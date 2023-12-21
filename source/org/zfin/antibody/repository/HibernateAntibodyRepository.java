@@ -192,26 +192,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    public int getAntibodiesByAOTermCount(GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Antibody.class);
-        criteria.setProjection(Projections.countDistinct("zdbID"));
-        Criteria labeling = criteria.createCriteria("antibodyLabelings");
-        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
-        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
-        Criteria fish = fishExperiment.createCriteria("fish");
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-        Criteria results = labeling.createCriteria("expressionResults");
-        // check AO1 and AO2
-        results.add(Restrictions.or(
-            Restrictions.eq("entity.superterm", aoTerm),
-            Restrictions.eq("entity.subterm", aoTerm)));
-        results.add(eq("expressionFound", true));
-
-        return ((Long) results.list().get(0)).intValue();
-    }
-
     public PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         String hql = """

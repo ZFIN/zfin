@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MergeService;
@@ -41,11 +42,11 @@ public class DeleteMarkerController {
 
         // a bit of validation, maybe put somewhere else
         if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
-            Set<ExpressionExperiment> expressionExperiments = ((Antibody) marker).getAntibodyLabelings();
+            Set<ExpressionExperiment2> expressionExperiments = ((Antibody) marker).getAntibodyLabelings();
             if (CollectionUtils.isNotEmpty(expressionExperiments)) {
                 int numExpression = expressionExperiments.size();
-                Set<String> pubs = new HashSet<String>();
-                for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+                Set<String> pubs = new HashSet<>();
+                for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
                             expressionExperiment.getPublication(),
                             CurationPresentation.CurationTab.FX)

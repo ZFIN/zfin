@@ -14,6 +14,7 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
@@ -66,7 +67,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Antibody ab = getAntibodyRepository().getAntibodyByName(abName);
         assertNotNull(ab);
 
-        Set<ExpressionExperiment> labelings = ab.getAntibodyLabelings();
+        Set<ExpressionExperiment2> labelings = ab.getAntibodyLabelings();
         assertNotNull(labelings);
 
         Set<MarkerSupplier> antibodyLabSuppliers = ab.getSuppliers();
@@ -659,12 +660,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
-        int count = getAntibodyRepository().getAntibodiesByAOTermCount(term);
-        assertTrue(count > 0);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
         assertNotNull(abs);
-        assertEquals(count, abs.getTotalCount());
+        assertEquals( abs.getTotalCount(), 3);
     }
 
     @Test
@@ -679,8 +678,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(5);
-        int count = getAntibodyRepository().getAntibodiesByAOTermCount(term);
-        assertThat(count, greaterThan(-1));
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
         assertNotNull(abs);

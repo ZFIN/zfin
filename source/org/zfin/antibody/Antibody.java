@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
@@ -32,7 +33,7 @@ public class Antibody extends Marker {
     private String lightChainIsotype;
     @JsonView(View.AntibodyDetailsAPI.class)
     private String clonalType;
-    private Set<ExpressionExperiment> antibodyLabelings;
+    private Set<ExpressionExperiment2> antibodyLabelings;
     private Set<AntibodyExternalNote> externalNotes;
     @JsonView(View.AntibodyDetailsAPI.class)
     private List<Marker> antigenGenes;
@@ -45,8 +46,8 @@ public class Antibody extends Marker {
      * @param expressionExperiment Antibody label to compare.
      * @return Returns an antibody that prevents merging.
      */
-    public ExpressionExperiment getMatchingAntibodyLabeling(ExpressionExperiment expressionExperiment) {
-        for (ExpressionExperiment anExpressionExperiment : getAntibodyLabelings()) {
+    public ExpressionExperiment2 getMatchingAntibodyLabeling(ExpressionExperiment2 expressionExperiment) {
+        for (ExpressionExperiment2 anExpressionExperiment : getAntibodyLabelings()) {
             if (!canMergeAntibodyLabel(anExpressionExperiment, expressionExperiment)) {
                 return anExpressionExperiment;
             }
@@ -65,7 +66,7 @@ public class Antibody extends Marker {
      * @param eeb Second expression experiment.
      * @return Whether or not an antibody label can be merged.
      */
-    private boolean canMergeAntibodyLabel(ExpressionExperiment eea, ExpressionExperiment eeb) {
+    private boolean canMergeAntibodyLabel(ExpressionExperiment2 eea, ExpressionExperiment2 eeb) {
         if (!eea.getPublication().equals(eeb.getPublication())) return true;
         if (!eea.getFishExperiment().equals(eeb.getFishExperiment())) return true;
         if (!eea.getAssay().equals(eeb.getAssay())) return true;

@@ -231,7 +231,7 @@
 
             <set name="antibodyLabelings" lazy="true">
                 <key column="xpatex_atb_zdb_id"/>
-                <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+                <one-to-many class="org.zfin.expression.ExpressionExperiment2"/>
             </set>
 
             <set name="externalNotes" lazy="true" sort="natural">

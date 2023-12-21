@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -124,7 +125,7 @@ public class MergeMarkerUnitTest {
         markerDBLink.setReferenceDatabase(referenceDatabase);
 
 
-        ExpressionExperiment e1 = new ExpressionExperiment();
+        ExpressionExperiment2 e1 = new ExpressionExperiment2();
         e1.setPublication(publication);
         e1.setFishExperiment(fishExperiment);
         e1.setAssay(expressionAssay);
@@ -133,7 +134,7 @@ public class MergeMarkerUnitTest {
         e1.setMarkerDBLink(markerDBLink);
         e1.setAntibody(a1);
 
-        ExpressionExperiment e2 = new ExpressionExperiment();
+        ExpressionExperiment2 e2 = new ExpressionExperiment2();
         e2.setPublication(publication);
         e2.setFishExperiment(fishExperiment);
         e2.setAssay(expressionAssay);
@@ -142,7 +143,7 @@ public class MergeMarkerUnitTest {
         e2.setMarkerDBLink(markerDBLink);
         e2.setAntibody(a1);
 
-        Set<ExpressionExperiment> antibodyLabelings = new HashSet<ExpressionExperiment>();
+        Set<ExpressionExperiment2> antibodyLabelings = new HashSet<>();
         antibodyLabelings.add(e1);
         a1.setAntibodyLabelings(antibodyLabelings);
 
