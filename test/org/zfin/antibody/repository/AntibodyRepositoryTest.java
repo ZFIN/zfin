@@ -13,7 +13,6 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
@@ -41,7 +40,6 @@ import org.zfin.util.FilterType;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -663,7 +661,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
         assertNotNull(abs);
-        assertEquals( abs.getTotalCount(), 3);
+        assertEquals(abs.getTotalCount(), 3);
     }
 
     @Test

@@ -1,13 +1,13 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
@@ -29,15 +29,15 @@ public class DeleteMarkerController {
 
     private Logger logger = LogManager.getLogger(DeleteMarkerController.class);
 
-    @RequestMapping(value ="/delete")
+    @RequestMapping(value = "/delete")
     public String deleteMarker(
-            @RequestParam("zdbIDToDelete") String zdbIDToDelete
-            ,  @ModelAttribute("formBean") DeleteBean formBean
-            ) throws Exception {
+        @RequestParam("zdbIDToDelete") String zdbIDToDelete
+        , @ModelAttribute("formBean") DeleteBean formBean
+    ) throws Exception {
 
         formBean.setZdbIDToDelete(zdbIDToDelete);
 
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
         formBean.setMarkerToDelete(marker);
 
         // a bit of validation, maybe put somewhere else
@@ -48,12 +48,12 @@ public class DeleteMarkerController {
                 Set<String> pubs = new HashSet<>();
                 for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
-                            expressionExperiment.getPublication(),
-                            CurationPresentation.CurationTab.FX)
+                        expressionExperiment.getPublication(),
+                        CurationPresentation.CurationTab.FX)
                     );
                 }
                 String argString = "";
-                for (Iterator<String> iter = pubs.iterator(); iter.hasNext();) {
+                for (Iterator<String> iter = pubs.iterator(); iter.hasNext(); ) {
                     argString += iter.next();
                     argString += (iter.hasNext() ? "<br> " : "");
                 }
@@ -68,11 +68,10 @@ public class DeleteMarkerController {
             HibernateUtil.createTransaction();
             MergeService.deleteMarker(marker);
             HibernateUtil.flushAndCommitCurrentSession();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to delete marker: " + formBean, e);
             HibernateUtil.rollbackTransaction();
-            formBean.addError("Failed to delete marker: " + formBean  + "<br>" + e.getMessage());
+            formBean.addError("Failed to delete marker: " + formBean + "<br>" + e.getMessage());
         }
 
         return "marker/delete-marker";

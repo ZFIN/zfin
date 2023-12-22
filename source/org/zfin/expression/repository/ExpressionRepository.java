@@ -78,8 +78,7 @@ public interface ExpressionRepository {
      * @param experimentID expression experiment ID
      * @return ExpressionExperiment
      */
-    ExpressionExperiment getExpressionExperiment(String experimentID);
-    ExpressionExperiment2 getExpressionExperiment2(String experimentID);
+    ExpressionExperiment2 getExpressionExperiment(String experimentID);
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
@@ -184,7 +183,7 @@ public interface ExpressionRepository {
      * @param fishID        genotype ID
      * @return list of expression experiment
      */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
+    List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieve an experiment figure stage for given pub, gene and fish.
@@ -204,7 +203,7 @@ public interface ExpressionRepository {
      * @param publicationID pub id
      * @return list of experiments
      */
-    List<ExpressionExperiment> getExperiments(String publicationID);
+    List<ExpressionExperiment2> getExperiments(String publicationID);
     List<ExpressionExperiment2> getExpressionByExperiment(String experimentID);
 
 
@@ -325,6 +324,8 @@ public interface ExpressionRepository {
      * @return list of expression results
      */
     List<ExpressionResult> getExpressionResultsByFish (Fish fish);
+
+    List<ExpressionFigureStage> getExpressionFigureStagesByFish(Fish fish);
 
     long getExpressionResultsByFishAndPublication(Fish fish, String publicationID);
 

@@ -47,7 +47,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String abbreviation;
     private String abbreviationOrder;
-    private Set<ExpressionExperiment> probeExpressionExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
     @JsonView(View.SequenceTargetingReagentAPI.class)
     private Set<PublicationAttribution> publications;
@@ -131,14 +130,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setAbbreviationOrder(String abbreviationOrder) {
         this.abbreviationOrder = abbreviationOrder;
-    }
-
-    public Set<ExpressionExperiment> getProbeExpressionExperiments() {
-        return probeExpressionExperiments;
-    }
-
-    public void setProbeExpressionExperiments(Set<ExpressionExperiment> probeExpressionExperiments) {
-        this.probeExpressionExperiments = probeExpressionExperiments;
     }
 
     public Set<ExpressionExperiment> getExpressionExperiments() {

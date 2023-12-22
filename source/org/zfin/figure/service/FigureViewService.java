@@ -487,7 +487,7 @@ public class FigureViewService {
      * @return
      */
     public List<Figure> getFiguresForPublicationAndProbe(Publication publication, Clone probe) {
-        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
+        //for direct submission pubs, publication.getFigures() won't be correct, and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
         if (probe != null && !isZebrasharePub(publication) && publication.isUnpublished()) {
             figures = getFigureRepository()

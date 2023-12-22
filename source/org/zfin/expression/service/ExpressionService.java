@@ -98,11 +98,11 @@ public class ExpressionService {
 
     public boolean isThisseProbe(Clone clone) {
         // get all expression experiments
-        Set<ExpressionExperiment> expressionExperiments = clone.getExpressionExperiments();
+        Set<ExpressionExperiment2> expressionExperiments = clone.getExpressionExperiments2();
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         Set<String> thissePublications = getThissePublicationZdbIDs();
 
-        for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+        for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
             // is there a record attribution for this expression experiment
             if (infrastructureRepository.getRecordAttribution(expressionExperiment.getZdbID(), expressionExperiment.getPublication().getZdbID(),
                 RecordAttribution.SourceType.STANDARD) != null
@@ -497,16 +497,16 @@ public class ExpressionService {
     /**
      * Return a distinct list of expression experiments from a given expression result collection
      *
-     * @param results expression result objects
+     * @param figureStages expression result objects
      * @return list of expression experiments
      */
-    public static List<ExpressionExperiment> getDistinctExpressionExperiments(List<ExpressionResult> results) {
-        if (results == null) {
+    public static List<ExpressionExperiment2> getDistinctExpressionExperiments(List<ExpressionFigureStage> figureStages) {
+        if (figureStages == null) {
             return null;
         }
-        Set<ExpressionExperiment> expressionExperimentSet = new HashSet<>(results.size());
-        for (ExpressionResult result : results) {
-            expressionExperimentSet.add(result.getExpressionExperiment());
+        Set<ExpressionExperiment2> expressionExperimentSet = new HashSet<>(figureStages.size());
+        for (ExpressionFigureStage figureStage : figureStages) {
+            expressionExperimentSet.add(figureStage.getExpressionExperiment());
         }
         return new ArrayList<>(expressionExperimentSet);
     }
@@ -612,40 +612,36 @@ public class ExpressionService {
         return DevelopmentStage.stageRangeOverlapsRange(superTerm.getStart(), superTerm.getEnd(), startStage, endStage);
     }
 
-    public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionResult> results) {
-        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<>(results.size());
-        for (ExpressionResult result : results) {
-            for (Figure figure : result.getFigures()) {
-                Set<ExpressionResult> expressionResults = figureListMap.get(figure);
-                if (expressionResults == null) {
-                    expressionResults = new HashSet<>();
-                    figureListMap.put(figure, expressionResults);
-                }
-                expressionResults.add(result);
-            }
+    public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionFigureStage> figureStages) {
+        Map<Figure, Set<ExpressionFigureStage>> figureListMap = new HashMap<>(figureStages.size());
+        for (ExpressionFigureStage figureStage : figureStages) {
+            Set<ExpressionFigureStage> figureStageSet = figureListMap.computeIfAbsent(figureStage.getFigure(), k -> new HashSet<>());
+            figureStageSet.add(figureStage);
         }
 
         List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<>(figureListMap.keySet().size());
-        List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
+        List<ExpressionExperiment2> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(figureStages);
         for (Figure figure : figureListMap.keySet()) {
             FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
             List<ExpressedGene> expressedGenes = new ArrayList<>(figureListMap.get(figure).size());
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+            for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
                 List<ExpressionStatement> expressionStatements = new ArrayList<>(figureListMap.get(figure).size());
                 if (!expressionExperiment.getAllFigures().contains(figure)) {
                     continue;
                 }
-                for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
+                for (ExpressionFigureStage figureStage : expressionExperiment.getFigureStageSet()) {
                     ExpressionStatement statement = new ExpressionStatement();
-                    if (!result.getFigures().contains(figure)) {
+                    if (!figureStage.getFigure().equals(figure)) {
                         continue;
                     }
-                    statement.setEntity(result.getEntity());
-                    statement.setExpressionFound(result.isExpressionFound());
-                    // ensure distinctness
-                    if (!expressionStatements.contains(statement)) {
-                        expressionStatements.add(statement);
-                    }
+                    figureStage.getExpressionResultSet().forEach(result -> {
+                        statement.setEntity(result.getEntity());
+                        statement.setExpressionFound(result.isExpressionFound());
+                        // ensure distinctness
+                        if (!expressionStatements.contains(statement)) {
+                            expressionStatements.add(statement);
+                        }
+                    });
                 }
                 Collections.sort(expressionStatements);
                 ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());

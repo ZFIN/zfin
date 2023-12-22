@@ -2169,8 +2169,8 @@ public class DTOConversionService {
         experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
         experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
         // check if there are expressions associated
-        Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
-        if (expressionResults != null) {
+        Set<ExpressionFigureStage> figureStageSet = experiment.getFigureStageSet();
+        if (figureStageSet != null) {
             experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
         }
         // check if a clone is available

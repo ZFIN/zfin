@@ -3,7 +3,6 @@ package org.zfin.marker;
 import org.junit.Test;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -19,6 +18,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
+ *
  */
 public class MergeMarkerUnitTest {
 

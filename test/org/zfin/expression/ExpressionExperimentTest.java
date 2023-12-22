@@ -13,96 +13,92 @@ public class ExpressionExperimentTest {
 
     @Test
     public void distinctExpressionsDuplicateFigures() {
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        ExpressionFigureStage figureStage1 = new ExpressionFigureStage();
         DevelopmentStage start = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-1");
-        resultOne.setStartStage(start);
+        figureStage.setStartStage(start);
+        figureStage1.setStartStage(start);
         DevelopmentStage end = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-2");
-        resultOne.setEndStage(end);
+        figureStage.setEndStage(end);
+        figureStage1.setEndStage(end);
         Figure figureOne = new FigureFigure();
         figureOne.setZdbID("ZDB-FIG-1");
         Figure figureTwo = new FigureFigure();
         figureTwo.setZdbID("ZDB-FIG-1");
-        Set<Figure> figures = new HashSet<Figure>();
-        figures.add(figureOne);
-        figures.add(figureTwo);
-        resultOne.setFigures(figures);
+        figureStage.setFigure(figureOne);
+        figureStage1.setFigure(figureTwo);
 
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
-        results.add(resultOne);
-
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        figureStage.setExpressionExperiment(experiment);
+        figureStage1.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage, figureStage1));
         assertEquals(1, experiment.getDistinctExpressions());
     }
 
     @Test
     public void distinctExpressionsTwoFigures() {
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        ExpressionFigureStage figureStage1 = new ExpressionFigureStage();
         DevelopmentStage start = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-1");
-        resultOne.setStartStage(start);
+        figureStage.setStartStage(start);
+        figureStage1.setStartStage(start);
         DevelopmentStage end = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-2");
-        resultOne.setEndStage(end);
+        figureStage.setEndStage(end);
+        figureStage1.setEndStage(end);
         Figure figureOne = new FigureFigure();
         figureOne.setZdbID("ZDB-FIG-1");
         Figure figureTwo = new FigureFigure();
         figureTwo.setZdbID("ZDB-FIG-2");
-        Set<Figure> figures = new HashSet<Figure>();
-        figures.add(figureOne);
-        figures.add(figureTwo);
-        resultOne.setFigures(figures);
-
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
-        results.add(resultOne);
-
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        figureStage.setFigure(figureOne);
+        figureStage1.setFigure(figureTwo);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        experiment.setFigureStageSet(Set.of(figureStage, figureStage1));
         assertEquals(2, experiment.getDistinctExpressions());
     }
 
     @Test
     public void distinctExpressionsTwoFiguresTwoExpressions() {
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        ExpressionFigureStage figureStage1 = new ExpressionFigureStage();
         DevelopmentStage start = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-1");
-        resultOne.setStartStage(start);
+        figureStage.setStartStage(start);
+        figureStage1.setStartStage(start);
         DevelopmentStage end = new DevelopmentStage();
         end.setZdbID("ZDB-STAGE-2");
-        resultOne.setEndStage(end);
+        figureStage.setEndStage(end);
+        figureStage1.setEndStage(end);
         Figure figureOne = new FigureFigure();
         figureOne.setZdbID("ZDB-FIG-1");
         Figure figureTwo = new FigureFigure();
         figureTwo.setZdbID("ZDB-FIG-2");
-        Set<Figure> figures = new HashSet<Figure>();
-        figures.add(figureOne);
-        figures.add(figureTwo);
-        resultOne.setFigures(figures);
+        figureStage.setFigure(figureOne);
+        figureStage1.setFigure(figureTwo);
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionFigureStage figureStage2 = new ExpressionFigureStage();
+        ExpressionFigureStage figureStage3 = new ExpressionFigureStage();
         DevelopmentStage startOne = new DevelopmentStage();
         startOne.setZdbID("ZDB-STAGE-3");
-        resultTwo.setStartStage(startOne);
+        figureStage2.setStartStage(startOne);
+        figureStage3.setStartStage(startOne);
         DevelopmentStage endOne = new DevelopmentStage();
         endOne.setZdbID("ZDB-STAGE-4");
-        resultTwo.setEndStage(endOne);
+        figureStage2.setEndStage(endOne);
+        figureStage3.setEndStage(endOne);
         Figure figureThree = new FigureFigure();
         figureThree.setZdbID("ZDB-FIG-1");
         Figure figureFour = new FigureFigure();
         figureFour.setZdbID("ZDB-FIG-2");
-        Set<Figure> figuresTwo = new HashSet<Figure>();
-        figuresTwo.add(figureThree);
-        figuresTwo.add(figureFour);
-        resultTwo.setFigures(figuresTwo);
+        figureStage2.setFigure(figureThree);
+        figureStage3.setFigure(figureFour);
 
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
-        results.add(resultOne);
-        results.add(resultTwo);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        experiment.setFigureStageSet(Set.of(figureStage, figureStage1,figureStage2,figureStage3));
         assertEquals(4, experiment.getDistinctExpressions());
     }
 }

@@ -10,6 +10,7 @@ import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
@@ -389,12 +390,12 @@ public class FishService {
         Fish fish = getMutantRepository().getFish(fishID);
         Set<FishExperiment> fishOx = fish.getFishExperiments();
 
-        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(fishOx, geneID);
-        if (CollectionUtils.isEmpty(results)) {
+        List<ExpressionFigureStage> figureStages = getMutantRepository().getExpressionSummary(fishOx, geneID);
+        if (CollectionUtils.isEmpty(figureStages) && CollectionUtils.isEmpty(figureStages.stream().map(ExpressionFigureStage::getExpressionResultSet).flatMap(Collection::stream).toList())) {
             return null;
         }
 
-        return ExpressionService.createExpressionFigureSummaryFromExpressionResults(results);
+        return ExpressionService.createExpressionFigureSummaryFromExpressionResults(figureStages);
     }
 
     /**

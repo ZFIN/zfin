@@ -146,15 +146,13 @@ public class AntibodyBean extends PublicationListBean {
     }
 
     public Set<Publication> getAntibodyAttributesPublications() {
-        Set<Publication> publications = new HashSet<Publication>();
+        Set<Publication> publications = new HashSet<>();
 
         if (antibody == null)
             return publications;
 
         // add alias associated publications
-        for (Publication pub : MarkerService.getAliasAttributions(antibody)) {
-            publications.add(pub);
-        }
+        publications.addAll(MarkerService.getAliasAttributions(antibody));
 
 
         AntibodyService antibodyData = getAntibodyStat();
@@ -196,7 +194,7 @@ public class AntibodyBean extends PublicationListBean {
     }
 
     public List<Publication> getSortedPublishedPublications() {
-        List<Publication> publishedPublications = new ArrayList<Publication>();
+        List<Publication> publishedPublications = new ArrayList<>();
         Set<Publication> AntibodyPublications = getAntibodyAttributesPublications();
         for (Publication pub : getSortedPublications()) {
             if (!pub.isUnpublished()) {

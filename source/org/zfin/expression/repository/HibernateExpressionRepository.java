@@ -765,13 +765,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 	}
 
 
-	public ExpressionExperiment getExpressionExperiment(String experimentID) {
+	public ExpressionExperiment2 getExpressionExperiment(String experimentID) {
 		Session session = HibernateUtil.currentSession();
-		return session.get(ExpressionExperiment.class, experimentID);
-	}
-
-	public ExpressionExperiment2 getExpressionExperiment2(String experimentID) {
-		return HibernateUtil.currentSession().get(ExpressionExperiment2.class, experimentID);
+		return session.get(ExpressionExperiment2.class, experimentID);
 	}
 
 	public List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID) {
@@ -957,18 +953,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		return query.list();
 	}
 
-	public List<ExpressionExperiment> getExperiments(String publicationID) {
+	public List<ExpressionExperiment2> getExperiments(String publicationID) {
 		Session session = HibernateUtil.currentSession();
 
 		String hql = """
-			select experiment from ExpressionExperiment experiment
+			select experiment from ExpressionExperiment2 experiment
 			       left join experiment.gene as gene
 			     where experiment.publication.zdbID = :pubID
 			    order by gene.abbreviationOrder,
 			             experiment.fishExperiment.fish.name,
 			             experiment.assay.displayOrder
 			             """;
-		Query<ExpressionExperiment> query = session.createQuery(hql, ExpressionExperiment.class);
+		Query<ExpressionExperiment2> query = session.createQuery(hql, ExpressionExperiment2.class);
 		query.setParameter("pubID", publicationID);
 		return query.list();
 
@@ -1036,9 +1032,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		return HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
 	}
 
-	public List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
+	public List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
 
-		String hql = "select experiment from ExpressionExperiment experiment "
+		String hql = "select experiment from ExpressionExperiment2 experiment "
 			+ "       left join experiment.gene as gene "
 			+ "       left join experiment.fishExperiment as fishox"
 			+ "     where experiment.publication.zdbID = :pubID ";
@@ -1052,7 +1048,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 			"             fishox.fish.name, " +
 			"             fishox.experiment.name, " +
 			"             experiment.assay.displayOrder ";
-		Query<ExpressionExperiment> query = HibernateUtil.currentSession().createQuery(hql, ExpressionExperiment.class);
+		Query<ExpressionExperiment2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionExperiment2.class);
 		query.setParameter("pubID", publicationID);
 		if (geneZdbID != null) {
 			query.setParameter("geneID", geneZdbID);
@@ -1609,32 +1605,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		data.setZdbID(endStageID);
 	}
 
-	private List<ExperimentFigureStage> populateExperimentFigureStage
-		(List<Object[]> objects) {
-		List<ExperimentFigureStage> efses = new ArrayList<>();
-		for (Object[] object : objects) {
-			//ExpressionExperiment exp = (ExpressionExperiment) object[0];
-			ExpressionResult result = (ExpressionResult) object[0];
-			Figure figure = (Figure) object[1];
-			ExperimentFigureStage efs = new ExperimentFigureStage();
-			ExpressionExperiment expressionExperiment = result.getExpressionExperiment();
-			expressionExperiment.addExpressionResult(result);
-			efs.setExpressionExperiment(expressionExperiment);
-			efs.setFigure(figure);
-			efs.addExpressionResult(result);
-			if (!efses.contains(efs)) {
-				efses.add(efs);
-			} else {
-				for (ExperimentFigureStage ef : efses) {
-					if (ef.equals(efs)) {
-						ef.addExpressionResult(result);
-					}
-				}
-			}
-		}
-		return efses;
-	}
-
 	/**
 	 * Retrieve all expression results for a given genotype
 	 *
@@ -1664,6 +1634,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 			"        and xpRslt.expressionExperiment = xpExp " +
 			"        and xpExp.gene != null";
 		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		query.setParameter("fish", fish);
+
+		return query.list();
+	}
+
+	public List<ExpressionFigureStage> getExpressionFigureStagesByFish(Fish fish) {
+		Session session = HibernateUtil.currentSession();
+
+		String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+			"      where fishox.fish = :fish " +
+			"        and fishox = xpExp.fishExperiment " +
+			"        and xpRslt.expressionExperiment = xpExp " +
+			"        and xpExp.gene != null";
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("fish", fish);
 
 		return query.list();

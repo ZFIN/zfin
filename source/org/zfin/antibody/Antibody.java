@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
@@ -74,17 +73,17 @@ public class Antibody extends Marker {
         if (eea.getProbe() == null && eeb.getProbe() != null) return true;
         if (eea.getProbe() != null && eeb.getProbe() == null) return true;
         if (eea.getProbe() != null && eeb.getProbe() != null &&
-                !eea.getProbe().equals(eeb.getProbe())) return true;
+            !eea.getProbe().equals(eeb.getProbe())) return true;
 
         if (eea.getGene() == null && eeb.getGene() != null) return true;
         if (eea.getGene() != null && eeb.getGene() == null) return true;
         if (eea.getGene() != null && eeb.getGene() != null &&
-                !eea.getGene().equals(eeb.getGene())) return true;
+            !eea.getGene().equals(eeb.getGene())) return true;
 
         if (eea.getMarkerDBLink() == null && eeb.getMarkerDBLink() != null) return true;
         if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() == null) return true;
         if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() != null
-                && !eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true;
+            && !eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true;
 
         return false;
     }
@@ -101,9 +100,9 @@ public class Antibody extends Marker {
         }
 
         return antibodyLabelings.stream()
-                .filter(experiment -> CollectionUtils.isNotEmpty(experiment.getExpressionResults()))
-                .map(experiment -> experiment.getAssay().getAbbreviation())
-                .filter(Objects::nonNull).distinct().sorted().collect(Collectors.toList());
+            .filter(experiment -> CollectionUtils.isNotEmpty(experiment.getFigureStageSet()))
+            .map(experiment -> experiment.getAssay().getAbbreviation())
+            .filter(Objects::nonNull).distinct().sorted().collect(Collectors.toList());
 
     }
 }

@@ -61,7 +61,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getExperimentByID() {
         String experimentID = "ZDB-XPAT-090417-2";
-        ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
+        ExpressionExperiment2 experiment = expRep.getExpressionExperiment(experimentID);
         assertNotNull(experiment);
     }
 
@@ -144,7 +144,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void removeExperiment() {
         String experimentID = "ZDB-XPAT-090430-4";
 
-        ExpressionExperiment2 experiment = expRep.getExpressionExperiment2(experimentID);
+        ExpressionExperiment2 experiment = expRep.getExpressionExperiment(experimentID);
         expRep.deleteExpressionExperiment(experiment);
     }
 
@@ -218,7 +218,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionExperiments() {
         String zdbID = "ZDB-PUB-990507-16";
 
-        List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
+        List<ExpressionExperiment2> experiments = expRep.getExperiments(zdbID);
         assertNotNull(experiments);
         // alcam
         String geneID = "ZDB-GENE-990415-30";
@@ -260,7 +260,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionExperiments2() {
         String zdbID = "ZDB-PUB-990507-16";
 
-        List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
+        List<ExpressionExperiment2> experiments = expRep.getExperiments(zdbID);
         assertThat(experiments.size(), greaterThan(3));
 
         // alcam
@@ -395,13 +395,13 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void getExpressionFigureCountForGivenFish() {
+    public void getExpressionFigureStagesByFish() {
         Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-16069");
         int count = expRep.getExpressionFigureCountForFish(fish);
         assertThat(count, both(greaterThan(1)).and(lessThan(200)));
 
-        List<ExpressionResult> expressionResults = expRep.getExpressionResultsByFish(fish);
-        assertThat(expressionResults, is(notNullValue()));
+        List<ExpressionFigureStage> figureStages = expRep.getExpressionFigureStagesByFish(fish);
+        assertThat(figureStages, is(notNullValue()));
     }
 
     @Test
