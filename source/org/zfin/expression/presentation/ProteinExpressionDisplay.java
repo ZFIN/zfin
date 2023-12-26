@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
@@ -31,7 +32,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
     private Set<Publication> publications;
     private Set<Figure> figures;
     @JsonView(View.API.class)
-    private List<ExpressionResult> expressionResults;
+    private List<ExpressionResult2> expressionResults;
     @JsonView(View.API.class)
     private Experiment experiment;
     @JsonView(View.API.class)

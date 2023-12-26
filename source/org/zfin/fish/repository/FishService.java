@@ -516,12 +516,12 @@ public class FishService {
     }
 
     public static Set<ZfinFigureEntity> getAllExpressionFigureEntitiesForFish(Fish fish) {
-        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
+        List<ExpressionFigureStage> figureStages = getExpressionRepository().getExpressionResultsByFish(fish);
         Set<ZfinFigureEntity> figureEntities = new HashSet<>();
         ZfinFigureEntity figureEntity;
         Set<Figure> expressionFigures = new HashSet<>();
-        for (ExpressionResult expressionResult : expressionResults) {
-            expressionFigures.addAll(expressionResult.getFigures());
+        for (ExpressionFigureStage figureStage : figureStages) {
+            expressionFigures.add(figureStage.getFigure());
         }
 
         for (Figure figure : expressionFigures) {

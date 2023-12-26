@@ -323,7 +323,7 @@ public interface ExpressionRepository {
      * @param fish Fish
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getExpressionResultsByFish (Fish fish);
 
     List<ExpressionFigureStage> getExpressionFigureStagesByFish(Fish fish);
 
@@ -333,11 +333,11 @@ public interface ExpressionRepository {
 
     List<String> getExpressionPublicationIDsByFish(Fish fish);
 
-    List<ExpressionResult> getNonEfgExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getNonEfgExpressionResultsByFish (Fish fish);
 
-    List<ExpressionResult> getEfgExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getEfgExpressionResultsByFish (Fish fish);
 
-    List<ExpressionResult> getProteinExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getProteinExpressionResultsByFish (Fish fish);
 
     /**
      * Retrieve all expression results for a given Sequenec Targeting Reagent
@@ -345,7 +345,7 @@ public interface ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
+    List<ExpressionFigureStage> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
 
     List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
 

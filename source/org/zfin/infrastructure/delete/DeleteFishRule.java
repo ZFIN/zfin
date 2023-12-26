@@ -1,9 +1,7 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
@@ -30,16 +28,16 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
             addToValidationReport(fish.getAbbreviation() + " associated with more than one publication: ", publicationList);
         }
         List<DiseaseAnnotationModel> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
-        if (CollectionUtils.isNotEmpty(diseaseAnnotationList) ) {
+        if (CollectionUtils.isNotEmpty(diseaseAnnotationList)) {
             List<DiseaseAnnotation> sortedDiseaseForFish = new ArrayList<>();
             for (DiseaseAnnotationModel pheno : diseaseAnnotationList) {
                 sortedDiseaseForFish.add(pheno.getDiseaseAnnotation());
             }
-            addToValidationReport(fish.getAbbreviation() + " associated with : "+ diseaseAnnotationList.size()+" disease model(s)",sortedDiseaseForFish);
+            addToValidationReport(fish.getAbbreviation() + " associated with : " + diseaseAnnotationList.size() + " disease model(s)", sortedDiseaseForFish);
         }
         List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByFish(fish);
         // Can't delete a genotype if it has phenotypes associated
-       if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
+        if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
             SortedSet<PhenotypeStatement> sortedPhenotypesForFish = new TreeSet<>();
             for (PhenotypeStatement pheno : phenotypeStatements) {
                 sortedPhenotypesForFish.add(pheno);
@@ -48,7 +46,7 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
         }
 
         List<ExpressionExperiment2> fishExpressionExperiments = RepositoryFactory.getExpressionRepository().getExpressionExperiment2sByFish(fish);
-         //Can't delete a genotype if it has expression data associated
+        //Can't delete a genotype if it has expression data associated
         if (CollectionUtils.isNotEmpty(fishExpressionExperiments)) {
             Set<ExpressionExperiment2> expressionExperiments = new HashSet<>();
             for (ExpressionExperiment2 fishExpressionExperiment : fishExpressionExperiments) {
@@ -60,7 +58,7 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
                 pubs.add(expressionExperiment.getPublication());
             }
             addToValidationReport(fish.getAbbreviation() + " is used in " + numExpression +
-                    " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
+                                  " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
         }
 
         return validationReportList;

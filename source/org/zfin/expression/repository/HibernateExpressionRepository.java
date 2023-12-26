@@ -1605,35 +1605,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		data.setZdbID(endStageID);
 	}
 
-	/**
-	 * Retrieve all expression results for a given genotype
-	 *
-	 * @param genotype genotype
-	 * @return list of expression results
-	 */
-	public List<ExpressionResult> getExpressionResultsByFish(Genotype genotype) {
+	public List<ExpressionFigureStage> getExpressionResultsByFish(Fish fish) {
 		Session session = HibernateUtil.currentSession();
 
-		String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
-			"      where fishox.fish.genotype.zdbID = :genotypeID " +
-			"        and fishox = xpExp.fishExperiment " +
-			"        and xpRslt.expressionExperiment = xpExp " +
-			"        and xpExp.gene != null";
-		Query query = session.createQuery(hql);
-		query.setParameter("genotypeID", genotype.getZdbID());
-
-		return (List<ExpressionResult>) query.list();
-	}
-
-	public List<ExpressionResult> getExpressionResultsByFish(Fish fish) {
-		Session session = HibernateUtil.currentSession();
-
-		String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+		String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox " +
 			"      where fishox.fish = :fish " +
 			"        and fishox = xpExp.fishExperiment " +
 			"        and xpRslt.expressionExperiment = xpExp " +
 			"        and xpExp.gene != null";
-		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("fish", fish);
 
 		return query.list();
@@ -1698,49 +1678,49 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		return (List<String>) query.list();
 	}
 
-	public List<ExpressionResult> getNonEfgExpressionResultsByFish(Fish fish) {
+	public List<ExpressionFigureStage> getNonEfgExpressionResultsByFish(Fish fish) {
 		Session session = HibernateUtil.currentSession();
 
-		String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+		String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox " +
 			"      where fishox.fish = :fish " +
 			"        and fishox = xpExp.fishExperiment " +
 			"        and xpRslt.expressionExperiment = xpExp " +
 			"        and xpExp.gene != null" +
 			"        and xpExp.gene.zdbID not like :markerId";
-		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("fish", fish);
 		query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
 
 		return query.list();
 	}
 
-	public List<ExpressionResult> getEfgExpressionResultsByFish(Fish fish) {
+	public List<ExpressionFigureStage> getEfgExpressionResultsByFish(Fish fish) {
 		Session session = HibernateUtil.currentSession();
 
 		String hql = """
-			select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox
+			select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox
 			      where fishox.fish = :fish
 			        and fishox = xpExp.fishExperiment
 			        and xpRslt.expressionExperiment = xpExp
 			        and xpExp.gene != null
 			        and xpExp.gene.zdbID like :markerId
 			""";
-		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("fish", fish);
 		query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
 
 		return query.list();
 	}
 
-	public List<ExpressionResult> getProteinExpressionResultsByFish(Fish fish) {
+	public List<ExpressionFigureStage> getProteinExpressionResultsByFish(Fish fish) {
 		Session session = HibernateUtil.currentSession();
 
-		String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+		String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox " +
 			"      where fishox.fish = :fish " +
 			"        and fishox = xpExp.fishExperiment " +
 			"        and xpRslt.expressionExperiment = xpExp " +
 			"        and xpExp.antibody != null";
-		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("fish", fish);
 
 		return query.list();
@@ -1902,7 +1882,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     }
 */
-	public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+	public List<ExpressionFigureStage> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
 		Session session = HibernateUtil.currentSession();
 
 
@@ -1916,7 +1896,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 " and cefs.fishExperiment=fishox" +
                 " and cefs.gene=:str";*/
 
-		String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
+		String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
 			"        where fishox = xpExp.fishExperiment " +
 			"        and fish = fishox.fish " +
 			"        and geno = fish.genotype " +
@@ -1926,14 +1906,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 			" and cefs.fishExperiment=fishox" +
 			" and cefs.gene=:str";
 
-		Query query = session.createQuery(hql);
+		Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
 		query.setParameter("str", sequenceTargetingReagent);
 
-
-		List<ExpressionResult> expressionResults = (List<ExpressionResult>) query.list();
-
-
-		return expressionResults;
+		return query.list();
 	}
 
 	public List<String> getExpressionFigureIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {

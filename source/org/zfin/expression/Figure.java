@@ -30,7 +30,6 @@ public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID 
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String label;
     private String orderingLabel;
-    private Set<ExpressionResult> expressionResults;
     private Set<ExpressionFigureStage> expressionFigureStage;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
