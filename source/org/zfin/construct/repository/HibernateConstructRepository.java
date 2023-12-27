@@ -242,12 +242,10 @@ public class HibernateConstructRepository implements ConstructRepository {
             throw new RuntimeException("Cannot update construct name for construct with zdbID: " + constructZdbID + " because it does not exist.");
         }
         existingConstruct.setName(newName);
-        currentSession().update(existingConstruct);
 
         Marker existingMarker = getMarkerRepository().getMarkerByID(constructZdbID);
         existingMarker.setName(newName);
         existingMarker.setAbbreviation(newName);
-        currentSession().update(existingMarker);
     }
 
 
