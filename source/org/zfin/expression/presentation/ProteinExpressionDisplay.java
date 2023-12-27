@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
@@ -19,7 +18,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 
 /**
- *  TODO: add comments
+ * TODO: add comments
  */
 @Setter
 @Getter
@@ -44,60 +43,59 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
     }
 
     public int compareTo(ProteinExpressionDisplay anotherProteinExpressionDisplay) {
-        if (antiGene == null){
+        if (antiGene == null) {
             return -1;
-        }
-        else if (antiGene.compareTo(anotherProteinExpressionDisplay.getAntiGene()) == 0)
+        } else if (antiGene.compareTo(anotherProteinExpressionDisplay.getAntiGene()) == 0)
             return experiment.compareTo(anotherProteinExpressionDisplay.getExperiment());
         return antiGene.compareTo(anotherProteinExpressionDisplay.getAntiGene());
     }
 
     @JsonView(View.API.class)
     public int getNumberOfFigures() {
-		if (figures == null) {
-			return 0;
-		} else {
-			return figures.size();
-		}
+        if (figures == null) {
+            return 0;
+        } else {
+            return figures.size();
+        }
     }
 
     @JsonView(View.API.class)
     public Figure getFigure() {
-		if (figures == null || figures.size() != 1)
-		   return null;
+        if (figures == null || figures.size() != 1)
+            return null;
 
         Figure singleFigure = null;
-		for (Figure fig : figures) {
-		   singleFigure = fig;
-           break;
-		}
+        for (Figure fig : figures) {
+            singleFigure = fig;
+            break;
+        }
         return singleFigure;
     }
 
     @JsonView(View.API.class)
     public Publication getPublication() {
-		if (publications == null || publications.size() != 1)
-		   return null;
+        if (publications == null || publications.size() != 1)
+            return null;
 
-		Publication singlePub = new Publication();
-		for (Publication pub : publications) {
-			singlePub = pub;
-		}
+        Publication singlePub = new Publication();
+        for (Publication pub : publications) {
+            singlePub = pub;
+        }
         return singlePub;
     }
 
     @JsonView(View.API.class)
     public int getNumberOfPublications() {
-		if (publications == null) {
-			return 0;
-		} else {
-			return publications.size();
-		}
+        if (publications == null) {
+            return 0;
+        } else {
+            return publications.size();
+        }
     }
 
     @JsonView(View.API.class)
     public boolean isImgInFigure() {
-        if (noFigureOrFigureWithNoLabel())   {
+        if (noFigureOrFigureWithNoLabel()) {
             return false;
         }
         boolean thereIsImg = false;
@@ -112,7 +110,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
 
     @JsonView(View.API.class)
     public boolean noFigureOrFigureWithNoLabel() {
-        if (figures == null || figures.isEmpty())   {
+        if (figures == null || figures.isEmpty()) {
             return true;
         }
         boolean noFigureLabel = false;

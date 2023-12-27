@@ -207,16 +207,19 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExpressionByExperiment(String experimentID);
 
 
-    /**
+/*
+    */
+/**
      * Create a single figure annotation.
      * If no composed term is provided 'Unspecified is used'
      *
      * @param expressionResult experiment figure stage
      * @param singleFigure     Figure
-     */
-    void createExpressionResult(ExpressionResult expressionResult, Figure singleFigure);
+     *//*
 
-    List<ExpressionResult> checkForExpressionResultRecord(ExpressionResult result);
+    void createExpressionResult(ExpressionResult2 expressionResult, Figure singleFigure);
+*/
+
     List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result);
 
     /**
@@ -375,7 +378,7 @@ public interface ExpressionRepository {
      * Retrieve all expression result objects that annotate with a secondary term.
      * @return list of expression result objects
      */
-    List<ExpressionResult> getExpressionOnSecondaryTerms();
+    List<ExpressionResult2> getExpressionOnSecondaryTerms();
 
     /**
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
@@ -404,7 +407,7 @@ public interface ExpressionRepository {
      * @param range
      * @return
      */
-    List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
+    List<ExpressionResult2> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 
     ExpressionResult getExpressionResult(Long expressionResultID);
 

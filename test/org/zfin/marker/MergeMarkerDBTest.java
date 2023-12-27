@@ -228,34 +228,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
         return antibodies;
     }
 
-    private Figure createFigure(String figa1ZdbID, Publication pub1, ExpressionResult expressionResult) {
-        HibernateUtil.currentSession().createSQLQuery(" " +
-                                                      " insert into zdb_active_data(zactvd_zdb_id) values (:fig1ZdbID) " +
-                                                      "")
-            .setParameter("fig1ZdbID", figa1ZdbID)
-            .executeUpdate();
-
-        HibernateUtil.currentSession().createSQLQuery(" " +
-                                                      " insert into figure(fig_zdb_id,fig_source_zdb_id) values (:fig1ZdbID,:pubID) " +
-                                                      "")
-            .setParameter("fig1ZdbID", figa1ZdbID)
-            .setParameter("pubID", pub1.getZdbID())
-            .executeUpdate();
-
-        HibernateUtil.currentSession().createSQLQuery(" " +
-                                                      " insert into expression_pattern_figure (xpatfig_fig_zdb_id,xpatfig_xpatres_zdb_id)  " +
-                                                      " values ( :fig1ZdbID , :expatResultZdbID )  " +
-                                                      "")
-            .setParameter("fig1ZdbID", figa1ZdbID)
-////TODO                .setParameter("expatResultZdbID", expressionResult.getZdbID())
-            .executeUpdate();
-
-        HibernateUtil.currentSession().flush();
-        return (Figure) HibernateUtil.currentSession().createCriteria(Figure.class)
-            .add(Restrictions.eq("zdbID", figa1ZdbID)).uniqueResult();
-
-    }
-
     @SuppressWarnings("unchecked")
     private List<ExpressionAssay> createExpressionAssays() {
 

@@ -336,7 +336,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionOnSecondaryTerms() {
-        List<ExpressionResult> expressionResults = expRep.getExpressionOnSecondaryTerms();
+        List<ExpressionResult2> expressionResults = expRep.getExpressionOnSecondaryTerms();
         assertNotNull(expressionResults);
         Assert.assertEquals(0, expressionResults.size());
     }
@@ -582,7 +582,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         range.setSuperTerm(term);
         range.setStart(start);
         range.setEnd(end);
-        List<ExpressionResult> resultList = getExpressionRepository().getExpressionResultsByTermAndStage(range);
+        List<ExpressionResult2> resultList = getExpressionRepository().getExpressionResultsByTermAndStage(range);
         assertNotNull(resultList);
     }
 

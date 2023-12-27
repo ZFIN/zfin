@@ -549,13 +549,13 @@ public class ExpressionService {
      */
     public static ExpressionResultSplitStatement splitExpressionAnnotations(TermStageSplitStatement statement) {
         // find expression Result records matching the original term-stage-range
-        List<ExpressionResult> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
+        List<ExpressionResult2> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
         if (CollectionUtils.isEmpty(expressionResultList)) {
             return null;
         }
         logger.info("Found " + expressionResultList.size() + " expression_result records");
         ExpressionResultSplitStatement splitStatement = new ExpressionResultSplitStatement();
-        for (ExpressionResult result : expressionResultList) {
+        for (ExpressionResult2 result : expressionResultList) {
             // create new records for the remaining split parts
             boolean firstElement = true;
             for (TermFigureStageRange stageRange : statement.getTermFigureStageRangeList()) {
@@ -569,31 +569,34 @@ public class ExpressionService {
                 if (firstElement) {
                     // update existing record
                     result.setSuperTerm(stageRange.getSuperTerm());
-                    result.setStartStage(stageRange.getStart());
-                    result.setEndStage(stageRange.getEnd());
+                    result.getExpressionFigureStage().setStartStage(stageRange.getStart());
+                    result.getExpressionFigureStage().setEndStage(stageRange.getEnd());
                     ///result.setComment("Created by a split of " + result.getZdbID());
                     firstElement = false;
                     splitStatement.setOriginalExpressionResult(result);
                 } else {
-                    ExpressionResult splitResult = new ExpressionResult();
-                    splitResult.setExpressionExperiment(result.getExpressionExperiment());
+                    ExpressionResult2 splitResult = new ExpressionResult2();
+                    ExpressionFigureStage figureStage = new ExpressionFigureStage();
+                    figureStage.setExpressionExperiment(result.getExpressionFigureStage().getExpressionExperiment());
+                    figureStage.setStartStage(stageRange.getStart());
+                    figureStage.setEndStage(stageRange.getEnd());
+                    figureStage.setFigure(result.getExpressionFigureStage().getFigure());
+                    splitResult.setExpressionFigureStage(figureStage);
                     splitResult.setSuperTerm(stageRange.getSuperTerm());
-                    splitResult.setStartStage(stageRange.getStart());
-                    splitResult.setEndStage(stageRange.getEnd());
                     splitResult.setExpressionFound(result.isExpressionFound());
                     ///splitResult.setComment("Created by a split of " + result.getZdbID());
                     //splitResult.setFigures(result.getFigures());
-                    for (Figure figure : result.getFigures()) {
-                        getExpressionRepository().createExpressionResult(splitResult, figure);
+/*
+                    Figure figure = result.getExpressionFigureStage().getFigure();
+ToDo: Might need some adjustment that need to be taken care of when making use of the split function
+                    getExpressionRepository().createExpressionResult(splitResult, figure);
+                    Set<Figure> figures = splitResult.getFigures();
+                    if (figures == null) {
+                        figures = new HashSet<>(2);
+                        splitResult.setFigures(figures);
                     }
-                    for (Figure figure : result.getFigures()) {
-                        Set<Figure> figures = splitResult.getFigures();
-                        if (figures == null) {
-                            figures = new HashSet<>(2);
-                            splitResult.setFigures(figures);
-                        }
-                        figures.add(figure);
-                    }
+                    figures.add(figure);
+*/
                     splitStatement.getExpressionResultList().add(splitResult);
                 }
             }
