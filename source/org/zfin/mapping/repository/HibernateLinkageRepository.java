@@ -1,12 +1,14 @@
 package org.zfin.mapping.repository;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -18,12 +20,9 @@ import org.zfin.mapping.*;
 import org.zfin.mapping.importer.AGPEntry;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -34,6 +33,8 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     private Logger logger = LogManager.getLogger(HibernateLinkageRepository.class);
 
+    @Autowired
+    private ProfileService profileService;
 
     public HibernateLinkageRepository() {
     }
@@ -387,7 +388,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public void saveLinkageComment(Linkage linkage, String newComment) {
-        if (!Person.isCurrentSecurityUserRoot()) {
+        if (!profileService.isCurrentSecurityUserRoot()) {
             throw new RuntimeException("No User with permissions found");
         }
         Updates updates = new Updates();
