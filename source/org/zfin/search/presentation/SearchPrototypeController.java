@@ -818,7 +818,7 @@ public class SearchPrototypeController {
         }
 
         for (SearchResult result : results) {
-            result.setHighlights(solrService.getHighlights(result.getId(), response));
+            result.setHighlightsPreservingPrivacy(solrService.getHighlights(result.getId(), response));
         }
 
     }

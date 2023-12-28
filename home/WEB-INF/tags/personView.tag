@@ -45,7 +45,7 @@
                 </authz:authorize>
                 <tr>
                     <th>Email:</th>
-                    <td><a href="mailto:${person.email}">${person.email}</a></td>
+                    <td><a href="mailto:${person.emailIfVisible}">${person.emailIfVisible}</a></td>
                 </tr>
                 <tr>
                     <th>URL:</th>

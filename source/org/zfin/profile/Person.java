@@ -116,7 +116,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         }
         String role = accountInfo.getRole();
         GrantedAuthority gr = new SimpleGrantedAuthority(role);
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(gr);
         return grantedAuthorities;
     }
@@ -133,6 +133,19 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             return null;
         }
         return accountInfo.getUsername();
+    }
+
+    public String getEmailIfVisible() {
+        if (emailPrivacyPreference == null || emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.PUBLIC.toString())) {
+            return email;
+        }
+        if (emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.REGISTERED.toString()) && isCurrentSecurityUserLoggedIn()) {
+            return email;
+        }
+        if (emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.HIDDEN.toString()) && isCurrentSecurityUserRoot()) {
+            return email;
+        }
+        return "";
     }
 
     public boolean isAccountNonExpired() {
@@ -177,6 +190,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
     }
 
+    public static boolean isCurrentSecurityUserLoggedIn() {
+        Person person = ProfileService.getCurrentSecurityUser();
+        if (person == null || person.getAccountInfo() == null) {
+            return false;
+        }
+        return true;
+    }
+
     public int hashCode() {
         if (zdbID == null) {
             return getZdbID().hashCode();
@@ -212,14 +233,13 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Person");
-        sb.append("{zdbID='").append(zdbID).append('\'');
-        sb.append(", fullName='").append(getFullName()).append('\'');
-        sb.append(", name='").append(shortName).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append('}');
-        return sb.toString();
+        String sb = "Person" +
+                "{zdbID='" + zdbID + '\'' +
+                ", fullName='" + getFullName() + '\'' +
+                ", name='" + shortName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+        return sb;
     }
 
     @Override

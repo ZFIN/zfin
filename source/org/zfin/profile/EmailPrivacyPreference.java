@@ -30,4 +30,25 @@ public class EmailPrivacyPreference {
     public String toString() {
         return name;
     }
+
+    public enum Name {
+        PUBLIC("Visible to All"),
+        REGISTERED("Visible to Registered Users"),
+        HIDDEN("Not Visible");
+
+        private final String value;
+
+        Name(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
 }

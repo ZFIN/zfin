@@ -476,8 +476,8 @@ public class ResultService {
 
         if (person != null) {
 
-            if (StringUtils.isNotEmpty(person.getEmail())) {
-                result.addAttribute(EMAIL, person.getEmail());
+            if (StringUtils.isNotEmpty(person.getEmailIfVisible())) {
+                result.addAttribute(EMAIL, person.getEmailIfVisible());
             }
 
             if (StringUtils.isNotEmpty(person.getAddress())) {

@@ -87,7 +87,6 @@
                         </td>
                         <td>
                             <form:select path="emailPrivacyPreference">
-                                <form:option value="" />
                                 <form:options items="${emailPrivacyPreferenceList}"/>
                             </form:select>
                         </td>

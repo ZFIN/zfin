@@ -2,6 +2,7 @@ package org.zfin.search.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
@@ -9,12 +10,13 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.profile.Person;
 import org.zfin.search.Category;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /*
  * This should match the fl parameter set as default in solrconfig
@@ -342,8 +344,58 @@ public class SearchResult implements ProvidesLink {
         } else {
             return categories.get(0);
         }
-
     }
 
+    /**
+     * This is similar to setHighlights, except it first checks if there are any that should be hidden
+     * due to privacy concernts.
+     *
+     * @param highlights the highlights that should be set on the search result
+     */
+    public void setHighlightsPreservingPrivacy(Map<String, List<String>> highlights) {
+
+        // if this is a person, we need to filter out any highlights that are not public
+        boolean isPerson = StringUtils.equals(getCategory(), Category.COMMUNITY.getName()) && StringUtils.equals(getType(), "Person");
+        if (!isPerson) {
+            this.highlights = highlights;
+            return;
+        }
+
+        Map<String, List<String>> filteredHighlights = filterHighlightsRemovePrivateInformation(highlights);
+        this.highlights = filteredHighlights;
+    }
+
+    /**
+     * Input is list of highlights from solr. Output is the same list with some potentially removed for privacy
+     * @param highlights the highlights from solr
+     * @return the filtered highlights
+     */
+    private Map<String, List<String>> filterHighlightsRemovePrivateInformation(Map<String, List<String>> highlights) {
+        return highlights.entrySet().stream()
+                .filter(entry -> shouldFieldBeDisplayed(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Returns true if a field should be hidden. Currently only email addresses are considered.
+     * @param field the field name from solr highlights map
+     * @return true if we should hide the highlight, otherwise false
+     */
+    private boolean shouldFieldBeHidden(String field) {
+        if (field.equals("Email Address")) {
+            Person person = getProfileRepository().getPerson(this.getId());
+            if (StringUtils.isEmpty(person.getEmailIfVisible())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Inverse of shouldFieldBeHidden
+     */
+    private boolean shouldFieldBeDisplayed(String field) {
+        return !shouldFieldBeHidden(field);
+    }
 
 }
