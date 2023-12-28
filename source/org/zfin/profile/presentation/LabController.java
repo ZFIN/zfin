@@ -84,6 +84,7 @@ public class LabController {
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
         lab.setPrefix(featureRepository.getCurrentPrefixForLab(zdbID));
+        model.addAttribute("emailPrivacyPreferenceList", profileService.getEmailPrivacyPreferences());
 
         // designations // if submit, only show if root
 
@@ -112,6 +113,7 @@ public class LabController {
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
         lab.setPrefix(featureRepository.getCurrentPrefixForLab(zdbID));
+        model.addAttribute("emailPrivacyPreferenceList", profileService.getEmailPrivacyPreferences());
 
         newLab.setUrl(profileService.processUrl(newLab.getUrl()));
 

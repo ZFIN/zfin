@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import java.util.function.Supplier;
+
 @Getter
 @Setter
 @Entity
@@ -27,8 +29,48 @@ public class EmailPrivacyPreference {
     @Column(name = "epp_order")
     private Integer order;
 
+    public String getEmailIfVisibleOrEmptyString(String email, Supplier<Person> personSupplier) {
+        return isVisibleToUser(personSupplier) ? email : "";
+    }
+
     public String toString() {
         return name;
+    }
+
+    /**
+     * Figure out if the email address should be visible to the given user.
+     * Using a supplier to potentially avoid a database call if the privacy preference is public.
+     *
+     * @param personSupplier
+     * @return
+     */
+    private boolean isVisibleToUser(Supplier<Person> personSupplier) {
+        if (isPublic()) {
+            return true;
+        }
+        Person currentUser = personSupplier.get();
+        if (currentUser == null) {
+            return false;
+        }
+        if (isRegisteredOnly() && currentUser.isLoginAccount()) {
+            return true;
+        }
+        if (isHidden() && currentUser.isRootAccount()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPublic() {
+        return getName().equals(EmailPrivacyPreference.Name.PUBLIC.toString());
+    }
+
+    private boolean isRegisteredOnly() {
+        return getName().equals(EmailPrivacyPreference.Name.REGISTERED.toString());
+    }
+
+    private boolean isHidden() {
+        return getName().equals(EmailPrivacyPreference.Name.HIDDEN.toString());
     }
 
     public enum Name {

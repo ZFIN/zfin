@@ -115,7 +115,7 @@ public class ProfileService {
         if (person == null || person.getAccountInfo() == null) {
             return false;
         }
-        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
+        return person.isRootAccount();
     }
 
 //    private BeanComparator beanComparator = new BeanComparator() ;
@@ -308,6 +308,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldLab, newLab));
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
@@ -352,6 +353,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldCompany, newCompany));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldCompany, newCompany));

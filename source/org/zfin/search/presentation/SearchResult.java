@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.search.Category;
 
@@ -136,7 +137,9 @@ public class SearchResult implements ProvidesLink {
 
         // if this is a person, we need to filter out any highlights that are not public
         boolean isPerson = StringUtils.equals(getCategory(), Category.COMMUNITY.getName()) && StringUtils.equals(getType(), "Person");
-        if (!isPerson) {
+        boolean isLab = StringUtils.equals(getCategory(), Category.COMMUNITY.getName()) && StringUtils.equals(getType(), "Lab");
+
+        if (!isPerson && !isLab) {
             this.highlights = highlights;
             return;
         }
@@ -157,14 +160,20 @@ public class SearchResult implements ProvidesLink {
     }
 
     /**
-     * Returns true if a field should be hidden. Currently only email addresses are considered.
+     * Returns true if a field should be hidden. Currently only email addresses are considered (for person or lab).
      * @param field the field name from solr highlights map
      * @return true if we should hide the highlight, otherwise false
      */
     private boolean shouldFieldBeHidden(String field) {
-        if (SOLR_EMAIL_FIELD.equals(field)) {
+        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Person")) {
             Person person = getProfileRepository().getPerson(this.getId());
             if (StringUtils.isEmpty(person.getEmailIfVisible())) {
+                return true;
+            }
+        }
+        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Lab")) {
+            Lab lab = getProfileRepository().getLabById(this.getId());
+            if (StringUtils.isEmpty(lab.getEmailIfVisible())) {
                 return true;
             }
         }

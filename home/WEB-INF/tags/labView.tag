@@ -51,10 +51,12 @@
                     <th>Contact Person:</th>
                     <td><zfin:link entity="${lab.contactPerson}"/></td>
                 </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td><a href="mailto:${lab.email}">${lab.email}</a></td>
-                </tr>
+                <c:if test="${not empty lab.emailIfVisible}">
+                    <tr>
+                        <th>Email:</th>
+                        <td><a href="mailto:${lab.emailIfVisible}">${lab.emailIfVisible}</a></td>
+                    </tr>
+                </c:if>
                 <tr>
                     <th>URL:</th>
                     <td><zfin2:uriDisplay uri="${lab.url}" /></td>

@@ -136,16 +136,10 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public String getEmailIfVisible() {
-        if (emailPrivacyPreference == null || emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.PUBLIC.toString())) {
+        if (emailPrivacyPreference == null) {
             return email;
         }
-        if (emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.REGISTERED.toString()) && isCurrentSecurityUserLoggedIn()) {
-            return email;
-        }
-        if (emailPrivacyPreference.getName().equals(EmailPrivacyPreference.Name.HIDDEN.toString()) && isCurrentSecurityUserRoot()) {
-            return email;
-        }
-        return "";
+        return emailPrivacyPreference.getEmailIfVisibleOrEmptyString(email, ProfileService::getCurrentSecurityUser);
     }
 
     public boolean isAccountNonExpired() {
@@ -168,18 +162,8 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return accountInfo != null;
     }
 
-    /**
-     * This returns a Person object of the current security person.
-     * If no authorized Person is found return null.
-     *
-     * @return Is user root?
-     */
-    public static boolean isCurrentSecurityUserRoot() {
-        Person person = ProfileService.getCurrentSecurityUser();
-        if (person == null || person.getAccountInfo() == null) {
-            return false;
-        }
-        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
+    public boolean isRootAccount() {
+        return accountInfo != null && accountInfo.getRole().equals(AccountInfo.Role.ROOT.toString());
     }
 
     public static boolean isDeveloper() {
@@ -188,14 +172,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             return false;
         }
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
-    }
-
-    public static boolean isCurrentSecurityUserLoggedIn() {
-        Person person = ProfileService.getCurrentSecurityUser();
-        if (person == null || person.getAccountInfo() == null) {
-            return false;
-        }
-        return true;
     }
 
     public int hashCode() {

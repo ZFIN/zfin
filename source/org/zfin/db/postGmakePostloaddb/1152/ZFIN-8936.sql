@@ -16,3 +16,5 @@ insert into email_privacy_preference (epp_name, epp_description, epp_order) valu
 insert into email_privacy_preference (epp_name, epp_description, epp_order) values ('Not Visible', 'This email will be hidden', 3);
 
 alter table person add column pers_epp_pk_id int references email_privacy_preference(epp_pk_id) default 1 not null;
+alter table lab add column epp_pk_id int references email_privacy_preference(epp_pk_id) default 1 not null;
+alter table company add column epp_pk_id int references email_privacy_preference(epp_pk_id) default 1 not null;

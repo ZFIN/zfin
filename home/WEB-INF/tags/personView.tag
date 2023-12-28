@@ -43,10 +43,12 @@
                         </td>
                     </tr>
                 </authz:authorize>
-                <tr>
-                    <th>Email:</th>
-                    <td><a href="mailto:${person.emailIfVisible}">${person.emailIfVisible}</a></td>
-                </tr>
+                <c:if test="${not empty person.emailIfVisible}">
+                    <tr>
+                        <th>Email:</th>
+                        <td><a href="mailto:${person.emailIfVisible}">${person.emailIfVisible}</a></td>
+                    </tr>
+                </c:if>
                 <tr>
                     <th>URL:</th>
                     <td><zfin2:uriDisplay uri="${person.url}" /></td>

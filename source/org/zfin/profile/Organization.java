@@ -10,10 +10,12 @@ import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
+import org.zfin.profile.service.ProfileService;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
+
 
 /**
  *
@@ -83,6 +85,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     // a non-persisted element, just a convenience
     private String prefix;
+
+    private EmailPrivacyPreference emailPrivacyPreference;
 
     public String getLowerName() {
         return name.toLowerCase();
@@ -175,6 +179,13 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Override
     public String getEntityType() {
         return getType();
+    }
+
+    public String getEmailIfVisible() {
+        if (emailPrivacyPreference == null) {
+            return email;
+        }
+        return emailPrivacyPreference.getEmailIfVisibleOrEmptyString(email, ProfileService::getCurrentSecurityUser);
     }
 
     @Override
