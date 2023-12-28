@@ -78,14 +78,6 @@ public class SearchResult implements ProvidesLink {
         return "<a " + cssClass + " href=\"" + url + "\">" + name + "</a>";
     }
 
-    public String getPgcmid() {
-        return pgcmid;
-    }
-
-    public void setPgcmid(String pgcmid) {
-        this.pgcmid = pgcmid;
-    }
-
     public String getLinkWithAttribution() {
         return getLink();
     }
@@ -94,231 +86,19 @@ public class SearchResult implements ProvidesLink {
         return getLink();
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getDivID() {
         return id.replace("-", "");
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<String> categories) {
-        this.categories = categories;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-
-    public String getMatchingText() {
-        return matchingText;
-    }
-
-    public void setMatchingText(String matchingText) {
-        this.matchingText = matchingText;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
-
-    public List<String> getThumbnails() {
-        return thumbnails;
-    }
-
-    public void setThumbnails(List<String> thumbnails) {
-        this.thumbnails = thumbnails;
-    }
-
-    public List<String> getImageZdbIds() {
-        return imageZdbIds;
-    }
-
-    public void setImageZdbIds(List<String> imageZdbIds) {
-        this.imageZdbIds = imageZdbIds;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public Float getScore() {
-        return score;
-    }
-
-    public void setScore(Float score) {
-        this.score = score;
-    }
-
-    public String getAutocompleteLabel() {
-        return autocompleteLabel;
-    }
-
-    public void setAutocompleteLabel(String autocompleteLabel) {
-        this.autocompleteLabel = autocompleteLabel;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Integer getAttributionCount() {
-        return attributionCount;
-    }
 
     public void setAttribution_count(Integer attributionCount) {
         this.attributionCount = attributionCount;
-    }
-
-    public void setAttributionCount(Integer attributionCount) {
-        this.attributionCount = attributionCount;
-    }
-
-    public List<String> getRelatedLinks() {
-        return relatedLinks;
-    }
-
-    public void setRelatedLinks(List<String> relatedLinks) {
-        this.relatedLinks = relatedLinks;
-    }
-
-    public String getDisplayedID() {
-        return displayedID;
-    }
-
-    public void setDisplayedID(String displayedID) {
-        this.displayedID = displayedID;
-    }
-
-    public Map getAttributes() {
-        return attributes;
-    }
-
-    public String getScreen() {
-        return screen;
-    }
-
-    public void setScreen(String screen) {
-        this.screen = screen;
-    }
-
-    public String getXpatZdbId() {
-        return xpatZdbId;
-    }
-
-    public void setXpatZdbId(String xpatZdbId) {
-        this.xpatZdbId = xpatZdbId;
-    }
-
-    public String getFigZdbId() {
-        return figZdbId;
-    }
-
-    public void setFigZdbId(String figZdbId) {
-        this.figZdbId = figZdbId;
-    }
-
-    public String getExplain() {
-        return explain;
-    }
-
-    public void setExplain(String explain) {
-        this.explain = explain;
-    }
-
-    public boolean isCuratable() {
-        return curatable;
-    }
-
-    public void setCuratable(boolean curatable) {
-        this.curatable = curatable;
     }
 
     public void addAttribute(String label, String value) {
         if (attributes == null)
             attributes = new LinkedHashMap();
         attributes.put(label, value);
-    }
-
-    public List<FeatureGene> getFeatureGenes() {
-        return featureGenes;
-    }
-
-    public void setFeatureGenes(List<FeatureGene> featureGenes) {
-        this.featureGenes = featureGenes;
-    }
-
-    public String getHasOrthology() {
-        return hasOrthology;
-    }
-
-    public void setHasOrthology(String hasOrthology) {
-        this.hasOrthology = hasOrthology;
-    }
-
-    public Object getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Object entity) {
-        this.entity = entity;
-    }
-
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public void setFigure(Figure figure) {
-        this.figure = figure;
     }
 
     /* just grab an arbitrary first one for now.. */

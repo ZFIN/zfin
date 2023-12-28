@@ -1,6 +1,8 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
@@ -16,6 +18,8 @@ import java.util.Set;
 /**
  *
  */
+@Setter
+@Getter
 public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasImage, EntityZdbID {
 
     public static final String ACTIVE_STATUS = "active";
@@ -80,120 +84,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     // a non-persisted element, just a convenience
     private String prefix;
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Person getContactPerson() {
-        return contactPerson;
-    }
-
-    public void setContactPerson(Person contactPerson) {
-        this.contactPerson = contactPerson;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getLowerName() {
         return name.toLowerCase();
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Person owner) {
-        this.owner = owner;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Set<SourceUrl> getOrganizationUrls() {
@@ -270,54 +162,6 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     public abstract boolean getCompany();
 
 
-    public Set<Feature> getFeatureSourceList() {
-        return featureSourceList;
-    }
-
-    public void setFeatureSourceList(Set<Feature> featureSourceList) {
-        this.featureSourceList = featureSourceList;
-    }
-
-    public Set<Feature> getFeatureSupplierList() {
-        return featureSupplierList;
-    }
-
-    public void setFeatureSupplierList(Set<Feature> featureSupplierList) {
-        this.featureSupplierList = featureSupplierList;
-    }
-
-    public Set<Genotype> getGenotypeSourceList() {
-        return genotypeSourceList;
-    }
-
-    public void setGenotypeSourceList(Set<Genotype> genotypeSourceList) {
-        this.genotypeSourceList = genotypeSourceList;
-    }
-
-    public Set<Genotype> getGenotypeSupplierList() {
-        return genotypeSupplierList;
-    }
-
-    public void setGenotypeSupplierList(Set<Genotype> genotypeSupplierList) {
-        this.genotypeSupplierList = genotypeSupplierList;
-    }
-
-    public Set<Marker> getMarkerSourceList() {
-        return markerSourceList;
-    }
-
-    public void setMarkerSourceList(Set<Marker> markerSourceList) {
-        this.markerSourceList = markerSourceList;
-    }
-
-    public Set<Marker> getMarkerSupplierList() {
-        return markerSupplierList;
-    }
-
-    public void setMarkerSupplierList(Set<Marker> markerSupplierList) {
-        this.markerSupplierList = markerSupplierList;
-    }
-
     @Override
     public String getAbbreviation() {
         return name;
@@ -326,14 +170,6 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Override
     public String getAbbreviationOrder() {
         return name;
-    }
-
-    public Set<Person> getMemberList() {
-        return memberList;
-    }
-
-    public void setMemberList(Set<Person> memberList) {
-        this.memberList = memberList;
     }
 
     @Override
