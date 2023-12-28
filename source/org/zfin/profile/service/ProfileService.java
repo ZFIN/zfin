@@ -141,6 +141,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("orcidID", oldPerson, newPerson));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, false, true));
 
         if (getCurrentSecurityUser() != null   // it's a logged-in user
@@ -741,4 +742,7 @@ public class ProfileService {
         return person;
     }
 
+    public List<EmailPrivacyPreference> getEmailPrivacyPreferences() {
+        return profileRepository.getAllEmailPrivacyPreferences();
+    }
 }

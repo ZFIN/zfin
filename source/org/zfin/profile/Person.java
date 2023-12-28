@@ -1,6 +1,8 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +24,8 @@ import java.util.Set;
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
+@Setter
+@Getter
 public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasImage, EntityZdbID {
 
     @NotNull
@@ -93,178 +97,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private String image;
     private boolean hidden;
 
-    public String getPutativeLoginName() {
-        return putativeLoginName;
-    }
-
-    public void setPutativeLoginName(String putativeLoginName) {
-        this.putativeLoginName = putativeLoginName;
-    }
-
-
-    public String getPass1() {
-        return pass1;
-    }
-
-    public void setPass1(String pass1) {
-        this.pass1 = pass1;
-    }
-
-    public String getPass2() {
-        return pass2;
-    }
-
-    public void setPass2(String pass2) {
-        this.pass2 = pass2;
-    }
-
-    public String getOrganizationZdbId() {
-        return organizationZdbId;
-    }
-
-    public void setOrganizationZdbId(String organizationZdbId) {
-        this.organizationZdbId = organizationZdbId;
-    }
-
-    public Integer getPosition() {
-        return position;
-    }
-
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getOrcidID() {
-        return orcidID;
-    }
-
-    public void setOrcidID(String orcidID) {
-        this.orcidID = orcidID;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getNonZfinPublications() {
-        return nonZfinPublications;
-    }
-
-    public void setNonZfinPublications(String nonZfinPublications) {
-        this.nonZfinPublications = nonZfinPublications;
-    }
-
-    public Set<Lab> getLabs() {
-        return labs;
-    }
-
-    public void setLabs(Set<Lab> labs) {
-        this.labs = labs;
-    }
-
-    public Set<Company> getCompanies() {
-        return companies;
-    }
-
-    public void setCompanies(Set<Company> companies) {
-        this.companies = companies;
-    }
-
-    public Set<Publication> getPublications() {
-        return publications;
-    }
-
-    public void setPublications(Set<Publication> publications) {
-        this.publications = publications;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
+    private EmailPrivacyPreference emailPrivacyPreference;
 
     public String getFirstLastName() {
         String ret = "";
@@ -275,50 +108,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         if (lastName != null)
             ret += lastName;
         return ret;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public Boolean getEmailList() {
-        return emailList;
-    }
-
-    public void setEmailList(Boolean emailList) {
-        this.emailList = emailList;
-    }
-
-    public Boolean getDeceased() {
-        return deceased;
-    }
-
-    public void setDeceased(Boolean deceased) {
-        this.deceased = deceased;
-    }
-
-    public String getPersonalBio() {
-        return personalBio;
-    }
-
-    public void setPersonalBio(String personalBio) {
-        this.personalBio = personalBio;
-    }
-
-    public AccountInfo getAccountInfo() {
-        return accountInfo;
-    }
-
-    public void setAccountInfo(AccountInfo accountInfo) {
-        this.accountInfo = accountInfo;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
     }
 
     public Collection<GrantedAuthority> getAuthorities() {

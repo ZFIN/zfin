@@ -27,6 +27,7 @@
         <property name="converters">
             <set>
                 <bean class="org.zfin.framework.PassThroughStringToArrayAntiConverter" />
+                <bean class="org.zfin.profile.EmailPrivacyPreferenceConverter" />
             </set>
         </property>
     </bean>

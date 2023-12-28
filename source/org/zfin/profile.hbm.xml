@@ -44,6 +44,8 @@
         <!--not really mapped this way mapped from the other other direction -->
         <!--<many-to-one name="addressFields" column="zdb_id" class="org.zfin.profile.Address" insert="false" update="false" lazy="true"/>-->
 
+        <many-to-one name="emailPrivacyPreference" column="pers_epp_pk_id" class="org.zfin.profile.EmailPrivacyPreference" fetch="join"/>
+
         <!--not lazy because it is used in the header on every page-->
         <set name="labs" table="int_person_lab">
             <key column="source_id"/>
