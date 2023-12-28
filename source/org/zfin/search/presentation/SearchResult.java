@@ -24,7 +24,7 @@ import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 @Getter
 @Setter
 public class SearchResult implements ProvidesLink {
-
+    private static final String SOLR_EMAIL_FIELD = "Email Address";
     //fields mapped to the Solr index
     private @Field String id;
     private @Field String name;
@@ -382,7 +382,7 @@ public class SearchResult implements ProvidesLink {
      * @return true if we should hide the highlight, otherwise false
      */
     private boolean shouldFieldBeHidden(String field) {
-        if (field.equals("Email Address")) {
+        if (SOLR_EMAIL_FIELD.equals(field)) {
             Person person = getProfileRepository().getPerson(this.getId());
             if (StringUtils.isEmpty(person.getEmailIfVisible())) {
                 return true;
