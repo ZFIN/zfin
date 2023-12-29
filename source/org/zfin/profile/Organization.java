@@ -3,8 +3,10 @@ package org.zfin.profile;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
@@ -190,18 +192,11 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Organization");
-        sb.append("{active=").append(active).append('\'');
-        sb.append(", zdbID='").append(zdbID).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", phone='").append(phone).append('\'');
-        sb.append(", fax='").append(fax).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append(", url='").append(url).append('\'');
-        sb.append(", owner=").append(owner).append('\'');
-        sb.append(", address='").append(address).append('\'');
-        sb.append('}');
-        return sb.toString();
+        try {
+            String template = "Organization{active=${active}, zdbID='${zdbID}', name='${name}', phone='${phone}', fax='${fax}', email='${email}', url='${url}', owner=${owner:-null}, address='${address}'}";
+            return StringSubstitutor.replace(template, BeanUtils.describe(this));
+        } catch (Exception e) {
+            return "";
+        }
     }
 }
