@@ -82,3 +82,7 @@ delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ALT-190404-20';
 
 -- Add redirect
 insert into zdb_replaced_data(zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ALT-190404-20', 'ZDB-ALT-210414-10');
+
+-- alias for the old feature's name Df(chr4:mir430a-18,mir430b-17)zf2099
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id) VALUES
+    (get_id_and_insert_active_data('DALIAS'), 'ZDB-ALT-210414-10', 'Df(chr4:mir430a-18,mir430b-17)zf2099', '1');
