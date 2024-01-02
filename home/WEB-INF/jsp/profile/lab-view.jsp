@@ -21,7 +21,7 @@
         <authz:authorize access="hasRole('root')">
             <nav class="navbar navbar-light admin text-center border-bottom">
                 <a class="col-sm" href="/action/profile/lab/view/${formBean.zdbID}">Old View</a>
-                <a class="col-sm" href="/action/publication/${formBean.zdbID}/edit">Edit</a>
+                <a class="col-sm" href="/action/profile/lab/edit/${formBean.zdbID}">Edit</a>
                 <a class="col-sm" href="/action/infrastructure/deleteRecord/${formBean.zdbID}">Delete</a>
                 <a class="col-sm" href='/action/profile/lab/all-labs'>All labs</a>
                 <a class="col-sm" href='/action/profile/company/all-companies'>All companies</a>
