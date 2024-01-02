@@ -1,24 +1,19 @@
 package org.zfin.marker.presentation;
 
 import lombok.Getter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.NavigationMenuOptions;
-import org.zfin.marker.Marker;
-
-import java.util.List;
 
 /**
  *
  */
 @Controller
 @RequestMapping("/gene/stats")
-public class GeneStatisController {
+public class GeneStatisticsController {
 
     @RequestMapping("")
     public String viewPublicationUberTable(Model model) {
