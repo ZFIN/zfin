@@ -125,7 +125,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public AllianceGeneDesc getGeneDescByMkr(Marker marker) {
         Session session = currentSession();
 
-        String hql = "select  agd from AllianceGeneDesc agd " + "      where agd.gene= :geneID ";
+        String hql = """
+            select  agd from AllianceGeneDesc agd
+            where agd.gene= :geneID
+            """;
 
         Query<AllianceGeneDesc> query = session.createQuery(hql, AllianceGeneDesc.class);
         query.setParameter("geneID", marker.getZdbID());
@@ -1240,7 +1243,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "     order by stat.gene.abbreviationOrder ";
 
 */
-        String sqlQueryAllStr = " select stat.fstat_feat_zdb_id, probe.mrkr_abbrev as probeSymbol, gene.mrkr_zdb_id," + "                       gene.mrkr_abbrev,stat.fstat_fig_zdb_id, fig.fig_label, stat.fstat_pub_zdb_id, " + "                       probe.mrkr_type, gene.mrkr_abbrev_order, pub.zdb_id, pub.pub_mini_ref," + "                       gene.mrkr_name, probe.mrkr_name as probeName, img.img_zdb_id  " + "from " + "        feature_stats as stat" + "        join marker as gene on fstat_gene_zdb_id = gene.mrkr_zdb_id" + "        join marker as probe on fstat_feat_zdb_id = probe.mrkr_zdb_id            " + "        join figure as fig on fstat_fig_zdb_id = fig.fig_zdb_id" + "        join publication as pub on fstat_pub_zdb_id = pub.zdb_id        " + "        left outer join image as img on fstat_img_zdb_id = img.img_zdb_id    " + "     where fstat_superterm_zdb_id = :aoterm " + "           and fstat_type = :type ";
+        String sqlQueryAllStr = """
+            select stat.fstat_feat_zdb_id, probe.mrkr_abbrev as probeSymbol, gene.mrkr_zdb_id,
+            gene.mrkr_abbrev,stat.fstat_fig_zdb_id, fig.fig_label, stat.fstat_pub_zdb_id,
+            probe.mrkr_type, gene.mrkr_abbrev_order, pub.zdb_id, pub.pub_mini_ref,
+            gene.mrkr_name, probe.mrkr_name as probeName, img.img_zdb_id
+            from feature_stats as stat
+            join marker as gene on fstat_gene_zdb_id = gene.mrkr_zdb_id
+            join marker as probe on fstat_feat_zdb_id = probe.mrkr_zdb_id
+            join figure as fig on fstat_fig_zdb_id = fig.fig_zdb_id
+            join publication as pub on fstat_pub_zdb_id = pub.zdb_id
+            left outer join image as img on fstat_img_zdb_id = img.img_zdb_id
+            where fstat_superterm_zdb_id = :aoterm
+            and fstat_type = :type
+            """;
         if (!includeSubstructures) {
             sqlQueryAllStr += "  and fstat_subterm_zdb_id = :aoterm ";
         }

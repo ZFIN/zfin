@@ -1,6 +1,8 @@
 package org.zfin.framework.api;
 
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +21,8 @@ public interface FilterFunction<Entity, FilterValue> {
         value = value.trim();
         String[] token = value.split(" ");
         Set<Boolean> resultSet = Arrays.stream(token)
-                .map(val -> entityName.toLowerCase().contains(val.toLowerCase()))
-                .collect(Collectors.toSet());
+            .map(val -> StringUtils.containsIgnoreCase(entityName, val))
+            .collect(Collectors.toSet());
         return !resultSet.contains(false);
     }
 
@@ -33,8 +35,8 @@ public interface FilterFunction<Entity, FilterValue> {
     static boolean fullMatchMultiValueOR(String entity, String value, String delimiter) {
         String[] tokenList = value.split(delimiter);
         List<String> cleanedValues = Arrays.stream(tokenList)
-                .map(s -> s.toLowerCase().trim())
-                .collect(Collectors.toList());
+            .map(s -> s.toLowerCase().trim())
+            .collect(Collectors.toList());
         cleanedValues.removeIf(String::isEmpty);
         if (cleanedValues.isEmpty())
             return true;
@@ -42,7 +44,7 @@ public interface FilterFunction<Entity, FilterValue> {
     }
 
 
-    static boolean valueIsNull(List list){
+    static boolean valueIsNull(List list) {
         return false;
     }
 }
