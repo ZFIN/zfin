@@ -64,14 +64,14 @@
             </div>
 
             <div class="form-group row">
-                <form:label path="lab" cssClass="col-md-3 col-form-label">Lab / Company</form:label>
+                <form:label path="lab" cssClass="col-md-3 col-form-label">Lab</form:label>
                 <div class="col-md-5">
                     <form:input path="lab" cssClass="form-control"/>
                 </div>
             </div>
 
             <div class="form-group row">
-                <form:label path="role" cssClass="col-md-3 col-form-label">Role</form:label>
+                <form:label path="role" cssClass="col-md-3 col-form-label">Role/Position</form:label>
                 <div class="col-md-5">
                     <form:select path="role" cssClass="form-control">
                         <form:option value="" label=""/>
@@ -117,6 +117,27 @@
     if (altEmailElement) {
         altEmailElement.style.display = "none";
     }
+    </script>
+
+    <script>
+    //if the Lab field is not empty, make Role/Position field required
+    document.addEventListener("DOMContentLoaded", function() {
+        const labField = document.getElementById("lab");
+        const roleField = document.getElementById("role");
+        const roleLabel = document.querySelector("label[for='role']");
+
+        if (labField && roleField) {
+            labField.addEventListener("change", function() {
+                if (labField.value) {
+                    roleField.required = true;
+                    roleLabel.classList.add("required");
+                } else {
+                    roleField.required = false;
+                    roleLabel.classList.remove("required");
+                }
+            });
+        }
+    });
     </script>
 
 </z:page>
