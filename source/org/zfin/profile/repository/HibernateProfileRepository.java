@@ -11,7 +11,6 @@ import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.Updates;
@@ -326,6 +325,14 @@ public class HibernateProfileRepository implements ProfileRepository {
 		Session session = currentSession();
 		Query<Person> query = session.createQuery("from Person where fullName = :fullName", Person.class);
 		query.setParameter("fullName", fullName);
+		return query.list();
+	}
+
+	@Override
+	public List<Person> getRootUsers() {
+		Session session = currentSession();
+		Query<Person> query = session.createQuery("from Person where accountInfo.role = :role", Person.class);
+		query.setParameter("role", "root");
 		return query.list();
 	}
 

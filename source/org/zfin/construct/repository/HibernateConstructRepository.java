@@ -15,6 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -23,6 +24,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Basic repository class to handle fish searches against a database.
@@ -204,7 +206,8 @@ public class HibernateConstructRepository implements ConstructRepository {
 
     }
 
-    public void createConstruct(ConstructCuration construct, Publication pub) {
+    @Override
+    public void createConstruct(ConstructCuration construct, Publication pub, Person loggedInUser) {
         if (construct.getName() == null)
             throw new RuntimeException("Cannot create a new construct without a name.");
         if (construct == null)
@@ -214,7 +217,11 @@ public class HibernateConstructRepository implements ConstructRepository {
         if (pub == null)
             throw new RuntimeException("Cannot create a new construct without a publication.");
 
-        construct.setOwner(ProfileService.getCurrentSecurityUser());
+        if (loggedInUser == null) {
+            loggedInUser = ProfileService.getCurrentSecurityUser();
+        }
+
+        construct.setOwner(loggedInUser);
         if (!construct.getOwner().getAccountInfo().getRoot())
             throw new RuntimeException("Non-root user cannot create a construct");
         currentSession().save(construct);
@@ -226,7 +233,27 @@ public class HibernateConstructRepository implements ConstructRepository {
         RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(construct.getZdbID(), pub.getZdbID());
 
         // run procedure for fast search table
+    }
 
+    @Override
+    public void updateConstructName(String constructZdbID, String newName) {
+        ConstructCuration existingConstruct = getConstructByID(constructZdbID);
+        if (existingConstruct == null) {
+            throw new RuntimeException("Cannot update construct name for construct with zdbID: " + constructZdbID + " because it does not exist.");
+        }
+        existingConstruct.setName(newName);
+        currentSession().update(existingConstruct);
+
+        Marker existingMarker = getMarkerRepository().getMarkerByID(constructZdbID);
+        existingMarker.setName(newName);
+        existingMarker.setAbbreviation(newName);
+        currentSession().update(existingMarker);
+    }
+
+
+    @Override
+    public void createConstruct(ConstructCuration construct, Publication pub) {
+        createConstruct(construct, pub, null);
     }
 
     @Override

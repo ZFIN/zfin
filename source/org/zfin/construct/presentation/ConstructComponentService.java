@@ -1,110 +1,97 @@
 package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
+import org.zfin.Species;
 import org.zfin.construct.ConstructComponent;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.InvalidConstructNameException;
+import org.zfin.construct.name.*;
+import org.zfin.database.InformixUtil;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.construct.repository.ConstructRepository;
+import org.zfin.profile.Person;
+import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.repository.SequenceRepository;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static org.zfin.construct.name.Cassette.COMPONENT_SEPARATOR;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Service
 public class ConstructComponentService {
-    private static ConstructRepository cr = RepositoryFactory.getConstructRepository();
-    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-    private static String openP="(";
-
-    private static String cassetteSeparator="Cassette";
-    private static String storedComponentSeparator="#";
-    private static String componentSeparator=":";
-
-
-    public static String[] getCassettes(String constructStoredName) {
-        if (constructStoredName == null)
-            return null;
-
-
-        String[] array1;
-        array1 = constructStoredName.split(cassetteSeparator);
-        for (int i = 0; i < array1.length; i++) {
-            array1[i] = array1[i].trim();
-
-
-        }
-        return array1;
-    }
-
-//making assumption that "(" is the construct wrapper
+    private static final ConstructRepository cr = RepositoryFactory.getConstructRepository();
+    private static final MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+    private static final PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+    private static final InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    private static final SequenceRepository sr = RepositoryFactory.getSequenceRepository();
+    private static final String openP = "(";
 
     //TODO convert category to Enum
 
-    public  static  void setConstructWrapperComponents(String constructType,String constructPrefix, String constructId,int cassetteNumber) {
-        int numberOfWrapperComponents=3; //count of type, prefix and "("))
-        if (constructPrefix.equals("")){
-            numberOfWrapperComponents=2;
+    /**
+     * Sets the beginning components of the construct, eg. "TgBAC(atoh1c:GAL4FF)" would get the components: "Tg", "BAC", "("
+     *
+     * @param constructType
+     * @param constructPrefix
+     * @param constructId
+     */
+    public static void setConstructWrapperComponents(String constructType, String constructPrefix, String constructId) {
+        //2 or 3 components: type, prefix (optional) and Open Parenthesis: "("
+        boolean emptyPrefix = constructPrefix.equals("");
+        int constructComponentNumber = 1;
+        int cassetteNumber = 1;
+
+        //first component is always the construct type
+        mr.addConstructComponent(cassetteNumber, constructComponentNumber++, constructId, constructType, ConstructComponent.Type.TEXT_COMPONENT, "construct wrapper component", null);
+
+        //second component is the construct prefix, if it exists
+        if (!emptyPrefix) {
+            mr.addConstructComponent(cassetteNumber, constructComponentNumber++, constructId, constructPrefix, ConstructComponent.Type.TEXT_COMPONENT, "construct wrapper component", null);
         }
 
-
-        mr.addConstructComponent(cassetteNumber,1,constructId,constructType,ConstructComponent.Type.TEXT_COMPONENT,"construct wrapper component",null);
-        if (numberOfWrapperComponents==2){
-
-            mr.addConstructComponent(cassetteNumber,2,constructId,openP,ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT,"construct wrapper component",ir.getCVZdbIDByTerm(openP).getZdbID());
-        }
-
-            if (numberOfWrapperComponents==3){
-                mr.addConstructComponent(cassetteNumber,2,constructId,constructPrefix,ConstructComponent.Type.TEXT_COMPONENT,"construct wrapper component",null);
-                mr.addConstructComponent(cassetteNumber,3,constructId,openP,ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT,"construct wrapper component",ir.getCVZdbIDByTerm(openP).getZdbID());
-
-            }
-
-
+        //last component is always the open parenthesis
+        mr.addConstructComponent(cassetteNumber, constructComponentNumber++, constructId, openP, ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(openP).getZdbID());
     }
-    public static void getPromotersAndCoding(String cassetteName,int cassetteNumber,String zdbID,String newPub) {
 
+    public static void setPromotersAndCoding(Cassette cassette, String zdbID, String newPub) {
 
-        String promString;
-        String codingString;
-        String[] promoterArray;
-        String[] codingArray;
-        Set<Marker> promoterMarker = new HashSet<>();
-        Set<Marker> codingMarker = new HashSet<>();
+        Set<Marker> promoterMarkers = new HashSet<>();
+        Set<Marker> codingMarkers = new HashSet<>();
 
+        Promoter promoter = cassette.getPromoter();
+        Coding coding = cassette.getCoding();
 
-        promString=StringUtils.substringBefore(cassetteName,componentSeparator);
-        codingString=StringUtils.substringAfter(cassetteName,componentSeparator);
-
-        promoterArray = promString.split(storedComponentSeparator);
-        codingArray = codingString.split(storedComponentSeparator);
-        for (int i = 0; i < promoterArray.length; i++) {
-            int lastComp=getComponentCount(zdbID);
-            createComponentRecords(StringUtils.trim(promoterArray[i]),"promoter component", promoterMarker,ConstructComponent.Type.PROMOTER_OF,cassetteNumber,lastComp,newPub,zdbID);
+        //add the promoter parts
+        for (String promoterPart : promoter.getPromoterParts()) {
+            createComponentRecords(StringUtils.trim(promoterPart),"promoter component", promoterMarkers,ConstructComponent.Type.PROMOTER_OF, cassette.getCassetteNumber(), newPub,zdbID);
         }
-        if (codingArray.length!=0) {
-            int lastComponent=getComponentCount(zdbID);
-            createComponentRecords(componentSeparator, "promoter component", promoterMarker, ConstructComponent.Type.PROMOTER_OF, cassetteNumber, lastComponent, newPub, zdbID);
 
+        //add the ":" separator (if one needed)
+        if (coding.size() > 0) {
+            createComponentRecords(COMPONENT_SEPARATOR, "promoter component", promoterMarkers, ConstructComponent.Type.PROMOTER_OF, cassette.getCassetteNumber(), newPub, zdbID);
         }
-            for (int i = 0; i < codingArray.length; i++) {
-               int lastComponent=getComponentCount(zdbID);
-                createComponentRecords(StringUtils.trim(codingArray[i]), "coding component", codingMarker, ConstructComponent.Type.CODING_SEQUENCE_OF, cassetteNumber, lastComponent, newPub, zdbID);
-            }
 
-        if (!promoterMarker.isEmpty() || !codingMarker.isEmpty()) {
-            cr.addConstructRelationships(promoterMarker, codingMarker, cr.getConstructByID(zdbID), newPub);
+        //add the coding parts
+        for (String codingPart : coding.getCodingParts()) {
+            createComponentRecords(StringUtils.trim(codingPart), "coding component", codingMarkers, ConstructComponent.Type.CODING_SEQUENCE_OF, cassette.getCassetteNumber(), newPub, zdbID);
+        }
+
+        //add relationships
+        if (!promoterMarkers.isEmpty() || !codingMarkers.isEmpty()) {
+            cr.addConstructRelationships(promoterMarkers, codingMarkers, cr.getConstructByID(zdbID), newPub);
         }
 
     }
@@ -113,32 +100,212 @@ public class ConstructComponentService {
         String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
         Query query = currentSession().createSQLQuery(sqlCount);
         query.setString("zdbID", zdbID);
-        Session session = HibernateUtil.currentSession();
         int lastComp = (Integer) query.uniqueResult() + 1;
         return lastComp;
     }
 
-    private static void createComponentRecords(String componentString,String componentCategory,Set<Marker> componentArray,ConstructComponent.Type type,int cassetteNumber,int componentOrder,String constructPub,String constructID) {
+    //TODO: refactor this. Some ideas:
+    // 1. it's weird that componentArray is getting populated in the method
+    // 2. type is being passed in but overridden for some cases
+    // 3. can componentCategory handling be improved?
+    /**
+     * Creates the construct component record in the database for a given component string.
+     * If the component is a marker, it will add a marker component (either promoter or coding based on `type`) and it will be added to the componentArray.
+     * If not a marker, it will create either a text or controlled vocab component.
+     *
+     * @param componentString the string representation of the component to be processed
+     * @param componentCategory either "promoter component" or "coding component"
+     * @param componentArray a collection to be populated with markers
+     * @param type the type of component to be created. If the component is not a marker, this will be overridden.
+     * @param cassetteNumber the cassette number (starting at 1)
+     * @param constructPub the publication of the construct
+     * @param constructID the construct ID
+     *
+     */
+    private static void createComponentRecords(String componentString,String componentCategory,Set<Marker> componentArray,ConstructComponent.Type type,int cassetteNumber,String constructPub,String constructID) {
+        int componentCount = getComponentCount(constructID);
         String componentZdbID = null;
         if (!(componentString.isEmpty())) {
             Marker mrkr = mr.getMarkerByAbbreviationAndAttribution(componentString, constructPub);
             if (mrkr != null) {
-
                 componentZdbID = mrkr.getZdbID();
-
                 componentArray.add(mrkr);
-
             } else {
                 ControlledVocab cVocab = ir.getCVZdbIDByTerm(componentString);
                 if (cVocab != null) {
                     componentZdbID = cVocab.getZdbID();
                     type = ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT;
                 } else {
-
                     type = ConstructComponent.Type.TEXT_COMPONENT;
                 }
             }
-            mr.addConstructComponent(cassetteNumber, componentOrder, constructID, componentString, type, componentCategory, componentZdbID);
+            mr.addConstructComponent(cassetteNumber, componentCount, constructID, componentString, type, componentCategory, componentZdbID);
+        }
+    }
+
+    /**
+     * Validate construct name
+     * If it fails validation, return an error message
+     * If it passes validation, return an empty optional
+     * @param constructName
+     * @return
+     */
+    public static Optional<String> getValidationErrorMessageForConstructName(String constructName) {
+        if (constructName.contains("..")) {
+            return Optional.of("\"" + constructName + "\" contains a dot followed by a dot, Please check");
+        } else if (constructName.contains(".,")) {
+            return Optional.of("\"" + constructName + "\" contains a dot followed by a comma, Please check");
+        } else if (constructName.contains("()")) {
+            return Optional.of("\"" + constructName + "\": Construct Name cannot be blank");
+        }
+        return Optional.empty();
+    }
+
+    public static boolean isConstructNameInvalid(String constructName) {
+        return getValidationErrorMessageForConstructName(constructName).isPresent();
+    }
+
+    public static Optional<Marker.Type> getConstructTypeEnumByConstructName(String constructName) {
+        return switch (constructName.substring(0, 2)) {
+            case "Tg" -> Optional.of(Marker.Type.TGCONSTRCT);
+            case "Et" -> Optional.of(Marker.Type.ETCONSTRCT);
+            case "Gt" -> Optional.of(Marker.Type.GTCONSTRCT);
+            case "Pt" -> Optional.of(Marker.Type.PTCONSTRCT);
+            default -> Optional.empty();
+        };
+    }
+
+    public static Optional<String> getTypeAbbreviationFromType(Marker.Type type) {
+        return switch (type) {
+            case TGCONSTRCT -> Optional.of("Tg");
+            case ETCONSTRCT -> Optional.of("Et");
+            case GTCONSTRCT -> Optional.of("Gt");
+            case PTCONSTRCT -> Optional.of("Pt");
+            default -> Optional.empty();
+        };
+    }
+
+    public static Optional<MarkerType> getConstructTypeByConstructName(String constructName) {
+        Optional<Marker.Type> typeEnum = getConstructTypeEnumByConstructName(constructName);
+        return typeEnum.map(type -> mr.getMarkerTypeByName(type.toString()));
+    }
+
+    public static Marker createNewConstructFromSubmittedForm(AddConstructFormFields form) throws InvalidConstructNameException {
+        //will use the logged in user as the submitting curator
+        return createNewConstructFromSubmittedForm(form, null);
+    }
+
+    public static Marker createNewConstructFromSubmittedForm(AddConstructFormFields form, Person submittingCurator) throws InvalidConstructNameException {
+        validateConstructNameOrThrowException(form.getConstructName());
+        ConstructCuration newConstruct = ConstructCuration.create(form.getConstructName());
+        newConstruct.setPublicCommentsIfNotEmpty(form.getConstructComments());
+
+        Publication constructPub = pr.getPublication(form.getPubZdbID());
+
+        //persist the new construct to the DB as the submitting curator (if null, use currently logged in user)
+        cr.createConstruct(newConstruct, constructPub, submittingCurator);
+
+        //the new construct is now persisted to the DB, so we can get its ZDB ID
+        String constructZdbID = newConstruct.getZdbID();
+
+        //create the construct components in the DB -- "Tg4(ubb:mir155smn1-DsRed)" becomes ["Tg", "4", "(", "ubb", ":", "mir155smn1", "-", "DsRed", ")"] with metadata
+        createConstructComponentsInDatabase(form, constructZdbID);
+
+        //adding construct record to marker table
+        InformixUtil.runProcedure("regen_construct_marker", constructZdbID + "");
+
+        //retrieve the latest version of the construct from the marker table
+        Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
+
+        //add the alias, curator note, and sequence to the construct
+        setConstructAliasNoteAndSequence(form, constructPub, latestConstruct);
+
+        return latestConstruct;
+    }
+
+    private static void setConstructAliasNoteAndSequence(AddConstructFormFields form, Publication constructPub, Marker latestConstruct) {
+        if (!StringUtils.isEmpty(form.getConstructAlias())) {
+            mr.addMarkerAlias(latestConstruct, form.getConstructAlias(), constructPub);
+        }
+
+        if (!StringUtils.isEmpty(form.getConstructCuratorNote())) {
+            mr.addMarkerDataNote(latestConstruct, form.getConstructCuratorNote());
+        }
+
+        if (!StringUtils.isEmpty(form.getConstructSequence())) {
+            ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                    ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+            mr.addDBLink(latestConstruct, form.getConstructSequence(), genBankRefDB, form.getPubZdbID());
+        }
+    }
+
+    public static Marker updateConstructName(String constructZdbID, ConstructName newName, String pubZdbID) throws InvalidConstructNameException {
+        Marker oldMarker = mr.getMarkerByID(constructZdbID);
+
+        //TODO: add better handling for this
+        // Do we want to support changing marker type for constructs?
+        String oldNameType = oldMarker.getName().substring(0, 2);
+        String newNameType = newName.getTypeAbbreviation();
+        if (!oldNameType.equals(newNameType)) {
+            throw new InvalidConstructNameException("Cannot change construct type");
+        }
+
+        validateConstructNameOrThrowException(newName.toString());
+
+        //delete the components
+        mr.deleteConstructComponents(constructZdbID);
+
+        //create the new components
+        createConstructComponentsInDatabase(newName, constructZdbID, pubZdbID);
+
+        //update the construct name
+        cr.updateConstructName(constructZdbID, newName.toString());
+
+        //adding construct record to marker table
+        InformixUtil.runProcedure("regen_construct_marker", constructZdbID + "");
+
+        return mr.getMarkerByID(constructZdbID);
+    }
+
+    /**
+     * Create the construct components in the database
+     * This includes the wrapper components (e.g. "Tg", "(", ")"), the prefix, and the cassette components (e.g. "promoter", "coding")
+     * @param form
+     * @param constructZdbID
+     */
+    private static void createConstructComponentsInDatabase(AddConstructFormFields form, String constructZdbID) {
+        ConstructName constructName = new ConstructName(form.getConstructName(), form.getConstructPrefix());
+        Cassettes cassettes = Cassettes.fromStoredName(form.getConstructStoredName());
+        constructName.setCassettes(cassettes);
+
+        createConstructComponentsInDatabase(constructName, constructZdbID, form.getPubZdbID());
+    }
+
+    private static void createConstructComponentsInDatabase(ConstructName constructName, String constructZdbID, String pubZdbID) {
+        Cassettes cassettes = constructName.getCassettes();
+
+        //create the constructs for the opening wrapper components -- e.g. "Tg", "optionalPrefix", "("
+        ConstructComponentService.setConstructWrapperComponents(constructName.getTypeAbbreviation(), constructName.getPrefix(), constructZdbID);
+
+        //create the construct components for the cassettes
+        for (Cassette cassette : cassettes) {
+            ConstructComponentService.setPromotersAndCoding(cassette, constructZdbID, pubZdbID);
+        }
+
+        //create the construct components for the closing wrapper components -- e.g. ")"
+        int lastComp = ConstructComponentService.getComponentCount(constructZdbID);
+        mr.addConstructComponent(cassettes.size(), lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
+    }
+
+    private static void validateConstructNameOrThrowException(String constructName) throws InvalidConstructNameException {
+        //Some validation
+        List<Marker> markerList = mr.getMarkersByAbbreviation(constructName);
+
+        if (markerList.size() > 0) {
+            throw new InvalidConstructNameException("\"" + constructName + "\" is not a unique name");
+        }
+        if (isConstructNameInvalid(constructName)) {
+            throw new InvalidConstructNameException(getValidationErrorMessageForConstructName(constructName).orElse("Invalid construct name"));
         }
     }
 }

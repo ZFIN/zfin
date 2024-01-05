@@ -1,5 +1,8 @@
 package org.zfin.construct;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Prita
@@ -7,6 +10,8 @@ package org.zfin.construct;
  * Time: 12:16 PM
  * To change this template use File | Settings | File Templates.
  */
+@Setter
+@Getter
 public class ConstructComponent {
 
 
@@ -22,23 +27,7 @@ public class ConstructComponent {
     private String componentCategory;
     private String componentValue;
 
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
     private int ID;
-
-    public String getComponentCategory() {
-        return componentCategory;
-    }
-
-    public void setComponentCategory(String componentCategory) {
-        this.componentCategory = componentCategory;
-    }
 
     public enum Type {
         PROMOTER_OF("promoter of"),
@@ -63,59 +52,4 @@ public class ConstructComponent {
         }
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public String getConstructZdbID() {
-        return constructZdbID;
-    }
-
-    public void setConstructZdbID(String constructZdbID) {
-        this.constructZdbID = constructZdbID;
-    }
-
-    public String getComponentZdbID() {
-        return componentZdbID;
-    }
-
-    public void setComponentZdbID(String componentZdbID) {
-        this.componentZdbID = componentZdbID;
-    }
-
-    public String getMarkerZDB() {
-        return markerZDB;
-    }
-
-    public void setMarkerZDB(String markerZDB) {
-        this.markerZDB = markerZDB;
-    }
-
-    public int getComponentOrder() {
-        return componentOrder;
-    }
-
-    public void setComponentOrder(int componentOrder) {
-        this.componentOrder = componentOrder;
-    }
-
-    public int getComponentCassetteNum() {
-        return componentCassetteNum;
-    }
-
-    public void setComponentCassetteNum(int componentCassetteNum) {
-        this.componentCassetteNum = componentCassetteNum;
-    }
-
-    public String getComponentValue() {
-        return componentValue;
-    }
-
-    public void setComponentValue(String componentValue) {
-        this.componentValue = componentValue;
-    }
 }

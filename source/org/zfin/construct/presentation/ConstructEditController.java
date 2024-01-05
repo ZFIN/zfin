@@ -1,7 +1,8 @@
 package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.Species;
 import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
@@ -213,8 +215,51 @@ public class ConstructEditController {
         mr.removeCuratorNote(m,curatorNote);
     }
 
+//    @RequestMapping(value = "/rename/{constructID}", method = RequestMethod.GET)
+//    public
+//    String renameConstructForm(@PathVariable String constructID, Model model) {
+//        Marker construct = mr.getMarkerByID(constructID);
+//        model.addAttribute("constructID", constructID);
+//        model.addAttribute("constructName", construct.getName());
+//        return "construct/construct-rename";
+//    }
 
+    @RequestMapping(value = "/rename", method = RequestMethod.GET)
+    public String renameConstructForm() {
+        return "construct/construct-rename";
     }
+
+    //must be logged in to use this
+    //example request:
+    // curl -X POST -k https://<SITE>.zfin.org/action/construct/rename/ZDB-TGCONSTRCT-161115-2 -H "Content-Type: application/json" -d '{"constructStoredName": "tdg.1#-#Hsa.TEST1#:EGFP#Cassette#,#tdg.2#-#Hsa.TEST2#:EGFP#", "pubZdbID": "ZDB-PUB-190507-21", "constructType": "Tg", "constructPrefix": ""}'
+    @RequestMapping(value = "/rename/{constructID}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String renameConstruct(@PathVariable String constructID,
+                           @RequestBody AddConstructFormFields request) throws Exception{
+
+        String storedName = request.getConstructStoredName();
+        String constructType = request.getConstructType();
+        String constructPrefix = request.getConstructPrefix();
+        String pubZdbID = request.getPubZdbID();
+
+        //create a construct name object and set the cassettes from the stored name
+        ConstructName constructName = new ConstructName(constructType, constructPrefix);
+        constructName.setCassettesFromStoredName(storedName);
+
+        HibernateUtil.createTransaction();
+        Marker newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return """
+                {
+                    "message": "%s",
+                    "success": true
+                }
+                """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
+    }
+
+}
 
 
 
