@@ -1,7 +1,5 @@
 package org.zfin.util.downloads.jaxb;
 
-import org.biojava.utils.ObjectUtil;
-import org.zfin.util.downloads.DownloadFileService;
 import org.zfin.util.downloads.presentation.DownloadFileInfo;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -141,15 +139,15 @@ public class DownloadFileEntry {
     @Override
     public String toString() {
         return "DownloadFileEntry{" +
-                "name='" + name + '\'' +
-                ", category='" + category + '\'' +
-                ", description='" + description + '\'' +
-                ", wikiLink='" + wikiLink + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", fileExtension='" + fileExtension + '\'' +
-                ", query='" + query + '\'' +
-                ", columnHeaderList=" + columnHeaderList +
-                '}';
+               "name='" + name + '\'' +
+               ", category='" + category + '\'' +
+               ", description='" + description + '\'' +
+               ", wikiLink='" + wikiLink + '\'' +
+               ", fileName='" + fileName + '\'' +
+               ", fileExtension='" + fileExtension + '\'' +
+               ", query='" + query + '\'' +
+               ", columnHeaderList=" + columnHeaderList +
+               '}';
     }
 
     public String getFullFileName() {
