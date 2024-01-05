@@ -447,7 +447,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<Updates> getUpdates(String zdbID) {
         return HibernateUtil.currentSession()
-            .createQuery("from Updates where recID = :recID order by whenUpdated", Updates.class)
+            .createQuery("from Updates where recID = :recID order by whenUpdated desc", Updates.class)
             .setParameter("recID", zdbID)
             .list();
     }
@@ -1256,7 +1256,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public UnloadInfo getUnloadInfo() {
         Session session = HibernateUtil.currentSession();
-        Query<UnloadInfo> query = session.createQuery("from UnloadInfo order by date", UnloadInfo.class);
+        Query<UnloadInfo> query = session.createQuery("from UnloadInfo order by date order desc", UnloadInfo.class);
         query.setFirstResult(0);
         query.setMaxResults(1);
         return query.uniqueResult();
