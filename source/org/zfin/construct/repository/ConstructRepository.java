@@ -6,6 +6,7 @@ import org.zfin.construct.ConstructRelationship;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -33,6 +34,10 @@ public interface ConstructRepository {
     void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, ConstructCuration construct, String pubID);
     ConstructCuration getConstructByID(String zdbID);
     ConstructCuration getConstructByName(String conName);
+    void createConstruct(ConstructCuration construct, Publication publication, Person loggedInUser);
+
+    void updateConstructName(String constructZdbID, String newName);
+
     void createConstruct(ConstructCuration construct, Publication publication);
     List<Marker> getAllConstructs();
 
