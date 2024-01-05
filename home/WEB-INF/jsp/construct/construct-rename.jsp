@@ -1,19 +1,4 @@
-<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<style>
-    label {
-        display: block;
-    }
-    input[type="text"] {
-        width: 70%;
-    }
-</style>
-
 <h2>Temporary Developer Tool to Rename Construct</h2>
-
-<button id="ZDB-TGCONSTRCT-161115-2">Rename ZDB-TGCONSTRCT-161115-2</button><a target="_blank" href="/ZDB-TGCONSTRCT-161115-2">View Page</a><br/>
-<button id="ZDB-TGCONSTRCT-161115-3">Rename ZDB-TGCONSTRCT-161115-3</button><a target="_blank" href="/ZDB-TGCONSTRCT-161115-3">View Page</a><br/>
-<button id="ZDB-TGCONSTRCT-161115-4">Rename ZDB-TGCONSTRCT-161115-4</button><a target="_blank" href="/ZDB-TGCONSTRCT-161115-4">View Page</a><br/>
 
 <script>
     function submitForm(constructID, pubZdbID, constructType, constructPrefix, constructStoredName) {
@@ -47,13 +32,49 @@
             alert("Error: " + error);
         });
     }
-    document.getElementById("ZDB-TGCONSTRCT-161115-2").addEventListener("click",
-        () => submitForm("ZDB-TGCONSTRCT-161115-2", "ZDB-PUB-190507-21", "Tg", "", "en.epi#-#Hsa.HBB#:EGFP"));
 
-    document.getElementById("ZDB-TGCONSTRCT-161115-3").addEventListener("click",
-        () => submitForm("ZDB-TGCONSTRCT-161115-3", "ZDB-PUB-190507-21", "Tg", "", "rr.2pand1#:EGFP"));
+    const changes = [
+        {
+            "constructID": "ZDB-TGCONSTRCT-161115-2",
+            "pubZdbID": "ZDB-PUB-190507-21",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructStoredName": "en.epi#-#Hsa.HBB#:EGFP"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-161115-3",
+            "pubZdbID": "ZDB-PUB-190507-21",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructStoredName": "rr.2pand1#:EGFP"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-161115-4",
+            "pubZdbID": "ZDB-PUB-190507-21",
+            "constructType": "Tg",
+            "constructPrefix": "2",
+            "constructStoredName": "rr.2pand1#:EGFP"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-220422-1",
+            "pubZdbID": "ZDB-PUB-220103-2",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructStoredName": "pth2#:EGFP#Cassette#,#cryaa#:EGFP"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-220422-2",
+            "pubZdbID": "ZDB-PUB-220103-2",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry"
+        }
+    ];
 
-    document.getElementById("ZDB-TGCONSTRCT-161115-4").addEventListener("click",
-        () => submitForm("ZDB-TGCONSTRCT-161115-4", "ZDB-PUB-190507-21", "Tg", "2", "rr.2pand1#:EGFP"));
+    changes.forEach(change => {
+        document.writeln('<button id="' + change.constructID + '">Rename ' + change.constructID + '</button>  <a target="_blank" href="/' + change.constructID + '">View Page</a><br/><br/>');
+        document.getElementById(change.constructID).addEventListener("click",
+            () => submitForm(change.constructID, change.pubZdbID, change.constructType, change.constructPrefix, change.constructStoredName));
+    });
 
 </script>
