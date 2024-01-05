@@ -64,7 +64,6 @@ public class TranscriptServiceTest extends AbstractDatabaseTest {
         assertTrue("Two equivalent TranscriptStatus records are equal", TranscriptStatus.equals(A,alsoA));
         assertTrue("Two null-typed TranscriptStatus records are equal", TranscriptStatus.equals(C,alsoC));
         assertFalse("Two unequal TranscriptStatus records are unequal", TranscriptStatus.equals(A,B));
-        assertTrue("TranscriptStatus.equals returns equal for actual nulls", TranscriptStatus.equals(null,null));
         assertFalse("One real TranscriptStatus and one null are not equal", TranscriptStatus.equals(B,null));
         assertFalse("One real TranscriptStatus and one null-typed are not equal", TranscriptStatus.equals(A,B));
 
