@@ -150,11 +150,11 @@ public class OntologyTermDetailController {
         GenericTerm term = null;
         // check if TERM id
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
-            term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+            term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
             if (term == null) {
                 String replacedId = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
                 if (replacedId != null) {
-                    term = RepositoryFactory.getInfrastructureRepository().getTermByID(replacedId);
+                    term = RepositoryFactory.getOntologyRepository().getTermByZdbID(replacedId);
                 }
             }
         } else {
@@ -237,11 +237,11 @@ public class OntologyTermDetailController {
         GenericTerm term = null;
         // check if TERM id
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
-            term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+            term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
             if (term == null) {
                 String replacedId = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
                 if (replacedId != null) {
-                    term = RepositoryFactory.getInfrastructureRepository().getTermByID(replacedId);
+                    term = RepositoryFactory.getOntologyRepository().getTermByZdbID(replacedId);
                 }
             }
         } else {
