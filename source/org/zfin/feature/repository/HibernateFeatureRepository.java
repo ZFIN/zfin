@@ -512,13 +512,37 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return getLabPrefixes(labName, true);
     }
 
+    /**
+     * Get the next zf line number
+     * @return
+     */
     public String getNextZFLineNum() {
-        String sql = "select max(cast(coalesce(feature_line_number,'0') as integer)) + 1 from feature where feature_lab_prefix_id = 194";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        return query.uniqueResult().toString();
-
+        return getNextZFLineNumWithoutFeatureTrackingCollision();
     }
 
+    /**
+     * Get the next zf line number. First look at the feature table and add 1 to the max value.
+     * Then, check if there is a feature tracking entry with the same line number. If so, increment the line number
+     * until there is no collision.
+     * @return next line number (without collision)
+     */
+    private String getNextZFLineNumWithoutFeatureTrackingCollision() {
+        Integer nextLine = getNextZFLineNumFromFeatureTable();
+        while(getFeatureTrackingByAbbreviation("zf" + nextLine) != null) {
+            nextLine++;
+        }
+        return String.valueOf(nextLine);
+    }
+
+    /**
+     * Get the next zf line number by looking at the feature table and adding 1 to the max value.
+     * @return next line number
+     */
+    private Integer getNextZFLineNumFromFeatureTable() {
+        String sql = "select max(cast(coalesce(feature_line_number,'0') as integer)) + 1 from feature where feature_lab_prefix_id = 194";
+        Number result = (Number)(currentSession().createNativeQuery(sql).getSingleResult());
+        return result.intValue();
+    }
 
     public List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty) {
         String hqlLab1 = """
@@ -750,6 +774,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query queryTracker = session.createQuery(hqlFtrTrack);
         queryTracker.setParameter("featTrackingFeatZdbID", featTrackingFeatZdbID);
         return (String) queryTracker.uniqueResult();
+    }
+
+    @Override
+    public FeatureTracking getFeatureTrackingByAbbreviation(String abbreviation) {
+        String hql = "from FeatureTracking where featTrackingFeatAbbrev = :abbrev";
+        Query<FeatureTracking> query = currentSession().createQuery(hql, FeatureTracking.class);
+        query.setParameter("abbrev", abbreviation);
+        return query.uniqueResult();
     }
 
     public TreeSet<String> getFeatureLG(Feature feat) {

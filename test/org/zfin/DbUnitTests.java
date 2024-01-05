@@ -17,6 +17,7 @@ import org.zfin.expression.FigureServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.FeatureServiceTest;
+import org.zfin.feature.FeatureTrackingTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.feature.service.FeatureAttributionServiceTest;
 import org.zfin.fish.repository.FishRepositoryTest;
@@ -88,6 +89,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FeatureAttributionServiceTest.class,
         FeatureRepositoryTest.class,
         FeatureServiceTest.class,
+        FeatureTrackingTest.class,
         FigureServiceTest.class,
         FishRepositoryTest.class,
         FishServiceTest.class,

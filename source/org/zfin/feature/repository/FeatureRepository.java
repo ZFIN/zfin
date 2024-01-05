@@ -112,6 +112,8 @@ public interface FeatureRepository {
 
     List<Marker> getMarkersPresentForFeature(Feature feature);
 
+    FeatureTracking getFeatureTrackingByAbbreviation(String abbreviation);
+
     TreeSet<String> getFeatureLG(Feature feat);
 
     /**

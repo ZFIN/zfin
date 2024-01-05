@@ -1,7 +1,12 @@
 package org.zfin.feature;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "feature_tracking")
 public class FeatureTracking {
@@ -15,29 +20,5 @@ public class FeatureTracking {
     private Feature feature;
     @Column(name = "ft_feature_abbrev")
     private String featTrackingFeatAbbrev;
-
-    public int getPkid() {
-        return pkid;
-    }
-
-    public void setPkid(int pkid) {
-        this.pkid = pkid;
-    }
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public String getFeatTrackingFeatAbbrev() {
-        return featTrackingFeatAbbrev;
-    }
-
-    public void setFeatTrackingFeatAbbrev(String featTrackingFeatAbbrev) {
-        this.featTrackingFeatAbbrev = featTrackingFeatAbbrev;
-    }
 
 }
