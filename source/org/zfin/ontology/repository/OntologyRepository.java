@@ -63,20 +63,6 @@ public interface OntologyRepository {
     GenericTerm getTermByOboID(String termID);
 
     /**
-     * @param terms
-     * @return
-     */
-    List<GenericTermRelationship> getTermRelationshipsForTerms(List<Term> terms);
-
-    /**
-     * Retrieve all Children terms from a given term
-     *
-     * @param termID ID
-     * @return list of terms
-     */
-    List<? extends Term> getChildren(String termID);
-
-    /**
      * Retrieve a term by name and ontology.
      * Does not search for obsolete or secondary terms.
      *
@@ -277,14 +263,6 @@ public interface OntologyRepository {
      * @return list of expression results records.
      */
     List<ExpressionResult2> getExpressionResultsViolateStageRanges();
-
-    /**
-     * Retrieve a generic term by one or more of its values.
-     *
-     * @param superTerm term
-     * @return term
-     */
-    GenericTerm getTermByExample(GenericTerm superTerm);
 
     /**
      * Retrieve a stage by one or more of its values.
