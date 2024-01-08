@@ -1,9 +1,9 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.marker.Marker;
 import org.zfin.properties.ZfinProperties;
@@ -39,7 +39,7 @@ public class DeleteAntibodyRule extends AbstractDeleteEntityRule implements Dele
                 pubs.add(expressionExperiment.getPublication());
             }
             addToValidationReport(marker.getAbbreviation() + " is used in " + numExpression
-                    + " expression records in the following " + pubs.size() + " publication(s)", pubs);
+                                  + " expression records in the following " + pubs.size() + " publication(s)", pubs);
 
         }
         return validationReportList;

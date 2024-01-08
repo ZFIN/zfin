@@ -439,7 +439,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             createErrorReport(null, rows, reportConfiguration);
         }
         // check if any secondary IDs are used in any expression annotation:
-        List<ExpressionResult> secondaryTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnSecondaryTerms();
+        List<ExpressionResult2> secondaryTermsUsedExpression = RepositoryFactory.getExpressionRepository().getExpressionOnSecondaryTerms();
         if (secondaryTermsUsedExpression != null && secondaryTermsUsedExpression.size() > 0) {
             LOG.warn("Expression annotations found that use secondary term ids");
             StringBuffer buffer = new StringBuffer();
@@ -447,10 +447,10 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
             List<List<String>> rows = new ArrayList<>(secondaryTermsUsedExpression.size());
-            for (ExpressionResult expressionResult : secondaryTermsUsedExpression) {
+            for (ExpressionResult2 expressionResult : secondaryTermsUsedExpression) {
                 List<String> row = new ArrayList<>();
-                row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
-                row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
+                row.add(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication().getZdbID());
+                row.add(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
                 GenericTerm secondaryTerm = null;
                 if (expressionResult.getEntity().getSuperterm().isSecondary()) {

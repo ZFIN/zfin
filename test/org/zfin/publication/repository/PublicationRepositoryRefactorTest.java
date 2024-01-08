@@ -38,22 +38,6 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     private PublicationRepository publicationRepository;
 
     @Test
-    public void getExpressedGenePublications() {
-        List<Publication> pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-001103-4 ", "ZDB-TERM-100331-8");
-        assertNotNull(pubs);
-
-        pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-001103-4", "ZDB-TERM-100331-8");
-        assertNotNull(pubs);
-        assertTrue(pubs.size() > 5); //was 10 at the time of this test writing
-
-        //basilar artery -> cyp1a
-        pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-011219-1", "ZDB-TERM-100331-1678");
-        assertNotNull(pubs);
-        assertTrue(pubs.size() >= 1);
-        assertEquals("ZDB-PUB-170818-4", pubs.get(0).getZdbID());
-    }
-
-    @Test
     public void getSNPPublicationIDs() {
         Marker marker = getMarkerRepository().getMarker("ZDB-BAC-050218-656");
         List<String> pubs = publicationRepository.getSNPPublicationIDs(marker);

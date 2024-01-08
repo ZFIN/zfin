@@ -1,5 +1,6 @@
 package org.zfin.curation.presentation;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -165,12 +166,12 @@ public class ExpressionController implements ExpressionCurationService {
     @RequestMapping(value = "/{publicationID}/expression-experiments", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<ExpressionExperimentDTO> getExpressionExperiments(@PathVariable String publicationID) {
-        List<ExpressionExperiment> experiments = expRepository.getExperiments(publicationID);
+        List<ExpressionExperiment2> experiments = expRepository.getExperiments(publicationID);
         if (experiments == null)
             return null;
 
         List<ExpressionExperimentDTO> dtos = new ArrayList<>();
-        for (ExpressionExperiment experiment : experiments) {
+        for (ExpressionExperiment2 experiment : experiments) {
             ExpressionExperimentDTO experimentDTO = new ExpressionExperimentDTO();
             experimentDTO.setExperimentZdbID(experiment.getZdbID());
             Marker gene = experiment.getGene();
@@ -190,9 +191,9 @@ public class ExpressionController implements ExpressionCurationService {
             experimentDTO.setEnvironment(DTOConversionService.convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
             experimentDTO.setAssay(experiment.getAssay().getName());
             // check if there are expressions associated
-            Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
-            if (expressionResults != null)
+            if (CollectionUtils.isNotEmpty(experiment.getFigureStageSet())) {
                 experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
+            }
 
             dtos.add(experimentDTO);
         }
@@ -267,7 +268,7 @@ public class ExpressionController implements ExpressionCurationService {
                                  @PathVariable String expressionExperimentID) {
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment2 experiment = expRepository.getExpressionExperiment2(expressionExperimentID);
+            ExpressionExperiment2 experiment = expRepository.getExpressionExperiment(expressionExperimentID);
             expRepository.deleteExpressionExperiment(experiment);
             tx.commit();
         } catch (HibernateException e) {

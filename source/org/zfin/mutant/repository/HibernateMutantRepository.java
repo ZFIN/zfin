@@ -7,10 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
@@ -1460,18 +1457,18 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID) {
+    public List<ExpressionFigureStage> getExpressionSummary(Set<FishExperiment> fishOx, String geneID) {
         if (CollectionUtils.isEmpty(fishOx)) {
             return null;
         }
 
         String hql = """ 
-            select distinct expressionResult from ExpressionResult expressionResult where
+            select distinct expressionResult from ExpressionFigureStage expressionResult where
             expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND
             expressionResult.expressionExperiment.gene.zdbID
             """ + (geneID == null ? " is not null" : " = :geneID");
 
-        Query<ExpressionResult> query = currentSession().createQuery(hql, ExpressionResult.class);
+        Query<ExpressionFigureStage> query = currentSession().createQuery(hql, ExpressionFigureStage.class);
 
         query.setParameterList("fishOx", fishOx);
         if (geneID != null) {
@@ -1490,18 +1487,18 @@ public class HibernateMutantRepository implements MutantRepository {
         return session.createQuery(query).getResultList();
     }
 
-    public List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds) {
+    public List<ExpressionResult2> getConstructExpressionSummary(List<String> genoxIds) {
         if (CollectionUtils.isEmpty(genoxIds)) {
             return null;
         }
 
         String hql = """
-             select distinct expressionResult from ExpressionResult expressionResult where 
-              expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND 
-               expressionResult.expressionExperiment.gene is not null
+             select distinct expressionResult from ExpressionResult2 expressionResult where
+              expressionResult.expressionFigureStage.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND
+               expressionResult.expressionFigureStage.expressionExperiment.gene is not null
             """;
 
-        Query<ExpressionResult> query = currentSession().createQuery(hql, ExpressionResult.class);
+        Query<ExpressionResult2> query = currentSession().createQuery(hql, ExpressionResult2.class);
         query.setParameterList("genoxIds", genoxIds);
 
         return query.list();

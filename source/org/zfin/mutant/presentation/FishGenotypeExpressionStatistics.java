@@ -1,6 +1,6 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
@@ -39,7 +39,7 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
         if (figures == null) {
             figures = new HashSet<>(5);
             for (FishExperiment fishExperiment : fishExperimentList)
-                for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
+                for (ExpressionExperiment2 expressionExperiment : fishExperiment.getExpressionExperiments()) {
                     if (expressionExperiment.getGene() != null)
                         figures.addAll(expressionExperiment.getAllFigures());
                 }
@@ -94,7 +94,7 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<>(5);
         for (FishExperiment fishExperiment : fishExperimentList)
-            for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
+            for (ExpressionExperiment2 expressionExperiment : fishExperiment.getExpressionExperiments()) {
                 if (expressionExperiment.getGene() != null)
                     pubs.add(expressionExperiment.getPublication());
             }

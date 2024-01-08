@@ -98,11 +98,11 @@ public class ExpressionService {
 
     public boolean isThisseProbe(Clone clone) {
         // get all expression experiments
-        Set<ExpressionExperiment> expressionExperiments = clone.getExpressionExperiments();
+        Set<ExpressionExperiment2> expressionExperiments = clone.getExpressionExperiments2();
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
         Set<String> thissePublications = getThissePublicationZdbIDs();
 
-        for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+        for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
             // is there a record attribution for this expression experiment
             if (infrastructureRepository.getRecordAttribution(expressionExperiment.getZdbID(), expressionExperiment.getPublication().getZdbID(),
                 RecordAttribution.SourceType.STANDARD) != null
@@ -204,7 +204,7 @@ public class ExpressionService {
                     return 1;
                 } else {
                     logger.error("failed to add publication attribution for data[" + publicationAttribution.getDataZdbID()
-                        + "] source[" + publicationAttribution.getSourceZdbID() + "]");
+                                 + "] source[" + publicationAttribution.getSourceZdbID() + "]");
                 }
             }
         }
@@ -497,16 +497,16 @@ public class ExpressionService {
     /**
      * Return a distinct list of expression experiments from a given expression result collection
      *
-     * @param results expression result objects
+     * @param figureStages expression result objects
      * @return list of expression experiments
      */
-    public static List<ExpressionExperiment> getDistinctExpressionExperiments(List<ExpressionResult> results) {
-        if (results == null) {
+    public static List<ExpressionExperiment2> getDistinctExpressionExperiments(List<ExpressionFigureStage> figureStages) {
+        if (figureStages == null) {
             return null;
         }
-        Set<ExpressionExperiment> expressionExperimentSet = new HashSet<>(results.size());
-        for (ExpressionResult result : results) {
-            expressionExperimentSet.add(result.getExpressionExperiment());
+        Set<ExpressionExperiment2> expressionExperimentSet = new HashSet<>(figureStages.size());
+        for (ExpressionFigureStage figureStage : figureStages) {
+            expressionExperimentSet.add(figureStage.getExpressionExperiment());
         }
         return new ArrayList<>(expressionExperimentSet);
     }
@@ -549,13 +549,13 @@ public class ExpressionService {
      */
     public static ExpressionResultSplitStatement splitExpressionAnnotations(TermStageSplitStatement statement) {
         // find expression Result records matching the original term-stage-range
-        List<ExpressionResult> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
+        List<ExpressionResult2> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
         if (CollectionUtils.isEmpty(expressionResultList)) {
             return null;
         }
         logger.info("Found " + expressionResultList.size() + " expression_result records");
         ExpressionResultSplitStatement splitStatement = new ExpressionResultSplitStatement();
-        for (ExpressionResult result : expressionResultList) {
+        for (ExpressionResult2 result : expressionResultList) {
             // create new records for the remaining split parts
             boolean firstElement = true;
             for (TermFigureStageRange stageRange : statement.getTermFigureStageRangeList()) {
@@ -569,31 +569,34 @@ public class ExpressionService {
                 if (firstElement) {
                     // update existing record
                     result.setSuperTerm(stageRange.getSuperTerm());
-                    result.setStartStage(stageRange.getStart());
-                    result.setEndStage(stageRange.getEnd());
+                    result.getExpressionFigureStage().setStartStage(stageRange.getStart());
+                    result.getExpressionFigureStage().setEndStage(stageRange.getEnd());
                     ///result.setComment("Created by a split of " + result.getZdbID());
                     firstElement = false;
                     splitStatement.setOriginalExpressionResult(result);
                 } else {
-                    ExpressionResult splitResult = new ExpressionResult();
-                    splitResult.setExpressionExperiment(result.getExpressionExperiment());
+                    ExpressionResult2 splitResult = new ExpressionResult2();
+                    ExpressionFigureStage figureStage = new ExpressionFigureStage();
+                    figureStage.setExpressionExperiment(result.getExpressionFigureStage().getExpressionExperiment());
+                    figureStage.setStartStage(stageRange.getStart());
+                    figureStage.setEndStage(stageRange.getEnd());
+                    figureStage.setFigure(result.getExpressionFigureStage().getFigure());
+                    splitResult.setExpressionFigureStage(figureStage);
                     splitResult.setSuperTerm(stageRange.getSuperTerm());
-                    splitResult.setStartStage(stageRange.getStart());
-                    splitResult.setEndStage(stageRange.getEnd());
                     splitResult.setExpressionFound(result.isExpressionFound());
                     ///splitResult.setComment("Created by a split of " + result.getZdbID());
                     //splitResult.setFigures(result.getFigures());
-                    for (Figure figure : result.getFigures()) {
-                        getExpressionRepository().createExpressionResult(splitResult, figure);
+/*
+                    Figure figure = result.getExpressionFigureStage().getFigure();
+ToDo: Might need some adjustment that need to be taken care of when making use of the split function
+                    getExpressionRepository().createExpressionResult(splitResult, figure);
+                    Set<Figure> figures = splitResult.getFigures();
+                    if (figures == null) {
+                        figures = new HashSet<>(2);
+                        splitResult.setFigures(figures);
                     }
-                    for (Figure figure : result.getFigures()) {
-                        Set<Figure> figures = splitResult.getFigures();
-                        if (figures == null) {
-                            figures = new HashSet<>(2);
-                            splitResult.setFigures(figures);
-                        }
-                        figures.add(figure);
-                    }
+                    figures.add(figure);
+*/
                     splitStatement.getExpressionResultList().add(splitResult);
                 }
             }
@@ -612,40 +615,36 @@ public class ExpressionService {
         return DevelopmentStage.stageRangeOverlapsRange(superTerm.getStart(), superTerm.getEnd(), startStage, endStage);
     }
 
-    public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionResult> results) {
-        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<>(results.size());
-        for (ExpressionResult result : results) {
-            for (Figure figure : result.getFigures()) {
-                Set<ExpressionResult> expressionResults = figureListMap.get(figure);
-                if (expressionResults == null) {
-                    expressionResults = new HashSet<>();
-                    figureListMap.put(figure, expressionResults);
-                }
-                expressionResults.add(result);
-            }
+    public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionFigureStage> figureStages) {
+        Map<Figure, Set<ExpressionFigureStage>> figureListMap = new HashMap<>(figureStages.size());
+        for (ExpressionFigureStage figureStage : figureStages) {
+            Set<ExpressionFigureStage> figureStageSet = figureListMap.computeIfAbsent(figureStage.getFigure(), k -> new HashSet<>());
+            figureStageSet.add(figureStage);
         }
 
         List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<>(figureListMap.keySet().size());
-        List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
+        List<ExpressionExperiment2> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(figureStages);
         for (Figure figure : figureListMap.keySet()) {
             FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
             List<ExpressedGene> expressedGenes = new ArrayList<>(figureListMap.get(figure).size());
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+            for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
                 List<ExpressionStatement> expressionStatements = new ArrayList<>(figureListMap.get(figure).size());
                 if (!expressionExperiment.getAllFigures().contains(figure)) {
                     continue;
                 }
-                for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
+                for (ExpressionFigureStage figureStage : expressionExperiment.getFigureStageSet()) {
                     ExpressionStatement statement = new ExpressionStatement();
-                    if (!result.getFigures().contains(figure)) {
+                    if (!figureStage.getFigure().equals(figure)) {
                         continue;
                     }
-                    statement.setEntity(result.getEntity());
-                    statement.setExpressionFound(result.isExpressionFound());
-                    // ensure distinctness
-                    if (!expressionStatements.contains(statement)) {
-                        expressionStatements.add(statement);
-                    }
+                    figureStage.getExpressionResultSet().forEach(result -> {
+                        statement.setEntity(result.getEntity());
+                        statement.setExpressionFound(result.isExpressionFound());
+                        // ensure distinctness
+                        if (!expressionStatements.contains(statement)) {
+                            expressionStatements.add(statement);
+                        }
+                    });
                 }
                 Collections.sort(expressionStatements);
                 ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
@@ -662,11 +661,11 @@ public class ExpressionService {
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
     public static List<ExpressionDisplay> createExpressionDisplays(String initialKey,
-                                                                   List<ExpressionResult> expressionResults,
+                                                                   List<ExpressionFigureStage> figureStages,
                                                                    List<String> expressionFigureIDs,
                                                                    List<String> expressionPublicationIDs,
                                                                    boolean showCondition) {
-        if (CollectionUtils.isEmpty(expressionResults) ||
+        if (CollectionUtils.isEmpty(figureStages) ||
             CollectionUtils.isEmpty(expressionFigureIDs) ||
             CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
@@ -675,108 +674,108 @@ public class ExpressionService {
         // a map of zdbIDs of expressed genes as keys and display objects as values
         Map<String, ExpressionDisplay> map = new HashMap<>();
 
-        for (ExpressionResult xpResult : expressionResults) {
-            Marker expressedGene = xpResult.getExpressionExperiment().getGene();
-            if (expressedGene != null) {
-                logger.info(expressedGene.getAbbreviation());
-                FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
-                Experiment exp = fishox.getExperiment();
+        for (ExpressionFigureStage figureStage : figureStages) {
 
-                String key = initialKey + expressedGene.getZdbID();
+            for (ExpressionResult2 xpResult : figureStage.getExpressionResultSet()) {
+                Marker expressedGene = figureStage.getExpressionExperiment().getGene();
+                if (expressedGene != null) {
+                    logger.info(expressedGene.getAbbreviation());
+                    FishExperiment fishox = figureStage.getExpressionExperiment().getFishExperiment();
+                    Experiment exp = fishox.getExperiment();
 
-                if (showCondition && fishox.isStandardOrGenericControl()) {
-                    key += "standard";
-                }
+                    String key = initialKey + expressedGene.getZdbID();
 
-                if (showCondition && exp.isChemical()) {
-                    key += "chemical";
-                }
-                if (CollectionUtils.isEmpty(xpResult.getFigures())) {
-                    return null;
-                }
-
-                Set<Figure> figs = xpResult.getFigures();
-                Set<Figure> qualifiedFigures = new HashSet<>();
-
-                for (Figure fig : figs) {
-                    if (expressionFigureIDs.contains(fig.getZdbID())) {
-                        qualifiedFigures.add(fig);
-                    }
-                }
-
-                GenericTerm term = xpResult.getSuperTerm();
-                Publication pub = xpResult.getExpressionExperiment().getPublication();
-
-                ExpressionDisplay xpDisplay;
-                // if the key not in the map, instantiate a display object and add it to the map
-                // otherwise, get the display object from the map
-                if (!map.containsKey(key)) {
-                    xpDisplay = new ExpressionDisplay(expressedGene);
-                    xpDisplay.setExpressionResults(new ArrayList<>());
-                    xpDisplay.setExperiment(exp);
-                    xpDisplay.setExpressionTerms(new HashSet<>());
-
-                    xpDisplay.getExpressionResults().add(xpResult);
-                    xpDisplay.getExpressionTerms().add(term);
-
-                    xpDisplay.setExpressedGene(expressedGene);
-
-                    xpDisplay.setFigures(new HashSet<>());
-                    xpDisplay.getFigures().addAll(qualifiedFigures);
-
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
-                    for (Figure figure : qualifiedFigures) {
-                        Publication publication = figure.getPublication();
-                        if (!figuresPerPub.containsKey(publication)) {
-                            SortedSet<Figure> sortedFigs = new TreeSet<>();
-                            sortedFigs.add(figure);
-                            figuresPerPub.put(publication, sortedFigs);
-                        } else {
-                            figuresPerPub.get(publication).add(figure);
-                        }
+                    if (showCondition && fishox.isStandardOrGenericControl()) {
+                        key += "standard";
                     }
 
-                    xpDisplay.setFiguresPerPub(figuresPerPub);
-
-                    xpDisplay.setPublications(new HashSet<>());
-                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
-                        xpDisplay.getPublications().add(pub);
-
-                        if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
-                            map.put(key, xpDisplay);
-                        }
+                    if (showCondition && exp.isChemical()) {
+                        key += "chemical";
                     }
-                } else {
-                    xpDisplay = map.get(key);
+                    if (figureStage.getFigure() == null) {
+                        return null;
+                    }
 
-                    if (!xpDisplay.getExpressionTerms().contains(term)) {
+                    Figure figure = figureStage.getFigure();
+                    Set<Figure> qualifiedFigures = new HashSet<>();
+
+                    if (expressionFigureIDs.contains(figure.getZdbID())) {
+                        qualifiedFigures.add(figure);
+                    }
+
+                    GenericTerm term = xpResult.getSuperTerm();
+                    Publication pub = figureStage.getExpressionExperiment().getPublication();
+
+                    ExpressionDisplay xpDisplay;
+                    // if the key not in the map, instantiate a display object and add it to the map
+                    // otherwise, get the display object from the map
+                    if (!map.containsKey(key)) {
+                        xpDisplay = new ExpressionDisplay(expressedGene);
+                        xpDisplay.setExpressionResults(new ArrayList<>());
+                        xpDisplay.setExperiment(exp);
+                        xpDisplay.setExpressionTerms(new HashSet<>());
+
                         xpDisplay.getExpressionResults().add(xpResult);
                         xpDisplay.getExpressionTerms().add(term);
-                    }
 
-                    (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
+                        xpDisplay.setExpressedGene(expressedGene);
 
-                    xpDisplay.getFigures().addAll(qualifiedFigures);
-                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
-                        xpDisplay.getPublications().add(pub);
-                    }
+                        xpDisplay.setFigures(new HashSet<>());
+                        xpDisplay.getFigures().addAll(qualifiedFigures);
 
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
-                    for (Figure figure : qualifiedFigures) {
-                        Publication publication = figure.getPublication();
-                        if (!figuresPerPub.containsKey(publication)) {
-                            SortedSet<Figure> sortedFigs = new TreeSet<>();
-                            sortedFigs.add(figure);
-                            xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
-                        } else {
-                            xpDisplay.getFiguresPerPub().get(publication).add(figure);
+                        SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                        for (Figure fig : qualifiedFigures) {
+                            Publication publication = fig.getPublication();
+                            if (!figuresPerPub.containsKey(publication)) {
+                                SortedSet<Figure> sortedFigs = new TreeSet<>();
+                                sortedFigs.add(fig);
+                                figuresPerPub.put(publication, sortedFigs);
+                            } else {
+                                figuresPerPub.get(publication).add(fig);
+                            }
+                        }
+
+                        xpDisplay.setFiguresPerPub(figuresPerPub);
+
+                        xpDisplay.setPublications(new HashSet<>());
+                        if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                            xpDisplay.getPublications().add(pub);
+
+                            if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                                map.put(key, xpDisplay);
+                            }
+                        }
+                    } else {
+                        xpDisplay = map.get(key);
+
+                        if (!xpDisplay.getExpressionTerms().contains(term)) {
+                            xpDisplay.getExpressionResults().add(xpResult);
+                            xpDisplay.getExpressionTerms().add(term);
+                        }
+
+                        (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
+
+                        xpDisplay.getFigures().addAll(qualifiedFigures);
+                        if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                            xpDisplay.getPublications().add(pub);
+                        }
+
+                        SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
+                        for (Figure fig : qualifiedFigures) {
+                            Publication publication = fig.getPublication();
+                            if (!figuresPerPub.containsKey(publication)) {
+                                SortedSet<Figure> sortedFigs = new TreeSet<>();
+                                sortedFigs.add(fig);
+                                xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
+                            } else {
+                                xpDisplay.getFiguresPerPub().get(publication).add(fig);
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
-
         List<ExpressionDisplay> expressionDisplays = new ArrayList<>(map.size());
 
         if (map.values().size() > 0) {
@@ -820,8 +819,12 @@ public class ExpressionService {
     /**
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
-    public static List<ProteinExpressionDisplay> createProteinExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
-        if (CollectionUtils.isEmpty(expressionResults) ||
+    public static List<ProteinExpressionDisplay> createProteinExpressionDisplays(String initialKey,
+                                                                                 List<ExpressionFigureStage> figureStages,
+                                                                                 List<String> expressionFigureIDs,
+                                                                                 List<String> expressionPublicationIDs,
+                                                                                 boolean showCondition) {
+        if (CollectionUtils.isEmpty(figureStages) ||
             CollectionUtils.isEmpty(expressionFigureIDs) ||
             CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
@@ -830,104 +833,103 @@ public class ExpressionService {
         // a map of zdbIDs of antibodies as keys and display objects as values
         Map<String, ProteinExpressionDisplay> map = new HashMap<>();
 
-        for (ExpressionResult xpResult : expressionResults) {
-            Marker antiGene = xpResult.getExpressionExperiment().getGene();
-            Antibody antibody = xpResult.getExpressionExperiment().getAntibody();
-            if (antibody != null) {
-                FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
-                Experiment exp = fishox.getExperiment();
+        for (ExpressionFigureStage figureStage : figureStages) {
+            for (ExpressionResult2 xpResult : figureStage.getExpressionResultSet()) {
+                Marker antiGene = figureStage.getExpressionExperiment().getGene();
+                Antibody antibody = figureStage.getExpressionExperiment().getAntibody();
+                if (antibody != null) {
+                    FishExperiment fishox = figureStage.getExpressionExperiment().getFishExperiment();
+                    Experiment exp = fishox.getExperiment();
 
-                String key = initialKey + antibody.getZdbID();
+                    String key = initialKey + antibody.getZdbID();
 
-                if (showCondition && fishox.isStandardOrGenericControl()) {
-                    key += "standard";
-                }
+                    if (showCondition && fishox.isStandardOrGenericControl()) {
+                        key += "standard";
+                    }
 
-                if (showCondition && exp.isChemical()) {
-                    key += "chemical";
-                }
+                    if (showCondition && exp.isChemical()) {
+                        key += "chemical";
+                    }
 
-                Set<Figure> figs = xpResult.getFigures();
-                Set<Figure> qualifiedFigures = new HashSet<>();
+                    Figure fig = figureStage.getFigure();
+                    Set<Figure> qualifiedFigures = new HashSet<>();
 
-                for (Figure fig : figs) {
                     if (expressionFigureIDs.contains(fig.getZdbID())) {
                         qualifiedFigures.add(fig);
                     }
-                }
 
-                GenericTerm term = xpResult.getSuperTerm();
-                Publication pub = xpResult.getExpressionExperiment().getPublication();
+                    GenericTerm term = xpResult.getSuperTerm();
+                    Publication pub = figureStage.getExpressionExperiment().getPublication();
 
-                ProteinExpressionDisplay xpDisplay;
-                // if the key not in the map, instantiate a display object and add it to the map
-                // otherwise, get the display object from the map
-                if (!map.containsKey(key)) {
-                    xpDisplay = new ProteinExpressionDisplay(antibody);
-                    xpDisplay.setAntiGene(antiGene);
-                    xpDisplay.setExpressionResults(new ArrayList<>());
-                    xpDisplay.setExperiment(exp);
-                    xpDisplay.setExpressionTerms(new HashSet<>());
+                    ProteinExpressionDisplay xpDisplay;
+                    // if the key not in the map, instantiate a display object and add it to the map
+                    // otherwise, get the display object from the map
+                    if (!map.containsKey(key)) {
+                        xpDisplay = new ProteinExpressionDisplay(antibody);
+                        xpDisplay.setAntiGene(antiGene);
+                        xpDisplay.setExpressionResults(new ArrayList<>());
+                        xpDisplay.setExperiment(exp);
+                        xpDisplay.setExpressionTerms(new HashSet<>());
 
-                    xpDisplay.getExpressionResults().add(xpResult);
-                    xpDisplay.getExpressionTerms().add(term);
-
-                    xpDisplay.setFigures(new HashSet<>());
-                    xpDisplay.getFigures().addAll(qualifiedFigures);
-
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
-                    for (Figure figure : qualifiedFigures) {
-                        Publication publication = figure.getPublication();
-                        if (!figuresPerPub.containsKey(publication)) {
-                            SortedSet<Figure> sortedFigs = new TreeSet<>();
-                            sortedFigs.add(figure);
-                            figuresPerPub.put(publication, sortedFigs);
-                        } else {
-                            figuresPerPub.get(publication).add(figure);
-                        }
-                    }
-
-                    xpDisplay.setFiguresPerPub(figuresPerPub);
-
-                    xpDisplay.setPublications(new HashSet<>());
-                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
-                        xpDisplay.getPublications().add(pub);
-
-                        if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
-                            map.put(key, xpDisplay);
-                        }
-                    }
-                } else {
-                    xpDisplay = map.get(key);
-
-                    if (!xpDisplay.getExpressionTerms().contains(term)) {
                         xpDisplay.getExpressionResults().add(xpResult);
                         xpDisplay.getExpressionTerms().add(term);
-                    }
 
-                    (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
+                        xpDisplay.setFigures(new HashSet<>());
+                        xpDisplay.getFigures().addAll(qualifiedFigures);
 
-                    xpDisplay.getFigures().addAll(qualifiedFigures);
-                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
-                        xpDisplay.getPublications().add(pub);
-                    }
+                        SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                        for (Figure figure : qualifiedFigures) {
+                            Publication publication = figure.getPublication();
+                            if (!figuresPerPub.containsKey(publication)) {
+                                SortedSet<Figure> sortedFigs = new TreeSet<>();
+                                sortedFigs.add(figure);
+                                figuresPerPub.put(publication, sortedFigs);
+                            } else {
+                                figuresPerPub.get(publication).add(figure);
+                            }
+                        }
 
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
-                    for (Figure figure : qualifiedFigures) {
-                        Publication publication = figure.getPublication();
-                        if (!figuresPerPub.containsKey(publication)) {
-                            SortedSet<Figure> sortedFigs = new TreeSet<>();
-                            sortedFigs.add(figure);
-                            xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
-                        } else {
-                            xpDisplay.getFiguresPerPub().get(publication).add(figure);
+                        xpDisplay.setFiguresPerPub(figuresPerPub);
+
+                        xpDisplay.setPublications(new HashSet<>());
+                        if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                            xpDisplay.getPublications().add(pub);
+
+                            if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                                map.put(key, xpDisplay);
+                            }
+                        }
+                    } else {
+                        xpDisplay = map.get(key);
+
+                        if (!xpDisplay.getExpressionTerms().contains(term)) {
+                            xpDisplay.getExpressionResults().add(xpResult);
+                            xpDisplay.getExpressionTerms().add(term);
+                        }
+
+                        (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
+
+                        xpDisplay.getFigures().addAll(qualifiedFigures);
+                        if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                            xpDisplay.getPublications().add(pub);
+                        }
+
+                        SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
+                        for (Figure figure : qualifiedFigures) {
+                            Publication publication = figure.getPublication();
+                            if (!figuresPerPub.containsKey(publication)) {
+                                SortedSet<Figure> sortedFigs = new TreeSet<>();
+                                sortedFigs.add(figure);
+                                xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
+                            } else {
+                                xpDisplay.getFiguresPerPub().get(publication).add(figure);
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
-
         List<ProteinExpressionDisplay> proteinExpressionDisplays = new ArrayList<>(map.size());
 
         map.values().forEach(display -> {
@@ -977,19 +979,19 @@ public class ExpressionService {
         addInSituFilter(query, onlyInSitu);
 
         String jsonFacet = "{" +
-            "  images: {" +
-            "    terms: {" +
-            "      field: img_zdb_id," +
-            "      limit: " + pagination.getLimit() + "," +
-            "      offset: " + pagination.getStart() + "," +
-            "      numBuckets: true," +
-            "      sort: \"img_order desc\"," +
-            "      facet : {" +
-            "        img_order: \"max(expression_image_sort)\"" +
-            "      }" +
-            "    }" +
-            "  }" +
-            "}";
+                           "  images: {" +
+                           "    terms: {" +
+                           "      field: img_zdb_id," +
+                           "      limit: " + pagination.getLimit() + "," +
+                           "      offset: " + pagination.getStart() + "," +
+                           "      numBuckets: true," +
+                           "      sort: \"img_order desc\"," +
+                           "      facet : {" +
+                           "        img_order: \"max(expression_image_sort)\"" +
+                           "      }" +
+                           "    }" +
+                           "  }" +
+                           "}";
         query.set("json.facet", jsonFacet);
 
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);

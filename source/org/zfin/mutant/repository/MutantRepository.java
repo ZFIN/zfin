@@ -1,9 +1,6 @@
 package org.zfin.mutant.repository;
 
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionStatement;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.api.Pagination;
@@ -17,7 +14,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
-import org.zfin.expression.Experiment;
 import org.zfin.sequence.STRMarkerSequence;
 
 
@@ -295,9 +291,9 @@ public interface MutantRepository {
      *
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID);
+    List<ExpressionFigureStage> getExpressionSummary(Set<FishExperiment> fishOx, String geneID);
     List<ExperimentCondition> getExperimentConditions (Experiment experiment);
-    List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
+    List<ExpressionResult2> getConstructExpressionSummary(List<String> genoxIds);
 
 
     /**

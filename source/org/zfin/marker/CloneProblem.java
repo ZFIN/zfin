@@ -3,14 +3,12 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Set;
 
 @Setter
 @Getter

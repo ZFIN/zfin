@@ -1,6 +1,7 @@
 package org.zfin.util;
 
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,22 +11,22 @@ import java.util.List;
  */
 public class ExpressionResultSplitStatement {
 
-    private ExpressionResult originalExpressionResult;
-    private List<ExpressionResult> expressionResultList = new ArrayList<ExpressionResult>(5);
+    private ExpressionResult2 originalExpressionResult;
+    private List<ExpressionResult2> expressionResultList = new ArrayList<>(5);
 
-    public ExpressionResult getOriginalExpressionResult() {
+    public ExpressionResult2 getOriginalExpressionResult() {
         return originalExpressionResult;
     }
 
-    public void setOriginalExpressionResult(ExpressionResult originalExpressionResult) {
+    public void setOriginalExpressionResult(ExpressionResult2 originalExpressionResult) {
         this.originalExpressionResult = originalExpressionResult;
     }
 
-    public List<ExpressionResult> getExpressionResultList() {
+    public List<ExpressionResult2> getExpressionResultList() {
         return expressionResultList;
     }
 
-    public void setExpressionResultList(List<ExpressionResult> expressionResultList) {
+    public void setExpressionResultList(List<ExpressionResult2> expressionResultList) {
         this.expressionResultList = expressionResultList;
     }
 
