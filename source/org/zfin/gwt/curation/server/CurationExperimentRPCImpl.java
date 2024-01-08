@@ -229,7 +229,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(experimentID);
+            ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment(experimentID);
             //createAuditRecordsForModifications(expressionExperiment, experimentDTO);
             // update assay: never null
             populateExpressionExperiment(experimentDTO, expressionExperiment);
@@ -505,7 +505,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             ExpressionFigureStage expressionFigureStage = DTOConversionService.getExpressionFigureStageFromDTO(figureAnnotation);
-            ExpressionExperiment2 expressionExperiment = getExpressionRepository().getExpressionExperiment2(figureAnnotation.getExperiment().getExperimentZdbID());
+            ExpressionExperiment2 expressionExperiment = getExpressionRepository().getExpressionExperiment(figureAnnotation.getExperiment().getExperimentZdbID());
             expressionFigureStage.setExpressionExperiment(expressionExperiment);
             RepositoryFactory.getExpressionRepository().createExpressionFigureStage(expressionFigureStage);
             fullDto = DTOConversionService.convertToExpressionFigureStageDTOShallow(expressionFigureStage);
@@ -542,7 +542,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         if (experimentDTO == null)
             return null;
         ExperimentFigureStage efs = new ExperimentFigureStage();
-        ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(experimentDTO.getExperiment().getExperimentZdbID());
+        ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment(experimentDTO.getExperiment().getExperimentZdbID());
         efs.setExpressionExperiment(expressionExperiment);
 
         Figure figure = figureRepository.getFigure(experimentDTO.getFigure().getZdbID());
@@ -631,7 +631,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param efs figure annotation
      */
     public void createPatoRecord(ExpressionFigureStageDTO efs) {
-        ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(efs.getExperiment().getExperimentZdbID());
+        ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment(efs.getExperiment().getExperimentZdbID());
         Figure figure = figureRepository.getFigure(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());

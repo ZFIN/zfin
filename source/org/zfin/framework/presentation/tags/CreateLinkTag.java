@@ -181,8 +181,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = TermPresentation.getLink((PostComposedEntity) o, suppressPopupLink);
         else if (o instanceof TermDTO)
             link = TermDTOPresentation.getLink((TermDTO) o);
-        else if (o instanceof ExpressionResult)
-            link = ExpressionResultPresentation.getLink((ExpressionResult) o, suppressPopupLink, curationLink);
+        else if (o instanceof ExpressionResult2 expressionResult)
+            link = ExpressionResultPresentation.getLink(expressionResult, suppressPopupLink, curationLink);
         else if (o instanceof TermExternalReference)
             link = TermExternalReferencePresentation.getLink((TermExternalReference) o);
         else if (o instanceof ExpressionStatement)

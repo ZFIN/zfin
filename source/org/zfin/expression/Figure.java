@@ -3,6 +3,7 @@ package org.zfin.expression;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
@@ -11,9 +12,7 @@ import org.zfin.publication.Publication;
 import org.zfin.mutant.PhenotypeExperiment;
 
 import java.io.Serializable;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Figure domain business object. It is a figure referenced in a publication.
@@ -31,7 +30,7 @@ public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID 
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String label;
     private String orderingLabel;
-    private Set<ExpressionResult> expressionResults;
+    private Set<ExpressionFigureStage> expressionFigureStage;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
     @JsonView(View.GeneExpressionAPI.class)
@@ -116,4 +115,11 @@ public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID 
         return false;
     }
 
+    public List<ExpressionResult2> getExpressionResults2() {
+        if(CollectionUtils.isEmpty(expressionFigureStage))
+            return null;
+
+        return expressionFigureStage.stream().map(ExpressionFigureStage::getExpressionResultSet)
+            .flatMap(Collection::stream).toList();
+    }
 }

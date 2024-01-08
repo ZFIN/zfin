@@ -1,17 +1,18 @@
 package org.zfin.expression;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -55,6 +56,27 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getFigureExpressionSummary() {
+        Figure figure = figureRepository.getFigure("ZDB-FIG-100506-2");
+
+        FigureExpressionSummary summary = figureViewService.getFigureExpressionSummary(figure);
+
+        assertThat("Figure has genes", summary, notNullValue());
+        assertThat("Figure has 1 gene", summary.getGenes().size(), equalTo(1));
+        assertThat("Figure has 1 fish", summary.getFish().size(), equalTo(1));
+        assertThat("Figure has 3 antibodies", summary.getAntibodies().size(), equalTo(3));
+        assertThat("Figure has 9 entities", summary.getEntities().size(), equalTo(9));
+        assertThat("Figure Start", summary.getStartStage().getName(), equalTo("Segmentation:10-13 somites"));
+        assertThat("Figure End", summary.getEndStage().getName(), equalTo("Hatching:Long-pec"));
+
+        figure = figureRepository.getFigure("ZDB-FIG-050630-9812");
+        summary = figureViewService.getFigureExpressionSummary(figure);
+
+        assertThat("Figure has genes", summary, notNullValue());
+        assertThat("Figure has 1 clone", summary.getProbe().getName(), equalTo("cb1"));
+    }
+
+    @Test
     public void genotypeExpressionFigureSummaryDisplayTest() {
         Figure figure = figureRepository.getFigure("ZDB-FIG-041108-3");
         FishExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
@@ -76,7 +98,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         boolean withImgOnly = false;
 
         List<FigureSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(genox, pax2a, withImgOnly);
-        
+
         assertThat("figureSummaryList is not null", figureSummaryList, notNullValue());
         assertThat("figureSummaryList is not empty", figureSummaryList, not(empty()));
 
@@ -90,7 +112,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
             for (ExpressionStatement statement : figureSummary.getExpressionStatementList()) {
                 logger.debug(figureSummary.getPublication().getShortAuthorList() + " "
-                        + figureSummary.getFigure().getLabel() + " has: " + statement.getEntity().getSuperterm().getTermName());
+                             + figureSummary.getFigure().getLabel() + " has: " + statement.getEntity().getSuperterm().getTermName());
             }
 
         }
@@ -105,10 +127,10 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         assertThat("figureSummaryList should have Hans fig 5", fig5Summary, notNullValue());
         String figureLabel = fig5Summary.getPublication().getShortAuthorList() + " " + fig5Summary.getFigure().getLabel();
         assertThat(figureLabel + " should contain " + oticPlacodeStatement.getEntity().getSuperterm().getTermName(),
-                fig5Summary.getExpressionStatementList(), hasItem(oticPlacodeStatement));
+            fig5Summary.getExpressionStatementList(), hasItem(oticPlacodeStatement));
         //ectoderm is associaed with sox9a in this figure, not pax2a, if it comes in, the gene parameter is being ignored
         assertThat(figureLabel + " should NOT contain " + ectodermStatement.getEntity().getSuperterm().getTermName(),
-                fig5Summary.getExpressionStatementList(), not(hasItem(ectodermStatement)));
+            fig5Summary.getExpressionStatementList(), not(hasItem(ectodermStatement)));
 
     }
 
@@ -162,7 +184,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         for (FigureSummaryDisplay row : figureSummaryRows) {
             if (last != null) {
                 assertThat("publications should be sorted",
-                        row.getPublication(), greaterThanOrEqualTo(last.getPublication()));
+                    row.getPublication(), greaterThanOrEqualTo(last.getPublication()));
             }
             last = row;
         }
@@ -203,16 +225,16 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         }
 
         assertThat(figure.getPublication().getShortAuthorList() + " " + figure.getLabel() + " is in the summary",
-                figureSummaryDisplay, notNullValue());
+            figureSummaryDisplay, notNullValue());
 
 
         assertThat(figure.getPublication().getShortAuthorList() + " " + figure.getLabel()
-                        + " has statement " + presentInFigure.getDisplayName(),
-                figureSummaryDisplay.getExpressionStatementList(), hasItem(presentInFigure));
+                   + " has statement " + presentInFigure.getDisplayName(),
+            figureSummaryDisplay.getExpressionStatementList(), hasItem(presentInFigure));
 
         assertThat(figure.getPublication().getShortAuthorList() + " " + figure.getLabel()
-                        + " should NOT have statement " + notPresentInFigure.getDisplayName(),
-                figureSummaryDisplay.getExpressionStatementList(), not(hasItem(notPresentInFigure)));
+                   + " should NOT have statement " + notPresentInFigure.getDisplayName(),
+            figureSummaryDisplay.getExpressionStatementList(), not(hasItem(notPresentInFigure)));
 
         return figureSummaryList;
     }

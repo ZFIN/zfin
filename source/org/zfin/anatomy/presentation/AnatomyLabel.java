@@ -18,7 +18,7 @@ import java.util.*;
 @Setter
 public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
-    private ExpressionResult expressionResult;
+    private ExpressionResult2 expressionResult;
     private ExpressionStatement expressionStatement;
 
     private Set<Publication> publications;
@@ -29,11 +29,11 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     private boolean figureWithImage;
     private boolean notAllFiguresTextOnly;
 
-    public AnatomyLabel(ExpressionResult result) {
+    public AnatomyLabel(ExpressionResult2 result) {
         this(result, false);
     }
 
-    private void init(ExpressionResult result) {
+    private void init(ExpressionResult2 result) {
         expressionResult = result;
 
         if (result.getEntity() == null || result.getEntity().getSuperterm() == null)
@@ -48,7 +48,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         genes = new TreeSet<>();
     }
 
-    public AnatomyLabel(ExpressionResult result, boolean suppressedSubTerm) {
+    public AnatomyLabel(ExpressionResult2 result, boolean suppressedSubTerm) {
         init(result);
         if (suppressedSubTerm) {
             PostComposedEntity entity = new PostComposedEntity();
@@ -72,11 +72,11 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
     }
 
     public DevelopmentStage getStartStage() {
-        return expressionResult.getStartStage();
+        return expressionResult.getExpressionFigureStage().getStartStage();
     }
 
     public DevelopmentStage getEndStage() {
-        return expressionResult.getEndStage();
+        return expressionResult.getExpressionFigureStage().getEndStage();
     }
 
     public int getNumberOfPublications() {
@@ -202,7 +202,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
     public String toString() {
         return expressionResult.getEntity().toString() + " " +
-                expressionResult.getStartStage().getName() + "" +
-                expressionResult.getEndStage().getName();
+                expressionResult.getExpressionFigureStage().getStartStage().getName() + "" +
+                expressionResult.getExpressionFigureStage().getEndStage().getName();
     }
 }

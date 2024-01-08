@@ -77,10 +77,6 @@ public class FigureViewController {
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
 
-        List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
-        model.addAttribute("expressionTableRows", expressionTableRows);
-        model.addAttribute("showExpressionQualifierColumn", figureViewService.showExpressionQualifierColumn(expressionTableRows));
-
         List<AntibodyTableRow> antibodyTableRows = figureViewService.getAntibodyTableRows(figure);
         model.addAttribute("antibodyTableRows", antibodyTableRows);
         model.addAttribute("showAntibodyQualifierColumn", figureViewService.showAntibodyQualifierColumn(antibodyTableRows));

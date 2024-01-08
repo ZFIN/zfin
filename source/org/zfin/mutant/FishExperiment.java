@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class FishExperiment implements Comparable<FishExperiment> {
     @JsonView(View.API.class)
     private Fish fish;
     private Set<PhenotypeExperiment> phenotypeExperiments;
-    private Set<ExpressionExperiment> expressionExperiments;
+    private Set<ExpressionExperiment2> expressionExperiments;
     private Set<GeneGenotypeExperiment> geneGenotypeExperiments;
     private Set<DiseaseAnnotationModel> diseaseAnnotationModels;
 

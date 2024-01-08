@@ -25,7 +25,7 @@ public class TermStageUpdateFileParser {
     }
 
     public List<TermStageSplitStatement> parseFile() {
-        List<TermStageSplitStatement> queries = new ArrayList<TermStageSplitStatement>();
+        List<TermStageSplitStatement> queries = new ArrayList<>();
         FileReader fileReader = null;
         try {
             fileReader = new FileReader(termStageUpdateFile);

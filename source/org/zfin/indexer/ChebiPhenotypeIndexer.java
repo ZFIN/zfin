@@ -1,6 +1,7 @@
 package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.StatelessSession;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -88,6 +89,11 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected void insertEntityGraph(StatelessSession session, ChebiPhenotypeDisplay entity) {
+        entity.getPhenotypeStatements().forEach(session::insert);
+        session.insert(entity);
     }
 
 }

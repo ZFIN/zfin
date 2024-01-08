@@ -4,10 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionSummaryCriteria;
-import org.zfin.expression.FigureExpressionSummary;
-import org.zfin.expression.FigureService;
+import org.zfin.expression.*;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
@@ -171,8 +168,8 @@ public class FishExpressionSummaryController {
         expressionCriteria.setShowCondition(false);
         model.addAttribute("expressionCriteria", expressionCriteria);
 
-        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
-        List<FigureExpressionSummary> figureExpressionSummaries = ExpressionService.createExpressionFigureSummaryFromExpressionResults(expressionResults);
+        List<ExpressionFigureStage> figureStages = getExpressionRepository().getExpressionFigureStagesByFish(fish);
+        List<FigureExpressionSummary> figureExpressionSummaries = ExpressionService.createExpressionFigureSummaryFromExpressionResults(figureStages);
         Collections.sort(figureExpressionSummaries);
         List<FigureExpressionSummaryDisplay> figureExpressionSummaryDisplayList = PresentationConverter.getFigureExpressionSummaryDisplay(figureExpressionSummaries);
 

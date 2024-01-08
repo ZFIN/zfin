@@ -3,6 +3,7 @@ package org.zfin.ontology.datatransfer.service;
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
@@ -92,7 +93,7 @@ public class OntologyTermFigureStageUpdate extends AbstractScriptWrapper {
             long startTimeLong = System.currentTimeMillis();
             startMessage.append("Start Time: " + new Date() + "\n");
             // find expression-result objects
-            List<ExpressionResultSplitStatement> statementList = new ArrayList<ExpressionResultSplitStatement>(splitStatementList.size());
+            List<ExpressionResultSplitStatement> statementList = new ArrayList<>(splitStatementList.size());
             for (TermStageSplitStatement statement : splitStatementList) {
                 ExpressionResultSplitStatement splitStatement = ExpressionService.splitExpressionAnnotations(statement);
                 if (splitStatement != null)
@@ -118,10 +119,10 @@ public class OntologyTermFigureStageUpdate extends AbstractScriptWrapper {
     }
 
     private void generateReport(List<ExpressionResultSplitStatement> statementList) {
-        List<List<String>> rows = new ArrayList<List<String>>();
+        List<List<String>> rows = new ArrayList<>();
         for (ExpressionResultSplitStatement statement : statementList) {
             rows.add(getStringsPerRow(statement.getOriginalExpressionResult()));
-            for (ExpressionResult splitStatement : statement.getExpressionResultList())
+            for (ExpressionResult2 splitStatement : statement.getExpressionResultList())
                 rows.add(getStringsPerRow(splitStatement));
 
         }
@@ -133,19 +134,16 @@ public class OntologyTermFigureStageUpdate extends AbstractScriptWrapper {
 
     }
 
-    private List<String> getStringsPerRow(ExpressionResult result) {
-        List<String> row = new ArrayList<String>(10);
+    private List<String> getStringsPerRow(ExpressionResult2 result) {
+        List<String> row = new ArrayList<>(10);
 //TODO        row.add(result.getZdbID());
         row.add(result.getSuperTerm().getOboID());
         row.add(result.getSuperTerm().getTermName());
-        row.add(result.getStartStage().getAbbreviation());
-        row.add(result.getEndStage().getAbbreviation());
-        row.add(result.getExpressionExperiment().getPublication().getShortAuthorList());
-        row.add(result.getExpressionExperiment().getPublication().getZdbID());
-        StringBuilder builder = new StringBuilder();
-        for (Figure figure : result.getFigures())
-            builder.append(figure.getLabel() + ",");
-        row.add(builder.deleteCharAt(builder.length() - 1).toString());
+        row.add(result.getExpressionFigureStage().getStartStage().getAbbreviation());
+        row.add(result.getExpressionFigureStage().getEndStage().getAbbreviation());
+        row.add(result.getExpressionFigureStage().getExpressionExperiment().getPublication().getShortAuthorList());
+        row.add(result.getExpressionFigureStage().getExpressionExperiment().getPublication().getZdbID());
+        row.add(result.getExpressionFigureStage().getFigure().getLabel());
         return row;
     }
 

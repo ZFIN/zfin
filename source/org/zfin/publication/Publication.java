@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.curation.PublicationNote;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
@@ -83,7 +83,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Journal journal;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "xpatex_source_zdb_id")
-    private Set<ExpressionExperiment> expressionExperiments;
+    private Set<ExpressionExperiment2> expressionExperiments;
     @JsonView(View.FigureAPI.class)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "fig_source_zdb_id")
@@ -154,14 +154,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.authorPubs = authorPubs;
     }
 
-
-    public Set<ExpressionExperiment> getExpressionExperiments() {
-        return expressionExperiments;
-    }
-
-    public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
-        this.expressionExperiments = expressionExperiments;
-    }
 
     public GregorianCalendar getPublicationDate() {
         return publicationDate;

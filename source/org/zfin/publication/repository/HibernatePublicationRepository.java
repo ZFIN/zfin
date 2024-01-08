@@ -81,25 +81,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     private ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
-    public List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = """
-            SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res  \s
-            WHERE (res.entity.superterm.zdbID = :aoZdbID OR
-                   res.entity.subterm.zdbID = :aoZdbID)
-            AND publication = exp.publication
-            AND res.expressionExperiment = exp
-            AND exp.gene.zdbID = :zdbID
-            AND res.expressionFound is true
-            """;
-        String sql = addOrderByParameters(hql);
-        Query<Publication> query = session.createQuery(sql, Publication.class);
-        addPaginationParameters(query);
-        query.setParameter("zdbID", geneID);
-        query.setParameter("aoZdbID", anatomyItemID);
-        return query.list();
-    }
-
     public List<String> getSNPPublicationIDs(Marker marker) {
         Session session = HibernateUtil.currentSession();
         String sql = """
@@ -508,20 +489,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Root<Publication> pubs = query.from(Publication.class);
 
         // Join the expressionExperiments property
-        Join<Publication, ExpressionExperiment> expressionExperiments = pubs.join("expressionExperiments", JoinType.INNER);
+        Join<Publication, ExpressionExperiment2> expressionExperiments = pubs.join("expressionExperiments", JoinType.INNER);
 
         // Define the predicates for the query
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(expressionExperiments.get("gene"), marker));
 
-        Join<ExpressionExperiment, ExpressionResult> expressionResults = expressionExperiments.join("expressionResults", JoinType.INNER);
+        Join<ExpressionExperiment2, ExpressionFigureStage> figureStageSet = expressionExperiments.join("figureStageSet", JoinType.INNER);
+        Join<ExpressionFigureStage, ExpressionResult2> expressionResults = figureStageSet.join("expressionResultSet", JoinType.INNER);
 
-        predicates.add(cb.isNotEmpty(expressionResults.get("figures")));
-        predicates.add(cb.or(cb.equal(expressionResults.get("entity").get("superterm"), anatomyTerm), cb.equal(expressionResults.get("entity").get("subterm"), anatomyTerm)));
+        predicates.add(cb.isNotNull(figureStageSet.get("figure")));
+        predicates.add(cb.or(cb.equal(expressionResults.get("superTerm"), anatomyTerm), cb.equal(expressionResults.get("subTerm"), anatomyTerm)));
         predicates.add(cb.equal(expressionResults.get("expressionFound"), true));
 
         // Join the fishExperiment property
-        Join<ExpressionExperiment, FishExperiment> genox = expressionExperiments.join("fishExperiment", JoinType.INNER);
+        Join<ExpressionExperiment2, FishExperiment> genox = expressionExperiments.join("fishExperiment", JoinType.INNER);
         predicates.add(cb.equal(genox.get("standardOrGenericControl"), true));
 
         // Join the fish property

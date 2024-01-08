@@ -42,14 +42,6 @@ import java.util.*;
  */
 public interface PublicationRepository extends PaginationParameter {
 
-    /**
-     * Retrieve all publication for a given geneID and anatomical structure.
-     *
-     * @param geneID        gene ID
-     * @param anatomyItemID term ID
-     */
-    List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID);
-
     List<String> getSNPPublicationIDs(Marker marker);
 
     /**

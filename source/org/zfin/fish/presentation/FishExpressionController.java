@@ -34,13 +34,12 @@ public class FishExpressionController {
      * @param fishID genotype ID or genox Ids
      * @param model  Model
      * @return view page
-     * @throws Exception exception
      */
     @RequestMapping(value = "/expression-summary", method = RequestMethod.GET)
     protected String showExpressionSummary(@RequestParam(value = "fishID", required = true) String fishID,
                                            @RequestParam(value = "geneID", required = false) String geneID,
                                            @ModelAttribute("formBean") FishSearchFormBean formBean,
-                                           Model model) throws Exception {
+                                           Model model) {
 
         return "fish/fish-expression-figure-summary";
     }
@@ -52,7 +51,7 @@ public class FishExpressionController {
     }
 
     @RequestMapping(value = "/expression-image-exist", method = RequestMethod.GET)
-    protected String imageExists(@RequestParam(value = "fishID", required = true) String fishID,
+    protected String imageExists(@RequestParam(value = "fishID") String fishID,
                                  @ModelAttribute("formBean") FishSearchFormBean formBean,
                                  Model model) throws Exception {
 

@@ -3,7 +3,7 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.ActiveData;
 
@@ -16,28 +16,28 @@ public class Clone extends Marker {
     @JsonView({View.API.class, View.UI.class})
     private Integer rating;
     private ProblemType problem;
-    private Set<ExpressionExperiment> expressionExperiments;
+    private Set<ExpressionExperiment2> expressionExperiments2;
 
     private Vector vector;
-    private ProbeLibrary probeLibrary ;
-    private String digest ;
-    private Integer insertSize ;
-    private String polymeraseName ;
-    private String pcrAmplification ;
+    private ProbeLibrary probeLibrary;
+    private String digest;
+    private Integer insertSize;
+    private String polymeraseName;
+    private String pcrAmplification;
     private String cloneComments;
-    private String cloningSite ;
+    private String cloningSite;
     private String sequenceType;
 
-    public boolean isRnaClone(){
+    public boolean isRnaClone() {
         return
-                getMarkerType().getType().equals(Marker.Type.CDNA)
-                        ||
-                        getMarkerType().getType().equals(Marker.Type.EST)
-                ;
+            getMarkerType().getType().equals(Marker.Type.CDNA)
+            ||
+            getMarkerType().getType().equals(Marker.Type.EST)
+            ;
     }
 
 
-    public enum ProblemType{
+    public enum ProblemType {
         CHIMERIC("Chimeric"),
         GENOMIC_CONTAMINATION__INTRON_CONTAINING_("Genomic Contamination (intron containing)"),
         PARTIALLY_PROCESSED("partially processed"),
@@ -52,7 +52,7 @@ public class Clone extends Marker {
             this.value = value;
         }
 
-        public String toString(){
+        public String toString() {
             return value;
         }
 
@@ -66,19 +66,19 @@ public class Clone extends Marker {
     }
 
 
-    public Set<ExpressionExperiment> getExpressionExperiments() {
-        return expressionExperiments;
+    public Set<ExpressionExperiment2> getExpressionExperiments2() {
+        return expressionExperiments2;
     }
 
-    public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
-        this.expressionExperiments = expressionExperiments;
+    public void setExpressionExperiments2(Set<ExpressionExperiment2> expressionExperiments) {
+        this.expressionExperiments2 = expressionExperiments;
     }
 
     // note: Must not have "isProblem" method as it will assume that 'problem' is a BooleanType
 
 
-    public boolean isChimeric(){
-        return ( problem!=null && problem.equals(ProblemType.CHIMERIC) ) ;
+    public boolean isChimeric() {
+        return (problem != null && problem.equals(ProblemType.CHIMERIC));
     }
 
     public String toString() {
@@ -100,7 +100,7 @@ public class Clone extends Marker {
     }
 
     @JsonView({View.UI.class})
-    public String getCloneType(){
+    public String getCloneType() {
         return ActiveData.getType(zdbID).name();
     }
 }

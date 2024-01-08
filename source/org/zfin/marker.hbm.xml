@@ -114,11 +114,6 @@
         </property>
 
 
-        <set name="probeExpressionExperiments" lazy="true">
-            <key column="xpatex_probe_feature_zdb_id"/>
-            <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
-        </set>
-
         <set name="orthologs" lazy="true">
             <key column="ortho_zdb_id"/>
             <one-to-many class="org.zfin.orthology.Ortholog"/>
@@ -231,7 +226,7 @@
 
             <set name="antibodyLabelings" lazy="true">
                 <key column="xpatex_atb_zdb_id"/>
-                <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+                <one-to-many class="org.zfin.expression.ExpressionExperiment2"/>
             </set>
 
             <set name="externalNotes" lazy="true" sort="natural">
@@ -282,9 +277,9 @@
             <many-to-one name="probeLibrary" column="clone_probelib_zdb_id" not-null="false"
                          class="org.zfin.marker.ProbeLibrary"/>
 
-            <set name="expressionExperiments" lazy="true">
+            <set name="expressionExperiments2" lazy="true">
                 <key column="xpatex_probe_feature_zdb_id"/>
-                <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+                <one-to-many class="org.zfin.expression.ExpressionExperiment2"/>
             </set>
         </joined-subclass>
 

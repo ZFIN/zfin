@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.presentation.ProteinExpressionDisplay;
@@ -54,7 +55,7 @@ public class FishAPIController {
         pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         pagination.addFieldFilter(FieldFilter.CONDITION_NAME, filterConditionName);
 
-        List<ExpressionResult> fishNonEfgExpressionResults = getExpressionRepository().getNonEfgExpressionResultsByFish(fish);
+        List<ExpressionFigureStage> fishNonEfgExpressionResults = getExpressionRepository().getNonEfgExpressionResultsByFish(fish);
         List<String> fishExpressionFigureIDs = getExpressionRepository().getExpressionFigureIDsByFish(fish);
         List<String> fishExpressionPublicationIDs = getExpressionRepository().getExpressionPublicationIDsByFish(fish);
         List<ExpressionDisplay> fishNonEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishNonEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
@@ -105,7 +106,7 @@ public class FishAPIController {
             pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, filterAntibodyName);
         }
 
-        List<ExpressionResult> fishProteinExpressionResults = getExpressionRepository().getProteinExpressionResultsByFish(fish);
+        List<ExpressionFigureStage> fishProteinExpressionResults = getExpressionRepository().getProteinExpressionResultsByFish(fish);
         List<String> fishExpressionFigureIDs = getExpressionRepository().getExpressionFigureIDsByFish(fish);
         List<String> fishExpressionPublicationIDs = getExpressionRepository().getExpressionPublicationIDsByFish(fish);
         List<ProteinExpressionDisplay> fishProteinExpressionDisplays = ExpressionService.createProteinExpressionDisplays(fish.getZdbID(), fishProteinExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
@@ -153,7 +154,7 @@ public class FishAPIController {
             pagination.addFieldFilter(FieldFilter.CONDITION_NAME, filterConditionName);
         }
 
-        List<ExpressionResult> fishEfgExpressionResults = getExpressionRepository().getEfgExpressionResultsByFish(fish);
+        List<ExpressionFigureStage> fishEfgExpressionResults = getExpressionRepository().getEfgExpressionResultsByFish(fish);
         List<String> fishExpressionFigureIDs = getExpressionRepository().getExpressionFigureIDsByFish(fish);
         List<String> fishExpressionPublicationIDs = getExpressionRepository().getExpressionPublicationIDsByFish(fish);
         List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);

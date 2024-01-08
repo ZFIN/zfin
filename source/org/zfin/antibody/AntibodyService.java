@@ -34,6 +34,7 @@ import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -43,7 +44,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class AntibodyService {
 
-    private Antibody antibody;
+    private final Antibody antibody;
     private AntibodySearchCriteria antibodySearchCriteria;
     private MatchingService matchingService;
 
@@ -119,44 +120,6 @@ public class AntibodyService {
         }
     }
 
-    public List<Term> getDistinctAnatomyTerms() {
-        List<Term> distinctAoTerms = new ArrayList<>();
-        Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null) {
-            return null;
-        }
-        for (ExpressionExperiment experiment : labelings) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
-            FishExperiment exp = experiment.getFishExperiment();
-
-            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
-                continue;
-            }
-            if (results != null) {
-                for (ExpressionResult result : results) {
-                    if (!result.isExpressionFound()) {
-                        continue;
-                    }
-                    Term term = result.getSuperTerm();
-                    if (!distinctAoTerms.contains(term)) {
-                        distinctAoTerms.add(term);
-                    }
-                    // add the secondary term if available
-                    Term subterm = result.getSubTerm();
-                    if (subterm != null) {
-                        if (!distinctAoTerms.contains(subterm)) {
-                            distinctAoTerms.add(subterm);
-                        }
-                    }
-                }
-            }
-        }
-        Collections.sort(distinctAoTerms);
-        return distinctAoTerms;
-    }
-
     /**
      * Returns the number of distinct composed terms where a composed term is composition of
      * superterm : subterm.
@@ -166,12 +129,14 @@ public class AntibodyService {
      */
     public int getNumberOfDistinctComposedTerms() {
         Collection<String> distinctTerms = new HashSet<>();
-        Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> labelings = antibody.getAntibodyLabelings();
         if (labelings == null) {
             return 0;
         }
-        for (ExpressionExperiment experiment : labelings) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
+        for (ExpressionExperiment2 experiment : labelings) {
+
+            Set<ExpressionResult2> results = getExpressionResult2s(experiment);
+
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get a FishExperiment object to check for standard environment; do nothing if not standard
             FishExperiment exp = experiment.getFishExperiment();
@@ -180,7 +145,7 @@ public class AntibodyService {
                 continue;
             }
             if (results != null) {
-                for (ExpressionResult result : results) {
+                for (ExpressionResult2 result : results) {
                     if (!result.isExpressionFound()) {
                         continue;
                     }
@@ -197,6 +162,17 @@ public class AntibodyService {
         return distinctTerms.size();
     }
 
+    private static Set<ExpressionResult2> getExpressionResult2s(ExpressionExperiment2 experiment) {
+        Set<ExpressionResult2> results = null;
+        if (CollectionUtils.isNotEmpty(experiment.getFigureStageSet())) {
+            results = experiment.getFigureStageSet().stream()
+                .map(ExpressionFigureStage::getExpressionResultSet)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+        }
+        return results;
+    }
+
     /**
      * Returns a list of distinct GO terms that this antibody labels.
      * Only include wild-type fish and standard condition.
@@ -205,12 +181,12 @@ public class AntibodyService {
      */
     public SortedSet<Term> getDistinctGoTermsWTAndStandard() {
         SortedSet<Term> distinctGoTerms = new TreeSet<>();
-        Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> labelings = antibody.getAntibodyLabelings();
         if (labelings == null || labelings.isEmpty()) {
             return null;
         }
-        for (ExpressionExperiment experiment : labelings) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
+        for (ExpressionExperiment2 experiment : labelings) {
+            Set<ExpressionResult2> results = getExpressionResult2s(experiment);
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get a FishExperiment object to check for standard environment; do nothing if not standard
@@ -221,7 +197,7 @@ public class AntibodyService {
             }
 
             if (results != null && !results.isEmpty()) {
-                for (ExpressionResult result : results) {
+                for (ExpressionResult2 result : results) {
                     // only record if expression is found.
                     if (!result.isExpressionFound()) {
                         continue;
@@ -247,21 +223,21 @@ public class AntibodyService {
      */
     public DevelopmentStage getEarliestStartStage() {
         DevelopmentStage stage = null;
-        Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> labelings = antibody.getAntibodyLabelings();
         if (labelings == null) {
             return null;
         }
-        for (ExpressionExperiment experiment : labelings) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
+        for (ExpressionExperiment2 experiment : labelings) {
+            Set<ExpressionFigureStage> figureStageSet = experiment.getFigureStageSet();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get a FishExperiment object to check for standard environment; do nothing if not standard
             FishExperiment exp = experiment.getFishExperiment();
             if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
             }
-            if (results != null) {
-                for (ExpressionResult result : results) {
-                    DevelopmentStage testStage = result.getStartStage();
+            if (CollectionUtils.isNotEmpty(figureStageSet)) {
+                for (ExpressionFigureStage figureStage : figureStageSet) {
+                    DevelopmentStage testStage = figureStage.getStartStage();
                     if (stage == null || testStage.earlierThan(stage)) {
                         stage = testStage;
                     }
@@ -279,21 +255,21 @@ public class AntibodyService {
      */
     public DevelopmentStage getLatestEndStage() {
         DevelopmentStage stage = null;
-        Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> labelings = antibody.getAntibodyLabelings();
         if (labelings == null) {
             return null;
         }
-        for (ExpressionExperiment experiment : labelings) {
-            Set<ExpressionResult> results = experiment.getExpressionResults();
+        for (ExpressionExperiment2 experiment : labelings) {
+            Set<ExpressionFigureStage> figureStageSet = experiment.getFigureStageSet();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get a FishExperiment object to check for standard environment; do nothing if not standard
             FishExperiment exp = experiment.getFishExperiment();
             if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
             }
-            if (results != null) {
-                for (ExpressionResult result : results) {
-                    DevelopmentStage testStage = result.getEndStage();
+            if (CollectionUtils.isNotEmpty(figureStageSet)) {
+                for (ExpressionFigureStage figureStage : figureStageSet) {
+                    DevelopmentStage testStage = figureStage.getEndStage();
                     if (stage == null || !testStage.earlierThan(stage)) {
                         stage = testStage;
                     }
@@ -401,20 +377,20 @@ public class AntibodyService {
 
     public Set<Term> getDistinctAoTerms() {
         Set<Term> terms = new HashSet<>();
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> experiments = antibody.getAntibodyLabelings();
         if (experiments == null) {
             return terms;
         }
-        for (ExpressionExperiment experiment : experiments) {
+        for (ExpressionExperiment2 experiment : experiments) {
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
             FishExperiment exp = experiment.getFishExperiment();
 
             if (geno.isWildtype() && exp.isStandardOrGenericControl()) {
-                Set<ExpressionResult> results = experiment.getExpressionResults();
+                Set<ExpressionResult2> results = getExpressionResult2s(experiment);
                 if (results != null) {
-                    for (ExpressionResult result : results) {
+                    for (ExpressionResult2 result : results) {
                         if (result.isExpressionFound()) {
                             terms.add(result.getSuperTerm());
                             GenericTerm subterm = result.getSubTerm();
@@ -430,13 +406,13 @@ public class AntibodyService {
     }
 
     public SortedSet<String> getDistinctAssayNames() {
-        Set<ExpressionExperiment> antibodyLabelings = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> antibodyLabelings = antibody.getAntibodyLabelings();
         if (antibodyLabelings == null) {
             return new TreeSet<>();
         }
         SortedSet<String> assayNames = new TreeSet<>();
-        for (ExpressionExperiment labeling : antibodyLabelings) {
-            Set<ExpressionResult> results = labeling.getExpressionResults();
+        for (ExpressionExperiment2 labeling : antibodyLabelings) {
+            Set<ExpressionResult2> results = getExpressionResult2s(labeling);
             // exclude those assays with no expression result record
             if (results != null && !results.isEmpty()) {
                 String assayName = labeling.getAssay().getName();
@@ -476,7 +452,7 @@ public class AntibodyService {
         Map<String, AnatomyLabel> map = new HashMap<>();
 
         // get a set of ExpressionExperiment objects associated with the antibody
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> experiments = antibody.getAntibodyLabelings();
 
         // loop through the set of ExpressionExperiment objects to get the related data
         if (CollectionUtils.isNotEmpty(experiments)) {
@@ -504,7 +480,7 @@ public class AntibodyService {
     public List<ExpressionStatement> getAntibodyLabelingStatements() {
 
         // get a set of ExpressionExperiment objects associated with the antibody
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> experiments = antibody.getAntibodyLabelings();
         List<ExpressionStatement> labelingDisplays = new ArrayList<>();
 
         // loop through the set of ExpressionExperiment objects to get the related data
@@ -516,17 +492,24 @@ public class AntibodyService {
         return labelingDisplays;
     }
 
-    private List<ExpressionStatement> getDistinctExpressionStatements(Set<ExpressionExperiment> experiments) {
+    private List<ExpressionStatement> getDistinctExpressionStatements(Set<ExpressionExperiment2> experiments) {
         if (experiments == null) {
             return null;
         }
         Set<ExpressionStatement> statementSet = new HashSet<>();
 
-        for (ExpressionExperiment exp : experiments) {
+        for (ExpressionExperiment2 exp : experiments) {
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
             if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
-                if (exp.getExpressionResults() != null) {
-                    for (ExpressionResult result : exp.getExpressionResults()) {
+                Set<ExpressionResult2> results = null;
+                if (CollectionUtils.isNotEmpty(exp.getFigureStageSet())) {
+                    results = exp.getFigureStageSet().stream()
+                        .map(ExpressionFigureStage::getExpressionResultSet)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet());
+                }
+                if (results != null) {
+                    for (ExpressionResult2 result :results) {
                         if (result.isExpressionFound()) {
                             ExpressionStatement statement = new ExpressionStatement();
                             statement.setEntity(result.getEntity());
@@ -542,8 +525,8 @@ public class AntibodyService {
         return statements;
     }
 
-    private void processExperiments(Map<String, AnatomyLabel> map, Set<ExpressionExperiment> experiments) {
-        for (ExpressionExperiment exp : experiments) {
+    private void processExperiments(Map<String, AnatomyLabel> map, Set<ExpressionExperiment2> experiments) {
+        for (ExpressionExperiment2 exp : experiments) {
 
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
@@ -554,10 +537,10 @@ public class AntibodyService {
             if (geno.isWildtype() && experiment.isStandardOrGenericControl()) {
 
                 // get a set of ExpressionResult objects
-                Set<ExpressionResult> results = exp.getExpressionResults();
+                Set<ExpressionResult2> results = getExpressionResult2s(exp);
 
-                // loop thru the set of ExpressionResult objects to get the related data
-                for (ExpressionResult result : results) {
+                // loop through the set of ExpressionResult objects to get the related data
+                for (ExpressionResult2 result : results) {
                     if (result.isExpressionFound()) {
                         Term ao = result.getSuperTerm();
 
@@ -597,16 +580,14 @@ public class AntibodyService {
                         labeling.setEndStage(endStage);
                         */
 
-                        Set<Figure> figures = result.getFigures();
+                        Figure figure = result.getExpressionFigureStage().getFigure();
 
-                        if (figures != null && !figures.isEmpty()) {
-                            labeling.getFigures().addAll(figures);
+                        if (figure != null) {
+                            labeling.getFigures().add(figure);
                             // if there is one figure with image, set the flag
-                            for (Figure fig : figures) {
-                                if (fig.getImages() != null && fig.getImages().size() > 0) {
-                                    labeling.setFigureWithImage(true);
-                                    break;
-                                }
+                            if (figure.getImages() != null && figure.getImages().size() > 0) {
+                                labeling.setFigureWithImage(true);
+                                break;
                             }
                         }
 
@@ -633,10 +614,10 @@ public class AntibodyService {
         Map<String, AnatomyLabel> map = new HashMap<>();
 
         // get a set of ExpressionExperiment objects associated with the antibody
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+        Set<ExpressionExperiment2> experiments = antibody.getAntibodyLabelings();
 
         // loop thru the set of ExpressionExperiment objects to get the related data
-        for (ExpressionExperiment exp : experiments) {
+        for (ExpressionExperiment2 exp : experiments) {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
@@ -645,16 +626,16 @@ public class AntibodyService {
                 Marker gene = exp.getGene();
 
                 // get a set of ExpressionResult objects
-                Set<ExpressionResult> results = exp.getExpressionResults();
+                Set<ExpressionResult2> results = getExpressionResult2s(exp);
 
                 // loop through the set of ExpressionResult objects to get the related data
-                for (ExpressionResult result : results) {
+                for (ExpressionResult2 result : results) {
                     if (result.isExpressionFound()) {
 
                         Term subterm = result.getSubTerm();
                         Term superterm = result.getSuperTerm();
 
-                        DevelopmentStage startStage = result.getStartStage();
+                        DevelopmentStage startStage = result.getExpressionFigureStage().getStartStage();
                         String startStageName;
 
                         if (startStage == null) {
@@ -663,7 +644,7 @@ public class AntibodyService {
                             startStageName = startStage.getName();
                         }
 
-                        DevelopmentStage endStage = result.getEndStage();
+                        DevelopmentStage endStage = result.getExpressionFigureStage().getEndStage();
                         String endStageName;
                         if (endStage == null) {
                             endStageName = "";
@@ -707,10 +688,10 @@ public class AntibodyService {
                         }
 
                         // get the figures associated
-                        Set<Figure> figures = result.getFigures();
+                        Figure figure = result.getExpressionFigureStage().getFigure();
 
-                        if (figures != null && !figures.isEmpty()) {
-                            labeling.getFigures().addAll(figures);
+                        if (figure != null) {
+                            labeling.getFigures().add(figure);
                         }
 
                         Publication pub = exp.getPublication();
@@ -870,7 +851,7 @@ public class AntibodyService {
             publication = RepositoryFactory.getPublicationRepository().getPublication(publicationId);
         }
         InfrastructureService.insertUpdate(alias.getMarker(), "Removed alias: " + alias.getAlias() + "' attributed to publication: '"
-                                                   + (publication == null ? "null" : publication.getZdbID()) + "'");
+                                                              + (publication == null ? "null" : publication.getZdbID()) + "'");
         getMarkerRepository().deleteMarkerAlias(alias.getMarker(), alias);
     }
 

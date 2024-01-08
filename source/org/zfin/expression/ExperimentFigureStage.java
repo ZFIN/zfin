@@ -4,6 +4,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.ComposedFxTerm;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Domain object that does not map to a database table directly.
@@ -11,11 +12,11 @@ import java.util.*;
  */
 public class ExperimentFigureStage {
 
-    private ExpressionExperiment expressionExperiment;
+    private ExpressionExperiment2 expressionExperiment;
     private Figure figure;
     private DevelopmentStage start;
     private DevelopmentStage end;
-    private Set<ExpressionResult> expressionResults;
+    private Set<ExpressionFigureStage> figureStages;
     //cached variable
     private List<ComposedFxTerm> terms;
 
@@ -47,35 +48,33 @@ public class ExperimentFigureStage {
         this.end = end;
     }
 
-    public ExpressionExperiment getExpressionExperiment() {
+    public ExpressionExperiment2 getExpressionExperiment() {
         return expressionExperiment;
     }
 
-    public void setExpressionExperiment(ExpressionExperiment expressionExperiment) {
+    public void setExpressionExperiment(ExpressionExperiment2 expressionExperiment) {
         this.expressionExperiment = expressionExperiment;
     }
 
-    public Set<ExpressionResult> getExpressionResults() {
-        return expressionResults;
-    }
-
-    public void setExpressionResults(Set<ExpressionResult> expressionResults) {
-        this.expressionResults = expressionResults;
+    public Set<ExpressionResult2> getFigureStages() {
+        return figureStages.stream().map(ExpressionFigureStage::getExpressionResultSet).flatMap(Collection::stream).collect(Collectors.toSet());
     }
 
     public List<ComposedFxTerm> getComposedTerms() {
         if (terms != null)
             return terms;
-        terms = new ArrayList<ComposedFxTerm>();
-        for (ExpressionResult result : expressionResults) {
-            ComposedFxTerm term = new ComposedFxTerm();
-            term.setSuperTerm(result.getSuperTerm());
-            term.setSubterm(result.getSubTerm());
-            term.setExpressionFound(result.isExpressionFound());
-            ////term.setZdbID(result.getZdbID());
-            terms.add(term);
-            setStart(result.getStartStage());
-            setEnd(result.getEndStage());
+        terms = new ArrayList<>();
+        for (ExpressionFigureStage figureStage : figureStages) {
+            figureStage.getExpressionResultSet().forEach(result -> {
+                ComposedFxTerm term = new ComposedFxTerm();
+                term.setSuperTerm(result.getSuperTerm());
+                term.setSubterm(result.getSubTerm());
+                term.setExpressionFound(result.isExpressionFound());
+                ////term.setZdbID(result.getZdbID());
+                terms.add(term);
+                setStart(figureStage.getStartStage());
+                setEnd(figureStage.getEndStage());
+            });
         }
         return terms;
     }
@@ -104,31 +103,15 @@ public class ExperimentFigureStage {
         return result;
     }
 
-    public void addExpressionResults(Collection<ExpressionResult> result) {
-        for(ExpressionResult er : result){
-            addExpressionResult(er);
-        }
-    }
-
-    public void addExpressionResult(ExpressionResult result) {
-        if (expressionResults == null){
-            expressionResults = new HashSet<ExpressionResult>();
-        }
-        expressionResults.add(result);
-        start = result.getStartStage();
-        end = result.getEndStage();
-    }
-
-
     @Override
     public String toString() {
         return "ExperimentFigureStage{" +
-                "expressionExperiment=" + expressionExperiment +
-                ", figure=" + figure +
-                ", start=" + start +
-                ", end=" + end +
-                ", expressionResults=" + expressionResults +
-                ", terms=" + terms +
-                '}';
+               "expressionExperiment=" + expressionExperiment +
+               ", figure=" + figure +
+               ", start=" + start +
+               ", end=" + end +
+               ", expressionResults=" + figureStages +
+               ", terms=" + terms +
+               '}';
     }
 }

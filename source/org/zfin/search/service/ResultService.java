@@ -540,7 +540,7 @@ public class ResultService {
 
         ExpressionFigureStage efs = RepositoryFactory.getExpressionRepository().getExpressionFigureStage(id);
 
-        ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
+        ExpressionExperiment2 xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
         Figure figure = RepositoryFactory.getFigureRepository().getFigure(result.getFigZdbId());
 
         if (xpatex != null && efs != null) {
@@ -576,7 +576,6 @@ public class ResultService {
             }
 
             List<String> results = new ArrayList<>();
-            List<ExpressionResult> expressionResults = new ArrayList<>();
 
 
             //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
@@ -584,7 +583,6 @@ public class ResultService {
 
 
             //Sort expressionResults by start stage, end stage, superterm name, subterm name...
-            Collections.sort(expressionResults);
 
             for (ExpressionResult2 expressionResult : efs.getExpressionResultSet()) {
                 StringBuilder sb = new StringBuilder();

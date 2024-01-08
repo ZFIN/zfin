@@ -78,8 +78,6 @@ public interface AntibodyRepository {
 	 * @param aoTerm Anatomy Term
 	 * @return number of antibodies
 	 */
-	int getAntibodiesByAOTermCount(GenericTerm aoTerm);
-
 	/**
 	 * Retrieve antibodies for a given ao term.
 	 * Only wild-type fish are cared for.

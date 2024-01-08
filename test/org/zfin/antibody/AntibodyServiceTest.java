@@ -32,13 +32,7 @@ import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
-/**
- * Tests AntibodyService class.
- */
 public class AntibodyServiceTest extends AbstractDatabaseTest {
-
-    private static final Logger logger = LogManager.getLogger(AntibodyServiceTest.class);
-
 
     @Test
     public void distinctAOTermList() {
@@ -52,31 +46,34 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         termThree.setZdbID("ZDB-ANAT-010921-572");
         termThree.setTermName("Engel");
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSuperTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultTwo.setSuperTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        ExpressionResult resultThree = new ExpressionResult();
+        ExpressionResult2 resultThree = new ExpressionResult2();
         resultThree.setSuperTerm(termThree);
         resultThree.setExpressionFound(true);
 
-        ExpressionResult resultFour = new ExpressionResult();
+        ExpressionResult2 resultFour = new ExpressionResult2();
         resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
         results.add(resultFour);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -84,7 +81,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertTrue(aoTerms != null);
+        assertNotNull(aoTerms);
         assertEquals(3, aoTerms.size());
     }
 
@@ -100,32 +97,34 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         termThree.setZdbID("ZDB-ANAT-011113-512");
         termThree.setTermName("Halle");
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSuperTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultTwo.setSuperTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        ExpressionResult resultThree = new ExpressionResult();
+        ExpressionResult2 resultThree = new ExpressionResult2();
         resultThree.setSuperTerm(termThree);
         resultThree.setExpressionFound(true);
 
-        ExpressionResult resultFour = new ExpressionResult();
+        ExpressionResult2 resultFour = new ExpressionResult2();
         resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
         results.add(resultFour);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
-
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -133,7 +132,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertTrue(aoTerms != null);
+        assertNotNull(aoTerms);
         assertEquals(2, aoTerms.size());
     }
 
@@ -146,23 +145,26 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termThree = new GenericTerm();
         termThree.setZdbID("ZDB-ANAT-011113-514");
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSuperTerm(createMinimalGenericTerm(termOne, Ontology.ANATOMY));
         resultOne.setExpressionFound(true);
         resultOne.setSubTerm(createMinimalGenericTerm(termThree, Ontology.ANATOMY));
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultOne.setSuperTerm(createMinimalGenericTerm(termTwo, Ontology.ANATOMY));
         resultTwo.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
 
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -170,11 +172,11 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertTrue(aoTerms != null);
+        assertNotNull(aoTerms);
         assertEquals(3, aoTerms.size());
     }
 
-    private Set<ExpressionExperiment> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment experiment) {
+    private Set<ExpressionExperiment2> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment2 experiment) {
         FishExperiment genox = new FishExperiment();
         genox.setStandard(true);
         genox.setStandardOrGenericControl(true);
@@ -186,7 +188,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         genox.setFish(fish);
         Experiment exp = new Experiment();
         genox.setExperiment(exp);
-        Set<ExpressionExperiment> experiments = new HashSet<>();
+        Set<ExpressionExperiment2> experiments = new HashSet<>();
         experiments.add(experiment);
         return experiments;
     }
@@ -195,16 +197,19 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
     public void singleGoTermList() {
         GenericTerm termOne = getNucleusTerm();
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -212,22 +217,24 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertTrue(goTerms != null);
+        assertNotNull(goTerms);
         assertEquals(1, goTerms.size());
     }
 
     @Test
     public void noGoTermList() {
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -235,7 +242,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertTrue(goTerms != null);
+        assertNotNull(goTerms);
         assertEquals(0, goTerms.size());
     }
 
@@ -245,22 +252,25 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
         GenericTerm termTwo = getCyokineTerm();
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultTwo.setSubTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
 
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -268,7 +278,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertTrue(goTerms != null);
+        assertNotNull(goTerms);
         assertEquals(2, goTerms.size());
     }
 
@@ -293,24 +303,27 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         GenericTerm termOne = getNucleusTerm();
         GenericTerm termTwo = getCyokineTerm();
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultTwo.setSubTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        ExpressionResult resultThree = new ExpressionResult();
+        ExpressionResult2 resultThree = new ExpressionResult2();
         resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
-        Set<ExpressionExperiment> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionResultSet(results);
+        figureStage.setExpressionExperiment(experiment);
+        experiment.setFigureStageSet(Set.of(figureStage));
+        Set<ExpressionExperiment2> experiments = createWildtypeAndStandardGenotypeExperiment(experiment);
 
         Antibody ab = new Antibody();
         ab.setAntibodyLabelings(experiments);
@@ -318,7 +331,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertTrue(goTerms != null);
+        assertNotNull(goTerms);
         assertEquals(2, goTerms.size());
     }
 
@@ -326,27 +339,30 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
     public void multipleRepeatingGoTermListWithNull() {
         GenericTerm termOne = getNucleusTerm();
 
-        ExpressionResult resultOne = new ExpressionResult();
+        ExpressionResult2 resultOne = new ExpressionResult2();
         resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        ExpressionResult resultTwo = new ExpressionResult();
+        ExpressionResult2 resultTwo = new ExpressionResult2();
         resultTwo.setExpressionFound(true);
 
-        ExpressionResult resultThree = new ExpressionResult();
+        ExpressionResult2 resultThree = new ExpressionResult2();
         resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<>();
+        HashSet<ExpressionResult2> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
 
-        ExpressionExperiment experiment = new ExpressionExperiment();
-        experiment.setExpressionResults(results);
+        ExpressionExperiment2 experiment = new ExpressionExperiment2();
+        ExpressionFigureStage figureStage = new ExpressionFigureStage();
+        figureStage.setExpressionExperiment(experiment);
+        figureStage.setExpressionResultSet(results);
+        experiment.setFigureStageSet(Set.of(figureStage));
         createWildtypeAndStandardGenotypeExperiment(experiment);
 
-        Set<ExpressionExperiment> experiments = new HashSet<>();
+        Set<ExpressionExperiment2> experiments = new HashSet<>();
         experiments.add(experiment);
 
         Antibody ab = new Antibody();

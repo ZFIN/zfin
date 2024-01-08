@@ -5,9 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -182,18 +180,17 @@ public class MergeService {
      * @param antibodyA, Antibody antibodyB) { Antibody to merge expression away from (and then delete).
      * @param antibodyB  Antibody to merge expression on to.
      */
-    @SuppressWarnings("unchecked")
     protected static void mergeAntibodyLabeling(Antibody antibodyA, Antibody antibodyB) {
 
         if (CollectionUtils.isEmpty(antibodyA.getAntibodyLabelings())) return;
 
-        Set<ExpressionExperiment> antibodyLabelingsARemoveSet = new HashSet<ExpressionExperiment>();
+        Set<ExpressionExperiment2> antibodyLabelingsARemoveSet = new HashSet<>();
 
 //        for all expression experiments on A:  EEa
-        for (ExpressionExperiment expressionExperimentA : antibodyA.getAntibodyLabelings()) {
+        for (ExpressionExperiment2 expressionExperimentA : antibodyA.getAntibodyLabelings()) {
 //          if EEa not contained in antibody B: then
 //            update the antibody on EEa to point to antibody B
-            ExpressionExperiment expressionExperimentB = antibodyB.getMatchingAntibodyLabeling(expressionExperimentA);
+            ExpressionExperiment2 expressionExperimentB = antibodyB.getMatchingAntibodyLabeling(expressionExperimentA);
             if (expressionExperimentB == null) {
                 // move out of the way both ways
                 expressionExperimentA.setAntibody(antibodyB);
@@ -202,10 +199,12 @@ public class MergeService {
             }
             //else
             // there is a match, then we move the expression results
+/*   ToDO: re-write
             else if (CollectionUtils.isNotEmpty(expressionExperimentA.getExpressionResults())) {
-                Set<ExpressionResult> expressionResultRemoveSet = moveExpressionResults(expressionExperimentA, expressionExperimentB);
+                Set<ExpressionResult2> expressionResultRemoveSet = moveExpressionResults(expressionExperimentA, expressionExperimentB);
                 expressionExperimentA.getExpressionResults().removeAll(expressionResultRemoveSet);
             }
+*/
         }
 
         // cleanup things to remove:
@@ -213,9 +212,9 @@ public class MergeService {
 
     }
 
-    private static Set<ExpressionResult> moveExpressionResults(ExpressionExperiment expressionExperimentA, ExpressionExperiment expressionExperimentB) {
-        Set<ExpressionResult> expressionResultRemoveSet = new HashSet<ExpressionResult>();
-        for (ExpressionResult expressionResultA : expressionExperimentA.getExpressionResults()) {
+    private static Set<ExpressionResult2> moveExpressionResults(ExpressionExperiment2 expressionExperimentA, ExpressionExperiment2 expressionExperimentB) {
+        Set<ExpressionResult2> expressionResultRemoveSet = new HashSet<>();
+/*        for (ExpressionResult expressionResultA : expressionExperimentA.getExpressionResults()) {
             ExpressionResult expressionResultB = expressionExperimentB.getMatchingExpressionResult(expressionResultA);
             if (expressionResultB == null) {
                 expressionResultA.setExpressionExperiment(expressionExperimentB);
@@ -226,15 +225,15 @@ public class MergeService {
             // if there is a match then we move the expression result figures
             else {
                 HibernateUtil.currentSession().evict(expressionResultA);
-/* ////TODO
+*//* ////TODO
                 expressionResultA = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultA.getZdbID());
                 HibernateUtil.currentSession().evict(expressionResultB);
                 expressionResultB = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultB.getZdbID());
-*/
+*//*
 
                 moveFigures(expressionResultA, expressionResultB);
             }
-        }
+        }*/
         return expressionResultRemoveSet;
     }
 

@@ -23,11 +23,11 @@ public class ExpressionExperiment2 {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ExpressionExperiment2")
     @GenericGenerator(name = "ExpressionExperiment2",
-            strategy = "org.zfin.database.ZdbIdGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "type", value = "XPAT"),
-                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
-            })
+        strategy = "org.zfin.database.ZdbIdGenerator",
+        parameters = {
+            @org.hibernate.annotations.Parameter(name = "type", value = "XPAT"),
+            @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+        })
     @Column(name = "xpatex_zdb_id")
     private String zdbID;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,14 +89,6 @@ public class ExpressionExperiment2 {
         this.publication = publication;
     }
 
-    public Set<ExpressionResult> getExpressionResults() {
-        return expressionResults;
-    }
-
-    public void setExpressionResults(Set<ExpressionResult> expressionResults) {
-        this.expressionResults = expressionResults;
-    }
-
     public Marker getGene() {
         return gene;
     }
@@ -154,59 +146,18 @@ public class ExpressionExperiment2 {
      * @return number of distinct expressions
      */
     public int getDistinctExpressions() {
-        HashSet<String> distinctSet = new HashSet<String>();
-        if (expressionResults != null) {
-            for (ExpressionResult expression : expressionResults) {
-                DevelopmentStage startStage = expression.getStartStage();
-                DevelopmentStage endStage = expression.getEndStage();
-                Set<Figure> figures = expression.getFigures();
-                for (Figure figure : figures) {
-                    StringBuilder sb = new StringBuilder(figure.getZdbID());
-                    sb.append(startStage.getZdbID());
-                    sb.append(endStage.getZdbID());
-                    distinctSet.add(sb.toString());
-                }
+        HashSet<String> distinctSet = new HashSet<>();
+        if (figureStageSet != null) {
+            for (ExpressionFigureStage figureStage : figureStageSet) {
+                DevelopmentStage startStage = figureStage.getStartStage();
+                DevelopmentStage endStage = figureStage.getEndStage();
+                StringBuilder sb = new StringBuilder(figureStage.getFigure().getZdbID());
+                sb.append(startStage.getZdbID());
+                sb.append(endStage.getZdbID());
+                distinctSet.add(sb.toString());
             }
         }
         return distinctSet.size();
-    }
-
-    public void addExpressionResult(ExpressionResult newResult) {
-        if (expressionResults == null)
-            expressionResults = new HashSet<ExpressionResult>();
-        expressionResults.add(newResult);
-    }
-
-    public ExpressionResult getMatchingExpressionResult(ExpressionResult expressionResult) {
-        for (ExpressionResult aExpressionResult : getExpressionResults()) {
-            if (false == canMergeExpressionResult(aExpressionResult, expressionResult)) {
-                return aExpressionResult;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Uses alternate key:
-     * experiment, anatomy item, start stage, end stage, expression found, and term
-     * Only term can be null.  Expression found is a boolean.
-     * Since experiment is going ot be moved, we don't really care about that.
-     *
-     * @param era First expresion result.
-     * @param erb Second expression result.
-     * @return Indicates if these records are too similar (false) or not (true).
-     */
-    private boolean canMergeExpressionResult(ExpressionResult era, ExpressionResult erb) {
-        if (!era.getSuperTerm().equals(erb.getSuperTerm())) return true;
-        if (!era.getStartStage().equals(erb.getStartStage())) return true;
-        if (!era.getEndStage().equals(erb.getEndStage())) return true;
-        if (!era.isExpressionFound() == erb.isExpressionFound()) return true;
-        if (era.getSubTerm() == null && erb.getSubTerm() != null) return true;
-        if (era.getSubTerm() != null && erb.getSubTerm() == null) return true;
-        if (era.getSubTerm() != null && erb.getSubTerm() != null &&
-                false == era.getSubTerm().equals(erb.getSubTerm())) return true;
-
-        return false;
     }
 
     /**
@@ -218,9 +169,9 @@ public class ExpressionExperiment2 {
         if (expressionResults == null)
             return null;
         // at maximum as many figures as result records
-        Set<Figure> figures = new HashSet<Figure>(expressionResults.size());
-        for (ExpressionResult result : expressionResults) {
-            figures.addAll(result.getFigures());
+        Set<Figure> figures = new HashSet<>(figureStageSet.size());
+        for (ExpressionFigureStage result : figureStageSet) {
+            figures.add(result.getFigure());
         }
         return figures;
     }
@@ -235,6 +186,7 @@ public class ExpressionExperiment2 {
 
     /**
      * Check if the fish uses a wildtype geno without STRs and the environment is standard or generic control.
+     *
      * @return
      */
     public boolean isWildtype() {

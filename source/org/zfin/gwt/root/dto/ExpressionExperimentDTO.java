@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import org.zfin.gwt.root.util.StringUtils;
 
 /**
- * Data Transfer Object corresponding to {@link org.zfin.expression.ExpressionExperiment}.
+ * Data Transfer Object corresponding to {@link org.zfin.expression.ExpressionExperiment2}.
  */
 public class ExpressionExperimentDTO implements IsSerializable, Comparable<ExpressionExperimentDTO> {
 

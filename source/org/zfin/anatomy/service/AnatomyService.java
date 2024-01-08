@@ -88,36 +88,4 @@ public class AnatomyService {
         return stageListDisplay;
     }
 
-    public static DevelopmentStage getEarliestStartStage(Collection<ExpressionResult> results) {
-        if (results == null)
-            return null;
-
-        DevelopmentStage stage = null;
-        for (ExpressionResult result : results) {
-            if (stage == null) {
-                stage = result.getStartStage();
-                continue;
-            }
-            if (result.getStartStage().earlierThan(stage))
-                stage = result.getStartStage();
-        }
-        return stage;
-    }
-
-    public static DevelopmentStage getLatestEndStage(Collection<ExpressionResult> results) {
-        if (results == null)
-            return null;
-
-        DevelopmentStage stage = null;
-        for (ExpressionResult result : results) {
-            if (stage == null) {
-                stage = result.getEndStage();
-                continue;
-            }
-            if (stage.earlierThan(result.getEndStage()))
-                stage = result.getEndStage();
-        }
-        return stage;
-    }
-
 }

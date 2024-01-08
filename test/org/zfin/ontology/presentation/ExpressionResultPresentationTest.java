@@ -2,6 +2,7 @@ package org.zfin.ontology.presentation;
 
 import org.junit.Test;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -17,7 +18,7 @@ public class ExpressionResultPresentationTest extends TermPresentation {
 
     @Test
     public void createExpressionResultHyperlink() {
-        ExpressionResult result = new ExpressionResult();
+        ExpressionResult2 result = new ExpressionResult2();
         GenericTerm superterm = createTermByName("eye");
         GenericTerm subterm = createTermByName("melanocyte");
         PostComposedEntity entity = new PostComposedEntity();
@@ -25,7 +26,7 @@ public class ExpressionResultPresentationTest extends TermPresentation {
         entity.setSubterm(subterm);
         result.setEntity(entity);
 
-        String hyperlink = ExpressionResultPresentation.getLink((ExpressionResult) null, true, false);
+        String hyperlink = ExpressionResultPresentation.getLink(null, true, false);
         assertNull(hyperlink);
 
         hyperlink = ExpressionResultPresentation.getLink(result,true, false);

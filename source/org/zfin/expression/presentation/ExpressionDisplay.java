@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
@@ -25,7 +26,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private Set<Publication> publications;
     @JsonView(View.API.class)
     private Set<Figure> figures;
-    private List<ExpressionResult> expressionResults;
+    private List<ExpressionResult2> expressionResults;
     @JsonView(View.API.class)
     private Experiment experiment;
     @JsonView(View.API.class)

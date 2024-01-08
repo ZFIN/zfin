@@ -78,8 +78,7 @@ public interface ExpressionRepository {
      * @param experimentID expression experiment ID
      * @return ExpressionExperiment
      */
-    ExpressionExperiment getExpressionExperiment(String experimentID);
-    ExpressionExperiment2 getExpressionExperiment2(String experimentID);
+    ExpressionExperiment2 getExpressionExperiment(String experimentID);
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
@@ -184,7 +183,7 @@ public interface ExpressionRepository {
      * @param fishID        genotype ID
      * @return list of expression experiment
      */
-    List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
+    List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
 
     /**
      * Retrieve an experiment figure stage for given pub, gene and fish.
@@ -204,20 +203,23 @@ public interface ExpressionRepository {
      * @param publicationID pub id
      * @return list of experiments
      */
-    List<ExpressionExperiment> getExperiments(String publicationID);
+    List<ExpressionExperiment2> getExperiments(String publicationID);
     List<ExpressionExperiment2> getExpressionByExperiment(String experimentID);
 
 
-    /**
+/*
+    */
+/**
      * Create a single figure annotation.
      * If no composed term is provided 'Unspecified is used'
      *
      * @param expressionResult experiment figure stage
      * @param singleFigure     Figure
-     */
-    void createExpressionResult(ExpressionResult expressionResult, Figure singleFigure);
+     *//*
 
-    List<ExpressionResult> checkForExpressionResultRecord(ExpressionResult result);
+    void createExpressionResult(ExpressionResult2 expressionResult, Figure singleFigure);
+*/
+
     List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result);
 
     /**
@@ -324,7 +326,9 @@ public interface ExpressionRepository {
      * @param fish Fish
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getExpressionResultsByFish (Fish fish);
+
+    List<ExpressionFigureStage> getExpressionFigureStagesByFish(Fish fish);
 
     long getExpressionResultsByFishAndPublication(Fish fish, String publicationID);
 
@@ -332,11 +336,11 @@ public interface ExpressionRepository {
 
     List<String> getExpressionPublicationIDsByFish(Fish fish);
 
-    List<ExpressionResult> getNonEfgExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getNonEfgExpressionResultsByFish (Fish fish);
 
-    List<ExpressionResult> getEfgExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getEfgExpressionResultsByFish (Fish fish);
 
-    List<ExpressionResult> getProteinExpressionResultsByFish (Fish fish);
+    List<ExpressionFigureStage> getProteinExpressionResultsByFish (Fish fish);
 
     /**
      * Retrieve all expression results for a given Sequenec Targeting Reagent
@@ -344,7 +348,7 @@ public interface ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
+    List<ExpressionFigureStage> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
 
     List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
 
@@ -374,7 +378,7 @@ public interface ExpressionRepository {
      * Retrieve all expression result objects that annotate with a secondary term.
      * @return list of expression result objects
      */
-    List<ExpressionResult> getExpressionOnSecondaryTerms();
+    List<ExpressionResult2> getExpressionOnSecondaryTerms();
 
     /**
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
@@ -403,7 +407,7 @@ public interface ExpressionRepository {
      * @param range
      * @return
      */
-    List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
+    List<ExpressionResult2> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 
     ExpressionResult getExpressionResult(Long expressionResultID);
 
@@ -475,6 +479,6 @@ public interface ExpressionRepository {
     ArrayList<String> getCategoryTags(String datasetId);
     List<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample);
 
-    List<ExpressionResult> getAllExpressionResults();
+    List<ExpressionResult2> getAllExpressionResults();
 
 }

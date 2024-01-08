@@ -9,7 +9,7 @@ import org.zfin.ontology.GenericTerm;
  */
 public class WildtypeExpressionExperiment {
     private Long id;
-    private ExpressionExperiment expressionExperiment;
+    private ExpressionExperiment2 expressionExperiment;
     private DevelopmentStage startStage ;
     private DevelopmentStage endStage ;
     private Marker gene ;
@@ -24,11 +24,11 @@ public class WildtypeExpressionExperiment {
         this.id = id;
     }
 
-    public ExpressionExperiment getExpressionExperiment() {
+    public ExpressionExperiment2 getExpressionExperiment() {
         return expressionExperiment;
     }
 
-    public void setExpressionExperiment(ExpressionExperiment expressionExperiment) {
+    public void setExpressionExperiment(ExpressionExperiment2 expressionExperiment) {
         this.expressionExperiment = expressionExperiment;
     }
 

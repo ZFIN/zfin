@@ -24,9 +24,7 @@ import static org.junit.Assert.*;
  */
 public class ExpressionServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = LogManager.getLogger(ExpressionServiceTest.class);
-
-    private ExpressionService expressionService = new ExpressionService();
+    private final ExpressionService expressionService = new ExpressionService();
 
 
     @Test
