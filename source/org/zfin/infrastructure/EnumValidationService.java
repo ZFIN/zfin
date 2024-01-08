@@ -1,8 +1,8 @@
 package org.zfin.infrastructure;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Ignore;
@@ -58,12 +58,12 @@ public class EnumValidationService {
                 try {
                     logger.info("running method: " + method.getName());
                     method.invoke(this);
-                    System.out.println(method.getName()+":"+reportError);
+                    System.out.println(method.getName() + ":" + reportError);
                     ++count;
                 } catch (IllegalAccessException iae) {
                     if (iae.getCause() instanceof EnumValidationException) {
                         throw new EnumValidationException("test failed" + method.getName() + "\n"
-                                + iae.getCause().getMessage(), iae);
+                                                          + iae.getCause().getMessage(), iae);
                     }
                     logger.fatal("bad method exception", iae);
                     throw new EnumValidationException("exception from EnumValidationService on method " + method.getName(), iae);
@@ -85,7 +85,7 @@ public class EnumValidationService {
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Marker.Type.values());
 
-        Criteria c = HibernateUtil.currentSession().createCriteria(MarkerType.class);
+        HibernateUtil.currentSession().createQuery("from MarkerType", MarkerType.class).list();
     }
 
     @ServiceTest
@@ -123,8 +123,8 @@ public class EnumValidationService {
 
         if (countAll.intValue() != countBothTypes.intValue()) {
             throw new EnumValidationException("anatomy statistics for both types are not equal - " +
-                    "all[" + countAll + "]" +
-                    " both types[" + countBothTypes + "]");
+                                              "all[" + countAll + "]" +
+                                              " both types[" + countBothTypes + "]");
         }
     }
 
@@ -358,7 +358,7 @@ public class EnumValidationService {
         String hql = "select distinct g.source from GenomeLocation g";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, GenomeLocation.Source.values());
-        System.out.println(":"+reportError);
+        System.out.println(":" + reportError);
     }
 
     @ServiceTest
@@ -390,12 +390,12 @@ public class EnumValidationService {
         int i = 0;
         for (InferenceCategory inferenceCategory : InferenceCategory.values()) {
             if (inferenceCategory != InferenceCategory.ZFIN_MRPH_GENO
-                    && inferenceCategory != InferenceCategory.ZFIN_GENE
-                    && inferenceCategory != InferenceCategory.GO
-                    && inferenceCategory != InferenceCategory.ENSEMBL
-                    && inferenceCategory != InferenceCategory.SP_KW
-                    && inferenceCategory != InferenceCategory.SP_SL
-                    ) {
+                && inferenceCategory != InferenceCategory.ZFIN_GENE
+                && inferenceCategory != InferenceCategory.GO
+                && inferenceCategory != InferenceCategory.ENSEMBL
+                && inferenceCategory != InferenceCategory.SP_KW
+                && inferenceCategory != InferenceCategory.SP_SL
+            ) {
                 enums[i] = inferenceCategory;
                 ++i;
             }
@@ -434,7 +434,7 @@ public class EnumValidationService {
     }
 
     public <T> void checkEnumVersusDatabaseCollection(List<T> databaseList, Enum[] enumValues, boolean allowNullEnumValue)
-            throws EnumValidationException {
+        throws EnumValidationException {
         List<String> enumList = new ArrayList<>();
         Enum enumType = null;
         for (Enum type : enumValues) {
@@ -456,7 +456,7 @@ public class EnumValidationService {
             reason += "ENUMERATION VALIDATION REPORT: " + LINE_SEPARATOR + message;
             reason += LINE_SEPARATOR + "*******************************************************************************";
             logger.warn(reason);
-            if(reportError) {
+            if (reportError) {
                 if (report == null)
                     report = new StringBuilder();
                 report.append(message);

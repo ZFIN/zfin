@@ -1,18 +1,17 @@
 package org.zfin.construct.repository;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
-import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.*;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
@@ -35,84 +34,46 @@ public class HibernateConstructRepository implements ConstructRepository {
     private static Logger logger = LogManager.getLogger(org.zfin.construct.repository.HibernateConstructRepository.class);
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
-    private ZfinEntity getZfinEntity(String zdbID, String name) {
-        ZfinEntity entity = new ZfinEntity();
-        entity.setName(name);
-        entity.setID(zdbID);
-        return entity;
-    }
-
-    public WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(WarehouseSummary.class);
-        criteria.add(Restrictions.eq("martName", mart.getName()));
-        return (WarehouseSummary) criteria.uniqueResult();
-    }
-
-    /**
-     * Retrieve the status of the construct mart:
-     * true: construct mart ready for usage
-     * false: construct mart is being rebuilt.
-     *
-     * @return status
-     */
-
-    public ZdbFlag getConstructMartStatus() {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ZdbFlag.class);
-        criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_CONSTRUCTMART));
-        return (ZdbFlag) criteria.uniqueResult();
-    }
-
-
     public ConstructRelationship getConstructRelationship(ConstructCuration marker1, Marker marker2, ConstructRelationship.Type type) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(ConstructRelationship.class);
-        criteria.add(Restrictions.eq("construct", marker1));
-        criteria.add(Restrictions.eq("marker", marker2));
-        criteria.add(Restrictions.eq("type", type));
-        return (ConstructRelationship) criteria.uniqueResult();
+        String hql = """
+            from ConstructRelationship
+            where construct = :construct
+            AND marker = :marker
+            AND type = :type
+            """;
+        Query<ConstructRelationship> query = session.createQuery(hql, ConstructRelationship.class);
+        query.setParameter("construct", marker1);
+        query.setParameter("marker", marker2);
+        query.setParameter("type", type);
+        return query.uniqueResult();
 
     }
 
     public ConstructRelationship getConstructRelationshipByID(String zdbID) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(ConstructRelationship.class);
-        criteria.add(Restrictions.eq("zdbID", zdbID));
-        return (ConstructRelationship) criteria.uniqueResult();
+        return session.get(ConstructRelationship.class, zdbID);
     }
 
 
     public List<ConstructRelationship> getConstructRelationshipsByPublication(String publicationZdbID) {
-        List<ConstructRelationship.Type> constructRelationshipList = new ArrayList<ConstructRelationship.Type>();
+        List<ConstructRelationship.Type> constructRelationshipList = new ArrayList<>();
         constructRelationshipList.add(ConstructRelationship.Type.PROMOTER_OF);
         constructRelationshipList.add(ConstructRelationship.Type.CODING_SEQUENCE_OF);
         constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct cmr from ConstructRelationship as cmr, " +
-                "PublicationAttribution as attribution " +
-                "where  attribution.dataZdbID = cmr.zdbID AND " +
-                "cmr.type in (:constructRelationshipType)AND " +
-                "attribution.publication.zdbID = :pubID ";
+                     "PublicationAttribution as attribution " +
+                     "where  attribution.dataZdbID = cmr.zdbID AND " +
+                     "cmr.type in (:constructRelationshipType)AND " +
+                     "attribution.publication.zdbID = :pubID ";
 
-        Query query = session.createQuery(hql);
+        Query<ConstructRelationship> query = session.createQuery(hql, ConstructRelationship.class);
         query.setParameter("pubID", publicationZdbID);
         query.setParameterList("constructRelationshipType", constructRelationshipList);
-        List<ConstructRelationship> constructRelationships = (List<ConstructRelationship>) query.list();
-        Collections.sort(constructRelationships, new Comparator<ConstructRelationship>() {
-            @Override
-            public int compare(ConstructRelationship o1, ConstructRelationship o2) {
-                return o1.getConstruct().getName().compareTo(o2.getConstruct().getName());
-            }
-        });
-        // order
-        /*Collections.sort(markerRelationships, new Comparator<ConstructRelationship>(){
-            @Override
-            public int compare(ConstructRelationship o1, ConstructRelationship o2) {
-                return o1.getFirstMarker().getAbbreviationOrder().compareTo(o2.getFirstMarker().getAbbreviationOrder()) ;
-            }
-        });*/
+        List<ConstructRelationship> constructRelationships = query.list();
+        constructRelationships.sort(Comparator.comparing(o -> o.getConstruct().getName()));
         return constructRelationships;
     }
 
@@ -141,7 +102,6 @@ public class HibernateConstructRepository implements ConstructRepository {
                 if (cmRel == null) {
                     ConstructRelationship codingRel = new ConstructRelationship();
                     codingRel.setConstruct(construct);
-                    ;
                     codingRel.setMarker(codingMarkers);
                     codingRel.setType(ConstructRelationship.Type.CODING_SEQUENCE_OF);
                     currentSession().save(codingRel);
@@ -172,7 +132,7 @@ public class HibernateConstructRepository implements ConstructRepository {
             pa.setDataZdbID(markerZdbID);
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             pa.setPublication(publication);
-            Set<PublicationAttribution> pubAttrbs = new HashSet<PublicationAttribution>();
+            Set<PublicationAttribution> pubAttrbs = new HashSet<>();
             pubAttrbs.add(pa);
             Marker mrkr = new Marker();
             mrkr.setPublications(pubAttrbs);
@@ -190,7 +150,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         return session.get(ConstructCuration.class, conName);
     }
 
-    public List<Marker> getAllConstructs(){
+    public List<Marker> getAllConstructs() {
         List<String> types = new ArrayList<>();
 
         types.add(Marker.Type.TGCONSTRCT.name());
@@ -200,9 +160,9 @@ public class HibernateConstructRepository implements ConstructRepository {
 
 
         String hql = "select m from Marker m  where m.markerType.name in (:types) ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameterList("types", types);
-        return (List<Marker>) query.list();
+        return query.list();
 
     }
 
@@ -212,6 +172,8 @@ public class HibernateConstructRepository implements ConstructRepository {
             throw new RuntimeException("Cannot create a new construct without a name.");
         if (construct == null)
             throw new RuntimeException("No construct object provided.");
+        if (construct.getName() == null)
+            throw new RuntimeException("Cannot create a new construct without a name.");
         if (construct.getConstructType() == null)
             throw new RuntimeException("Cannot create a new construct without a type.");
         if (pub == null)
@@ -257,21 +219,19 @@ public class HibernateConstructRepository implements ConstructRepository {
     }
 
     @Override
-    public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId){
+    public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId) {
         Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(ConstructComponent.class);
-        criteria.add(Restrictions.eq("constructZdbID", constructZdbId));
-        return (List<ConstructComponent>) criteria.list();
+        Query<ConstructComponent> criteria = session.createQuery("from ConstructComponent where constructZdbID = :constructZdbID", ConstructComponent.class);
+        criteria.setParameter("constructZdbID", constructZdbId);
+        return criteria.list();
     }
 
     @Override
     public List<ConstructComponent> getConstructComponentsByComponentID(String componentZdbID) {
         Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(ConstructComponent.class);
-        criteria.add(Restrictions.eq("componentZdbID", componentZdbID));
-        return (List<ConstructComponent>) criteria.list();
+        Query<ConstructComponent> query = session.createQuery("from ConstructComponent where componentZdbID = :componentZdbID", ConstructComponent.class);
+        query.setParameter("componentZdbID", componentZdbID);
+        return query.list();
     }
 
     public void addConstructRelationshipAttribution(ConstructRelationship cmrel, Publication attribution, ConstructCuration construct) {

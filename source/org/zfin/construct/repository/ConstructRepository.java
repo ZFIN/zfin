@@ -17,17 +17,6 @@ import java.util.Set;
  */
 public interface ConstructRepository {
 
-    WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
-
-    /**
-     * Retrieve the status of the fish mart:
-     * true: fish mart ready for usage
-     * false: fish mart is being rebuilt.
-     *
-     * @return status
-     */
-    ZdbFlag getConstructMartStatus();
-
     List<ConstructRelationship> getConstructRelationshipsByPublication(String publicationZdbID);
     ConstructRelationship getConstructRelationshipByID(String zdbID);
     ConstructRelationship getConstructRelationship(ConstructCuration marker1, Marker marker2, ConstructRelationship.Type type);
