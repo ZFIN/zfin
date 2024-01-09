@@ -41,6 +41,30 @@ public class FilterService<T> {
     }
 
 /*
+    public List<T> filterIsNull(List<T> list, Set<String> nullFields) {
+        if (list == null)
+            return null;
+        if (nullFields == null)
+            return list;
+
+        return list.stream()
+            .filter(annotation -> containsNull(annotation, nullFields))
+            .collect(Collectors.toList());
+    }
+
+    public boolean containsNull(T list,  Set<String> nullFields) {
+        Set<Boolean> filterResults = nullFields.stream()
+            .map((entry) -> {
+                FilterFunction<T, String> filterFunction = filtering.filterFieldMap.get(entry);
+                if (filterFunction == null)
+                    return null;
+                return filterFunction.valueIsNull(list);
+            })
+            .collect(Collectors.toSet());
+        return !filterResults.contains(false);
+    }
+*/
+/*
     public List<T> getSortedResults(Pagination pagination, List<T> list, Sorting<T> sorting) {
         // sorting
         SortingField sortingField = null;

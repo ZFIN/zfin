@@ -9,10 +9,10 @@ import java.io.Serializable;
 
 @Setter
 @Getter
-public class Column implements Serializable {
+public class Column<Entity, SubEntity> implements Serializable {
 
     @JsonView(View.API.class)
-    private ColumnStats columnDefinition;
+    private ColumnStats<Entity, SubEntity> columnDefinition;
     @JsonView(View.API.class)
     private ColumnValues columnStat;
 

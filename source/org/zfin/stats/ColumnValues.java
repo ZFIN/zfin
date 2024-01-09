@@ -22,9 +22,9 @@ public class ColumnValues {
     private Map<String, Integer> histogram;
     @JsonView(View.API.class)
     private Map<String, Integer> uberHistogram;
-    private Range cardinality;
+    private Range<Integer> cardinality;
     @JsonView(View.API.class)
-    private Range multiplicity;
+    private Range<Integer> multiplicity;
 
     @JsonView(View.API.class)
     public String getCardinality() {

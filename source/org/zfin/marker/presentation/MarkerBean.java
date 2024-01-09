@@ -8,6 +8,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.AllianceGeneDesc;
 import org.zfin.marker.Marker;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Setter
 @Getter
-public class MarkerBean extends PaginationBean {
+public class MarkerBean extends PaginationBean implements EntityZdbID {
 
     @JsonView(View.API.class)
     protected Marker marker;
@@ -86,4 +87,23 @@ public class MarkerBean extends PaginationBean {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public String getAbbreviation() {
+        return null;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return null;
+    }
+
+    @Override
+    public String getEntityType() {
+        return null;
+    }
+
+    @Override
+    public String getEntityName() {
+        return null;
+    }
 }
