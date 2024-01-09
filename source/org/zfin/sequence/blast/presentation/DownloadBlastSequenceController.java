@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.MountedWublastBlastService;
@@ -25,7 +26,7 @@ public class DownloadBlastSequenceController {
     protected String showBlastDefinitions(@RequestParam(required = false) String accession,
                                           HttpServletResponse response,
                                           HttpServletRequest request) throws Exception {
-
+        HibernateUtil.createTransaction();
         List<Sequence> sequences = MountedWublastBlastService.getInstance().
                 getSequencesForAccessionAndDisplayGroup(
                         accession, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE,
@@ -51,6 +52,7 @@ public class DownloadBlastSequenceController {
 
         outputStreamWriter.flush();
         outputStreamWriter.close();
+        HibernateUtil.rollbackTransaction();
 
         return null;
     }
