@@ -132,11 +132,11 @@
         <!--CASE substr(dblink_linked_recid,0,9)-->
         <discriminator type="string"
                        formula="(
-                    CASE substring(dblink_linked_recid from 1 for 9)
-                    WHEN 'ZDB-ORTHO' THEN 'ORTH'
-                    WHEN 'ZDB-TERM-' THEN 'TERM'
-                    WHEN 'ZDB-TSCRI' THEN 'TSCR'
-                    WHEN 'ZDB-ALT' THEN 'ALT'
+                    CASE get_obj_type(dblink_linked_recid)
+                    WHEN 'ORTHO' THEN 'ORTH'
+                    WHEN 'TERM' THEN 'TERM'
+                    WHEN 'TSCRIPT' THEN 'TSCR'
+                    WHEN 'ALT' THEN 'ALT'
                     ELSE  'MARK'
                   END
                 )"
