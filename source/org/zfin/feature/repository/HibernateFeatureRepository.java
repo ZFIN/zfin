@@ -517,30 +517,52 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @return
      */
     public String getNextZFLineNum() {
-        return getNextZFLineNumWithoutFeatureTrackingCollision();
+        return getNextLineNumberForLabPrefix(FeaturePrefix.ZF);
+    }
+
+    public String getNextLineNumberForLabPrefix(String labPrefix) {
+        return getNextLineNumberForLabPrefix(getFeaturePrefixByPrefix(labPrefix));
+    }
+
+    public String getNextLineNumberForLabPrefix(FeaturePrefix labPrefix) {
+        return getNextLineNumberForLabPrefixWithoutFeatureTrackingCollision(labPrefix);
     }
 
     /**
-     * Get the next zf line number. First look at the feature table and add 1 to the max value.
+     * Get the next line number for lab. First look at the feature table and add 1 to the max value.
      * Then, check if there is a feature tracking entry with the same line number. If so, increment the line number
      * until there is no collision.
      * @return next line number (without collision)
      */
-    private String getNextZFLineNumWithoutFeatureTrackingCollision() {
-        Integer nextLine = getNextZFLineNumFromFeatureTable();
-        while(getFeatureTrackingByAbbreviation("zf" + nextLine) != null) {
+    private String getNextLineNumberForLabPrefixWithoutFeatureTrackingCollision(FeaturePrefix labPrefix) {
+        Integer nextLine = getNextLineNumberIntegerForLabPrefix(labPrefix);
+        while(getFeatureTrackingByAbbreviation(labPrefix.getAbbreviation() + nextLine) != null) {
             nextLine++;
         }
         return String.valueOf(nextLine);
     }
 
     /**
-     * Get the next zf line number by looking at the feature table and adding 1 to the max value.
+     * Get the next line number by looking at the feature table and adding 1 to the max value.
+     * Omit from calculation any line numbers that aren't actually numbers
      * @return next line number
      */
-    private Integer getNextZFLineNumFromFeatureTable() {
-        String sql = "select max(cast(coalesce(feature_line_number,'0') as integer)) + 1 from feature where feature_lab_prefix_id = 194";
-        Number result = (Number)(currentSession().createNativeQuery(sql).getSingleResult());
+    private int getNextLineNumberIntegerForLabPrefix(FeaturePrefix labPrefix) {
+        String sql = """
+            SELECT
+                max(cast(coalesce(feature_line_number, '0') AS integer)) + 1
+            FROM
+                feature
+            WHERE
+                is_numeric(feature_line_number)
+                AND feature_lab_prefix_id = :labPrefix 
+        """;
+        Number result = (Number)(currentSession().createNativeQuery(sql)
+                .setParameter("labPrefix", labPrefix.getFeaturePkID())
+                .getSingleResult());
+        if (result == null) {
+            return 1;
+        }
         return result.intValue();
     }
 

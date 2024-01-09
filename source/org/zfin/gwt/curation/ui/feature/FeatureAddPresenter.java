@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 
-import com.google.gwt.user.client.Window;
+import org.zfin.feature.FeaturePrefix;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
@@ -22,7 +22,7 @@ import java.util.List;
 public class FeatureAddPresenter extends AbstractFeaturePresenter implements HandlesError {
 
     private FeatureAddView view;
-    protected final String ZF_PREFIX = "zf";
+    protected final String ZF_PREFIX = FeaturePrefix.ZF;
     private String publicationID;
     private MutationDetailPresenter addMutationDetailPresenter;
 
