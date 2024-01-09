@@ -574,8 +574,6 @@ public interface MarkerRepository {
 
     void updateMarkerName(String constructZdbID, String toString);
 
-    Map<Marker, List<Transcript>> getAllTranscripts();
-
     Map<Marker, List<Transcript>> getAllTranscripts(Pagination pagination);
 
     Map<Marker, List<MarkerDBLink>> getAllPlasmids(DisplayGroup.GroupName... groupNames);
