@@ -136,7 +136,7 @@ public class HibernateFigureRepository implements FigureRepository {
             inner join image.figure as figure
             inner join figure.publication as publication
             inner join publication.statusHistory as pubStatus
-            left outer join figure.expressionResults as expression
+            left outer join figure.expressionFigureStage as figureStage
             left outer join figure.phenotypeExperiments as phenotype
             where pubStatus.isCurrent = true
             and pubStatus.status.name = :closedCurated
@@ -147,10 +147,10 @@ public class HibernateFigureRepository implements FigureRepository {
             and (
               phenotype.id is not null
               or (
-                expression.xpatresID is not null
+                size(figureStage.expressionResultSet) > 0
                 and (
-                  expression.expressionExperiment.assay.name = 'Immunohistochemistry'
-                  or expression.expressionExperiment.assay.name = 'mRNA in situ hybridization'
+                  figureStage.expressionExperiment.assay.name = 'Immunohistochemistry'
+                  or figureStage.expressionExperiment.assay.name = 'mRNA in situ hybridization'
                 )
               )
             )
