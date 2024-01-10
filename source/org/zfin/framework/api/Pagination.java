@@ -23,6 +23,7 @@ public class Pagination {
     private Map<String, String> filterMap = new HashMap<>();
     private Map<String, String> exactFilterMap = new HashMap<>();
     private Set<String> notNullFilterMap = new HashSet<>();
+    private Set<String> nullFilterMap = new HashSet<>();
     private boolean isCount = false;
 
     public Pagination(Integer page, Integer limit, String sortBy, String asc) {
@@ -186,6 +187,10 @@ public class Pagination {
 
     public void addToNotNullFilterMap(String value) {
         notNullFilterMap.add(value);
+    }
+
+    public void addToNullFilterMap(String value) {
+        nullFilterMap.add(value);
     }
 
     public Map<String, String> getFilterMap() {

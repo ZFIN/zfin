@@ -4,7 +4,7 @@ import {columnDefinitionType} from '../../utils/types';
 import CheckboxListFilter from './CheckboxListFilter';
 import TextBoxFilter from './TextBoxFilter';
 
-const HeaderCell = ({column, filterValue, onFilterChange, supplementalData}) => {
+const HeaderCell = ({column, filterValue, onFilterChange, supplementalData, selectionFilterDisplay}) => {
     const [filterOpen, setFilterOpen] = useState(false);
     const handleFilterChange = (newValue) => {
         if (!column.filterName) {
@@ -24,11 +24,17 @@ const HeaderCell = ({column, filterValue, onFilterChange, supplementalData}) => 
             )}
             {filterOpen && (
                 column.filterOptions ?
-                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange}/> :
+                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange} displayFunction={selectionFilterDisplay}/> :
                     column.filterOptionFromSupplementalData ?
-                        <CheckboxListFilter options={supplementalData[column.filterOptionFromSupplementalData]} value={filterValue} onChange={handleFilterChange}/> :
+                        <CheckboxListFilter
+                            options={supplementalData[column.filterOptionFromSupplementalData]}
+                            value={filterValue}
+                            onChange={handleFilterChange}
+                            displayFunction={selectionFilterDisplay}
+                        /> :
                         <TextBoxFilter value={filterValue} onChange={handleFilterChange} placeholder={filterText}/>
-            )}
+            )
+            }
         </>
     );
 };
@@ -38,6 +44,7 @@ HeaderCell.propTypes = {
     filterValue: PropTypes.string,
     supplementalData: PropTypes.object,
     onFilterChange: PropTypes.func,
+    selectionFilterDisplay: PropTypes.func,
 };
 
 export default HeaderCell;

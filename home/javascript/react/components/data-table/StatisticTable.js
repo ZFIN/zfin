@@ -28,7 +28,8 @@ const StatisticTable = ({
             label: label1,
             content: content1,
             filterName: filterName1,
-            filterOptions: options,
+            filterOptions: Object.keys(options),
+            //filterOptions: Object.entries(options).map((key,value)=> key+value),
         }
     )
 
@@ -45,7 +46,8 @@ const StatisticTable = ({
                             <th className='uberCell' key={key}>
                                 {( value.columnStat.histogram) && (
                                     <HeaderCell
-                                        column={columnGenerateOptions(key, key, value.columnDefinition.filterName, Object.keys(value.columnStat.histogram))}
+                                        column={columnGenerateOptions(key, key, value.columnDefinition.filterName,value.columnStat.histogram)}
+                                        selectionFilterDisplay={(keyName) => keyName + ' [' + value.columnStat.histogram[keyName] + ']'}
                                         filterValue={tableState.filter && tableState.filter[key]}
                                         onFilterChange={handleFilterChange}
                                     />

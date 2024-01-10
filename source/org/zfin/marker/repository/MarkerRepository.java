@@ -6,6 +6,7 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -23,6 +24,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationDbXref;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
@@ -572,7 +574,14 @@ public interface MarkerRepository {
 
     void updateMarkerName(String constructZdbID, String toString);
 
+
     List<SequenceTargetingReagent> getSequenceTargetingReagents(List<String> markerIDs);
 
     List<SequenceTargetingReagent> getRecentSequenceTargetingReagents(int limit);
+
+    Map<Marker, List<Transcript>> getAllTranscripts(Pagination pagination);
+
+    Map<Marker, List<MarkerDBLink>> getAllPlasmids(DisplayGroup.GroupName... groupNames);
+
+    Map<Marker, List<TranscriptBean>> getAllTranscriptBeans(Pagination pagination);
 }
