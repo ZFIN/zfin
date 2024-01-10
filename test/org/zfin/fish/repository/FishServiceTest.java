@@ -1,7 +1,5 @@
 package org.zfin.fish.repository;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -310,9 +308,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void getExpressionSummary() {
         // genotype: apchu745/hu745> no MOs just generic and std-control genox ids
 
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
-        criteria.add(Restrictions.eq("zdbID", "ZDB-FISH-150901-26664"));
-        Fish fish = (Fish) criteria.uniqueResult();
+        Fish fish = HibernateUtil.currentSession().get(Fish.class, "ZDB-FISH-150901-26664");
 
         assertNotNull("fish should not be null", fish);
 
@@ -471,7 +467,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishSearchResult result = FishService.getFish(criteria);
 
         assertTrue("searching for 'sid' should return less than 500 (21 when the test is going in)," +
-                " rather than 600+ that will match if 'si:d*' genes are also matched ", result.getResults() != null && result.getResults().size() < 500);
+                   " rather than 600+ that will match if 'si:d*' genes are also matched ", result.getResults() != null && result.getResults().size() < 500);
 
     }
 
@@ -504,7 +500,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
         FishSearchResult result = FishService.getFish(criteria);
         assertTrue("'pre-optic area' term + gene 'fez' search returns results",
-                result != null && result.getResults() != null && result.getResultsFound() > 0);
+            result != null && result.getResults() != null && result.getResultsFound() > 0);
     }
 
     @Test
@@ -520,7 +516,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
         FishSearchResult result = FishService.getFish(criteria);
         assertTrue("'cavitated compound organ' term should have results, and they'll all be from substructures",
-                result != null && result.getResults() != null && result.getResultsFound() > 0);
+            result != null && result.getResults() != null && result.getResultsFound() > 0);
     }
 
 
