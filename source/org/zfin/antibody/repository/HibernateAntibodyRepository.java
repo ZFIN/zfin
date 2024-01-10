@@ -8,7 +8,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -230,26 +229,31 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    @SuppressWarnings("unchecked")
     public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria labeling = pubs.createCriteria("expressionExperiments");
-        labeling.add(eq("antibody", antibody));
-        Criteria results = labeling.createCriteria("expressionResults");
-        // check AO1 and AO2
-        results.add(Restrictions.or(
-            Restrictions.eq("entity.superterm", aoTerm),
-            Restrictions.eq("entity.subterm", aoTerm)));
-        results.add(isNotEmpty("figures"));
-        results.add(eq("expressionFound", true));
-        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
-        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
-        Criteria fish = fishExperiment.createCriteria("fish");
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<>((List<Publication>) pubs.list());
+        String hql = """
+            select publication from Publication as publication
+            left outer join publication.expressionExperiments as expressionExperiment
+            left outer join expressionExperiment.figureStageSet as figureStage
+            left outer join figureStage.expressionResultSet as expressionResult
+            inner join expressionExperiment.fishExperiment as fishExperiment
+            """;
+
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
+
+        hqlClauses.add("expressionExperiment.antibody = :antibody");
+        parameterMap.put("antibody", antibody);
+        hqlClauses.add("(expressionResult.superTerm = :term OR expressionResult.subTerm = :term )");
+        parameterMap.put("term", aoTerm);
+        hqlClauses.add("size(publication.figures) > 0");
+        hqlClauses.add("expressionResult.expressionFound = true");
+        hqlClauses.add("fishExperiment.standardOrGenericControl = true");
+        hqlClauses.add("fishExperiment.fish.genotype.wildtype = true");
+        hql += " where " + String.join(" and ", hqlClauses);
+        Query<Publication> query = session.createQuery(hql, Publication.class);
+        parameterMap.forEach(query::setParameter);
+        return new PaginationResult<>(query.list());
     }
 
     public PaginationResult<Publication> getPublicationsProbeWithFigures(Marker probe, GenericTerm aoTerm) {
@@ -906,81 +910,50 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     public List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
                                                               DevelopmentStage start, DevelopmentStage end, boolean withImgOnly) {
 
-        List<Figure> figures = new ArrayList<>();
         Session session = HibernateUtil.currentSession();
+        String hql = """
+            select figure from Figure as figure
+            left outer join figure.expressionFigureStage as figureStage
+            left outer join figureStage.expressionResultSet as expressionResult
+            inner join figureStage.expressionExperiment as expressionExperiment
+            inner join expressionExperiment.fishExperiment as fishExperiment
+            inner join fishExperiment.fish as fish
+            """;
 
-        Criteria criteria = session.createCriteria(Figure.class);
-        criteria.createAlias("expressionResults", "xpatres");
-        criteria.createAlias("xpatres.expressionExperiment", "xpatex");
-        criteria.createAlias("xpatex.fishExperiment", "fishox");
-        criteria.createAlias("fishox.fish", "fish");
-        criteria.createAlias("fish.genotype", "geno");
-        criteria.createAlias("publication", "pub");
 
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
 
-        criteria.add(Restrictions.eq("xpatex.antibody", antibody));
-        criteria.add(Restrictions.eq("xpatres.expressionFound", true));
-        criteria.add(Restrictions.eq("geno.wildtype", true));
-        criteria.add(Restrictions.eq("fishox.standardOrGenericControl", true));
-        criteria.add(Restrictions.eq("xpatres.entity.superterm", superTerm));
+        hqlClauses.add("expressionExperiment.antibody = :antibody");
+        parameterMap.put("antibody", antibody);
+        hqlClauses.add("expressionResult.expressionFound = true");
+        hqlClauses.add("fishExperiment.fish.genotype.wildtype = true");
+        hqlClauses.add("fishExperiment.standardOrGenericControl = true");
+        hqlClauses.add("expressionResult.superTerm = :superTerm");
+        parameterMap.put("superTerm", superTerm);
 
         if (subTerm != null) {
-            criteria.add(Restrictions.eq("xpatres.entity.subterm", subTerm));
+            hqlClauses.add("expressionResult.subTerm = :subTerm");
+            parameterMap.put("subTerm", subTerm);
         } else {
-            criteria.add(Restrictions.isNull("xpatres.entity.subterm"));
+            hqlClauses.add("expressionResult.subTerm is null");
         }
 
         if (start != null) {
-            criteria.add(Restrictions.eq("xpatres.startStage", start));
+            hqlClauses.add("figureStage.startStage = :start");
+            parameterMap.put("start", start);
         }
         if (end != null) {
-            criteria.add(Restrictions.eq("xpatres.endStage", end));
+            hqlClauses.add("figureStage.endStage = :end");
+            parameterMap.put("start", end);
         }
         if (withImgOnly) {
-            criteria.add(Restrictions.isNotEmpty("images"));
+            hqlClauses.add("size(figure.images) > 0");
         }
-
-        figures.addAll(criteria.list());
-        return figures;
-    }
-
-    /**
-     * Retrieve a list of figures for a given antibody, super and sub term, stage range.
-     * Note: If start and end stage is null and the subTerm as well we assume the
-     * caller means: give me all figures with antibodies at any stage with the super term
-     * either super term or sub term.
-     *
-     * @param antibody    antibody
-     * @param term        term
-     * @param withImgOnly only figures with images or not
-     * @return list of figures
-     */
-    public List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly) {
-        List<Figure> figures = new ArrayList<>();
-        Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(Figure.class);
-        criteria.createAlias("expressionResults", "xpatres");
-        criteria.createAlias("xpatres.expressionExperiment", "xpatex");
-        criteria.createAlias("xpatex.fishExperiment", "fishox");
-        criteria.createAlias("fishox.fish", "fish");
-        criteria.createAlias("fish.genotype", "geno");
-        criteria.createAlias("publication", "pub");
-
-
-        criteria.add(Restrictions.eq("xpatex.antibody", antibody));
-        criteria.add(Restrictions.eq("xpatres.expressionFound", true));
-        criteria.add(Restrictions.eq("geno.wildtype", true));
-        criteria.add(Restrictions.eq("fishox.standardOrGenericControl", true));
-        criteria.add(Restrictions.or(Restrictions.eq("xpatres.entity.superterm", term),
-            Restrictions.eq("xpatres.entity.subterm", term)));
-
-        if (withImgOnly) {
-            criteria.add(Restrictions.isNotEmpty("images"));
-        }
-
-        figures.addAll(criteria.list());
-        return figures;
+        hql += " where " + String.join(" and ", hqlClauses);
+        Query<Figure> query = session.createQuery(hql, Figure.class);
+        parameterMap.forEach(query::setParameter);
+        return new ArrayList<>(query.list());
     }
 
     @Override
@@ -1004,7 +977,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @Override
     public Map<Publication, List<Antibody>> getAntibodiesFromAllPublications() {
-        if(pubAntibodyMapCached != null)
+        if (pubAntibodyMapCached != null)
             return pubAntibodyMapCached;
         Session session = HibernateUtil.currentSession();
 
@@ -1028,7 +1001,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString());
         List<MarkerRelationship> rels = query.list();
         antibodyMap.values().stream().flatMap(Collection::stream).forEach(antibody -> {
-            List<Marker> marker= rels.stream().filter(relationship -> relationship.getSecondMarker().getZdbID().equals(antibody.getZdbID()))
+            List<Marker> marker = rels.stream().filter(relationship -> relationship.getSecondMarker().getZdbID().equals(antibody.getZdbID()))
                 .map(MarkerRelationship::getFirstMarker)
                 .collect(Collectors.toList());
             antibody.setAntigenGenes(marker);
