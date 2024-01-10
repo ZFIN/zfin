@@ -93,7 +93,7 @@ public class PersonController {
         model.addAttribute("showDeceasedCheckBox", showDeceasedCheckBox);
         model.addAttribute("countryList", profileService.getCountries());
 
-        model.addAttribute("emailPrivacyPreferenceList", profileRepository.getAllEmailPrivacyPreferences());
+        model.addAttribute("emailPrivacyPreferenceList", profileService.getEmailPrivacyPreferences());
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-edit";
