@@ -250,16 +250,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hqlClauses.add("expressionResult.expressionFound = true");
         hqlClauses.add("fishExperiment.standardOrGenericControl = true");
         hqlClauses.add("fishExperiment.fish.genotype.wildtype = true");
-        if (CollectionUtils.isNotEmpty(hqlClauses)) {
-            hql += "where ";
-            int index = 0;
-            for (String clause : hqlClauses) {
-                if (index++ > 0) {
-                    hql += " AND ";
-                }
-                hql += clause + " ";
-            }
-        }
+        hql += " where " + String.join(" and ", hqlClauses);
         Query<Publication> query = session.createQuery(hql, Publication.class);
         parameterMap.forEach(query::setParameter);
         return new PaginationResult<>(query.list());
