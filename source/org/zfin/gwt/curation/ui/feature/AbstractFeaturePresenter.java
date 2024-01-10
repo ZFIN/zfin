@@ -1,8 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.feature.FeaturePrefix;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.FeatureDTO;
@@ -13,14 +12,13 @@ import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
 public abstract class AbstractFeaturePresenter implements HandlesError {
 
     private AbstractFeatureView view;
-    protected final String ZF_PREFIX = "zf";
+    protected final String ZF_PREFIX = FeaturePrefix.ZF;
     protected FeatureDTO dto;
     String publicationID;
 
@@ -111,7 +109,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     }
 
     public void onLabDesigChange(String labPrefix) {
-       
+
 
         if (labPrefix.equals(ZF_PREFIX)) {
             FeatureRPCService.App.getInstance().getNextZFLineNum(
