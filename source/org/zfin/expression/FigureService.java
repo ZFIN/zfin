@@ -211,9 +211,8 @@ public class FigureService {
         clone.setSingleTermEitherPosition(null);
 
         Set<ExpressionStatement> expressionResultSet = expressionRepository.getExpressionStatements(clone);
-        List<ExpressionStatement> expressionStatementList = new ArrayList<ExpressionStatement>();
 
-        expressionStatementList.addAll(expressionResultSet);
+        List<ExpressionStatement> expressionStatementList = new ArrayList<>(expressionResultSet);
         return expressionStatementList;
 
     }

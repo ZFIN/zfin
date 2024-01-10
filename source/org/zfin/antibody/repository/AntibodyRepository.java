@@ -171,19 +171,6 @@ public interface AntibodyRepository {
 	List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
 													   DevelopmentStage start, DevelopmentStage end, boolean withImgOnly);
 
-	/**
-	 * Retrieve a list of figures for a given antibody, super and sub term, stage range.
-	 * Note: If start and end stage is null and the subTerm as well we assume the
-	 * caller means: give me all figures with antibodies at any stage with the super term
-	 * either super term or sub term.
-	 *
-	 * @param antibody    antibody
-	 * @param term        term
-	 * @param withImgOnly only figures with images or not
-	 * @return list of figures
-	 */
-	List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly);
-
 
     Map<String, List<Marker>> getAntibodyAntigenGeneMap(List<String> antibodyIDs);
 

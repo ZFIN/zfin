@@ -166,8 +166,6 @@ public class ExpressionExperiment2 {
      * @return set of figures to which expression results are linked
      */
     public Set<Figure> getAllFigures() {
-        if (expressionResults == null)
-            return null;
         // at maximum as many figures as result records
         Set<Figure> figures = new HashSet<>(figureStageSet.size());
         for (ExpressionFigureStage result : figureStageSet) {

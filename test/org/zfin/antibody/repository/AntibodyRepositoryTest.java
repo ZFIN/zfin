@@ -884,11 +884,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         List<Figure> figures = getAntibodyRepository().getFiguresForAntibodyWithTermsAtStage(antibody, term, null, null, null, false);
         assertNotNull(figures);
         assertTrue(figures.size() > 5);
-
-        figures = getAntibodyRepository().getFiguresForAntibodyWithTerms(antibody, term, false);
-        assertNotNull(figures);
-        assertTrue(figures.size() > 7);
-
     }
 
     @Test

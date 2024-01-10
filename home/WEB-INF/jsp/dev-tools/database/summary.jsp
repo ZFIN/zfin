@@ -17,14 +17,12 @@
             <th><a href="?orderBy=name">Database Name</a></th>
             <th><a href="?orderBy=owner">Owner</a></th>
             <th><a href="?orderBy=dateCreated">Date Created</a></th>
-            <th>Logging enabled</th>
         </tr>
         <c:forEach var="database" items="${databases}" varStatus="loop">
             <tr>
-                <td>${database.name}</td>
+                <td>${database.dbname}</td>
                 <td>${database.owner}</td>
                 <td><fmt:formatDate value="${database.dateCreated}" type="date"/></td>
-                <td>${database.logging}</td>
             </tr>
         </c:forEach>
     </table>

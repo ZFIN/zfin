@@ -1,7 +1,5 @@
 package org.zfin.antibody;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -371,7 +369,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertTrue(goTerms != null);
+        assertNotNull(goTerms);
         assertEquals(1, goTerms.size());
     }
 
@@ -499,8 +497,6 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         DevelopmentStage prim5 = RepositoryFactory.getAnatomyRepository().getStageByID("ZDB-STAGE-010723-10");
         assertNotNull(prim5);
 
-        Figure figS3 = RepositoryFactory.getFigureRepository().getFigure("ZDB-FIG-081117-50");
-
         AntibodyService antibodyService = new AntibodyService(antibody);
 
         ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, prim5, prim5, false);
@@ -511,14 +507,15 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         for (FigureSummaryDisplay figureSummary : figureSummaryList) {
             //all figures returned should have slow muscle cell
             String expressionStatement = figureSummary.getExpressionStatementList().stream()
-                    .map(ExpressionStatement::getDisplayName)
-                    .collect(Collectors.joining(","));
+                .map(ExpressionStatement::getDisplayName)
+                .collect(Collectors.joining(","));
             assertTrue(figureSummary.getPublication().getShortAuthorList() + " " + figureSummary.getFigure().getLabel()
-                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), expressionStatement.contains(slowMuscleCellStatement.getDisplayName()));
+                       + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), expressionStatement.contains(slowMuscleCellStatement.getDisplayName()));
         }
 
 
         //find the figure 6 summary, test against it
+        Figure figS3 = RepositoryFactory.getFigureRepository().getFigure("ZDB-FIG-081117-50");
         FigureSummaryDisplay figS3Summary = null;
         for (FigureSummaryDisplay fs : figureSummaryList) {
             if (fs.getFigure().equals(figS3)) {
