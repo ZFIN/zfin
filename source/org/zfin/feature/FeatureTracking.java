@@ -1,43 +1,24 @@
 package org.zfin.feature;
 
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "feature_tracking")
 public class FeatureTracking {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ft_pk_id")
-    private int pkid;
-    @ManyToOne
-    @JoinColumn(name = "ft_feature_zdb_id")
-    private Feature feature;
-    @Column(name = "ft_feature_abbrev")
-    private String featTrackingFeatAbbrev;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ft_pk_id")
+  private int pkid;
 
-    public int getPkid() {
-        return pkid;
-    }
+  @ManyToOne
+  @JoinColumn(name = "ft_feature_zdb_id")
+  private Feature feature;
 
-    public void setPkid(int pkid) {
-        this.pkid = pkid;
-    }
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public String getFeatTrackingFeatAbbrev() {
-        return featTrackingFeatAbbrev;
-    }
-
-    public void setFeatTrackingFeatAbbrev(String featTrackingFeatAbbrev) {
-        this.featTrackingFeatAbbrev = featTrackingFeatAbbrev;
-    }
-
+  @Column(name = "ft_feature_abbrev")
+  private String featTrackingFeatAbbrev;
 }

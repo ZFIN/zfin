@@ -8,7 +8,6 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
-import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
@@ -74,6 +73,10 @@ public interface FeatureRepository {
 
     String getNextZFLineNum();
 
+    String getNextLineNumberForLabPrefix(FeaturePrefix labPrefix);
+
+    String getNextLineNumberForLabPrefix(String labPrefix);
+
     List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty);
 
     List<FeaturePrefix> getLabPrefixesById(String labZdbID, boolean assignIfEmpty);
@@ -111,6 +114,8 @@ public interface FeatureRepository {
     List<Marker> getMarkerIsAlleleOf(Feature feature);
 
     List<Marker> getMarkersPresentForFeature(Feature feature);
+
+    FeatureTracking getFeatureTrackingByAbbreviation(String abbreviation);
 
     TreeSet<String> getFeatureLG(Feature feat);
 
@@ -226,4 +231,6 @@ public interface FeatureRepository {
     int getNumberOfFeaturesForConstruct(Marker construct);
 
     List<Feature> getAllFeatureList(int i);
+
+
 }
