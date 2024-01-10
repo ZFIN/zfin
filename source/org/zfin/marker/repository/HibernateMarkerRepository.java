@@ -2458,6 +2458,39 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public List<SequenceTargetingReagent> getSequenceTargetingReagents(List<String> markerIDs) {
+        Session session = currentSession();
+        String hql = "select str from SequenceTargetingReagent str where str.zdbID in (:markerIDs)";
+        return session.createQuery(hql, SequenceTargetingReagent.class)
+                .setParameterList("markerIDs", markerIDs)
+                .list();
+    }
+
+    @Override
+    public List<SequenceTargetingReagent> getRecentSequenceTargetingReagents(int limit) {
+        Session session = currentSession();
+        String sql = """
+            select seq_mrkr_zdb_id
+            from marker_sequence
+            order by get_date_from_id(seq_mrkr_zdb_id, 'YYYY-MM-DD')  desc
+            limit :limit
+        """;
+        List<String> markerIDs = session.createSQLQuery(sql).setParameter("limit", limit).list();
+        List<SequenceTargetingReagent> markers = getSequenceTargetingReagents(markerIDs);
+
+        //map the markers to the order of the markerIDs
+        Map<String, SequenceTargetingReagent> markerMap = new HashMap<>();
+        for (SequenceTargetingReagent marker : markers) {
+            markerMap.put(marker.getZdbID(), marker);
+        }
+        List<SequenceTargetingReagent> orderedMarkers = new ArrayList<>();
+        for (String markerID : markerIDs) {
+            orderedMarkers.add(markerMap.get(markerID));
+        }
+        return orderedMarkers;
+    }
+
+    @Override
     public SequenceTargetingReagent getSequenceTargetingReagentBySequence(Marker.Type type, String sequence) {
         return getSequenceTargetingReagentBySequence(type, sequence, null);
     }
