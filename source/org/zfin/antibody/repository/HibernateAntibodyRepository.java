@@ -950,16 +950,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (withImgOnly) {
             hqlClauses.add("size(figure.images) > 0");
         }
-        if (CollectionUtils.isNotEmpty(hqlClauses)) {
-            hql += "where ";
-            int index = 0;
-            for (String clause : hqlClauses) {
-                if (index++ > 0) {
-                    hql += " AND ";
-                }
-                hql += clause + " ";
-            }
-        }
+        hql += " where " + String.join(" and ", hqlClauses);
         Query<Figure> query = session.createQuery(hql, Figure.class);
         parameterMap.forEach(query::setParameter);
         return new ArrayList<>(query.list());

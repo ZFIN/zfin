@@ -2133,16 +2133,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             hqlClauses.add("fishExperiment.standardOrGenericControl = true");
         }
 
-        if (CollectionUtils.isNotEmpty(hqlClauses)) {
-            hql += "where ";
-            int index = 0;
-            for (String clause : hqlClauses) {
-                if (index++ > 0) {
-                    hql += " AND ";
-                }
-                hql += clause + " ";
-            }
-        }
+        hql += hqlClauses.isEmpty() ? "" : " where " + String.join(" and ", hqlClauses);
         Query<Figure> query = session.createQuery(hql, Figure.class);
         parameterMap.forEach(query::setParameter);
         return new ArrayList<>(query.list());
