@@ -2,6 +2,7 @@ package org.zfin.profile;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.profile.service.ProfileService;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,10 +29,6 @@ public class EmailPrivacyPreference {
 
     @Column(name = "epp_order")
     private Integer order;
-
-    public String getEmailIfVisibleOrEmptyString(String email, Supplier<Person> personSupplier) {
-        return isVisibleToUser(personSupplier) ? email : "";
-    }
 
     public String toString() {
         return name;
@@ -71,6 +68,14 @@ public class EmailPrivacyPreference {
 
     private boolean isHidden() {
         return getName().equals(EmailPrivacyPreference.Name.HIDDEN.toString());
+    }
+
+    public boolean shouldHide() {
+        return !this.isVisibleToUser(ProfileService::getCurrentSecurityUser);
+    }
+
+    public boolean shouldShow() {
+        return !shouldHide();
     }
 
     public enum Name {

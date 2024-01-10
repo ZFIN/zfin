@@ -181,16 +181,9 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
         return getType();
     }
 
-    public String getEmailIfVisible() {
-        if (emailPrivacyPreference == null) {
-            return email;
-        }
-        return emailPrivacyPreference.getEmailIfVisibleOrEmptyString(email, ProfileService::getCurrentSecurityUser);
-    }
-
     @Override
     public String toString() {
-        String sb = "Organization" +
+        return "Organization" +
                 "{active=" + active + "'" +
                 ", zdbID='" + zdbID + "'" +
                 ", name='" + name + "'" +
@@ -201,8 +194,6 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
                 ", owner=" + owner + "'" +
                 ", address='" + address + "'" +
                 '}';
-
-        return sb;
     }
 
 //    TODO: Seems like using StringSubstitutor with BeanUtils could simplify this method

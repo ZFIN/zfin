@@ -135,13 +135,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return accountInfo.getUsername();
     }
 
-    public String getEmailIfVisible() {
-        if (emailPrivacyPreference == null) {
-            return email;
-        }
-        return emailPrivacyPreference.getEmailIfVisibleOrEmptyString(email, ProfileService::getCurrentSecurityUser);
-    }
-
     public boolean isAccountNonExpired() {
         return true;
     }

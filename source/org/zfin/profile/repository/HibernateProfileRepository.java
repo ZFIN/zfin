@@ -1028,4 +1028,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 		return emailPrivacyPreferences.get(0);
 	}
 
+	@Override
+	public EmailPrivacyPreference getEmailPrivacyPreference(EmailPrivacyPreference.Name name) {
+		return getEmailPrivacyPreferenceByName(name.toString());
+	}
+
 }

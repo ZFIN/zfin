@@ -167,13 +167,13 @@ public class SearchResult implements ProvidesLink {
     private boolean shouldFieldBeHidden(String field) {
         if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Person")) {
             Person person = getProfileRepository().getPerson(this.getId());
-            if (StringUtils.isEmpty(person.getEmailIfVisible())) {
+            if (person.getEmailPrivacyPreference().shouldHide()) {
                 return true;
             }
         }
         if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Lab")) {
             Lab lab = getProfileRepository().getLabById(this.getId());
-            if (StringUtils.isEmpty(lab.getEmailIfVisible())) {
+            if (lab.getEmailPrivacyPreference().shouldHide()) {
                 return true;
             }
         }

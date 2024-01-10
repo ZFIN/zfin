@@ -479,20 +479,20 @@ public class ProfileService {
     }
 
     public Lab createLab(Lab lab) {
-        Person contactPerson = getCurrentSecurityUser();
-        if (contactPerson == null) {
+        if (getCurrentSecurityUser() == null) {
             throw new RuntimeException("Must be logged in to create a user.");
         }
+        lab.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
         lab.setUrl(processUrl(lab.getUrl()));
         HibernateUtil.currentSession().save(lab);
         return lab;
     }
 
     public Company createCompany(Company company) {
-        Person contactPerson = getCurrentSecurityUser();
-        if (contactPerson == null) {
+        if (getCurrentSecurityUser() == null) {
             throw new RuntimeException("Must be logged in to create a user.");
         }
+        company.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
         company.setUrl(processUrl(company.getUrl()));
         HibernateUtil.currentSession().save(company);
         return company;
@@ -501,6 +501,8 @@ public class ProfileService {
 
     public Person createPerson(Person person) {
         person.generateNameVariations();
+
+        person.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
 
         AccountInfo accountInfo = new AccountInfo();
         String login = person.getPutativeLoginName();
@@ -746,5 +748,9 @@ public class ProfileService {
 
     public List<EmailPrivacyPreference> getEmailPrivacyPreferences() {
         return profileRepository.getAllEmailPrivacyPreferences();
+    }
+
+    private EmailPrivacyPreference getDefaultEmailPrivacyPreference() {
+        return profileRepository.getEmailPrivacyPreference(EmailPrivacyPreference.Name.PUBLIC);
     }
 }

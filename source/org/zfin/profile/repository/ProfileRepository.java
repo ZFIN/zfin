@@ -234,4 +234,6 @@ public interface ProfileRepository {
     List<EmailPrivacyPreference> getAllEmailPrivacyPreferences();
 
     EmailPrivacyPreference getEmailPrivacyPreferenceByName(String source);
+
+    EmailPrivacyPreference getEmailPrivacyPreference(EmailPrivacyPreference.Name name);
 }
