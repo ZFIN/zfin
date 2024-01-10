@@ -1,18 +1,18 @@
 package org.zfin.construct;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.zfin.construct.presentation.ConstructComponentService;
 import org.zfin.marker.MarkerType;
 import org.zfin.profile.Person;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Prita
- * Date: 4/1/14
- * Time: 12:15 PM
- * To change this template use File | Settings | File Templates.
- */
+@Setter
+@Getter
 public class ConstructCuration {
 
     private String zdbID;
@@ -20,76 +20,35 @@ public class ConstructCuration {
     private Person owner;
     private Set<ConstructRelationship> constructRelations;
 
-    public Set<ConstructRelationship> getConstructRelations() {
-        return constructRelations;
-    }
-
-    public void setConstructRelations(Set<ConstructRelationship> constructRelations) {
-        this.constructRelations = constructRelations;
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Person owner) {
-        this.owner = owner;
-    }
-
-    public String getPublicComments() {
-        return publicComments;
-    }
-
-    public void setPublicComments(String publicComments) {
-        this.publicComments = publicComments;
-    }
-
     private String name;
     private MarkerType constructType;
-
-    public Date getModDate() {
-        return modDate;
-    }
-
-    public void setModDate(Date modDate) {
-        this.modDate = modDate;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public MarkerType getConstructType() {
-        return constructType;
-    }
-
-    public void setConstructType(MarkerType constructType) {
-        this.constructType = constructType;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 
     private Date modDate;
     private Date createdDate;
 
+    /**
+     * Create a basic new construct curation object from the name.
+     * It uses the name to set the construct type and initializes the dates.
+     *
+     * @param name
+     * @return
+     */
+    public static ConstructCuration create(String name) {
+        ConstructCuration newConstruct = new ConstructCuration();
 
-    public String getName() {
-        return name;
+        Optional<MarkerType> constructMarkerType = ConstructComponentService.getConstructTypeByConstructName(name);
+        constructMarkerType.ifPresent(newConstruct::setConstructType);
+
+        newConstruct.setName(name);
+        newConstruct.setCreatedDate(new Date());
+        newConstruct.setModDate(new Date());
+        return newConstruct;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPublicCommentsIfNotEmpty(String publicComments) {
+        if (StringUtils.isNotEmpty(publicComments)) {
+            this.publicComments = publicComments;
+        }
     }
-
 
 }

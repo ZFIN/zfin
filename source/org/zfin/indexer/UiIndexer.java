@@ -2,6 +2,7 @@ package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Duration;
@@ -148,7 +149,8 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
         if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz()) ||
-           this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz())) {
+           this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz()) ||
+           this.getClass().equals(UiIndexerConfig.ChebiPhenotypeIndexer.getIndexClazz())) {
             saveWithStatefulSession(batchedList);
         } else {
             saveWithStatelessSession(batchedList);
@@ -169,10 +171,15 @@ public abstract class UiIndexer<Entity> extends Thread {
         HibernateUtil.createStatelessTransaction();
         batchedList.forEach(batch -> {
             for (Entity entity : batch) {
-                HibernateUtil.currentStatelessSession().insert(entity);
+                insertEntityGraph(HibernateUtil.currentStatelessSession(), entity);
             }
         });
-        HibernateUtil.flushAndCommitCurrentStatelessSession();    }
+        HibernateUtil.flushAndCommitCurrentStatelessSession();
+    }
+
+    protected void insertEntityGraph(StatelessSession session, Entity entity) {
+        session.insert(entity);
+    }
 
     protected void cleanoutTable(String... tables) {
         List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).toList();

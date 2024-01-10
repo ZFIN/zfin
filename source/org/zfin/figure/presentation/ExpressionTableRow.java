@@ -121,15 +121,16 @@ public class ExpressionTableRow implements ZdbID {
 
     }
 
-    public ExpressionTableRow(ExpressionResult expressionResult) {
-        ExpressionExperiment expressionExperiment = expressionResult.getExpressionExperiment();
+    public ExpressionTableRow(ExpressionFigureStage figureStage, ExpressionResult2 expressionResult) {
+
+        ExpressionExperiment2 expressionExperiment = figureStage.getExpressionExperiment();
         setGene(expressionExperiment.getGene());
         setAntibody(expressionExperiment.getAntibody());
         setFishExperiment(expressionExperiment.getFishExperiment());
         setFish(expressionExperiment.getFishExperiment().getFish());
         setExperiment(expressionExperiment.getFishExperiment().getExperiment());
-        setStart(expressionResult.getStartStage());
-        setEnd(expressionResult.getEndStage());
+        setStart(figureStage.getStartStage());
+        setEnd(figureStage.getEndStage());
         setIsExpressionFound(expressionResult.isExpressionFound());
         setSuperterm(expressionResult.getSuperTerm());
         if (expressionResult.getSubTerm() != null) {
@@ -143,14 +144,12 @@ public class ExpressionTableRow implements ZdbID {
             setQualifier("Not Detected");
         }
         setEntity(expressionResult.getEntity());
-        setAssay(expressionResult.getExpressionExperiment().getAssay());
+        setAssay(figureStage.getExpressionExperiment().getAssay());
 
         setGeneGenoxZdbIDs(gene.getZdbID() + fishExperiment.getZdbID());
 
         //todo: might want this to be getNameOrder later...
         setFishNameOrder(fishExperiment.getFish().getAbbreviationOrder());
-
-
     }
 
 

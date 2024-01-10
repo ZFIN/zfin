@@ -11,13 +11,13 @@ import java.util.LinkedHashMap;
 
 @Setter
 @Getter
-public class StatisticRow implements Serializable {
+public class StatisticRow<Entity, SubEntity> implements Serializable {
 
     @JsonView(View.API.class)
-    private LinkedHashMap<String, Column> columns;
+    private LinkedHashMap<String, Column<Entity, SubEntity>> columns;
 
-    public void put(ColumnStats geneStat, ColumnValues columnValues) {
-        Column col = new Column();
+    public void put(ColumnStats<Entity, SubEntity> geneStat, ColumnValues columnValues) {
+        Column<Entity, SubEntity> col = new Column<>();
         col.setColumnDefinition(geneStat);
         col.setColumnStat(columnValues);
         if (MapUtils.isEmpty(columns))

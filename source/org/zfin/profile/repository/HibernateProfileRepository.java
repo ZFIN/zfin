@@ -328,6 +328,14 @@ public class HibernateProfileRepository implements ProfileRepository {
 		return query.list();
 	}
 
+	@Override
+	public List<Person> getRootUsers() {
+		Session session = currentSession();
+		Query<Person> query = session.createQuery("from Person where accountInfo.role = :role", Person.class);
+		query.setParameter("role", "root");
+		return query.list();
+	}
+
 	/**
 	 * Delete a curator session element.
 	 *

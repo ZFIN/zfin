@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
@@ -92,7 +93,7 @@ public class SequenceTargetingReagentViewController {
 
         // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
-        List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<ExpressionFigureStage> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionPublicationIDs = expressionRepository.getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs, false);

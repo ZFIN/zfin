@@ -111,7 +111,7 @@ public class FigureEditController {
         Figure figure = figureRepository.getFigure(zdbID);
         Publication pub = figure.getPublication();
 
-        if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
+        if (CollectionUtils.isNotEmpty(figure.getExpressionFigureStage()) ||
                 CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
             throw new InvalidWebRequestException("Figure has expression or phenotype data attached", null);
         }

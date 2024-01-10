@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.ui.feature;
 
-
-import com.google.gwt.user.client.Window;
+import org.zfin.feature.FeaturePrefix;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
@@ -21,10 +20,10 @@ import java.util.List;
 
 public class FeatureAddPresenter extends AbstractFeaturePresenter implements HandlesError {
 
-    private FeatureAddView view;
-    protected final String ZF_PREFIX = "zf";
-    private String publicationID;
-    private MutationDetailPresenter addMutationDetailPresenter;
+    private final FeatureAddView view;
+    protected final String ZF_PREFIX = FeaturePrefix.ZF;
+    private final String publicationID;
+    private final MutationDetailPresenter addMutationDetailPresenter;
 
     public FeatureAddPresenter(FeatureAddView view, String publicationID) {
         super(view, publicationID);
@@ -56,16 +55,13 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
 
     @Override
     public void fireEventSuccess() {
-
     }
 
     @Override
     public void addHandlesErrorListener(HandlesError handlesError) {
-
     }
-   public void onLabDesigChange() {
 
-
+    public void onLabDesigChange() {
         if (view.labDesignationBox.getSelected().equals(ZF_PREFIX)) {
             FeatureRPCService.App.getInstance().getNextZFLineNum(
                     new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
@@ -76,16 +72,14 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                             clearError();
                         }
                     }
-
             );
         }
         else{
-
             view.lineNumberBox.setText("");
         }
     }
-    public void onLabOfOriginChange(String labOfOriginSelected) {
 
+    public void onLabOfOriginChange(String labOfOriginSelected) {
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_START);
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
@@ -125,7 +119,6 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
                     }
                 });
-
     }
 
     public FeatureDTO createDTOFromGUI() {
@@ -140,13 +133,9 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             NoteDTO publicNoteDTO = new NoteDTO();
             publicNoteDTO.setNoteData(view.publicNoteBox.getText());
             publicNoteDTO.setPublicationZdbID(publicationID);
-      publicNoteDTO.setNoteType(view.noteType.getSelected());
-
-
+            publicNoteDTO.setNoteType(view.noteType.getSelected());
 
             featureDTO.addPublicNote(publicNoteDTO);
-
-
         }
 
         if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {
@@ -221,8 +210,5 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.CREATE_FEATURE_STOP);
             }
         });
-
     }
-
-
 }

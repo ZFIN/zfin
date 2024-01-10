@@ -4,21 +4,21 @@ package org.zfin.construct;
  * Created by prita on 3/2/2015.
  */
 
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.infrastructure.EntityAttribution;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-
-
-        import org.zfin.infrastructure.EntityAttribution;
-        import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.marker.Marker;
-
-import java.util.HashSet;
-        import java.util.Set;
+import java.util.Set;
 
 
 /**
  * Class MarkerRelationship.
  */
+@Setter
+@Getter
 public class ConstructRelationship implements EntityAttribution {
 
     public enum Type {
@@ -60,32 +60,6 @@ public class ConstructRelationship implements EntityAttribution {
     private String zdbID;
 
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public ConstructCuration getConstruct() {
-        return construct;
-    }
-
-    public void setConstruct(ConstructCuration construct) {
-        this.construct = construct;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-
-
     private ConstructCuration construct;
     private Marker marker;
 
@@ -93,35 +67,6 @@ public class ConstructRelationship implements EntityAttribution {
 
     private Set<PublicationAttribution> publications;
 
-    /**
-     * Get zdbID.
-     *
-     * @return zdbID as String.
-     */
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    /**
-     * Set zdbID.
-     *
-     * @param zdbID the value to set.
-     */
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-
-
-    public Set<PublicationAttribution> getPublications() {
-        if (publications == null)
-            return new HashSet<PublicationAttribution>();
-        return publications;
-    }
-
-    public void setPublications(Set<PublicationAttribution> publications) {
-        this.publications = publications;
-    }
 
     public int getPublicationCount() {
         if (publications == null)

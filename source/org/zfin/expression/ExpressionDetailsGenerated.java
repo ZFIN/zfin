@@ -17,7 +17,7 @@ public class ExpressionDetailsGenerated {
     private long id;
     private Figure figure;
     private Set<ExpressionResultGenerated> expressionResults;
-    private ExpressionExperiment expressionExperiment;
+    private ExpressionExperiment2 expressionExperiment;
     private FishExperiment fishExperiment;
     private Marker gene;
     private Clone probe;
@@ -50,9 +50,9 @@ public class ExpressionDetailsGenerated {
         this.expressionResults = expressionResults;
     }
 
-    public ExpressionExperiment getExpressionExperiment() { return expressionExperiment; }
+    public ExpressionExperiment2 getExpressionExperiment() { return expressionExperiment; }
 
-    public void setExpressionExperiment(ExpressionExperiment expressionExperiment) { this.expressionExperiment = expressionExperiment; }
+    public void setExpressionExperiment(ExpressionExperiment2 expressionExperiment) { this.expressionExperiment = expressionExperiment; }
 
     public FishExperiment getFishExperiment() {
         return fishExperiment;

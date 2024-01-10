@@ -6,10 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
+import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.*;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
@@ -17,6 +15,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.profile.repository.HibernateProfileRepository;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 
@@ -45,11 +44,13 @@ public class FigureViewService {
     public List<ExpressionTableRow> getExpressionTableRows(Figure figure) {
         List<ExpressionTableRow> rows = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (expressionResult.getExpressionExperiment().getGene() != null) {
-                ExpressionTableRow expressionTableRow = new ExpressionTableRow(expressionResult);
-                expressionTableRow.setFigure(figure);
-                rows.add(expressionTableRow);
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            if (figureStage.getExpressionExperiment().getGene() != null) {
+                for (ExpressionResult2 expressionResult : figureStage.getExpressionResultSet()) {
+                    ExpressionTableRow expressionTableRow = new ExpressionTableRow(figureStage, expressionResult);
+                    expressionTableRow.setFigure(figure);
+                    rows.add(expressionTableRow);
+                }
             }
         }
 
@@ -99,20 +100,18 @@ public class FigureViewService {
 
 
     /**
-     * Get a a list of AntibodyTableRows for the given figure
+     * Get a list of AntibodyTableRows for the given figure
      */
     public List<AntibodyTableRow> getAntibodyTableRows(Figure figure) {
         List<AntibodyTableRow> rows = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if ((expressionResult.getExpressionExperiment().getGene() == null) &&
-                    (expressionResult.getExpressionExperiment().getAntibody() != null)) {
-                rows.add(new AntibodyTableRow(expressionResult));
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            if (figureStage.getExpressionExperiment().getGene() == null &&
+                figureStage.getExpressionExperiment().getAntibody() != null) {
+                figureStage.getExpressionResultSet().forEach(expressionResult -> rows.add(new AntibodyTableRow(figureStage, expressionResult)));
             }
         }
-
         rows.sort(ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
-
         return rows;
     }
 
@@ -152,14 +151,14 @@ public class FigureViewService {
      */
     public List<Marker> getExpressionGenes(Figure figure) {
         List<Marker> genes = new ArrayList<>();
-        for (ExpressionResult er : figure.getExpressionResults()) {
-            ExpressionExperiment ee = er.getExpressionExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            ExpressionExperiment2 ee = figureStage.getExpressionExperiment();
             Marker marker = ee.getGene();
 
             if ((marker != null)
-                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
-                    && !genes.contains(marker)) {
-                genes.add(ee.getGene());
+                && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
+                && !genes.contains(marker)) {
+                genes.add(marker);
             }
         }
         Collections.sort(genes);
@@ -172,13 +171,13 @@ public class FigureViewService {
      */
     public List<Marker> getAntibodies(Figure figure) {
         List<Marker> antibodies = new ArrayList<>();
-        for (ExpressionResult er : figure.getExpressionResults()) {
-            ExpressionExperiment ee = er.getExpressionExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            ExpressionExperiment2 ee = figureStage.getExpressionExperiment();
             Marker antibody = ee.getAntibody();
 
             if ((antibody != null)
-                    && (antibody.getType() == Marker.Type.ATB)
-                    && !antibodies.contains(antibody)) {
+                && (antibody.getType() == Marker.Type.ATB)
+                && !antibodies.contains(antibody)) {
                 antibodies.add(antibody);
             }
         }
@@ -192,8 +191,8 @@ public class FigureViewService {
      */
     public List<Fish> getExpressionFish(Figure figure) {
         Set<Fish> fishSet = new TreeSet<>();
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            fishSet.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            fishSet.add(figureStage.getExpressionExperiment().getFishExperiment().getFish());
         }
         return new ArrayList<>(fishSet);
     }
@@ -204,8 +203,8 @@ public class FigureViewService {
     public List<SequenceTargetingReagent> getExpressionSTR(Figure figure) {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            for (SequenceTargetingReagent str : expressionResult.getExpressionExperiment().getFishExperiment().getFish().getStrList()) {
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            for (SequenceTargetingReagent str : figureStage.getExpressionExperiment().getFishExperiment().getFish().getStrList()) {
                 if (str != null && !strs.contains(str)) {
                     strs.add(str);
                 }
@@ -223,8 +222,8 @@ public class FigureViewService {
     public List<Experiment> getExpressionCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
         List<String> expConditionUniqueKey = new ArrayList<>();
-        for (ExpressionResult expressonResult : figure.getExpressionResults()) {
-            FishExperiment fishExperiment = expressonResult.getExpressionExperiment().getFishExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            FishExperiment fishExperiment = figureStage.getExpressionExperiment().getFishExperiment();
             if (canAddExperimentToConditionsList(fishExperiment)) {
                 String key = fishExperiment.getExperiment().getDisplayAllConditions();
                 if (!expConditionUniqueKey.contains(key)) {
@@ -245,10 +244,12 @@ public class FigureViewService {
     public List<PostComposedEntity> getExpressionEntities(Figure figure) {
         List<PostComposedEntity> entities = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (expressionResult.isExpressionFound()) {
-                if (!entities.contains(expressionResult.getEntity())) {
-                    entities.add(expressionResult.getEntity());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            for (ExpressionResult2 expressionResult : figureStage.getExpressionResultSet()) {
+                if (expressionResult.isExpressionFound()) {
+                    if (!entities.contains(expressionResult.getEntity())) {
+                        entities.add(expressionResult.getEntity());
+                    }
                 }
             }
         }
@@ -264,10 +265,9 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            stages.add(expressionResult.getStartStage());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            stages.add(figureStage.getStartStage());
         }
-
         if (stages.size() == 0) {
             return null;
         }
@@ -282,8 +282,8 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            stages.add(expressionResult.getEndStage());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            stages.add(figureStage.getEndStage());
         }
 
         if (stages.size() == 0) {
@@ -372,7 +372,7 @@ public class FigureViewService {
                 }
 
                 if (phenotypeStatement.getRelatedEntity() != null
-                        && !entities.contains(phenotypeStatement.getRelatedEntity())) {
+                    && !entities.contains(phenotypeStatement.getRelatedEntity())) {
                     entities.add(phenotypeStatement.getRelatedEntity());
                 }
             }
@@ -419,15 +419,15 @@ public class FigureViewService {
 
     public String getFullFigureLabel(Figure figure) {
         return figure.getPublication().getShortAuthorList().replace("<i>", "").replace("</i>", "")
-                + ", " + figure.getLabel();
+               + ", " + figure.getLabel();
     }
 
     public Clone getProbeForFigure(Figure figure) {
         Clone probe = null;
-        if (!CollectionUtils.isEmpty(figure.getExpressionResults())) {
-            ExpressionResult firstExpressionResult = figure.getExpressionResults().iterator().next();
-            if (firstExpressionResult != null) {
-                probe = firstExpressionResult.getExpressionExperiment().getProbe();
+        if (!CollectionUtils.isEmpty(figure.getExpressionFigureStage())) {
+            ExpressionFigureStage figureStage = figure.getExpressionFigureStage().iterator().next();
+            if (figureStage != null) {
+                probe = figureStage.getExpressionExperiment().getProbe();
             }
         }
 
@@ -481,16 +481,17 @@ public class FigureViewService {
     /**
      * Return the figures for a publication. This will just return publication.getFigures() unless
      * the following conditions are met: isZebrashare and isUnpublished and probe is not null
+     *
      * @param publication
      * @param probe
      * @return
      */
     public List<Figure> getFiguresForPublicationAndProbe(Publication publication, Clone probe) {
-        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
+        //for direct submission pubs, publication.getFigures() won't be correct, and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
         if (probe != null && !isZebrasharePub(publication) && publication.isUnpublished()) {
             figures = getFigureRepository()
-                        .getFiguresForDirectSubmissionPublication(publication, probe);
+                .getFiguresForDirectSubmissionPublication(publication, probe);
         } else {
             figures.addAll(publication.getFigures());
         }

@@ -4,8 +4,8 @@ package org.zfin.figure.repository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionExperiment2;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.ComparatorCreator;
@@ -84,10 +84,10 @@ public class HibernateFigureRepository implements FigureRepository {
         CriteriaQuery<Figure> query = criteriaBuilder.createQuery(Figure.class);
         Root<Figure> figureRoot = query.from(Figure.class);
 
-        Join<Figure, ExpressionResult> xpatres = figureRoot.join("expressionResults");
-        Join<ExpressionResult, ExpressionExperiment> xpatex = xpatres.join("expressionExperiment");
-        Join<ExpressionExperiment, Publication> pub = xpatex.join("publication");
-        Join<ExpressionExperiment, Clone> cl = xpatex.join("probe");
+        Join<Figure, ExpressionFigureStage> xpatres = figureRoot.join("expressionFigureStage");
+        Join<ExpressionFigureStage, ExpressionExperiment2> xpatex = xpatres.join("expressionExperiment");
+        Join<ExpressionExperiment2, Publication> pub = xpatex.join("publication");
+        Join<ExpressionExperiment2, Clone> cl = xpatex.join("probe");
 
         Predicate pred1 = criteriaBuilder.equal(pub.get("zdbID"), publication.getZdbID());
         Predicate pred2 = criteriaBuilder.equal(cl.get("zdbID"), probe.getZdbID());
@@ -136,7 +136,7 @@ public class HibernateFigureRepository implements FigureRepository {
             inner join image.figure as figure
             inner join figure.publication as publication
             inner join publication.statusHistory as pubStatus
-            left outer join figure.expressionResults as expression
+            left outer join figure.expressionFigureStage as figureStage
             left outer join figure.phenotypeExperiments as phenotype
             where pubStatus.isCurrent = true
             and pubStatus.status.name = :closedCurated
@@ -147,10 +147,10 @@ public class HibernateFigureRepository implements FigureRepository {
             and (
               phenotype.id is not null
               or (
-                expression.xpatresID is not null
+                size(figureStage.expressionResultSet) > 0
                 and (
-                  expression.expressionExperiment.assay.name = 'Immunohistochemistry'
-                  or expression.expressionExperiment.assay.name = 'mRNA in situ hybridization'
+                  figureStage.expressionExperiment.assay.name = 'Immunohistochemistry'
+                  or figureStage.expressionExperiment.assay.name = 'mRNA in situ hybridization'
                 )
               )
             )

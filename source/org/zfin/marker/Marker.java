@@ -8,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.ExternalNote;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.api.View;
@@ -23,7 +23,6 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -47,8 +46,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String abbreviation;
     private String abbreviationOrder;
-    private Set<ExpressionExperiment> probeExpressionExperiments;
-    private Set<ExpressionExperiment> expressionExperiments;
+    private Set<ExpressionExperiment2> expressionExperiments;
     @JsonView(View.SequenceTargetingReagentAPI.class)
     private Set<PublicationAttribution> publications;
     private HashMap<String, List<Publication>> pubsPerAnatomy;
@@ -133,22 +131,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.abbreviationOrder = abbreviationOrder;
     }
 
-    public Set<ExpressionExperiment> getProbeExpressionExperiments() {
-        return probeExpressionExperiments;
-    }
-
-    public void setProbeExpressionExperiments(Set<ExpressionExperiment> probeExpressionExperiments) {
-        this.probeExpressionExperiments = probeExpressionExperiments;
-    }
-
-    public Set<ExpressionExperiment> getExpressionExperiments() {
-        return expressionExperiments;
-    }
-
-    public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
-        this.expressionExperiments = expressionExperiments;
-    }
-
     public Set<PublicationAttribution> getPublications() {
         return publications;
     }
@@ -165,29 +147,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     @Override
     public String getEntityName() {
         return name;
-    }
-
-    /**
-     * obtain a list of publications that are expressed in this gene and
-     * the given anatomical structure.
-     *
-     * @param aoZdbID ZdbID of anatomy object.
-     * @return List of publications.
-     */
-    public List<Publication> getPublications(String aoZdbID) {
-        List<Publication> pubs;
-/*
-        if (pubsPerAnatomy == null)
-            pubsPerAnatomy = new HashMap<String, List<Publication>>();
-        pubs = pubsPerAnatomy.get(aoZdbID);
-        if (pubs != null)
-            return pubs;
-
-*/
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        pubs = pr.getExpressedGenePublications(zdbID, aoZdbID);
-//        pubsPerAnatomy.put(aoZdbID, pubs);
-        return pubs;
     }
 
     /**
@@ -231,14 +190,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         Set<MarkerRelationship> relationshipsFirst = getFirstMarkerRelationships();
         for (MarkerRelationship relationship : relationshipsFirst) {
             if (markers == null)
-                markers = new ArrayList<Marker>();
+                markers = new ArrayList<>();
             if (!markers.contains(relationship.getSecondMarker()))
                 markers.add(relationship.getSecondMarker());
         }
         Set<MarkerRelationship> relationshipsSecond = getSecondMarkerRelationships();
         for (MarkerRelationship relationship : relationshipsSecond) {
             if (markers == null)
-                markers = new ArrayList<Marker>();
+                markers = new ArrayList<>();
             if (!markers.contains(relationship.getFirstMarker()))
                 markers.add(relationship.getFirstMarker());
         }
@@ -308,13 +267,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return isInTypeGroup(TypeGroup.GENEDOM_AND_NTR);
     }
 
-    ;
-
     public boolean isNontranscribed() {
         return isInTypeGroup(TypeGroup.NONTSCRBD_REGION);
     }
-
-    ;
 
     public MarkerType getMarkerType() {
         if (markerType == null)
@@ -503,8 +458,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         private final String value;
         private final String prefix;
 
-        private Type(String type) {
-            this.value = type; this.prefix = type;
+        Type(String type) {
+            this.value = type;
+            this.prefix = type;
         }
 
         private Type(String type, String prefix) {

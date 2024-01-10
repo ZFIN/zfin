@@ -138,6 +138,8 @@ public interface ProfileRepository {
 
     List<Person> getPeopleByFullName(String fullName);
 
+    List<Person> getRootUsers();
+
     /**
      * Delete a curator session element.
      *

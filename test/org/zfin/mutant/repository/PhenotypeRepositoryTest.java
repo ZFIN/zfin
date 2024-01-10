@@ -10,7 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.repository.ExpressionRepository;
@@ -300,7 +300,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         session.beginTransaction();
         try {
 
-            ExpressionExperiment expressionExperiment = expressionRepository.getExpressionExperiment(expressionExperimentID);
+            ExpressionExperiment2 expressionExperiment = expressionRepository.getExpressionExperiment(expressionExperimentID);
             Figure figure = getFigureRepository().getFigure(figureID);
             DevelopmentStage start = anatomyRepository.getStageByID(startID);
             DevelopmentStage end = anatomyRepository.getStageByID(endID);

@@ -17,7 +17,6 @@ import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.DateUtil;
-import org.zfin.util.ExpressionResultSplitStatement;
 import org.zfin.util.TermFigureStageRange;
 import org.zfin.util.TermStageSplitStatement;
 
@@ -111,7 +110,7 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
                 }
                 // if xpatID, startID,endID is the same then update term
                 if (expressionResult.getStartStage().getZdbID().equals(record.getStartStageID()) &&
-                        expressionResult.getEndStage().getZdbID().equals(record.getEndStageID())) {
+                    expressionResult.getEndStage().getZdbID().equals(record.getEndStageID())) {
                     // different super term: update to new one.
                     GenericTerm superTerm = expressionResult.getEntity().getSuperterm();
                     if (record.getSuperTermOboID().equalsIgnoreCase("delete")) {
@@ -143,38 +142,6 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
         // need to reverse it. A bit of a hack!
         TermPresentation.domain = null;
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
-    }
-
-    private void generateReport(List<ExpressionResultSplitStatement> statementList) {
-        List<List<String>> rows = new ArrayList<List<String>>();
-        for (ExpressionResultSplitStatement statement : statementList) {
-            rows.add(getStringsPerRow(statement.getOriginalExpressionResult()));
-            for (ExpressionResult splitStatement : statement.getExpressionResultList())
-                rows.add(getStringsPerRow(splitStatement));
-
-        }
-        CronJobReport cronReport = new CronJobReport(report.getJobName());
-        cronReport.setRows(rows);
-        cronReport.appendToSubject(" - " + rows.size() + " new expression Results" + rows.size() + " found");
-        cronReport.info();
-        cronJobUtil.emailReport("term-stage-split-event.ftl", cronReport);
-
-    }
-
-    private List<String> getStringsPerRow(ExpressionResult result) {
-        List<String> row = new ArrayList<String>(10);
-////TODO        row.add(result.getZdbID());
-        row.add(result.getSuperTerm().getOboID());
-        row.add(result.getSuperTerm().getTermName());
-        row.add(result.getStartStage().getAbbreviation());
-        row.add(result.getEndStage().getAbbreviation());
-        row.add(result.getExpressionExperiment().getPublication().getShortAuthorList());
-        row.add(result.getExpressionExperiment().getPublication().getZdbID());
-        StringBuilder builder = new StringBuilder();
-        for (Figure figure : result.getFigures())
-            builder.append(figure.getLabel() + ",");
-        row.add(builder.deleteCharAt(builder.length() - 1).toString());
-        return row;
     }
 
     private List<ExpressionResultUpdateRecord> expressionUpdateRecords;

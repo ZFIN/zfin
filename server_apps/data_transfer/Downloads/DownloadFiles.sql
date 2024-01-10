@@ -2122,10 +2122,6 @@ CREATE TEMP TABLE tmp_mutation_details(
   dna_localization_so_id text,
   dna_localization_exon bigint,
   dna_localization_intron bigint,
-  transcript_consequence_name text,
-  transcript_consequence_so_id text,
-  transcript_consequence_exon bigint,
-  transcript_consequence_intron bigint,
   protein_consequence_name text,
   protein_consequence_so_id text,
   protein_ref_aa text,
@@ -2163,10 +2159,6 @@ INSERT INTO tmp_mutation_details
     localization_term.ont_id,
     fdmd_exon_number,
     fdmd_intron_number,
-    transcript_term.display,
-    transcript_term.ont_id,
-    ftmd_exon_number,
-    ftmd_intron_number,
     protein_term.display,
     protein_term.ont_id,
     wt_aa.display,
@@ -2182,8 +2174,6 @@ INSERT INTO tmp_mutation_details
   LEFT OUTER JOIN foreign_db_contains dna_dbc ON fdmd_fdbcont_zdb_id = dna_dbc.fdbcont_zdb_id
   LEFT OUTER JOIN foreign_db dna_db ON dna_db.fdb_db_pk_id = dna_dbc.fdbcont_fdb_db_id
   LEFT OUTER JOIN tmp_term_names_and_ids localization_term ON localization_term.zdb_id = fdmd_gene_localization_term_zdb_id
-  LEFT OUTER JOIN feature_transcript_mutation_detail ON feature_zdb_id = ftmd_feature_zdb_id
-  LEFT OUTER JOIN tmp_term_names_and_ids transcript_term ON transcript_term.zdb_id = ftmd_transcript_consequence_term_zdb_id
   LEFT OUTER JOIN feature_protein_mutation_detail ON feature_zdb_id = fpmd_feature_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids protein_term ON protein_term.zdb_id = fpmd_protein_consequence_term_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids wt_aa ON wt_aa.zdb_id = fpmd_wt_protein_term_zdb_id
@@ -2195,6 +2185,20 @@ create temp table feature_chromosome as
 select feature_zdb_id,  (SELECT STRING_AGG(distinct sfcl_chromosome, ',') ) as chromosomes from feature
                                        full join sequence_feature_chromosome_location on feature_zdb_id = sfcl_feature_zdb_id
 where sfcl_feature_zdb_id = feature_zdb_id
+group by feature_zdb_id
+;
+
+create temp table feature_transcript_consequence as
+select feature_zdb_id,  (SELECT STRING_AGG(distinct display, ',') ) as transcript_consequence
+                     ,  (SELECT STRING_AGG(distinct term_ont_id, ',') ) as transcript_soTerm
+                     ,  (SELECT STRING_AGG(nvl(ftmd_exon_number::varchar,null), ',') ) as transcript_exonNumber
+                     ,  (SELECT STRING_AGG(nvl(ftmd_intron_number::varchar,null), ',') ) as transcript_intronNumber
+from feature
+                                       full join feature_transcript_mutation_detail on feature_zdb_id = ftmd_feature_zdb_id
+                                       full join term on term_zdb_id = ftmd_transcript_consequence_term_zdb_id
+                                       full join tmp_term_names_and_ids on term_ont_id = ont_id
+
+where ftmd_feature_zdb_id = feature_zdb_id
 group by feature_zdb_id
 ;
 
@@ -2222,10 +2226,10 @@ create view featuresAffectedGenes as
     dna_localization_so_id,
     dna_localization_exon,
     dna_localization_intron,
-    transcript_consequence_name,
-    transcript_consequence_so_id,
-    transcript_consequence_exon,
-    transcript_consequence_intron,
+    ftc.transcript_consequence,
+    ftc.transcript_soTerm,
+    ftc.transcript_exonNumber,
+    ftc.transcript_intronNumber,
     protein_consequence_name,
     protein_consequence_so_id,
     protein_ref_aa,
@@ -2238,6 +2242,7 @@ create view featuresAffectedGenes as
     fc.chromosomes
   FROM feature f
   full join feature_chromosome fc on fc.feature_zdb_id = f.feature_zdb_id
+  full join feature_transcript_consequence ftc on ftc.feature_zdb_id = f.feature_zdb_id
           , feature_marker_relationship,marker, marker_type_group_member, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
   WHERE fmrel_ftr_zdb_id = f.feature_zdb_id
   AND mrkr_zdb_id = fmrel_mrkr_zdb_id

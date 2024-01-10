@@ -56,8 +56,8 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
     }
 
     private void runReport() {
-        Person jaime = getProfileRepository().getPerson("ZDB-PERS-220425-1");
-        Person emilia = getProfileRepository().getPerson("ZDB-PERS-221004-4");
+        Person gunner = getProfileRepository().getPerson("ZDB-PERS-231010-2");
+        Person avery = getProfileRepository().getPerson("ZDB-PERS-231010-1");
         PublicationTrackingStatus readyForIndexing = getPublicationRepository().getPublicationTrackingStatus(2);
         PublicationTrackingStatus manualPdfAcquisition = getPublicationRepository().getPublicationTrackingStatus(22);
         List<PublicationTrackingStatus> allStatused = getPublicationRepository().getAllPublicationStatuses();
@@ -68,21 +68,21 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
         stats.setReportTitle("Report for " + jobName);
         stats.includeTimestamp();
         Map<String, Object> summary = new LinkedHashMap<>();
-        summary.put("Stats for Jaime","");
+        summary.put("Stats for "+gunner.getShortName(),"");
         summary.put("Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, readyForIndexing));
+                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, readyForIndexing));
         summary.put("number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, manualPdfAcquisition));
+                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, manualPdfAcquisition));
         summary.put("number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, closed.toArray(PublicationTrackingStatus[]::new)));
+                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         summary.put("","");
-        summary.put("Stats for Emilia","");
+        summary.put("Stats for "+avery.getShortName(),"");
         summary.put("Emilia: Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, readyForIndexing));
+                getPublicationRepository().getPublicationTrackingStatus(avery, 7, readyForIndexing));
         summary.put("Emilia: number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, manualPdfAcquisition));
+                getPublicationRepository().getPublicationTrackingStatus(avery, 7, manualPdfAcquisition));
         summary.put("Emilia: number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, closed.toArray(PublicationTrackingStatus[]::new)));
+                getPublicationRepository().getPublicationTrackingStatus(avery, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(dataDirectory, jobName), "statistics");
     }
