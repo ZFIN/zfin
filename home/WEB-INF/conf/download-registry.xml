@@ -125,25 +125,25 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="2">Alternate Identifiers</Column>
         </Download>
 
- <!--       
-        <Download orderIndex="5">
-            <Name>
-                ZFIN RRIDs and names
-            </Name>
-            <Category>
-                ZFIN RRIDs and names
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>rrid</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[]]>
-            </Query>
-            <Column id="1">ID</Column>
-            <Column id="2">Alternate Identifiers</Column>
-        </Download> -->
+        <!--
+               <Download orderIndex="5">
+                   <Name>
+                       ZFIN RRIDs and names
+                   </Name>
+                   <Category>
+                       ZFIN RRIDs and names
+                   </Category>
+                   <Description></Description>
+                   <WikiLink></WikiLink>
+                   <FileName>rrid</FileName>
+                   <FileExtension>txt</FileExtension>
+                   <FileFormat>tsv</FileFormat>
+                   <Query>
+                       <![CDATA[]]>
+                   </Query>
+                   <Column id="1">ID</Column>
+                   <Column id="2">Alternate Identifiers</Column>
+               </Download> -->
 
         <Download orderIndex="2">
             <Name>
@@ -205,7 +205,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 HTP Dataset
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.4)
             </Category>
@@ -222,7 +222,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 HTP Dataset Sample
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.4)
             </Category>
@@ -239,7 +239,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Reference
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.4)
             </Category>
@@ -290,7 +290,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 STR
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.4)
             </Category>
@@ -412,7 +412,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 AGM
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -429,7 +429,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Construct
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -446,7 +446,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 HTP Dataset
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -463,7 +463,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 HTP Dataset Sample
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -480,7 +480,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 STR
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -497,7 +497,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Allele
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -514,7 +514,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Basic Gene Information
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -531,7 +531,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Disease
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -548,7 +548,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Expression
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -565,7 +565,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Phenotype
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -582,7 +582,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Variant
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.1)
             </Category>
@@ -602,7 +602,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 AGM
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -619,7 +619,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 STR
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -636,7 +636,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Allele
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -653,7 +653,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Basic Gene Information
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -670,7 +670,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Disease
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -687,7 +687,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Expression
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -704,7 +704,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Phenotype
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -721,7 +721,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         <Download orderIndex="1">
             <Name>
                 Variant
-			</Name>
+            </Name>
             <Category>
                 ZFIN Alliance Data (1.0.1.0)
             </Category>
@@ -1557,8 +1557,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="3">ZECO Term ID (ZECO:ID)</Column>
             <Column id="4">Chebi Term Name</Column>
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
-            <Column id="6">ZFA Term Name</Column>  
-            <Column id="7">ZFA Term ID (ZFA:ID)</Column>  
+            <Column id="6">ZFA Term Name</Column>
+            <Column id="7">ZFA Term ID (ZFA:ID)</Column>
             <Column id="8">Affected Structure Subterm Name</Column>
             <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
@@ -1853,7 +1853,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="22">Figure ID</Column>
             <Column id="23">Publication ID</Column>
             <Column id="24">PubMed ID</Column>
-        </Download>        
+        </Download>
         <Download orderIndex="1">
             <Name>
                 Fish with Abnormal and Normal Phenotypes
@@ -1931,7 +1931,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="21">Affected Structure or Process 2 superterm name</Column>
             <Column id="22" unique="true">Publication ID</Column>
             <Column id="23" unique="true">Environment ID</Column>
-        </Download>      
+        </Download>
         <Download orderIndex="1">
             <Name>
                 Exacerbated Phenotypes
@@ -2034,7 +2034,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
             <Column id="6">ZFA Term Name</Column>
             <Column id="7">ZFA Term ID (ZFA:ID)</Column>
-            <Column id="8">Affected Structure Subterm Name</Column> 
+            <Column id="8">Affected Structure Subterm Name</Column>
             <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
             <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
@@ -2288,7 +2288,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
         </Download>
         <Download orderIndex="5">
             <Name>
-                Experiment Details 
+                Experiment Details
             </Name>
             <Category>
                 Fish Data
@@ -2315,16 +2315,16 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
                       LEFT OUTER JOIN term t ON expcond_taxon_Term_zdb_id = t.term_Zdb_id;
                 ]]>
             </Query>
-            <Column id="1" >Experiment ID</Column>
+            <Column id="1">Experiment ID</Column>
             <Column id="2">ZECO Term ID</Column>
             <Column id="3">ZFA Term ID</Column>
             <Column id="4">GO Cellular Component Term ID</Column>
             <Column id="5">Chebi Term ID</Column>
-	    <Column id="6">NCBI Taxon Term ID</Column>
+            <Column id="6">NCBI Taxon Term ID</Column>
         </Download>
         <Download orderIndex="6">
             <Name>
-                Innocuous/Phenotypic Construct Details 
+                Innocuous/Phenotypic Construct Details
             </Name>
             <Category>
                 Fish Data
@@ -2639,7 +2639,15 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="31">Protein Consequence Position Start</Column>
             <Column id="32">Protein Consequence Position End</Column>
             <Column id="33">Protein Reference Sequence</Column>
-            <Column id="34">Chromosome</Column>
+            <Column id="34">Zv9 Chromosome</Column>
+            <Column id="35">Zv9 Start</Column>
+            <Column id="36">Zv9 End</Column>
+            <Column id="37">GRCz10 Chromosome</Column>
+            <Column id="38">GRCz10 Start</Column>
+            <Column id="39">GRCz10 End</Column>
+            <Column id="40">GRCz11 Chromosome</Column>
+            <Column id="41">GRCz11 Start</Column>
+            <Column id="42">GRCz11 End</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -3315,7 +3323,7 @@ order by 2, 4, 5, 7;
             <Column id="8">OMIM ID</Column>
             <Column id="9">Evidence Code</Column>
             <Column id="10">Publication</Column>
-        </Download>    
+        </Download>
     </DownloadDefinitions>
     <DownloadCategories>
         <Category orderIndex="10">
