@@ -2,6 +2,7 @@ package org.zfin.search.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
@@ -9,12 +10,14 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Person;
 import org.zfin.search.Category;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /*
  * This should match the fl parameter set as default in solrconfig
@@ -22,7 +25,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class SearchResult implements ProvidesLink {
-
+    private static final String SOLR_EMAIL_FIELD = "Email Address";
     //fields mapped to the Solr index
     private @Field String id;
     private @Field String name;
@@ -76,14 +79,6 @@ public class SearchResult implements ProvidesLink {
         return "<a " + cssClass + " href=\"" + url + "\">" + name + "</a>";
     }
 
-    public String getPgcmid() {
-        return pgcmid;
-    }
-
-    public void setPgcmid(String pgcmid) {
-        this.pgcmid = pgcmid;
-    }
-
     public String getLinkWithAttribution() {
         return getLink();
     }
@@ -92,231 +87,19 @@ public class SearchResult implements ProvidesLink {
         return getLink();
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getDivID() {
         return id.replace("-", "");
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<String> categories) {
-        this.categories = categories;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-
-    public String getMatchingText() {
-        return matchingText;
-    }
-
-    public void setMatchingText(String matchingText) {
-        this.matchingText = matchingText;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
-
-    public List<String> getThumbnails() {
-        return thumbnails;
-    }
-
-    public void setThumbnails(List<String> thumbnails) {
-        this.thumbnails = thumbnails;
-    }
-
-    public List<String> getImageZdbIds() {
-        return imageZdbIds;
-    }
-
-    public void setImageZdbIds(List<String> imageZdbIds) {
-        this.imageZdbIds = imageZdbIds;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public Float getScore() {
-        return score;
-    }
-
-    public void setScore(Float score) {
-        this.score = score;
-    }
-
-    public String getAutocompleteLabel() {
-        return autocompleteLabel;
-    }
-
-    public void setAutocompleteLabel(String autocompleteLabel) {
-        this.autocompleteLabel = autocompleteLabel;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Integer getAttributionCount() {
-        return attributionCount;
-    }
 
     public void setAttribution_count(Integer attributionCount) {
         this.attributionCount = attributionCount;
-    }
-
-    public void setAttributionCount(Integer attributionCount) {
-        this.attributionCount = attributionCount;
-    }
-
-    public List<String> getRelatedLinks() {
-        return relatedLinks;
-    }
-
-    public void setRelatedLinks(List<String> relatedLinks) {
-        this.relatedLinks = relatedLinks;
-    }
-
-    public String getDisplayedID() {
-        return displayedID;
-    }
-
-    public void setDisplayedID(String displayedID) {
-        this.displayedID = displayedID;
-    }
-
-    public Map getAttributes() {
-        return attributes;
-    }
-
-    public String getScreen() {
-        return screen;
-    }
-
-    public void setScreen(String screen) {
-        this.screen = screen;
-    }
-
-    public String getXpatZdbId() {
-        return xpatZdbId;
-    }
-
-    public void setXpatZdbId(String xpatZdbId) {
-        this.xpatZdbId = xpatZdbId;
-    }
-
-    public String getFigZdbId() {
-        return figZdbId;
-    }
-
-    public void setFigZdbId(String figZdbId) {
-        this.figZdbId = figZdbId;
-    }
-
-    public String getExplain() {
-        return explain;
-    }
-
-    public void setExplain(String explain) {
-        this.explain = explain;
-    }
-
-    public boolean isCuratable() {
-        return curatable;
-    }
-
-    public void setCuratable(boolean curatable) {
-        this.curatable = curatable;
     }
 
     public void addAttribute(String label, String value) {
         if (attributes == null)
             attributes = new LinkedHashMap();
         attributes.put(label, value);
-    }
-
-    public List<FeatureGene> getFeatureGenes() {
-        return featureGenes;
-    }
-
-    public void setFeatureGenes(List<FeatureGene> featureGenes) {
-        this.featureGenes = featureGenes;
-    }
-
-    public String getHasOrthology() {
-        return hasOrthology;
-    }
-
-    public void setHasOrthology(String hasOrthology) {
-        this.hasOrthology = hasOrthology;
-    }
-
-    public Object getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Object entity) {
-        this.entity = entity;
-    }
-
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public void setFigure(Figure figure) {
-        this.figure = figure;
     }
 
     /* just grab an arbitrary first one for now.. */
@@ -342,8 +125,66 @@ public class SearchResult implements ProvidesLink {
         } else {
             return categories.get(0);
         }
-
     }
 
+    /**
+     * This is similar to setHighlights, except it first checks if there are any that should be hidden
+     * due to privacy concernts.
+     *
+     * @param highlights the highlights that should be set on the search result
+     */
+    public void setHighlightsPreservingPrivacy(Map<String, List<String>> highlights) {
+
+        // if this is a person, we need to filter out any highlights that are not public
+        boolean isPerson = StringUtils.equals(getCategory(), Category.COMMUNITY.getName()) && StringUtils.equals(getType(), "Person");
+        boolean isLab = StringUtils.equals(getCategory(), Category.COMMUNITY.getName()) && StringUtils.equals(getType(), "Lab");
+
+        if (!isPerson && !isLab) {
+            this.highlights = highlights;
+            return;
+        }
+
+        Map<String, List<String>> filteredHighlights = filterHighlightsRemovePrivateInformation(highlights);
+        this.highlights = filteredHighlights;
+    }
+
+    /**
+     * Input is list of highlights from solr. Output is the same list with some potentially removed for privacy
+     * @param highlights the highlights from solr
+     * @return the filtered highlights
+     */
+    private Map<String, List<String>> filterHighlightsRemovePrivateInformation(Map<String, List<String>> highlights) {
+        return highlights.entrySet().stream()
+                .filter(entry -> shouldFieldBeDisplayed(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Returns true if a field should be hidden. Currently only email addresses are considered (for person or lab).
+     * @param field the field name from solr highlights map
+     * @return true if we should hide the highlight, otherwise false
+     */
+    private boolean shouldFieldBeHidden(String field) {
+        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Person")) {
+            Person person = getProfileRepository().getPerson(this.getId());
+            if (person.getEmailPrivacyPreference().shouldHide()) {
+                return true;
+            }
+        }
+        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Lab")) {
+            Lab lab = getProfileRepository().getLabById(this.getId());
+            if (lab.getEmailPrivacyPreference().shouldHide()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Inverse of shouldFieldBeHidden
+     */
+    private boolean shouldFieldBeDisplayed(String field) {
+        return !shouldFieldBeHidden(field);
+    }
 
 }

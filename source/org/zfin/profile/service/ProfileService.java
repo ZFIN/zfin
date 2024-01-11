@@ -115,7 +115,7 @@ public class ProfileService {
         if (person == null || person.getAccountInfo() == null) {
             return false;
         }
-        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
+        return person.isRootAccount();
     }
 
 //    private BeanComparator beanComparator = new BeanComparator() ;
@@ -141,6 +141,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("orcidID", oldPerson, newPerson));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, false, true));
 
         if (getCurrentSecurityUser() != null   // it's a logged-in user
@@ -307,6 +308,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldLab, newLab));
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
@@ -351,6 +353,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldCompany, newCompany));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailPrivacyPreference", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldCompany, newCompany));
@@ -476,20 +479,20 @@ public class ProfileService {
     }
 
     public Lab createLab(Lab lab) {
-        Person contactPerson = getCurrentSecurityUser();
-        if (contactPerson == null) {
+        if (getCurrentSecurityUser() == null) {
             throw new RuntimeException("Must be logged in to create a user.");
         }
+        lab.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
         lab.setUrl(processUrl(lab.getUrl()));
         HibernateUtil.currentSession().save(lab);
         return lab;
     }
 
     public Company createCompany(Company company) {
-        Person contactPerson = getCurrentSecurityUser();
-        if (contactPerson == null) {
+        if (getCurrentSecurityUser() == null) {
             throw new RuntimeException("Must be logged in to create a user.");
         }
+        company.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
         company.setUrl(processUrl(company.getUrl()));
         HibernateUtil.currentSession().save(company);
         return company;
@@ -498,6 +501,8 @@ public class ProfileService {
 
     public Person createPerson(Person person) {
         person.generateNameVariations();
+
+        person.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
 
         AccountInfo accountInfo = new AccountInfo();
         String login = person.getPutativeLoginName();
@@ -741,4 +746,11 @@ public class ProfileService {
         return person;
     }
 
+    public List<EmailPrivacyPreference> getEmailPrivacyPreferences() {
+        return profileRepository.getAllEmailPrivacyPreferences();
+    }
+
+    private EmailPrivacyPreference getDefaultEmailPrivacyPreference() {
+        return profileRepository.getEmailPrivacyPreference(EmailPrivacyPreference.Name.PUBLIC);
+    }
 }

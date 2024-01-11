@@ -313,6 +313,13 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 	}
 
 	@Test
+	public void organizationToString() {
+		Organization organization = profileRepository.getOrganizationByZdbID("ZDB-LAB-980205-5");
+		assertNotNull(organization);
+		assertEquals("Lab{Organization{active=", organization.toString().substring(0, 24));
+	}
+
+	@Test
 	public void getPersonByLastNameStartsWith() {
 		List<Person> personList;
 		personList = profileRepository.getPersonByLastNameStartsWith("d");

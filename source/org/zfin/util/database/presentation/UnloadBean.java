@@ -3,7 +3,7 @@ package org.zfin.util.database.presentation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.util.FileInfo;
 import org.zfin.util.database.UnloadIndexingService;
 import org.zfin.util.database.UnloadService;
@@ -136,7 +136,7 @@ public class UnloadBean {
     public Map<String, String> getDownloadDateList() {
         LinkedHashMap<String, String> dateList = new LinkedHashMap<String, String>();
         List<String> dates = null;
-        if (Person.isCurrentSecurityUserRoot())
+        if ((new ProfileService()).isCurrentSecurityUserRoot())
             dates = downloadFileService.getAllArchiveDateStrings();
         else
             dates = downloadFileService.getDataMatchingUnloadedDateStrings();

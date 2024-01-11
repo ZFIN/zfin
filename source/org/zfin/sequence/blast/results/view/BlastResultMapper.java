@@ -2,7 +2,8 @@ package org.zfin.sequence.blast.results.view;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.mapping.GenomeLocation;
@@ -13,7 +14,7 @@ import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;
@@ -155,7 +156,7 @@ public class BlastResultMapper {
         // if not root
         Set<Database> databases = new HashSet<>();
 //        StringTokenizer databaseStringTokens  = new StringTokenizer(blastOutput.getBlastOutputDb()," ") ;
-        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        boolean isRoot = (new ProfileService()).isCurrentSecurityUserRoot();
 
         logger.debug("is root: " + isRoot);
         int numberOfSequences = 0;

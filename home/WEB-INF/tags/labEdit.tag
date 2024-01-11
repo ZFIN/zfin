@@ -66,6 +66,16 @@
                     </tr>
                     <tr>
                         <td>
+                            <form:label path="emailPrivacyPreference">Email Privacy:</form:label>
+                        </td>
+                        <td>
+                            <form:select path="emailPrivacyPreference">
+                                <form:options items="${emailPrivacyPreferenceList}"/>
+                            </form:select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <form:label path="url">URL:</form:label>
                         </td>
                         <td>

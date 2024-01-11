@@ -1,13 +1,15 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.*;
 
@@ -19,13 +21,16 @@ public class BlastDatabaseInfoController {
 
     private static Logger logger = LogManager.getLogger(BlastDatabaseInfoController.class);
 
+    @Autowired
+    private ProfileService profileService;
+
     @RequestMapping("/blast/blast-definitions")
     protected String showBlastDefinitions(@RequestParam(required = false) String accession,
                                           @ModelAttribute("formBean") BlastInfoBean blastInfoBean) throws Exception {
 
         logger.info("abbrev: " + accession);
         // we don't want the proteinDB string
-        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        boolean isRoot = profileService.isCurrentSecurityUserRoot();
         if (accession != null && accession.trim().length() > 0) {
             blastInfoBean.setShowTitle(false);
             Database.AvailableAbbrev abbrev = Database.AvailableAbbrev.getType(accession);
@@ -58,7 +63,7 @@ public class BlastDatabaseInfoController {
             blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
 
             cacheStatistics(blastInfoBean);
-            if (Person.isCurrentSecurityUserRoot()) {
+            if (profileService.isCurrentSecurityUserRoot()) {
 //                String remoteString = httpServletRequest.getParameter("remote") ;
                 return "blast/blast-database-table";
             } else {

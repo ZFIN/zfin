@@ -1,6 +1,7 @@
 package org.zfin.profile.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -146,7 +147,7 @@ public class OrganizationMembersController {
 
 
         //this is a bit of a kludge, throw the zdb_id in just in case there's two users with the same name
-        if (Person.isCurrentSecurityUserRoot()) {
+        if (profileService.isCurrentSecurityUserRoot()) {
             for (PersonLookupEntry personLookupEntry : personMemberPresentationList) {
                 if (lookupEntryListContainsName(personMemberPresentationList, personLookupEntry.getValue()))
                 personLookupEntry.setLabel(personLookupEntry.getLabel() + " [" + personLookupEntry.getId() + "]");

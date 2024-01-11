@@ -475,18 +475,14 @@ public class ResultService {
         Person person = RepositoryFactory.getProfileRepository().getPerson(result.getId());
 
         if (person != null) {
-
-            if (StringUtils.isNotEmpty(person.getEmail())) {
+            if (person.getEmailPrivacyPreference().shouldShow()) {
                 result.addAttribute(EMAIL, person.getEmail());
             }
 
             if (StringUtils.isNotEmpty(person.getAddress())) {
                 result.addAttribute(ADDRESS, "<span class=\"result-street-address\">" + person.getAddress() + "</span>");
             }
-
-
         }
-
     }
 
     public void injectLabAttributes(SearchResult result) {
