@@ -132,7 +132,7 @@
         </z:attributeListItem>
 
         <z:attributeListItem label="Statistics Data (Testing)">
-            <a href="stats">Publication Statistics</a>
+            <a href="/action/publication/stats">Publication Statistics</a>
         </z:attributeListItem>
 
     </authz:authorize>
