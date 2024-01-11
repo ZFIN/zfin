@@ -75,20 +75,6 @@ public interface InfrastructureRepository {
     List<RecordAttribution> getRecordAttributions(String ActiveDataZdbID);
 
     /**
-     * Retrieve a single record attribution record.
-     * Since this table has a composite key you need to provide three parameters:
-     * 1) Data ZDB ID
-     * 2) Source ZDB ID
-     * 3) Source type
-     *
-     * @param data   Active data id
-     * @param source Active data id
-     * @param type   source type
-     * @return Record Attribution
-     */
-    RecordAttribution getRecordAttribution(ActiveData data, ActiveSource source, RecordAttribution.SourceType type);
-
-    /**
      * Retrieve a publication attribution by PK.
      * Since this table has a composite key you need to provide three parameters:
      * 1) Data ZDB ID
@@ -186,8 +172,6 @@ public interface InfrastructureRepository {
      * @param pubZdbID
      * @return
      */
-    PublicationAttribution getStandardPublicationAttribution(String dataZdbID, String pubZdbID);
-
     /**
      * Retrieve the replaced zdbID for a given zdbID.
      *
@@ -249,43 +233,6 @@ public interface InfrastructureRepository {
     List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies);
 
     /**
-     * Retrieve terms by synonym match.
-     *
-     * @param queryString synonym name
-     * @param ontology    name
-     * @return list of terms
-     */
-    List<GenericTerm> getTermsBySynonymName(String queryString, Ontology ontology);
-
-    /**
-     * Retrieve a single term by name and ontology. If more than one term is found
-     * an exception is thrown.
-     *
-     * @param termName name
-     * @param ontology Ontology
-     * @return Term
-     */
-    GenericTerm getTermByName(String termName, Ontology ontology);
-
-    /**
-     * Retrieve Term by ZDB ID.
-     *
-     * @param termID term id
-     * @return Generic Term
-     */
-    public GenericTerm getTermByID(String termID);
-
-    /**
-     * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
-     * Hopefully, there term is only found in a single ontology. Match has to be exact.
-     *
-     * @param termName   name
-     * @param ontologies Ontology
-     * @return Term
-     */
-    GenericTerm getTermByName(String termName, List<Ontology> ontologies);
-
-    /**
      * Fetch a Data Alias Group entity for a given name
      *
      * @param name alias group object
@@ -294,14 +241,6 @@ public interface InfrastructureRepository {
     DataAliasGroup getDataAliasGroupByName(String name);
 
     ControlledVocab getCVZdbIDByTerm(String cvTermName);
-
-    /**
-     * Retrieve Root of given ontology.
-     *
-     * @param ontologyName ontology name
-     * @return Term
-     */
-    GenericTerm getRootTerm(String ontologyName);
 
     int getDataAliasesAttributions(String zdbID, String pubZdbID);
 
@@ -366,13 +305,6 @@ public interface InfrastructureRepository {
      * @param batchSize size of of individual batches.
      */
     void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data, int batchSize);
-
-    /**
-     * Execute a query with a native JDBC call
-     *
-     * @param query query string
-     */
-    void executeJdbcQuery(String query);
 
     /**
      * Return a set of data from a native SELECT statement.

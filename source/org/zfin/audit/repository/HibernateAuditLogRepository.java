@@ -1,9 +1,7 @@
 package org.zfin.audit.repository;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.framework.HibernateUtil;
 
@@ -16,12 +14,11 @@ public class HibernateAuditLogRepository implements AuditLogRepository {
 
     public AuditLogItem getLatestAuditLogItem(String recordID) {
         Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(AuditLogItem.class);
-        query.add(Restrictions.eq("zdbID", recordID));
-        query.addOrder(Order.desc("dateUpdated"));
+        Query<AuditLogItem> query = session.createQuery("from AuditLogItem where zdbID = :zdbID order by dateUpdated desc", AuditLogItem.class);
+        query.setParameter("zdbID", recordID);
         query.setMaxResults(1);
 
-        List<AuditLogItem> items = (List<AuditLogItem>) query.list();
+        List<AuditLogItem> items = query.list();
         if (items == null || items.isEmpty())
             return null;
         else
@@ -30,9 +27,8 @@ public class HibernateAuditLogRepository implements AuditLogRepository {
 
     public List<AuditLogItem> getAuditLogItems(String recordID) {
         Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(AuditLogItem.class);
-        query.add(Restrictions.eq("zdbID", recordID));
-        query.addOrder(Order.desc("dateUpdated"));
+        Query<AuditLogItem> query = session.createQuery("from AuditLogItem where zdbID = :zdbID order by dateUpdated desc", AuditLogItem.class);
+        query.setParameter("zdbID", recordID);
         List<AuditLogItem> list = query.list();
         return list;
     }

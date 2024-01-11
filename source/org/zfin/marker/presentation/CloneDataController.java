@@ -1,12 +1,9 @@
 package org.zfin.marker.presentation;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -16,36 +13,18 @@ import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.ProbeLibrary;
 import org.zfin.marker.Vector;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.repository.DisplayGroupRepository;
-import org.zfin.sequence.repository.SequenceRepository;
 
 @Controller
 @RequestMapping("/api/clone")
 @Log4j2
 public class CloneDataController {
 
-    private static Logger LOG = LogManager.getLogger(CloneDataController.class);
-
     @Autowired
     private MarkerRepository markerRepository;
-
-    @Autowired
-    private DisplayGroupRepository displayGroupRepository;
-
-    @Autowired
-    private SequenceRepository sequenceRepository;
-
-    @Autowired
-    private InfrastructureRepository infrastructureRepository;
-
-    @Autowired
-    private PublicationRepository publicationRepository;
 
     @InitBinder("linkDisplay")
     public void initLinkBinder(WebDataBinder binder) {
@@ -119,9 +98,9 @@ public class CloneDataController {
 
             String cloneProbeLibraryName = (clone.getProbeLibrary() == null ? null : clone.getProbeLibrary().getName());
             DTOMarkerService.insertMarkerUpdate(clone, "Probe Library", cloneProbeLibraryName, cloneDTO.getProbeLibraryName());
-            Criteria criteria = session.createCriteria(ProbeLibrary.class);
-            criteria.add(Restrictions.eq("name", cloneDTO.getProbeLibraryName()));
-            ProbeLibrary probeLibrary = (ProbeLibrary) criteria.uniqueResult();
+            Query<ProbeLibrary> query = session.createQuery("from ProbeLibrary where name = :name", ProbeLibrary.class);
+            query.setParameter("name", cloneDTO.getProbeLibraryName());
+            ProbeLibrary probeLibrary = query.uniqueResult();
             clone.setProbeLibrary(probeLibrary);
 
 

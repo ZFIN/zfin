@@ -2,7 +2,6 @@ package org.zfin.infrastructure;
 
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
@@ -46,7 +45,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
-    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private final InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @Test
     public void persistActiveData() {
@@ -85,11 +84,20 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getReplacedZdbID() {
+        String replacedZdbID = "ZDB-ANAT-010921-532";
+        String replacementZdbID = infrastructureRepository.getReplacedZdbID(replacedZdbID);
+        assertNotNull(replacementZdbID);
+
+        assertEquals("ZDB-TERM-100331-100", replacementZdbID);
+    }
+
+    @Test
     public void dataAliasAbbrev() {
         String name = "acerebellar";
         List<String> list = infrastructureRepository.getDataAliasesWithAbbreviation(name);
         assertNotNull(list);
-        assertTrue(list.size() == 1);
+        assertEquals(1, list.size());
         assertEquals("fgf8a", list.get(0));
     }
 
@@ -128,28 +136,12 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getGoCcTermSynonymsByQueryString() {
-        String queryString = "mito";
-        List<GenericTerm> groups = infrastructureRepository.getTermsBySynonymName(queryString, Ontology.GO_CC);
-        assertNotNull(groups);
-        assertTrue(groups.size() > 1);
-    }
-
-    @Test
-    public void getGoCcTerm() {
-        String queryString = "mitochondrion";
-        GenericTerm term = infrastructureRepository.getTermByName(queryString, Ontology.GO_CC);
-        assertNotNull(term);
-    }
-
-
-    @Test
     public void getDataAliasGO() {
         //mitochondrial ATP synthesis coupled electron transport
         String alias = "organelle atp synthesis coupled electron transport";
         List<DataAlias> groups = infrastructureRepository.getDataAliases(alias);
         assertNotNull(groups);
-        assertTrue(!groups.isEmpty());
+        assertFalse(groups.isEmpty());
     }
 
     @Test
@@ -159,12 +151,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(group);
     }
 
-
-    @Test
-    public void getQualityRootTerm() {
-        GenericTerm rootTerm = infrastructureRepository.getRootTerm(Ontology.QUALITY.getOntologyName());
-        assertNotNull(rootTerm);
-    }
 
     @Test
     public void externalNoteRecordAttribution() {
@@ -177,16 +163,13 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         ActiveSource source = new ActiveSource();
         source.setZdbID(pubID);
 
-        RecordAttribution rec = infrastructureRepository.getRecordAttribution(data, source, RecordAttribution.SourceType.STANDARD);
-        Assert.assertTrue(rec == null);
-
         PublicationAttribution record = new PublicationAttribution();
         record.setDataZdbID("externalNoteZdbID");
         Publication pub = new Publication();
         pub.setZdbID(pubID);
         record.setPublication(pub);
-        rec = infrastructureRepository.getPublicationAttribution(record);
-        Assert.assertTrue(rec == null);
+        PublicationAttribution rec = infrastructureRepository.getPublicationAttribution(record);
+        assertNull(rec);
 
     }
 
@@ -309,7 +292,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        List<List<String>> list = null;
+        List<List<String>> list;
         list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
@@ -323,7 +306,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        List<List<String>> list = null;
+        List<List<String>> list;
         list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
@@ -388,8 +371,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getExternalNotes() {
         Antibody antibody = getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-19");
         Set<AntibodyExternalNote> externalNotes = antibody.getExternalNotes();
-        List<ExternalNote> notes = new ArrayList<>();
-        notes.addAll(externalNotes);
+        List<ExternalNote> notes = new ArrayList<>(externalNotes);
         assertEquals(1, notes.size());
 
         notes.clear();
@@ -419,19 +401,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         }
         int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
         assertEquals(3, removed);
-    }
-
-
-    public void addAttributionsNotFound() {
-        infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-        Set<String> datas = new HashSet<>();
-        datas.add("ZDB-GENE-000607-47");
-        datas.add("ZDB-GENE-000607-71");
-        datas.add("ZDB-GENE-030131-10076");
-        int added = infrastructureRepository.addAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
-        assertEquals(datas.size(), added);
-        List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-        assertEquals(datas.size(), numMarkersAttributed.size());
     }
 
 
@@ -477,7 +446,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDistinctPublicationsByData() {
         long count = infrastructureRepository.getDistinctPublicationsByData("ZDB-GENO-100511-2");
-        assertThat((int) (long) count, greaterThan(1));
+        assertThat((int) count, greaterThan(1));
     }
 
     @Test

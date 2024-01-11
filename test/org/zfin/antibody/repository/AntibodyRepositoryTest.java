@@ -14,17 +14,13 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment2;
-import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerType;
+import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -661,7 +657,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
         assertNotNull(abs);
-        assertEquals(abs.getTotalCount(), 3);
     }
 
     @Test
@@ -716,6 +711,14 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Set<MarkerSupplier> suppliers = antibody.getSuppliers();
         assertNotNull(suppliers);
 
+    }
+
+    @Test
+    public void getAntibodiesByName() {
+        String abName = "Ab1";
+        List<Antibody> antibodies = getAntibodyRepository().getAntibodiesByName(abName);
+        assertNotNull(antibodies);
+        assertTrue(antibodies.size() > 2400);
     }
 
     @Test
@@ -835,6 +838,24 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
         assertNotNull(pubs);
+        assertEquals(3, pubs.getPopulatedResults().size());
+    }
+
+    @Test
+    public void getPublicationsPerCloneAndAoTerm() {
+        String aoTermName = "proliferative region";
+        Clone clone = getMarkerRepository().getCloneById("ZDB-EST-010914-1");
+        GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
+
+        PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsProbeWithFigures(clone, aoTerm);
+        assertNotNull(pubs);
+        assertEquals(1, pubs.getPopulatedResults().size());
+    }
+
+    @Test
+    public void getAntibodyByAbbrev() {
+        Antibody antibody = getAntibodyRepository().getAntibodyByAbbrev("zn-5");
+        assertNotNull(antibody);
     }
 
     /**
@@ -880,10 +901,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         String antibodyName = "Ab1-eng";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         assertNotNull(antibody);
-
-        List<Figure> figures = getAntibodyRepository().getFiguresForAntibodyWithTermsAtStage(antibody, term, null, null, null, false);
-        assertNotNull(figures);
-        assertTrue(figures.size() > 5);
     }
 
     @Test

@@ -138,8 +138,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     SourceAlias addJournalAlias(Journal journal, String alias);
 
-    PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
-
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
     Image getImageById(String zdbID);

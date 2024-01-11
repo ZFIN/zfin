@@ -2,12 +2,9 @@ package org.zfin.fish.repository;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import org.zfin.feature.Feature;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ZfinFigureEntity;
@@ -27,14 +24,14 @@ public class HibernateFishRepository implements FishRepository {
 
     public Set<ZfinFigureEntity> getAllFigures(String fishZdbID) {
         String sql = "select phenox_fig_zdb_id,\n" +
-                "        CASE\n" +
-                "         WHEN img_fig_zdb_id is not null then 'true'\n" +
-                "         ELSE 'false'\n" +
-                "        END as hasImage\n" +
-                "from phenotype_experiment\n" +
-                "     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id\n" +
-                "     left outer join image on img_fig_zdb_id = phenox_fig_zdb_id\n" +
-                "where genox_fish_zdb_id = :fishZdbID ";
+                     "        CASE\n" +
+                     "         WHEN img_fig_zdb_id is not null then 'true'\n" +
+                     "         ELSE 'false'\n" +
+                     "        END as hasImage\n" +
+                     "from phenotype_experiment\n" +
+                     "     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id\n" +
+                     "     left outer join image on img_fig_zdb_id = phenox_fig_zdb_id\n" +
+                     "where genox_fish_zdb_id = :fishZdbID ";
                /* "UNION\n" +
                 "select xedg_fig_zdb_id,\n" +
                 "        CASE\n" +
@@ -66,9 +63,9 @@ public class HibernateFishRepository implements FishRepository {
 
     @Override
     public Fish getFishByName(String name) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
-        criteria.add(Restrictions.eq("name", name));
-        return (Fish) criteria.uniqueResult();
+        Query<Fish> criteria = HibernateUtil.currentSession().createQuery("from Fish where name = :name", Fish.class);
+        criteria.setParameter("name", name);
+        return criteria.uniqueResult();
     }
 
 
@@ -81,15 +78,15 @@ public class HibernateFishRepository implements FishRepository {
     public Set<ZfinFigureEntity> getPhenotypeFigures(String fishID) {
         Session session = HibernateUtil.currentSession();
         String sqlFeatures = "select pfiggm_member_name, pfiggm_member_id, " +
-                "CASE " +
-                " WHEN img_fig_zdb_id is not null then 'true' " +
-                " else 'false'" +
-                "END as hasImage " +
-                "from phenotype_figure_group_member, phenotype_figure_group, figure, OUTER image " +
-                "where pfiggm_group_id = pfigg_group_pk_id " +
-                "and pfigg_genox_zdb_id = :fishID " +
-                "and fig_zdb_id = pfiggm_member_id " +
-                "and img_fig_zdb_id = fig_zdb_id";
+                             "CASE " +
+                             " WHEN img_fig_zdb_id is not null then 'true' " +
+                             " else 'false'" +
+                             "END as hasImage " +
+                             "from phenotype_figure_group_member, phenotype_figure_group, figure, OUTER image " +
+                             "where pfiggm_group_id = pfigg_group_pk_id " +
+                             "and pfigg_genox_zdb_id = :fishID " +
+                             "and fig_zdb_id = pfiggm_member_id " +
+                             "and img_fig_zdb_id = fig_zdb_id";
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
         sqlQuery.setParameter("fishID", fishID);
         List<Object[]> objs = sqlQuery.list();
@@ -118,16 +115,16 @@ public class HibernateFishRepository implements FishRepository {
     @Override
     public WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(WarehouseSummary.class);
-        criteria.add(Restrictions.eq("martName", mart.getName()));
-        return (WarehouseSummary) criteria.uniqueResult();
+        Query<WarehouseSummary> criteria = session.createQuery("from WarehouseSummary where martName = :name", WarehouseSummary.class);
+        criteria.setParameter("name", mart.getName());
+        return criteria.uniqueResult();
     }
 
     @Override
     public List<Fish> getAllFish(int firstNIds) {
         Session session = HibernateUtil.currentSession();
         String hql = "from Fish order by zdbID";
-        Query query = session.createQuery(hql);
+        Query<Fish> query = session.createQuery(hql, Fish.class);
         if (firstNIds > 0)
             query.setMaxResults(firstNIds);
         return query.list();

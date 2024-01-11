@@ -469,7 +469,7 @@ public class FishService {
 
             List<String> terms = new ArrayList<>();
             for (String termID : termIDs) {
-                Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+                Term term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
                 terms.add("\"" + term.getTermName() + "\"");
             }
 

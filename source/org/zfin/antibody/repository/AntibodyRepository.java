@@ -73,12 +73,6 @@ public interface AntibodyRepository {
 	List<Species> getImmunogenSpeciesList();
 
 	/**
-	 * Retrieve the number of antibodies found for a given ao term.
-	 *
-	 * @param aoTerm Anatomy Term
-	 * @return number of antibodies
-	 */
-	/**
 	 * Retrieve antibodies for a given ao term.
 	 * Only wild-type fish are cared for.
 	 * <p/>
@@ -128,18 +122,6 @@ public interface AntibodyRepository {
 	 */
 	Antibody getAntibodyByName(String antibodyName);
 
-	/**
-	 * Get all antibodyAOStatistics records for a given ao term.
-	 * Note: for the case to include substructures the result set is not returned just the total number
-	 * in the PaginationResult object!
-	 *
-	 * @param aoTerm               ao term
-	 * @param pagination           pagination bean
-	 * @param includeSubstructures boolean
-	 * @return pagination result
-	 */
-	List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures);
-
 	List<AntibodyStatistics> getAntibodyStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures);
 
 	List<HighQualityProbe> getProbeStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures);
@@ -160,16 +142,6 @@ public interface AntibodyRepository {
 	List<Antibody> getAllAntibodies();
 
 	List<Antibody> getAntibodiesByName(String query);
-
-
-	/**
-	 * Get figures that with expression results matching a given antibody, subterm and image boolean
-	 * optionally also specify subterm and stages.
-	 *
-	 * @return figure list, ordered by pub year then figure label
-	 */
-	List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
-													   DevelopmentStage start, DevelopmentStage end, boolean withImgOnly);
 
 
     Map<String, List<Marker>> getAntibodyAntigenGeneMap(List<String> antibodyIDs);
