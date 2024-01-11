@@ -1,6 +1,7 @@
 package org.zfin.profile.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -92,6 +92,9 @@ public class PersonController {
         }
         model.addAttribute("showDeceasedCheckBox", showDeceasedCheckBox);
         model.addAttribute("countryList", profileService.getCountries());
+
+        model.addAttribute("emailPrivacyPreferenceList", profileService.getEmailPrivacyPreferences());
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-edit";
     }
@@ -260,6 +263,7 @@ public class PersonController {
 
         newPerson.setUrl(profileService.processUrl(newPerson.getUrl()));
         model.addAttribute("countryList", profileService.getCountries());
+        model.addAttribute("emailPrivacyPreferenceList", profileService.getEmailPrivacyPreferences());
 
         if (errors.hasErrors()) {
             return "profile/profile-edit";

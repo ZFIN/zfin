@@ -232,4 +232,10 @@ public interface ProfileRepository {
     List<Person> getPersonByLastNameEquals(String lastName);
 
     boolean emailExists(String email);
+
+    List<EmailPrivacyPreference> getAllEmailPrivacyPreferences();
+
+    EmailPrivacyPreference getEmailPrivacyPreferenceByName(String source);
+
+    EmailPrivacyPreference getEmailPrivacyPreference(EmailPrivacyPreference.Name name);
 }

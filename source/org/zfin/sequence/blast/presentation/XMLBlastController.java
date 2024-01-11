@@ -20,7 +20,7 @@ import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.*;
@@ -47,6 +47,9 @@ import java.util.StringTokenizer;
  */
 @Controller
 public class XMLBlastController {
+
+    @Autowired
+    private ProfileService profileService;
 
     @ModelAttribute("formBean")
     private XMLBlastBean getDefaultSearchFormPrevious(HttpServletRequest request) throws JAXBException, FileNotFoundException {
@@ -283,7 +286,7 @@ public class XMLBlastController {
     }
 
     private void setDatabases(XMLBlastBean xmlBlastBean) {
-        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        boolean isRoot = profileService.isCurrentSecurityUserRoot();
         xmlBlastBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
         xmlBlastBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
     }

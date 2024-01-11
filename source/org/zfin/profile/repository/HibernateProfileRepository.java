@@ -1018,4 +1018,27 @@ public class HibernateProfileRepository implements ProfileRepository {
 		List<Person> persons = query.list();
 		return persons.size() >= 1;
 	}
+
+	@Override
+	public List<EmailPrivacyPreference> getAllEmailPrivacyPreferences() {
+		return currentSession().createQuery("from EmailPrivacyPreference epp order by epp.order", EmailPrivacyPreference.class).list();
+	}
+
+	@Override
+	public EmailPrivacyPreference getEmailPrivacyPreferenceByName(String source) {
+		Session session = currentSession();
+		Query<EmailPrivacyPreference> query = session.createQuery("from EmailPrivacyPreference where name = :name", EmailPrivacyPreference.class);
+		query.setParameter("name", source);
+		List<EmailPrivacyPreference> emailPrivacyPreferences = query.list();
+		if (emailPrivacyPreferences.size() == 0) {
+			return null;
+		}
+		return emailPrivacyPreferences.get(0);
+	}
+
+	@Override
+	public EmailPrivacyPreference getEmailPrivacyPreference(EmailPrivacyPreference.Name name) {
+		return getEmailPrivacyPreferenceByName(name.toString());
+	}
+
 }

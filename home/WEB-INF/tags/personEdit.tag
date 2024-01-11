@@ -80,6 +80,18 @@
                             <zfin2:errors errorResult="${errors}" path="email"/>
                         </td>
                     </tr>
+
+                    <tr>
+                        <td>
+                            <form:label path="emailPrivacyPreference">Email Privacy:</form:label>
+                        </td>
+                        <td>
+                            <form:select path="emailPrivacyPreference">
+                                <form:options items="${emailPrivacyPreferenceList}"/>
+                            </form:select>
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>
                             <form:label path="url">URL:</form:label>
@@ -91,7 +103,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <form:label path="orcidID">ORCID Id:</form:label>
+                            <form:label path="orcidID">ORCID:</form:label>
                         </td>
                         <td>
                             <form:input size="19" path="orcidID"/>
