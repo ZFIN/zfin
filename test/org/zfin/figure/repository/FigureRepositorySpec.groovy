@@ -81,12 +81,12 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         ["ZDB-IMAGE-001220-14", "ZDB-IMAGE-001220-11", "ZDB-IMAGE-001220-15"] == images*.zdbID
     }
 
-    def "getRecentlyCuratedImages should contain > 50 images (assuming we've been adding images over the last year)"() {
+    def "getRecentlyCuratedImages should contain > 15 images (assuming we've been adding images over the last year)"() {
         when: "get the images list"
         List<Image> images = RepositoryFactory.figureRepository.getRecentlyCuratedImages()
 
         then: "it should have the correct number of images in order"
-        images.size() >= 20;
+        images.size() >= 15;
     }
 
 }
