@@ -154,24 +154,6 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
         expressionUpdateRecords = parser.parseFile();
     }
 
-    /**
-     * Tries to find the full entities for each one by example.
-     *
-     * @param splitStatementList list of split statements
-     */
-    private void findObjects(List<TermStageSplitStatement> splitStatementList) {
-        if (splitStatementList == null)
-            return;
-        for (TermStageSplitStatement termStageSplitStatement : splitStatementList) {
-            for (TermFigureStageRange stageRange : termStageSplitStatement.getTermFigureStageRangeList()) {
-                ExpressionService.populateEntities(stageRange);
-                String errorMessage = ExpressionService.populateEntities(termStageSplitStatement.getOriginalTermFigureStageRange());
-                if (errorMessage != null)
-                    termStageSplitStatement.setErrorMessage(errorMessage);
-            }
-        }
-    }
-
     private long sectionTime;
 
     public boolean initialize(CronJobReport cronJobReport) {

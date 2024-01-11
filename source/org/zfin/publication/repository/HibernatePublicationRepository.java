@@ -93,7 +93,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
-    //TODO: refactor to JPA Criteria?
     //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
 
@@ -128,7 +127,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     }
 
-    //TODO: refactor to JPA Criteria?
     //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
 
     /**
@@ -445,20 +443,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         InfrastructureService.insertUpdate(journal, updateComment);
 */
         return journalAlias;
-    }
-
-    public PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype) {
-        Session session = HibernateUtil.currentSession();
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria expression = pubs.createCriteria("expressionExperiments");
-        Criteria genox = expression.createCriteria("fishExperiment");
-        Criteria fish = genox.createCriteria("fish");
-        fish.add(Restrictions.eq("genotype", genotype));
-        Criteria result = expression.createCriteria("expressionResults");
-        result.add(Restrictions.isNotEmpty("figures"));
-        expression.add(Restrictions.isNull("antibody"));
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<>((List<Publication>) pubs.list());
     }
 
     @Override
@@ -1075,7 +1059,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Journal getJournalByID(String zdbID) {
-        return (Journal) HibernateUtil.currentSession().get(Journal.class, zdbID);
+        return HibernateUtil.currentSession().get(Journal.class, zdbID);
     }
 
     public SortedSet<Publication> getAllPublicationsForGenotypes(List<Genotype> genotypes) {

@@ -785,20 +785,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return currentSession().get(ExpressionDetailsGenerated.class, id);
     }
 
-    @Override
-    public ExpressionDetailsGenerated getExpressionDetailsGenerated(String xpatZdbID, String figZdbID) {
-        if (StringUtils.isEmpty(xpatZdbID) || StringUtils.isEmpty(figZdbID)) {
-            return null;
-        }
-
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ExpressionDetailsGenerated.class);
-        criteria.add(Restrictions.eq("expressionExperiment.zdbID", xpatZdbID));
-        criteria.add(Restrictions.eq("figure.zdbID", figZdbID));
-        return (ExpressionDetailsGenerated) criteria.uniqueResult();
-    }
-
-
     /**
      * Retrieve an assay by name.
      *

@@ -82,8 +82,6 @@ public interface ExpressionRepository {
 
     ExpressionDetailsGenerated getExpressionExperiment2(long id);
 
-    ExpressionDetailsGenerated getExpressionDetailsGenerated(String xpatZdbID, String figZdbID);
-
     /**
      * Retrieve an assay by name.
      *

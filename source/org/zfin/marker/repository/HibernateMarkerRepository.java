@@ -4,11 +4,8 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -66,6 +63,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.marker.MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -271,17 +269,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(cr).uniqueResult();
     }
 
-    //this is kind of awful...
-    public List<Marker> getMarkersByZdbIdPrefix(String prefix) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Marker.class);
-        criteria.add(Restrictions.like("zdbID", prefix + "%"));
-        criteria.setFetchMode("aliases", FetchMode.JOIN);
-        List<Marker> markerList = new ArrayList<>();
-        markerList.addAll(criteria.list());
-        return markerList;
-    }
-
     public List<Marker> getMarkersByAbbreviation(String name) {
         List<Marker> markerList = currentSession().createQuery("from Marker where upper(abbreviation) like :name || '%' order by abbreviationOrder asc ", Marker.class).setParameter("name", name.toUpperCase()).list();
 
@@ -294,10 +281,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public List<Marker> getGenesByAbbreviation(String name) {
-        List<Marker> markerList = currentSession().createQuery("from Marker where upper(abbreviation) like :name || '%' AND zdbID like 'ZDB-GENE%' order by abbreviationOrder asc ", Marker.class).setParameter("name", name.toUpperCase()).list();
+        List<Marker> markerList =
+            currentSession().createQuery("from Marker where upper(abbreviation) like :name || '%' " +
+                                         " AND zdbID like 'ZDB-GENE%' order by abbreviationOrder asc ", Marker.class)
+                .setParameter("name", name.toUpperCase())
+                .list();
 
 
-        List<Marker> markerListContains = currentSession().createQuery("from Marker where upper(abbreviation) like  '%' || :name || '%' AND zdbID like 'ZDB-GENE%' order by abbreviationOrder asc ", Marker.class).setParameter("name", name.toUpperCase()).list();
+        List<Marker> markerListContains =
+            currentSession().createQuery("from Marker where upper(abbreviation) like  '%' || :name || '%' " +
+                                         " AND zdbID like 'ZDB-GENE%' order by abbreviationOrder asc ", Marker.class)
+                .setParameter("name", name.toUpperCase())
+                .list();
         markerListContains.forEach(familyName -> {
             if (!markerList.contains(familyName)) markerList.add(familyName);
         });
@@ -457,7 +452,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
             query.setParameterList("mTypeGroup", mTypeGroup);
             return query.list();
         } else {
-            String hql = "select mr.name from MarkerRelationshipType mr where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name not like '%interacts%'";
+            String hql = "select mr.name from MarkerRelationshipType mr " +
+                         " where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name not like '%interacts%'";
             Query<String> query = session.createQuery(hql, String.class);
             query.setParameterList("mTypeGroup", mTypeGroup);
             return query.list();
@@ -503,7 +499,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         currentSession().flush();
         currentSession().refresh(mrel);
 
-        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation() + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel() + " " + mrel.getSecondMarker().getAbbreviation() + "\" with Attribution: " + sourceZdbID;
+        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation()
+                               + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
+                               + " " + mrel.getSecondMarker().getAbbreviation()
+                               + "\" with Attribution: " + sourceZdbID;
         log.debug(updateComment);
         InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
         InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
@@ -854,11 +853,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public MarkerLocation getMarkerLocationByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(MarkerLocation.class);
-        criteria.add(Restrictions.eq("zdbID", zdbID));
-
-        return (MarkerLocation) criteria.uniqueResult();
+        return session.get(MarkerLocation.class, zdbID);
     }
 
     public MarkerLocation saveMarkerLocation(MarkerLocation markerLocation) {
@@ -1067,7 +1062,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         List<MarkerType> types = group.getTypeStrings().stream().map(this::getMarkerTypeByName).collect(toList());
         // a slight speed improvement and more fine-grained sorting control (if needed)
-        String hql = " select distinct m from Marker m  where m.abbreviation like :name  and m.markerType in (:types)  ";
+        String hql = " select distinct m from Marker m  "
+                     + " where m.abbreviation like :name  "
+                     + " and m.markerType in (:types)  ";
 //                + " order by m.abbreviationOrder asc " ;
 
         List<Marker> markerList = new ArrayList<>(HibernateUtil.currentSession().createQuery(hql, Marker.class).setParameter("name", "%" + name + "%").setParameterList("types", types).list());
@@ -1129,9 +1126,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public TranscriptStatus getTranscriptStatusForName(String statusString) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(org.zfin.marker.TranscriptStatus.class);
-        criteria.add(Restrictions.eq("status", statusString));
-        return (TranscriptStatus) criteria.uniqueResult();
+        Query<TranscriptStatus> criteria = session.createQuery("from TranscriptStatus where status = :status", TranscriptStatus.class);
+        criteria.setParameter("status", statusString);
+        return criteria.uniqueResult();
     }
 
     public boolean getGeneHasGOEvidence(Marker gene) {
@@ -1167,7 +1164,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public boolean getGeneHasPhenotype(Marker gene) {
-        String sql = "SELECT count(phenox_pk_id) FROM mutant_fast_search, phenotype_experiment WHERE mfs_data_zdb_id = :geneZdbID AND mfs_genox_zdb_id = phenox_genox_zdb_id ";
+        String sql = "SELECT count(phenox_pk_id) " +
+                     "FROM mutant_fast_search, phenotype_experiment " +
+                     "WHERE mfs_data_zdb_id = :geneZdbID " +
+                     "AND mfs_genox_zdb_id = phenox_genox_zdb_id ";
         Query query = currentSession().createSQLQuery(sql);
         query.setParameter("geneZdbID", gene.getZdbID());
 
@@ -1227,9 +1227,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         String hqlCount;
         if (includeSubstructures) {
-            hqlCount = "select count(distinct stat.probe) from HighQualityProbeAOStatistics stat where stat.superterm.zdbID = :aoterm ";
+            hqlCount = "select count(distinct stat.probe) " +
+                       "     from HighQualityProbeAOStatistics stat " +
+                       "     where stat.superterm.zdbID = :aoterm ";
         } else {
-            hqlCount = "select count(distinct stat.probe) from HighQualityProbeAOStatistics stat where stat.superterm.zdbID = :aoterm and stat.subterm.zdbID = :aoterm ";
+            hqlCount = "select count(distinct stat.probe) " +
+                       "     from HighQualityProbeAOStatistics stat " +
+                       "     where stat.superterm.zdbID = :aoterm and " +
+                       "           stat.subterm.zdbID = :aoterm ";
         }
         Query<Number> query = session.createQuery(hqlCount, Number.class);
         query.setParameter("aoterm", aoTerm.getZdbID());
@@ -2641,7 +2646,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public Marker getMarkerByFeature(Feature feature) {
-        String hql = "select fmr.marker from FeatureMarkerRelationship as fmr where fmr.feature = :feature and fmr.type in (:types)";
+        String hql = "select fmr.marker from FeatureMarkerRelationship as fmr " +
+                     "where " +
+                     " fmr.feature = :feature " +
+                     " and fmr.type in (:types)";
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("feature", feature);
         query.setParameterList("types", (new FeatureMarkerRelationshipTypeEnum[]{FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF}));
@@ -2651,7 +2659,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public String getAccessionNumber(Marker marker, Database.AvailableAbbrev database) {
-        String hql = "from MarkerDBLink where referenceDatabase.primaryBlastDatabase.abbrev = :database and marker = :marker ";
+        String hql = "from MarkerDBLink " +
+                     "where referenceDatabase.primaryBlastDatabase.abbrev = :database " +
+                     "and marker = :marker ";
         Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
         query.setParameter("database", database);
         query.setParameter("marker", marker);
@@ -2815,18 +2825,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<SequenceTargetingReagentLookupEntry> getSequenceTargetingReagentForString(String lookupString, String type) {
-        String hql = " select mo from Marker mo where lower(mo.abbreviation) like :lookupString and mo.markerType.name = :type order by mo.abbreviation  ";
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameter("type", type).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
-                Marker str = (Marker) tuple[0];
-                SequenceTargetingReagentLookupEntry strSuggestionList = new SequenceTargetingReagentLookupEntry();
-                strSuggestionList.setId(str.getZdbID());
-                strSuggestionList.setLabel(str.getAbbreviation());
-                strSuggestionList.setValue(str.getAbbreviation());
-                return strSuggestionList;
-            }
-        }).list();
+        String hql = " select mo from Marker mo " +
+                     "where " +
+                     "lower(mo.abbreviation) like :lookupString " +
+                     "and mo.markerType.name = :type " +
+                     "order by mo.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+            .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+            .setParameter("type", type)
+            .setResultTransformer(new BasicTransformerAdapter() {
+                @Override
+                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+                    Marker str = (Marker) tuple[0];
+                    SequenceTargetingReagentLookupEntry strSuggestionList = new SequenceTargetingReagentLookupEntry();
+                    strSuggestionList.setId(str.getZdbID());
+                    strSuggestionList.setLabel(str.getAbbreviation());
+                    strSuggestionList.setValue(str.getAbbreviation());
+                    return strSuggestionList;
+                }
+            })
+            .list()
+            ;
     }
 
     @Override
@@ -2859,7 +2878,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
         }
 
-        String hql = "select rel.secondMarker from MarkerRelationship as rel where rel.firstMarker = :firstMarker and rel.type = :type order by rel.secondMarker.abbreviationOrder";
+        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
+                     "where rel.firstMarker = :firstMarker " +
+                     "and rel.type = :type " +
+                     "order by rel.secondMarker.abbreviationOrder";
 
         Session session = currentSession();
         Query<Marker> query = session.createQuery(hql, Marker.class);
@@ -2874,7 +2896,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
         }
 
-        String hql = "select rel from MarkerRelationship as rel where rel.secondMarker = :secondMarker order by rel.firstMarker.abbreviationOrder";
+        String hql = "select rel from MarkerRelationship as rel  " +
+                     "where rel.secondMarker = :secondMarker " +
+                     "order by rel.firstMarker.abbreviationOrder";
 
         Session session = currentSession();
         Query<MarkerRelationship> query = session.createQuery(hql, MarkerRelationship.class);
@@ -2920,7 +2944,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
         }
         // second related elements
-        String hql = "select rel.secondMarker from MarkerRelationship as rel  where rel.firstMarker = :firstMarker and rel.type in (:typeList) order by rel.secondMarker.abbreviationOrder";
+        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
+                     "where rel.firstMarker = :firstMarker " +
+                     "and rel.type in (:typeList) " +
+                     "order by rel.secondMarker.abbreviationOrder";
 
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("firstMarker", marker);
@@ -2929,7 +2956,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         PaginationResult<Marker> markerPaginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean.getMaxDisplayRecordsInteger(), query.scroll());
 
         // second related elements
-        hql = "select rel.firstMarker from MarkerRelationship as rel  where rel.secondMarker = :secondMarker and rel.type in (:typeList) order by rel.firstMarker.abbreviationOrder";
+        hql = "select rel.firstMarker from MarkerRelationship as rel  " +
+              "where rel.secondMarker = :secondMarker " +
+              "and rel.type in (:typeList) " +
+              "order by rel.firstMarker.abbreviationOrder";
 
         Query<Marker> query2 = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query2.setParameter("secondMarker", marker);
@@ -2943,7 +2973,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<OmimPhenotype> getOmimPhenotype(Marker marker) {
         Session session = HibernateUtil.currentSession();
-        String sql = "FROM OmimPhenotype WHERE ortholog.zebrafishGene = :gene AND ortholog.ncbiOtherSpeciesGene.organism.commonName = :organism ";
+        String sql = "FROM OmimPhenotype " +
+                     "WHERE ortholog.zebrafishGene = :gene " +
+                     "AND ortholog.ncbiOtherSpeciesGene.organism.commonName = :organism ";
 
         Query<OmimPhenotype> query = session.createQuery(sql, OmimPhenotype.class);
         query.setParameter("gene", marker);
@@ -3122,7 +3154,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             query.setFirstResult(0);
             query.setMaxResults(number);
         }
-        return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return query.setResultTransformer(DISTINCT_ROOT_ENTITY).list();
     }
 
     @Override
@@ -3149,28 +3181,49 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2) {
         String seq1 = str1.getSequence().getSequence();
-        HibernateUtil.currentSession().createSQLQuery("UPDATE marker_sequence SET seq_sequence = :seq_sequence WHERE seq_mrkr_zdb_id = :zdbID ").setParameter("seq_sequence", seq1).setParameter("zdbID", str2.getZdbID()).executeUpdate();
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE marker_sequence " +
+                "SET seq_sequence = :seq_sequence " +
+                "WHERE seq_mrkr_zdb_id = :zdbID ")
+            .setParameter("seq_sequence", seq1)
+            .setParameter("zdbID", str2.getZdbID())
+            .executeUpdate();
         String seq2;
         if (str1.getSequence().getSecondSequence() != null) {
             seq2 = str1.getSequence().getSecondSequence();
-            HibernateUtil.currentSession().createSQLQuery("UPDATE marker_sequence SET seq_sequence_2 = :seq_sequence_2 WHERE seq_mrkr_zdb_id = :zdbID ").setParameter("seq_sequence_2", seq2).setParameter("zdbID", str2.getZdbID()).executeUpdate();
+            HibernateUtil.currentSession().createSQLQuery(
+                    "UPDATE marker_sequence " +
+                    "SET seq_sequence_2 = :seq_sequence_2 " +
+                    "WHERE seq_mrkr_zdb_id = :zdbID ")
+                .setParameter("seq_sequence_2", seq2)
+                .setParameter("zdbID", str2.getZdbID())
+                .executeUpdate();
         }
     }
 
     @Override
     public List<LookupEntry> getRegionListForString(String lookupString, String type) {
-        String hql = " select region from Marker region where lower(region.abbreviation) like :lookupString and region.markerType.name = :type order by region.abbreviation  ";
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameter("type", type).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] regions) {
-                Marker reg = (Marker) tuple[0];
-                LookupEntry regionSuggestionList = new LookupEntry();
-                regionSuggestionList.setId(reg.getZdbID());
-                regionSuggestionList.setLabel(reg.getAbbreviation());
-                regionSuggestionList.setValue(reg.getAbbreviation());
-                return regionSuggestionList;
-            }
-        }).list();
+        String hql = " select region from Marker region " +
+                     "where " +
+                     "lower(region.abbreviation) like :lookupString " +
+                     "and region.markerType.name = :type " +
+                     "order by region.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+            .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+            .setParameter("type", type)
+            .setResultTransformer(new BasicTransformerAdapter() {
+                @Override
+                public Object transformTuple(Object[] tuple, String[] regions) {
+                    Marker reg = (Marker) tuple[0];
+                    LookupEntry regionSuggestionList = new LookupEntry();
+                    regionSuggestionList.setId(reg.getZdbID());
+                    regionSuggestionList.setLabel(reg.getAbbreviation());
+                    regionSuggestionList.setValue(reg.getAbbreviation());
+                    return regionSuggestionList;
+                }
+            })
+            .list()
+            ;
     }
 
     @Override
@@ -3197,18 +3250,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<AntibodyLookupEntry> getAntibodyForString(String lookupString, String type) {
-        String hql = " select ab from Marker ab where lower(ab.abbreviation) like :lookupString and ab.markerType.name = :type order by ab.abbreviation  ";
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameter("type", type).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
-                Marker antibody = (Marker) tuple[0];
-                AntibodyLookupEntry abSuggestionList = new AntibodyLookupEntry();
-                abSuggestionList.setId(antibody.getZdbID());
-                abSuggestionList.setLabel(antibody.getAbbreviation());
-                abSuggestionList.setValue(antibody.getAbbreviation());
-                return abSuggestionList;
-            }
-        }).list();
+        String hql = " select ab from Marker ab " +
+                     "where " +
+                     "lower(ab.abbreviation) like :lookupString " +
+                     "and ab.markerType.name = :type " +
+                     "order by ab.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+            .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+            .setParameter("type", type)
+            .setResultTransformer(new BasicTransformerAdapter() {
+                @Override
+                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+                    Marker antibody = (Marker) tuple[0];
+                    AntibodyLookupEntry abSuggestionList = new AntibodyLookupEntry();
+                    abSuggestionList.setId(antibody.getZdbID());
+                    abSuggestionList.setLabel(antibody.getAbbreviation());
+                    abSuggestionList.setValue(antibody.getAbbreviation());
+                    return abSuggestionList;
+                }
+            })
+            .list()
+            ;
     }
 
     @Override

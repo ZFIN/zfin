@@ -70,10 +70,6 @@ public interface MarkerRepository {
 
     Marker getMarkerByName(String name);
 
-    List<Marker> getMarkersByZdbIdPrefix(String prefix);
-
-    //Todo: should this move to another class?
-
     MarkerRelationship getMarkerRelationship(Marker firstMarker,
                                              Marker secondMarker,
                                              MarkerRelationship.Type type);

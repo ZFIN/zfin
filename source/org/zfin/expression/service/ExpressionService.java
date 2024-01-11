@@ -513,7 +513,7 @@ public class ExpressionService {
 
     public static String populateEntities(TermFigureStageRange stageRange) {
         try {
-            GenericTerm term = getOntologyRepository().getTermByExample(stageRange.getSuperTerm());
+            GenericTerm term = getOntologyRepository().getTermByOboID(stageRange.getSuperTerm().getOboID());
             stageRange.setSuperTerm(term);
         } catch (Exception e) {
             String error = "Superterm not found by oboID: " + stageRange.getSuperTerm().getOboID();

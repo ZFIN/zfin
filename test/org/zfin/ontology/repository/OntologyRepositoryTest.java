@@ -9,10 +9,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 
@@ -41,6 +43,18 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getDevelopmentStageFromTerm() {
+        GenericTerm liver = ontologyRepository.getTermByName("liver", Ontology.ANATOMY);
+
+        DevelopmentStage stage = OntologyService.getStartStageForTerm(liver);
+        assertNotNull(stage);
+        GenericTerm term = new GenericTerm();
+        term.setOboID(stage.getOboID());
+        DevelopmentStage stage1 = ontologyRepository.getDevelopmentStageFromTerm(term);
+        assertNotNull(stage1);
+    }
+
+    @Test
     public void getTermByName() {
         String anatomyTermName = "forerunner cell group";
         GenericTerm term = ontologyRepository.getTermByName(anatomyTermName, Ontology.ANATOMY);
@@ -65,22 +79,21 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void goOntologyContainsAllGOTerms() {
-        List<String> ignoreGoIDs = new ArrayList<>();
-        ignoreGoIDs.addAll(getOntologyRepository()
-                .getObsoleteAndSecondaryTerms()
-                .stream()
-                .map(GenericTerm::getOboID)
-                .filter(id -> id.startsWith("GO:"))
-                .toList());
+        List<String> ignoreGoIDs = new ArrayList<>(getOntologyRepository()
+            .getObsoleteAndSecondaryTerms()
+            .stream()
+            .map(GenericTerm::getOboID)
+            .filter(id -> id.startsWith("GO:"))
+            .toList());
 
         assertTrue("filter method gets data", ignoreGoIDs.size() > 0);
 
         List<String> comparisonGoIDs = new ArrayList<>();
         comparisonGoIDs.addAll(getOntologyRepository()
-                .getObsoleteAndSecondaryTermsByOntologies(Ontology.GO_MF, Ontology.GO_BP, Ontology.GO_CC)
-                .stream()
-                .map(GenericTerm::getOboID)
-                .toList());
+            .getObsoleteAndSecondaryTermsByOntologies(Ontology.GO_MF, Ontology.GO_BP, Ontology.GO_CC)
+            .stream()
+            .map(GenericTerm::getOboID)
+            .toList());
 
         assertTrue("repository method gets data", comparisonGoIDs.size() > 0);
 
@@ -130,13 +143,35 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void loadAllTermsOfOntology() throws Exception {
+    public void loadAllTermsOfOntology() {
         List<GenericTerm> terms = ontologyRepository.getAllTermsFromOntology(Ontology.QUALITY);
-        Assert.assertNotNull(terms);
+        assertNotNull(terms);
+        assertTrue(terms.size() > 2700);
     }
 
     @Test
-    public void checkTermSubset() throws Exception {
+    public void getEcoEvidenceCode() {
+        GenericTerm term = ontologyRepository.getTermByOboID("ECO:0000256");
+        EcoGoEvidenceCodeMapping terms = ontologyRepository.getEcoEvidenceCode(term);
+        assertNotNull(terms);
+        assertEquals(terms.getEvidenceCode(), "IEA");
+    }
+
+    @Test
+    public void getExpressionRibbonCellularComponentTerms() {
+        List<GenericTerm> terms = ontologyRepository.getExpressionRibbonCellularComponentTerms();
+        assertNotNull(terms);
+    }
+
+    @Test
+    public void getTermByNameActive() {
+        GenericTerm liver = ontologyRepository.getTermByNameActive("liver", Ontology.ANATOMY);
+        assertNotNull(liver);
+        assertEquals(liver.getTermName(), "liver");
+    }
+
+    @Test
+    public void checkTermSubset() {
         Term term = ontologyRepository.getTermByName("fused with", Ontology.QUALITY);
         assertNotNull(term);
         Set<Subset> subs = term.getSubsets();
@@ -144,7 +179,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void loadOntologyMetatdataForAll() throws Exception {
+    public void loadOntologyMetatdataForAll() {
         List<OntologyMetadata> metadata = ontologyRepository.getAllOntologyMetadata();
         assertNotNull(metadata);
         assertEquals("ontology name", "sequence", metadata.get(0).getName());
@@ -154,14 +189,14 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void loadOntologyMetatdataForQuality() throws Exception {
+    public void loadOntologyMetatdataForQuality() {
         OntologyMetadata metadata = ontologyRepository.getOntologyMetadata(Ontology.QUALITY.getOntologyName());
         assertNotNull(metadata);
         assertEquals("Default name space", "quality", metadata.getDefaultNamespace());
     }
 
     @Test
-    public void getPhenotypesWithSecondaryTerms() throws Exception {
+    public void getPhenotypesWithSecondaryTerms() {
         List<PhenotypeStatement> phenotypesWithSecondaryTerms = ontologyRepository.getPhenotypesWithSecondaryTerms();
         assertNotNull(phenotypesWithSecondaryTerms);
     }
@@ -215,7 +250,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getOntologyMetadata() throws Exception {
+    public void getOntologyMetadata() {
         List<OntologyMetadata> metadata = ontologyRepository.getAllOntologyMetadata();
         assertNotNull(metadata);
     }
@@ -333,18 +368,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         endTime = System.currentTimeMillis();
         logger.info("SPATIAL time End: " + (endTime - startTime) / 1000f + "s");
 
-
-//        startTime = System.currentTimeMillis();
-//        assertEquals(ontologyRepository.getNumberTermsForOntology(Ontology.QUALITY),ontologyRepository.getTermDTOsFromOntology(Ontology.QUALITY).size());
-//        endTime = System.currentTimeMillis();
-//        logger.info("QUALITY time End: " + (endTime - startTime) / 1000f + "s");
-
-//        startTime = System.currentTimeMillis();
-//        Map<String,TermDTO> anatomyTermDtos = ontologyRepository.getTermDTOsFromOntology(Ontology.ANATOMY);
-//        assertEquals(ontologyRepository.getNumberTermsForOntology(Ontology.ANATOMY),anatomyTermDtos.keySet().size());
-//        endTime = System.currentTimeMillis();
-//        logger.info("ANATOMY time End: " + (endTime - startTime) / 1000f + "s");
-
     }
 
     @Test
@@ -356,7 +379,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     @Ignore("Disease ontology issue: uses disease_Ontology as a default namespace but then uses 'doid' " +
-        "as namespaces for some terms. Need to check with the working group")
+            "as namespaces for some terms. Need to check with the working group")
     public void getFirst2Terms() {
         List<String> allTerms = ontologyRepository.getFirstNTermsPerOntology(2);
         assertNotNull(allTerms);
@@ -472,22 +495,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     public void getTermsWithoutRelationships() {
         List<GenericTerm> relationshipList = ontologyRepository.getActiveTermsWithoutRelationships();
         assertNotNull(relationshipList);
-    }
-
-    @Test
-    public void getTermByExample() {
-        GenericTerm term = new GenericTerm();
-        term.setOboID("ZFA:0000123");
-        GenericTerm genericTerm = ontologyRepository.getTermByExample(term);
-        assertNotNull(genericTerm);
-        assertEquals("liver", genericTerm.getTermName());
-
-        DevelopmentStage stage = new DevelopmentStage();
-        stage.setAbbreviation("5-9 somites");
-        stage = ontologyRepository.getStageByExample(stage);
-        assertNotNull(genericTerm);
-        assertEquals("ZFS:0000024", stage.getOboID());
-
     }
 
     @Test
