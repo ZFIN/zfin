@@ -36,7 +36,7 @@ public class FigureViewService {
     private PhenotypeRepository phenotypeRepository;
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private ProfileRepository profileRepository = new HibernateProfileRepository();
 
     /**
      * Get a list of ExpressionTableRows for the given figure
