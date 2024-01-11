@@ -1,6 +1,5 @@
 package org.zfin.marker;
 
-
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,32 +12,7 @@ public class SequenceFeature {
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     public String zdbID;
 
-    public String getNameOrder() {
-        return nameOrder;
-    }
-
-    public void setNameOrder(String nameOrder) {
-        this.nameOrder = nameOrder;
-    }
-
     public String nameOrder;
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     public String name;

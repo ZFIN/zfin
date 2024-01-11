@@ -570,6 +570,11 @@ public interface MarkerRepository {
 
     void updateMarkerName(String constructZdbID, String toString);
 
+
+    List<SequenceTargetingReagent> getSequenceTargetingReagents(List<String> markerIDs);
+
+    List<SequenceTargetingReagent> getRecentSequenceTargetingReagents(int limit);
+
     Map<Marker, List<Transcript>> getAllTranscripts(Pagination pagination);
 
     Map<Marker, List<MarkerDBLink>> getAllPlasmids(DisplayGroup.GroupName... groupNames);
