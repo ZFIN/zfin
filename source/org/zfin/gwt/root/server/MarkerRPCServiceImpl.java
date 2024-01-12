@@ -4,11 +4,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
@@ -16,7 +14,6 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
-import org.zfin.feature.Feature;
 import org.zfin.feature.service.FeatureAttributionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -33,7 +30,8 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerAttributionService;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.*;
+import org.zfin.mutant.DiseaseAnnotationModel;
+import org.zfin.mutant.Fish;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.publication.Publication;
@@ -47,6 +45,7 @@ import java.util.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
+ *
  */
 public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements MarkerRPCService {
 
@@ -71,7 +70,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
     }
-
 
 
     /**
@@ -151,12 +149,12 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.createTransaction();
         String zdbID = constructRelationshipDTO.getZdbID();
         infrastructureRepository.insertUpdatesTable(zdbID, "Construct", zdbID, "",
-                "deleted construct/marker relationship between: "
-                        + constructRelationshipDTO.getConstructDTO().getName()
-                        + " and "
-                        + constructRelationshipDTO.getMarkerDTO().getName()
-                        + " of type "
-                        + constructRelationshipDTO.getRelationshipType()
+            "deleted construct/marker relationship between: "
+            + constructRelationshipDTO.getConstructDTO().getName()
+            + " and "
+            + constructRelationshipDTO.getMarkerDTO().getName()
+            + " of type "
+            + constructRelationshipDTO.getRelationshipType()
         );
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
         HibernateUtil.flushAndCommitCurrentSession();
@@ -248,7 +246,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         MarkerAlias dataAlias = markerRepository.getSpecificDataAlias(marker, relatedEntityDTO.getName());
         HibernateUtil.createTransaction();
         InfrastructureService.insertUpdate(marker, "Removed alias: " + dataAlias.getAlias() + "' attributed to publication: '"
-                + (publication == null ? "null" : publication.getZdbID()) + "'");
+                                                   + (publication == null ? "null" : publication.getZdbID()) + "'");
         markerRepository.deleteMarkerAlias(marker, dataAlias);
         HibernateUtil.flushAndCommitCurrentSession();
     }
@@ -285,7 +283,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             dbLinkDTO.setPublicationZdbID(pubZdbID);
 
             InfrastructureService.insertUpdate(marker, "Added protein sequence: '" +
-                    sequence.getDbLink().getAccessionNumber() + "' with attribution: '" + referenceZdbID + "'");
+                                                       sequence.getDbLink().getAccessionNumber() + "' with attribution: '" + referenceZdbID + "'");
 
             //accession numbers end up in the name tables, so a regen will make the accession
             //search in markerselect work for this new sequence.
@@ -312,14 +310,14 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
 
             Sequence sequence = MountedWublastBlastService.getInstance().
-                    addSequenceToMarker(marker, sequenceData, pubZdbID, referenceDatabase);
+                addSequenceToMarker(marker, sequenceData, pubZdbID, referenceDatabase);
 
             List<DBLinkDTO> dbLinkDTOs = DTOConversionService.convertToDBLinkDTOs((MarkerDBLink) sequence.getDbLink());
             DBLinkDTO dbLinkDTO = dbLinkDTOs.get(0);
             dbLinkDTO.setPublicationZdbID(pubZdbID);
 
             String updateComment = "Added nucleotide sequence: '" + dbLinkDTO.getName()
-                    + "' with attribution: " + pubZdbID;
+                                   + "' with attribution: " + pubZdbID;
 
             InfrastructureService.insertUpdate(marker, updateComment);
 
@@ -347,7 +345,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         ReferenceDatabaseDTO referenceDatabaseDTO;
         for (Iterator<ReferenceDatabaseDTO> iter = referenceDatabaseDTOs.iterator();
              iter.hasNext() && referenceDBFound == false;
-                ) {
+        ) {
             referenceDatabaseDTO = iter.next();
             if (true == dbLink.getReferenceDatabase().getZdbID().equalsIgnoreCase(referenceDatabaseDTO.getZdbID())) {
                 return true;
@@ -357,9 +355,9 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         // nothing is found so throw exception
         throw new DBLinkNotFoundException(
-                "Can not add dblinks with reference database not contained in list: " +
-                        dbLink.getReferenceDatabase().getForeignDB().getDbName() + "-" +
-                        dbLink.getReferenceDatabase().getZdbID());
+            "Can not add dblinks with reference database not contained in list: " +
+            dbLink.getReferenceDatabase().getForeignDB().getDbName() + "-" +
+            dbLink.getReferenceDatabase().getZdbID());
     }
 
     /**
@@ -392,7 +390,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 String message = "Not found: accession[" + dbLink.getAccessionNumber() + "] ";
                 if (dbLink.getReferenceDatabase() != null) {
                     message += "referenceDB[" + dbLink.getReferenceDatabase().getForeignDB().getDbName() +
-                            "-" + dbLink.getReferenceDatabase().getForeignDBDataType().getDataType() + "]";
+                               "-" + dbLink.getReferenceDatabase().getForeignDBDataType().getDataType() + "]";
                 }
                 throw new DBLinkNotFoundException(message);
             }
@@ -418,7 +416,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (StringUtils.isNotEmpty(dbLinkDTO.getPublicationZdbID())) {
             Set<PublicationAttribution> publications = new HashSet<PublicationAttribution>();
             infrastructureRepository.insertPublicAttribution(dbLinkDTO.getZdbID(),
-                    dbLinkDTO.getPublicationZdbID());
+                dbLinkDTO.getPublicationZdbID());
             PublicationAttribution publicationAttribQuery = new PublicationAttribution();
             publicationAttribQuery.setPublication(getPublicationRepository().getPublication(dbLinkDTO.getPublicationZdbID()));
             PublicationAttribution publicationAttribution = infrastructureRepository.getPublicationAttribution(publicationAttribQuery);
@@ -453,7 +451,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         DBLink dbLink = null;
         if (dblinkZdbID == null && sequenceDTO.getDataName() != null && sequenceDTO.getDataZdbID() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByAlternateKey(sequenceDTO.getName(),
-                    dblinkDataZdbID, DTOConversionService.convertToReferenceDatabase(sequenceDTO.getReferenceDatabaseDTO()));
+                dblinkDataZdbID, DTOConversionService.convertToReferenceDatabase(sequenceDTO.getReferenceDatabaseDTO()));
             if (dbLink == null) {
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + sequenceDTO);
             }
@@ -487,7 +485,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByID(dblinkZdbID);
         } else if (dbLinkDTO.getDataName() != null && dbLinkDTO.getDataZdbID() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByAlternateKey(dbLinkDTO.getName(),
-                    dblinkDataZdbID, DTOConversionService.convertToReferenceDatabase(dbLinkDTO.getReferenceDatabaseDTO()));
+                dblinkDataZdbID, DTOConversionService.convertToReferenceDatabase(dbLinkDTO.getReferenceDatabaseDTO()));
             if (dbLink == null) {
                 throw new RuntimeException("Faild to get a dblink for dblinkdto: " + dbLinkDTO);
             }
@@ -510,8 +508,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
         if (dbLink == null && dbLinkDTO.getDataZdbID() != null && dbLinkDTO.getName() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().
-                    getDBLink(dbLinkDTO.getDataZdbID(),
-                            dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
+                getDBLink(dbLinkDTO.getDataZdbID(),
+                    dbLinkDTO.getName(), dbLinkDTO.getReferenceDatabaseDTO().getName());
         }
         if (dbLink == null) {
             throw new RuntimeException("Failed to find dblink: " + dbLinkDTO.toString());
@@ -555,15 +553,15 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
 
         String updateComment = "Updating " + dbLink.getAccessionNumber()
-                + " length, changing from " + dbLink.getLength()
-                + " to " + dbLinkDTO.getLength()
-                + " with attribution: " + pub.getZdbID();
+                               + " length, changing from " + dbLink.getLength()
+                               + " to " + dbLinkDTO.getLength()
+                               + " with attribution: " + pub.getZdbID();
         InfrastructureService.insertUpdate(marker, updateComment);
 
         List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber(dbLinkDTO.getName());
         for (Accession accession : accessions) {
             logger.debug("updating " + accession.getNumber() + " (id:" + accession.getID() + ") length from "
-                    + accession.getLength() + " to " + dbLinkDTO.getLength());
+                         + accession.getLength() + " to " + dbLinkDTO.getLength());
             accession.setLength(dbLinkDTO.getLength());
             session.update(accession);
 
@@ -670,13 +668,13 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     public void addMarkerSupplier(String name, String markerZdbID) {
         Session session = HibernateUtil.currentSession();
 
-        Criteria criteria = session.createCriteria(Organization.class);
-        criteria.add(Restrictions.eq("name", name));
-        Organization organization = (Organization) criteria.uniqueResult();
+        Query<Organization> query = session.createQuery("from Organization where name = :name", Organization.class);
+        query.setParameter("name", name);
+        Organization organization = query.uniqueResult();
         if (organization == null) {
             throw new RuntimeException("orginziation not found: " + name);
         }
-        Marker marker = (Marker) session.get(Marker.class, markerZdbID);
+        Marker marker = session.get(Marker.class, markerZdbID);
 
         Transaction transaction = session.beginTransaction();
         MarkerSupplier markerSupplier = new MarkerSupplier();
@@ -699,8 +697,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         String hql = " from MarkerSupplier ms where ms.marker.zdbID = :markerZdbID and ms.organization.name = :supplierName";
         Query query = session.createQuery(hql);
-        query.setString("markerZdbID", markerZdbID);
-        query.setString("supplierName", name);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("supplierName", name);
         MarkerSupplier markerSupplier = (MarkerSupplier) query.uniqueResult();
 
         if (markerSupplier != null) {
@@ -792,7 +790,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
 
         logger.debug("addMarkerRelationship, first marker: " + firstMarker.getAbbreviation()
-                + " second marker: " + secondMarker.getAbbreviation());
+                     + " second marker: " + secondMarker.getAbbreviation());
 
         HibernateUtil.flushAndCommitCurrentSession();
 
@@ -997,17 +995,17 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         List<ReferenceDatabase> referenceDatabases = new ArrayList<ReferenceDatabase>();
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG)) {
             referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.GENOMIC,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH
             ));
 
             referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.RNA,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH
             ));
 
         }
@@ -1064,7 +1062,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     @Override
     public String checkDeattributionRules(String entityID, String publicationID)
-            throws DeAttributionException {
+        throws DeAttributionException {
         if (ActiveData.Type.GENO.equals(ActiveData.getType(entityID))) {
             long count = getMutantRepository().getFishCountByGenotype(entityID, publicationID);
             if (count > 0) {

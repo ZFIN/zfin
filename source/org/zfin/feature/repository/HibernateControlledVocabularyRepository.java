@@ -1,15 +1,13 @@
 package org.zfin.feature.repository;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
 
 import java.util.List;
 
 public class HibernateControlledVocabularyRepository<T> implements ControlledVocabularyRepository<T> {
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     public HibernateControlledVocabularyRepository(Class<T> clazz) {
         this.clazz = clazz;
@@ -18,15 +16,13 @@ public class HibernateControlledVocabularyRepository<T> implements ControlledVoc
     @Override
     public T getControlledVocabularyTerm(String oboID) {
 
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(clazz);
-        Criteria termCriteria = criteria.createCriteria("term");
-        return (T) termCriteria.add(Restrictions.eq("oboID", oboID)).uniqueResult();
+        Query<T> query = HibernateUtil.currentSession().createQuery("from " + clazz.getSimpleName() + " where term.oboID = :oboID", clazz);
+        return query.setParameter("oboID", oboID).uniqueResult();
     }
 
     @Override
     public List<T> getControlledVocabularyTermList() {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(clazz);
-        criteria.addOrder(Order.asc("order"));
-        return (List<T>) criteria.list();
+        Query<T> query = HibernateUtil.currentSession().createQuery("from " + clazz.getSimpleName() + " order by order", clazz);
+        return query.list();
     }
 }

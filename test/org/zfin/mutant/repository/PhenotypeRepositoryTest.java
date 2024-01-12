@@ -500,4 +500,9 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         // no assertion as this may or may not return an object. These objects are regenerated regularly and thus the id's
         // are not stable. Still want to test that this method does not throw an exception
     }
+
+    @Test
+    public void getPhenoMartStatus() {
+        RepositoryFactory.getPhenotypeRepository().getPhenoMartStatus();
+    }
 }

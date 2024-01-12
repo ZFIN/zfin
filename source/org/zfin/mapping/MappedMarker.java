@@ -1,9 +1,11 @@
 package org.zfin.mapping;
 
+import lombok.Data;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 
+@Data
 public abstract class MappedMarker implements Comparable, ZdbID {
     protected String zdbID;
     protected Panel panel;
@@ -12,6 +14,7 @@ public abstract class MappedMarker implements Comparable, ZdbID {
     protected Person owner;
     protected String comments;
     protected String lg;
+    protected String entityID;
     protected String mappedName;
     protected String scoringData;
     protected String metric;

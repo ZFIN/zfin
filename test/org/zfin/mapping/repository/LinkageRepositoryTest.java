@@ -205,6 +205,15 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getGenomeLocationForMarker() {
+        Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
+        List<MarkerGenomeLocation> mmarkerList = getLinkageRepository().getGenomeLocation(marker, GenomeLocation.Source.ZFIN);
+        assertNotNull(mmarkerList);
+        assertEquals(1, mmarkerList.size());
+    }
+
+
+    @Test
     public void getLinkedMarkersFromFeature() {
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("bmpr1aa");
         List<Linkage> linkage = getLinkageRepository().getLinkagesForMarker(marker);

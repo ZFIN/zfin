@@ -1,11 +1,11 @@
 package org.zfin.gwt.marker.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.CloneRPCService;
@@ -22,7 +22,6 @@ import org.zfin.marker.ProbeLibrary;
 import org.zfin.marker.Vector;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
  */
 public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements CloneRPCService {
 
@@ -89,8 +89,8 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
         cloneDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(clone));
 
         // get related genes
-       cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
-       // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
+        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
+        // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
 
         // get sequences
         cloneDTO.setSupportingSequenceLinks(DTOMarkerService.getSupportingSequenceDTOs(clone));
@@ -146,19 +146,17 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
 
             String cloneProbeLibraryName = (clone.getProbeLibrary() == null ? null : clone.getProbeLibrary().getName());
             DTOMarkerService.insertMarkerUpdate(clone, "Probe Library", cloneProbeLibraryName, cloneDTO.getProbeLibraryName());
-            Criteria criteria = session.createCriteria(ProbeLibrary.class);
-            criteria.add(Restrictions.eq("name", cloneDTO.getProbeLibraryName()));
-            ProbeLibrary probeLibrary = (ProbeLibrary) criteria.uniqueResult();
+            Query<ProbeLibrary> query = session.createQuery("from ProbeLibrary where name = :name", ProbeLibrary.class);
+            query.setParameter("name", cloneDTO.getProbeLibraryName());
+            ProbeLibrary probeLibrary = query.uniqueResult();
             clone.setProbeLibrary(probeLibrary);
-
 
             session.update(clone);
             session.flush();
             logger.info("updated clone: " + clone);
 
             transaction.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             transaction.rollback();
             logger.error(e);
         }
@@ -200,17 +198,17 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
         ReferenceDatabase referenceDatabase = null;
         if (marker.isInTypeGroup(Marker.TypeGroup.CLONE)) {
             referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.GENOMIC,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH
             );
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
             referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.RNA,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH
             );
         }
 

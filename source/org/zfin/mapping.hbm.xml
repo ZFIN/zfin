@@ -210,6 +210,10 @@
             <column name="comments"/>
         </property>
 
+        <property name="entityID">
+            <column name="marker_id"/>
+        </property>
+
         <property name="lg" type="string">
             <column name="mm_chromosome" not-null="true"/>
         </property>
