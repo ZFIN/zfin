@@ -237,6 +237,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         RecordAttribution result = getRecordAttribution(dataZdbID, sourceZdbID, sourceType);
         if (result == null) {
             session.save(recordAttribution);
+            result = recordAttribution;
         }
         return result;
     }
