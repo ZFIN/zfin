@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import lombok.Data;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.profile.Person;
@@ -11,6 +12,7 @@ import java.util.Date;
  * This holds a single expression structure, consisting of a superterm (AO), a subterm, a stage in which
  * the superterm is defined and a boolean
  */
+@Data
 public class ExpressionStructure extends PostComposedEntity {
 
     private String zdbID;
@@ -20,62 +22,6 @@ public class ExpressionStructure extends PostComposedEntity {
     private GenericTerm eapQualityTerm;
     private String tag;
     private boolean expressionFound = true;
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public GenericTerm getEapQualityTerm() {
-        return eapQualityTerm;
-    }
-
-    public void setEapQualityTerm(GenericTerm eapQualityTerm) {
-        this.eapQualityTerm = eapQualityTerm;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public boolean isExpressionFound() {
-        return expressionFound;
-    }
-
-    public void setExpressionFound(boolean expressionFound) {
-        this.expressionFound = expressionFound;
-    }
 
     @Override
     public String toString() {

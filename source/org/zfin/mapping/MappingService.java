@@ -1,10 +1,8 @@
 package org.zfin.mapping;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -152,12 +150,10 @@ public class MappingService {
 
     public static List<MarkerLocation> getMarkerLocation(String zdbID) {
         Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(MarkerLocation.class);
-        criteria.add(Restrictions.eq("marker.zdbID", zdbID));
-        criteria.addOrder(Property.forName("zdbID").asc());
-
-        return (List<MarkerLocation>) criteria.list();
+        String hql = "from MarkerLocation where marker.zdbID = :zdbID order by zdbID";
+        Query<MarkerLocation> query = session.createQuery(hql, MarkerLocation.class);
+        query.setParameter("zdbID", zdbID);
+        return query.list();
     }
 
 }
