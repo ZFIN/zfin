@@ -1256,7 +1256,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public UnloadInfo getUnloadInfo() {
         Session session = HibernateUtil.currentSession();
-        Query<UnloadInfo> query = session.createQuery("from UnloadInfo order by date order desc", UnloadInfo.class);
+        Query<UnloadInfo> query = session.createQuery("from UnloadInfo order by date desc", UnloadInfo.class);
         query.setFirstResult(0);
         query.setMaxResults(1);
         return query.uniqueResult();
