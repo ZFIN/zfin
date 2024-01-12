@@ -218,8 +218,6 @@ public interface ExpressionRepository {
     void createExpressionResult(ExpressionResult2 expressionResult, Figure singleFigure);
 */
 
-    List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result);
-
     /**
      * Delete a figure annotation, including all expression result records.
      *
