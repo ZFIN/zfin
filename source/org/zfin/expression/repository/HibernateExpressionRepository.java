@@ -5,9 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
 import org.hibernate.query.Query;
@@ -50,6 +48,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -1011,7 +1010,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             query.setParameter("fishZdbID", fishZdbID);
         }
 
-        return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return query.setResultTransformer(DISTINCT_ROOT_ENTITY).list();
     }
 
     public ExpressionFigureStage getExpressionFigureStage(Long id) {
@@ -1159,24 +1158,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return query.uniqueResult();
     }
 
-    public List<ExpressionResult2> checkForExpressionResultRecord2(ExpressionResult2 result) {
-        // first check if an expression result record already exists
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria;
-        criteria = session.createCriteria(ExpressionResult2.class);
-        Term subTerm = result.getSubTerm();
-        if (subTerm == null) {
-            criteria.add(Restrictions.isNull("subTerm"));
-        } else {
-            criteria.add(Restrictions.eq("subTerm", result.getSubTerm()));
-        }
-        criteria.add(Restrictions.eq("expressionFigureStage", result.getExpressionFigureStage()));
-
-        criteria.add(Restrictions.eq("superTerm", result.getSuperTerm()));
-        criteria.add(Restrictions.eq("expressionFound", result.isExpressionFound()));
-        return (List<ExpressionResult2>) criteria.list();
-    }
-
     // run the script to update the fast search table for antibodies-anatomy
 
     public void runAntibodyAnatomyFastSearchUpdate(ExpressionResult result) {
@@ -1269,15 +1250,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     public List<ExpressionStructure> retrieveExpressionStructures(String publicationID) {
         Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(ExpressionStructure.class);
-        crit.add(Restrictions.eq("publication.zdbID", publicationID));
-        Criteria superterm = crit.createCriteria("superterm");
-        superterm.addOrder(Order.asc("termName"));
-        crit.setFetchMode("superterm", FetchMode.JOIN);
-        crit.setFetchMode("superterm.start", FetchMode.JOIN);
-        crit.setFetchMode("superterm.end", FetchMode.JOIN);
-        crit.setFetchMode("person", FetchMode.JOIN);
-        return (List<ExpressionStructure>) crit.list();
+        String hql = """
+            from ExpressionStructure
+            join fetch superterm
+            join fetch superterm.start
+            join fetch superterm.end
+            join fetch person
+            where publication.zdbID = :publicationID
+            order by superterm.name
+            """;
+        Query<ExpressionStructure> query = session.createQuery(hql, ExpressionStructure.class);
+        query.setParameter("publication", publicationID);
+        return query.list();
     }
 
     /**
@@ -1303,8 +1287,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public void deleteExpressionStructuresForPub(Publication publication) {
         List<ExpressionStructure> structures = HibernateUtil.currentSession()
-            .createCriteria(ExpressionStructure.class)
-            .add(Restrictions.eq("publication", publication))
+            .createQuery("from ExpressionStructure where publication = :publication", ExpressionStructure.class)
+            .setParameter("publication", publication)
             .list();
         for (ExpressionStructure structure : structures) {
             getInfrastructureRepository().deleteActiveDataByZdbID(structure.getZdbID());
@@ -2520,7 +2504,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameterList("ids", expressionIDs.stream().map(Long::valueOf).collect(Collectors.toList()));
 
-        return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return query.setResultTransformer(DISTINCT_ROOT_ENTITY).list();
     }
 
 
