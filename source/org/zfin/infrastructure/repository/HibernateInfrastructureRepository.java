@@ -293,8 +293,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
-        Query<RecordAttribution> query = session.createQuery("from RecordAttribution where dataZdbID = :dataZdbID" +
-                                                             "AND sourceType = :sourceType", RecordAttribution.class);
+        Query<RecordAttribution> query = session.createQuery("""
+            from RecordAttribution where dataZdbID = :dataZdbID
+            AND sourceType = :sourceType
+            """, RecordAttribution.class);
         query.setParameter("dataZdbID", dataZdbID);
         query.setParameter("sourceType", sourceType.toString());
         return query.list();
