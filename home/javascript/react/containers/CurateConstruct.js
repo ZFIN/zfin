@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CurateConstructNew from './CurateConstructNew';
-import CurateConstructEdit from './CurateConstructEdit';
-import CurateConstructRelationships from './CurateConstructRelationships';
+import CurateConstructNew from '../components/curate-construct/CurateConstructNew';
+import CurateConstructEdit from '../components/curate-construct/CurateConstructEdit';
+import CurateConstructRelationships from '../components/curate-construct/CurateConstructRelationships';
 
 const CurateConstruct = ({publicationId}) => {
     return (
