@@ -688,12 +688,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                      "                  and pgcm.phenoWarehouse.start.zdbID=:startStageZdbID" +
                      "                  and pgcm.phenoWarehouse.end.zdbID=:endStageZdbID";
 
-        Query query = session.createQuery(hql);
+        Query<PhenotypeWarehouse> query = session.createQuery(hql, PhenotypeWarehouse.class);
         query.setParameter("psgID", id);
         query.setParameter("figureZdbID", figureZdbID);
         query.setParameter("startStageZdbID", startStageZdbID);
         query.setParameter("endStageZdbID", endStageZdbID);
-        return (PhenotypeWarehouse) query.uniqueResult();
+        return query.uniqueResult();
 
 
     }
