@@ -1,7 +1,5 @@
 package org.zfin.curation.presentation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,15 +34,11 @@ import java.util.List;
 public class CurationController implements CurationService {
 
     @Autowired
-    private ExpressionRepository expRepository;
-    @Autowired
     private PublicationRepository pubRepository;
     @Autowired
     private PublicationService publicationService;
     @Autowired
     private PublicationRepository publicationRepository;
-
-    private final static Logger LOG = LogManager.getRootLogger();
 
     @RequestMapping(value = "/{publicationID}/antibodies", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -111,13 +105,13 @@ public class CurationController implements CurationService {
     @RequestMapping("/{pubID}")
     protected String curationPage(@PathVariable String pubID,
                                   @ModelAttribute("currentTab") String currentTab,
-                                  Model model) throws Exception {
+                                  Model model) {
         Publication publication = publicationRepository.getPublication(pubID);
         if (publication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         model.addAttribute("publication", publication);
-        model.addAttribute("curationTabs", CurationModuleType.values());
+        model.addAttribute("curationTabs", CurationModuleType.enabledCurationTabs());
         model.addAttribute("currentTab", currentTab);
         model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.CURATING));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
@@ -128,7 +122,7 @@ public class CurationController implements CurationService {
     @ResponseBody
     @RequestMapping("/currentTab/{currentTab}")
     protected String setCurrentTab(@PathVariable String currentTab,
-                                   Model model) throws Exception {
+                                   Model model) {
         if (currentTab == null) {
             return "error: no tab name provided";
         }
