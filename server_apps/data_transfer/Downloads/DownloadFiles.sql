@@ -2181,12 +2181,38 @@ INSERT INTO tmp_mutation_details
   LEFT OUTER JOIN foreign_db_contains prot_dbc ON fpmd_fdbcont_zdb_id = prot_dbc.fdbcont_zdb_id
   LEFT OUTER JOIN foreign_db prot_db ON prot_db.fdb_db_pk_id = prot_dbc.fdbcont_fdb_db_id;
 
+drop table feature_chromosome ;
 create temp table feature_chromosome as
 select feature_zdb_id,  (SELECT STRING_AGG(distinct sfcl_chromosome, ',') ) as chromosomes from feature
                                        full join sequence_feature_chromosome_location on feature_zdb_id = sfcl_feature_zdb_id
 where sfcl_feature_zdb_id = feature_zdb_id
 group by feature_zdb_id
 ;
+
+alter table feature_chromosome add column assembly_zv9_start text;
+alter table feature_chromosome add column assembly_zv9_end text;
+alter table feature_chromosome add column assembly_zv9_chromosome text;
+alter table feature_chromosome add column assembly_grcz10_start text;
+alter table feature_chromosome add column assembly_grcz10_end text;
+alter table feature_chromosome add column assembly_grcz10_chromosome text;
+alter table feature_chromosome add column assembly_grcz11_start text;
+alter table feature_chromosome add column assembly_grcz11_end text;
+alter table feature_chromosome add column assembly_grcz11_chromosome text;
+
+update feature_chromosome
+set assembly_zv9_start = subquery.start, assembly_zv9_end = subquery.endd, assembly_zv9_chromosome = subquery.chromo
+FROM (select sfcl_feature_zdb_id, sfcl_assembly, sfcl_start_position as start, sfcl_end_position as endd, sfcl_chromosome as chromo from sequence_feature_chromosome_location ) as subquery
+where feature_chromosome.feature_zdb_id = subquery.sfcl_feature_zdb_id and subquery.sfcl_assembly = 'Zv9';
+
+update feature_chromosome
+set assembly_grcz10_start = subquery.start, assembly_grcz10_end = subquery.endd, assembly_grcz10_chromosome = subquery.chromo
+FROM (select sfcl_feature_zdb_id, sfcl_assembly, sfcl_start_position as start, sfcl_end_position as endd, sfcl_chromosome as chromo from sequence_feature_chromosome_location ) as subquery
+where feature_chromosome.feature_zdb_id = subquery.sfcl_feature_zdb_id and subquery.sfcl_assembly = 'GRCz10';
+
+update feature_chromosome
+set assembly_grcz11_start = subquery.start, assembly_grcz11_end = subquery.endd, assembly_grcz11_chromosome = subquery.chromo
+FROM (select sfcl_feature_zdb_id, sfcl_assembly, sfcl_start_position as start, sfcl_end_position as endd, sfcl_chromosome as chromo from sequence_feature_chromosome_location ) as subquery
+where feature_chromosome.feature_zdb_id = subquery.sfcl_feature_zdb_id and subquery.sfcl_assembly = 'GRCz11';
 
 create temp table feature_transcript_consequence as
 select feature_zdb_id,  (SELECT STRING_AGG(distinct display, ',') ) as transcript_consequence
@@ -2239,7 +2265,15 @@ create view featuresAffectedGenes as
     protein_position_start,
     protein_position_end,
     protein_reference_seq,
-    fc.chromosomes
+    fc.assembly_zv9_chromosome,
+    fc.assembly_zv9_start,
+    fc.assembly_zv9_end,
+    fc.assembly_grcz10_chromosome,
+    fc.assembly_grcz10_start,
+    fc.assembly_grcz10_end,
+    fc.assembly_grcz11_chromosome,
+    fc.assembly_grcz11_start,
+    fc.assembly_grcz11_end
   FROM feature f
   full join feature_chromosome fc on fc.feature_zdb_id = f.feature_zdb_id
   full join feature_transcript_consequence ftc on ftc.feature_zdb_id = f.feature_zdb_id
