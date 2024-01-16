@@ -37,6 +37,16 @@ const config = {
                 use: ['babel-loader'],
             },
             {
+                test: /\.tsx?$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
+                    }
+                },
+                exclude: /node_modules/
+            },
+            {
                 test: /\.s?css$/,
                 use: [
                     MiniCssExtractPlugin.loader,
@@ -59,6 +69,9 @@ const config = {
                 }
             },
         ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
         new MiniCssExtractPlugin({

@@ -5,9 +5,11 @@
   "repository": "file:///net/filer.zfin.org/vol/central/Vault/git/ZFIN_WWW",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@babel/preset-typescript": "^7.23.3",
     "babel-eslint": "10.0.1",
     "eslint": "8.29.0",
-    "eslint-plugin-react": "7.31.11"
+    "eslint-plugin-react": "7.31.11",
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "clean": "rm -rf $TARGETROOT/home/dist",
