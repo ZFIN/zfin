@@ -20,9 +20,11 @@
                     </z:attributeListItem>
                 </authz:authorize>
 
-                <z:attributeListItem label="Email">
-                    <a href="mailto:${pesron.email}">${person.email}</a>
-                </z:attributeListItem>
+                <c:if test="${!empty person.email && person.emailPrivacyPreference.visible}">
+                    <z:attributeListItem label="Email">
+                        <a href="mailto:${person.email}">${person.email}</a>
+                    </z:attributeListItem>
+                </c:if>
 
                 <z:attributeListItem label="URL">
                     <zfin2:uriDisplay uri="${person.url}"/>

@@ -475,7 +475,7 @@ public class ResultService {
         Person person = RepositoryFactory.getProfileRepository().getPerson(result.getId());
 
         if (person != null) {
-            if (person.getEmailPrivacyPreference().shouldShow()) {
+            if (person.getEmailPrivacyPreference().isVisible()) {
                 result.addAttribute(EMAIL, person.getEmail());
             }
 
