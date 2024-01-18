@@ -24,8 +24,8 @@ public class FeatureTrackingTest extends AbstractDatabaseTest {
         int asNumber = Integer.parseInt(nextLine);
         assertTrue(asNumber > 3000);
 
-        FeatureTracking ft = getFeatureRepository().getFeatureTrackingByAbbreviation("zf" + nextLine);
-        assertNull(ft);
+        boolean exists = getFeatureRepository().isExistingFeatureTrackingByAbbreviation("zf" + nextLine);
+        assertFalse(exists);
     }
 
     @Test
