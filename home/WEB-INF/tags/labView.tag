@@ -51,10 +51,10 @@
                     <th>Contact Person:</th>
                     <td><zfin:link entity="${lab.contactPerson}"/></td>
                 </tr>
-                <c:if test="${not empty lab.emailIfVisible}">
+                <c:if test="${!empty lab.email && lab.emailPrivacyPreference.visible}">
                     <tr>
                         <th>Email:</th>
-                        <td><a href="mailto:${lab.emailIfVisible}">${lab.emailIfVisible}</a></td>
+                        <td><a href="mailto:${lab.email}">${lab.email}</a></td>
                     </tr>
                 </c:if>
                 <tr>
