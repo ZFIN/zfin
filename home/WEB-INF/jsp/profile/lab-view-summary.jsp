@@ -22,9 +22,11 @@
                     <zfin:link entity="${formBean.contactPerson}"/>
                 </z:attributeListItem>
 
-                <z:attributeListItem dtColSize="3" label="Email">
-                    <a href="mailto:${formBean.email}">${formBean.email}</a>
-                </z:attributeListItem>
+                <c:if test="${!empty formBean.email && formBean.emailPrivacyPreference.visible}">
+                    <z:attributeListItem dtColSize="3" label="Email">
+                        <a href="mailto:${formBean.email}">${formBean.email}</a>
+                    </z:attributeListItem>
+                </c:if>
 
                 <z:attributeListItem dtColSize="3" label="URL">
                     <zfin2:uriDisplay uri="${formBean.url}"/>

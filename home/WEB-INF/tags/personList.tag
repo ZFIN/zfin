@@ -46,7 +46,7 @@
                     </authz:authorize>
                 </td>
                 <td>
-                    <c:if test="${!empty person.email}">
+                    <c:if test="${!empty person.email && person.emailPrivacyPreference.visible}">
                         <div><a href="mailto:${person.email}">${person.email}</a></div>
                     </c:if>
                     <c:if test="${!empty person.address}">

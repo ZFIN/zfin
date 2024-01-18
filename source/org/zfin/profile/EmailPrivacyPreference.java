@@ -35,6 +35,22 @@ public class EmailPrivacyPreference {
     }
 
     /**
+     * Figure out if the email address should be visible to the current user.
+     * @return
+     */
+    public boolean isVisible() {
+        return isVisibleToUser(ProfileService::getCurrentSecurityUser);
+    }
+
+    /**
+     * Figure out if the email address should be hidden from the current user.
+     * @return
+     */
+    public boolean isHidden() {
+        return !isVisible();
+    }
+
+    /**
      * Figure out if the email address should be visible to the given user.
      * Using a supplier to potentially avoid a database call if the privacy preference is public.
      *
@@ -52,10 +68,7 @@ public class EmailPrivacyPreference {
         if (isRegisteredOnly() && currentUser.isLoginAccount()) {
             return true;
         }
-        if (isHidden() && currentUser.isRootAccount()) {
-            return true;
-        }
-        return false;
+        return currentUser.isRootAccount();
     }
 
     private boolean isPublic() {
@@ -64,18 +77,6 @@ public class EmailPrivacyPreference {
 
     private boolean isRegisteredOnly() {
         return getName().equals(EmailPrivacyPreference.Name.REGISTERED.toString());
-    }
-
-    private boolean isHidden() {
-        return getName().equals(EmailPrivacyPreference.Name.HIDDEN.toString());
-    }
-
-    public boolean shouldHide() {
-        return !this.isVisibleToUser(ProfileService::getCurrentSecurityUser);
-    }
-
-    public boolean shouldShow() {
-        return !shouldHide();
     }
 
     public enum Name {

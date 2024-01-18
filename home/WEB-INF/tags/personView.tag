@@ -43,10 +43,10 @@
                         </td>
                     </tr>
                 </authz:authorize>
-                <c:if test="${not empty person.emailIfVisible}">
+                <c:if test="${!empty person.email && person.emailPrivacyPreference.visible}">
                     <tr>
                         <th>Email:</th>
-                        <td><a href="mailto:${person.emailIfVisible}">${person.emailIfVisible}</a></td>
+                        <td><a href="mailto:${person.email}">${person.email}</a></td>
                     </tr>
                 </c:if>
                 <tr>
