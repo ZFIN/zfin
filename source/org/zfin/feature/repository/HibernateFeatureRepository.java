@@ -536,7 +536,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
      */
     private String getNextLineNumberForLabPrefixWithoutFeatureTrackingCollision(FeaturePrefix labPrefix) {
         Integer nextLine = getNextLineNumberIntegerForLabPrefix(labPrefix);
-        while(getFeatureTrackingByAbbreviation(labPrefix.getAbbreviation() + nextLine) != null) {
+        while(isExistingFeatureTrackingByAbbreviation(labPrefix.getAbbreviation() + nextLine)) {
             nextLine++;
         }
         return String.valueOf(nextLine);
@@ -798,12 +798,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (String) queryTracker.uniqueResult();
     }
 
+    /**
+     * Check if there exists an entry in the feature tracking table already for the given abbreviation
+     * @param abbreviation
+     * @return
+     */
     @Override
-    public FeatureTracking getFeatureTrackingByAbbreviation(String abbreviation) {
-        String hql = "from FeatureTracking where featTrackingFeatAbbrev = :abbrev";
-        Query<FeatureTracking> query = currentSession().createQuery(hql, FeatureTracking.class);
-        query.setParameter("abbrev", abbreviation);
-        return query.uniqueResult();
+    public boolean isExistingFeatureTrackingByAbbreviation(String abbreviation) {
+        String sql = "SELECT * FROM feature_tracking WHERE ft_feature_abbrev = :abbrev";
+        List results = currentSession().createNativeQuery(sql).setParameter("abbrev", abbreviation).list();
+        return !results.isEmpty();
     }
 
     public TreeSet<String> getFeatureLG(Feature feat) {
