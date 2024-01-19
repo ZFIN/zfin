@@ -2191,6 +2191,7 @@ INSERT INTO tmp_mutation_details
   LEFT OUTER JOIN foreign_db_contains prot_dbc ON fpmd_fdbcont_zdb_id = prot_dbc.fdbcont_zdb_id
   LEFT OUTER JOIN foreign_db prot_db ON prot_db.fdb_db_pk_id = prot_dbc.fdbcont_fdb_db_id;
 
+drop table if exists feature_chromosome ;
 create temp table feature_chromosome as
 select feature_zdb_id,  (SELECT STRING_AGG(distinct sfcl_chromosome, ',') ) as chromosomes from feature
                                        full join sequence_feature_chromosome_location on feature_zdb_id = sfcl_feature_zdb_id
