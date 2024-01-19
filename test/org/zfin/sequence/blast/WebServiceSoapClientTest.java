@@ -92,7 +92,7 @@ public class WebServiceSoapClientTest {
     }
 
     @Test
-    public void testNucleodiesNcbi() throws Exception {
+    public void testNucleodiesNcbi() {
         String accession = "KC818433";
         List<Sequence> sequences = NCBIEfetch.getSequenceForAccession(accession, NCBIEfetch.Type.NUCLEOTIDE);
         assertThat(sequences, not(empty()));

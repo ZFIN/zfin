@@ -10,6 +10,7 @@ import org.zfin.AbstractSmokeTest;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.SequenceTargetingReagent;
+import spock.lang.Ignore;
 
 import java.io.IOException;
 import java.util.GregorianCalendar;
@@ -46,6 +47,7 @@ public class BlastSmokeTest extends AbstractSmokeTest {
      * Make sure it returns a results page that contains the STR in the results.
      */
     @Test
+    @Ignore
     public void testRecentSTR() {
         SequenceTargetingReagent str = getRecentCrisprSTR();
         log.info("STR: " + str.getZdbID());

@@ -14,7 +14,9 @@ import org.zfin.sequence.blast.WebServiceSoapClientTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         MicroarrayServiceTest.class,
-        WebServiceSoapClientTest.class,
+// enable if you are making changes to the implementation of an efetch call to NCBI
+// otherwise this test suite is too volatile to run every time (too many times efetch is not available)
+// WebServiceSoapClientTest.class,
         BlastDBServiceTest.class,
         DOITest.class
 //        PostForeignTest.class
