@@ -845,14 +845,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return session.get(Experiment.class, experimentID);
     }
 
-    public Experiment getExperimentByPubAndName(String pubID, String experimentID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Experiment.class);
-        criteria.add(Restrictions.eq("zdbID", experimentID));
-        criteria.add(Restrictions.eq("publication.zdbID", pubID));
-        return (Experiment) criteria.uniqueResult();
-    }
-
     /**
      * Retrieve Genotype by PK.
      *
@@ -1394,34 +1386,43 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
 
         Session session = HibernateUtil.currentSession();
+        String hql = """
+            from ExpressionStructure
+            """;
 
-        Criteria crit = session.createCriteria(ExpressionStructure.class);
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
+
+        hqlClauses.add("superterm.termName = :superterm");
+        parameterMap.put("superterm", supertermName);
+        hqlClauses.add("expressionFound = :expressionFound");
+        parameterMap.put("expressionFound", expressedTerm.isExpressionFound());
+        hqlClauses.add("publication.zdbID = :publicationZdbID");
+        parameterMap.put("publicationZdbID", publicationID);
         if (expressedTerm.getEntity().getSubTerm() != null) {
             OntologyDTO subtermOntology = expressedTerm.getEntity().getSubTerm().getOntology();
             if (subtermOntology == null) {
                 throw new NullPointerException("No subterm ontology provided.");
             }
-            Criteria subterm = crit.createCriteria("subterm");
-            subterm.add(Restrictions.eq("termName", expressedTerm.getEntity().getSubTerm().getTermName()));
+            hqlClauses.add("subterm = :subterm");
+            parameterMap.put("subterm", expressedTerm.getEntity().getSubTerm());
         } else {
-            crit.add(Restrictions.isNull("subterm"));
+            hqlClauses.add("subterm is null");
         }
         if (expressedTerm.getQualityTerm() != null) {
             if (expressedTerm.getQualityTerm().getTerm() != null) {
-                crit.add(Restrictions.eq("eapQualityTerm.zdbID", expressedTerm.getQualityTerm().getTerm().getZdbID()));
+                hqlClauses.add("eapQualityTerm.zdbID = :zdbID");
+                parameterMap.put("zdbID", expressedTerm.getQualityTerm().getTerm().getZdbID());
             }
-            crit.add(Restrictions.eq("tag", expressedTerm.getQualityTerm().getTag()));
+            hqlClauses.add("tag = :tag");
+            parameterMap.put("tag", expressedTerm.getQualityTerm().getTag());
         } else {
-            crit.add(Restrictions.isNull(("eapQualityTerm")));
+            hqlClauses.add("eapQualityTerm is null");
         }
-        crit.add(Restrictions.eq("expressionFound", expressedTerm.isExpressionFound()));
-        Criteria publication = crit.createCriteria("publication");
-        publication.add(Restrictions.eq("zdbID", publicationID));
-        Criteria superterm = crit.createCriteria("superterm");
-        superterm.add(Restrictions.eq("termName", supertermName));
-
-        List list = crit.list();
-        return list != null && !list.isEmpty();
+        hql += " where " + String.join(" and ", hqlClauses);
+        Query<ExpressionStructure> query = session.createQuery(hql, ExpressionStructure.class);
+        parameterMap.forEach(query::setParameter);
+        return query.list() != null && !query.list().isEmpty();
     }
 
     /**
@@ -2112,111 +2113,67 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @Override
     public Set<ExpressionStatement> getExpressionStatements(ExpressionSummaryCriteria expressionCriteria) {
-        Set<ExpressionResult> results = new HashSet<>();
-        Set<ExpressionStatement> expressionStatements = new TreeSet<>();
         Session session = HibernateUtil.currentSession();
 
-        //store strings for createAlias here, then only create what's necessary at the end.
-        Map<String, String> aliasMap = new HashMap<String, String>();
+        String hql = """
+            from ExpressionResult2
+            """;
 
-        Criteria criteria = session.createCriteria(ExpressionResult.class);
-        Criteria figureCriteria = null;
-        //duplicate createAlias statements are ok, so we'll put the necessary
-        //aliases in for any set of restrictions.
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
 
         if (expressionCriteria.getFigure() != null) {
-            //if there were hql, I would do member of..
-            if (figureCriteria == null) {
-                figureCriteria = criteria.createCriteria("figures", "figure");
-            }
-            figureCriteria.add(Restrictions.eq("zdbID", expressionCriteria.getFigure().getZdbID()));
-            logger.debug("figure: " + expressionCriteria.getFigure().getZdbID());
+            hqlClauses.add("expressionFigureStage.figure.zdbID = :figureZdbID");
+            parameterMap.put("figureZdbID", expressionCriteria.getFigure().getZdbID());
         }
-
         if (expressionCriteria.getGene() != null) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("xpatex.gene", expressionCriteria.getGene()));
-            logger.debug("gene: " + expressionCriteria.getGene().getZdbID());
+            hqlClauses.add("expressionFigureStage.expressionExperiment.gene = :gene");
+            parameterMap.put("gene", expressionCriteria.getGene());
         }
-
         if (expressionCriteria.getFishExperiment() != null) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("xpatex.fishExperiment", expressionCriteria.getFishExperiment()));
-            logger.debug("genox: " + expressionCriteria.getFishExperiment().getZdbID());
+            hqlClauses.add("expressionFigureStage.expressionExperiment.fishExperiment = :genox");
+            parameterMap.put("genox", expressionCriteria.getFishExperiment());
         }
-
         if (expressionCriteria.getFish() != null) {
-            aliasMap.put("xpatex.fishExperiment", "genox");
-            criteria.add(Restrictions.eq("genox.fish", expressionCriteria.getFish()));
-            logger.debug("fish: " + expressionCriteria.getFish().getZdbID());
+            hqlClauses.add("expressionFigureStage.expressionExperiment.fishExperiment.fish = :fish");
+            parameterMap.put("fish", expressionCriteria.getFish());
         }
-
-
         if (expressionCriteria.getAntibody() != null) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("xpatex.antibody", expressionCriteria.getAntibody()));
-            logger.debug("antibody: " + expressionCriteria.getAntibody().getZdbID());
+            hqlClauses.add("expressionFigureStage.expressionExperiment.antibody = :antibody");
+            parameterMap.put("antibody", expressionCriteria.getAntibody());
         }
-
-
         if (expressionCriteria.getStart() != null) {
-            criteria.add(Restrictions.eq("startStage", expressionCriteria.getStart()));
-            logger.debug("start stage: " + expressionCriteria.getStart().getZdbID());
+            hqlClauses.add("expressionFigureStage.startStage = :start");
+            parameterMap.put("start", expressionCriteria.getStart());
         }
-
         if (expressionCriteria.getEnd() != null) {
-            criteria.add(Restrictions.eq("endStage", expressionCriteria.getEnd()));
-            logger.debug("end stage: " + expressionCriteria.getEnd().getZdbID());
+            hqlClauses.add("expressionFigureStage.endStage = :end");
+            parameterMap.put("end", expressionCriteria.getEnd());
         }
 
         if (expressionCriteria.isWithImagesOnly()) {
-            if (figureCriteria == null) {
-                figureCriteria = criteria.createCriteria("figures", "figure");
-            }
-            figureCriteria.add(Restrictions.isNotEmpty("images"));
-            logger.debug("with images only");
+            hqlClauses.add("size(expressionFigureStage.figure.images) > 0");
         }
-
         if (expressionCriteria.isWildtypeOnly()) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.fishExperiment", "genox");
-            aliasMap.put("genox.fish", "fish");
-            aliasMap.put("fish.genotype", "genotype");
-            criteria.add(Restrictions.eq("fish.wildtype", true));
-            criteria.add(Restrictions.eq("genotype.wildtype", true));
-            logger.debug("wildtype only");
+            hqlClauses.add("expressionFigureStage.expressionExperiment.fishExperiment.fish.wildtype = true");
+            hqlClauses.add("expressionFigureStage.expressionExperiment.fishExperiment.fish.genotype.wildtype = true");
         }
-
         if (expressionCriteria.isStandardEnvironment()) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.fishExperiment", "genox");
-            criteria.add(Restrictions.eq("genox.standardOrGenericControl", true));
-            logger.debug("standard or generic-control only");
+            hqlClauses.add("expressionFigureStage.expressionExperiment.fishExperiment.standardOrGenericControl = true");
         }
 
-        if (expressionCriteria.isChemicalEnvironment()) {
-            aliasMap.put("expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.fishExperiment", "genox");
-            aliasMap.put("genox.experiment", "exp");
-            aliasMap.put("exp.experimentConditions", "cond");
-            aliasMap.put("cond.conditionDataType", "cdt");
-            criteria.add(Restrictions.eq("cdt.group", "chemical"));
-            logger.debug("chemical environments only");
-        }
+        hql += " where " + String.join(" and ", hqlClauses);
+        Query<ExpressionResult2> query = session.createQuery(hql, ExpressionResult2.class);
+        parameterMap.forEach(query::setParameter);
 
-        for (Map.Entry<String, String> entry : aliasMap.entrySet()) {
-            criteria.createAlias(entry.getKey(), entry.getValue());
-        }
-
-        logger.debug("getting terms for an ExpressionSummaryCriteria object");
-        results.addAll(criteria.list());
-        for (ExpressionResult result : results) {
+        Set<ExpressionStatement> expressionStatements = new TreeSet<>();
+        Set<ExpressionResult2> results = new HashSet<>(query.list());
+        for (ExpressionResult2 result : results) {
             ExpressionStatement statement = new ExpressionStatement();
             statement.setEntity(result.getEntity());
             statement.setExpressionFound(result.isExpressionFound());
             expressionStatements.add(statement);
         }
-
         return expressionStatements;
     }
 
