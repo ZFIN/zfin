@@ -37,7 +37,6 @@ import PropTypes from 'prop-types';
  *
  * @constructor
  */
-const DOMAIN = 'https://cell-mac.zfin.org';
 
 const ConstructMarkerAutocomplete = ({ publicationId, resetFlag, onSelect, onChange }) => {
     const [input, setInput] = useState('');
@@ -49,7 +48,7 @@ const ConstructMarkerAutocomplete = ({ publicationId, resetFlag, onSelect, onCha
 
     useEffect(() => {
         if (input.length > 1) {
-            fetch(`${DOMAIN}/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
+            fetch(`/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
                 .then(response => response.json())
                 .then(data => setSuggestions(data))
                 .catch(error => console.error('Error fetching data:', error));
