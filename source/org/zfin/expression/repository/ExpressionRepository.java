@@ -123,7 +123,6 @@ public interface ExpressionRepository {
      * @return Experiment
      */
     Experiment getExperimentByID(String experimentID);
-    Experiment getExperimentByPubAndName(String pubID, String experimentName);
 
     /**
      * Retrieve Genotype by PK.
