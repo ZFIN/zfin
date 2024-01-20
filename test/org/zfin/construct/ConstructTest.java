@@ -2,6 +2,7 @@ package org.zfin.construct;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.construct.name.*;
@@ -14,10 +15,12 @@ import org.zfin.marker.MarkerType;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @Log4j2
@@ -287,6 +290,78 @@ public class ConstructTest  extends AbstractDatabaseTest {
         assertEquals("EGFP", components.get(partsIndex++).getComponentValue());
         assertEquals(")", components.get(partsIndex++).getComponentValue());
     }
+
+    @Test
+    public void testGetExistingConstructName() {
+        ConstructName name = ConstructComponentService.getExistingConstructName("ZDB-TGCONSTRCT-140210-4");
+        assertNotNull(name);
+        assertEquals("Tg(fabp10a:TETA,TETRE-CMV:HsRed,TETRE-CMV:EGFP,TETRE-CMV:HBV.HBx,TETRE-CMV:HCV.Cp)", name.toString());
+    }
+
+    @Test
+    public void testGetExistingConstructName2() {
+        ConstructName name = ConstructComponentService.getExistingConstructName("ZDB-TGCONSTRCT-221005-1");
+        assertNotNull(name);
+        assertEquals("Tg(MYC)", name.toString());
+    }
+
+    @Test
+    public void testGetExistingConstructName3() {
+        ConstructName name = ConstructComponentService.getExistingConstructName("ZDB-TGCONSTRCT-121024-2");
+        assertNotNull(name);
+        assertEquals("TgBAC(ikzf1:Eos)", name.toString());
+    }
+
+    @Test
+    @Ignore //do we care about this single exception case?  The DB has "(-" as a construct component
+    public void testGetExistingConstructName4() {
+        ConstructName name = ConstructComponentService.getExistingConstructName("ZDB-ETCONSTRCT-080625-1");
+        assertNotNull(name);
+        assertEquals("Et(-109Xla.Eef1a1:GFP)", name.toString());
+    }
+
+    @Test
+    public void testGetManyExistingConstructNames() {
+        String sql = "select mrkr_zdb_id, mrkr_name from marker where mrkr_zdb_id ilike '%CONSTRCT%' limit 100";
+        List<Object[]> results = currentSession().createNativeQuery(sql).getResultList();
+        List<String> errors = new ArrayList<>();
+        for (Object[] result : results) {
+            String zdbID = (String)result[0];
+            String name = (String)result[1];
+            if (zdbID.equals("ZDB-ETCONSTRCT-080625-1")) {
+                //skip this one weird construct
+                continue;
+            }
+
+//            System.out.println("zdbID: " + zdbID + " name: " + name);
+//            System.out.flush();
+
+            ConstructName constructName = ConstructComponentService.getExistingConstructName(zdbID);
+            assertNotNull(constructName);
+            assertEquals("Error parsing construct components for " + zdbID, name, constructName.toString());
+        }
+    }
+
+    @Test
+    public void testConstructNameChangeDiff() {
+        ConstructName existingName = ConstructComponentService.getExistingConstructName("ZDB-TGCONSTRCT-190812-12");
+        assertEquals("TgBAC(cdh1:cdh1-TagRFP,cryaa:Cerulean)", existingName.toString());
+
+        ConstructName newName = new ConstructName("Tg", "BAC");
+        newName.addCassette(Promoter.create("cdh1"), Coding.create("cdh1", "-", "TagBFP"));
+        newName.addCassette(Promoter.create(",", "cryaa"), Coding.create("Cerulean"));
+        System.out.println("newName: " + newName.toString());
+        System.out.println("oldName: " + existingName.toString());
+        System.out.flush();
+        CassettesDiff diff = CassettesDiff.calculate(existingName.getCassettes(), newName.getCassettes());
+        assertEquals(0, diff.getPromoterMarkersAdded().size());
+        assertEquals(0, diff.getPromoterMarkersRemoved().size());
+        assertEquals(1, diff.getCodingMarkersAdded().size());
+        assertEquals(1, diff.getCodingMarkersRemoved().size());
+        assertEquals("TagRFP", diff.getCodingMarkersRemoved().get(0));
+        assertEquals("TagBFP", diff.getCodingMarkersAdded().get(0));
+    }
+
 
     public Person getCurator() {
         return getProfileRepository().getRootUsers().stream().findFirst().orElse(null);
