@@ -181,17 +181,25 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
         //convert marker_go_term_evidence records to load actions
         List<SecondaryTermLoadAction> toAddActions = toAdd.stream()
                 .map(
-                        markerGoTermEvidence -> SecondaryTermLoadAction.builder()
-                                .geneZdbID(markerGoTermEvidence.getMarkerZdbID())
-                                .dbName(dbName)
-                                .relatedEntityFields(markerGoTermEvidence.toMap())
-                                .type(SecondaryTermLoadAction.Type.LOAD)
-                                .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
-                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
-                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
-                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
-                                .build()
+                        markerGoTermEvidence -> {
+                            if (markerGoTermEvidence.getGoTermZdbID() == null) {
+                                log.error("No GO term ZDB ID for marker go term evidence: " + markerGoTermEvidence.getGoID() + " " + markerGoTermEvidence.getMarkerZdbID());
+                                return null;
+                            } else {
+                                return SecondaryTermLoadAction.builder()
+                                                .geneZdbID(markerGoTermEvidence.getMarkerZdbID())
+                                                .dbName(dbName)
+                                                .relatedEntityFields(markerGoTermEvidence.toMap())
+                                                .type(SecondaryTermLoadAction.Type.LOAD)
+                                                .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
+                                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
+                                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
+                                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
+                                                .build();
+                            }
+                        }
                 )
+                .filter(action -> action != null)
                 .toList();
 
         log.info("Count of marker go term evidences to delete: " + toDelete.size());
