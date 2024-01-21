@@ -403,6 +403,14 @@
                 `;
             }
 
+
+            if (!reportSummary) {
+                return html`<h2>Dry Run</h2>
+                <p>This report was generated as part of a dry-run. The before/after summary data is not captured for
+                dry runs.</p>
+                `;
+            }
+
             return html`
                     <h2>Summary</h2>
                     <p>Summary of the changes that will be made to the database (or have been made).</p>
