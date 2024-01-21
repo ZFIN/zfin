@@ -34,7 +34,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.TimerTrigger>
-      <spec></spec>
+      <spec/>
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -43,10 +43,11 @@
       <command>
         <![CDATA[
 echo "WORKSPACE=$WORKSPACE"
+echo "PWD=$PWD"
 echo "UNIPROT_LOAD_MODE=$UNIPROT_LOAD_MODE"
-rm -f $WORKSPACE/uniprot_secondary_load_report.json $WORKSPACE/uniprot_secondary_load_report.json.report.html
+rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report.json.report.html
+export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report.json"
 cd $SOURCEROOT
-export UNIPROT_OUTPUT_FILE="$WORKSPACE/uniprot_secondary_load_report.json"
 gradle uniprotSecondaryTermLoadTask
         ]]>
       </command>
