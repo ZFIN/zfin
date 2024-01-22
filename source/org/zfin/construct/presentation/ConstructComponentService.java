@@ -1,5 +1,6 @@
 package org.zfin.construct.presentation;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import static org.zfin.construct.name.Cassette.COMPONENT_SEPARATOR;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Service
+@Log4j2
 public class ConstructComponentService {
     private static final ConstructRepository cr = RepositoryFactory.getConstructRepository();
     private static final MarkerRepository mr = RepositoryFactory.getMarkerRepository();
@@ -344,7 +346,10 @@ public class ConstructComponentService {
         Coding currentCoding = new Coding();
         int cassetteNumber = 1;
         int componentNumber = 2;
-        String parsingCassette = "promoter";
+
+        //are we parsing promoter parts of the cassette (true), or the coding parts (false)
+        boolean parsingCassettePromoter = true;
+
         while (componentIterator.hasNext()) {
             componentNumber++;
             currentComponent = componentIterator.next();
@@ -356,33 +361,34 @@ public class ConstructComponentService {
                 cassetteNumber++;
                 currentPromoter = new Promoter();
                 currentCoding = new Coding();
-                parsingCassette = "promoter";
+                parsingCassettePromoter = true;
             }
             if (currentComponent.getComponentValue().equals(COMPONENT_SEPARATOR)) {
                 continue;
             } else if (currentComponent.getComponentValue().equals(")") && !componentIterator.hasNext()) {
                 continue;
-            } else if (currentComponent.getComponentCategory().equals("promoter component")) {
-                currentPromoter.addPromoterPart(currentComponent.getComponentValue());
-            } else if (currentComponent.getComponentCategory().equals("coding component")) {
-                parsingCassette = "coding";
+            }
+            if (currentComponent.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF)) {
+                parsingCassettePromoter = false; //parsing coding part now
                 currentCoding.addCodingPart(currentComponent.getComponentValue());
-            } else if (currentComponent.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF)) {
-                parsingCassette = "coding";
-                currentCoding.addCodingPart(currentComponent.getComponentValue());
-            } else if (currentComponent.getComponentCategory().equals("coding sequence component")) {
-                parsingCassette = "coding";
-                currentCoding.addCodingPart(currentComponent.getComponentValue());
-            } else if (currentComponent.getComponentCategory().equals("cassette delimiter")) {
-                if (parsingCassette.equals("promoter")) {
-                    currentPromoter.addPromoterPart(currentComponent.getComponentValue());
-                } else if (parsingCassette.equals("coding")) {
+                continue;
+            }
+
+            switch (currentComponent.getComponentCategoryEnum()) {
+                case PROMOTER_COMPONENT -> currentPromoter.addPromoterPart(currentComponent.getComponentValue());
+                case CODING_COMPONENT, CODING_SEQUENCE_COMPONENT -> {
+                    parsingCassettePromoter = false;
                     currentCoding.addCodingPart(currentComponent.getComponentValue());
                 }
-            } else if (currentComponent.getComponentCategory().equals("construct wrapper component")) {
-                continue;
-            } else {
-                System.out.println("Unknown component category: " + currentComponent.getComponentCategory());
+                case CASSETTE_DELIMITER -> {
+                    if (parsingCassettePromoter) {
+                        currentPromoter.addPromoterPart(currentComponent.getComponentValue());
+                    } else {
+                        currentCoding.addCodingPart(currentComponent.getComponentValue());
+                    }
+                }
+                case CONSTRUCT_WRAPPER_COMPONENT -> {} // Do nothing
+                default -> log.error("Unknown component category: " + currentComponent.getComponentCategory());
             }
         }
 
