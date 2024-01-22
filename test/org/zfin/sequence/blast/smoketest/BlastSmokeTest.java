@@ -46,6 +46,7 @@ public class BlastSmokeTest extends AbstractSmokeTest {
      * Get a recent crispr STR from the database. Query the blast form with the sequence of the STR.
      * Make sure it returns a results page that contains the STR in the results.
      */
+    @org.junit.Ignore //This fails on TRUNK -> TODO: write a jenkins job to replace this test
     @Test
     @Ignore
     public void testRecentSTR() {

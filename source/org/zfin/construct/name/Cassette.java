@@ -4,14 +4,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class Cassette {
     public static final String COMPONENT_SEPARATOR = ":";
     private static final String STORED_COMPONENT_SEPARATOR = "#";
 
-    private Promoter promoter;
-    private Coding coding;
+    private Promoter promoter = new Promoter();
+    private Coding coding = new Coding();
     private int cassetteNumber;
 
     public Cassette (Promoter promoter, Coding coding) {
@@ -34,8 +37,13 @@ public class Cassette {
     }
 
     public String toString() {
-        return promoter.toString() +
-                COMPONENT_SEPARATOR +
-                coding.toString();
+        List<String> nameParts = new ArrayList<>();
+        if (StringUtils.isNotEmpty(promoter.toString())) {
+            nameParts.add(promoter.toString());
+        }
+        if (StringUtils.isNotEmpty(coding.toString())) {
+            nameParts.add(coding.toString());
+        }
+        return String.join(COMPONENT_SEPARATOR, nameParts);
     }
 }
