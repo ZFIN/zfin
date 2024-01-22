@@ -68,7 +68,14 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry"
-        }
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-190812-12",
+            "pubZdbID": "ZDB-PUB-190209-17",
+            "constructType": "Tg",
+            "constructPrefix": "BAC",
+            "constructStoredName": "cdh1#:cdh1#-#TagRFP#Cassette#,#cryaa#:Cerulean"
+        },
     ];
 
     changes.forEach(change => {

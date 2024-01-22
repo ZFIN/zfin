@@ -1,5 +1,6 @@
 package org.zfin.construct.presentation;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
@@ -8,13 +9,16 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.InvalidConstructNameException;
 import org.zfin.construct.name.*;
+import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
+import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.construct.repository.ConstructRepository;
+import org.zfin.marker.service.MarkerAttributionService;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -24,13 +28,14 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
-
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.construct.name.Cassette.COMPONENT_SEPARATOR;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Service
+@Log4j2
 public class ConstructComponentService {
     private static final ConstructRepository cr = RepositoryFactory.getConstructRepository();
     private static final MarkerRepository mr = RepositoryFactory.getMarkerRepository();
@@ -252,6 +257,9 @@ public class ConstructComponentService {
 
         validateConstructNameOrThrowException(newName.toString());
 
+        //update the construct relationships based on the name change
+        updateConstructRelationships(constructZdbID, newName, pubZdbID);
+
         //delete the components
         mr.deleteConstructComponents(constructZdbID);
 
@@ -307,6 +315,132 @@ public class ConstructComponentService {
         if (isConstructNameInvalid(constructName)) {
             throw new InvalidConstructNameException(getValidationErrorMessageForConstructName(constructName).orElse("Invalid construct name"));
         }
+    }
+
+    /**
+     * Get the ConstructName object from the construct ID
+     * It retrieves the ConstructComponent objects from the database and parses them into a ConstructName object
+     * @param constructID
+     * @return
+     */
+    public static ConstructName getExistingConstructName(String constructID) {
+        List<ConstructComponent> components = cr.getConstructComponentsByConstructZdbId(constructID);
+        Iterator<ConstructComponent> componentIterator = components.iterator();
+        ConstructName constructName = new ConstructName();
+
+        //Set the TYPE
+        ConstructComponent currentComponent = componentIterator.next();
+        constructName.setTypeByAbbreviation(currentComponent.getComponentValue());
+
+        //Set the PREFIX if it exists
+        currentComponent = componentIterator.next();
+        if (currentComponent.getComponentValue().equals("(")) {
+            constructName.setPrefix("");
+        } else {
+            constructName.setPrefix(currentComponent.getComponentValue());
+        }
+
+        //Set the Cassettes
+        Cassette currentCassette = new Cassette();
+        Promoter currentPromoter = new Promoter();
+        Coding currentCoding = new Coding();
+        int cassetteNumber = 1;
+        int componentNumber = 2;
+
+        //are we parsing promoter parts of the cassette (true), or the coding parts (false)
+        boolean parsingCassettePromoter = true;
+
+        while (componentIterator.hasNext()) {
+            componentNumber++;
+            currentComponent = componentIterator.next();
+            if(cassetteNumber != currentComponent.getComponentCassetteNum()) {
+                currentCassette.setPromoter(currentPromoter);
+                currentCassette.setCoding(currentCoding);
+                constructName.addCassette(currentCassette);
+                currentCassette = new Cassette();
+                cassetteNumber++;
+                currentPromoter = new Promoter();
+                currentCoding = new Coding();
+                parsingCassettePromoter = true;
+            }
+            if (currentComponent.getComponentValue().equals(COMPONENT_SEPARATOR)) {
+                continue;
+            } else if (currentComponent.getComponentValue().equals(")") && !componentIterator.hasNext()) {
+                continue;
+            }
+            if (currentComponent.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF)) {
+                parsingCassettePromoter = false; //parsing coding part now
+                currentCoding.addCodingPart(currentComponent.getComponentValue());
+                continue;
+            }
+
+            switch (currentComponent.getComponentCategoryEnum()) {
+                case PROMOTER_COMPONENT -> currentPromoter.addPromoterPart(currentComponent.getComponentValue());
+                case CODING_COMPONENT, CODING_SEQUENCE_COMPONENT -> {
+                    parsingCassettePromoter = false;
+                    currentCoding.addCodingPart(currentComponent.getComponentValue());
+                }
+                case CASSETTE_DELIMITER -> {
+                    if (parsingCassettePromoter) {
+                        currentPromoter.addPromoterPart(currentComponent.getComponentValue());
+                    } else {
+                        currentCoding.addCodingPart(currentComponent.getComponentValue());
+                    }
+                }
+                case CONSTRUCT_WRAPPER_COMPONENT -> {} // Do nothing
+                default -> log.error("Unknown component category: " + currentComponent.getComponentCategory());
+            }
+        }
+
+        currentCassette.setPromoter(currentPromoter);
+        currentCassette.setCoding(currentCoding);
+        constructName.addCassette(currentCassette);
+
+        return constructName;
+    }
+
+    /**
+     * When renaming a construct, this gets the old name and does a comparison to figure out which markers were added/deleted
+     * from the promoters and codings. For any marker removed, this removes the construct relationship. For any markers added,
+     * this creates new relationships.
+     *
+     * @param constructZdbID
+     * @param newConstructName
+     * @param pubZdbID
+     */
+    private static void updateConstructRelationships(String constructZdbID, ConstructName newConstructName, String pubZdbID) {
+        ConstructName oldConstructName = getExistingConstructName(constructZdbID);
+        CassettesDiff diff = CassettesDiff.calculate(oldConstructName.getCassettes(), newConstructName.getCassettes());
+
+        if (diff.getCodingMarkersAdded().isEmpty() && diff.getPromoterMarkersAdded().isEmpty()) {
+            //no new markers, so no new relationships to add
+        } else {
+            Set<Marker> promotersAdded = diff.getPromoterMarkersAdded().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            Set<Marker> codingAdded = diff.getCodingMarkersAdded().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            cr.addConstructRelationships(promotersAdded, codingAdded, cr.getConstructByID(constructZdbID), pubZdbID);
+            addMarkerAttributionIfNotPresent(promotersAdded, pubZdbID);
+            addMarkerAttributionIfNotPresent(codingAdded, pubZdbID);
+        }
+
+        if (diff.getCodingMarkersRemoved().isEmpty() && diff.getPromoterMarkersRemoved().isEmpty()) {
+            //no markers removed, so no relationships to remove
+        } else {
+            Set<Marker> promotersRemoved = diff.getPromoterMarkersRemoved().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            Set<Marker> codingRemoved = diff.getCodingMarkersRemoved().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            cr.removeConstructRelationships(promotersRemoved, codingRemoved, cr.getConstructByID(constructZdbID), pubZdbID);
+        }
+    }
+
+    private static void addMarkerAttributionIfNotPresent(Set<Marker> markers, String pubZdbID) {
+        markers.forEach(marker -> {
+            try {
+                MarkerAttributionService.addAttributionForMarker(marker, pubZdbID);
+            } catch (TermNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (DuplicateEntryException e) {
+                //do nothing
+            }
+        });
     }
 }
 

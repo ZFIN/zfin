@@ -37,4 +37,8 @@ public class Promoter {
     public int size() {
         return promoterParts.size();
     }
+
+    public void addPromoterPart(String componentValue) {
+        promoterParts.add(componentValue);
+    }
 }

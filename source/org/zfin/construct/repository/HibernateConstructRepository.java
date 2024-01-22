@@ -14,6 +14,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -23,6 +24,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
@@ -77,7 +79,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         return constructRelationships;
     }
 
-
+    @Override
     public void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, ConstructCuration construct, String pubID) {
         //      HibernateUtil.createTransaction();
 
@@ -115,7 +117,38 @@ public class HibernateConstructRepository implements ConstructRepository {
         }
         currentSession().flush();
         //       flushAndCommitCurrentSession();
+    }
 
+    @Override
+    public void removeConstructRelationships(Set<Marker> promMarkers, Set<Marker> codingMarkers, ConstructCuration construct, String pubID) {
+        Marker constructMarker = getMarkerRepository().getMarkerByID(construct.getZdbID());
+        List<String> zdbIDsToDelete = new ArrayList<>(); //deleteActiveDataByZdbID
+        if (!promMarkers.isEmpty()) {
+            for (Marker promMarker : promMarkers) {
+                ConstructRelationship cmRel = getConstructRelationship(construct, promMarker, ConstructRelationship.Type.PROMOTER_OF);
+                if (cmRel != null) {
+                    zdbIDsToDelete.add(cmRel.getZdbID());
+                }
+                MarkerRelationship mRel = getMarkerRepository().getMarkerRelationship(constructMarker, promMarker, MarkerRelationship.Type.PROMOTER_OF);
+                if (mRel != null) {
+                    zdbIDsToDelete.add(mRel.getZdbID());
+                }
+            }
+        }
+
+        if (!codingMarkers.isEmpty()) {
+            for (Marker codingMarker : codingMarkers) {
+                ConstructRelationship cmRel = getConstructRelationship(construct, codingMarker, ConstructRelationship.Type.CODING_SEQUENCE_OF);
+                if (cmRel != null) {
+                    zdbIDsToDelete.add(cmRel.getZdbID());
+                }
+                MarkerRelationship mRel = getMarkerRepository().getMarkerRelationship(constructMarker, codingMarker, MarkerRelationship.Type.CODING_SEQUENCE_OF);
+                if (mRel != null) {
+                    zdbIDsToDelete.add(mRel.getZdbID());
+                }
+            }
+        }
+        getInfrastructureRepository().deleteActiveDataByZdbID(zdbIDsToDelete);
     }
 
     public void addConstructPub(ConstructCuration construct, Publication publication) {
@@ -221,7 +254,13 @@ public class HibernateConstructRepository implements ConstructRepository {
     @Override
     public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId) {
         Session session = HibernateUtil.currentSession();
-        Query<ConstructComponent> criteria = session.createQuery("from ConstructComponent where constructZdbID = :constructZdbID", ConstructComponent.class);
+        Query<ConstructComponent> criteria = session.createQuery(
+                """
+                from ConstructComponent
+                where constructZdbID = :constructZdbID
+                order by componentOrder
+                """,
+                ConstructComponent.class);
         criteria.setParameter("constructZdbID", constructZdbId);
         return criteria.list();
     }
