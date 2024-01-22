@@ -39,7 +39,11 @@ public class ConstructComponent {
         TEXT_COMPONENT("text component"),
         TEXT_COMPONENT_("text component "),
         UNKNOWN_COMPONENT("unknown component"),
-        CODING_COMPONENT("coding component");
+        CODING_COMPONENT("coding component"),
+        PROMOTER_COMPONENT("promoter component"),
+        CODING_SEQUENCE_COMPONENT("coding sequence component"),
+        CASSETTE_DELIMITER("cassette delimiter"),
+        CONSTRUCT_WRAPPER_COMPONENT("construct wrapper component");
 
         private final String value;
 
@@ -50,6 +54,22 @@ public class ConstructComponent {
         public String toString() {
             return this.value;
         }
+
+
+        public static Type fromString(String text) {
+            if (text != null) {
+                for (Type b : Type.values()) {
+                    if (text.equals(b.value)) {
+                        return b;
+                    }
+                }
+            }
+            return UNKNOWN_COMPONENT; // Or null, based on how you want to handle unknown cases
+        }
+    }
+
+    public Type getComponentCategoryEnum() {
+        return Type.fromString(componentCategory);
     }
 
 }

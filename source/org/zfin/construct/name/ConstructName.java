@@ -51,9 +51,9 @@ import static org.zfin.construct.presentation.ConstructComponentService.getTypeA
 @NoArgsConstructor
 public class ConstructName {
     private Marker.Type type;
-    private String prefix;
+    private String prefix = "";
 
-    private Cassettes cassettes;
+    private Cassettes cassettes = new Cassettes();
 
     public ConstructName(String typeAbbreviation, String prefix) {
         getConstructTypeEnumByConstructName(typeAbbreviation).ifPresent(this::setType);
@@ -88,12 +88,24 @@ public class ConstructName {
         return typeAbbr.get();
     }
 
+    public String getTypeAbbreviationOrEmpty() {
+        Optional<String> typeAbbr = getTypeAbbreviationFromType(type);
+        if (typeAbbr.isEmpty()) {
+            return "";
+        }
+        return typeAbbr.get();
+    }
+
     public String toString() {
-        return getTypeAbbreviation() +
+        return getTypeAbbreviationOrEmpty() +
                 prefix +
                 "(" +
                 cassettes.toString() +
                 ")";
+    }
+
+    public void addCassette(Cassette cassette) {
+        cassettes.add(cassette);
     }
 
     public void addCassette(Promoter promoter, Coding coding) {
@@ -102,5 +114,9 @@ public class ConstructName {
 
     public void setCassettesFromStoredName(String storedName) {
         cassettes = Cassettes.fromStoredName(storedName);
+    }
+
+    public void setTypeByAbbreviation(String componentValue) {
+        getConstructTypeEnumByConstructName(componentValue).ifPresent(this::setType);
     }
 }
