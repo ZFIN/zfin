@@ -37,4 +37,8 @@ public class Coding {
     public int size() {
         return codingParts.size();
     }
+
+    public void addCodingPart(String componentValue) {
+        codingParts.add(componentValue);
+    }
 }

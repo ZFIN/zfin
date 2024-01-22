@@ -21,6 +21,7 @@ public interface ConstructRepository {
     ConstructRelationship getConstructRelationshipByID(String zdbID);
     ConstructRelationship getConstructRelationship(ConstructCuration marker1, Marker marker2, ConstructRelationship.Type type);
     void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, ConstructCuration construct, String pubID);
+    void removeConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, ConstructCuration construct, String pubID);
     ConstructCuration getConstructByID(String zdbID);
     ConstructCuration getConstructByName(String conName);
     void createConstruct(ConstructCuration construct, Publication publication, Person loggedInUser);
