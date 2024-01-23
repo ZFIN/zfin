@@ -415,8 +415,18 @@ public class ConstructComponentService {
         if (diff.getCodingMarkersAdded().isEmpty() && diff.getPromoterMarkersAdded().isEmpty()) {
             //no new markers, so no new relationships to add
         } else {
-            Set<Marker> promotersAdded = diff.getPromoterMarkersAdded().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
-            Set<Marker> codingAdded = diff.getCodingMarkersAdded().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            Set<Marker> promotersAdded = diff.getPromoterMarkersAdded()
+                    .stream()
+                    .map(mr::getMarkerByAbbreviation)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            Set<Marker> codingAdded = diff.getCodingMarkersAdded()
+                    .stream()
+                    .map(mr::getMarkerByAbbreviation)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
             cr.addConstructRelationships(promotersAdded, codingAdded, cr.getConstructByID(constructZdbID), pubZdbID);
             addMarkerAttributionIfNotPresent(promotersAdded, pubZdbID);
             addMarkerAttributionIfNotPresent(codingAdded, pubZdbID);
@@ -425,8 +435,16 @@ public class ConstructComponentService {
         if (diff.getCodingMarkersRemoved().isEmpty() && diff.getPromoterMarkersRemoved().isEmpty()) {
             //no markers removed, so no relationships to remove
         } else {
-            Set<Marker> promotersRemoved = diff.getPromoterMarkersRemoved().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
-            Set<Marker> codingRemoved = diff.getCodingMarkersRemoved().stream().map(mr::getMarkerByAbbreviation).collect(Collectors.toSet());
+            Set<Marker> promotersRemoved = diff.getPromoterMarkersRemoved()
+                    .stream()
+                    .map(mr::getMarkerByAbbreviation)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            Set<Marker> codingRemoved = diff.getCodingMarkersRemoved()
+                    .stream()
+                    .map(mr::getMarkerByAbbreviation)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
             cr.removeConstructRelationships(promotersRemoved, codingRemoved, cr.getConstructByID(constructZdbID), pubZdbID);
         }
     }
