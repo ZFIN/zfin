@@ -1951,6 +1951,7 @@ sub initializeMapOfZfinToNCBIgeneIds {
 sub logOneToZeroAssociations {
     # Global: %genesZFINwithNoRNAFoundAtNCBI
     open (ONETOZERO, ">reportOneToZero") ||  die "Cannot open ONETOZERO : $!\n" if $debug;
+    print ONETOZERO getArtifactComparisonURLs();
 
     my $ctOneToZero = 0;
     foreach my $geneAtZFIN (sort keys %genesZFINwithNoRNAFoundAtNCBI) {
@@ -2343,6 +2344,7 @@ sub getOneToNNCBItoZFINgeneIds {
 
     # report N:N
     open (NTON, ">reportNtoN") ||  die "Cannot open reportNtoN : $!\n";
+    print NTON getArtifactComparisonURLs();
 
     foreach my $geneZFINtoMultiNCBI (sort keys %oneToNZFINtoNCBI) {
 
@@ -2563,6 +2565,7 @@ sub reportOneToN {
     #  %geneZDBidsSymbols
     #  %NCBIidsGeneSymbols
     open (ONETON, ">reportOneToN") ||  die "Cannot open reportOneToN : $!\n";
+    print ONETON getArtifactComparisonURLs();
 
     my $ct = 0;
     foreach my $zdbId (sort keys %oneToN) {
@@ -2593,6 +2596,7 @@ sub reportNtoOne {
     #  %NCBIidsGeneSymbols
 
     open (NTOONE, ">reportNtoOne") ||  die "Cannot open reportNtoOne : $!\n";
+    print NTOONE getArtifactComparisonURLs();
 
     my $ct = 0;
     foreach my $ncbiId (sort keys %nToOne) {
@@ -3696,6 +3700,7 @@ sub reportAllLoadStatistics {
         $symbol = $geneZDBidsSymbols{$zdbGeneId};
         $outputBuffer =~ s/$zdbGeneId([^\d])/$zdbGeneId($symbol)$1/g;
     }
+    print STATS getArtifactComparisonURLs();
     print STATS $outputBuffer;
 
     close STATS;
@@ -3710,6 +3715,39 @@ sub emailLoadReports {
 
     $subject = "Auto from $dbname: NCBI_gene_load.pl :: log file";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","logNCBIgeneLoad");
+}
+
+# This method creates a header to be added to the top of a report file that is sent via email.
+# It includes URLs to compare the reports between the current build and the previous build.
+# It assumes the jenkins environment variables JOB_URL and BUILD_ID are set.
+# It requires artifact-diff plugin to be installed
+sub getArtifactComparisonURLs {
+    #eg. JOB_URL=http://SITE.zfin.org/jobs/job/test-job2/
+    my $jobURL = $ENV{'JOB_URL'};
+    my $buildID = $ENV{'BUILD_ID'};
+
+    if (!$jobURL || !$buildID) {
+        return "";
+    }
+
+    #replace http with https if not already https
+    $jobURL = "https" . substr($jobURL,4) if (substr($jobURL,0,5) eq "http:");
+
+    my $previousBuildID = $buildID - 1;
+    my $artifactSubDirectory = "server_apps/data_transfer/NCBIGENE";
+
+    #array of artifacts
+    my @artifacts = ("reportNtoN", "reportNtoOne", "reportOneToN", "reportOneToZero", "reportStatistics", "reportNonLoadPubGenPept", "reportZDBgeneIdWithMultipleVegaIds");
+
+    my $buffer = "See below URLs to compare reports between this build and the previous build:\n";
+    $buffer .=   "===========================================================================\n\n";
+    foreach my $artifact (@artifacts) {
+        #eg. https://SITE.zfin.org/jobs/job/NCBI-Gene-Load_w/2/artifact-diff/3/server_apps/data_transfer/reportNtoN
+        $buffer .= $jobURL . $previousBuildID . "/artifact-diff/$buildID/$artifactSubDirectory/$artifact\n";
+    }
+    $buffer .= "===========================================================================\n\n";
+
+    return $buffer;
 }
 
 main();
