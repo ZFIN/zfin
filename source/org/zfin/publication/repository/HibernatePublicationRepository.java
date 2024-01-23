@@ -5,9 +5,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.*;
+import org.hibernate.SQLQuery;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
@@ -1490,35 +1492,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
                                                             int offset, String sort) {
 
-        Criteria listCriteria = createPubsByStatusCriteria(status, location, owner);
-        listCriteria.addOrder(Order.asc("status"));
-        if (StringUtils.isNotEmpty(sort)) {
-            boolean isAscending = true;
-            if (sort.startsWith("-")) {
-                isAscending = false;
-                sort = sort.substring(1);
-            }
-            Order order;
-            if (isAscending) {
-                order = Order.asc(sort);
-            } else {
-                order = Order.desc(sort);
-            }
-            listCriteria.addOrder(order);
-        }
+        Query<PublicationTrackingHistory> listCriteria = createPubsByStatusCriteria(status, location, owner, sort, false);
         PaginationResult<PublicationTrackingHistory> histories = PaginationResultFactory
             .createResultFromScrollableResultAndClose(offset, offset + count, listCriteria.scroll());
 
-        Criteria countsCriteria = createPubsByStatusCriteria(status, location, owner);
-        List countList = countsCriteria.setProjection(Projections.projectionList()
-                .add(Projections.groupProperty("status"))
-                .add(Projections.rowCount()))
-            .list();
+        Query countsCriteria = createPubsByStatusCriteria(status, location, owner, null, true);
+        List countList = countsCriteria.list();
         Map<String, Long> counts = new HashMap<>();
         for (Object item : countList) {
             Object[] tuple = (Object[]) item;
-            PublicationTrackingStatus pubStatus = (PublicationTrackingStatus) tuple[0];
-            counts.put(pubStatus.getName().toString(), (long) tuple[1]);
+            PublicationTrackingStatus.Name pubStatus = (PublicationTrackingStatus.Name) tuple[0];
+            counts.put(pubStatus.toString(), (long) tuple[1]);
         }
 
         DashboardPublicationList result = new DashboardPublicationList();
@@ -2395,31 +2379,65 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             .uniqueResult();
     }
 
-    private Criteria createPubsByStatusCriteria(Long status, Long location, String owner) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
-            .add(Restrictions.eq("isCurrent", true))
-            .createAlias("publication", "pub");
+    private Query createPubsByStatusCriteria(Long status, Long location, String owner, String sort, boolean groupBy) {
+
+        String hql = "";
+        if (groupBy) {
+            hql = """
+                select pubTrack.status.name, count(*)
+                """;
+        }
+        hql += """
+            from PublicationTrackingHistory as pubTrack
+            """;
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
+
+        hqlClauses.add("pubTrack.isCurrent = true");
 
         if (status != null) {
-            criteria.add(Restrictions.eq("status", getPublicationTrackingStatus(status)));
+            hqlClauses.add("pubTrack.status = :status");
+            parameterMap.put("status", getPublicationTrackingStatus(status));
         }
 
         if (location != null) {
             if (location == 0) {
-                criteria.add(Restrictions.isNull("location"));
+                hqlClauses.add("pubTrack.location is null");
             } else {
-                criteria.add(Restrictions.eq("location", getPublicationTrackingLocation(location)));
+                hqlClauses.add("pubTrack.location = :location");
+                parameterMap.put("location", getPublicationTrackingLocation(location));
             }
         }
 
         if (StringUtils.isNotEmpty(owner)) {
             if (owner.equals("*")) {
-                criteria.add(Restrictions.isNotNull("owner"));
+                hqlClauses.add("pubTrack.owner is not null");
             } else {
-                criteria.add(Restrictions.eq("owner", profileRepository.getPerson(owner)));
+                hqlClauses.add("pubTrack.owner = :owner");
+                parameterMap.put("owner", profileRepository.getPerson(owner));
             }
         }
-        return criteria;
+        hql += " where " + String.join(" and ", hqlClauses);
+        if (groupBy) {
+            hql += " group by pubTrack.status.name ";
+        }
+        if (StringUtils.isNotEmpty(sort)) {
+            hql += " order by pubTrack.status";
+            boolean isAscending = true;
+            if (sort.startsWith("-")) {
+                isAscending = false;
+                hql += ", " + sort.substring(1);
+            }
+            if (isAscending) {
+                hql += " asc";
+            } else {
+                hql += " desc";
+            }
+        }
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        parameterMap.forEach(query::setParameter);
+        return query;
     }
 
     @Override
