@@ -5,6 +5,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Subset;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
@@ -15,10 +16,8 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,8 +61,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 createMarkerGoTermEvidencesFromNewSecondaryTermIDs(uniProtRecords, actions, context);
 
         log.info("Created " + markerGoTermEvidenceActions.size() + " markerGoTermEvidenceActions before filtering");
-        List<SecondaryTermLoadAction> filteredMarkerGoTermEvidenceActions = filterTerms(markerGoTermEvidenceActions);
-        return filteredMarkerGoTermEvidenceActions;
+        return filterTerms(markerGoTermEvidenceActions);
     }
 
     public static List<SecondaryTermLoadAction> filterTerms(List<SecondaryTermLoadAction> markerGoTermEvidences) {
@@ -88,7 +86,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
         if (notForAnnotations == null) {
             throw new RuntimeException("Could not find subset " + GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS);
         }
-        List<String> termZdbIDs = notForAnnotations.getTerms().stream().map(term -> term.getZdbID()).toList();
+        List<String> termZdbIDs = notForAnnotations.getTerms().stream().map(GenericTerm::getZdbID).toList();
         return markerGoTermEvidences.stream()
                 .filter(action -> !termZdbIDs.contains(action.getGoTermZdbID()))
                 .toList();
@@ -164,6 +162,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                             .goID("GO:" + item2go.goID())
                             .goTermZdbID(item2go.termZdbID())
                             .publicationID(context.getPubIDForMarkerGoTermEvidenceByDB(dbName))
+                            .inferredFrom(dbName + ":" + dblink.getAccession())
                             .build();
                 }
         ).toList();
@@ -199,7 +198,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                             }
                         }
                 )
-                .filter(action -> action != null)
+                .filter(Objects::nonNull)
                 .toList();
 
         log.info("Count of marker go term evidences to delete: " + toDelete.size());
