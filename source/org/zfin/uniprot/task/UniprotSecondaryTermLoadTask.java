@@ -40,7 +40,7 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
 @Setter
 public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
-    private static final int ACTION_SIZE_ERROR_THRESHOLD = 20_000;
+    private static final int ACTION_SIZE_ERROR_THRESHOLD = 30_000;
     private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/secondary-load-report.html";
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private final String domainFile;
@@ -278,7 +278,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void calculatePipelineActions() {
-        /** The following could be all handled by the same class in a refactoring: **/
+        /* The following could be all handled by the same class in a refactoring: */
         // TODO: refactor this area
         // Something like this: pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(List.of(INTERPRO, EC, PFAM, PROSITE)), RemoveFromLostUniProtsActionProcessor.class);
         // And could even combine the Add and Remove handlers into one class that calls out to the two classes
@@ -293,7 +293,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
         pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
-        /** The above could be refactored to all be handled by the same class **/
+        /* The above could be refactored to all be handled by the same class */
 
         pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
         pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
