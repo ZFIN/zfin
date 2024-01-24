@@ -58,15 +58,7 @@ public interface SequenceRepository {
     DBLink getDBLinkByID(String zdbID);
 
     DBLink getDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
-    DBLink getDBLinkByData(String dataZdbID,ReferenceDatabase referenceDatabase);
-    FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
-
-    MarkerDBLink getSingleDBLinkForMarker (Marker marker, ReferenceDatabase referenceDatabase);
-
     List<MarkerDBLink> getDBLinksForMarker(Marker marker, ReferenceDatabase... referenceDatabases);
-
-    List<MarkerDBLink> getDBLinksForMarkerExcludingReferenceDatabases(Marker marker, ForeignDBDataType.DataType refType,
-                                                                      ReferenceDatabase... referenceDatabases);
 
     void addDBLinks(Collection<MarkerDBLink> dbLinksToAdd, Publication attributionPub, int commitChunk);
 
