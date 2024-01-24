@@ -2405,7 +2405,8 @@ drop view phenoGeneCleanDataFish;
 
 \echo '\copy (select * from crisprFasta) crispr fasta file'
 create view crisprFasta as
-select '>lcl|', mrkr_zdb_id, mrkr_name||'|' as text2, seq_sequence as text3
+select '>lcl|', mrkr_zdb_id, mrkr_name as text2, '
+'||seq_sequence as text3
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-CRISPR%';
@@ -2414,7 +2415,8 @@ drop view crisprFasta;
 
 \echo '\copy (select * from talenFasta) talen fasta file'
 create view talenFasta as
-select '>lcl|',mrkr_zdb_id||' sequence1' as text2, mrkr_name||'|' as text3, seq_sequence as test4
+select '>lcl|',mrkr_zdb_id||' sequence1' as text2, mrkr_name as text3, '
+'||seq_sequence as test4
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-TALEN%'
