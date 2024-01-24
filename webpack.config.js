@@ -13,7 +13,6 @@ const config = {
     devtool: isProd ? false : 'eval-cheap-module-source-map',
     mode: 'development',
     entry: {
-        angular: './angular/index.js',
         bootstrap: './bootstrap/index.js',
         curation: './curation/index.js',
         'jquery-ui': './jquery-ui/index.js',
