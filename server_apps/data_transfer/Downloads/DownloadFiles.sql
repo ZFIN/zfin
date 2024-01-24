@@ -2409,7 +2409,7 @@ select '>lcl|', mrkr_zdb_id, mrkr_name||'|' as text2, seq_sequence as text3
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-CRISPR%';
-\COPY (SELECT * FROM crisprFasta WHERE mrkr_zdb_id = 'ZDB-CRISPR-190124-1' LIMIT 1) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
+\COPY (SELECT * FROM crisprFasta) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
 drop view crisprFasta;
 
 \echo '\copy (select * from talenFasta) talen fasta file'
