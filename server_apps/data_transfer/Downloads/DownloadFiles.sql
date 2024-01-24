@@ -2405,18 +2405,16 @@ drop view phenoGeneCleanDataFish;
 
 \echo '\copy (select * from crisprFasta) crispr fasta file'
 create view crisprFasta as
-select '>lcl|', mrkr_zdb_id, mrkr_name||'|' as text2, '
-'||seq_sequence as text3
+select '>lcl|', mrkr_zdb_id, mrkr_name||'|' as text2, seq_sequence as text3
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-CRISPR%';
-\copy (select * from crisprFasta) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa'
+\COPY (SELECT * FROM crisprFasta WHERE mrkr_zdb_id = 'ZDB-CRISPR-190124-1' LIMIT 1) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
 drop view crisprFasta;
 
 \echo '\copy (select * from talenFasta) talen fasta file'
 create view talenFasta as
-select '>lcl|',mrkr_zdb_id||' sequence1' as text2, mrkr_name||'|' as text3, '
-'||seq_sequence as test4
+select '>lcl|',mrkr_zdb_id||' sequence1' as text2, mrkr_name||'|' as text3, seq_sequence as test4
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-TALEN%'
@@ -2426,7 +2424,7 @@ select '>lcl|',mrkr_zdb_id||' sequence2',mrkr_name||'|', '
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-TALEN%';
-\copy (select * from talenFasta) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa'
+\COPY (SELECT * FROM talenFasta) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
 drop view talenFasta;
 
 \echo '\copy (select * from fishModelDisease) fish_model_disease.txt'
