@@ -10,6 +10,7 @@ const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
         {
             label: 'Human Disease',
             content: row => <TermLink key={row.diseaseAnnotation.disease} entity={row.diseaseAnnotation.disease}/>,
+            width: '200px',
         },
         {
             label: 'Fish',

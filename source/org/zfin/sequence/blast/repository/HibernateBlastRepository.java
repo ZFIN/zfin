@@ -1,26 +1,22 @@
 package org.zfin.sequence.blast.repository;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.hibernate.type.StandardBasicTypes;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.sequence.blast.*;
+import org.zfin.sequence.blast.BlastRegenerationCache;
+import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.blast.DatabaseRelationship;
+import org.zfin.sequence.blast.Origination;
 
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
+ *
  */
 public class HibernateBlastRepository implements BlastRepository {
 
@@ -28,9 +24,9 @@ public class HibernateBlastRepository implements BlastRepository {
 
     public Database getDatabase(Database.AvailableAbbrev blastDatabaseAvailableAbbrev) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Database.class);
-        criteria.add(Restrictions.eq("abbrev", blastDatabaseAvailableAbbrev));
-        Database database = (Database) criteria.uniqueResult();
+        Query<Database> query = session.createQuery("from Database where abbrev = :abbrev", Database.class);
+        query.setParameter("abbrev", blastDatabaseAvailableAbbrev);
+        Database database = query.uniqueResult();
         session.refresh(database);
         return database;
     }
@@ -38,9 +34,9 @@ public class HibernateBlastRepository implements BlastRepository {
     public Origination getOrigination(Origination.Type type) {
         Session session = HibernateUtil.currentSession();
         String hql = " select o from Origination o where o.type = :type";
-        Query query = session.createQuery(hql);
+        Query<Origination> query = session.createQuery(hql, Origination.class);
         query.setParameter("type", type.toString());
-        return (Origination) query.uniqueResult();
+        return query.uniqueResult();
     }
 
     public List<Database> getDatabases(Database.Type type) {
@@ -49,24 +45,34 @@ public class HibernateBlastRepository implements BlastRepository {
 
     public List<Database> getDatabases(Database.Type type, boolean excludePrivate, boolean excludeExternal) {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Database.class);
+        String hql = """
+            from Database
+            """;
+        List<String> hqlClauses = new ArrayList<>();
+        HashMap<String, Object> parameterMap = new HashMap<>();
+
         if (type != null) {
-            criteria.add(Restrictions.eq("type", type));
+            hqlClauses.add("type = :type");
+            parameterMap.put("type", type);
         }
-        if (excludePrivate == true) {
-            criteria.add(Restrictions.eq("publicDatabase", true));
+        if (excludePrivate) {
+            hqlClauses.add("publicDatabase = true");
         }
-        if (excludeExternal == true) {
-            criteria.add(Restrictions.not(Restrictions.eq("origination", getOrigination(Origination.Type.EXTERNAL))));
+        if (excludeExternal) {
+            hqlClauses.add("origination != :origination");
+            parameterMap.put("origination", getOrigination(Origination.Type.EXTERNAL));
         }
-        criteria.addOrder(Order.asc("name"));
-        return criteria.list();
+        hql += " where " + String.join(" and ", hqlClauses);
+        hql += " order by name";
+        Query<Database> query = session.createQuery(hql, Database.class);
+        parameterMap.forEach(query::setParameter);
+        return query.list();
     }
 
     public List<Database> getDatabaseByOrigination(Origination.Type... originationType) {
         Session session = HibernateUtil.currentSession();
         String hql = " select d from Database d where d.origination.type in  (:type)";
-        Query query = session.createQuery(hql);
+        Query<Database> query = session.createQuery(hql, Database.class);
         query.setParameterList("type", originationType);
         return query.list();
     }
@@ -74,7 +80,7 @@ public class HibernateBlastRepository implements BlastRepository {
     public List<DatabaseRelationship> getChildDatabaseRelationshipsByOrigination(Origination.Type originationType) {
         Session session = HibernateUtil.currentSession();
         String hql = " select dr from DatabaseRelationship dr  where dr.child.origination.type = :type";
-        Query query = session.createQuery(hql);
+        Query<DatabaseRelationship> query = session.createQuery(hql, DatabaseRelationship.class);
         query.setParameter("type", originationType.toString());
         return query.list();
     }
@@ -83,15 +89,15 @@ public class HibernateBlastRepository implements BlastRepository {
         Set<String> returnAccessions = new HashSet<>();
 
         String hql1 = "select dbl.accessionNumber " +
-                " from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd " +
-                " where bd.zdbID = :databaseZdbID";
+                      " from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd " +
+                      " where bd.zdbID = :databaseZdbID";
         Query query1 = HibernateUtil.currentSession().createQuery(hql1);
         query1.setString("databaseZdbID", database.getZdbID());
         returnAccessions.addAll(query1.list());
 
         String hql2 = "select acc.number" +
-                " from Accession  acc join acc.referenceDatabase rd join rd.primaryBlastDatabase bd " +
-                " where bd.zdbID = :databaseZdbID";
+                      " from Accession  acc join acc.referenceDatabase rd join rd.primaryBlastDatabase bd " +
+                      " where bd.zdbID = :databaseZdbID";
         Query query2 = HibernateUtil.currentSession().createQuery(hql2);
         query2.setString("databaseZdbID", database.getZdbID());
         List accessionBankList = query2.list();
@@ -110,8 +116,8 @@ public class HibernateBlastRepository implements BlastRepository {
     @Override
     public List<String> getPreviousAccessionsForDatabase(Database database) {
         String hql = " select brc.accession from BlastRegenerationCache brc" +
-                " where brc.blastDatabase = :database " +
-                " ";
+                     " where brc.blastDatabase = :database " +
+                     " ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("database", database);
         return query.list();
@@ -121,20 +127,20 @@ public class HibernateBlastRepository implements BlastRepository {
     public Map<String, Integer> getValidAccessionCountsForAllBlastDatabases() {
 
         String sql = " select bdb.blastdb_abbrev as abbrev, count(distinct dbl.dblink_acc_num) as num " +
-                " from db_link dbl " +
-                " join foreign_db_contains fdbc " +
-                "    on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
-                " join blast_database bdb " +
-                "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
-                " join blast_database_origination_type orig " +
-                "    on bdb.blastdb_origination_id=orig.bdot_pk_id" +
-                " where orig.bdot_type != :originationType " +
-                "  group by bdb.blastdb_abbrev ";
+                     " from db_link dbl " +
+                     " join foreign_db_contains fdbc " +
+                     "    on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
+                     " join blast_database bdb " +
+                     "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
+                     " join blast_database_origination_type orig " +
+                     "    on bdb.blastdb_origination_id=orig.bdot_pk_id" +
+                     " where orig.bdot_type != :originationType " +
+                     "  group by bdb.blastdb_abbrev ";
 
         Query query = HibernateUtil.currentSession()
-                .createSQLQuery(sql)
-                .addScalar("abbrev", StandardBasicTypes.STRING)
-                .addScalar("num", StandardBasicTypes.LONG);
+            .createSQLQuery(sql)
+            .addScalar("abbrev", StandardBasicTypes.STRING)
+            .addScalar("num", StandardBasicTypes.LONG);
         query.setParameter("originationType", Origination.Type.EXTERNAL.toString());
         List<Object[]> blastDatabaseCounts = query.list();
 
@@ -198,11 +204,11 @@ public class HibernateBlastRepository implements BlastRepository {
      */
     public Integer getNumberValidAccessionNumbers(Database database) {
         String sql = "" +
-                "select dbl.dblink_acc_num " +
-                "from db_link dbl" +
-                " join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-                " join blast_database bdb on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
-                " where bdb.blastdb_zdb_id = :databaseZdbID ";
+                     "select dbl.dblink_acc_num " +
+                     "from db_link dbl" +
+                     " join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
+                     " join blast_database bdb on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
+                     " where bdb.blastdb_zdb_id = :databaseZdbID ";
         Query query2 = HibernateUtil.currentSession().createSQLQuery(sql);
         query2.setString("databaseZdbID", database.getZdbID());
         ScrollableResults results = query2.scroll();
@@ -244,8 +250,8 @@ public class HibernateBlastRepository implements BlastRepository {
         }
         String hql = "delete BlastRegenerationCache brc where brc.accession in (:accessions) ";
         HibernateUtil.currentSession().createQuery(hql)
-                .setParameterList("accessions", accessionToRemove)
-                .executeUpdate();
+            .setParameterList("accessions", accessionToRemove)
+            .executeUpdate();
     }
 
 }

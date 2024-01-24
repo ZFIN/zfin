@@ -3,10 +3,8 @@ package org.zfin.mutant.repository;
 import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -876,8 +874,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<GenericTerm> getHumanDiseases(String publicationID) {
 
         String hql = "select term from TermAttribution as termAtt where " +
-            "       termAtt.publication.zdbID = :publicationID " +
-            "     order by termAtt.term.termName";
+                     "       termAtt.publication.zdbID = :publicationID " +
+                     "     order by termAtt.term.termName";
         Query<GenericTerm> query = HibernateUtil.currentSession().createQuery(hql, GenericTerm.class);
         query.setParameter("publicationID", publicationID);
 
@@ -887,8 +885,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID) {
         String hql = "from DiseaseAnnotation as disease where" +
-            " disease.publication.zdbID = :publicationID " +
-            "order by disease.disease.termName";
+                     " disease.publication.zdbID = :publicationID " +
+                     "order by disease.disease.termName";
         Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
         query.setParameter("publicationID", publicationID);
         return query.list();
@@ -1118,9 +1116,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public ZdbFlag getPhenoMartStatus() {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ZdbFlag.class);
-        criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_PHENOTYPEMART));
-        return (ZdbFlag) criteria.uniqueResult();
+        Query<ZdbFlag> query = session.createQuery("from ZdbFlag where type = :type", ZdbFlag.class);
+        query.setParameter("type", ZdbFlag.Type.REGEN_PHENOTYPEMART);
+        return query.uniqueResult();
     }
 
     @Override
