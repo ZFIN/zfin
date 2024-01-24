@@ -276,11 +276,11 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public List<MarkerGenomeLocation> getGenomeLocationWithCoordinates(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery(
+        Query<MarkerGenomeLocation> query = HibernateUtil.currentSession().createQuery(
             "from MarkerGenomeLocation mgl where marker = :marker " +
-            " and mgl.start is not null and mgl.end is not null");
+            " and mgl.start is not null and mgl.end is not null", MarkerGenomeLocation.class);
         query.setParameter("marker", marker);
-        return (List<MarkerGenomeLocation>) query.list();
+        return query.list();
     }
 
     @Override
@@ -288,12 +288,12 @@ public class HibernateLinkageRepository implements LinkageRepository {
         String hql = """
             from MarkerGenomeLocation
             where marker = :marker
-            AND source = :source
+            AND source in (:source)
             order by chromosome
             """;
         Query<MarkerGenomeLocation> query = HibernateUtil.currentSession().createQuery(hql, MarkerGenomeLocation.class);
         query.setParameter("marker", marker);
-        query.setParameterList("source", (Object[]) sources);
+        query.setParameterList("source", sources);
         return query.list();
     }
 
