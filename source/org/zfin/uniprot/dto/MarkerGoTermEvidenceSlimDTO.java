@@ -48,11 +48,11 @@ public class MarkerGoTermEvidenceSlimDTO {
 
     public Map<String, String> toMap() {
         return Map.of(
-                "goID", goID.toString(),
-                "markerZdbID", markerZdbID,
-                "goTermZdbID", goTermZdbID,
-                "publicationID", publicationID,
-                "inferredFrom", inferredFrom
+                "goID", getGoID() == null ? "null" : getGoID(),
+                "markerZdbID", markerZdbID == null ? "null" : markerZdbID,
+                "goTermZdbID", goTermZdbID == null ? "null" : goTermZdbID,
+                "publicationID", publicationID == null ? "null" : publicationID,
+                "inferredFrom", inferredFrom == null ? "null" : inferredFrom
         );
     }
 
@@ -65,7 +65,7 @@ public class MarkerGoTermEvidenceSlimDTO {
     }
 
     public String getGoID() {
-        return goID.toString();
+        return goID == null ? null : goID.toString();
     }
 
     /**
