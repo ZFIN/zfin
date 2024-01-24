@@ -1252,15 +1252,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         String hql = """
             from ExpressionStructure
-            join fetch superterm
-            join fetch superterm.start
-            join fetch superterm.end
-            join fetch person
             where publication.zdbID = :publicationID
-            order by superterm.name
+            order by superterm.termName
             """;
         Query<ExpressionStructure> query = session.createQuery(hql, ExpressionStructure.class);
-        query.setParameter("publication", publicationID);
+        query.setParameter("publicationID", publicationID);
         return query.list();
     }
 
