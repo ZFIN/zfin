@@ -32,8 +32,7 @@ public class RemoveFromLostUniProtsActionProcessor implements ActionProcessor {
                 log.error("Error deleting dblink (none found by attributes): " + action.getGeneZdbID() + " " + action.getAccession() + " " + action.getDbName() + " " + action.getSubType() + " " + getReferenceDatabaseIDForAction(action));
                 continue;
             }
-            System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-            log.info("Removing dblink: " + dblink.getZdbID());
+            log.info("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
             getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
             dblinksToDelete.add(dblink);
         }
