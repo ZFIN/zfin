@@ -30,14 +30,6 @@ public interface OrthologyRepository extends CachedRepository {
     /**
      * Retireve list of orthologs for given zebrafish gene
      *
-     * @param zdbID gene zdb ID
-     * @return list of orthologs
-     */
-    List<Ortholog> getOrthologs(String zdbID);
-
-    /**
-     * Retireve list of orthologs for given zebrafish gene
-     *
      * @param gene gene
      * @return list of orthologs
      */

@@ -1,8 +1,7 @@
 package org.zfin.orthology.repository;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
@@ -85,39 +84,37 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     public List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId) {
-        Session session = HibernateUtil.currentSession();
-
         String sql = "select organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id from ortholog, organism, ortholog_evidence " +
-                "      where ortho_zebrafish_gene_zdb_id = :geneID  " +
-                "        and organism_taxid = ortho_other_species_taxid  " +
-                "        and  ortho_zdb_id = oev_ortho_zdb_id  " +
-                "   order by organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id ";
+                     "      where ortho_zebrafish_gene_zdb_id = :geneID  " +
+                     "        and organism_taxid = ortho_other_species_taxid  " +
+                     "        and  ortho_zdb_id = oev_ortho_zdb_id  " +
+                     "   order by organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id ";
 
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("geneID", geneId)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public OrthologySlimPresentation transformTuple(Object[] tuple, String[] aliases) {
-                        OrthologySlimPresentation orthoSlim = new OrthologySlimPresentation();
-                        orthoSlim.setOrganism(tuple[0].toString());
-                        orthoSlim.setOrthologySymbol(tuple[1].toString());
-                        orthoSlim.setEvidenceCode(tuple[2].toString());
-                        orthoSlim.setPublication(tuple[3].toString());
-                        return orthoSlim;
-                    }
+        return HibernateUtil.currentSession().createNativeQuery(sql)
+            .setParameter("geneID", geneId)
+            .setResultTransformer(new BasicTransformerAdapter() {
+                @Override
+                public OrthologySlimPresentation transformTuple(Object[] tuple, String[] aliases) {
+                    OrthologySlimPresentation orthoSlim = new OrthologySlimPresentation();
+                    orthoSlim.setOrganism(tuple[0].toString());
+                    orthoSlim.setOrthologySymbol(tuple[1].toString());
+                    orthoSlim.setEvidenceCode(tuple[2].toString());
+                    orthoSlim.setPublication(tuple[3].toString());
+                    return orthoSlim;
+                }
 
-                })
-                .list();
+            })
+            .list();
     }
 
     @Override
     public List<String> getEvidenceCodes(Marker gene, Publication publication) {
 
         String sql = " from Ortholog " +
-                "where zebrafishGene = :gene ";
+                     "where zebrafishGene = :gene ";
 
         Query query = HibernateUtil.currentSession().createQuery(sql)
-                .setParameter("gene", gene);
+            .setParameter("gene", gene);
 
         List<Ortholog> orthologs = (List<Ortholog>) query.list();
 
@@ -138,21 +135,13 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     @Override
-    public List<Ortholog> getOrthologs(String zdbID) {
-        String sql = "from Ortholog " +
-                "where ";
-
-        return null;
-    }
-
-    @Override
     public List<Ortholog> getOrthologs(Marker gene) {
         String sql = "from Ortholog " +
-                "where zebrafishGene = :gene " +
-                "order by ncbiOtherSpeciesGene.organism.displayOrder, symbol";
-        Query query = HibernateUtil.currentSession().createQuery(sql);
+                     "where zebrafishGene = :gene " +
+                     "order by ncbiOtherSpeciesGene.organism.displayOrder, symbol";
+        Query<Ortholog> query = HibernateUtil.currentSession().createQuery(sql, Ortholog.class);
         query.setParameter("gene", gene);
-        return (List<Ortholog>) query.list();
+        return query.list();
     }
 
     @Override
@@ -163,19 +152,18 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public List<EvidenceCode> getEvidenceCodes() {
         return HibernateUtil.currentSession()
-                .createCriteria(EvidenceCode.class)
-                .addOrder(Order.asc("order"))
-                .list();
+            .createQuery("from EvidenceCode order by order asc", EvidenceCode.class)
+            .list();
     }
 
     @Override
     public EvidenceCode getEvidenceCode(String name) {
-        return (EvidenceCode) HibernateUtil.currentSession().get(EvidenceCode.class, name);
+        return HibernateUtil.currentSession().get(EvidenceCode.class, name);
     }
 
     @Override
     public Ortholog getOrtholog(String orthID) {
-        return (Ortholog) HibernateUtil.currentSession().get(Ortholog.class, orthID);
+        return HibernateUtil.currentSession().get(Ortholog.class, orthID);
     }
 
     @Override
@@ -204,20 +192,20 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     @Override
     public Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene) {
         String hql = "from Ortholog where " +
-                "zebrafishGene = :zebrafishGene and ncbiOtherSpeciesGene = :otherSpeciesGene ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+                     "zebrafishGene = :zebrafishGene and ncbiOtherSpeciesGene = :otherSpeciesGene ";
+        Query<Ortholog> query = HibernateUtil.currentSession().createQuery(hql, Ortholog.class);
         query.setParameter("zebrafishGene", gene);
         query.setParameter("otherSpeciesGene", ncbiGene);
-        return (Ortholog) query.uniqueResult();
+        return query.uniqueResult();
     }
 
     @Override
     public List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID) {
         String hql = "from NcbiOrthoExternalReference where " +
-                "ncbiOtherSpeciesGene.ID = :accessionNumber  ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+                     "ncbiOtherSpeciesGene.ID = :accessionNumber  ";
+        Query<NcbiOrthoExternalReference> query = HibernateUtil.currentSession().createQuery(hql, NcbiOrthoExternalReference.class);
         query.setParameter("accessionNumber", ncbiID);
-        return (List<NcbiOrthoExternalReference>) query.list();
+        return query.list();
     }
 
 }

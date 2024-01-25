@@ -3,7 +3,6 @@ package org.zfin.ontology.repository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
@@ -89,9 +88,9 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public GoEvidenceCode getGoEvidenceCode(String evidenceCode) {
-        return (GoEvidenceCode) HibernateUtil.currentSession().createCriteria(GoEvidenceCode.class).add(Restrictions.eq("code", evidenceCode)).uniqueResult();
+        return (GoEvidenceCode) HibernateUtil.currentSession().createQuery("from GoEvidenceCode where code = :code", GoEvidenceCode.class)
+            .setParameter("code", evidenceCode).uniqueResult();
     }
 
     @Override

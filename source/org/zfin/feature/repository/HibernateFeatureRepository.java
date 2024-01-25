@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.type.IntegerType;
@@ -514,6 +513,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     /**
      * Get the next zf line number
+     *
      * @return
      */
     public String getNextZFLineNum() {
@@ -532,11 +532,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * Get the next line number for lab. First look at the feature table and add 1 to the max value.
      * Then, check if there is a feature tracking entry with the same line number. If so, increment the line number
      * until there is no collision.
+     *
      * @return next line number (without collision)
      */
     private String getNextLineNumberForLabPrefixWithoutFeatureTrackingCollision(FeaturePrefix labPrefix) {
         Integer nextLine = getNextLineNumberIntegerForLabPrefix(labPrefix);
-        while(isExistingFeatureTrackingByAbbreviation(labPrefix.getAbbreviation() + nextLine)) {
+        while (isExistingFeatureTrackingByAbbreviation(labPrefix.getAbbreviation() + nextLine)) {
             nextLine++;
         }
         return String.valueOf(nextLine);
@@ -545,21 +546,22 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * Get the next line number by looking at the feature table and adding 1 to the max value.
      * Omit from calculation any line numbers that aren't actually numbers
+     *
      * @return next line number
      */
     private int getNextLineNumberIntegerForLabPrefix(FeaturePrefix labPrefix) {
         String sql = """
-            SELECT
-                max(cast(coalesce(feature_line_number, '0') AS integer)) + 1
-            FROM
-                feature
-            WHERE
-                is_numeric(feature_line_number)
-                AND feature_lab_prefix_id = :labPrefix 
-        """;
-        Number result = (Number)(currentSession().createNativeQuery(sql)
-                .setParameter("labPrefix", labPrefix.getFeaturePkID())
-                .getSingleResult());
+                SELECT
+                    max(cast(coalesce(feature_line_number, '0') AS integer)) + 1
+                FROM
+                    feature
+                WHERE
+                    is_numeric(feature_line_number)
+                    AND feature_lab_prefix_id = :labPrefix 
+            """;
+        Number result = (Number) (currentSession().createNativeQuery(sql)
+            .setParameter("labPrefix", labPrefix.getFeaturePkID())
+            .getSingleResult());
         if (result == null) {
             return 1;
         }
@@ -666,8 +668,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     public FeatureAssay getFeatureAssay(Feature feature) {
-        Query<FeatureAssay> query = HibernateUtil.currentSession().createQuery( "select fa from FeatureAssay fa " +
-                                                                                "where fa.feature = :feature", FeatureAssay.class);
+        Query<FeatureAssay> query = HibernateUtil.currentSession().createQuery("select fa from FeatureAssay fa " +
+                                                                               "where fa.feature = :feature", FeatureAssay.class);
         query.setParameter("feature", feature);
         query.setMaxResults(1);
         return query.getSingleResult();
@@ -800,6 +802,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     /**
      * Check if there exists an entry in the feature tracking table already for the given abbreviation
+     *
      * @param abbreviation
      * @return
      */
@@ -945,8 +948,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public String setCurrentPrefix(String organizationZdbId, String prefix) {
-        List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createCriteria(OrganizationFeaturePrefix.class)
-            .add(Restrictions.eq("organization.zdbID", organizationZdbId))
+        List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery("from OrganizationFeaturePrefix where organization.zdbID = :zdbID",
+                OrganizationFeaturePrefix.class)
+            .setParameter("zdbID", organizationZdbId)
             .list();
         String hql = " update source_feature_prefix  " +
                      " set sfp_current_designation = :currentDesignation " +

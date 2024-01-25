@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
@@ -39,14 +38,6 @@ public class ImageService {
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner, String publicationZdbId) throws IOException {
         return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream(), publicationZdbId);
-    }
-
-    public static Image processImage(Figure figure, String filePath, Boolean isVideoStill, String direction, String publicationZdbId) throws IOException {
-        // This method was made for the original Dorsky load, so it has a hard-coded owner
-        Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
-                .add(Restrictions.eq("zdbID", "ZDB-PERS-030520-2"))  //Yvonne
-                .uniqueResult();
-        return processImage(figure, owner, isVideoStill, filePath, new FileInputStream(filePath), publicationZdbId);
     }
 
     private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill) {
@@ -88,7 +79,7 @@ public class ImageService {
             }
         }
 
-        String destinationFolderPath = pubYear+"/"+publicationZdbId;
+        String destinationFolderPath = pubYear + "/" + publicationZdbId;
 
         File containingFolder;
         if (absolutePath) {
@@ -111,7 +102,7 @@ public class ImageService {
         String thumbnailFilename = destinationBasename + THUMB + FilenameUtils.EXTENSION_SEPARATOR + extension;
         String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + extension;
         File destinationFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), destinationFilename);
-        File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString() , thumbnailFilename);
+        File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), thumbnailFilename);
         File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), mediumFilename);
 
         // we used to attempt to set the image's width and height properties here using ImageIO.read(), but it
@@ -123,7 +114,7 @@ public class ImageService {
         HibernateUtil.currentSession().save(image);
 
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(figure.getPublication(), "img_zdb_id",
-                "create new record", image.getZdbID(), null);
+            "create new record", image.getZdbID(), null);
 
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 

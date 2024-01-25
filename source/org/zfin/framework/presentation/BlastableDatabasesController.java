@@ -18,15 +18,15 @@ public class BlastableDatabasesController {
 
     @RequestMapping("/blastable-databases")
     protected String showBlastableDb(@ModelAttribute("formBean") BlastableDatabasesBean blastableDatabasesBean,
-                                     Model model) throws Exception {
+                                     Model model) {
 
         if (blastableDatabasesBean.getSelectedReferenceDatabaseZdbID() != null) {
             handleCommand(blastableDatabasesBean);
         }
 
-        List<ReferenceDatabase> referenceDatabases = (List<ReferenceDatabase>) HibernateUtil.currentSession().createCriteria(ReferenceDatabase.class).list();
+        List<ReferenceDatabase> referenceDatabases = HibernateUtil.currentSession().createQuery("from ReferenceDatabase", ReferenceDatabase.class).list();
         blastableDatabasesBean.setReferenceDatabases(referenceDatabases);
-        List<Database> databases = (List<Database>) HibernateUtil.currentSession().createCriteria(Database.class).list();
+        List<Database> databases = HibernateUtil.currentSession().createQuery("from Database", Database.class).list();
         blastableDatabasesBean.setDatabases(databases);
         blastableDatabasesBean.setDatabaseToAddZdbID(null);
         blastableDatabasesBean.setDatabaseToRemoveZdbID(null);
@@ -37,7 +37,7 @@ public class BlastableDatabasesController {
     }
 
     private void handleCommand(BlastableDatabasesBean blastableDatabasesBean) {
-        ReferenceDatabase selectecReferenceDatabase = (ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, blastableDatabasesBean.getSelectedReferenceDatabaseZdbID());
+        ReferenceDatabase selectecReferenceDatabase = HibernateUtil.currentSession().get(ReferenceDatabase.class, blastableDatabasesBean.getSelectedReferenceDatabaseZdbID());
 
         HibernateUtil.createTransaction();
         // these just happen no matter what
@@ -47,18 +47,18 @@ public class BlastableDatabasesController {
 
         // these just happen no matter what
         if (StringUtils.isNotEmpty(blastableDatabasesBean.getDatabaseToAddZdbID())) {
-            selectecReferenceDatabase.getRelatedBlastDbs().add((Database) HibernateUtil.currentSession().get(Database.class, blastableDatabasesBean.getDatabaseToAddZdbID()));
+            selectecReferenceDatabase.getRelatedBlastDbs().add(HibernateUtil.currentSession().get(Database.class, blastableDatabasesBean.getDatabaseToAddZdbID()));
         }
 
         if (selectecReferenceDatabase.getPrimaryBlastDatabase() == null
-                &&
-                StringUtils.isNotEmpty(blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID())
-                ) {
-            selectecReferenceDatabase.setPrimaryBlastDatabase((Database) HibernateUtil.currentSession().get(Database.class, blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID()));
+            &&
+            StringUtils.isNotEmpty(blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID())
+        ) {
+            selectecReferenceDatabase.setPrimaryBlastDatabase(HibernateUtil.currentSession().get(Database.class, blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID()));
         } else if (selectecReferenceDatabase.getPrimaryBlastDatabase() != null
-                &&
-                StringUtils.isEmpty(blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID())
-                ) {
+                   &&
+                   StringUtils.isEmpty(blastableDatabasesBean.getDatabaseToSetAsPrimaryZdbID())
+        ) {
             selectecReferenceDatabase.setPrimaryBlastDatabase(null);
         }
         HibernateUtil.currentSession().update(selectecReferenceDatabase);
