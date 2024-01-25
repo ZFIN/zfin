@@ -94,6 +94,7 @@ public enum FieldName {
     GENOTYPE_FULL_NAME("genotype_full_name"),
     GROUP_KEY("group_key"),
     HAS_IMAGE("has_image"),
+    HAS_CTD("has_ctd"),
     HOST_ORGANISM("host_organism"),
     ID("id"),
     ID_T("id_t"),
