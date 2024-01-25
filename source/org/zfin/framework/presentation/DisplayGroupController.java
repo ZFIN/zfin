@@ -23,14 +23,14 @@ public class DisplayGroupController {
 
     @RequestMapping("/display-groups")
     protected String showPanelDetail(@ModelAttribute("formBean") DisplayGroupBean formBean,
-                                     Model model) throws Exception {
+                                     Model model) {
         if (formBean.getDisplayGroupToEditID() != null) {
             handleCommand(formBean);
         }
 
         DisplayGroupRepository dgRepository = RepositoryFactory.getDisplayGroupRepository();
 
-        Set<DisplayGroup> displayGroups = new TreeSet<DisplayGroup>();
+        Set<DisplayGroup> displayGroups = new TreeSet<>();
 
         for (DisplayGroup.GroupName dgName : DisplayGroup.GroupName.values()) {
             DisplayGroup dg = dgRepository.getDisplayGroupByName(dgName);
@@ -44,19 +44,19 @@ public class DisplayGroupController {
 
         formBean.setDisplayGroups(displayGroups);
 
-        formBean.setReferenceDatabases(new TreeSet<ReferenceDatabase>(HibernateUtil.currentSession().createCriteria(ReferenceDatabase.class).list()));
+        formBean.setReferenceDatabases(new TreeSet<>(HibernateUtil.currentSession().createQuery("from ReferenceDatabase", ReferenceDatabase.class).list()));
         formBean.clear();
 
         return "dev-tools/display-groups";
     }
 
-    private Logger logger = LogManager.getLogger(DisplayGroupController.class);
+    private final Logger logger = LogManager.getLogger(DisplayGroupController.class);
 
     private void handleCommand(DisplayGroupBean formBean) {
-        DisplayGroup displayGroup = (DisplayGroup) HibernateUtil.currentSession().get(DisplayGroup.class, formBean.getDisplayGroupToEditID());
+        DisplayGroup displayGroup = HibernateUtil.currentSession().get(DisplayGroup.class, formBean.getDisplayGroupToEditID());
         HibernateUtil.createTransaction();
         if (StringUtils.isNotEmpty(formBean.getReferenceDatabaseToAddZdbID())) {
-            displayGroup.getReferenceDatabases().add((ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, formBean.getReferenceDatabaseToAddZdbID()));
+            displayGroup.getReferenceDatabases().add(HibernateUtil.currentSession().get(ReferenceDatabase.class, formBean.getReferenceDatabaseToAddZdbID()));
         } else if (StringUtils.isNotEmpty(formBean.getReferenceDatabaseToRemoveZdbID())) {
             displayGroup.getReferenceDatabases().remove(HibernateUtil.currentSession().get(ReferenceDatabase.class, formBean.getReferenceDatabaseToRemoveZdbID()));
         }

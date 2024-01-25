@@ -9,8 +9,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
@@ -1412,7 +1410,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public List<PublicationTrackingStatus> getAllPublicationStatuses() {
-        return HibernateUtil.currentSession().createCriteria(PublicationTrackingStatus.class).list();
+        return HibernateUtil.currentSession().createQuery("from PublicationTrackingStatus", PublicationTrackingStatus.class).list();
     }
 
     public PublicationTrackingStatus getPublicationTrackingStatus(long id) {
@@ -1461,10 +1459,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             .collect(Collectors.toList());
 
         List<PublicationTrackingHistory> trackingHistoryList = currentSession()
-            .createCriteria(PublicationTrackingHistory.class)
-            .add(Restrictions.eq("isCurrent", true))
-            .add(Restrictions.in("status", statuses))
-            .addOrder(Order.desc("publication"))
+            .createQuery("from PublicationTrackingHistory where isCurrent = true AND status in (:status) order by publication desc ", PublicationTrackingHistory.class)
+            .setParameterList("status", statuses)
             .list();
 
         List<Publication> publications = trackingHistoryList
@@ -1848,23 +1844,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public ProcessingChecklistTask getProcessingChecklistTask(ProcessingChecklistTask.Task task) {
-        return (ProcessingChecklistTask) HibernateUtil.currentSession()
-            .createCriteria(ProcessingChecklistTask.class)
-            .add(Restrictions.eq("task", task))
+        return HibernateUtil.currentSession()
+            .createQuery("from ProcessingChecklistTask where task = :task", ProcessingChecklistTask.class)
+            .setParameter("task", task)
             .uniqueResult();
     }
 
     @Override
     public PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id) {
-        return (PublicationProcessingChecklistEntry) HibernateUtil.currentSession()
+        return HibernateUtil.currentSession()
             .get(PublicationProcessingChecklistEntry.class, id);
     }
 
     @Override
     public List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication) {
         return HibernateUtil.currentSession()
-            .createCriteria(PubmedPublicationAuthor.class)
-            .add(Restrictions.eq("publication", publication))
+            .createQuery("from PubmedPublicationAuthor where publication = :publication", PubmedPublicationAuthor.class)
+            .setParameter("publication", publication)
             .list();
     }
 
@@ -2373,9 +2369,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     private PublicationTrackingLocation getPublicationTrackingLocationByName(PublicationTrackingLocation.Name name) {
-        return (PublicationTrackingLocation) HibernateUtil.currentSession()
-            .createCriteria(PublicationTrackingLocation.class)
-            .add(Restrictions.eq("name", name))
+        return HibernateUtil.currentSession()
+            .createQuery("from PublicationTrackingLocation where name = :name", PublicationTrackingLocation.class)
+            .setParameter("name", name)
             .uniqueResult();
     }
 
