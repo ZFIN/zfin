@@ -76,10 +76,13 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
 
     public static boolean recordsToPersistContainsExistingRecord(List<SecondaryTermLoadAction> recordsToPersist, MarkerGoTermEvidenceSlimDTO record) {
         return recordsToPersist.stream().anyMatch(action -> {
-            String goID = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields()).getGoID();
+            MarkerGoTermEvidenceSlimDTO actionSlimDTO = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+            String goID = actionSlimDTO.getGoID();
+            String inferredFrom = actionSlimDTO.getInferredFrom();
             String markerZdbID = action.getGeneZdbID();
-            boolean match = record.getGoID().equals(goID) && record.getMarkerZdbID().equals(markerZdbID);
-            return match;
+            return record.getGoID().equals(goID) &&
+                    record.getMarkerZdbID().equals(markerZdbID) &&
+                    record.getInferredFrom().equals(inferredFrom);
         });
     }
 }
