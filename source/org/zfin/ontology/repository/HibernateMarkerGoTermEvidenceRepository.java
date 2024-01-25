@@ -74,6 +74,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
             .stream()
             .map(this::getMarkerGoTermEvidencesForPubZdbID)
             .flatMap(List::stream)
+            .distinct()
             .toList();
     }
 

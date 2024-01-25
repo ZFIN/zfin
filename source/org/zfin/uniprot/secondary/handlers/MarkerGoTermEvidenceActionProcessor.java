@@ -10,7 +10,6 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
@@ -78,6 +77,7 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     }
 
     private static void loadSingleMarkerGoTermEvidence(SecondaryTermLoadAction action)  {
+        MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
         markerGoTermEvidence.setExternalLoadDate(null);
 
@@ -119,40 +119,26 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
         markerGoTermEvidence.setModifiedWhen(rightNow);
         markerGoTermEvidence.setCreatedWhen(rightNow);
         getMarkerGoTermEvidenceRepository().addEvidence(markerGoTermEvidence, false);
-        getMutantRepository().addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, action.getPrefixedAccession());
+        getMutantRepository().addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, dto.getInferredFrom());
     }
 
     private void deleteSingleMarkerGoTermEvidence(SecondaryTermLoadAction action) {
         MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
         String sql = """
-                delete from marker_go_term_evidence
-                where mrkrgoev_mrkr_zdb_id = :mrkrgoev_mrkr_zdb_id
-                and mrkrgoev_term_zdb_id = :mrkrgoev_term_zdb_id
-                and mrkrgoev_source_zdb_id = :mrkrgoev_source_zdb_id
+                DELETE FROM marker_go_term_evidence
+                USING inference_group_member
+                WHERE mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+                AND infgrmem_inferred_from = :inferred_from
+                AND mrkrgoev_mrkr_zdb_id = :mrkrgoev_mrkr_zdb_id
+                AND mrkrgoev_term_zdb_id = :mrkrgoev_term_zdb_id
+                AND mrkrgoev_source_zdb_id = :mrkrgoev_source_zdb_id
                 """;
+
         currentSession().createSQLQuery(sql)
+                .setParameter("inferred_from", dto.getInferredFrom())
                 .setParameter("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID())
                 .setParameter("mrkrgoev_term_zdb_id", dto.getGoTermZdbID())
                 .setParameter("mrkrgoev_source_zdb_id", dto.getPublicationID())
                 .executeUpdate();
-    }
-
-
-    private String getNotesForDBName(ForeignDB.AvailableName dbName) {
-        return switch(dbName) {
-            case INTERPRO -> "ZFIN InterPro 2 GO";
-            case EC -> "ZFIN EC acc 2 GO";
-            case UNIPROTKB -> "ZFIN SP keyword 2 GO";
-            default -> throw new IllegalStateException("Unexpected value: " + dbName);
-        };
-    }
-
-    private String getPubIDForDBName(ForeignDB.AvailableName dbName) {
-        return switch(dbName) {
-            case INTERPRO -> IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            case EC -> EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            case UNIPROTKB -> SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            default -> throw new IllegalStateException("Unexpected value: " + dbName);
-        };
     }
 }
