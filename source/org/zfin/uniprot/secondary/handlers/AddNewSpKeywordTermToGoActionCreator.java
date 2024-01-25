@@ -45,9 +45,8 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
         newMarkerGoTermEvidenceLoadActions = filterExistingTerms(newMarkerGoTermEvidenceLoadActions, context);
 
         log.info("Remaining: " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering for obsoletes, etc.");
-        List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterTerms(newMarkerGoTermEvidenceLoadActions);
 
-        return filteredMarkerGoTermEvidences;
+        return filterTerms(newMarkerGoTermEvidenceLoadActions);
     }
 
 
@@ -100,6 +99,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
                     .publicationID(SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID)
                     .goTermZdbID(item2go.termZdbID())
                     .goID(item2go.goID())
+                    .inferredFrom("UniProtKB-KW:" + item2go.dbAccession())
                     .build();
 
             SecondaryTermLoadAction newAction = SecondaryTermLoadAction.builder()
@@ -125,15 +125,14 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
 
     private boolean spKwAlreadyExists(SecondaryLoadContext context, SecondaryTermLoadAction newAction) {
         List<MarkerGoTermEvidenceSlimDTO> existingRecords = context.getExistingMarkerGoTermEvidenceRecords();
-        //TODO: do we need to filter for SPKW?
         String goID = newAction.getGoID();
         String geneZdbID = newAction.getGeneZdbID();
-        boolean exists = existingRecords.stream()
-                .anyMatch( record -> {
-                    boolean matches = record.getGoID().equals(goID) && record.getMarkerZdbID().equals(geneZdbID);
-                    return matches;
-                });
-        return exists;
+        String inferredFrom = MarkerGoTermEvidenceSlimDTO.fromMap(newAction.getRelatedEntityFields()).getInferredFrom();
+        return existingRecords
+                .stream()
+                .anyMatch( record -> record.getGoID().equals(goID) &&
+                        record.getMarkerZdbID().equals(geneZdbID) &&
+                        record.getInferredFrom().equals(inferredFrom));
     }
 
 }
