@@ -172,6 +172,7 @@ public class SecondaryLoadContext {
                                         GoDefaultPublication.INTERPRO.zdbID()
                                 ))
                                 .stream()
+                                .distinct()
                                 //filter? to only allow 'ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029'
                                 //based on mgte.getGoTerm().getZdbID()
 //                                .filter(mgte -> mgte.getGoTerm().getZdbID().equals(GO_TERM_MOLECULAR_FUNCTION_ID)
@@ -342,10 +343,6 @@ public class SecondaryLoadContext {
         return uniprotDbLinksByGeneZdbID.get(dataZdbID) == null ?
                 Collections.emptyList() :
                 uniprotDbLinksByGeneZdbID.get(dataZdbID);
-    }
-
-    public DBLinkSlimDTO getUniprotByGene(String dataZdbID) {
-        return getUniprotsByGene(dataZdbID).stream().findFirst().orElse(null);
     }
 
     public List<DBLinkSlimDTO> getGeneByUniprot(String dataZdbID) {

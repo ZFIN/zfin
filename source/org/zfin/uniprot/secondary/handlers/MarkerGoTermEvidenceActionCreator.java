@@ -5,6 +5,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Subset;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
@@ -15,10 +16,8 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,8 +61,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 createMarkerGoTermEvidencesFromNewSecondaryTermIDs(uniProtRecords, actions, context);
 
         log.info("Created " + markerGoTermEvidenceActions.size() + " markerGoTermEvidenceActions before filtering");
-        List<SecondaryTermLoadAction> filteredMarkerGoTermEvidenceActions = filterTerms(markerGoTermEvidenceActions);
-        return filteredMarkerGoTermEvidenceActions;
+        return filterTerms(markerGoTermEvidenceActions);
     }
 
     public static List<SecondaryTermLoadAction> filterTerms(List<SecondaryTermLoadAction> markerGoTermEvidences) {
@@ -88,7 +86,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
         if (notForAnnotations == null) {
             throw new RuntimeException("Could not find subset " + GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS);
         }
-        List<String> termZdbIDs = notForAnnotations.getTerms().stream().map(term -> term.getZdbID()).toList();
+        List<String> termZdbIDs = notForAnnotations.getTerms().stream().map(GenericTerm::getZdbID).toList();
         return markerGoTermEvidences.stream()
                 .filter(action -> !termZdbIDs.contains(action.getGoTermZdbID()))
                 .toList();
@@ -127,7 +125,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         //all existing db links
         List<DBLinkSlimDTO> existingDbLinks = context.getFlattenedDbLinksByDbName(dbName);
-        log.info("Count of existing db links: " + existingDbLinks.size());
+        log.info("Count of existing db links (" + dbName + "): " + existingDbLinks.size());
 
         //all new db links (based on actions)
         List<DBLinkSlimDTO> actionsLoadedFromNewDBLinks = actions.stream()
@@ -140,19 +138,19 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 )
                 .toList();
 
-        log.info("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
+        log.info("Count of new db links (" + dbName + "): " + actionsLoadedFromNewDBLinks.size());
 
         List<DBLinkSlimDTO> allDbLinks = Stream.concat(existingDbLinks.stream(), actionsLoadedFromNewDBLinks.stream()).toList();
-        log.info("Count of all db links: " + allDbLinks.size());
+        log.info("Count of all db links (" + dbName + "): " + allDbLinks.size());
 
         //create markerGoTermEvidences for all db links
-        log.info("Joining DBLinks with translation records...");
-        //join the load actions to the interpro/ec/spkw translation records
+        log.info("Joining DBLinks (" + dbName + "): with translation records...");
+        //join the set of allDbLinks (load actions and existing db links) to the interpro/ec/spkw translation records
         List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = Seq.seq(allDbLinks)
                 .innerJoin(translationRecords,
-                        (action, item2go) -> action.getAccession().equals(item2go.dbAccession()))
+                        (dbLink, item2go) -> dbLink.getAccession().equals(item2go.dbAccession()))
                 .toList();
-        log.info("Count of joined records: " + joined.size());
+        log.info("Count of joined records (" + dbName + "): " + joined.size());
 
         //convert to markerGoTermEvidenceSlimDTOs
         List<MarkerGoTermEvidenceSlimDTO> calculatedMarkerGoTermEvidences = joined.stream().map(
@@ -164,11 +162,24 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                             .goID("GO:" + item2go.goID())
                             .goTermZdbID(item2go.termZdbID())
                             .publicationID(context.getPubIDForMarkerGoTermEvidenceByDB(dbName))
+                            .inferredFrom(dbName + ":" + dblink.getAccession())
                             .build();
                 }
-        ).toList();
+        )
+        .filter(mgt -> {
+            if (mgt.getGoID() == null) {
+                log.error("No match to GO for " + mgt.getMarkerZdbID() + " " + mgt.getInferredFrom());
+                return false;
+            }
+            if (mgt.getGoTermZdbID() == null) {
+                log.error("No match for ZDB-TERM for " + mgt.getMarkerZdbID() + " " + mgt.getInferredFrom());
+                return false;
+            }
+            return true;
+        })
+        .toList();
 
-        log.info("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
+        log.info("Count of calculated marker go term evidences (" + dbName + "): " + calculatedMarkerGoTermEvidences.size());
 
         List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidences = context.getExistingMarkerGoTermEvidenceRecords(dbName);
 
@@ -177,7 +188,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         List<MarkerGoTermEvidenceSlimDTO> toDelete = ListUtils.subtract(existingMarkerGoTermEvidences, calculatedMarkerGoTermEvidences);
 
-        log.info("Count of marker go term evidences to add: " + toAdd.size());
+        log.info("Count of marker go term evidences to add (" + dbName + "):  " + toAdd.size());
         //convert marker_go_term_evidence records to load actions
         List<SecondaryTermLoadAction> toAddActions = toAdd.stream()
                 .map(
@@ -199,10 +210,10 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                             }
                         }
                 )
-                .filter(action -> action != null)
+                .filter(Objects::nonNull)
                 .toList();
 
-        log.info("Count of marker go term evidences to delete: " + toDelete.size());
+        log.info("Count of marker go term evidences to delete (" + dbName + "): " + toDelete.size());
         List<SecondaryTermLoadAction> toDeleteActions = toDelete.stream()
                 .map(
                         markerGoTermEvidence -> SecondaryTermLoadAction.builder()
