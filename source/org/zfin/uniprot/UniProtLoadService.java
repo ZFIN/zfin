@@ -108,8 +108,7 @@ public class UniProtLoadService {
             List<String> pubIDs = dblink.getPublicationIdsAsList();
             if (pubIDs.size() == 1 && pubIDs.get(0).equals(PUBLICATION_ATTRIBUTION_ID)) {
                 //only delete if this is the only attribution
-                System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-                log.info("Removing dblink: " + dblink.getZdbID());
+                log.info("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
                 getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
                 dblinksToDelete.add(dblink);
             } else {
@@ -121,8 +120,7 @@ public class UniProtLoadService {
     }
 
     private static void removeAttribution(DBLink dblink, UniProtLoadAction action) {
-        System.err.println("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-        log.info("Removing attribution from dblink: " + dblink.getZdbID());
+        log.info("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
         dblink.getPublications()
             .stream()
             .filter(attribution -> attribution.getSourceZdbID().equals(PUBLICATION_ATTRIBUTION_ID))

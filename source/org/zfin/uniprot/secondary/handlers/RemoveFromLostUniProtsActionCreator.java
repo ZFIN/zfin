@@ -8,9 +8,10 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 
 
 /**
@@ -47,19 +48,27 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
             //then find the uniprot for that gene that already exists in our DB
             //then use that uniprot to find the corresponding uniprot record in the load file
             //if it's not there in the load file, delete it from the DB
-            DBLinkSlimDTO existingUniprotByGene = context.getUniprotByGene(iplink.getDataZdbID());
-            RichSequenceAdapter parsedUniprotRecordFromLoadFile = existingUniprotByGene == null ? null :
-                    uniProtRecords.getByAccession(existingUniprotByGene.getAccession());
+            List<DBLinkSlimDTO> existingUniprotsByGene = context.getUniprotsByGene(iplink.getDataZdbID());
 
-            if(parsedUniprotRecordFromLoadFile == null) {
+            List<RichSequenceAdapter> parsedUniprotRecordsFromLoadFile = existingUniprotsByGene.isEmpty() ? emptyList() :
+                    existingUniprotsByGene.stream()
+                            .map(uniprot -> uniProtRecords.getByAccession(uniprot.getAccession()))
+                            .filter(Objects::nonNull)
+                            .toList();
+
+            if(parsedUniprotRecordsFromLoadFile.isEmpty()) {
                 newActions.add(SecondaryTermLoadAction.builder().type(SecondaryTermLoadAction.Type.DELETE)
                         .subType(isSubTypeHandlerFor())
                         .dbName(this.dbName)
                         .accession(iplink.getAccession())
                         .geneZdbID(iplink.getDataZdbID())
                         .details(
-                                existingUniprotByGene == null ? "" :
-                                    uniProtRecords.getUniprotFormatByAccession(existingUniprotByGene.getAccession())
+                                existingUniprotsByGene.isEmpty() ? "" :
+                                    "Existing uniprots by gene " + iplink.getDataZdbID() + ": " +
+                                    existingUniprotsByGene
+                                            .stream()
+                                            .map(uniprot -> uniProtRecords.getUniprotFormatByAccession(uniprot.getAccession()))
+                                            .collect(Collectors.joining(","))
                         )
                         .build());
 
