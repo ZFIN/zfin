@@ -122,7 +122,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             from CuratorSession
             where curator.zdbID = :curatorID
             AND publication.zdbID = :pubID
-            AND field = "field
+            AND field = :field
             """;
         Query<CuratorSession> query = session.createQuery(hql, CuratorSession.class);
         query.setParameter("curatorID", curator.getZdbID());

@@ -1416,7 +1416,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         hql += " where " + String.join(" and ", hqlClauses);
         Query<ExpressionStructure> query = session.createQuery(hql, ExpressionStructure.class);
         parameterMap.forEach(query::setParameter);
-        return query.list() != null && !query.list().isEmpty();
+        List<ExpressionStructure> list = query.list();
+        return list != null && !list.isEmpty();
     }
 
     /**
