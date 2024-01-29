@@ -21,6 +21,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
@@ -1137,5 +1138,28 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("BAC", markerRelationshipPresentationList.get(0).getMarkerType());
         assertEquals("BAC", markerRelationshipPresentationList.get(1).getMarkerType());
         assertEquals("Fosmid", markerRelationshipPresentationList.get(2).getMarkerType());
+    }
+
+    @Test
+    public void createCuratorNoteAndDeleteIt() {
+        String constructID = "ZDB-ETCONSTRCT-120217-3";
+        Marker marker = markerRepository.getMarkerByID(constructID); //pax2a
+        assertNotNull(marker);
+        Set<DataNote> notes = marker.getDataNotes();
+        assertNotNull(notes);
+        int notesSize = notes.size();
+
+        DataNote dataNote = markerRepository.addMarkerDataNote(marker, "Test Note");
+        DataNote curatorNote = infrastructureRepository.getDataNoteByID(dataNote.getZdbID());
+
+        currentSession().refresh(marker);
+        Set<DataNote> notes2 = marker.getDataNotes();
+        assertEquals(notesSize + 1, notes2.size());
+
+        markerRepository.removeCuratorNote(marker, curatorNote);
+        currentSession().flush();
+        currentSession().refresh(marker);
+        Set<DataNote> notes3 = marker.getDataNotes();
+        assertEquals(notesSize, notes3.size());
     }
 }
