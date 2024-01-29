@@ -329,7 +329,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
             truncatedAccession = accessionString.substring(0, accessionString.indexOf("."));
         Session session = HibernateUtil.currentSession();
         String hql = "from DBLink where " +
-                     " (accessionNumber = :accessionNumber1 or accessionNumber = :accessionNumber2) order by referenceDatabase, accessionNumber";
+                     " (accessionNumber = :accessionNumber1 or accessionNumber = :accessionNumber2)";
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
             hql += " and referenceDatabase in (:referenceDatabase) ";
         }
