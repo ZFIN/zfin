@@ -209,10 +209,12 @@ public class ConstructEditController {
     public
     @ResponseBody
     void deleteNote(@PathVariable String constructID,@PathVariable String noteID) throws Exception{
+        HibernateUtil.createTransaction();
         DataNote curatorNote=ir.getDataNoteByID(noteID);
         Marker m=mr.getMarkerByID(constructID);
         ir.insertUpdatesTable(m,"curator note","deleted curator note");
         mr.removeCuratorNote(m,curatorNote);
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
 //    @RequestMapping(value = "/rename/{constructID}", method = RequestMethod.GET)
