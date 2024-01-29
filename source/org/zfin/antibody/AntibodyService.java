@@ -509,7 +509,7 @@ public class AntibodyService {
                         .collect(Collectors.toSet());
                 }
                 if (results != null) {
-                    for (ExpressionResult2 result :results) {
+                    for (ExpressionResult2 result : results) {
                         if (result.isExpressionFound()) {
                             ExpressionStatement statement = new ExpressionStatement();
                             statement.setEntity(result.getEntity());
@@ -629,81 +629,83 @@ public class AntibodyService {
                 Set<ExpressionResult2> results = getExpressionResult2s(exp);
 
                 // loop through the set of ExpressionResult objects to get the related data
-                for (ExpressionResult2 result : results) {
-                    if (result.isExpressionFound()) {
+                if (results != null) {
+                    for (ExpressionResult2 result : results) {
+                        if (result.isExpressionFound()) {
 
-                        Term subterm = result.getSubTerm();
-                        Term superterm = result.getSuperTerm();
+                            Term subterm = result.getSubTerm();
+                            Term superterm = result.getSuperTerm();
 
-                        DevelopmentStage startStage = result.getExpressionFigureStage().getStartStage();
-                        String startStageName;
+                            DevelopmentStage startStage = result.getExpressionFigureStage().getStartStage();
+                            String startStageName;
 
-                        if (startStage == null) {
-                            startStageName = "";
-                        } else {
-                            startStageName = startStage.getName();
-                        }
+                            if (startStage == null) {
+                                startStageName = "";
+                            } else {
+                                startStageName = startStage.getName();
+                            }
 
-                        DevelopmentStage endStage = result.getExpressionFigureStage().getEndStage();
-                        String endStageName;
-                        if (endStage == null) {
-                            endStageName = "";
-                        } else {
-                            endStageName = endStage.getName();
-                        }
+                            DevelopmentStage endStage = result.getExpressionFigureStage().getEndStage();
+                            String endStageName;
+                            if (endStage == null) {
+                                endStageName = "";
+                            } else {
+                                endStageName = endStage.getName();
+                            }
 
-                        // form the key
-                        String key = superterm.getZdbID() + startStageName + endStageName;
-                        if (subterm != null) {
-                            key += subterm.getZdbID();
-                        }
+                            // form the key
+                            String key = superterm.getZdbID() + startStageName + endStageName;
+                            if (subterm != null) {
+                                key += subterm.getZdbID();
+                            }
 
-                        AnatomyLabel labeling;
+                            AnatomyLabel labeling;
 
-                        // if the key is not in the map, instantiate a display (AnatomyLabel) object and add it to the map
-                        // otherwise, just get the display object from the map
-                        if (!map.containsKey(key)) {
-                            labeling = new AnatomyLabel(result);
-                            map.put(key, labeling);
-                        } else {
-                            labeling = map.get(key);
-                        }
+                            // if the key is not in the map, instantiate a display (AnatomyLabel) object and add it to the map
+                            // otherwise, just get the display object from the map
+                            if (!map.containsKey(key)) {
+                                labeling = new AnatomyLabel(result);
+                                map.put(key, labeling);
+                            } else {
+                                labeling = map.get(key);
+                            }
 
-                        if (labeling.getAssays() == null) {
-                            SortedSet<ExpressionAssay> assays = new TreeSet<>();
-                            labeling.setAssays(assays);
-                        }
+                            if (labeling.getAssays() == null) {
+                                SortedSet<ExpressionAssay> assays = new TreeSet<>();
+                                labeling.setAssays(assays);
+                            }
 
-                        if (assay != null) {
-                            labeling.getAssays().add(assay);
-                        }
+                            if (assay != null) {
+                                labeling.getAssays().add(assay);
+                            }
 
-                        if (labeling.getGenes() == null) {
-                            SortedSet<Marker> genes = new TreeSet<>();
-                            labeling.setGenes(genes);
-                        }
+                            if (labeling.getGenes() == null) {
+                                SortedSet<Marker> genes = new TreeSet<>();
+                                labeling.setGenes(genes);
+                            }
 
-                        if (gene != null) {
-                            labeling.getGenes().add(gene);
-                        }
+                            if (gene != null) {
+                                labeling.getGenes().add(gene);
+                            }
 
-                        // get the figures associated
-                        Figure figure = result.getExpressionFigureStage().getFigure();
+                            // get the figures associated
+                            Figure figure = result.getExpressionFigureStage().getFigure();
 
-                        if (figure != null) {
-                            labeling.getFigures().add(figure);
-                        }
+                            if (figure != null) {
+                                labeling.getFigures().add(figure);
+                            }
 
-                        Publication pub = exp.getPublication();
-                        if (pub != null) {
-                            labeling.getPublications().add(pub);
-                        }
+                            Publication pub = exp.getPublication();
+                            if (pub != null) {
+                                labeling.getPublications().add(pub);
+                            }
 
-                        Set<Figure> allFigures = labeling.getFigures();
-                        for (Figure fig : allFigures) {
-                            if (fig.getType() == FigureType.FIGURE) {
-                                labeling.setNotAllFiguresTextOnly(true);
-                                break;
+                            Set<Figure> allFigures = labeling.getFigures();
+                            for (Figure fig : allFigures) {
+                                if (fig.getType() == FigureType.FIGURE) {
+                                    labeling.setNotAllFiguresTextOnly(true);
+                                    break;
+                                }
                             }
                         }
                     }
