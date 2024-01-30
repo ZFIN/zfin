@@ -144,19 +144,17 @@ public class AntibodyService {
             if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
             }
-            if (results != null) {
-                for (ExpressionResult2 result : results) {
-                    if (!result.isExpressionFound()) {
-                        continue;
-                    }
-                    Term term = result.getSuperTerm();
-                    Term subterm = result.getSubTerm();
-                    String composedTermName = term.getZdbID();
-                    if (subterm != null) {
-                        composedTermName += subterm.getZdbID();
-                    }
-                    distinctTerms.add(composedTermName);
+            for (ExpressionResult2 result : results) {
+                if (!result.isExpressionFound()) {
+                    continue;
                 }
+                Term term = result.getSuperTerm();
+                Term subterm = result.getSubTerm();
+                String composedTermName = term.getZdbID();
+                if (subterm != null) {
+                    composedTermName += subterm.getZdbID();
+                }
+                distinctTerms.add(composedTermName);
             }
         }
         return distinctTerms.size();
