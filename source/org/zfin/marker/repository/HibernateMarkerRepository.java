@@ -3460,6 +3460,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerTranscriptBeanMap;
     }
 
+    @Override
+    public List<Marker> getAllEnsemblVegaGeneMarker() {
+        String hql = """
+            from Marker
+            """;
+        return null;
+    }
+
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {
         List<String> ids = dbLinks.stream().map(MarkerDBLink::getZdbID).toList();
         Session session = HibernateUtil.currentSession();

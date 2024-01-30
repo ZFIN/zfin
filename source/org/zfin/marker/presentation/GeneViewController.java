@@ -3,7 +3,6 @@ package org.zfin.marker.presentation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -183,10 +181,10 @@ public class GeneViewController {
                 constructBean.setMarker(mrkr);
                 List<MarkerRelationshipPresentation> mrkrRels = new ArrayList<>();
                 mrkrRels.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
-                        mrkr, true
-                        , MarkerRelationship.Type.PROMOTER_OF
-                        , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                        , MarkerRelationship.Type.CONTAINS_REGION
+                    mrkr, true
+                    , MarkerRelationship.Type.PROMOTER_OF
+                    , MarkerRelationship.Type.CODING_SEQUENCE_OF
+                    , MarkerRelationship.Type.CONTAINS_REGION
                 ));
 
                 List<Marker> regulatoryRegions = new ArrayList<>();
@@ -219,36 +217,36 @@ public class GeneViewController {
 
         // (Antibodies)
         List<MarkerRelationshipPresentation> antibodyRelationships = markerRepository.getRelatedMarkerDisplayForTypes(
-                gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+            gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
 
         if (CollectionUtils.isNotEmpty(antibodyRelationships)) {
             Set<String> antibodyIds = antibodyRelationships.stream()
-                    .map(MarkerRelationshipPresentation::getZdbId)
-                    .collect(Collectors.toSet());
+                .map(MarkerRelationshipPresentation::getZdbId)
+                .collect(Collectors.toSet());
             geneBean.setAntibodies(markerRepository.getAntibodies(antibodyIds));
             List<AntibodyMarkerBean> beans = markerRepository.getAntibodies(antibodyIds).stream()
-                    .map(antibody -> {
-                        AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
-                        antibodyBean.setAntibody(antibody);
-                        antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
-                        antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(
-                                antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
-                        return antibodyBean;
-                    })
-                    .collect(Collectors.toList());
+                .map(antibody -> {
+                    AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
+                    antibodyBean.setAntibody(antibody);
+                    antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+                    antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(
+                        antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+                    return antibodyBean;
+                })
+                .collect(Collectors.toList());
             geneBean.setAntibodyBeans(beans);
         }
 
         if (gene.getType() == Marker.Type.GENE) {
             geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
-                    gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
+                gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
         }
 
 
         geneBean.setPlasmidDBLinks(
-                markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
+            markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
         geneBean.setPathwayDBLinks(
-                markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PATHWAYS));
+            markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PATHWAYS));
 
         // orthology
         List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
@@ -293,7 +291,7 @@ public class GeneViewController {
 
     @RequestMapping(value = "/{geneID}/phenotype-summary")
     public String phenotypeSummary(Model model
-            , @PathVariable("geneID") String geneID) throws Exception {
+        , @PathVariable("geneID") String geneID) throws Exception {
 
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
         if (marker == null) {
@@ -318,8 +316,8 @@ public class GeneViewController {
         }
 
         String searchLink = new ExpressionSearchService.LinkBuilder()
-                .gene(marker)
-                .build();
+            .gene(marker)
+            .build();
         return "forward:" + searchLink;
     }
 
@@ -332,9 +330,9 @@ public class GeneViewController {
         }
 
         String searchLink = new ExpressionSearchService.LinkBuilder()
-                .wildtypeOnly(true)
-                .gene(marker)
-                .build();
+            .wildtypeOnly(true)
+            .gene(marker)
+            .build();
         return "forward:" + searchLink;
     }
 
@@ -373,12 +371,12 @@ public class GeneViewController {
                     for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
                         for (Publication publication : orthologEvidencePresentation.getPublications()) {
                             csvPrinter.printRecord(
-                                    row.getSpecies(),
-                                    row.getAbbreviation(),
-                                    row.getChromosome(),
-                                    orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
-                                    publication.getZdbID(),
-                                    orthologEvidencePresentation.getCode().getName()
+                                row.getSpecies(),
+                                row.getAbbreviation(),
+                                row.getChromosome(),
+                                orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
+                                publication.getZdbID(),
+                                orthologEvidencePresentation.getCode().getName()
                             );
                         }
 

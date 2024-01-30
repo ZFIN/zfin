@@ -580,4 +580,6 @@ public interface MarkerRepository {
     Map<Marker, List<MarkerDBLink>> getAllPlasmids(DisplayGroup.GroupName... groupNames);
 
     Map<Marker, List<TranscriptBean>> getAllTranscriptBeans(Pagination pagination);
+
+    List<Marker> getAllEnsemblVegaGeneMarker();
 }
