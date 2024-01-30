@@ -144,33 +144,30 @@ public class AntibodyService {
             if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
             }
-            if (results != null) {
-                for (ExpressionResult2 result : results) {
-                    if (!result.isExpressionFound()) {
-                        continue;
-                    }
-                    Term term = result.getSuperTerm();
-                    Term subterm = result.getSubTerm();
-                    String composedTermName = term.getZdbID();
-                    if (subterm != null) {
-                        composedTermName += subterm.getZdbID();
-                    }
-                    distinctTerms.add(composedTermName);
+            for (ExpressionResult2 result : results) {
+                if (!result.isExpressionFound()) {
+                    continue;
                 }
+                Term term = result.getSuperTerm();
+                Term subterm = result.getSubTerm();
+                String composedTermName = term.getZdbID();
+                if (subterm != null) {
+                    composedTermName += subterm.getZdbID();
+                }
+                distinctTerms.add(composedTermName);
             }
         }
         return distinctTerms.size();
     }
 
     private static Set<ExpressionResult2> getExpressionResult2s(ExpressionExperiment2 experiment) {
-        Set<ExpressionResult2> results = null;
         if (CollectionUtils.isNotEmpty(experiment.getFigureStageSet())) {
-            results = experiment.getFigureStageSet().stream()
+            return experiment.getFigureStageSet().stream()
                 .map(ExpressionFigureStage::getExpressionResultSet)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
         }
-        return results;
+        return Collections.emptySet();
     }
 
     /**
@@ -509,7 +506,7 @@ public class AntibodyService {
                         .collect(Collectors.toSet());
                 }
                 if (results != null) {
-                    for (ExpressionResult2 result :results) {
+                    for (ExpressionResult2 result : results) {
                         if (result.isExpressionFound()) {
                             ExpressionStatement statement = new ExpressionStatement();
                             statement.setEntity(result.getEntity());
