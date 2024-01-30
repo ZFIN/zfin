@@ -378,6 +378,12 @@ public class PersonController {
 
         logger.debug("passed in an organization");
 
+        setupPersonCreationModelForOrganization(organizationZdbID, model);
+
+        return "profile/create-person";
+    }
+
+    private void setupPersonCreationModelForOrganization(String organizationZdbID, Model model) {
         //todo: this is probably a little over-duplicated, I only care about the org type
         //for the sake of which position list to get...
         if (organizationZdbID != null && organizationZdbID.startsWith("ZDB-LAB")) {
@@ -393,10 +399,7 @@ public class PersonController {
                 model.addAttribute("organization", company);
                 model.addAttribute("positions", profileRepository.getCompanyPositions());
             }
-
         }
-
-        return "profile/create-person";
     }
 
 
@@ -407,6 +410,9 @@ public class PersonController {
         createPersonValidator.validate(person, errors);
         if (errors.hasErrors()) {
             model.addAttribute(LookupStrings.ERRORS, errors);
+            if (!StringUtils.isEmpty(person.getOrganizationZdbId())) {
+                setupPersonCreationModelForOrganization(person.getOrganizationZdbId(), model);
+            }
             return "profile/create-person";
         }
 
