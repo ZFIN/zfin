@@ -1249,6 +1249,30 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
+    public Map<Marker, List<TranscriptDBLink>> getAllRelevantEnsemblTranscripts() {
+        String hql = """
+             select link, rel.firstMarker from TranscriptDBLink as link,
+             MarkerRelationship as rel
+             where link.referenceDatabase.foreignDB.dbName = :dbName
+             AND rel.secondMarker = link.transcript
+             AND rel.type = :type
+            """;
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("dbName", ForeignDB.AvailableName.ENSEMBL_TRANS);
+//        query.setParameter("vega", ForeignDB.AvailableName.VEGA_TRANS);
+        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+        List<Object[]> list = query.list();
+        System.out.println("Total Number of Ensembl Transcript records: "+list.size());
+        Map<Marker, List<TranscriptDBLink>> map = new HashMap<>();
+        list.forEach(tuple -> {
+            List<TranscriptDBLink> transcriptList = map.computeIfAbsent(((Marker)tuple[1]), k -> new ArrayList<>());
+            transcriptList.add((TranscriptDBLink) tuple[0]);
+        });
+        return map;
+    }
+
+
+    @Override
     public Integer deleteUnitProtProteome() {
         return HibernateUtil.currentSession().createQuery("delete ReferenceProtein").executeUpdate();
     }
