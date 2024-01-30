@@ -146,7 +146,9 @@ public interface SequenceRepository {
 
     List<DBLink> getAllEnsemblTranscripts();
 
-    Integer deleteUnitProtProteome();
+    Map<Marker, List<TranscriptDBLink>> getAllRelevantEnsemblTranscripts();
+
+        Integer deleteUnitProtProteome();
 
     Integer deleteReferenceProteinByDBLinkID(String dbLinkID);
 
