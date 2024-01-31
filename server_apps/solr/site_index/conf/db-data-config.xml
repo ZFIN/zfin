@@ -5016,14 +5016,13 @@ and child.term_ontology = 'disease_ontology';
 
             <entity name="publication_ctd_xref"
                     query="select
+                            zdb_id as pub_zdb_id,
                             CASE
                             WHEN pc_id is not null THEN 'true'
                             ELSE 'false'
                             END  as has_ctd
                            from publication
-                           full outer join publication_ctd on zdb_id = pc_pub_zdb_id
-                           where
-                           zdb_id = publication.id"
+                           full outer join publication_ctd on zdb_id = pc_pub_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
