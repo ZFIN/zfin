@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import ConstructMarkerAutocomplete from "./ConstructMarkerAutocomplete";
-import ConstructCassetteListEditor, {cassetteHumanReadableList} from "./ConstructCassetteListEditor";
+import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 
 const CurateConstructNew = ({publicationId, show= true}) => {
 
@@ -12,19 +11,15 @@ const CurateConstructNew = ({publicationId, show= true}) => {
     const [sequence, setSequence] = useState('');
     const [publicNote, setPublicNote] = useState('');
     const [curatorNote, setCuratorNote] = useState('');
-    const [cassettes, setCassettes] = useState([]);
     const [cassettesDisplay, setCassettesDisplay] = useState('');
 
     const toggleDisplay = () => setDisplay(!display);
 
     const handleCassettesChanged = (cassettesChanged) => {
-        console.log('DEBUG: CurateConstructNew.handleCassettesChanged() cassettes:', cassettesChanged);
-        setCassettes(cassettesChanged);
         setCassettesDisplay(cassetteHumanReadableList(cassettesChanged));
     }
 
     return <>
-        <div className='display-none'>DEBUG: CurateConstructNew for {publicationId}</div>
         <div className='mb-3'>
             <span className='bold'>CREATE NEW CONSTRUCT: </span>
             <a onClick={toggleDisplay} style={{textDecoration: 'underline'}}>{display ? 'Hide' : 'Show'}</a>
@@ -32,7 +27,7 @@ const CurateConstructNew = ({publicationId, show= true}) => {
         {display &&
         <div className='mb-3' style={{backgroundColor: '#eee'}}>
             <table>
-                <thead></thead>
+                <thead/>
                 <tbody>
                     <tr>
                         <td><b>Construct Type</b></td>
@@ -89,6 +84,7 @@ const CurateConstructNew = ({publicationId, show= true}) => {
 
 CurateConstructNew.propTypes = {
     publicationId: PropTypes.string,
+    show: PropTypes.bool,
 }
 
 export default CurateConstructNew;
