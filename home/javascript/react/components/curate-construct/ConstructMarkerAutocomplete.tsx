@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState, KeyboardEvent, MouseEvent } from 'react';
-
+import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
 
 /**
  * This is a React component that is used to allow the user to start typing
@@ -53,19 +52,17 @@ interface ConstructMarkerAutocompleteProps {
     onChange: (value: string) => void;
 }
 
-const DOMAIN = 'https://cell-mac.zfin.org';
 
 function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange}: ConstructMarkerAutocompleteProps) {
     const [input, setInput] = useState<string>('');
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-    const [selectedSuggestion, setSelectedSuggestion] = useState(null);
     const [reset, setReset] = useState<boolean>(resetFlag);
     const dropdownRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
         if (input.length > 1) {
-            fetch(`${DOMAIN}/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
+            fetch(`/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
                 .then(response => response.json())
                 .then(data => setSuggestions(data))
                 .catch(error => console.error('Error fetching data:', error));
@@ -104,7 +101,6 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
 
     // Handle item selection
     const handleSelection = (suggestion: Suggestion) => {
-        setSelectedSuggestion(suggestion);
         handleChange(suggestion.value);
         setSuggestions([]);
         setInput('');
@@ -172,7 +168,7 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
     return (
         <>
             <input
-                type="text"
+                type='text'
                 value={input}
                 onChange={(e) => handleChange(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -194,7 +190,7 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
             <button onClick={handleFreeTextAdded} disabled={shouldDisableAddButton()}>+</button>
         </>
     );
-};
+}
 
 
 export default ConstructMarkerAutocomplete;
