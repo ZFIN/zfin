@@ -581,5 +581,4 @@ public interface MarkerRepository {
 
     Map<Marker, List<TranscriptBean>> getAllTranscriptBeans(Pagination pagination);
 
-    List<Marker> getAllEnsemblVegaGeneMarker();
 }
