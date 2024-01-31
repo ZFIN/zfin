@@ -174,7 +174,6 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
                     throw new RuntimeException(e);
                 }
             }
-            String n = null;
         });
         try {
             writer.close();
@@ -184,14 +183,6 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         }
 
 
-        Map<String, Set<RelatedMarker>> tMarkerMap = new HashMap<>();
-        Map<Marker, List<MarkerDBLink>> geneMap = ensdargList.stream().collect(Collectors.groupingBy(markerDBLink -> markerDBLink.getMarker()));
-        List<Marker> genes = getMarkerRepository().getAllEnsemblVegaGeneMarker();
-        genes.forEach(gene -> {
-            //geneMap.get(gene)
-            Set<RelatedMarker> relatedTranscripts = getRelatedTranscripts(gene);
-            tMarkerMap.put(gene.getZdbID(), relatedTranscripts);
-        });
         sortedGeneTranscriptMapCleaned.entrySet().removeIf(entry -> !ensdargMap.containsKey(entry.getKey()));
         System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file matching a gene record in ZFIN: " + sortedGeneTranscriptMapCleaned.size());
 
