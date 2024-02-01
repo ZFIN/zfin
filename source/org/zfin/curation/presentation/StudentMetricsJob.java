@@ -77,11 +77,11 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
                 getPublicationRepository().getPublicationTrackingStatus(gunner, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         summary.put("","");
         summary.put("Stats for "+avery.getShortName(),"");
-        summary.put("Emilia: Number of Pubs moved to Ready-For-Indexing",
+        summary.put("Number of Pubs moved to Ready-For-Indexing",
                 getPublicationRepository().getPublicationTrackingStatus(avery, 7, readyForIndexing));
-        summary.put("Emilia: number of pubs transitioned to ‘manual pdf acquisition",
+        summary.put("number of pubs transitioned to ‘manual pdf acquisition",
                 getPublicationRepository().getPublicationTrackingStatus(avery, 7, manualPdfAcquisition));
-        summary.put("Emilia: number of pubs closed",
+        summary.put("number of pubs closed",
                 getPublicationRepository().getPublicationTrackingStatus(avery, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(dataDirectory, jobName), "statistics");
