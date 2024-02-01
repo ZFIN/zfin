@@ -18,6 +18,10 @@ import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -225,7 +229,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         transitiveClosures = ontologyRepository.getChildrenTransitiveClosures(term);
 
         assertThat(transitiveClosures.size(), greaterThan(8));
-//        assertThat(transitiveClosures.size() , lessThan(10)); // was 9, which I agree with 
+//        assertThat(transitiveClosures.size() , lessThan(10)); // was 9, which I agree with
         assertThat(transitiveClosures.size(), lessThan(20));
 
         // http://www.berkeleybop.org/obo/tree/ZFA/ZFA:0005096? // perctoral fin vaculature
@@ -522,5 +526,22 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getChebiTermNames() throws IOException {
+        BufferedReader reader;
+
+        reader = new BufferedReader(new FileReader("chebi-terms/result-2-1.txt"));
+        String line = reader.readLine();
+
+        while (line != null) {
+            GenericTerm term = getOntologyRepository().getTermByOboID(line);
+            System.out.println(line + ": \t" + term.getTermName());
+            line = reader.readLine();
+        }
+
+        reader.close();
+    }
+
 
 }
+
