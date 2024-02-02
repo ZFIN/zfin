@@ -1665,7 +1665,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         List<RecordAttribution> resultList = getRecordAttributionsForType(dataZdbID, RecordAttribution.SourceType.STANDARD);
         if (resultList == null || resultList.size() > 1)
             return;
-        RecordAttribution result = resultList.get(0);
+        RecordAttribution result = resultList.stream().findFirst().orElse(null);
 
         // remove previous attribution if different from current pub
         if (result != null && !result.getSourceZdbID().equals(publicationID)) {
