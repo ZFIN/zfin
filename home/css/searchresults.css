@@ -67,11 +67,11 @@ table.searchresults tr.even {
 }
 
 .selected-sort-column.column-sort-asc .column-sort-button {
-    background-image: url(/images/sort-arrow-down-selected.png);
+    background-image: url(../images/sort-arrow-down-selected.png);
 }
 
 .selected-sort-column.column-sort-desc .column-sort-button {
-    background-image: url(/images/sort-arrow-up-selected.png);
+    background-image: url(../images/sort-arrow-up-selected.png);
 }
 
 .unselected-sort-column .column-sort-button {
@@ -85,11 +85,11 @@ table.searchresults tr.even {
 }
 
 .unselected-sort-column.column-sort-asc:hover .column-sort-button {
-    background-image: url(/images/sort-arrow-down-unselected.png);
+    background-image: url(../images/sort-arrow-down-unselected.png);
 }
 
 .unselected-sort-column.column-sort-desc:hover .column-sort-button {
-    background-image: url(/images/sort-arrow-up-unselected.png);
+    background-image: url(../images/sort-arrow-up-unselected.png);
 }
 
 .selected-radio-label {
