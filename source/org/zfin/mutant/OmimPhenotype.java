@@ -54,20 +54,12 @@ public class OmimPhenotype implements Comparable<OmimPhenotype>, Serializable {
         }
     }
 
-    public String getHumanGeneMimNumber() {
-        return humanGeneMimNumber;
-    }
-
-    public void setHumanGeneMimNumber(String humanGeneMimNumber) {
-        this.humanGeneMimNumber = humanGeneMimNumber;
-    }
-
     @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
         if (o instanceof OmimPhenotype anotherOmimPhenotype) {
-            if (anotherOmimPhenotype == null) {
-                return false;
-            }
 
             if(Long.valueOf(anotherOmimPhenotype.getId()) != null && Long.valueOf(id) != null && anotherOmimPhenotype.getId() == id) {
                 return true;

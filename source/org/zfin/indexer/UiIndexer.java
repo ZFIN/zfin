@@ -45,9 +45,9 @@ public abstract class UiIndexer<Entity> extends Thread {
         return "[" + indexerConfig.getTypeName() + "]";
     }
 
-    private IndexerInfo indexerInfo;
-    private IndexerInfoDAO infoDAO = new IndexerInfoDAO();
-    private IndexerTaskDAO taskDAO = new IndexerTaskDAO();
+    private final IndexerInfo indexerInfo;
+    private final IndexerInfoDAO infoDAO = new IndexerInfoDAO();
+    private final IndexerTaskDAO taskDAO = new IndexerTaskDAO();
 
     public void runIndex() {
         try {
@@ -221,7 +221,7 @@ public abstract class UiIndexer<Entity> extends Thread {
         IndexerRunDAO indexerRunDAO = new IndexerRunDAO();
         IndexerRun indexerRun = new IndexerRun();
         logRunIndexer(indexerRun, indexerRunDAO, true);
-        boolean isThreadedExecution = false;
+        boolean isThreadedExecution = false; //is this always false?
         for (String type : indexers.keySet()) {
             if (argumentSet.size() == 0 || argumentSet.contains(type)) {
                 if (isThreadedExecution) {

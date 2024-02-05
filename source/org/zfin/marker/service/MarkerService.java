@@ -2,7 +2,6 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.AttributionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -28,6 +26,7 @@ import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
@@ -1060,20 +1059,10 @@ public class MarkerService {
         logger.debug("marker is:" + marker.getZdbID());
         String zdbID = marker.getZdbID();
         if (marker.isGenedom()) {
-            List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
-            if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
-                markerBean.setDiseaseDisplays(null);
-            } else {
-                Set<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
-                List<DiseaseDisplay> diseaseDisplaysList = new ArrayList<>(diseaseDisplays.size());
-                diseaseDisplaysList.addAll(diseaseDisplays);
-                Collections.sort(diseaseDisplaysList);
-                markerBean.setDiseaseDisplays(diseaseDisplaysList);
-            }
-            List<DiseaseAnnotationModel> diseaseAnnotationModels = RepositoryFactory.getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
-            markerBean.setDiseaseModelDisplays(OntologyService.getDiseaseModelDisplay(diseaseAnnotationModels));
-            markerBean.setAllianceGeneDesc(markerRepository.getGeneDescByMkr(marker));
+            markerBean.setDiseaseDisplays(getDiseaseDisplays(marker));
+            markerBean.setDiseaseModelDisplays(getDiseaseModelDisplays(marker));
 
+            markerBean.setAllianceGeneDesc(markerRepository.getGeneDescByMkr(marker));
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
@@ -1101,6 +1090,25 @@ public class MarkerService {
         markerBean.setNumPubs(publicationRepository.getNumberAssociatedPublicationsForZdbID(marker.getZdbID()));
 
         return markerBean;
+    }
+
+    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplays(Marker marker) {
+        List<DiseaseAnnotationModel> diseaseAnnotationModels = RepositoryFactory.getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
+        Collection<DiseaseModelDisplay> diseaseModelDisplay = OntologyService.getDiseaseModelDisplay(diseaseAnnotationModels);
+        return diseaseModelDisplay;
+    }
+
+    private static List<DiseaseDisplay> getDiseaseDisplays(Marker marker) {
+        List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
+        if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
+            return null;
+        } else {
+            Set<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
+            List<DiseaseDisplay> diseaseDisplaysList = new ArrayList<>(diseaseDisplays.size());
+            diseaseDisplaysList.addAll(diseaseDisplays);
+            Collections.sort(diseaseDisplaysList);
+            return diseaseDisplaysList;
+        }
     }
 
     public static GeneBean pullClonesOntoGeneFromTranscript(GeneBean geneBean) {
