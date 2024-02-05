@@ -22,24 +22,6 @@
     </c:otherwise>
 </c:choose>
 
-<style>
-    .copy-attribute-target {
-        display: inline-block;
-        cursor: pointer;
-    }
-    .copy-attribute-target:hover {
-        /*text-decoration: underline;*/
-    }
-    .copy-attribute-icon {
-        display: none;
-        cursor: pointer;
-    }
-    .copy-attribute-target:hover + .copy-attribute-icon {
-        display: inline;
-    }
-</style>
-
-<dd class="col-sm-${ddColSize} copy-attribute-container">
-    <span class="copy-attribute-target"><jsp:doBody/></span>
-    <i class="far fa-copy copy-attribute-icon"></i>
+<dd class="col-sm-${ddColSize}">
+    <span class="__react-root" id="CopyTarget" data-classname="testClassName"><jsp:doBody/></span>
 </dd>

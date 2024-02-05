@@ -25,6 +25,11 @@ document
         let dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
         dataset = useEventBus ? {...dataset, eventBus: zfinEventBus} : {...dataset};
 
+        //check for innerHTML
+        if (element.innerHTML) {
+            dataset.innerHTML = element.innerHTML;
+        }
+
         import(`./containers/${container}`)
             .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))
             .catch((error) => console.error('Unable to load container named: ' + container, error));
