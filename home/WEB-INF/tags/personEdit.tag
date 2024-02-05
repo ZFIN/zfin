@@ -233,7 +233,7 @@
                         <td>
                             <span class="fill-with-generated-password"></span>
                             <span id="clipboard-actions">
-                                <button type="button" id="copy-generated-password"><i class="fa fa-clipboard"></i></button>
+                                <button type="button" id="copy-generated-password"><i class="far fa-copy"></i></button>
                                 <span id="copy-generated-password-message">Password Copied</span>
                             </span>
                         </td>

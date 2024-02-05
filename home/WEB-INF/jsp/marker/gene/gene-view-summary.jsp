@@ -3,9 +3,9 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <z:attributeList>
-    <z:attributeListItem label="ID">
+    <z:attributeListItemWithCopy label="ID">
         ${formBean.marker.zdbID}
-    </z:attributeListItem>
+    </z:attributeListItemWithCopy>
 
     <z:attributeListItem label="Name">
         <zfin:name entity="${formBean.marker}"/>
