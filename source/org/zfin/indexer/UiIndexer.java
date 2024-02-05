@@ -150,7 +150,8 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected void saveRecords(Collection<List<Entity>> batchedList) {
         if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz()) ||
            this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz()) ||
-           this.getClass().equals(UiIndexerConfig.ChebiPhenotypeIndexer.getIndexClazz())) {
+           this.getClass().equals(UiIndexerConfig.ChebiPhenotypeIndexer.getIndexClazz()) ||
+           this.getClass().equals(UiIndexerConfig.GenesInvolvedIndexer.getIndexClazz())) {
             saveWithStatefulSession(batchedList);
         } else {
             saveWithStatelessSession(batchedList);
