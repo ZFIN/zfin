@@ -3,7 +3,7 @@
 <jsp:useBean id="fish" class="org.zfin.mutant.Fish" scope="request"/>
 
 <z:attributeList>
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${fish.zdbID}
     </z:attributeListItem>
 

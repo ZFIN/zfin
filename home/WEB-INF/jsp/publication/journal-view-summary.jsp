@@ -4,7 +4,7 @@
 
 <z:attributeList>
 
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${journal.zdbID}
     </z:attributeListItem>
 

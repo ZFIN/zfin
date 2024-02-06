@@ -40,7 +40,7 @@
             <div class="small text-uppercase text-muted">IMAGE</div>
             <h1><a href="${titleUrl}">${title}</a></h1>
             <z:attributeList>
-                <z:attributeListItem label="ID">
+                <z:attributeListItem label="ID" copyable="true">
                     ${image.zdbID}
                 </z:attributeListItem>
                 <c:if test="${!empty expressionGeneList}">

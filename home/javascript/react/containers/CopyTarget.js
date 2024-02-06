@@ -6,7 +6,8 @@ import './CopyTargetStyle.css';
 const CopyTarget = ({innerHTML}) => {
     const [showingTooltip, setShowingTooltip] = useState(false);
     const copyTargetRef = useRef(null);
-    const displaySuccessMessage = (element) => {
+    const displaySuccessMessage = () => {
+        const element = copyTargetRef.current;
         // Create the tooltip
         $(element).attr('title', 'Copied').tooltip();
 
@@ -27,7 +28,7 @@ const CopyTarget = ({innerHTML}) => {
 
     useEffect(() => {
         if (showingTooltip) {
-            displaySuccessMessage('.copy-attribute-target');
+            displaySuccessMessage();
         }
     }, [showingTooltip]);
 
