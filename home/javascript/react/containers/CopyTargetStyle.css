@@ -4,10 +4,6 @@
     padding-right: 5px;
 }
 
-.copy-attribute-target:hover {
-    /*text-decoration: underline;*/
-}
-
 .copy-attribute-icon {
     display: none;
     cursor: pointer;

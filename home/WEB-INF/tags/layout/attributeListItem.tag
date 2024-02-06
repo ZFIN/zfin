@@ -21,10 +21,10 @@
 </c:choose>
 
 <dd class="col-sm-${ddColSize}">
-    <c:if test="${not empty copyable}">
-        <span class="__react-root" id="CopyTarget"><jsp:doBody/></span>
-    </c:if>
     <c:if test="${empty copyable}">
         <jsp:doBody/>
+    </c:if>
+    <c:if test="${not empty copyable}">
+        <span class="__react-root" id="CopyTarget"><jsp:doBody/></span>
     </c:if>
 </dd>
