@@ -4,16 +4,21 @@
 
 <z:page>
     <div class="summaryTitle">Target Locations for <zfin:link entity="${formBean.marker}"/></div>
-
-    <c:forEach items="${formBean.gbrowseImages}" var="image">
-        <div>
-            <div class="gbrowse-image"
-                 data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}", "build": "${image.build}"}'>
-            </div>
+    <style>
+        .jbrowse-container {
+            margin-bottom: 40px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            padding-top: 5px;
+        }
+    </style>
+    <c:forEach items="${formBean.gbrowseImages}" var="image" varStatus="loop">
+        <div class="jbrowse-container">
+        <h2>Location ${loop.index + 1}</h2>
+        <zfin-gbrowse:genomeBrowserImageComponent image="${image}" loopIndex="${loop.index}" />
         </div>
     </c:forEach>
 
-    <script>
-        jQuery(".gbrowse-image").gbrowseImage({width: 800});
-    </script>
+    <script src="${zfn:getAssetPath("react.js")}"></script>
+
 </z:page>
