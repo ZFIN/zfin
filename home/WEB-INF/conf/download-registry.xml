@@ -1134,6 +1134,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2" unique="true">Figure ID</Column>
         </Download>
+
+
         <Download orderIndex="7">
             <Name>
                 Gene Expression Phenotypes
@@ -1210,6 +1212,55 @@ where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
             <Column id="24">Publication ID</Column>
             <Column id="25">PubMed ID</Column>
         </Download>
+
+
+        <Download orderIndex="7">
+            <Name>
+                Gene Expression Phenotypes with Chemicals
+            </Name>
+            <Category>
+                Toxicology
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_expression_phenotype_with_chemicals</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1">Gene Symbol</Column>
+            <Column id="2">Gene ID</Column>
+            <Column id="3">RO Term</Column>
+            <Column id="4">RO ID</Column>
+            <Column id="5">Superstructure Name</Column>
+            <Column id="6">Superstructure ID</Column>
+            <Column id="7">Substructure Name</Column>
+            <Column id="8">Substructure ID</Column>
+            <Column id="9">Phenotype Keyword Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Tag</Column>
+            <Column id="12">Start Stage Name</Column>
+            <Column id="13">Start Stage ID</Column>
+            <Column id="14">End Stage Name</Column>
+            <Column id="15">End Stage ID</Column>
+            <Column id="16">Assay</Column>
+            <Column id="17">Assay MMO ID</Column>
+            <Column id="18">Probe ID</Column>
+            <Column id="19">Antibody Name</Column>
+            <Column id="20">Antibody ID</Column>
+            <Column id="21">Fish ID</Column>
+            <Column id="22">Environment ID</Column>
+            <Column id="23">Figure ID</Column>
+            <Column id="24">Publication ID</Column>
+            <Column id="25">PubMed ID</Column>
+            <Column id="26">ZECO ID(s)</Column>
+            <Column id="27">ZECO Name(s)</Column>
+            <Column id="28">ChEBI ID(s)</Column>
+            <Column id="29">ChEBI Name(s)</Column>
+        </Download>
+
+
         <Download orderIndex="8">
             <Name>
                 Antibody Labeling Phenotypes
@@ -1362,6 +1413,52 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="22" unique="true">Publication ID</Column>
             <Column id="23" unique="true">Environment ID</Column>
         </Download>
+
+        <Download orderIndex="1">
+            <Name>
+                Ameliorated Phenotypes with Chemicals
+            </Name>
+            <Category>
+                Toxicology
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ameliorated_phenotype_fish_with_chemicals</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+            <Column id="24">ZECO ID(s)</Column>
+            <Column id="25">ZECO Name(s)</Column>
+            <Column id="26">ChEBI ID(s)</Column>
+            <Column id="27">ChEBI Name(s)</Column>
+        </Download>
+
+
         <Download orderIndex="1">
             <Name>
                 Exacerbated Phenotypes
@@ -2809,6 +2906,9 @@ order by 2, 4, 5, 7;
         </Category>
         <Category orderIndex="180">
             <name>Human Disease</name>
+        </Category>
+        <Category orderIndex="190">
+            <name>Toxicology</name>
         </Category>
         <Category orderIndex="1000">
             <name>Unofficial Download Files</name>

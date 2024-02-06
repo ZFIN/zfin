@@ -49,6 +49,7 @@
 -- add term_ont_ids and names and post-composed relationships
 begin work;
 
+
 --! echo "Create table to hold phenotype data"
 create temp table tmp_phenotype_statement (
        phenos_pk_id serial,
@@ -561,6 +562,61 @@ create view ameliorated_phenotype_fish as
    and psg_tag = 'ameliorated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from ameliorated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish.txt' with delimiter as '	' null as '';
+
+-- Create a join table (experiment_condition_with_zeco_and_chebi) for connecting fish experiment to zeco and chebi terms (comma delimited for multiple terms).
+-- First, we must create 2 join tables for experiment_condition_with_zeco and experiment_condition_with_chebi.
+-- Then we join those 2 tables into the final join table.
+-- We need to do each table separately because we need to use DISTINCT and ORDER BY in the subqueries.
+
+CREATE TEMP TABLE experiment_with_zeco AS
+WITH distinct_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS zeco_id, term_name AS zeco_name
+    FROM experiment_condition LEFT JOIN term ON expcond_zeco_term_zdb_id = term_zdb_id)
+SELECT
+    expcond_exp_zdb_id,
+    string_agg(zeco_id, '|' ORDER BY zeco_id) AS zeco_ids,
+    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names
+FROM distinct_terms
+GROUP BY expcond_exp_zdb_id;
+
+CREATE TEMP TABLE experiment_with_chebi AS
+WITH distinct_chebi_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS chebi_id, term_name AS chebi_name
+    FROM experiment_condition LEFT JOIN term ON expcond_chebi_term_zdb_id = term_zdb_id)
+SELECT
+    expcond_exp_zdb_id,
+    string_agg(chebi_id, '|' ORDER BY chebi_id) AS chebi_ids,
+    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names
+FROM distinct_chebi_terms
+GROUP BY expcond_exp_zdb_id;
+
+CREATE TEMP TABLE experiment_condition_with_zeco_and_chebi AS
+SELECT
+    xpz.expcond_exp_zdb_id,
+    zeco_ids,
+    zeco_names,
+    chebi_ids,
+    chebi_names
+FROM
+    experiment_with_zeco xpz
+    LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
+ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
+
+DROP TABLE experiment_with_zeco;
+DROP TABLE experiment_with_chebi;
+
+-- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
+create view ameliorated_phenotype_fish_with_chemicals as
+    select apf.*,
+           fe.zeco_ids,
+           fe.zeco_names,
+           fe.chebi_ids,
+           fe.chebi_names
+    from ameliorated_phenotype_fish apf
+    left join experiment_condition_with_zeco_and_chebi fe on apf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+    order by fish_zdb_id, fig_source_zdb_id;
+
+\copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals.txt' with delimiter as '	' null as '';
+
+drop view ameliorated_phenotype_fish_with_chemicals;
 drop view ameliorated_phenotype_fish;
 
 create view exacerbated_phenotype_fish as
@@ -691,6 +747,16 @@ where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-L
   and pub.zdb_id = fig_source_zdb_id
  order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt' with delimiter as '	' null as '';
+
+create view gene_expression_phenotype_with_chemicals as
+select gep.*, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
+from gene_expression_phenotype gep
+left join experiment_condition_with_zeco_and_chebi fe on gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+order by gene, publication, figure;
+\copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
+
+drop view gene_expression_phenotype_with_chemicals;
+drop table experiment_condition_with_zeco_and_chebi;
 drop view gene_expression_phenotype;
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"

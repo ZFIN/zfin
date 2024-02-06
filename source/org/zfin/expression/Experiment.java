@@ -61,10 +61,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return experimentConditions;
     }
 
-    public void setExperimentConditions(SortedSet<ExperimentCondition> experimentConditions) {
-        this.experimentConditions = experimentConditions;
-    }
-
     public boolean isChemical() {
         if (experimentConditions == null || experimentConditions.isEmpty()) {
             return false;

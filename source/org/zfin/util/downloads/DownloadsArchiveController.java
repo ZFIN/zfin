@@ -185,7 +185,7 @@ public class DownloadsArchiveController {
                                           @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
         String date = downloadFileService.getMatchingIndexDirectory();
         formBean.setDate(date);
-        formBean.setCurrentDate((true));
+        formBean.setCurrentDate(true);
         String[] dateArray = date.split("\\.");
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, date);
         return getArchivedDownloads(model, dateArray[0], dateArray[1], dateArray[2], formBean);
