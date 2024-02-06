@@ -3,9 +3,9 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <z:attributeList>
-    <z:attributeListItemWithCopy label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${formBean.marker.zdbID}
-    </z:attributeListItemWithCopy>
+    </z:attributeListItem>
 
     <z:attributeListItem label="Name">
         <zfin:name entity="${formBean.marker}"/>
@@ -33,7 +33,6 @@
         <a href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}#orthology">
         <img border="0" height="40" src="/images/alliance_hexes4.png">
         </a>
-
     </z:attributeListItem>
 
 </z:attributeList>

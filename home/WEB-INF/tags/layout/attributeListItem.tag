@@ -3,6 +3,7 @@
 <%@ attribute name="label" required="true" rtexprvalue="true" %>
 <%@ attribute name="link" required="false" rtexprvalue="true" %>
 <%@ attribute name="statsLink" required="false" rtexprvalue="true" type="java.lang.String" %>
+<%@ attribute name="copyable" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
 
 <%@ attribute name="dtColSize" required="false" type="java.lang.Integer" %>
 <c:set var="dtColSize" value="${(empty dtColSize) ? 2 : dtColSize}" />
@@ -18,4 +19,12 @@
         <dt class="col-sm-${dtColSize} mb-sm-2">${label} <c:if test="${not empty statsLink}"><a class="popup-link info-popup-link" href="/action/publication/stats/view?section=${statsLink}"></a></c:if></dt>
     </c:otherwise>
 </c:choose>
-<dd class="col-sm-${ddColSize}"><jsp:doBody /></dd>
+
+<dd class="col-sm-${ddColSize}">
+    <c:if test="${not empty copyable}">
+        <span class="__react-root" id="CopyTarget"><jsp:doBody/></span>
+    </c:if>
+    <c:if test="${empty copyable}">
+        <jsp:doBody/>
+    </c:if>
+</dd>

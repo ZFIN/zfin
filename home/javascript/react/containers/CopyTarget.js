@@ -1,28 +1,11 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 
-// <style>
-//     .copy-attribute-target {
-//     display: inline-block;
-//     cursor: pointer;
-// }
-//     .copy-attribute-target:hover {
-//     /*text-decoration: underline;*/
-// }
-//     .copy-attribute-icon {
-//     display: none;
-//     cursor: pointer;
-// }
-//     .copy-attribute-target:hover + .copy-attribute-icon {
-//     display: inline;
-// }
-// </style>
-
+import './CopyTargetStyle.css';
 
 const CopyTarget = ({innerHTML}) => {
-
-    console.log('innerHTML', innerHTML);
-
+    const [showingTooltip, setShowingTooltip] = useState(false);
+    const copyTargetRef = useRef(null);
     const displaySuccessMessage = (element) => {
         // Create the tooltip
         $(element).attr('title', 'Copied').tooltip();
@@ -32,22 +15,31 @@ const CopyTarget = ({innerHTML}) => {
 
         // hide the tooltip after 1 second
         setTimeout(function() {
+            setShowingTooltip(false);
             $(element).tooltip('dispose');
         }, 1000);
     }
 
-    const copyClickHandler = (event) => {
-        navigator.clipboard.writeText(event.target.innerText.trim()).then(() => {
-            displaySuccessMessage(event.target);
-        }, (err) => {
-            //ignore copy to clipboard error
-        });
+    const copyClickHandler = async () => {
+        await navigator.clipboard.writeText(copyTargetRef.current.innerText.trim());
+        setShowingTooltip(true);
     }
+
+    useEffect(() => {
+        if (showingTooltip) {
+            displaySuccessMessage('.copy-attribute-target');
+        }
+    }, [showingTooltip]);
 
     return (
         <>
-            <span onClick={copyClickHandler} dangerouslySetInnerHTML={{__html: innerHTML}} />
-            <i className='far fa-copy'/>
+            <span
+                ref={copyTargetRef}
+                className='copy-attribute-target'
+                onClick={copyClickHandler}
+                dangerouslySetInnerHTML={{__html: innerHTML}}
+            />
+            <i onClick={copyClickHandler} className='far fa-copy copy-attribute-icon'/>
         </>
     );
 };
