@@ -126,6 +126,7 @@ public class OntologyTermDetailController {
         return histogram;
     }
 
+    //TODO: remove this method when we are ready to get rid of the old term pages
     @RequestMapping("/term-detail/{termID}")
     protected String termDetailPage(@PathVariable String termID,
                                     @ModelAttribute("formBean") OntologyBean form,

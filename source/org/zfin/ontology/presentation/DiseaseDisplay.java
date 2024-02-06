@@ -1,37 +1,27 @@
 package org.zfin.ontology.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.Term;
 
+@Setter
+@Getter
 public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
+
     private Term diseaseTerm;
+
     private OmimPhenotype omimPhenotype;
 
     public DiseaseDisplay() {
     }
 
-    public Term getDiseaseTerm() {
-        return diseaseTerm;
-    }
-
-    public void setDiseaseTerm(Term diseaseTerm) {
-        this.diseaseTerm = diseaseTerm;
-    }
-
-    public OmimPhenotype getOmimPhenotype() {
-        return omimPhenotype;
-    }
-
-    public void setOmimPhenotype(OmimPhenotype omimPhenotype) {
-        this.omimPhenotype = omimPhenotype;
-    }
-
     @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
         if (o instanceof DiseaseDisplay anotherDiseaseDisplay) {
-            if (anotherDiseaseDisplay == null) {
-                return false;
-            }
             if (anotherDiseaseDisplay.getDiseaseTerm() == null) {
                 return anotherDiseaseDisplay.getOmimPhenotype().equals(this.omimPhenotype);
             }
