@@ -1,17 +1,18 @@
 const path = require('path');
-const webpack = require('webpack');
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { EnvironmentPlugin } = require('webpack');
 
 const isProd = process.env.NODE_ENV === 'production';
 
 const config = {
     context: path.resolve(__dirname, 'home/javascript'),
     devtool: isProd ? false : 'eval-cheap-module-source-map',
-    mode: 'development',
+    mode: isProd ? 'production' : 'development',
     entry: {
         bootstrap: './bootstrap/index.js',
         curation: './curation/index.js',
@@ -25,7 +26,7 @@ const config = {
     },
     output: {
         path: path.resolve(process.env.TARGETROOT, 'home/dist'),
-        filename: '[name].bundle.[contenthash].js',
+        filename: '[name].[contenthash].js',
         publicPath: '/dist/'
     },
     module: {
@@ -33,58 +34,73 @@ const config = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: ['babel-loader'],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
             },
             {
-                test: /\.s?css$/,
+                test: /\.tsx?$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
+                    }
+                },
+                exclude: /node_modules/
+            },
+            {
+                test: /\.(scss|css)$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
                         loader: 'sass-loader',
                         options: {
-                            additionalData: '$primary: ' + (process.env.PRIMARY_COLOR || 'null') + ';',
+                            additionalData: `$primary: ${process.env.PRIMARY_COLOR || 'null'};`
                         }
-                    },
-                ],
+                    }
+                ]
             },
             {
+                //old method was supposed to inline any assets smaller than 8k as base64 data-uris
+                //new method: https://stackoverflow.com/a/67514465
                 test: /\.(woff2?|ttf|eot|svg|gif|png)$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: 8192
-                    }
-                }
+                type: 'asset/resource'
             },
-        ],
+        ]
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
+        new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
-            filename: '[name].bundle.[contenthash].css',
+            filename: '[name].bundle.[contenthash].css'
         }),
         new WebpackAssetsManifest({
             output: '../asset-manifest.json', // relative to output.path
             publicPath: true,
         }),
+        new HtmlWebpackPlugin(),
         // expose certain environment variables via process.env
-        new webpack.EnvironmentPlugin([
+        new EnvironmentPlugin([
             'NODE_ENV',
             'WIKI_HOST',
-            'ZFIN_ADMIN',
+            'ZFIN_ADMIN'
         ]),
     ],
+    optimization: {
+        minimize: isProd,
+        minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
+    },
     // jquery is loaded via CDN to make bootstrap 4 play nicely with inline script tags
     externals: {
-        jquery: 'jQuery',
+        jquery: 'jQuery'
     },
 };
 
-if (isProd) {
-    config.mode = 'production';
-    config.optimization = {
-        minimizer: [new TerserPlugin(), new OptimizeCssAssetsPlugin()],
-    };
-}
 
 module.exports = config;
