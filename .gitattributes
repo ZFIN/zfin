@@ -847,6 +847,7 @@
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/antisamy-markup-formatter.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/apache-httpcomponents-client-4-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/artifact-diff-plugin.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/bootstrap5-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/bouncycastle-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/build-timeout.jpi filter=lfs diff=lfs merge=lfs -text
