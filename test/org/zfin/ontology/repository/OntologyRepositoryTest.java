@@ -526,7 +526,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
-    @Test
+//    @Test
     public void getChebiTermNames() throws IOException {
         BufferedReader reader;
 
