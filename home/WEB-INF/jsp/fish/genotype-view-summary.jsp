@@ -4,7 +4,7 @@
 <c:set var="genotype" value="${formBean.genotype}"/>
 
 <z:attributeList>
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${genotype.zdbID}
     </z:attributeListItem>
 

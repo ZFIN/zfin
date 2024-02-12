@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <z:attributeList>
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${formBean.feature.zdbID}
     </z:attributeListItem>
 

@@ -7,12 +7,12 @@
 
 <z:attributeList>
 
-    <z:attributeListItem label="Term ID">
+    <z:attributeListItem label="Term ID" copyable="true">
         ${term.oboID}
     </z:attributeListItem>
 
     <authz:authorize access="hasRole('root')">
-        <z:attributeListItem label="Term ZDB ID">
+        <z:attributeListItem label="Term ZDB ID" copyable="true">
             ${term.zdbID}
         </z:attributeListItem>
     </authz:authorize>

@@ -3,7 +3,7 @@
 <jsp:useBean id="figure" type="org.zfin.expression.Figure" scope="request"/>
 
 <z:attributeList>
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${figure.zdbID}
     </z:attributeListItem>
 
