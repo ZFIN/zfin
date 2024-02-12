@@ -1,0 +1,18 @@
+.copy-attribute-target {
+    display: inline-block;
+    cursor: pointer;
+    padding-right: 5px;
+}
+
+.copy-attribute-icon {
+    display: none;
+    cursor: pointer;
+}
+
+.copy-attribute-target:hover + .copy-attribute-icon {
+    display: inline;
+}
+
+.copy-attribute-icon:hover {
+    display: inline;
+}

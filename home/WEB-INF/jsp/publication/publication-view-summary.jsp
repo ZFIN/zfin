@@ -23,7 +23,7 @@
         ${publication.authors}
     </z:attributeListItem>
 
-    <z:attributeListItem label="ID">
+    <z:attributeListItem label="ID" copyable="true">
         ${publication.zdbID}
     </z:attributeListItem>
 
