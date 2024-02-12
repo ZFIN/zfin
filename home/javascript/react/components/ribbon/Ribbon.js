@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { applyPolyfills, defineCustomElements } from '@geneontology/wc-ribbon-strips/loader';
 
-import style from './style.scss';
+import style from './style.module.scss';
 
 applyPolyfills().then(() => {
     defineCustomElements(window);

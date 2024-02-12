@@ -4,6 +4,7 @@ import CurateConstructNew from '../components/curate-construct/CurateConstructNe
 import CurateConstructEdit from '../components/curate-construct/CurateConstructEdit';
 import CurateConstructRelationships from '../components/curate-construct/CurateConstructRelationships';
 
+
 const CurateConstruct = ({publicationId}) => {
     return (
         <>
@@ -19,3 +20,4 @@ CurateConstruct.propTypes = {
 };
 
 export default CurateConstruct;
+

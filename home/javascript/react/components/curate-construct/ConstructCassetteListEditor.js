@@ -1,22 +1,19 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import ConstructCassetteEditor, {isValidCassette} from "./ConstructCassetteEditor";
-import ConstructCassetteView from "./ConstructCassetteView";
+import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
+import ConstructCassetteView from './ConstructCassetteView';
 
 const ConstructCassetteListEditor = ({publicationId, onChange}) => {
-    const defaultCassette = { promoter: [], coding: [] };
     const [cassettes, setCassettes] = useState([]);
     const [cassette, setCassette] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const handleCassetteChange = (updatedCassette) => {
-        console.log('DEBUG: handleCassetteChange', updatedCassette);
         setCassette(updatedCassette);
     }
 
     const handleAddCassette = (event) => {
         event.preventDefault();
-        console.log('DEBUG: handleAddCassette', cassette);
         const newCassettes = [...cassettes, cassette];
         setCassettes(newCassettes);
         setCassette(null);
@@ -27,7 +24,7 @@ const ConstructCassetteListEditor = ({publicationId, onChange}) => {
     }
 
     const showCassetteEditor = () => {
-        return cassettes.length == 0 || isEditMode;
+        return cassettes.length === 0 || isEditMode;
     }
 
     const handleRemoveCassette = (index) => {
@@ -44,7 +41,7 @@ const ConstructCassetteListEditor = ({publicationId, onChange}) => {
         <>
             <ul>
                 {cassettes.map((cassette, index) => <li key={index}>
-                    <ConstructCassetteView cassette={cassette}/> <a href='#' onClick={e => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>
+                    <ConstructCassetteView cassette={cassette}/> <a href='#' onClick={() => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>
                 </li>)}
             </ul>
             {(!showCassetteEditor() &&
@@ -61,6 +58,7 @@ const ConstructCassetteListEditor = ({publicationId, onChange}) => {
 
 ConstructCassetteListEditor.propTypes = {
     publicationId: PropTypes.string,
+    onChange: PropTypes.func,
 }
 
 const cassetteHumanReadable = (cassette) => {

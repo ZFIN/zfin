@@ -87,7 +87,7 @@ table.publicationlookup > tbody > tr > td {
 }
 
 .externalLink {
-    background: transparent url( /images/external.png) no-repeat scroll right center;
+    background: transparent url(../images/external.png) no-repeat scroll right center;
     padding-right: 13px;
     color: blue;
     cursor: pointer;

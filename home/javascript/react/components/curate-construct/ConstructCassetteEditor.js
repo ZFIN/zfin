@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import ConstructRegulatoryCodingUnitList from "./ConstructRegulatoryCodingUnitList";
+import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
 
 const ConstructCassetteEditor = ({publicationId, onChange}) => {
     const [state, setState] = useState({
@@ -9,11 +9,10 @@ const ConstructCassetteEditor = ({publicationId, onChange}) => {
     });
 
     const handleRegulatoryCodingUnitChange = (regulatoryCodingUnits, type) => {
-        console.log('DEBUG: handleRegulatoryCodingUnitChange', regulatoryCodingUnits, type);
 
         //the last item should have its separator set to ''
         const transformedRegulatoryCodingUnits = regulatoryCodingUnits.map((item, index) => {
-            if (index == regulatoryCodingUnits.length - 1) {
+            if (index === regulatoryCodingUnits.length - 1) {
                 return {...item, separator: ''};
             }
             return item;
@@ -46,7 +45,6 @@ ConstructCassetteEditor.propTypes = {
 }
 
 const isValidCassette = (cassette) => {
-    console.log("validating cassette", cassette);
     if (!cassette) {
         return false;
     }
@@ -56,10 +54,10 @@ const isValidCassette = (cassette) => {
     if (!cassette.coding) {
         return false;
     }
-    if (cassette.promoter.length == 0) {
+    if (cassette.promoter.length === 0) {
         return false;
     }
-    if (cassette.coding.length == 0) {
+    if (cassette.coding.length === 0) {
         return false;
     }
     return true;

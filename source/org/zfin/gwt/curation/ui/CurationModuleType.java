@@ -1,7 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.gwt.curation.ui.disease.HumanDiseaseModule;
 import org.zfin.gwt.curation.ui.experiment.ExperimentModule;
 import org.zfin.gwt.curation.ui.feature.FeatureModule;
@@ -10,7 +8,6 @@ import org.zfin.gwt.curation.ui.fish.FishModule;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Each module that is served by the CurationEntryPoint has a corresponding
@@ -90,15 +87,10 @@ public enum CurationModuleType {
     }
 
     /**
-     * Return all curation tabs. If the CONSTRUCT REACT tab is enabled, it will be returned, otherwise skipped.
      * @return list of curation tabs
      */
-    public static List<CurationModuleType> enabledCurationTabs() {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_REACT_CONSTRUCT_TAB)) {
-            return Arrays.asList(values());
-        } else {
-            return Arrays.stream(values()).filter(t -> t != CONSTREACT).collect(Collectors.toList());
-        }
+    public static List<CurationModuleType> allCurationTabs() {
+        return Arrays.asList(values());
     }
 
     public String getDisplayName() {

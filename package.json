@@ -2,12 +2,14 @@
   "name": "zfin-www",
   "version": "1.0.0",
   "description": "ZFIN The Zebrafish Information Network",
-  "repository": "file:///net/filer.zfin.org/vol/central/Vault/git/ZFIN_WWW",
-  "license": "UNLICENSED",
+  "repository": "https://github.com/zfin/zfin",
+  "license": "BSD 3-Clause License",
   "devDependencies": {
-    "babel-eslint": "10.0.1",
-    "eslint": "8.29.0",
-    "eslint-plugin-react": "7.31.11"
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-webpack-plugin": "^4.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0"
   },
   "scripts": {
     "clean": "rm -rf $TARGETROOT/home/dist",
@@ -16,24 +18,25 @@
     "lint": "eslint home/javascript/react/** --max-warnings 0"
   },
   "dependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.5",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/preset-env": "^7.20.2",
-    "@babel/preset-react": "^7.18.6",
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
     "@fortawesome/fontawesome-free": "^6.2.1",
     "@geneontology/wc-ribbon-strips": "0.0.37",
     "@geneontology/wc-ribbon-table": "0.0.57",
     "acorn": "^8.8.1",
-    "babel-loader": "^9.1.0",
+    "babel-loader": "^9.1.3",
     "bootstrap": "^4.6.2",
     "bootstrap-datepicker": "^1.9.0",
+    "clean-webpack-plugin": "^4.0.0",
     "corejs-typeahead": "1.3.1",
-    "css-loader": "^3.6.0",
-    "css-minimizer-webpack-plugin": "^4.2.2",
+    "css-loader": "^6.10.0",
+    "css-minimizer-webpack-plugin": "^6.0.0",
     "exports-loader": "^0.7.0",
     "fast-deep-equal": "3.1.3",
     "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.0",
     "imagesloaded": "^5.0.0",
     "immer": "^9.0.16",
     "jquery-bridget": "3.0.1",
@@ -42,10 +45,9 @@
     "jquery-validation": "^1.19.5",
     "jquery.tipsy": "1.0.3",
     "masonry-layout": "^4.2.2",
-    "mini-css-extract-plugin": "^2.7.2",
-    "sass": "^1.59.3",
+    "mini-css-extract-plugin": "^2.7.7",
     "popper.js": "1.16.1",
-    "postcss": "^8.4.19",
+    "postcss": "^8.4.33",
     "prop-types": "15.8.1",
     "qs": "^6.11.0",
     "react": "^16.14.0",
@@ -54,113 +56,16 @@
     "react-form": "^4.0.1",
     "react-timeago": "7.1.0",
     "regenerator-runtime": "^0.13.11",
-    "sass-loader": "^11.1.1",
+    "sass": "^1.70.0",
+    "sass-loader": "^14.1.0",
     "sorttable": "1.0.2",
+    "style-loader": "^3.3.4",
+    "terser-webpack-plugin": "^5.3.10",
     "url-loader": "^4.1.1",
-    "webpack": "^5.75.0",
+    "webpack": "^5.90.1",
     "webpack-assets-manifest": "^5.1.0",
-    "webpack-cli": "^5.0.1"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-syntax-dynamic-import"
-    ]
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "env": {
-      "browser": true,
-      "jquery": true,
-      "node": true,
-      "es6": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 9,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "jsx": true
-      }
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended"
-    ],
-    "plugins": [
-      "react"
-    ],
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    },
-    "rules": {
-      "curly": "error",
-      "eqeqeq": [
-        "error",
-        "always",
-        {
-          "null": "ignore"
-        }
-      ],
-      "indent": [
-        "warn",
-        4,
-        {
-          "ignoredNodes": [
-            "TemplateLiteral"
-          ]
-        }
-      ],
-      "jsx-quotes": [
-        "error",
-        "prefer-single"
-      ],
-      "no-alert": "error",
-      "no-console": [
-        "warn",
-        {
-          "allow": [
-            "warn",
-            "error"
-          ]
-        }
-      ],
-      "no-var": "error",
-      "react/display-name": "off",
-      "react/jsx-closing-bracket-location": [
-        "warn",
-        "line-aligned"
-      ],
-      "react/jsx-first-prop-new-line": "warn",
-      "react/jsx-indent": [
-        "warn",
-        4
-      ],
-      "react/jsx-indent-props": [
-        "warn",
-        4
-      ],
-      "react/jsx-max-props-per-line": [
-        "warn",
-        {
-          "when": "multiline"
-        }
-      ],
-      "react/self-closing-comp": "error",
-      "react/prop-types": [
-        "error",
-        {
-          "skipUndeclared": true
-        }
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ]
-    }
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "webpack-merge": "^5.10.0"
   }
 }

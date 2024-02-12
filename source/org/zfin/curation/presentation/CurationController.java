@@ -6,7 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.curation.ui.CurationModuleType;
 import org.zfin.gwt.curation.ui.CurationService;
@@ -24,6 +25,9 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.zfin.gwt.curation.ui.CurationModuleType.CONSTREACT;
 
 /**
  * This Controller is used to facilitate the curation tabs.
@@ -111,12 +115,25 @@ public class CurationController implements CurationService {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         model.addAttribute("publication", publication);
-        model.addAttribute("curationTabs", CurationModuleType.enabledCurationTabs());
+        model.addAttribute("curationTabs", enabledCurationTabs(CurationModuleType.allCurationTabs()));
         model.addAttribute("currentTab", currentTab);
         model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.CURATING));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
         return "curation/curation";
+    }
+
+    /**
+     * Filter out the CONSTREACT (new react based construct tab) tab if the feature flag is not enabled.
+     * @param allCurationTabs
+     * @return
+     */
+    private List<CurationModuleType> enabledCurationTabs(List<CurationModuleType> allCurationTabs) {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_REACT_CONSTRUCT_TAB)) {
+            return allCurationTabs;
+        } else {
+            return allCurationTabs.stream().filter(t -> t != CONSTREACT).collect(Collectors.toList());
+        }
     }
 
     @ResponseBody
