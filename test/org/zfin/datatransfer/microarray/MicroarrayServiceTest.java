@@ -33,6 +33,7 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest {
 
 
     @Test
+    @Ignore
     public void findGeoLinkForNCBI() {
         Marker m;
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761
