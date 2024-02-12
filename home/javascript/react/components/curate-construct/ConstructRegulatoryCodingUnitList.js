@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import ConstructMarkerAutocomplete from "./ConstructMarkerAutocomplete";
-import PropTypes from "prop-types";
+import React, {useState} from 'react';
+import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
+import PropTypes from 'prop-types';
 
 /**
  * This component is used to display a list of promoters and a text field to add new promoters.
@@ -47,16 +47,19 @@ const ConstructRegulatoryCodingUnitList = ({publicationId, onChange}) => {
         {rcUnitItems.map((part, index) => (
             <React.Fragment key={index}>
                 <span>{part.value}</span>
-                <a href='#' onClick={e => handleItemRemoved(part)}>
-                    <i className="fa fa-trash" aria-hidden="true"></i>
+                <a href='#' onClick={() => handleItemRemoved(part)}>
+                    <i className='fa fa-trash' aria-hidden='true'/>
                     {/*&#10060;*/}
                 </a>
-                <select className='promoter-separator' value={part.separator}
-                        onChange={e => handleSeparatorChange(index, e.target.value)}>
+                <select
+                    className='promoter-separator'
+                    value={part.separator}
+                    onChange={e => handleSeparatorChange(index, e.target.value)}
+                >
                     <option>-</option>
                     <option>,</option>
                     <option>.</option>
-                    <option></option>
+                    <option/>
                 </select>
             </React.Fragment>
         ))}
