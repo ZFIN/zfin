@@ -9,6 +9,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.zfin.datatransfer.ServiceConnectionException;
 import org.zfin.datatransfer.microarray.GeoMicorarrayEntriesBean;
+import org.zfin.publication.Publication;
 import org.zfin.sequence.EFetchDefline;
 import org.zfin.sequence.Sequence;
 
@@ -279,6 +280,12 @@ public class NCBIEfetch {
         } else {
             return accession;
         }
+    }
+
+    public static List<NameRecord> retrieveAuthorInfoForSinglePublication(Publication publication) {
+        String accession = publication.getAccessionNumber().toString();
+        String pubId = publication.getZdbID();
+        return retrieveAuthorInfo(List.of(accession), Map.of(accession, pubId));
     }
 
     public static List<NameRecord> retrieveAuthorInfo(List<String> accessionBatch, Map<String, String> accessionMap) {

@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PersonDTO;
@@ -35,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @Controller
 @RequestMapping("/publication")
@@ -214,7 +216,7 @@ public class PublicationEditController {
             bean.setAccessionNumber(publication.getAccessionNumber().toString());
         }
         model.addAttribute("publicationBean", bean);
-        List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
+        List<PubmedPublicationAuthor> authors = getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
 
         if (authors != null && !authors.isEmpty()) {
             model.addAttribute("authorStrings", publicationService.getAuthorStringList(authors));
@@ -231,7 +233,7 @@ public class PublicationEditController {
     @RequestMapping(value = "/{zdbID}/author-strings")
     @ResponseBody
     public List<String> authorStrings(@PathVariable String zdbID, HttpServletResponse response) {
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        PublicationRepository publicationRepository = getPublicationRepository();
 
 
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -249,7 +251,7 @@ public class PublicationEditController {
             return null;
         }
 
-        List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
+        List<PubmedPublicationAuthor> authors = getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
         if (authors != null && !authors.isEmpty()) {
             return publicationService.getAuthorStringList(authors);
         } else {
@@ -261,7 +263,7 @@ public class PublicationEditController {
     @ResponseBody
     public List<PersonDTO> registeredAuthors(@PathVariable String zdbID, HttpServletResponse response) {
 
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        PublicationRepository publicationRepository = getPublicationRepository();
 
 
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -289,6 +291,49 @@ public class PublicationEditController {
         return authorList;
     }
 
+    /**
+     * Call this endpoint to force a refetch of a publication's listed authors from NCBI
+     * @param zdbID the publication zdbID
+     * @return a list of the added authors (returned to browser in json)
+     */
+    @RequestMapping(value = "/{zdbID}/refresh-listed-authors", method = RequestMethod.POST)
+    @ResponseBody
+    public List<PubmedPublicationAuthor> refreshListedAuthorsFromNCBI(@PathVariable String zdbID) {
+        HibernateUtil.createTransaction();
+        Publication publication = getPublicationRepository().getPublication(zdbID);
+        List<NCBIEfetch.NameRecord> ncbiAuthors = NCBIEfetch.retrieveAuthorInfoForSinglePublication(publication);
+        List<PubmedPublicationAuthor> zfinAuthors = getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
+        List<NCBIEfetch.NameRecord> newNcbiAuthors = ncbiAuthors.stream()
+                .filter(nameRecord -> zfinAuthors.stream()
+                        .noneMatch(author -> author.getLastName().equals(nameRecord.lastName()) &&
+                                author.getFirstName().equals(nameRecord.firstName()) &&
+                                author.getMiddleName().equals(nameRecord.middleName()) &&
+                                author.getPubmedId().equals(nameRecord.accession())))
+                .toList();
+        List<PubmedPublicationAuthor> newZfinAuthors = newNcbiAuthors.stream()
+                .map(nameRecord -> {
+                    PubmedPublicationAuthor author = new PubmedPublicationAuthor();
+                    author.setFirstName(nameRecord.firstName());
+                    author.setMiddleName(nameRecord.middleName());
+                    author.setLastName(nameRecord.lastName());
+                    author.setPubmedId(nameRecord.accession());
+                    author.setPublication(publication);
+                    return author;
+                })
+                .toList();
+        newZfinAuthors.forEach(nameRecord -> {
+            HibernateUtil.currentSession().save(nameRecord);
+        });
+        HibernateUtil.flushAndCommitCurrentSession();
+        return newZfinAuthors.stream().map(author -> {
+            PubmedPublicationAuthor newAuthor = new PubmedPublicationAuthor();
+            newAuthor.setFirstName(author.getFirstName());
+            newAuthor.setMiddleName(author.getMiddleName());
+            newAuthor.setLastName(author.getLastName());
+            return newAuthor;
+        }).toList();
+    }
+
     @RequestMapping(value = "/link-author-suggestions")
     @ResponseBody
     public List<PersonDTO> linkAuthorSuggestions(@RequestParam String authorString) {
@@ -301,7 +346,7 @@ public class PublicationEditController {
 
     @RequestMapping(value = "/{zdbID}/addAuthor/{personZdbID}")
     public void addAuthor(@PathVariable String zdbID, @PathVariable String personZdbID, HttpServletResponse response) {
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        PublicationRepository publicationRepository = getPublicationRepository();
         Session session = HibernateUtil.currentSession();
 
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -349,7 +394,7 @@ public class PublicationEditController {
 
     @RequestMapping(value = "/{zdbID}/removeAuthor/{personZdbID}")
     public void removeAuthor(@PathVariable String zdbID, @PathVariable String personZdbID, HttpServletResponse response) {
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        PublicationRepository publicationRepository = getPublicationRepository();
         Session session = HibernateUtil.currentSession();
 
         Publication publication = publicationRepository.getPublication(zdbID);

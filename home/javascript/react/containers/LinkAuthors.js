@@ -24,6 +24,8 @@ const LinkAuthors = ({ pubId }) => {
 
     const [errorAddingAuthor, setErrorAddingAuthor] = useState(false);
 
+    const [refreshingListedAuthors, setRefreshingListedAuthors] = useState(false);
+
     if (authorStrings.pending) {
         return <LoadingSpinner/>;
     }
@@ -76,6 +78,15 @@ const LinkAuthors = ({ pubId }) => {
         registeredAuthors.refetch();
     }
 
+    const refreshListedAuthors = async (event) => {
+        event.preventDefault();
+        setRefreshingListedAuthors(true);
+        const url = `/action/publication/${pubId}/refresh-listed-authors`;
+        await fetch(url, {method: 'POST'});
+        await authorStrings.refetch();
+        setRefreshingListedAuthors(false);
+    }
+
     return (
         <>
             {registeredAuthors.rejected && (
@@ -103,6 +114,8 @@ const LinkAuthors = ({ pubId }) => {
                             )
                         ))}
                     </ul>
+                    {refreshingListedAuthors ? (<LoadingSpinner/>) : (
+                        <button onClick={refreshListedAuthors} className='btn btn-primary mt-3'>Refresh Listed Authors</button>)}
                 </div>
                 <div className='col-4 suggested-authors-container'>
                     <h4>
