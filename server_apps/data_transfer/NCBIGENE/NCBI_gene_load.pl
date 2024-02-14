@@ -3724,11 +3724,22 @@ sub emailLoadReports {
 sub getArtifactComparisonURLs {
     #eg. JOB_URL=http://SITE.zfin.org/jobs/job/test-job2/
     my $jobURL = $ENV{'JOB_URL'};
-    my $buildID = $ENV{'BUILD_ID'};
+    my $buildDisplay = $ENV{'BUILD_DISPLAY_NAME'};
 
-    if (!$jobURL || !$buildID) {
+    if (!$jobURL || !$buildDisplay) {
         return "";
     }
+
+    #buildDisplay is in the format "#1234"
+    $buildDisplay =~ s/#//;
+
+    #is buildDisplay numeric (after removing '#')?
+    if ($buildDisplay !~ /^\d+$/) {
+        return "";
+    }
+
+    #cast buildDisplay to int
+    my $buildID = int($buildDisplay);
 
     #replace http with https if not already https
     $jobURL = "https" . substr($jobURL,4) if (substr($jobURL,0,5) eq "http:");
