@@ -121,6 +121,7 @@
                 <authz:authorize access="!hasAnyRole('root')">
                     <form:hidden path="prefix"/>
                 </authz:authorize>
+                <form:hidden path="emailPrivacyPreference"/>
 
                 <form:label path="bio">Products and Services</form:label>
                 <br>
