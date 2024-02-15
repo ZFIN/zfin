@@ -612,6 +612,7 @@ create view ameliorated_phenotype_fish_with_chemicals as
            fe.chebi_names
     from ameliorated_phenotype_fish apf
     left join experiment_condition_with_zeco_and_chebi fe on apf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+    where fe.zeco_ids is not null or fe.chebi_ids is not null
     order by fish_zdb_id, fig_source_zdb_id;
 
 \copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals.txt' with delimiter as '	' null as '';
@@ -752,6 +753,7 @@ create view gene_expression_phenotype_with_chemicals as
 select gep.*, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
 from gene_expression_phenotype gep
 left join experiment_condition_with_zeco_and_chebi fe on gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+where fe.zeco_ids is not null or fe.chebi_ids is not null
 order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
 
