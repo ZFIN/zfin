@@ -1,5 +1,36 @@
 <h2>Temporary Developer Tool to Rename Construct</h2>
 
+<style>
+    /* Basic styling for a table */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    /* Add some padding to the cells */
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    /* Add a background color to the table header */
+    th {
+        background-color: #d0d0f0;
+    }
+
+    /* Give the rows some color */
+    tr:nth-child(even) {
+        background-color: #e5f0ff;
+    }
+
+    /* Style the input */
+    input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+</style>
 <script>
     function submitForm(constructID, pubZdbID, constructType, constructPrefix, constructStoredName) {
         console.log("submitting form");
@@ -34,54 +65,90 @@
     }
 
     const changes = [
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-161115-2",
+        //     "pubZdbID": "ZDB-PUB-190507-21",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructStoredName": "en.epi#-#Hsa.HBB#:EGFP"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-161115-3",
+        //     "pubZdbID": "ZDB-PUB-190507-21",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructStoredName": "rr.2pand1#:EGFP"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-161115-4",
+        //     "pubZdbID": "ZDB-PUB-190507-21",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "2",
+        //     "constructStoredName": "rr.2pand1#:EGFP"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-220422-1",
+        //     "pubZdbID": "ZDB-PUB-220103-2",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructStoredName": "pth2#:EGFP#Cassette#,#cryaa#:EGFP"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-220422-2",
+        //     "pubZdbID": "ZDB-PUB-220103-2",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-190812-12",
+        //     "pubZdbID": "ZDB-PUB-190209-17",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "BAC",
+        //     "constructStoredName": "cdh1#:cdh1#-#TagRFP#Cassette#,#cryaa#:Cerulean"
+        // },
         {
-            "constructID": "ZDB-TGCONSTRCT-161115-2",
-            "pubZdbID": "ZDB-PUB-190507-21",
+            "constructID": "ZDB-TGCONSTRCT-220928-1",
+            "pubZdbID": "ZDB-PUB-210114-8",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructStoredName": "en.epi#-#Hsa.HBB#:EGFP"
+            "constructOldName": "Tg(mylpfa:hsa.tpm3,myl7-:egfp)",
+            "constructStoredName": "mylpfa#:hsa.tpm3#Cassette#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9012"
         },
         {
-            "constructID": "ZDB-TGCONSTRCT-161115-3",
-            "pubZdbID": "ZDB-PUB-190507-21",
+            "constructID": "ZDB-TGCONSTRCT-230502-2",
+            "pubZdbID": "ZDB-PUB-210630-8",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructStoredName": "rr.2pand1#:EGFP"
+            "constructOldName": "Tg(rho:GAP-YFP-2A-NTR2.0)",
+            "constructStoredName": "rho#:GAP#-#TagYFP#-#2A#-#NTR2.0",
+            "issueNumber": "ZFIN-9034"
         },
         {
-            "constructID": "ZDB-TGCONSTRCT-161115-4",
-            "pubZdbID": "ZDB-PUB-190507-21",
-            "constructType": "Tg",
-            "constructPrefix": "2",
-            "constructStoredName": "rr.2pand1#:EGFP"
-        },
-        {
-            "constructID": "ZDB-TGCONSTRCT-220422-1",
-            "pubZdbID": "ZDB-PUB-220103-2",
+            "constructID": "ZDB-TGCONSTRCT-211019-1",
+            "pubZdbID": "ZDB-PUB-210105-1",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructStoredName": "pth2#:EGFP#Cassette#,#cryaa#:EGFP"
-        },
-        {
-            "constructID": "ZDB-TGCONSTRCT-220422-2",
-            "pubZdbID": "ZDB-PUB-220103-2",
-            "constructType": "Tg",
-            "constructPrefix": "",
-            "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry"
-        },
-        {
-            "constructID": "ZDB-TGCONSTRCT-190812-12",
-            "pubZdbID": "ZDB-PUB-190209-17",
-            "constructType": "Tg",
-            "constructPrefix": "BAC",
-            "constructStoredName": "cdh1#:cdh1#-#TagRFP#Cassette#,#cryaa#:Cerulean"
-        },
+            "constructOldName": "Tg(uts2d:GFP-CAAX)",
+            "constructStoredName": "uts2d#:GFP#-#CAAX#Cassette#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9036"
+        }
     ];
 
+    document.writeln('<table><thead><tr><th>Construct ID</th><th>Pub ID</th><th>Old Name</th><th>New Name (partial)</th><th>Issue #</th><th>Rename</th></tr></thead><tbody>');
     changes.forEach(change => {
-        document.writeln('<button id="' + change.constructID + '">Rename ' + change.constructID + '</button>  <a target="_blank" href="/' + change.constructID + '">View Page</a><br/><br/>');
+        document.writeln('<tr>' +
+            '<td><a target="_blank" href="/' + change.constructID + '">' + change.constructID + '</a></td>' +
+            '<td><a target="_blank" href="/' + change.pubZdbID + '">' + change.pubZdbID + '</a></td>' +
+            '<td>' + change.constructOldName + '</td>' +
+            '<td>' + change.constructStoredName.replaceAll('#Cassette#', '').replaceAll('#', '') + '</td>' +
+            '<td><a target="_blank" href="https://zfin.atlassian.net/browse/' + change.issueNumber + '">' + change.issueNumber + '</a></td>' +
+            '<td><button id="' + change.constructID + '">Rename</button></td>' +
+            '</tr>');
         document.getElementById(change.constructID).addEventListener("click",
             () => submitForm(change.constructID, change.pubZdbID, change.constructType, change.constructPrefix, change.constructStoredName));
     });
+    document.writeln('</tbody></table>');
 
 </script>
