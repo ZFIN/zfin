@@ -284,11 +284,15 @@ public class OntologyTermDetailController {
             menu = new ZFANavigationMenu();
         }
         if (Ontology.isGoOntology(term.getOntology())) {
-            menu = new GONavigationMenu();
+            if (term.getOntology().equals(Ontology.GO_CC)) {
+                menu = new GOCCNavigationMenu();
+            } else {
+                menu = new GONavigationMenu();
+            }
         }
         if (term.getOntology().equals(Ontology.CHEBI)) {
             String meshID = MatchingTermService.getMeshID(term.getOboID());
-            if(meshID != null) {
+            if (meshID != null) {
                 model.addAttribute("meshID", meshID.replace("MESH:", ""));
             }
         }
