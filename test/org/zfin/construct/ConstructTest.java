@@ -261,26 +261,19 @@ public class ConstructTest  extends AbstractDatabaseTest {
 
     @Test
     public void testConstructRename() throws InvalidConstructNameException {
-//        Construct updates for ZDB-PUB-190507-21
-//        Tg(and1-Hsa.HBB:EGFP) ZDB-TGCONSTRCT-161115-2
-//        Should be
-//        Tg(en.epi-Hsa.HBB:EGFP)
-//        Relationships
-//        promoter of en.epi
-//        Coding EGFP
-//         constructStoredName("en.epi#-#Hsa.HBB#:EGFP");
         String pubZdbID = "ZDB-PUB-190507-21";
         String constructZdbID = "ZDB-TGCONSTRCT-161115-2";
         ConstructName newName = new ConstructName("Tg", "");
         newName.addCassette(Promoter.create("en.epi", "-", "Hsa.HBB"), Coding.create("EGFP"));
+        newName.addCassette(Promoter.create(",", "fsta"), Coding.create("mCherry"));
         Marker newMarker = ConstructComponentService.updateConstructName(constructZdbID, newName, pubZdbID);
-        assertEquals("Tg(en.epi-Hsa.HBB:EGFP)", newMarker.getAbbreviation());
-        assertEquals("Tg(en.epi-Hsa.HBB:EGFP)", newMarker.getName());
+        assertEquals("Tg(en.epi-Hsa.HBB:EGFP,fsta:mCherry)", newMarker.getAbbreviation());
+        assertEquals("Tg(en.epi-Hsa.HBB:EGFP,fsta:mCherry)", newMarker.getName());
 
         List<ConstructComponent> components = getMarkerRepository().getConstructComponent(constructZdbID);
 
         int partsIndex = 0;
-        assertEquals(8, components.size());
+        assertEquals(12, components.size());
         assertEquals("Tg", components.get(partsIndex++).getComponentValue());
         assertEquals("(", components.get(partsIndex++).getComponentValue());
         assertEquals("en.epi", components.get(partsIndex++).getComponentValue());
@@ -288,6 +281,10 @@ public class ConstructTest  extends AbstractDatabaseTest {
         assertEquals("Hsa.HBB", components.get(partsIndex++).getComponentValue());
         assertEquals(":", components.get(partsIndex++).getComponentValue());
         assertEquals("EGFP", components.get(partsIndex++).getComponentValue());
+        assertEquals(",", components.get(partsIndex++).getComponentValue());
+        assertEquals("fsta", components.get(partsIndex++).getComponentValue());
+        assertEquals(":", components.get(partsIndex++).getComponentValue());
+        assertEquals("mCherry", components.get(partsIndex++).getComponentValue());
         assertEquals(")", components.get(partsIndex++).getComponentValue());
     }
 
