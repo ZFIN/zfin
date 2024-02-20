@@ -70,7 +70,7 @@ task uniprotReleaseDiffTask(type: JavaExec) {
 
 task uniprotReleaseCheckTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.UniProtReleaseCheckTask'
+    main = 'org.zfin.uniprot.task.UniProtReleaseCheckTask'
 //   use the conf/gradle-log4j2.xml file and customize if needed
 //    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./home/WEB-INF/log4j2-debug.xml")
 }
