@@ -37,7 +37,7 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
         //create new records
         for(String uniprotKey : uniProtRecords.getAccessions()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
-            List<String> uniprotRecordZdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(ZFIN);
+            List<String> uniprotRecordZdbIDs = context.getGeneZdbIDsByUniprot(uniprotKey);
             for (String zdbID : uniprotRecordZdbIDs) {
                 MarkerToProteinDTO newRecord = new MarkerToProteinDTO(zdbID, uniprotKey);
 
