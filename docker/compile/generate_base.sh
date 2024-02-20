@@ -52,6 +52,12 @@ fi
 #--------Generate Random Password for Postgresql Container--------------
 PG_PASS=/opt/zfin/source_roots/zfin.org/docker/pg_pass
 
+# Check if $PG_PASS is an empty directory and remove it if so. 
+# This can happen if the postgres container is started before the file is generated.
+if [ -d "$PG_PASS" ] && [ ! "$(ls -A "$PG_PASS")" ]; then
+  rmdir "$PG_PASS"
+fi
+
 if [ ! -f $PG_PASS ]
 then
      cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > $PG_PASS
