@@ -74,13 +74,9 @@ try {
 };
 
 try {
-  system("sed 's/^[ \t]*//;s/[ \t]*$//' < crispr_fasta.fa > crispr_fasta_new.fa");
-  system("rm crispr_fasta.fa");
-  system("mv crispr_fasta_new.fa crispr_fasta.fa");
+  system("sed -i 's/^[ \t]*//;s/[ \t]*$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa");
 
-  system("sed 's/^[ \t]*//;s/[ \t]*$//' < talen_fasta.fa > talen_fasta_new.fa");
-  system("rm talen_fasta.fa");
-  system("mv talen_fasta_new.fa talen_fasta.fa");
+  system("sed -i 's/^[ \t]*//;s/[ \t]*$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa");
 } catch {
   warn "Failed to remove trailing white spaces - $_";
   exit -1;
