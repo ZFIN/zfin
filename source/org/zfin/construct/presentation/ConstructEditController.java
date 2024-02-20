@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
+
 @Controller
 @RequestMapping("/construct")
 public class ConstructEditController {
@@ -56,11 +58,7 @@ public class ConstructEditController {
 
     private Person currentUser = ProfileService.getCurrentSecurityUser();
 
-
-
-
     @ModelAttribute("formBean")
-
     private ConstructUpdateBean getDefaultSearchForm(@RequestParam(value = "constructPublicationZdbID", required = false) String pubZdbID) {
         ConstructUpdateBean formBean = new ConstructUpdateBean();
         if (StringUtils.isNotEmpty(pubZdbID))
@@ -127,8 +125,6 @@ public class ConstructEditController {
     void updateConstructComments(
             @PathVariable String constructID,
             @PathVariable String constructUpdateComments
-
-
     ) {
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
@@ -139,8 +135,6 @@ public class ConstructEditController {
             c.setPublicComments(constructUpdateComments.replace("slash","/"));
             ir.insertUpdatesTable(m, "comments", "updated public notes");
             HibernateUtil.flushAndCommitCurrentSession();
-
-
         }
         else{
             m.setPublicComments("");
@@ -149,11 +143,7 @@ public class ConstructEditController {
             c.setPublicComments("");
             ir.insertUpdatesTable(m, "comments", "updated public notes");
             HibernateUtil.flushAndCommitCurrentSession();
-
-
         }
-
-
     }
 
     @RequestMapping(value = "/add-notes/{constructID}/notes/{notes}/publication/{pubID}"
@@ -217,15 +207,6 @@ public class ConstructEditController {
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-//    @RequestMapping(value = "/rename/{constructID}", method = RequestMethod.GET)
-//    public
-//    String renameConstructForm(@PathVariable String constructID, Model model) {
-//        Marker construct = mr.getMarkerByID(constructID);
-//        model.addAttribute("constructID", constructID);
-//        model.addAttribute("constructName", construct.getName());
-//        return "construct/construct-rename";
-//    }
-
     @RequestMapping(value = "/rename", method = RequestMethod.GET)
     public String renameConstructForm() {
         return "construct/construct-rename";
@@ -261,6 +242,14 @@ public class ConstructEditController {
                 """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
     }
 
+    //Send the json representation of a construct name to the client
+    @RequestMapping(value = "/json/{constructID}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ConstructName getConstructJson(@PathVariable String constructID) {
+        ConstructName oldConstructName = getExistingConstructName(constructID);
+        return oldConstructName;
+    }
 }
 
 

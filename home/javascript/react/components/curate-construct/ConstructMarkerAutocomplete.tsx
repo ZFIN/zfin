@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
+import {ConstructComponent} from "./ConstructTypes";
 
 /**
  * This is a React component that is used to allow the user to start typing
@@ -36,33 +37,36 @@ import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
  * @constructor
  */
 
-type Suggestion = {
-    id: null | string;
-    name: null | string;
-    label: string;
-    value: string;
-    url: null | string;
-    category: null | string;
-};
 
 interface ConstructMarkerAutocompleteProps {
     publicationId: string;
-    resetFlag: boolean;
-    onSelect: (suggestion: Suggestion) => void;
-    onChange: (value: string) => void;
+    resetFlag?: number;
+    onSelect: (suggestion: ConstructComponent) => void;
+    onChange?: (value: string) => void;
+    onChangeWithObject?: (suggestion: ConstructComponent) => void;
 }
 
+//TODO: This is a hack to get the domain for developing locally.  It should be removed when this is deployed to production.
+let calculatedDomain = window.location.origin;
+if (calculatedDomain.indexOf('localhost') > -1) {
+    calculatedDomain = 'https://cell-mac.zfin.org';
+}
 
-function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange}: ConstructMarkerAutocompleteProps) {
+function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
     const [input, setInput] = useState<string>('');
-    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [suggestions, setSuggestions] = useState<ConstructComponent[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-    const [reset, setReset] = useState<boolean>(resetFlag);
     const dropdownRef = useRef<HTMLUListElement>(null);
+
+    const resetState = () => {
+        setInput('');
+        setSuggestions([]);
+        setSelectedIndex(-1);
+    }
 
     useEffect(() => {
         if (input.length > 1) {
-            fetch(`/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
+            fetch(`${calculatedDomain}/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
                 .then(response => response.json())
                 .then(data => setSuggestions(data))
                 .catch(error => console.error('Error fetching data:', error));
@@ -72,11 +76,7 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
     }, [input, publicationId]);
 
     useEffect(() => {
-        if (resetFlag !== reset) {
-            setReset(resetFlag);
-            setInput('');
-            setSuggestions([]);
-        }
+        resetState();
     }, [resetFlag]);
 
     // Handle keyboard navigation
@@ -100,7 +100,7 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
     };
 
     // Handle item selection
-    const handleSelection = (suggestion: Suggestion) => {
+    const handleSelection = (suggestion: ConstructComponent) => {
         handleChange(suggestion.value);
         setSuggestions([]);
         setInput('');
@@ -113,19 +113,34 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
         if (onChange) {
             onChange(value);
         }
+        if (onChangeWithObject) {
+            const suggestion: ConstructComponent = {
+                id: null,
+                name: null,
+                label: value,
+                value: value,
+                url: null,
+                category: null,
+                separator: '',
+                type: ''
+            };
+            onChangeWithObject(suggestion);
+        }
     }
 
     const handleFreeTextAdded = () => {
         if (input == null || input.trim().length === 0) {
             return;
         }
-        const suggestion: Suggestion = {
+        const suggestion: ConstructComponent = {
             id: null,
             name: null,
             label: input,
             value: input,
             url: null,
-            category: null
+            category: null,
+            separator: '',
+            type: ''
         };
         handleSelection(suggestion);
     }
@@ -194,3 +209,4 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
 
 
 export default ConstructMarkerAutocomplete;
+export type { ConstructComponent };
