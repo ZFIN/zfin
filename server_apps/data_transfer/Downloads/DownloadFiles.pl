@@ -74,9 +74,8 @@ try {
 };
 
 try {
-  system("sed -i 's/^[ \t]*//;s/[ \t]*$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa");
-
-  system("sed -i 's/^[ \t]*//;s/[ \t]*$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa");
+  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa");
+  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa");
 } catch {
   warn "Failed to remove trailing white spaces - $_";
   exit -1;
