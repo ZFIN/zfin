@@ -106,7 +106,7 @@
     </condition>
 
     <condition property="isdocker">
-        <equals arg1="${INSTANCE}" arg2="docker"/>
+        <equals arg1="${USER}" arg2="docker"/>
     </condition>
 
     <condition property="is-happy-zfin-org">
