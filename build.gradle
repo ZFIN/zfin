@@ -57,7 +57,13 @@ task loadDatabase() {
         File unloads = file(dbunloadspath)
         String unloadPath
         if (unloads.exists()) {
-            File latest = unloads.listFiles().last()
+            def files = unloads.listFiles()
+            Arrays.sort(files, new Comparator<File>() {
+                int compare(File f1, File f2) {
+                    return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+                }
+            })
+            File latest = files[0]
             File latestBakDump = latest.listFiles().last()
             unloadPath = latestBakDump.getPath()
         }
