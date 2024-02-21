@@ -63,7 +63,7 @@ original flat file are moved to /research/zblastfiles/files/daily for weekly BLA
   <buildWrappers>
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.20">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
-        <timeoutMinutes>20</timeoutMinutes>
+        <timeoutMinutes>60</timeoutMinutes>
       </strategy>
       <operationList>
         <hudson.plugins.build__timeout.operations.AbortOperation/>
