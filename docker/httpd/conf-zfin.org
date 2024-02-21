@@ -76,8 +76,8 @@
     <Location /jobs>
         SSLRequireSSL
         Require env ZfinRestrictedHosts
-        ProxyPass         http://localhost:9499/jobs
-        ProxyPassReverse  http://localhost:9499/jobs
+        ProxyPass         http://jenkins:9499/jobs
+        ProxyPassReverse  http://jenkins:9499/jobs
         ProxyPassReverse  http://zfin.org/jobs
         ProxyPassReverse  http://clone.zfin.org/jobs
         ProxyPassReverse  http://watson.zfin.org/jobs
@@ -150,8 +150,8 @@
           Require env ZfinHosts
           Require valid-user
         </RequireAll>
-        ProxyPass         http://localhost:9499/jobs
-        ProxyPassReverse  http://localhost:9499/jobs
+        ProxyPass         http://jenkins:9499/jobs
+        ProxyPassReverse  http://jenkins:9499/jobs
         ProxyPassReverse  http://zfin.org/jobs
         ProxyPassReverse  http://clone.zfin.org/jobs
         ProxyPassReverse  http://watson.zfin.org/jobs
