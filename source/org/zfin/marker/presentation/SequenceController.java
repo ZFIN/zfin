@@ -62,6 +62,22 @@ public class SequenceController {
         return response;
     }
 
+    @JsonView(View.SequenceAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/dblinks")
+    public JsonResultResponse<MarkerDBLink> getDbLInkView(@PathVariable("zdbID") String zdbID,
+                                                            @RequestParam(value = "summary", required = false, defaultValue = "false") boolean summary,
+                                                            @RequestParam(value = "filter.type", required = false) String type,
+                                                            @RequestParam(value = "filter.accession", required = false) String accessionNumber,
+                                                            @Version Pagination pagination) {
+        HibernateUtil.createTransaction();
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
+        JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary);
+        response.setHttpServletRequest(request);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
 
 
     @JsonView(View.OrthologyAPI.class)

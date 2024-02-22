@@ -153,7 +153,7 @@ public class SequenceService {
                     .getDbLinks()
                     .stream()
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                    .collect(Collectors.toList())
+                    .toList()
                 );
             }
         } else {
@@ -162,7 +162,7 @@ public class SequenceService {
                 .stream()
                 .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
                 .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                .collect(Collectors.toList());
+                .toList();
             allDBLinks.addAll(dbLinks);
             // populate FishMiRNA sequence info
             dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())

@@ -9,6 +9,7 @@
 <c:set var="SEGMENTRELATIONSHIPS" value="Segment Relationships"/>
 <c:set var="PROTEINS" value="Protein Products"/>
 <c:set var="SUPPORTINGSEQUENCES" value="Supporting Sequences"/>
+<c:set var="DB_LINKS" value="DB_LINK Records"/>
 <c:set var="CITATIONS" value="Citations"/>
 
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
@@ -59,6 +60,16 @@
         </z:section>
 
         <z:section title="${SUPPORTINGSEQUENCES}">
+            <div
+                class="__react-root"
+                id="MarkerSequencesTable"
+                data-marker-id="${formBean.marker.zdbID}"
+                data-show-summary="true"
+            >
+            </div>
+        </z:section>
+
+        <z:section title="${DB_LINKS}">
             <div
                 class="__react-root"
                 id="MarkerSequencesTable"
