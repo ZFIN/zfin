@@ -27,12 +27,12 @@
                 <td><zfin:link entity="${report.phenotypeStatement.phenotypeExperiment.figure}"/></td>
                 <td><zfin:link entity="${report.phenotypeStatement}"/></td>
                 <td>
-                    <c:forEach var="term" items="${report.obsoletedTermList}" >
+                    <c:forEach var="term" items="${report.obsoletedTermList}">
                         <zfin:link entity="${term}"/>
                     </c:forEach>
                 </td>
                 <td>
-                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}" >
+                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}">
                         <zfin:link entity="${replacedByTerm.replacementTerm}"/><br/>
                     </c:forEach>
                 </td>
@@ -53,20 +53,18 @@
         </tr>
         <c:forEach var="report" items="${expressionObsoleteTermReports}" varStatus="loop">
             <zfin:alternating-tr loopName="loop" groupBeanCollection="${expressionObsoleteTermReports}">
-                <td><zfin:link entity="${report.expressionResult.expressionExperiment.publication}"/></td>
-                <td><zfin:link entity="${report.expressionResult.expressionExperiment}"/></td>
+                <td><zfin:link entity="${report.expressionResult.expressionFigureStage.expressionExperiment.publication}"/></td>
+                <td><zfin:link entity="${report.expressionResult}"/></td>
                 <td>
-                    <c:forEach var="figure" items="${report.expressionResult.figures}" >
-                        <zfin:link entity="${figure}"/>
-                    </c:forEach>
+                    <zfin:link entity="${report.expressionResult.expressionFigureStage.figure}"/>
                 </td>
                 <td>
-                    <c:forEach var="term" items="${report.obsoletedTermList}" >
+                    <c:forEach var="term" items="${report.obsoletedTermList}">
                         <zfin:link entity="${term}"/>
                     </c:forEach>
                 </td>
                 <td>
-                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}" >
+                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}">
                         <zfin:link entity="${replacedByTerm.replacementTerm}"/><br/>
                     </c:forEach>
                 </td>
@@ -88,12 +86,12 @@
                 <td><zfin:link entity="${report.goEvidence.source}"/></td>
                 <td><zfin:link entity="${report.goEvidence.marker}"/></td>
                 <td>
-                    <c:forEach var="term" items="${report.obsoletedTermList}" >
+                    <c:forEach var="term" items="${report.obsoletedTermList}">
                         <zfin:link entity="${term}"/>
                     </c:forEach>
                 </td>
                 <td>
-                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}" >
+                    <c:forEach var="replacedByTerm" items="${report.replacementTermList}">
                         <zfin:link entity="${replacedByTerm.replacementTerm}"/>
                     </c:forEach>
                 </td>
@@ -102,17 +100,16 @@
     </table>
 
     <script language="javascript">
-        function setCookie(name,value,prefix) {
-          var thisCookie = prefix+name;
-          document.cookie = thisCookie+"="+value;
-          //alert (thisCookie+"="+value);
+        function setCookie(name, value, prefix) {
+            var thisCookie = prefix + name;
+            document.cookie = thisCookie + "=" + value;
+            //alert (thisCookie+"="+value);
         }
 
 
-
-        function urlSetCookie(name,value,prefix) {
-          setCookie(name,value,prefix);
-            replaceLocation("/action/curation/$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
+        function urlSetCookie(name, value, prefix) {
+            setCookie(name, value, prefix);
+            replaceLocation("/action/curation/$OID&cookie=" + name + value + "&randomNum=" + Math.random() + "#" + name);
         }
 
     </script>
