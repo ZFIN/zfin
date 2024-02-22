@@ -617,10 +617,6 @@ create view ameliorated_phenotype_fish_with_chemicals as
 
 \copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals.txt' with delimiter as '	' null as '';
 
---create a second copy for another downloads section
---TODO: modify the download-registry handling to allow the same file in multiple categories
-\copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals_2.txt' with delimiter as '	' null as '';
-
 drop view ameliorated_phenotype_fish_with_chemicals;
 drop view ameliorated_phenotype_fish;
 
@@ -760,10 +756,6 @@ left join experiment_condition_with_zeco_and_chebi fe on gep.genox_exp_zdb_id = 
 where fe.chebi_ids is not null
 order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
-
---create a second copy for another downloads section
---TODO: modify the download-registry handling to allow the same file in multiple categories
-\copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
 
 drop view gene_expression_phenotype_with_chemicals;
 drop table experiment_condition_with_zeco_and_chebi;

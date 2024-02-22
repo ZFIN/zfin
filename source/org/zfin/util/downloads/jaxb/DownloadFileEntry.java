@@ -13,11 +13,12 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  */
 @XmlRootElement(name = "Download")
-@XmlType(propOrder = {"name", "category", "description", "wikiLink", "fileName", "fileExtension", "fileFormat", "query", "columnHeaderList"})
+@XmlType(propOrder = {"name", "category", "moreCategories", "description", "wikiLink", "fileName", "fileExtension", "fileFormat", "query", "columnHeaderList"})
 public class DownloadFileEntry {
 
     private String name;
     private String category;
+    private MoreCategories moreCategories;
     private String description;
     private String wikiLink;
     private String fileName;
@@ -48,6 +49,15 @@ public class DownloadFileEntry {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    @XmlElement(name = "MoreCategories")
+    public MoreCategories getMoreCategories() {
+        return moreCategories;
+    }
+
+    public void setMoreCategories(MoreCategories moreCategories) {
+        this.moreCategories = moreCategories;
     }
 
     @XmlElement(name = "Description")
@@ -196,5 +206,18 @@ public class DownloadFileEntry {
             builder.append(delimiter);
         }
         return builder.toString();
+    }
+
+    public static class MoreCategories {
+        private List<String> category;
+
+        @XmlElement(name = "Category")
+        public List<String> getCategory() {
+            return category;
+        }
+
+        public void setCategory(List<String> category) {
+            this.category = category;
+        }
     }
 }
