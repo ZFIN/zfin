@@ -1937,6 +1937,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 linkDisplay.setAccNumDisplay(tuple[13].toString());
 
             }
+            if (tuple.length > 11 && tuple[11] != null) {
+                linkDisplay.setAssociatedGeneID(tuple[11].toString());
+            }
             return linkDisplay;
         }
 
@@ -2449,6 +2452,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", gene.getZdbID()).setResultTransformer(markerDBLinkTransformer);
 
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(query.list());
+        return linkDisplay;
+    }
+
+    public List<LinkDisplay> getAllVegaGeneDBLinksTranscript() {
+
+        String sql = """
+            SELECT DISTINCT fdbdt.fdbdt_data_type, dbl.dblink_length, dbl.dblink_linked_recid, dbl.dblink_acc_num,
+            fdb.fdb_db_name, fdb.fdb_db_query, fdb.fdb_url_suffix, ra.recattrib_source_zdb_id, fdb.fdb_db_significance,
+            dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, mr.mrel_mrkr_1_zdb_id
+            FROM db_link dbl
+            JOIN foreign_db_contains fdbc ON dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+            JOIN foreign_db fdb ON fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+            JOIN foreign_db_data_type fdbdt ON fdbc.fdbcont_fdbdt_id=fdbdt.fdbdt_pk_id
+            JOIN marker_relationship mr ON mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
+            LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
+            WHERE mr.mrel_type='gene produces transcript'
+            AND fdb.fdb_db_name='VEGA'
+            """;
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setResultTransformer(markerDBLinkTransformer);
+
+        List list = query.list();
+        List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(list);
         return linkDisplay;
     }
 
