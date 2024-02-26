@@ -1,7 +1,9 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.api.View;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,7 @@ import java.util.Set;
 public class DisplayGroupMember {
     private Long id;
     private ReferenceDatabase referenceDatabase;
+    @JsonView(View.SequenceDetailAPI.class)
     private DisplayGroup displayGroup;
 
     private boolean canView;

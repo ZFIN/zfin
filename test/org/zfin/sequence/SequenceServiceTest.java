@@ -49,7 +49,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
         var pagination = new Pagination();
         var markerZdbId = "ZDB-GENE-041014-357";
 
-        var response = sequenceService.getMarkerDBLinkJsonResultResponse(markerZdbId, pagination, false);
+        var response = sequenceService.getMarkerDBLinkJsonResultResponse(markerZdbId, pagination, false, false);
         var results = response.getResults();
 
         assertEquals(12, results.size());

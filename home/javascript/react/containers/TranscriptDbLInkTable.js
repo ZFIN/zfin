@@ -2,10 +2,9 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
-import AttributionLink from '../components/AttributionLink';
-import BlastDropDown from '../components/BlastDropDown';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import SequenceType from '../components/SequenceType';
+import CommaSeparatedList from '../components/CommaSeparatedList';
 
 const TranscriptDbLinkTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
@@ -26,6 +25,26 @@ const TranscriptDbLinkTable = ({markerId, showSummary}) => {
 
     const columns = [
         {
+            label: 'ZFIN ID',
+            content: row => row.zdbID ,
+            width: '100px',
+            filterName: 'dblinkId',
+        },
+        {
+            label: 'Foreign DB',
+            content: row => (row.referenceDatabase.foreignDB.dbName),
+            width: '80px',
+            filterName: 'foreignDB',
+            filterOptionFromSupplementalData: 'foreignDB',
+        },
+        {
+            label: 'Accession',
+            content: row => row.accessionNumber ,
+            width: '100px',
+            filterName: 'accession',
+            align: 'left',
+        },
+        {
             label: 'Type',
             content: row => (
                 <SequenceType
@@ -37,22 +56,14 @@ const TranscriptDbLinkTable = ({markerId, showSummary}) => {
 
             width: '80px',
             filterName: 'type',
-            filterOptions: ['Genomic', 'RNA', 'Polypeptide'],
+            filterOptionFromSupplementalData: 'type',
         },
         {
-            label: 'Accession #',
-            content: row => (
-                <AttributionLink
-                    url={row.url}
-                    accession={row.displayName}
-                    publicationCount={row.publicationCount}
-                    publication={row.singlePublication}
-                    multiPubs={row.publicationIds}
-                    multiPubAccessionID={markerId}
-                />
-            ),
-            width: '150px',
-            filterName: 'accession',
+            label: 'Super Type',
+            content: row => (row.referenceDatabase.foreignDBDataType.superType),
+            width: '100px',
+            filterName: 'superType',
+            filterOptionFromSupplementalData: 'superTypes',
         },
         {
             label: 'Sequence',
@@ -81,14 +92,26 @@ const TranscriptDbLinkTable = ({markerId, showSummary}) => {
             align: 'right',
         },
         {
-            label: 'Length (nt/aa)',
-            content: row => row.length && `${row.length} ${row.units}`,
+            label: 'Display Groups',
+            //content: row => row.referenceDatabase.displayGroupMembers.map(obj => obj.displayGroup.groupName) ,
+            content: row => <CommaSeparatedList>
+                {row.referenceDatabase.displayGroupMembers.map(obj => obj.displayGroup.groupName)}
+            </CommaSeparatedList> ,
             width: '100px',
+            filterOptionFromSupplementalData: 'displayGroup',
+            filterName: 'displayGroup',
             align: 'right',
         },
         {
-            label: 'Analysis',
-            content: row => <BlastDropDown dbLink={row}/>,
+            label: 'Length (nt/aa)',
+            content: row => row.length && `${row.length} ${row.units}`,
+            width: '60px',
+            align: 'right',
+        },
+        {
+            label: 'Db_Link Info',
+            content: row => row.linkInfo,
+            filterName: 'dbInfo',
             width: '100px',
         }
     ];

@@ -172,6 +172,17 @@ public class TranscriptService {
 
     }
 
+    public static SequenceInfo getAllSequenceInfo(Transcript transcript) {
+        SequenceInfo sequenceInfo = new SequenceInfo();
+        Collection<DBLink> dbLinks = getSupportingDBLinks(transcript);
+        sequenceInfo.addDBLinks(dbLinks);
+
+        logger.debug((sequenceInfo.getDbLinks() == null ? "none " : sequenceInfo.getDbLinks().size()) + " marker linked sequence dblinks");
+
+        return sequenceInfo;
+
+    }
+
     public static SummaryDBLinkDisplay getSummaryPages(Transcript transcript) {
         SummaryDBLinkDisplay sp = new SummaryDBLinkDisplay();
 

@@ -20,11 +20,10 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
 
 /**
  *
@@ -108,11 +107,23 @@ public class SequenceService {
 
     public JsonResultResponse<MarkerDBLink> getMarkerDBLinkJsonResultResponse(String zdbID,
                                                                               Pagination pagination,
-                                                                              boolean summary) {
+                                                                              boolean summary,
+                                                                              boolean getAllRecords) {
         long startTime = System.currentTimeMillis();
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
-        List<MarkerDBLink> displayedLinks = getMarkerDBLinkResultsForMarkerZdbID(zdbID, summary, response);
+        List<MarkerDBLink> displayedLinks = getMarkerDBLinkResultsForMarkerZdbID(zdbID, summary, response, getAllRecords);
+        response.addSupplementalData("superTypes", displayedLinks.stream()
+            .map(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDBDataType().getSuperType().getValue()).distinct().toList());
+        response.addSupplementalData("foreignDB", displayedLinks.stream()
+            .map(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().getDbName().getValue()).distinct().toList());
+        response.addSupplementalData("type", displayedLinks.stream()
+            .map(DBLink::getSequenceType).distinct().toList());
+        response.addSupplementalData("displayGroup", displayedLinks.stream()
+            .map(markerDBLink -> markerDBLink.getReferenceDatabase().getDisplayGroups())
+            .flatMap(Collection::stream)
+            .map(displayGroup -> displayGroup.getGroupName().getValue())
+            .distinct().toList());
 
         // filtering
         FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
@@ -130,7 +141,7 @@ public class SequenceService {
         return response;
     }
 
-    public List<MarkerDBLink> getMarkerDBLinkResultsForMarkerZdbID(String markerZdbID, boolean summary, JsonResultResponse<MarkerDBLink> response) {
+    public List<MarkerDBLink> getMarkerDBLinkResultsForMarkerZdbID(String markerZdbID, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean getAllRecords) {
         Marker marker = markerRepository.getMarker(markerZdbID);
         if (marker == null) {
             String errorMessage = "No marker found for ID: " + markerZdbID;
@@ -139,7 +150,9 @@ public class SequenceService {
             error.addErrorMessage(errorMessage);
             throw new RestErrorException(error);
         }
-
+        if(getAllRecords){
+            return getAllMarkerDBLinkResultsForMarker(marker, summary, response);
+        }
         return getMarkerDBLinkResultsForMarker(marker, summary, response);
     }
 
@@ -178,7 +191,7 @@ public class SequenceService {
         if (marker.isGenedom()) {
             List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
                 .getDBLinksForFirstRelatedMarker(
-                        marker,
+                    marker,
                     DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
                     MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
                     MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
@@ -186,7 +199,89 @@ public class SequenceService {
                 );
             relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
                 .getDBLinksForSecondRelatedMarker(
-                        marker,
+                    marker,
+                    DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                    MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
+            );
+            relatedLinks.addAll(MarkerService.getTranscriptReferences(marker));
+            allDBLinks.addAll(relatedLinks.stream()
+                .map(RelatedMarkerDBLinkDisplay::getLink)
+                .collect(Collectors.toList())
+            );
+        }
+
+        List<MarkerDBLink> groupedLinks = MarkerService.aggregateDBLinksByPub(allDBLinks);
+
+        // links must be sorted before going into the summarizer so that the correct first one gets kept
+        groupedLinks.sort(new DbLinkDisplayComparator());
+        List<MarkerDBLink> displayedLinksOverview = new ArrayList<>();
+        Set<ForeignDBDataType.DataType> types = new HashSet<>();
+        for (MarkerDBLink link : groupedLinks) {
+            ForeignDBDataType.DataType linkType = link.getReferenceDatabase().getForeignDBDataType().getDataType();
+            if (!types.contains(linkType)) {
+                displayedLinksOverview.add(link);
+                types.add(linkType);
+            }
+        }
+
+        if (response != null) {
+            response.addSupplementalData("countDirect", displayedLinksOverview.size());
+            response.addSupplementalData("countIncludingChildren", groupedLinks.size());
+        }
+
+        List<MarkerDBLink> displayedLinks;
+        if (summary) {
+            displayedLinks = displayedLinksOverview;
+        } else {
+            displayedLinks = groupedLinks;
+        }
+        return displayedLinks;
+    }
+
+    public List<MarkerDBLink> getAllMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response) {
+        List<MarkerDBLink> allDBLinks = new ArrayList<>();
+
+        if (marker.getType().equals(Marker.Type.TSCRIPT)) {
+            Transcript transcript = (Transcript) marker;
+            if (CollectionUtils.isNotEmpty(transcript.getTranscriptDBLinks())) {
+                allDBLinks.addAll(transcript.getTranscriptDBLinks()
+                    .stream()
+                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                    .toList()
+                );
+            }
+        } else {
+            List<MarkerDBLink> dbLinks = sequenceRepository
+                .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
+                .stream()
+                .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
+                .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                .toList();
+            allDBLinks.addAll(dbLinks);
+            // populate FishMiRNA sequence info
+            dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
+                .forEach(fishMiRnaDBLink -> {
+                    List<Sequence> sequences = MountedWublastBlastService.getInstance().
+                        getSequencesFromSource(fishMiRnaDBLink);
+                    if (CollectionUtils.isNotEmpty(sequences)) {
+                        fishMiRnaDBLink.setSequence(sequences.get(0));
+                    }
+                });
+        }
+
+        if (marker.isGenedom()) {
+            List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
+                .getDBLinksForFirstRelatedMarker(
+                    marker,
+                    DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                    MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                    MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                );
+            relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForSecondRelatedMarker(
+                    marker,
                     DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
                     MarkerRelationship.Type.CLONE_CONTAINS_GENE
                 )

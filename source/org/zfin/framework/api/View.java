@@ -34,6 +34,9 @@ public class View {
     public static class SequenceAPI extends API {
     }
 
+    public static class SequenceDetailAPI extends SequenceAPI {
+    }
+
     public static class OrthologyAPI extends API {
     }
 
