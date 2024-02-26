@@ -9,7 +9,7 @@ import CommaSeparatedList from '../components/CommaSeparatedList';
 const TranscriptDbLinkTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
     const [showSequence, setShowSequence] = useState(false);
-    const [count, setCount] = useState({'countDirect':0,'countIncludingChildren':0});
+    const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
 
     const showSeq = () => {
         setShowSequence(true)
@@ -26,20 +26,23 @@ const TranscriptDbLinkTable = ({markerId, showSummary}) => {
     const columns = [
         {
             label: 'ZFIN ID',
-            content: row => row.zdbID ,
+            content: row => row.zdbID,
             width: '100px',
             filterName: 'dblinkId',
         },
         {
             label: 'Foreign DB',
-            content: row => (row.referenceDatabase.foreignDB.dbName),
+            content: row =>
+                <span title={row.referenceDatabase.zdbID}>
+                    {row.referenceDatabase.foreignDB.dbName}
+                </span>,
             width: '80px',
             filterName: 'foreignDB',
             filterOptionFromSupplementalData: 'foreignDB',
         },
         {
             label: 'Accession',
-            content: row => row.accessionNumber ,
+            content: row => row.accessionNumber,
             width: '100px',
             filterName: 'accession',
             align: 'left',
@@ -96,7 +99,7 @@ const TranscriptDbLinkTable = ({markerId, showSummary}) => {
             //content: row => row.referenceDatabase.displayGroupMembers.map(obj => obj.displayGroup.groupName) ,
             content: row => <CommaSeparatedList>
                 {row.referenceDatabase.displayGroupMembers.map(obj => obj.displayGroup.groupName)}
-            </CommaSeparatedList> ,
+            </CommaSeparatedList>,
             width: '100px',
             filterOptionFromSupplementalData: 'displayGroup',
             filterName: 'displayGroup',

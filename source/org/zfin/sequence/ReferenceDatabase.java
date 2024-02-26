@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Serializable {
 
+    @JsonView(View.SequenceDetailAPI.class)
     private String zdbID;
     @JsonView({View.MarkerRelationshipAPI.class, View.SequenceDetailAPI.class})
     private ForeignDB foreignDB;
