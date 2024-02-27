@@ -27,8 +27,10 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
             if (status != null && status.getStatusMessages() != null) {
                 if (status.getStatusMessages().getTimeElapsed() != null)
                     log.info("Elapsed Time: " + status.getStatusMessages().getTimeElapsed());
-            }
-            if (status == null || !status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
+            } else if (status == null) {
+                log.info("Could not check the Solr index. Solr Indexer is not available.");
+                System.exit(1);
+            } else if (!status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
                 log.info("Total Time: " + status.getStatusMessages().getTimeTaken());
                 System.exit(0);
             }
