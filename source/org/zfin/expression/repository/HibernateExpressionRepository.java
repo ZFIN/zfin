@@ -1398,8 +1398,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             if (subtermOntology == null) {
                 throw new NullPointerException("No subterm ontology provided.");
             }
-            hqlClauses.add("subterm = :subterm");
-            parameterMap.put("subterm", expressedTerm.getEntity().getSubTerm());
+            hqlClauses.add("subterm.termName = :subtermName");
+            parameterMap.put("subtermName", expressedTerm.getEntity().getSubTerm().getTermName());
         } else {
             hqlClauses.add("subterm is null");
         }
