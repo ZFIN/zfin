@@ -143,6 +143,8 @@ public interface SequenceRepository {
     List<ReferenceDatabase> getReferenceDatabases(List<ForeignDB.AvailableName> availableNames, List<ForeignDBDataType.DataType> dataTypes, ForeignDBDataType.SuperType superType, Species.Type species);
 
     List<MarkerDBLink> getAllEnsemblGenes();
+    List<MarkerDBLink> getAllGenbankGenes();
+    List<MarkerDBLink> getAllVegaGenes();
 
     List<DBLink> getAllEnsemblTranscripts();
 

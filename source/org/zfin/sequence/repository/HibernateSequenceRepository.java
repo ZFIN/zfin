@@ -1239,6 +1239,27 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
+    public List<MarkerDBLink>
+    getAllGenbankGenes() {
+        String hql = """
+            select mdb from MarkerDBLink as mdb, DisplayGroupMember as dgm
+            where mdb.referenceDatabase.foreignDB.dbName = (:dbName)
+            AND mdb.referenceDatabase = dgm.referenceDatabase
+            AND dgm.displayGroup.id = 18
+            """;
+        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
+        query.setParameter("dbName", ForeignDB.AvailableName.GENE);
+        return query.list();
+    }
+
+    public List<MarkerDBLink> getAllVegaGenes() {
+        String hql = " from MarkerDBLink  " +
+                     " where referenceDatabase.foreignDB.dbName = (:dbName) ";
+        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
+        query.setParameter("dbName", ForeignDB.AvailableName.VEGA);
+        return query.list();
+    }
+
     @Override
     public List<DBLink> getAllEnsemblTranscripts() {
         String hql = " from DBLink  " +

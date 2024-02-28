@@ -32,15 +32,15 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     private String accessionNumber;
     @JsonView(View.API.class)
     private Integer length;
-    @JsonView(View.MarkerRelationshipAPI.class)
+    @JsonView({View.MarkerRelationshipAPI.class, View.SequenceDetailAPI.class})
     private ReferenceDatabase referenceDatabase;
     private Set<PublicationAttribution> publications;
     private String dataZdbID;
     private Integer version;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String accessionNumberDisplay;
+    @JsonView(View.SequenceDetailAPI.class)
     private String linkInfo;
-
     @JsonView(View.SequenceAPI.class)
     private Sequence sequence;
 
@@ -102,11 +102,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
             if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.RNA) {
                 // only ensembl and megablast allowed for large values
                 if (length != null && length > 25000
-                        &&
-                        (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                                &&
-                                database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
-                        )
+                    &&
+                    (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
+                     &&
+                     database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
+                    )
                 ) {
                     iterator.remove();
 //                    blastableDatabases.remove(i);
@@ -124,10 +124,10 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
                 }
                 // only megablast and ensembl for medium
                 else if (length != null && length <= 200000 && length > 25000 &&
-                        (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                                &&
-                                database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
-                        )
+                         (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
+                          &&
+                          database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
+                         )
                 ) {
                     iterator.remove();
 //                    blastableDatabases.remove(i);
@@ -157,15 +157,15 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
      */
     public boolean isInternallyRetievableSequence() {
         if (referenceDatabase == null
-                ||
-                referenceDatabase.getPrimaryBlastDatabase() == null
+            ||
+            referenceDatabase.getPrimaryBlastDatabase() == null
         ) {
             return false;
         }
 
         boolean returnValue = referenceDatabase.getPrimaryBlastDatabase().getOrigination().getType() != Origination.Type.GENERATED
-                &&
-                referenceDatabase.getPrimaryBlastDatabase().getOrigination().getType() != Origination.Type.EXTERNAL;
+                              &&
+                              referenceDatabase.getPrimaryBlastDatabase().getOrigination().getType() != Origination.Type.EXTERNAL;
         logger.info("returnValue: " + returnValue);
         return returnValue;
     }
@@ -212,11 +212,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     }
 
     @JsonView(View.SequenceAPI.class)
-    public String getPublicationIds(){
+    public String getPublicationIds() {
         return String.join(",", getPublicationIdsAsList());
     }
 
-    public List<String> getPublicationIdsAsList(){
+    public List<String> getPublicationIdsAsList() {
         return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).toList();
     }
 
@@ -268,8 +268,8 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
             }
 
             if (getAccessionNumber().equals(dbLink.getAccessionNumber())
-                    &&
-                    getReferenceDatabase().equals(dbLink.getReferenceDatabase())
+                &&
+                getReferenceDatabase().equals(dbLink.getReferenceDatabase())
             ) {
                 return true;
             }

@@ -1,7 +1,11 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.api.View;
 
 import java.util.Set;
 
@@ -11,6 +15,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
 
 
     private Long id;
+    @JsonView(View.SequenceDetailAPI.class)
     private GroupName groupName;
     private String definition;
     private Set<DisplayGroupMember> displayGroupMembers;
@@ -21,6 +26,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
                 .collect(java.util.stream.Collectors.toSet());
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public enum GroupName {
         ADDABLE_NUCLEOTIDE_SEQUENCE("addable nucleotide sequence"),
         DBLINK_ADDING_ON_CLONE_EDIT("dblink adding on clone-edit"),
@@ -46,6 +52,11 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         ;
 
         private final String value;
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
 
         GroupName(String value) {
             this.value = value;

@@ -21,6 +21,12 @@ public enum NavigationMenuOptions {
     PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
+    SEQUENCE("Sequence"),
+    RELATED_TRANSCRIPTS("Related Transcripts"),
+    SEGEMENT_RELATIONSHIPS("Segment Relationships"),
+    SUPPORTING_SEQUENCE("Supporting Sequences"),
+    DB_LINKS("DB_LINK Records"),
+    PROTEIN_PRODUCTS("Protein Products"),
     ZEBRASHARE("Zebrashare Submission Details"),
     CITATION("Citations"),
 

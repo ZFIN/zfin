@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PublicationNavigationMenu;
+import org.zfin.framework.presentation.TranscriptNavigationMenu;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
@@ -26,6 +28,7 @@ import org.zfin.sequence.service.TranscriptService;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
@@ -145,6 +148,11 @@ public class TranscriptViewController {
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
         transcriptBean.setNucleotideSequences(sequences);
 
+        //set up the menu for the left hand navigation
+        TranscriptNavigationMenu navigationMenu = new TranscriptNavigationMenu();
+        navigationMenu.setRoot(isRootUser());
+        navigationMenu.setModel(model);
+        model.addAttribute("navigationMenu", navigationMenu);
         model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getTitleString() + transcript.getAbbreviation());
 

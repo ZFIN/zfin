@@ -1,6 +1,8 @@
 package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
@@ -9,8 +11,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- */
+@Getter
+@Setter
 public class LinkDisplay implements ProvidesLink {
 
     private String referenceDatabaseName;
@@ -21,6 +23,7 @@ public class LinkDisplay implements ProvidesLink {
     private String urlPrefix;
     private Set<MarkerReferenceBean> references;
     private String markerZdbID;
+    private String associatedGeneID;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String urlSuffix;
     private Integer significance;
