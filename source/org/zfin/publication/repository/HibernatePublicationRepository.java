@@ -2417,13 +2417,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         if (groupBy) {
             hql += " group by pubTrack.status.name ";
         }
+        hql += " order by pubTrack.status.name ";
         if (StringUtils.isNotEmpty(sort)) {
-            hql += " order by pubTrack.status";
             boolean isAscending = true;
             if (sort.startsWith("-")) {
+                sort = sort.substring(1);
                 isAscending = false;
-                hql += ", " + sort.substring(1);
             }
+            sort = sort.replaceAll("pub.", "pubTrack.publication.");
+            hql += ", " + sort;
             if (isAscending) {
                 hql += " asc";
             } else {
