@@ -94,10 +94,21 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         //printFirstTerms(sortedGeneTranscriptMapCleaned, 10);
 
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargList.size());
+        // vega gene list
+        List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
+        // genbank gene list
+        List<String> genbankGeneList = genbankList.stream().map(markerDBLink1 -> markerDBLink1.getMarker().getZdbID()).toList();
+        ensdargList.removeIf(markerDBLink -> !vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
+        System.out.println("Number of Ensembl Genes that also have a Vega Gene: " + ensdargList.size());
+        ensdargList.removeIf(markerDBLink -> !genbankGeneList.contains(markerDBLink.getMarker().getZdbID()));
+        System.out.println("Number of Ensembl Genes that also have a Vega and Genebank Gene: " + ensdargList.size());
+
         // <ensdargID, DBLink>
         Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
             Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
-        System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargMap.size());
 
         Map<Marker, List<TranscriptDBLink>> geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         System.out.println("Total Number of Genes with Ensembl Transcripts In ZFIN: " + geneEnsdartMap.size());

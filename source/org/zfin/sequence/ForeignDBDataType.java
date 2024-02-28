@@ -1,7 +1,15 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
+
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "FOREIGN_DB_DATA_TYPE")
 public class ForeignDBDataType {
@@ -19,6 +27,11 @@ public class ForeignDBDataType {
 
         SuperType(String value) {
             this.value = value;
+        }
+
+        @JsonValue
+        public String getValue() {
+            return value;
         }
 
         public String toString(){
@@ -52,6 +65,11 @@ public class ForeignDBDataType {
         ;
 
         private String value;
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
 
         DataType(String value) {
             this.value = value;
@@ -76,48 +94,18 @@ public class ForeignDBDataType {
     @Column(name = "fdbdt_pk_id")
     private Long dataTypeID ;
 
+    @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdbdt_data_type")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$DataType")})
     private DataType dataType;
+    @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdbdt_super_type")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$SuperType")})
     private SuperType superType;
     @Column(name = "fdbdt_display_order")
     private int displayOrder;
-
-    public Long getDataTypeID() {
-        return dataTypeID;
-    }
-
-    public void setDataTypeID(Long dataTypeID) {
-        this.dataTypeID = dataTypeID;
-    }
-
-    public SuperType getSuperType() {
-        return superType;
-    }
-
-    public void setSuperType(SuperType superType) {
-        this.superType = superType;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public DataType getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
-    }
 
     public String toString(){
         String returnString = "" ;

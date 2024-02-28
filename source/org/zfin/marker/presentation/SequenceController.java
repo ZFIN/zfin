@@ -25,6 +25,8 @@ import org.zfin.wiki.presentation.Version;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
+
 @RestController
 @RequestMapping("/api")
 @Log4j2
@@ -56,7 +58,33 @@ public class SequenceController {
         HibernateUtil.createTransaction();
         pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
         pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
-        JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary);
+        JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary, false);
+        response.setHttpServletRequest(request);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
+    @JsonView(View.SequenceDetailAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/dblinks")
+    public JsonResultResponse<MarkerDBLink> getDbLInkView(@PathVariable("zdbID") String zdbID,
+                                                            @RequestParam(value = "summary", required = false, defaultValue = "false") boolean summary,
+                                                            @RequestParam(value = "filter.type", required = false) String type,
+                                                            @RequestParam(value = "filter.foreignDB", required = false) String foreignDB,
+                                                            @RequestParam(value = "filter.superType", required = false) String superType,
+                                                            @RequestParam(value = "filter.dblinkId", required = false) String dblinkId,
+                                                            @RequestParam(value = "filter.accession", required = false) String accessionNumber,
+                                                            @RequestParam(value = "filter.displayGroup", required = false) String displayGroup,
+                                                            @RequestParam(value = "filter.dbInfo", required = false) String dbInfo,
+                                                            @Version Pagination pagination) {
+        HibernateUtil.createTransaction();
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
+        pagination.addFieldFilter(FieldFilter.ENTITY_ID, dblinkId);
+        pagination.addFieldFilter(FieldFilter.SUPER_TYPE, superType);
+        pagination.addFieldFilter(FieldFilter.DISPLAY_GROUP, displayGroup);
+        pagination.addFieldFilter(FieldFilter.FOREIGN_DB, foreignDB);
+        pagination.addFieldFilter(FieldFilter.DB_LINK_INFO, dbInfo);
+        JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary, true);
         response.setHttpServletRequest(request);
         HibernateUtil.flushAndCommitCurrentSession();
         return response;

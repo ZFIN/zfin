@@ -1,5 +1,6 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
@@ -14,6 +15,7 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdb_db_pk_id")
     private Long dbID;
+    @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdb_db_name")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
@@ -178,6 +180,11 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
 
 
         private final String value;
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
 
         private AvailableName(String type) {
             this.value = type;

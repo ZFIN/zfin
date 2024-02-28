@@ -45,6 +45,7 @@ public class ZfinConfiguration {
         objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
+
         return objectMapper;
     }
 }

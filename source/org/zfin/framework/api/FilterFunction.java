@@ -43,6 +43,27 @@ public interface FilterFunction<Entity, FilterValue> {
         return cleanedValues.contains(entity.toLowerCase());
     }
 
+    // List of values should match exactly the entity
+    // but in an OR connector
+    static boolean fullMatchMultiValueMultiEntityOR(List<String> entityList, String value) {
+        return fullMatchMultiValueMultiEntityOR(entityList, value, "\\|");
+    }
+
+    static boolean fullMatchMultiValueMultiEntityOR(List<String> entityList, String value, String delimiter) {
+        String[] tokenList = value.split(delimiter);
+        List<String> cleanedValues = Arrays.stream(tokenList)
+            .map(s -> s.toLowerCase().trim())
+            .collect(Collectors.toList());
+        cleanedValues.removeIf(String::isEmpty);
+        if (cleanedValues.isEmpty())
+            return true;
+        for (String entity : entityList) {
+            if (cleanedValues.contains(entity.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
+
 
     static boolean valueIsNull(List list) {
         return false;
