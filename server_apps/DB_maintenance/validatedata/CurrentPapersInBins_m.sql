@@ -77,6 +77,61 @@ where pth_location_id = ptl_pk_id
       and pth_status_is_current = 't'
 group by month, year;
 
+CREATE TEMP TABLE newXenograf AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'XENOGRAFT'
+      and pth_status_is_current = 't'
+group by month, year;
+
+CREATE TEMP TABLE newEnvironmentalTox AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'ENVIRONMENTAL_TOX'
+      and pth_status_is_current = 't'
+group by month, year;
+
+CREATE TEMP TABLE newNaturalProducts AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'NATURAL_PRODUCT'
+      and pth_status_is_current = 't'
+group by month, year;
+
+CREATE TEMP TABLE newNanomaterial AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'NANOMATERIALS'
+      and pth_status_is_current = 't'
+group by month, year;
+
+CREATE TEMP TABLE newDrugs AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'DRUG'
+      and pth_status_is_current = 't'
+group by month, year;
+
 CREATE TEMP TABLE newxpat AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
@@ -158,6 +213,31 @@ where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
 update monthly_curated_metric
+set mcm_number_in_xenograft_bin = nvl((select counter from newXenograf
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
+set mcm_number_in_xenograft_bin = nvl((select counter from newDrugs
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
+set mcm_number_in_xenograft_bin = nvl((select counter from newEnvironmentalTox
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
+set mcm_number_in_xenograft_bin = nvl((select counter from newNanomaterial
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
+set mcm_number_in_xenograft_bin = nvl((select counter from newNaturalProducts
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
 set mcm_number_archived_this_month = nvl((select counter from closedArchived
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
@@ -186,6 +266,11 @@ select mcm_date_Captured,
        mcm_number_in_expression_bin,
        mcm_number_in_ortho_bin,
        mcm_number_in_disease_bin,
+       mcm_number_in_xenograft_bin,
+       mcm_number_in_environment_tox_bin,
+       mcm_number_in_drug_bin,
+       mcm_number_in_nanomaterial_bin,
+       mcm_number_in_natural_product_bin,
        mcm_number_closed_unread_this_month,
        mcm_number_archived_this_month,
        mcm_number_closed_Curated_this_month
