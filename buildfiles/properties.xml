@@ -146,7 +146,7 @@
                 <equals arg1="${USER}" arg2="informix"/>
             </not>
             <not>
-                <equals arg1="${INSTANCE}" arg2="docker"/>
+                <equals arg1="${USER}" arg2="docker"/>
             </not>
         </and>
     </condition>
