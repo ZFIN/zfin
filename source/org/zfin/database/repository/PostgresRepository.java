@@ -26,7 +26,7 @@ public class PostgresRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "from PostgresSession where dbname = :dbname";
         if (formBean.isActive())
-            hql += " AND state = state";
+            hql += " AND state = :state";
         hql += " order by dateLastUsed";
         Query<PostgresSession> query = session.createQuery(hql, PostgresSession.class);
         query.setParameter("dbname", ZfinPropertiesEnum.DB_NAME.value());
