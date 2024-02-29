@@ -62,3 +62,11 @@ if [ ! -f $PG_PASS ]
 then
      cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > $PG_PASS
 fi
+
+#Create base directories for /mnt/research
+mkdir -p /mnt/research/vol/archive
+mkdir -p /mnt/research/vol/blast
+mkdir -p /mnt/research/vol/central
+mkdir -p /mnt/research/vol/prod
+mkdir -p /mnt/research/vol/unloads
+mkdir -p /mnt/research/vol/users

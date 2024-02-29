@@ -51,6 +51,17 @@ RUN mkdir -p /local/bin
 RUN ln -s /usr/bin/wget /local/bin/wget
 RUN ln -s /usr/bin/gunzip /local/bin/gunzip
 
+RUN mkdir /research
+RUN mkdir /mnt/research
+RUN ln -s /mnt/research/vol/archive /research/zarchive
+RUN ln -s /mnt/research/vol/blast /research/zblast
+RUN ln -s /mnt/research/vol/blast /research/zblastfiles
+RUN ln -s /mnt/research/vol/central /research/zcentral
+RUN ln -s /mnt/research/vol/prod /research/zprod
+RUN ln -s /mnt/research/vol/prod /research/zprodmore
+RUN ln -s /mnt/research/vol/unloads /research/zunloads
+RUN ln -s /mnt/research/vol/users /research/zusers
+
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
