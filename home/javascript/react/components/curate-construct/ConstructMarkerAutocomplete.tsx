@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
-import {ConstructComponent} from "./ConstructTypes";
+import {ConstructComponent} from './ConstructTypes';
 
 /**
  * This is a React component that is used to allow the user to start typing

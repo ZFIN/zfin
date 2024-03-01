@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
-import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from "./ConstructTypes";
+import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from './ConstructTypes';
 
 /*
  * This component is used to create a new construct
@@ -85,7 +85,6 @@ const CurateConstructNew = ({publicationId, show= true}: CurateConstructNewProps
             constructCuratorNote: curatorNote,
             pubZdbID: publicationId
         }
-        console.log('submissionObject', submissionObject);
 
         setSaving(true);
 
@@ -99,7 +98,6 @@ const CurateConstructNew = ({publicationId, show= true}: CurateConstructNewProps
                 body: JSON.stringify(submissionObject),
             });
             const body = await result.text();
-            console.log('body', body);
             clearForm();
             setShowSuccess(body);
         } catch (error) {

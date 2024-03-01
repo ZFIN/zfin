@@ -32,13 +32,13 @@ function cassetteToSimplifiedCassette(cassette: Cassette): SimplifiedCassette {
     let coding = [];
     for (let component of cassette.promoter) {
         promoter.push(component.value);
-        if (component.separator && component.separator !== "") {
+        if (component.separator && component.separator !== '') {
             promoter.push(component.separator);
         }
     }
     for (let component of cassette.coding) {
         coding.push(component.value);
-        if (component.separator && component.separator !== "") {
+        if (component.separator && component.separator !== '') {
             coding.push(component.separator);
         }
     }
@@ -55,11 +55,16 @@ function cassettesToSimplifiedCassettes(cassettes: Cassette[]): SimplifiedCasset
 
 function typeAbbreviationToType(typeAbbreviation: string): string {
     switch (typeAbbreviation) {
-        case "Tg": return "TGCONSTRCT";
-        case "Et": return "ETCONSTRCT";
-        case "Gt": return "GTCONSTRCT";
-        case "Pt": return "PTCONSTRCT";
-        default: return "";
+        case 'Tg':
+            return 'TGCONSTRCT';
+        case 'Et':
+            return 'ETCONSTRCT';
+        case 'Gt':
+            return 'GTCONSTRCT';
+        case 'Pt':
+            return 'PTCONSTRCT';
+        default:
+            return '';
     }
 }
 

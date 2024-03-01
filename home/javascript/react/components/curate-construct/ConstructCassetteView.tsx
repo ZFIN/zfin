@@ -1,5 +1,5 @@
 import React from 'react';
-import {Cassette} from "./ConstructTypes";
+import {Cassette} from './ConstructTypes';
 
 interface ConstructCassetteViewProps {
     cassette: Cassette;
