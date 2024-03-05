@@ -24,7 +24,7 @@ public class InterproDomainActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
         for (SecondaryTermLoadAction action : actions) {
             InterProProteinDTO iprDTO = InterProProteinDTO.fromMap(action.getRelatedEntityFields());
             InterProProtein ipr = iprDTO.toInterProProtein();

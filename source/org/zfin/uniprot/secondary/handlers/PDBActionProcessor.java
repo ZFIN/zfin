@@ -23,7 +23,7 @@ public class PDBActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
         processInserts(actions);
         processDeletes(actions);
         currentSession().flush();
