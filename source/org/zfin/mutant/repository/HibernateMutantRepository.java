@@ -832,7 +832,7 @@ public class HibernateMutantRepository implements MutantRepository {
                                     expcond.setNcbiTaxonId(condition.getTaxaonymTerm().getOboID());
                                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                                 }
-                                expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+                                DiseaseInfo.populateConditionClassId(expcond, condition);
                                 expcond.setConditionStatement(conditionStatement);
                                 expconds.add(expcond);
                             }
