@@ -33,6 +33,11 @@ public class ProteinToInterproActionCreator implements ActionCreator {
         for(String uniprotKey : uniProtRecords.getAccessions()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
             List<String> zdbIDs = context.getGeneZdbIDsByUniprot(uniprotKey);
+            if (zdbIDs.isEmpty()) {
+                //technically this case is handled by the clause below, but this is more clear
+                log.debug("No gene associations found for " + uniprotKey);
+                continue;
+            }
             if (!context.hasAnyUniprotGeneAssociation(uniprotKey, zdbIDs)) {
                 log.info("Is this line ever reached? " + uniprotKey + " : " + String.join(",", zdbIDs) );
                 continue;
