@@ -1,7 +1,10 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.mutant.Genotype;
 import org.zfin.sequence.DisplayGroup;
 
 import org.zfin.sequence.TranscriptDBLink;
@@ -11,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- */
+@Getter
+@Setter
 public class Transcript extends Marker {
     @JsonView(View.TranscriptDetailsAPI.class)
     private TranscriptType transcriptType;
@@ -25,41 +28,8 @@ public class Transcript extends Marker {
     private String loadId;
     private TranscriptSequence trSequence;
 
+    private Genotype strain;
 
-
-    public TranscriptSequence getTrSequence() {
-        return trSequence;
-    }
-
-    public void setTrSequence(TranscriptSequence trSequence) {
-        this.trSequence = trSequence;
-    }
-
-
-
-    public TranscriptType getTranscriptType() {
-        return transcriptType;
-    }
-
-    public void setTranscriptType(TranscriptType transcriptType) {
-        this.transcriptType = transcriptType;
-    }
-
-    public TranscriptStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TranscriptStatus status) {
-        this.status = status;
-    }
-
-    public Set<TranscriptDBLink> getTranscriptDBLinks() {
-        return transcriptDBLinks;
-    }
-
-    public void setTranscriptDBLinks(Set<TranscriptDBLink> transcriptDBLinks) {
-        this.transcriptDBLinks = transcriptDBLinks;
-    }
 
 
     public Integer getLength() {
@@ -100,21 +70,5 @@ public class Transcript extends Marker {
         sb.append("transcript status: ").append(status);
         sb.append("\n");
         return sb.toString();
-    }
-
-    public String getEnsdartId() {
-        return ensdartId;
-    }
-
-    public void setEnsdartId(String ensdartId) {
-        this.ensdartId = ensdartId;
-    }
-
-    public String getLoadId() {
-        return loadId;
-    }
-
-    public void setLoadId(String loadId) {
-        this.loadId = loadId;
     }
 }
