@@ -3,7 +3,6 @@ package org.zfin.search;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Setter
