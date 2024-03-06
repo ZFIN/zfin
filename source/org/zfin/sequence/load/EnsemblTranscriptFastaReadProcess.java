@@ -8,7 +8,9 @@ import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
+import org.zfin.Species;
 import org.zfin.alliancegenome.JacksonObjectMapperFactoryZFIN;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -16,7 +18,9 @@ import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.marker.presentation.RelatedTranscriptDisplay;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.profile.Person;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
@@ -34,8 +38,8 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 import static org.zfin.marker.TranscriptType.Type.MRNA;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
 
 /**
  * This class runs system exec calls robustly.
@@ -114,21 +118,45 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
                     if(existingEnsdartIDs.contains(ensdartID)){
                         return;
                     }
-                    EnsemblTranscript ensemblTranscript = api.getTranscriptInfo(ensdartID, "application/json");
+                        EnsemblTranscript ensemblTranscript = api.getTranscriptInfo(ensdartID, "application/json");
                     Transcript transcript = new Transcript();
                     transcript.setEnsdartId(ensdartID);
+                    Person person = getProfileRepository().getPerson("ZDB-PERS-030520-3");
+                    transcript.setOwner(person);
                     transcript.setAbbreviation(ensemblTranscript.getDisplayName());
+                    transcript.setName(ensemblTranscript.getDisplayName());
+                    transcript.setMarkerType(getMarkerRepository().getMarkerTypeByName("TSCRIPT"));
                     // if biotype = protein_coding => mRNA
                     // otherwise exception
                     if (!ensemblTranscript.getBiotype().equals("protein_coding"))
                         throw new RuntimeException("Could not map biotype " + ensemblTranscript.getDisplayName() + " to transcript Type");
                     transcript.setTranscriptType(getMarkerRepository().getTranscriptTypeForName(MRNA.toString()));
 
+                    HibernateUtil.createTransaction();
                     MarkerRelationship relationship = new MarkerRelationship();
                     relationship.setFirstMarker(marker);
                     relationship.setSecondMarker(transcript);
                     relationship.setType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
                     marker.getFirstMarkerRelationships().add(relationship);
+
+                    TranscriptDBLink transcriptDBLink = new TranscriptDBLink();
+                    transcriptDBLink.setTranscript(transcript);
+                    transcriptDBLink.setAccessionNumber(ensdartID
+                    );
+                    transcriptDBLink.setLength(ensemblTranscript.getLength());
+                    ReferenceDatabase database = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ENSEMBL_TRANS, ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+                    DisplayGroup nucleotideSequ = getSequenceRepository().getDisplayGroup(DISPLAYED_NUCLEOTIDE_SEQUENCE);
+                    database.getDisplayGroups().add(nucleotideSequ);
+                    transcriptDBLink.setReferenceDatabase(database);
+
+                    // Genotype hard-coded to TU
+                    Genotype tu = getExpressionRepository().getGenotypeByID("ZDB-GENO-990623-3");
+                    transcript.setStrain(tu);
+                    HibernateUtil.currentSession().save(transcript);
+                    HibernateUtil.currentSession().save(relationship);
+                    HibernateUtil.currentSession().save(transcriptDBLink);
+                    HibernateUtil.flushAndCommitCurrentSession();
+
                     String n = null;
                 });
             }
