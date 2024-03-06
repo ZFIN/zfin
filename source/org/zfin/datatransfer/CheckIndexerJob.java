@@ -42,13 +42,16 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
                     log.info("Unexpected Behavior. Elapsed Time Missing. Status Object:");
                     log.info(new ObjectMapper().writeValueAsString(status));
                 }
-            } else if (!status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
-                log.info("Total Time: " + status.getStatusMessages().getTimeTaken());
-                System.exit(0);
             } else {
                 log.info("Unexpected Behavior. Status Object:");
                 log.info(new ObjectMapper().writeValueAsString(status));
             }
+
+            if (!status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
+                log.info("Total Time: " + status.getStatusMessages().getTimeTaken());
+                System.exit(0);
+            }
+
             Thread.sleep(LOOP_TIME_IN_MILLISECONDS);
         }
         log.info("Timeout while checking on solr indexer. Exiting.");
