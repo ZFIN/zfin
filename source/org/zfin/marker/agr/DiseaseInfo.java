@@ -344,9 +344,9 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-6", "ZECO:0000104"));
     }
 
-    private void populateConditionClassId(ExperimentConditionDTO expcond, ExperimentCondition condition) {
+    public static void populateConditionClassId(ExperimentConditionDTO expcond, ExperimentCondition condition) {
         String oboID = condition.getZecoTerm().getOboID();
-        if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).collect(toList()).contains(oboID)) {
+        if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).toList().contains(oboID)) {
             expcond.setConditionClassId(oboID);
         } else {
             Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
