@@ -3,6 +3,7 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.View;
 import org.zfin.mutant.Genotype;
 import org.zfin.sequence.DisplayGroup;
@@ -29,6 +30,7 @@ public class Transcript extends Marker {
     private TranscriptSequence trSequence;
 
     private Genotype strain;
+    private VocabularyTerm annotationMethod;
 
 
 

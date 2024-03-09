@@ -121,3 +121,9 @@ task expressionExperimentAnalysisTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.expression.task.ExpressionExperimentAnalysisTask'
 }
+
+task runEnsemblTranscriptLoader(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReadProcess'
+}
+

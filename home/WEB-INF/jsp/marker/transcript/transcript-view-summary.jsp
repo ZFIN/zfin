@@ -37,7 +37,7 @@
              Annotation Method
         </jsp:attribute>
         <jsp:body>
-             Ensembl
+             ${formBean.transcript.annotationMethod.name}
         </jsp:body>
     </z:attributeListItem>
 

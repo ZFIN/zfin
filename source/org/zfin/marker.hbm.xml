@@ -290,6 +290,7 @@
             <many-to-one name="transcriptType" column="tscript_type_id" class="TranscriptType" not-null="true"/>
             <many-to-one name="status" column="tscript_status_id" class="TranscriptStatus" not-null="false"/>
             <many-to-one name="strain" column="tscript_genotype_zdb_id" class="org.zfin.mutant.Genotype" not-null="false"/>
+            <many-to-one name="annotationMethod" column="tscript_vocab_id" class="org.zfin.framework.VocabularyTerm" not-null="false"/>
 
             <set name="transcriptDBLinks" lazy="true">
                 <key column="dblink_linked_recid"/>

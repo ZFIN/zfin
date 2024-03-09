@@ -82,13 +82,7 @@ public class TranscriptViewController {
 
         MarkerService.createDefaultViewForMarker(transcriptBean);
 
-
-        // setting transcript relationships
-        Genotype strainForTranscript = markerRepository.getStrainForTranscript(transcript.getZdbID());
-        if(strainForTranscript == null){
-            strainForTranscript = transcript.getStrain();
-        }
-        transcriptBean.setStrain(strainForTranscript);
+        transcriptBean.setStrain(transcript.getStrain());
 
         RelatedMarkerDisplay transcriptRelationships = TranscriptService.getRelatedMarkerDisplay(transcript);
         transcriptBean.setMarkerRelationships(transcriptRelationships);
