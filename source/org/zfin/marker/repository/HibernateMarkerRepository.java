@@ -3479,7 +3479,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             TranscriptBean bean = new TranscriptBean();
             bean.setTranscript(transcript);
             bean.setRelatedGenes(TranscriptService.getRelatedGenes(transcript));
-            bean.setStrain(getStrainForTranscript(transcript.getZdbID()));
+            bean.setStrain(transcript.getStrain());
             bean.setNonReferenceStrains(TranscriptService.getNonReferenceStrainsForTranscript(transcript));
             return bean;
         }).collect(groupingBy(TranscriptBean::getTranscript));
