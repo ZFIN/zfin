@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zfin.marker.Marker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -182,6 +184,69 @@ public class ZfinStringUtils {
             return false;
         }
         return a.replaceAll("\\s+", "").equals(b.replaceAll("\\s+", ""));
+    }
+
+    /**
+     * Sorts a list of ZDB IDs in ascending order.
+     * Alphabetical, but uses special logic for numeric parts.
+     * If the date part starts with 9, then it is considered to be in the 20th century.
+     * If the sequence part is needed for sorting, it is considered to be a number.
+     *
+     * @param zdbIDs list of ZDB IDs
+     * @return sorted list of ZDB IDs
+     */
+    public static List<String> sortedZdbIDs(List<String> zdbIDs) {
+        zdbIDs.sort((o1, o2) -> {
+            if (o1 == null && o2 == null) {
+                return 0;
+            }
+            if (o1 == null) {
+                return -1;
+            }
+            if (o2 == null) {
+                return 1;
+            }
+            List<String> parts1 = zdbIDParts(o1);
+            List<String> parts2 = zdbIDParts(o2);
+
+            //compare "ZDB" (should always be the same
+            if(!parts1.get(0).equals(parts2.get(0))) {
+                return parts1.get(0).compareTo(parts2.get(0));
+            }
+
+            //compare type (eg. GENE, FISH, etc.)
+            if(!parts1.get(1).equals(parts2.get(1))) {
+                return parts1.get(1).compareTo(parts2.get(1));
+            }
+
+            //compare date
+            String date1 = parts1.get(2);
+            String date2 = parts2.get(2);
+            if(!date1.equals(date2)) {
+                date1 = date1.startsWith("9") ? "19" + date1 : "20" + date1;
+                date2 = date2.startsWith("9") ? "19" + date2 : "20" + date2;
+                return date1.compareTo(date2);
+            }
+
+            //compare sequence
+            String seq1 = parts1.get(3);
+            String seq2 = parts2.get(3);
+            if(!seq1.equals(seq2)) {
+                try {
+                    return Integer.parseInt(seq1) - Integer.parseInt(seq2);
+                } catch (NumberFormatException e) {
+                    return seq1.compareTo(seq2);
+                }
+            }
+
+            //if all else fails, compare the whole string (shouldn't happen)
+            return o1.compareTo(o2);
+        });
+        return zdbIDs;
+    }
+
+    private static List<String> zdbIDParts(String zdbID) {
+        return Arrays.asList(zdbID.split("-"));
     }
 
 }
