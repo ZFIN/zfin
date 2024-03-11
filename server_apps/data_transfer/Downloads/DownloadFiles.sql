@@ -1733,69 +1733,66 @@ insert into tmp_wtxpat (
   	antibody_id,
   	fish_zdb_id
 )
-select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-       '' as subontid,
-       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
-        xpatex_source_zdb_id,
-        case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker, expression_experiment2, fish_experiment, fish, experiment, expression_result2, expression_figure_stage, stage startStage, stage endStage,
- term super, genotype, expression_pattern_assay
- where geno_is_wildtype = 't'
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
-   and xpatres_expression_found = 't'
-  and not exists (Select 'x' from clone
-  where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-  and clone_problem_type = 'Chimeric')
-   and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_assay_name=xpatassay_name
-   and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id = genox_fish_zdb_id
-
---   and fish_is_wildtype = 't'
-   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
-   and efs_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_efs_id = expression_figure_stage.efs_pk_id
-   and efs_start_stg_zdb_id = startStage.stg_zdb_id
-   and efs_end_stg_zdb_id = endStage.stg_zdb_id
-   and fish_genotype_zdb_id = geno_zdb_id
-and xpatres_subterm_zdb_id is null
- group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
-        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
-union
-select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-       sub.term_ont_id as subontid,
-       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
-        xpatex_source_zdb_id,
-        case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker, expression_experiment2, fish_experiment, fish, experiment, expression_result2, expression_figure_stage, stage startStage, stage endStage,
- term super, genotype, term sub, expression_pattern_assay
- where geno_is_wildtype = 't'
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
-   and xpatres_expression_found = 't'
-  and not exists (Select 'x' from clone
-      	  	 	 where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-  and clone_problem_type = 'Chimeric')
-   and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id =genox_fish_zdb_id
---   and fish_is_wildtype = 't'
-   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
-   and efs_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_efs_id = expression_figure_stage.efs_pk_id
-   and efs_start_stg_zdb_id = startStage.stg_zdb_id
-   and efs_end_stg_zdb_id = endStage.stg_zdb_id
-   and fish_genotype_zdb_id = geno_zdb_id
-   and sub.term_zdb_id = xpatres_subterm_zdb_id
-   and xpatex_assay_name=xpatassay_name
-and xpatres_subterm_zdb_id is not null
- group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
-        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
+SELECT mrkr_zdb_id,
+       mrkr_abbrev,
+       fish_full_name,
+       super.term_ont_id,
+       super.term_name,
+       nvl(sub.term_ont_id, '') AS subontid,
+       nvl(sub.term_name, '') AS subname,
+       startStage.stg_name AS startSt,
+       endStage.stg_name AS endSt,
+       xpatex_assay_name,
+       xpatassay_mmo_id,
+       xpatex_source_zdb_id,
+       xpatex_probe_feature_zdb_id AS probe_id,
+       xpatex_atb_zdb_id AS antibody_id,
+       fish_zdb_id
+FROM marker,
+     expression_experiment2,
+     fish_experiment,
+     fish,
+     experiment,
+     expression_figure_stage,
+     stage startStage,
+     stage endStage,
+     term super,
+     genotype,
+     expression_pattern_assay,
+     expression_result2
+         LEFT JOIN term AS sub ON sub.term_zdb_id = expression_result2.xpatres_subterm_zdb_id
+WHERE geno_is_wildtype = 't'
+  AND exp_zdb_id IN ('ZDB-EXP-041102-1', 'ZDB-EXP-070511-5') -- standard and control
+  AND xpatres_expression_found = 't'
+  AND NOT EXISTS(SELECT 'x'
+                 FROM clone
+                 WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id AND clone_problem_type = 'Chimeric')
+  AND mrkr_zdb_id = xpatex_gene_zdb_id
+  AND xpatex_assay_name = xpatassay_name
+  AND xpatex_genox_zdb_id = genox_zdb_id
+  AND xpatres_superterm_zdb_id = super.term_zdb_id
+  AND fish_zdb_id = genox_fish_zdb_id
+  AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id)
+  AND efs_xpatex_zdb_id = xpatex_zdb_id
+  AND xpatres_efs_id = expression_figure_stage.efs_pk_id
+  AND efs_start_stg_zdb_id = startStage.stg_zdb_id
+  AND efs_end_stg_zdb_id = endStage.stg_zdb_id
+  AND fish_genotype_zdb_id = geno_zdb_id
+GROUP BY mrkr_zdb_id,
+         mrkr_abbrev,
+         fish_full_name,
+         super.term_ont_id,
+         super.term_name,
+         subontid,
+         subname,
+         startStage.stg_name,
+         endStage.stg_name,
+         xpatex_assay_name,
+         xpatassay_mmo_id,
+         xpatex_source_zdb_id,
+         probe_id,
+         xpatex_atb_zdb_id,
+         fish_Zdb_id
 ;
 
 delete from tmp_wtxpat
@@ -1805,7 +1802,7 @@ delete from tmp_wtxpat
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_wtxpat) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';
+\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
