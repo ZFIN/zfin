@@ -1738,46 +1738,35 @@ SELECT mrkr_zdb_id,
        fish_full_name,
        super.term_ont_id,
        super.term_name,
-       nvl(sub.term_ont_id, '') AS subontid,
-       nvl(sub.term_name, '') AS subname,
-       startStage.stg_name AS startSt,
-       endStage.stg_name AS endSt,
+       nvl(sub.term_ont_id, '')    AS subontid,
+       nvl(sub.term_name, '')      AS subname,
+       startStage.stg_name         AS startSt,
+       endStage.stg_name           AS endSt,
        xpatex_assay_name,
        xpatassay_mmo_id,
        xpatex_source_zdb_id,
        xpatex_probe_feature_zdb_id AS probe_id,
-       xpatex_atb_zdb_id AS antibody_id,
+       xpatex_atb_zdb_id           AS antibody_id,
        fish_zdb_id
-FROM marker,
-     expression_experiment2,
-     fish_experiment,
-     fish,
-     experiment,
-     expression_figure_stage,
-     stage startStage,
-     stage endStage,
-     term super,
-     genotype,
-     expression_pattern_assay,
-     expression_result2
-         LEFT JOIN term AS sub ON sub.term_zdb_id = expression_result2.xpatres_subterm_zdb_id
+FROM marker JOIN
+     expression_experiment2 ON mrkr_zdb_id = xpatex_gene_zdb_id JOIN
+     fish_experiment ON xpatex_genox_zdb_id = genox_zdb_id JOIN
+     fish ON genox_fish_zdb_id = fish_zdb_id JOIN
+     expression_figure_stage ON xpatex_zdb_id = efs_xpatex_zdb_id JOIN
+     stage startStage ON efs_start_stg_zdb_id = startStage.stg_zdb_id JOIN
+     stage endStage ON efs_end_stg_zdb_id = endStage.stg_zdb_id JOIN
+     expression_result2 ON efs_pk_id = xpatres_efs_id JOIN
+     term super ON super.term_zdb_id = xpatres_superterm_zdb_id JOIN
+     genotype ON fish_genotype_zdb_id = geno_zdb_id JOIN
+     expression_pattern_assay ON xpatex_assay_name = xpatassay_name LEFT JOIN
+     term AS sub ON sub.term_zdb_id = xpatres_subterm_zdb_id
 WHERE geno_is_wildtype = 't'
-  AND exp_zdb_id IN ('ZDB-EXP-041102-1', 'ZDB-EXP-070511-5') -- standard and control
   AND xpatres_expression_found = 't'
   AND NOT EXISTS(SELECT 'x'
                  FROM clone
-                 WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id AND clone_problem_type = 'Chimeric')
-  AND mrkr_zdb_id = xpatex_gene_zdb_id
-  AND xpatex_assay_name = xpatassay_name
-  AND xpatex_genox_zdb_id = genox_zdb_id
-  AND xpatres_superterm_zdb_id = super.term_zdb_id
-  AND fish_zdb_id = genox_fish_zdb_id
+                 WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                   AND clone_problem_type = 'Chimeric')
   AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id)
-  AND efs_xpatex_zdb_id = xpatex_zdb_id
-  AND xpatres_efs_id = expression_figure_stage.efs_pk_id
-  AND efs_start_stg_zdb_id = startStage.stg_zdb_id
-  AND efs_end_stg_zdb_id = endStage.stg_zdb_id
-  AND fish_genotype_zdb_id = geno_zdb_id
 GROUP BY mrkr_zdb_id,
          mrkr_abbrev,
          fish_full_name,
