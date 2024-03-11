@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Coding {
-    private List<String> codingParts = new ArrayList<>();
+    private List<String> coding = new ArrayList<>();
 
     public Coding(String[] parts) {
         for (String part : parts) {
@@ -27,18 +27,18 @@ public class Coding {
         if (StringUtils.isEmpty(trimmedPart)) {
             return;
         }
-        codingParts.add(trimmedPart);
+        coding.add(trimmedPart);
     }
 
     public String toString() {
-        return String.join("", codingParts);
+        return String.join("", coding);
     }
 
     public int size() {
-        return codingParts.size();
+        return coding.size();
     }
 
     public void addCodingPart(String componentValue) {
-        codingParts.add(componentValue);
+        coding.add(componentValue);
     }
 }

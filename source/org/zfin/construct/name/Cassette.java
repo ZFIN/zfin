@@ -1,5 +1,6 @@
 package org.zfin.construct.name;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +14,10 @@ public class Cassette {
     public static final String COMPONENT_SEPARATOR = ":";
     private static final String STORED_COMPONENT_SEPARATOR = "#";
 
+    @JsonUnwrapped
     private Promoter promoter = new Promoter();
+
+    @JsonUnwrapped
     private Coding coding = new Coding();
     private int cassetteNumber;
 

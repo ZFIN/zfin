@@ -113,14 +113,14 @@ public class ConstructTest  extends AbstractDatabaseTest {
         Cassette cassette1 = cassettes.get(0);
         Promoter promoter1 = cassette1.getPromoter();
         Coding coding1 = cassette1.getCoding();
-        assertEquals("tdg.1-Hsa.TEST1", String.join("", promoter1.getPromoterParts()));
-        assertEquals("EGFP", coding1.getCodingParts().get(0));
+        assertEquals("tdg.1-Hsa.TEST1", String.join("", promoter1.getPromoter()));
+        assertEquals("EGFP", coding1.getCoding().get(0));
 
         Cassette cassette2 = cassettes.get(1);
         Promoter promoter2 = cassette2.getPromoter();
         Coding coding2 = cassette2.getCoding();
-        assertEquals(",tdg.2-Hsa.TEST2", String.join("", promoter2.getPromoterParts()));
-        assertEquals("EGFP", coding2.getCodingParts().get(0));
+        assertEquals(",tdg.2-Hsa.TEST2", String.join("", promoter2.getPromoter()));
+        assertEquals("EGFP", coding2.getCoding().get(0));
     }
 
     @Test

@@ -80,7 +80,7 @@ public class ConstructComponentService {
         Coding coding = cassette.getCoding();
 
         //add the promoter parts
-        for (String promoterPart : promoter.getPromoterParts()) {
+        for (String promoterPart : promoter.getPromoter()) {
             createComponentRecords(StringUtils.trim(promoterPart),"promoter component", promoterMarkers,ConstructComponent.Type.PROMOTER_OF, cassette.getCassetteNumber(), newPub,zdbID);
         }
 
@@ -90,7 +90,7 @@ public class ConstructComponentService {
         }
 
         //add the coding parts
-        for (String codingPart : coding.getCodingParts()) {
+        for (String codingPart : coding.getCoding()) {
             createComponentRecords(StringUtils.trim(codingPart), "coding component", codingMarkers, ConstructComponent.Type.CODING_SEQUENCE_OF, cassette.getCassetteNumber(), newPub, zdbID);
         }
 
@@ -214,7 +214,13 @@ public class ConstructComponentService {
         String constructZdbID = newConstruct.getZdbID();
 
         //create the construct components in the DB -- "Tg4(ubb:mir155smn1-DsRed)" becomes ["Tg", "4", "(", "ubb", ":", "mir155smn1", "-", "DsRed", ")"] with metadata
-        createConstructComponentsInDatabase(form, constructZdbID);
+        if (form.getConstructStoredName() != null) {
+            createConstructComponentsInDatabaseUsingStoredName(form, constructZdbID);
+        } else if (form.getConstructNameObject() != null) {
+            createConstructComponentsInDatabase(form.getConstructNameObject(), constructZdbID, form.getPubZdbID());
+        } else {
+            throw new RuntimeException("No construct name or stored name found");
+        }
 
         //adding construct record to marker table
         InformixUtil.runProcedure("regen_construct_marker", constructZdbID + "");
@@ -228,7 +234,10 @@ public class ConstructComponentService {
         return latestConstruct;
     }
 
-    private static void setConstructAliasNoteAndSequence(AddConstructFormFields form, Publication constructPub, Marker latestConstruct) {
+
+
+
+        private static void setConstructAliasNoteAndSequence(AddConstructFormFields form, Publication constructPub, Marker latestConstruct) {
         if (!StringUtils.isEmpty(form.getConstructAlias())) {
             mr.addMarkerAlias(latestConstruct, form.getConstructAlias(), constructPub);
         }
@@ -281,7 +290,8 @@ public class ConstructComponentService {
      * @param form
      * @param constructZdbID
      */
-    private static void createConstructComponentsInDatabase(AddConstructFormFields form, String constructZdbID) {
+    //TODO: deprecate this method and all uses of StoredName (just use ConstructName). jquery for the stored name is used by legacy interface
+    private static void createConstructComponentsInDatabaseUsingStoredName(AddConstructFormFields form, String constructZdbID) {
         ConstructName constructName = new ConstructName(form.getConstructName(), form.getConstructPrefix());
         Cassettes cassettes = Cassettes.fromStoredName(form.getConstructStoredName());
         constructName.setCassettes(cassettes);
