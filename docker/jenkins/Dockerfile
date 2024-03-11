@@ -56,6 +56,10 @@ RUN adduser gradle solr
 #COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 #RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
 
+#Add root certificate for auth servers to java keystore
+COPY ./rhel_ipa.cer /tmp
+RUN /opt/java/openjdk/bin/keytool -importcert -file /tmp/rhel_ipa.cer -cacerts -storepass changeit -noprompt -alias "RHEL IPA" 
+
 USER gradle
 #COPY ./cshrc /home/gradle/.cshrc
 COPY ./bash_profile /tmp/bash_profile
