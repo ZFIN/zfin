@@ -3,6 +3,7 @@ package org.zfin.sequence.load;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SymbolTokenization;
@@ -14,8 +15,6 @@ import org.zfin.Species;
 import org.zfin.alliancegenome.JacksonObjectMapperFactoryZFIN;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.VocabularyTerm;
-import org.zfin.framework.dao.VocabularyDAO;
-import org.zfin.framework.dao.VocabularyTermDAO;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.framework.services.VocabularyService;
 import org.zfin.marker.Marker;
@@ -30,10 +29,12 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
+import org.zfin.util.FileUtil;
 import si.mazi.rescu.ClientConfig;
 import si.mazi.rescu.RestProxyFactory;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -42,8 +43,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
 import static java.util.stream.Collectors.joining;
 import static org.zfin.framework.services.VocabularyEnum.TRANSCRIPT_ANNOTATION_METHOD;
+import static org.zfin.marker.Marker.Type.TSCRIPT;
 import static org.zfin.marker.TranscriptType.Type.MRNA;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
@@ -159,11 +162,11 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
                     EnsemblTranscript ensemblTranscript = api.getTranscriptInfo(ensdartID, "application/json");
                     Transcript transcript = new Transcript();
                     transcript.setEnsdartId(ensdartID);
-                    Person person = getProfileRepository().getPerson("ZDB-PERS-030520-3");
+                    Person person = getProfileRepository().getPerson("ZDB-PERS-060413-1");
                     transcript.setOwner(person);
                     transcript.setAbbreviation(ensemblTranscript.getDisplayName());
                     transcript.setName(ensemblTranscript.getDisplayName());
-                    transcript.setMarkerType(getMarkerRepository().getMarkerTypeByName("TSCRIPT"));
+                    transcript.setMarkerType(getMarkerRepository().getMarkerTypeByName(TSCRIPT.name()));
                     // if biotype = protein_coding => mRNA
                     // otherwise exception
                     if (!ensemblTranscript.getBiotype().equals("protein_coding"))
@@ -322,6 +325,8 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
 
     private static Map<String, List<RichSequence>> getSequenceMapFromDownloadFile() {
         String fileName = "Danio_rerio.GRCz11.cdna.all.fa";
+        downloadFile(fileName);
+
         // <ensdargID, List<RichSequence>>
         Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(fileName);
         Map<String, List<RichSequence>> sortedGeneTranscriptMap = geneTranscriptMap.entrySet().stream()
@@ -335,6 +340,22 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         });
         System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file: " + sortedGeneTranscriptMap.size());
         return sortedGeneTranscriptMapCleaned;
+    }
+
+    private static void downloadFile(String fileName) {
+        fileName = fileName + ".gz";
+        String fileURL = "https://ftp.ensembl.org/pub/release-111/fasta/danio_rerio/cdna/" + fileName;
+
+        try {
+            FileUtils.copyURLToFile(
+                new URL(fileURL),
+                new File(fileName),
+                60000,
+                READ_TIMEOUT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        FileUtil.gunzipFile(fileName);
     }
 
     private static void printFirstTerms(Map<String, List<RichSequence>> sortedMap, int limit) {
