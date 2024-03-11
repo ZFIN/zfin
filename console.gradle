@@ -116,3 +116,8 @@ task runMeshChebiGenerator(type: JavaExec) {
     main = 'org.zfin.datatransfer.ctd.LoadCtdData'
 }
 
+//TODO: remove this task after duplicates have been fixed
+task expressionExperimentAnalysisTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.expression.task.ExpressionExperimentAnalysisTask'
+}
