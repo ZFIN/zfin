@@ -1,5 +1,6 @@
 package org.zfin.construct.name;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.zfin.marker.Marker;
@@ -53,6 +54,7 @@ public class ConstructName {
     private Marker.Type type;
     private String prefix = "";
 
+    @JsonUnwrapped
     private Cassettes cassettes = new Cassettes();
 
     public ConstructName(String typeAbbreviation, String prefix) {

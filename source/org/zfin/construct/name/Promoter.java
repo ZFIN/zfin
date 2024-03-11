@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Promoter {
-    List<String> promoterParts = new ArrayList<>();
+    List<String> promoter = new ArrayList<>();
 
     public Promoter(String[] parts) {
         for (String part : parts) {
@@ -27,18 +27,18 @@ public class Promoter {
         if (StringUtils.isEmpty(trimmedPart)) {
             return;
         }
-        promoterParts.add(trimmedPart);
+        promoter.add(trimmedPart);
     }
 
     public String toString() {
-        return String.join("", promoterParts);
+        return String.join("", promoter);
     }
 
     public int size() {
-        return promoterParts.size();
+        return promoter.size();
     }
 
     public void addPromoterPart(String componentValue) {
-        promoterParts.add(componentValue);
+        promoter.add(componentValue);
     }
 }

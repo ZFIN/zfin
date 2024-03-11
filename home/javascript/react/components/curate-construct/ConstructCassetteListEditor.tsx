@@ -1,15 +1,23 @@
-import React, {useState} from 'react';
-import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
+import {Cassette} from './ConstructTypes';
 
-const ConstructCassetteListEditor = ({publicationId, onChange}) => {
-    const [cassettes, setCassettes] = useState([]);
-    const [cassette, setCassette] = useState(null);
+interface ConstructCassetteListEditorProps {
+    publicationId: string;
+    onChange?: (cassettes: Cassette[]) => void;
+    resetFlag?: number;
+}
+
+const ConstructCassetteListEditor = ({publicationId, onChange, resetFlag}: ConstructCassetteListEditorProps) => {
+    const [cassettes, setCassettes] = useState<Cassette[]>([]);
+    const [cassette, setCassette] = useState<Cassette>(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const handleCassetteChange = (updatedCassette) => {
         setCassette(updatedCassette);
+        const eventPayload = [...cassettes, updatedCassette];
+        notifyParentOfChange(eventPayload);
     }
 
     const handleAddCassette = (event) => {
@@ -18,8 +26,19 @@ const ConstructCassetteListEditor = ({publicationId, onChange}) => {
         setCassettes(newCassettes);
         setCassette(null);
         setIsEditMode(false);
+        notifyParentOfChange(newCassettes);
+    }
+
+    const handleRemoveCassette = (index) => {
+        const newCassettes = [...cassettes];
+        newCassettes.splice(index, 1);
+        setCassettes(newCassettes);
+        notifyParentOfChange(newCassettes);
+    }
+
+    const notifyParentOfChange = (cassettes) => {
         if (onChange) {
-            onChange(newCassettes);
+            onChange(cassettes);
         }
     }
 
@@ -27,39 +46,38 @@ const ConstructCassetteListEditor = ({publicationId, onChange}) => {
         return cassettes.length === 0 || isEditMode;
     }
 
-    const handleRemoveCassette = (index) => {
-        const newCassettes = [...cassettes];
-        newCassettes.splice(index, 1);
-        setCassettes(newCassettes);
-    }
-
     const shouldDisableDoneButton = () => {
         return !isValidCassette(cassette);
     }
 
+    const resetState = () => {
+        setCassettes([]);
+        setCassette(null);
+        setIsEditMode(false);
+    }
+
+    useEffect(() => {
+        resetState();
+    }, [resetFlag]);
+
     return (
         <>
-            <ul>
+            {cassettes && cassettes.length > 0 && <b>Cassettes</b>}
+            <ol>
                 {cassettes.map((cassette, index) => <li key={index}>
                     <ConstructCassetteView cassette={cassette}/> <a href='#' onClick={() => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>
                 </li>)}
-            </ul>
+            </ol>
             {(!showCassetteEditor() &&
-                <a onClick={() => setIsEditMode(true)} title='Add' href='src#'>Add cassette</a>
+                <a onClick={(e) => {e.preventDefault(); setIsEditMode(true);}} title='Add' href='#'>Add cassette</a>
             )}
-            <br/>
             {showCassetteEditor() && <>
-                <ConstructCassetteEditor publicationId={publicationId} onChange={handleCassetteChange}/>
-                <input type='button' onClick={handleAddCassette} value='Done' disabled={shouldDisableDoneButton()}/>
+                <ConstructCassetteEditor publicationId={publicationId} onChange={handleCassetteChange} resetFlag={resetFlag}/>
+                <input style={{marginTop: '10px'}} type='button' onClick={handleAddCassette} value='Save Cassette' disabled={shouldDisableDoneButton()}/>
             </>}
         </>
     );
 };
-
-ConstructCassetteListEditor.propTypes = {
-    publicationId: PropTypes.string,
-    onChange: PropTypes.func,
-}
 
 const cassetteHumanReadable = (cassette) => {
     if (!cassette) {
@@ -67,6 +85,12 @@ const cassetteHumanReadable = (cassette) => {
     }
     const promoter = cassette.promoter.map(item => item.value + item.separator).join('');
     const coding = cassette.coding.map(item => item.value + item.separator).join('');
+    if (promoter.length === 0) {
+        return coding;
+    }
+    if (coding.length === 0) {
+        return promoter;
+    }
     return promoter + ':' + coding;
 }
 
