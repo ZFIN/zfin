@@ -5,6 +5,8 @@
 SSLCertificateFile   /opt/zfin/tls/certs/zfin.org.crt
 SSLCertificateKeyFile   /opt/zfin/tls/private/zfin.org.key
 
+LDAPVerifyServerCert off
+
 Timeout 1200
 
 # IP              Host                                  Purpose
@@ -14,10 +16,12 @@ Timeout 1200
 # 67.171.232.56   c-67-171-232-56.client.comcast.net    Monte at home
 
 #SetEnvIf Remote_Addr "(128.223.5[67])|(184.171.92.)" ZfinRestrictedHosts
-SetEnvIf Remote_Addr "(128.223.(4.124|5[67]|28))|(128.223.5.177)|(128.223.4.107)|(128.223.4.120)|(184.171.92.)" ZfinRestrictedHosts
+#SetEnvIf Remote_Addr "(128.223.(4.124|5[67]|28))|(128.223.5.177)|(128.223.4.107)|(128.223.4.120)|(184.171.92.)" ZfinRestrictedHosts
+SetEnvIf X-Real-IP "(128.223.(4.124|5[67]|28))|(128.223.5.177)|(128.223.4.107)|(128.223.4.120)|(184.171.92.)" ZfinRestrictedHosts
  
 #SetEnvIf Remote_Addr "(128.223.|67.171.232.56|184.171.92.)" ZfinHosts
-SetEnvIfExpr "-R '128.223.0.0/16' || -R '67.171.232.56' || -R '184.171.0.0/17' || -R '163.41.128.0/17' || -R '10.128.0.0/16' || -R '10.108.0.0/14' || -R '10.174.0.0/20'" ZfinHosts
+#SetEnvIfExpr "-R '128.223.0.0/16' || -R '67.171.232.56' || -R '184.171.0.0/17' || -R '163.41.128.0/17' || -R '10.128.0.0/16' || -R '10.108.0.0/14' || -R '10.174.0.0/20'" ZfinHosts
+SetEnvIfExpr "%{HTTP:X-Real-IP} -ipmatch '128.223.0.0/16' || %{HTTP:X-Real-IP} -ipmatch '67.171.232.56' || %{HTTP:X-Real-IP} -ipmatch '184.171.0.0/17' || %{HTTP:X-Real-IP} -ipmatch '163.41.128.0/17' || %{HTTP:X-Real-IP} -ipmatch '10.128.0.0/16' || %{HTTP:X-Real-IP} -ipmatch '10.108.0.0/14' || %{HTTP:X-Real-IP} -ipmatch '10.174.0.0/20'" ZfinHosts
 
 # Here's some people we don't want to hear from
 SetEnvIf User-Agent "(Website Quester - www.asona.org)|(Offline Explorer/*)|(Web2Map/*)|(Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp))|MJ12bot|Baiduspider|Sogou|Yandex" RejectRequest
