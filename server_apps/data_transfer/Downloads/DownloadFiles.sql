@@ -1754,8 +1754,8 @@ CREATE TEMP TABLE tmp_wtxpat AS
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';
+\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';'
+\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';
 
 CREATE TEMP TABLE tmp_wtxpat_with_chemicals AS
 select DISTINCT
