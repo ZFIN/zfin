@@ -1306,6 +1306,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setParameter("dbLinkID", dbLinkID);
         return query.executeUpdate();
     }
+
+    @Override
+    public DisplayGroup getDisplayGroup(DisplayGroup.GroupName displayGroupName) {
+        return HibernateUtil.currentSession().createQuery("from DisplayGroup where groupName = :groupName", DisplayGroup.class)
+            .setParameter("groupName", displayGroupName).uniqueResult();
+    }
 }
 
 

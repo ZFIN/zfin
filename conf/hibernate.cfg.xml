@@ -98,6 +98,8 @@
         <mapping class="org.zfin.fish.WarehouseSummary"/>
         <mapping class="org.zfin.figure.presentation.ExpressionTableRow"/>
         <mapping class="org.zfin.framework.featureflag.FeatureFlag"/>
+        <mapping class="org.zfin.framework.VocabularyTerm"/>
+        <mapping class="org.zfin.framework.Vocabulary"/>
         <mapping class="org.zfin.mutant.FishAlias"/>
         <mapping class="org.zfin.mutant.SecondaryFish"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>

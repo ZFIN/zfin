@@ -8,6 +8,7 @@ import org.zfin.genomebrowser.GenomeBrowserTrack;
 public enum GBrowseTrack {
     GENES("genes"),
     TRANSCRIPTS("transcript"),
+    ADDITIONAL_TRANSCRIPTS("Additional transcripts"),
     CLONE("clone"),
     GENES_VEGA("genesVega"),
     ENSEMBL_MRNA("Ensembl_mRNA"),
@@ -37,6 +38,7 @@ public enum GBrowseTrack {
         return switch (genomeBrowserTrack) {
             case GENES -> GenomeBrowserTrack.GENES;
             case TRANSCRIPTS -> GenomeBrowserTrack.TRANSCRIPTS;
+            case ADDITIONAL_TRANSCRIPTS -> GenomeBrowserTrack.ADDITIONAL_TRANSCRIPTS;
             case CLONE -> GenomeBrowserTrack.CLONE;
             case GENES_VEGA -> GenomeBrowserTrack.GENES_VEGA;
             case ENSEMBL_MRNA -> GenomeBrowserTrack.ENSEMBL_MRNA;

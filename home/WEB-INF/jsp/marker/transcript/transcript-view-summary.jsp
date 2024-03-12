@@ -32,6 +32,15 @@
         </jsp:body>
     </z:attributeListItem>
 
+    <z:attributeListItem>
+         <jsp:attribute name="label">
+             Annotation Method
+        </jsp:attribute>
+        <jsp:body>
+             ${formBean.transcript.annotationMethod.name}
+        </jsp:body>
+    </z:attributeListItem>
+
     <z:attributeListItem label="Associated With Genes">
         <zfin2:toggledLinkList collection="${formBean.relatedGenes}" maxNumber="6" showAttributionLinks="true"/>
     </z:attributeListItem>
