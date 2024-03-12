@@ -1762,12 +1762,8 @@ FROM marker JOIN
     term AS sub              ON sub.term_zdb_id = xpatres_subterm_zdb_id
 WHERE geno_is_wildtype = 't'
   AND xpatres_expression_found = 't'
-  AND NOT EXISTS(SELECT 'x'
-                 FROM clone
-                 WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-                   AND clone_problem_type = 'Chimeric')
+  AND NOT EXISTS(SELECT 'x' FROM clone WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id AND clone_problem_type = 'Chimeric')
   AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id)
-  AND NOT EXISTS(SELECT 'x' FROM clone where clone_problem_type = 'Chimeric' and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id)
 ;
 
 
