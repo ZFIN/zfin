@@ -17,6 +17,7 @@ import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.Genotype;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
@@ -81,9 +82,7 @@ public class TranscriptViewController {
 
         MarkerService.createDefaultViewForMarker(transcriptBean);
 
-
-        // setting transcript relationships
-        transcriptBean.setStrain(markerRepository.getStrainForTranscript(transcript.getZdbID()));
+        transcriptBean.setStrain(transcript.getStrain());
 
         RelatedMarkerDisplay transcriptRelationships = TranscriptService.getRelatedMarkerDisplay(transcript);
         transcriptBean.setMarkerRelationships(transcriptRelationships);

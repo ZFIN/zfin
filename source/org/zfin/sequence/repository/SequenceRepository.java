@@ -154,6 +154,7 @@ public interface SequenceRepository {
 
     Integer deleteReferenceProteinByDBLinkID(String dbLinkID);
 
+    DisplayGroup getDisplayGroup(DisplayGroup.GroupName displayGroupName);
 }
 
 

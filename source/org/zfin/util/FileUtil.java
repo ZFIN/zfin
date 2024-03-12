@@ -389,8 +389,15 @@ public final class FileUtil {
         return file.substring(indexOfLastSlash + 1);
     }
 
+    public static void gunzipFile(String compressedFile) {
+        gunzipFile(compressedFile, null);
+    }
+
     public static void gunzipFile(String compressedFile, String decompressedFile) {
 
+        if (decompressedFile == null) {
+            decompressedFile = compressedFile.substring(0, compressedFile.indexOf(".gz"));
+        }
         byte[] buffer = new byte[1024];
 
         try {
