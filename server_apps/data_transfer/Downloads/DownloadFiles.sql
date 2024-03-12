@@ -1698,43 +1698,11 @@ FROM publication pub, tmp_pubs,marker_type_group_member
 \copy (select * from gene_publication) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';
 drop view gene_publication;
 
-create temp table tmp_wtxpat (
-        mrkr_zdb_id text,
-  	mrkr_abbrev text,
-  	fish_full_name text,
-  	term_ont_id text,
-  	term_name text,
-  	subontid text,
-  	subname text,
-  	startSt text,
-  	endSt text,
-  	xpatex_assay_name text,
-  	xpatassay_mmo_id text,
-  	xpatex_source_zdb_id text,
-  	probe_id text,
-  	antibody_id text,
-  	fish_zdb_id text
-);
-insert into tmp_wtxpat (
-        mrkr_zdb_id,
-  	mrkr_abbrev,
-  	fish_full_name,
-  	term_ont_id,
-  	term_name,
-  	subontid,
-  	subname,
-  	startSt,
-  	endSt,
-  	xpatex_assay_name,
-  	xpatassay_mmo_id,
-  	xpatex_source_zdb_id,
-  	probe_id,
-  	antibody_id,
-  	fish_zdb_id
-)
+CREATE TEMP TABLE tmp_wtxpat_with_conditions AS
 SELECT DISTINCT
     mrkr_zdb_id,
     mrkr_abbrev,
+    genox_exp_zdb_id,
     fish_full_name,
     super.term_ont_id,
     super.term_name,
@@ -1749,29 +1717,60 @@ SELECT DISTINCT
     xpatex_atb_zdb_id           AS antibody_id,
     fish_zdb_id
 FROM marker JOIN
-    expression_experiment2   ON mrkr_zdb_id = xpatex_gene_zdb_id JOIN
-    fish_experiment          ON xpatex_genox_zdb_id = genox_zdb_id JOIN
-    fish                     ON genox_fish_zdb_id = fish_zdb_id JOIN
-    expression_figure_stage  ON xpatex_zdb_id = efs_xpatex_zdb_id JOIN
-    stage startStage         ON efs_start_stg_zdb_id = startStage.stg_zdb_id JOIN
-    stage endStage           ON efs_end_stg_zdb_id = endStage.stg_zdb_id JOIN
-    expression_result2       ON efs_pk_id = xpatres_efs_id JOIN
-    term super               ON super.term_zdb_id = xpatres_superterm_zdb_id JOIN
-    genotype                 ON fish_genotype_zdb_id = geno_zdb_id JOIN
-    expression_pattern_assay ON xpatex_assay_name = xpatassay_name LEFT JOIN
-    term AS sub              ON sub.term_zdb_id = xpatres_subterm_zdb_id
+     expression_experiment2   ON mrkr_zdb_id = xpatex_gene_zdb_id JOIN
+     fish_experiment          ON xpatex_genox_zdb_id = genox_zdb_id JOIN
+     fish                     ON genox_fish_zdb_id = fish_zdb_id JOIN
+     expression_figure_stage  ON xpatex_zdb_id = efs_xpatex_zdb_id JOIN
+     stage startStage         ON efs_start_stg_zdb_id = startStage.stg_zdb_id JOIN
+     stage endStage           ON efs_end_stg_zdb_id = endStage.stg_zdb_id JOIN
+     expression_result2       ON efs_pk_id = xpatres_efs_id JOIN
+     term super               ON super.term_zdb_id = xpatres_superterm_zdb_id JOIN
+     genotype                 ON fish_genotype_zdb_id = geno_zdb_id JOIN
+     expression_pattern_assay ON xpatex_assay_name = xpatassay_name LEFT JOIN
+     term AS sub              ON sub.term_zdb_id = xpatres_subterm_zdb_id
 WHERE geno_is_wildtype = 't'
   AND xpatres_expression_found = 't'
   AND NOT EXISTS(SELECT 'x' FROM clone WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id AND clone_problem_type = 'Chimeric')
-  AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id)
-;
+  AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id);
 
-
+CREATE TEMP TABLE tmp_wtxpat AS
+    SELECT DISTINCT
+        mrkr_zdb_id,
+        mrkr_abbrev,
+        fish_full_name,
+        term_ont_id,
+        term_name,
+        subontid,
+        subname,
+        startSt,
+        endSt,
+        xpatex_assay_name,
+        xpatassay_mmo_id,
+        xpatex_source_zdb_id,
+        probe_id,
+        antibody_id,
+        fish_zdb_id
+    FROM tmp_wtxpat_with_conditions;
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';'
 \copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';
+
+CREATE TEMP TABLE tmp_wtxpat_with_chemicals AS
+select DISTINCT
+    base.*,
+       fe.zeco_ids,
+       fe.zeco_names,
+       fe.chebi_ids,
+       fe.chebi_names
+from tmp_wtxpat_with_conditions base join
+     experiment_condition_with_zeco_and_chebi fe on base.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+where chebi_ids is not null;
+
+\copy (select * from tmp_wtxpat_with_chemicals ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish_with_chemicals2.txt' with delimiter as '	' null as '';
+
+
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
