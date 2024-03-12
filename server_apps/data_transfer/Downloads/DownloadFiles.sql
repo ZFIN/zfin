@@ -766,7 +766,6 @@ order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
 
 drop view gene_expression_phenotype_with_chemicals;
-drop table experiment_condition_with_zeco_and_chebi;
 drop view gene_expression_phenotype;
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
@@ -1768,10 +1767,9 @@ WHERE geno_is_wildtype = 't'
                  WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
                    AND clone_problem_type = 'Chimeric')
   AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id)
+  AND NOT EXISTS(SELECT 'x' FROM clone where clone_problem_type = 'Chimeric' and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id)
 ;
 
-delete from tmp_wtxpat
- where probe_id in (select clone_mrkr_zdb_id from clone where clone_problem_type = 'Chimeric');
 
 
 -- create full expression file for WT fish: standard condition, expression shown and
