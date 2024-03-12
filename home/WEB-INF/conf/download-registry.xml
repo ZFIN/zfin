@@ -967,6 +967,78 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="14">Antibody ID</Column>
             <Column id="15">Fish ID</Column>
         </Download>
+        <Download orderIndex="3">
+            <Name>
+                Expression data for wildtype fish with chemical information
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>wildtype_expression_fish_with_chemicals</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">Environment ID</Column>
+            <Column id="4">Fish Name</Column>
+            <Column id="5">Super Structure ID</Column>
+            <Column id="6">Super Structure Name</Column>
+            <Column id="7">Sub Structure ID</Column>
+            <Column id="8">Sub Structure Name</Column>
+            <Column id="9">Start Stage</Column>
+            <Column id="10">End Stage</Column>
+            <Column id="11">Assay</Column>
+            <Column id="12">Assay MMO ID</Column>
+            <Column id="13">Publication ID</Column>
+            <Column id="14">Probe ID</Column>
+            <Column id="15">Antibody ID</Column>
+            <Column id="16">Fish ID</Column>
+            <Column id="17">ZECO ID(s)</Column>
+            <Column id="18">ZECO Name(s)</Column>
+            <Column id="19">ChEBI ID(s)</Column>
+            <Column id="20">ChEBI Name(s)</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Expression data for wildtype fish with chemical information
+            </Name>
+            <Category>
+                Toxicology
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>wildtype_expression_fish_with_chemicals_2</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">Environment ID</Column>
+            <Column id="4">Fish Name</Column>
+            <Column id="5">Super Structure ID</Column>
+            <Column id="6">Super Structure Name</Column>
+            <Column id="7">Sub Structure ID</Column>
+            <Column id="8">Sub Structure Name</Column>
+            <Column id="9">Start Stage</Column>
+            <Column id="10">End Stage</Column>
+            <Column id="11">Assay</Column>
+            <Column id="12">Assay MMO ID</Column>
+            <Column id="13">Publication ID</Column>
+            <Column id="14">Probe ID</Column>
+            <Column id="15">Antibody ID</Column>
+            <Column id="16">Fish ID</Column>
+            <Column id="17">ZECO ID(s)</Column>
+            <Column id="18">ZECO Name(s)</Column>
+            <Column id="19">ChEBI ID(s)</Column>
+            <Column id="20">ChEBI Name(s)</Column>
+        </Download>
         <Download orderIndex="4">
             <Name>
                 Expression Environment Description
