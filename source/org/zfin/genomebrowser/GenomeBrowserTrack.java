@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public enum GenomeBrowserTrack {
     GENES("ZFIN Gene"),
     TRANSCRIPTS("Transcript"),
+    ADDITIONAL_TRANSCRIPTS("Additional Transcripts"),
     CLONE("Assembly"),
     GENES_VEGA("genesVega"),
     ENSEMBL_MRNA("Ensembl_mRNA"),
@@ -61,6 +62,7 @@ public enum GenomeBrowserTrack {
         return switch (genomeBrowserTrack) {
             case GENES -> GBrowseTrack.GENES;
             case TRANSCRIPTS -> GBrowseTrack.TRANSCRIPTS;
+            case ADDITIONAL_TRANSCRIPTS -> GBrowseTrack.ADDITIONAL_TRANSCRIPTS;
             case CLONE -> GBrowseTrack.CLONE;
             case GENES_VEGA -> GBrowseTrack.GENES_VEGA;
             case ENSEMBL_MRNA -> GBrowseTrack.ENSEMBL_MRNA;
