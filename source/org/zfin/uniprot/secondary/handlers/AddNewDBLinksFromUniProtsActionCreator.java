@@ -59,7 +59,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
             RichSequenceAdapter uniprot = uniprotEntry.getValue();
             String uniprotAccession = uniprot.getAccession();
 
-            List<DBLinkSlimDTO> dbls = context.getGeneByUniprot(uniprotAccession);
+            List<DBLinkSlimDTO> dbls = context.getGenesByUniprot(uniprotAccession);
             if(CollectionUtils.isEmpty(dbls)) {
                 continue;
             }

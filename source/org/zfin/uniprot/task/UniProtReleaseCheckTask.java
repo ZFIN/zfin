@@ -105,21 +105,14 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
     }
 
     private void downloadFiles(Date releaseDate) {
-        String url1 = downloadUrlForTremblFile;
-        String fileName1 = TREMBL_LOCAL_FILENAME;
-
-        String url2 = downloadUrlForSprotFile;
-        String fileName2 = SPROT_LOCAL_FILENAME;
-
         //set class properties
         downloadedDirectory = createPathForDownloadDestination(releaseDate);
-        downloadedFile1 = downloadedDirectory.resolve(fileName1);
-        downloadedFile2 = downloadedDirectory.resolve(fileName2);
+        downloadedFile1 = downloadedDirectory.resolve(TREMBL_LOCAL_FILENAME);
+        downloadedFile2 = downloadedDirectory.resolve(SPROT_LOCAL_FILENAME);
 
         //download the files
-        downloadFileIfNotExists(url1, downloadedFile1);
-        downloadFileIfNotExists(url2, downloadedFile2);
-
+        downloadFileIfNotExists(downloadUrlForTremblFile, downloadedFile1);
+        downloadFileIfNotExists(downloadUrlForSprotFile, downloadedFile2);
     }
 
     private Path processFiles() throws IOException {
@@ -171,6 +164,11 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
     }
 
     private void downloadFileIfNotExists(String url, Path localFile) {
+        if (localFile.toFile().exists()) {
+            log.info("File already exists: " + localFile + " size: (" + localFile.toFile().length() + " bytes)");
+            return;
+        }
+
         try {
             log.info("Downloading file: " + url + " to " + localFile);
             log.info("   exists? " + localFile.toFile().exists());

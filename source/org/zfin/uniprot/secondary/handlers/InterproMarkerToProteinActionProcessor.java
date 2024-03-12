@@ -1,9 +1,12 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
+import org.jooq.lambda.tuple.Tuple2;
+import org.zfin.uniprot.persistence.BatchInserter;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -24,27 +27,35 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        processInserts(actions);
-        processDeletes(actions);
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
+        if (type == SecondaryTermLoadAction.Type.LOAD) {
+            processInserts(actions);
+        } else if (type == SecondaryTermLoadAction.Type.DELETE) {
+            processDeletes(actions);
+        }
         currentSession().flush();
     }
 
     private void processInserts(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
-                log.info("inserting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
-                getMarkerRepository().insertInterProForMarker(action.getGeneZdbID(), action.getAccession());
-            }
-        }
+        List<Tuple2<String, String>> insertionRows = actions.stream()
+                .map(action -> new Tuple2<>(action.getGeneZdbID(), action.getAccession()))
+                .toList();
+        processInsertsFromTuples(insertionRows);
     }
+    public void processInsertsFromTuples(List<Tuple2<String, String>> actions) {
+        List<Map<String, Object>> insertionRows = actions.stream()
+                .map(action -> Map.of(
+                        "mtp_mrkr_zdb_id", (Object)action.v1(),
+                        "mtp_uniprot_id", action.v2()))
+                .toList();
+        BatchInserter batchInserter = new BatchInserter("marker_to_protein", insertionRows);
+        batchInserter.execute();
+    }
+
 
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
-            if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
-                log.info("deleting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
-                getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
-            }
+            getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
         }
     }
 

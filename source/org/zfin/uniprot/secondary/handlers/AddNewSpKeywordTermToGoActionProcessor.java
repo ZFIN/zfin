@@ -18,7 +18,7 @@ public class AddNewSpKeywordTermToGoActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        (new MarkerGoTermEvidenceActionProcessor()).processActions(actions);
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
+        (new MarkerGoTermEvidenceActionProcessor()).processActions(actions, type);
     }
 }

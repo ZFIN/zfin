@@ -40,7 +40,7 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     public static final String SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020723-1";
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
+    public void processActions(List<SecondaryTermLoadAction> subTypeActions, SecondaryTermLoadAction.Type type) {
 
         //group by subtype
         Map<SecondaryTermLoadAction.Type, List<SecondaryTermLoadAction>> groupedActions = subTypeActions.stream()

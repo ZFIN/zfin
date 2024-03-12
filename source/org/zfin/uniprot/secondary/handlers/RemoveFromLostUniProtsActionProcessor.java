@@ -24,7 +24,7 @@ public class RemoveFromLostUniProtsActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
         List<DBLink> dblinksToDelete = new ArrayList<>();
         for(SecondaryTermLoadAction action : actions) {
             DBLink dblink = getSequenceRepository().getDBLinkByReferenceDatabaseID(action.getGeneZdbID(), action.getAccession(), getReferenceDatabaseIDForAction(action));

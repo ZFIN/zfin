@@ -135,11 +135,11 @@ public class SecondaryTermLoadPipeline {
 
         for(SecondaryTermLoadAction.SubType subType : orderedSubTypes) {
             List<SecondaryTermLoadAction> subTypeActions = groupedBySubType.get(subType);
-            processLoadActionsBySubType(subType, subTypeActions);
+            processLoadActionsBySubType(type, subType, subTypeActions);
         }
     }
 
-    private static void processLoadActionsBySubType(SecondaryTermLoadAction.SubType subType, List<SecondaryTermLoadAction> subTypeActions) {
+    private static void processLoadActionsBySubType(SecondaryTermLoadAction.Type type, SecondaryTermLoadAction.SubType subType, List<SecondaryTermLoadAction> subTypeActions) {
         Class handlerClass = subTypeActions.get(0).getHandlerClass();
         ActionProcessor handler = getHandler(handlerClass);
         if (handler.isSubTypeHandlerFor() != subType) {
@@ -147,7 +147,7 @@ public class SecondaryTermLoadPipeline {
         }
         log.info("Processing " + subTypeActions.size() + " actions for " + subType + " using handler " + handlerClass);
         Date timestamp = new Date();
-        handler.processActions(subTypeActions);
+        handler.processActions(subTypeActions, type);
         long timeElapsed = new Date().getTime() - timestamp.getTime();
         long secondsElapsed = timeElapsed / 1000;
         log.info("Finished processing " + subTypeActions.size() + " actions in " + secondsElapsed + " seconds for " + subType + " using handler " + handlerClass);

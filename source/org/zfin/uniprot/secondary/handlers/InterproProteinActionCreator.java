@@ -38,7 +38,7 @@ public class InterproProteinActionCreator implements ActionCreator {
 
         for(String uniprotKey : uniProtRecords.getAccessions()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
-            List<String> zdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
+            List<String> zdbIDs = context.getGeneZdbIDsByUniprot(uniprotKey);
             if (zdbIDs.isEmpty()) {
                 continue;
             }
@@ -75,7 +75,7 @@ public class InterproProteinActionCreator implements ActionCreator {
             return Optional.empty();
         }
 
-        List<DBLinkSlimDTO> existingDbLinks = context.getGeneByUniprot(accession);
+        List<DBLinkSlimDTO> existingDbLinks = context.getGenesByUniprot(accession);
         Optional<DBLinkSlimDTO> autoCuratedDbLinks = existingDbLinks
                 .stream()
 //                .filter(dblink -> dblink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS)) //do we need this?
