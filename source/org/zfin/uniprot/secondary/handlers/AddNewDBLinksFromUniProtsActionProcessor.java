@@ -33,7 +33,7 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
         List<MarkerDBLink> dblinks = new ArrayList<>();
 
         for(SecondaryTermLoadAction action : actions) {

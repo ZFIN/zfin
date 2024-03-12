@@ -9,9 +9,11 @@ public interface ActionProcessor {
     /**
      * After all the actions have been created, the actions are processed.
      * This is where the database is updated.
+     *
      * @param actions list of actions to process
+     * @param type
      */
-    void processActions(List<SecondaryTermLoadAction> actions);
+    void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type);
 
     /**
      * Sanity check to make sure the actions are for the correct sub-type

@@ -21,7 +21,7 @@ public class RemoveSecondaryTermToGoActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
         for(SecondaryTermLoadAction action : actions) {
             switch (action.getDbName()) {
                 case INTERPRO -> deleteMarkerGoTermEvidence(action, IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID);

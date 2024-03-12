@@ -69,7 +69,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
             if (keywords == null || keywords.isEmpty()) {
                 continue;
             }
-            List<DBLinkSlimDTO> matchingGeneDBLinks = context.getGeneByUniprot(key);
+            List<DBLinkSlimDTO> matchingGeneDBLinks = context.getGenesByUniprot(key);
             if (matchingGeneDBLinks == null || matchingGeneDBLinks.isEmpty()) {
 //                log.info("No matching gene for " + key + " with " + keywords.size() + " keywords");
                 unmatchedGeneCount++;

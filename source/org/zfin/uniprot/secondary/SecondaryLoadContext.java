@@ -345,8 +345,16 @@ public class SecondaryLoadContext {
                 uniprotDbLinksByGeneZdbID.get(dataZdbID);
     }
 
-    public List<DBLinkSlimDTO> getGeneByUniprot(String dataZdbID) {
+    public List<DBLinkSlimDTO> getGenesByUniprot(String dataZdbID) {
         return this.uniprotDbLinks.get(dataZdbID);
+    }
+
+    public List<String> getGeneZdbIDsByUniprot(String uniprotAccession) {
+        List<DBLinkSlimDTO> dblinks = this.uniprotDbLinks.get(uniprotAccession);
+        if(dblinks == null) {
+            return Collections.emptyList();
+        }
+        return dblinks.stream().map(DBLinkSlimDTO::getDataZdbID).toList();
     }
 
     public boolean hasAnyUniprotGeneAssociation(String uniprotAccession, List<String> geneZdbIDs) {

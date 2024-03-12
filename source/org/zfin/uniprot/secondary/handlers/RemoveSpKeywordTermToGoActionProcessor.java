@@ -18,8 +18,8 @@ public class RemoveSpKeywordTermToGoActionProcessor implements ActionProcessor {
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        (new RemoveSecondaryTermToGoActionProcessor()).processActions(actions);
+    public void processActions(List<SecondaryTermLoadAction> actions, SecondaryTermLoadAction.Type type) {
+        (new RemoveSecondaryTermToGoActionProcessor()).processActions(actions, type);
     }
 
 }
