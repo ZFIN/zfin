@@ -5,7 +5,7 @@
 
     <zfin-gbrowse:genomeBrowserImageComponent image="${relatedTranscriptDisplay.gbrowseImage}" loopIndex="${loop.index}" />
 
-    <z:section>
+    <z:section show="true">
         <jsp:attribute name="title">
             Transcripts related to <zfin:abbrev entity="${relatedTranscriptDisplay.gene}" />
         </jsp:attribute>
