@@ -99,7 +99,7 @@ public interface InfrastructureRepository {
 
     void insertPublicAttribution(Genotype genotype, String sourceZdbID);
 
-    void insertStandardPubAttribution(String dataZdbID, Publication publication);
+    PublicationAttribution insertStandardPubAttribution(String dataZdbID, Publication publication);
 
     RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 

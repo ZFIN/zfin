@@ -17,6 +17,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.framework.services.VocabularyService;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -198,9 +199,11 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
                     HibernateUtil.currentSession().save(transcript);
                     HibernateUtil.currentSession().save(relationship);
                     HibernateUtil.currentSession().save(transcriptDBLink);
-
                     Publication pub = getPublicationRepository().getPublication("ZDB-PUB-240305-9");
-                    getInfrastructureRepository().insertStandardPubAttribution(transcript.zdbID, pub);
+                    PublicationAttribution attribution = getInfrastructureRepository().insertStandardPubAttribution(transcript.zdbID, pub);
+                    // attribute markerRelationship
+                    relationship.setPublications(Set.of(attribution));
+
 
                     HibernateUtil.flushAndCommitCurrentSession();
 
