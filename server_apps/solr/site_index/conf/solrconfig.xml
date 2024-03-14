@@ -81,6 +81,7 @@
        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <query>
 
+    <slowQueryThresholdMillis>5000</slowQueryThresholdMillis>
     <maxBooleanClauses>${solr.max.booleanClauses:1024}</maxBooleanClauses>
 
 
