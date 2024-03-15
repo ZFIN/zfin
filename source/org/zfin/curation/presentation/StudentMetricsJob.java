@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -68,21 +67,23 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
         stats.setReportTitle("Report for " + jobName);
         stats.includeTimestamp();
         Map<String, Object> summary = new LinkedHashMap<>();
-        summary.put("Stats for "+gunner.getShortName(),"");
-        summary.put("Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, readyForIndexing));
-        summary.put("number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, manualPdfAcquisition));
-        summary.put("number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(gunner, 7, closed.toArray(PublicationTrackingStatus[]::new)));
-        summary.put("","");
-        summary.put("Stats for "+avery.getShortName(),"");
-        summary.put("Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(avery, 7, readyForIndexing));
-        summary.put("number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(avery, 7, manualPdfAcquisition));
-        summary.put("number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(avery, 7, closed.toArray(PublicationTrackingStatus[]::new)));
+        summary.put("Stats for " + gunner.getShortName(), "");
+        int index = 1;
+        summary.put(index + " Number of Pubs moved to Ready-For-Indexing",
+            getPublicationRepository().getPublicationTrackingStatus(gunner, 7, readyForIndexing));
+        summary.put(index + " number of pubs transitioned to ‘manual pdf acquisition",
+            getPublicationRepository().getPublicationTrackingStatus(gunner, 7, manualPdfAcquisition));
+        summary.put(index + " number of pubs closed",
+            getPublicationRepository().getPublicationTrackingStatus(gunner, 7, closed.toArray(PublicationTrackingStatus[]::new)));
+        summary.put("", "");
+        summary.put("Stats for " + avery.getShortName(), "");
+        index++;
+        summary.put(index + " Number of Pubs moved to Ready-For-Indexing",
+            getPublicationRepository().getPublicationTrackingStatus(avery, 7, readyForIndexing));
+        summary.put(index + " number of pubs transitioned to ‘manual pdf acquisition",
+            getPublicationRepository().getPublicationTrackingStatus(avery, 7, manualPdfAcquisition));
+        summary.put(index + " number of pubs closed",
+            getPublicationRepository().getPublicationTrackingStatus(avery, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(dataDirectory, jobName), "statistics");
     }
