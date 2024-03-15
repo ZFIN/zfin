@@ -3,12 +3,7 @@ package org.zfin.framework.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.publication.Publication;
 
 @Getter
 @Setter
@@ -32,9 +27,7 @@ public class TranscriptNavigationMenu extends NavigationMenu {
 
         //If we aren't using the counter on the left hand navigation, turn it off for all menu items
         //We can remove this once this functionality is no longer behind a flag
-        if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER)) {
-            getNavigationItems().forEach(item -> item.setShowCount(false));
-        }
+        getNavigationItems().forEach(item -> item.setShowCount(false));
 
     }
 
