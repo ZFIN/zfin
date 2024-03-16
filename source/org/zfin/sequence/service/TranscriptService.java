@@ -99,7 +99,7 @@ public class TranscriptService {
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                     .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
-                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.ADDITIONAL_TRANSCRIPTS, GenomeBrowserTrack.GENES});
+                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
             }
