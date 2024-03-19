@@ -1,11 +1,16 @@
-FROM gradle:jdk17
+FROM gradle:7-jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
-       ant groovy postgresql-client tcsh sudo \
+       ant groovy tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
-       cpanminus build-essential rsync \
+       cpanminus build-essential rsync bind9-dnsutils \
        gnupg lsb-release 
+
+#add the postgresql repo so we can have a postgresql client that matches the server
+ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && apt update && apt install -y postgresql-client
 
 #RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 #RUN echo \
@@ -16,7 +21,8 @@ RUN echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_14.x \
   $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
 #
-#RUN apt update && apt install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
+        nodejs && npm install -g npm
 #       docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 RUN cpanm Devel::Camelcadedb
@@ -44,7 +50,20 @@ RUN mkdir -p /local/bin
 RUN ln -s /usr/bin/wget /local/bin/wget
 RUN ln -s /usr/bin/gunzip /local/bin/gunzip
 
+RUN mkdir /research
+RUN mkdir /mnt/research
+RUN ln -s /mnt/research/vol/archive /research/zarchive
+RUN ln -s /mnt/research/vol/blast /research/zblast
+RUN ln -s /mnt/research/vol/blast /research/zblastfiles
+RUN ln -s /mnt/research/vol/central /research/zcentral
+RUN ln -s /mnt/research/vol/prod /research/zprod
+RUN ln -s /mnt/research/vol/prod /research/zprodmore
+RUN ln -s /mnt/research/vol/unloads /research/zunloads
+RUN ln -s /mnt/research/vol/users /research/zusers
+
 RUN groupmod -n zfin gradle
+RUN groupadd -g 1076 zfinadmin
+RUN usermod  -aG zfinadmin gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
 RUN adduser gradle solr
