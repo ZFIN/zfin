@@ -11,9 +11,9 @@ public enum UiIndexerConfig {
 
     FishModelIndexer("FishModel", FishModelIndexer.class, 10),
     GenesInvolvedIndexer("GenesInvolved", GenesInvolvedIndexer.class, 20),
-    ChebiPhenotypeIndexer("ChebiPhenotype", ChebiPhenotypeIndexer.class, 30),
+    ChebiPhenotypeIndexer("ChebiPhenotype", ChebiPhenotypeIndexer.class, 50),
     PublicationExpressionIndexer("PublicationExpression", PublicationExpressionIndexer.class, 40),
-    TermPhenotypeIndexer("TermPhenotype", TermPhenotypeIndexer.class, 50),
+    TermPhenotypeIndexer("TermPhenotype", TermPhenotypeIndexer.class, 30),
     // Note: ChebiFishModelIndexer depends on FishModelIndexer, i.e. it has to run after FishModelIndexer!
     ChebiFishModelIndexer("ChebiFishModel", ChebiFishModelIndexer.class, 60);
 

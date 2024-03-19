@@ -141,17 +141,17 @@ public abstract class UiIndexer<Entity> extends Thread {
         int numberOfBatches = resultList.size() / BATCH_SIZE + 1;
         AtomicInteger counter = new AtomicInteger();
         Collection<List<Entity>> batchedList = resultList.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / numberOfBatches)).values();
-        helper.addQuickReport(getLogPrefix() + " Create batches: ");
+        helper.addQuickReport(getLogPrefix() + " Create batches: " + batchedList.size());
         return batchedList;
     }
 
     protected abstract void cleanUiTables();
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
-        if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz()) ||
-           this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz()) ||
-           this.getClass().equals(UiIndexerConfig.ChebiPhenotypeIndexer.getIndexClazz()) ||
-           this.getClass().equals(UiIndexerConfig.GenesInvolvedIndexer.getIndexClazz())) {
+        if (this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz()) ||
+            this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz()) ||
+            this.getClass().equals(UiIndexerConfig.ChebiPhenotypeIndexer.getIndexClazz()) ||
+            this.getClass().equals(UiIndexerConfig.GenesInvolvedIndexer.getIndexClazz())) {
             saveWithStatefulSession(batchedList);
         } else {
             saveWithStatelessSession(batchedList);
@@ -201,7 +201,7 @@ public abstract class UiIndexer<Entity> extends Thread {
     public static void main(String[] args) throws NoSuchFieldException {
 
         UiIndexer.init();
-        Set<String> argumentSet = new HashSet<>();
+        List<String> argumentSet = new ArrayList<>();
         for (int i = 0; i < args.length; i++) {
             argumentSet.add(args[i]);
             log.info("Args[" + i + "]: " + args[i]);
