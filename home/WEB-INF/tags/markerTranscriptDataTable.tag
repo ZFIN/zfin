@@ -8,6 +8,7 @@
         <tr>
             <th>Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
             <th>Name</th>
+            <th>Annotation Method</th>
             <th class="text-right">Length (nt)</th>
             <th>Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
         </tr>
@@ -34,6 +35,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
+                <td>${transcript.marker.annotationMethod.name}</td>
                 <td class="text-right">${transcript.marker.length} nt</td>
                 <td>
                     <c:if test="${empty transcript}">
