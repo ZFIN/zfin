@@ -11,11 +11,6 @@
 
 <z:page>
     <c:if test="${formBean.results != null}">
-        <div class="pub-export-controls">
-            <input type="button" value="Format into a printable listing" id="pub-printable-results">
-            <input type="button" value="Output as REFER format file" id="pub-refer-results">
-            <a href="/ZFIN/misc_html/refer_info.html" class="popup-link help-popup-link"></a>
-        </div>
         <table class="pub-search-results">
             <caption>
                 Publication Search Results<br>
@@ -237,8 +232,7 @@
             });
             $('#list-all-pubs').click(function (evt) {
                 evt.preventDefault();
-                resetForm($form);
-                $form.submit();
+                window.location.href = '/search?q=&fq=category%3A%22Publication%22&category=Publication';
             });
             $('#pub-printable-results').click(function (evt) {
                 evt.preventDefault();
