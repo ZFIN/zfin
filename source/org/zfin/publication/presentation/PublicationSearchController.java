@@ -31,6 +31,7 @@ public class PublicationSearchController {
     private final static int MIN_PAGE_SIZE = 1;
     private final static int DEFAULT_PAGE_SIZE = 10;
     private final static int MAX_PAGE_SIZE = 1000;
+    private final static String PUB_FACETED_SEARCH_URL = "/search?q=&fq=category%3A%22Publication%22&category=Publication";
 
     @Autowired
     private PublicationSearchService publicationSearchService;
@@ -88,29 +89,15 @@ public class PublicationSearchController {
     @RequestMapping(value = "/search/printable", method = RequestMethod.GET)
     public String returnPrintableResults(Model model,
                                          @ModelAttribute PublicationSearchBean formBean) {
-        formBean.setMaxDisplayRecords(Integer.MAX_VALUE);
-        formBean.setPageInteger(1);
-        model.addAttribute("formBean", formBean);
-        model.addAttribute("resultBeans", publicationSearchService.getResultsAsResultBeans(formBean));
-        model.addAttribute("today", new Date());
-        // this isn't really called via an ajax request, but this is how you get an unstyled page so...
-        return "publication/printable-results";
+        //redirect to PUB_FACETED_SEARCH_URL
+        return "redirect:" + PUB_FACETED_SEARCH_URL;
     }
 
-    @RequestMapping(value = "/search/refer", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void returnReferResults(@ModelAttribute PublicationSearchBean formBean,
+    @RequestMapping(value = "/search/refer", method = RequestMethod.GET)
+    public String returnReferResults(@ModelAttribute PublicationSearchBean formBean,
                                    HttpServletResponse response) throws IOException {
-        formBean.setMaxDisplayRecords(Integer.MAX_VALUE);
-        formBean.setPageInteger(1);
-        List<PublicationSearchResultBean> results = publicationSearchService.getResultsAsResultBeans(formBean);
-        String fileName = "ZFIN-Pub-Search-" + DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-        response.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter writer = response.getWriter();
-        for (PublicationSearchResultBean result : results) {
-            writer.println(publicationSearchService.formatAsRefer(result));
-        }
-        writer.close();
+        //redirect to PUB_FACETED_SEARCH_URL
+        return "redirect:" + PUB_FACETED_SEARCH_URL;
     }
 
     private void setDefaultValue(PublicationSearchBean formBean, String property, Object value) {
