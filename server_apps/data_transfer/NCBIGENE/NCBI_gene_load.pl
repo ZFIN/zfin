@@ -35,7 +35,7 @@ use FindBin;
 
 #relative path to library file(s) (ZFINPerlModules.pm)
 use lib "$FindBin::Bin/../../";
-use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File assertFileExists);
+use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File assertFileExistsAndNotEmpty) ;
 
 our $debug = 1;
 #########################
@@ -168,7 +168,7 @@ our $FASTA_LEN_COMMAND='./fasta_len.pl'; #was fasta_len.awk
 if (exists($ENV{'FASTA_LEN_COMMAND'})) {
     $FASTA_LEN_COMMAND=$ENV{'FASTA_LEN_COMMAND'};
 }
-assertFileExists($FASTA_LEN_COMMAND, "Could not find FASTA_LEN_COMMAND: $FASTA_LEN_COMMAND");
+assertFileExistsAndNotEmpty($FASTA_LEN_COMMAND, "Could not find FASTA_LEN_COMMAND: $FASTA_LEN_COMMAND");
 
 our $stepCount = 0;
 our $STEP_TIMESTAMP = 0;
@@ -469,14 +469,14 @@ sub sendLoadLogs {
 
 sub assertExpectedFilesExist {
     if (exists($ENV{'SKIP_DOWNLOADS'}) && $ENV{'SKIP_DOWNLOADS'}) {
-        assertFileExists("gene2accession.gz", "missing gene2accession.gz");
-        assertFileExists("RELEASE_NUMBER", "missing RELEASE_NUMBER");
-        assertFileExists("RefSeqCatalog.gz", "missing RefSeqCatalog.gz");
-        assertFileExists("gene2vega.gz", "missing gene2vega.gz");
-        assertFileExists("zf_gene_info.gz", "missing zf_gene_info.gz");
+        assertFileExistsAndNotEmpty("gene2accession.gz", "missing gene2accession.gz");
+        assertFileExistsAndNotEmpty("RELEASE_NUMBER", "missing RELEASE_NUMBER");
+        assertFileExistsAndNotEmpty("RefSeqCatalog.gz", "missing RefSeqCatalog.gz");
+        assertFileExistsAndNotEmpty("gene2vega.gz", "missing gene2vega.gz");
+        assertFileExistsAndNotEmpty("zf_gene_info.gz", "missing zf_gene_info.gz");
 
         unless (exists($ENV{'FORCE_EFETCH'}) && $ENV{'FORCE_EFETCH'}) {
-            assertFileExists("seq.fasta", "missing seq.fasta");
+            assertFileExistsAndNotEmpty("seq.fasta", "missing seq.fasta");
         }
     }
 }
@@ -592,9 +592,35 @@ sub downloadNCBIFilesForRelease {
         $hash = md5File('RefSeqCatalog.gz');
         print "RefSeqCatalog.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
+        #filter to only zebrafish records (unless it already exists)
+        if (!-e "RefSeqCatalog.danio.$hash.md5") {
+            doSystemCommand("touch RefSeqCatalog.danio.$hash.md5");
+
+            #delete file if exists:
+            unlink "RefSeqCatalog.danio.gz" if -e "RefSeqCatalog.danio.gz";
+            doSystemCommand("cat RefSeqCatalog.gz | gunzip -d | grep Danio | gzip -c > RefSeqCatalog.danio.gz");
+
+            #rename file to include new md5 hash
+            $hash = md5File("RefSeqCatalog.danio.gz");
+            rename("RefSeqCatalog.danio.gz", "RefSeqCatalog.danio.$hash.gz");
+        }
+
         downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz", "gene2accession.gz");
         $hash = md5File('gene2accession.gz');
         print "gene2accession.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
+
+        #filter to only zebrafish records (unless it already exists)
+        if (!-e "gene2accession.danio.$hash.md5") {
+            doSystemCommand("touch gene2accession.danio.$hash.md5");
+
+            #delete file if exists:
+            unlink "gene2accession.danio.gz" if -e "gene2accession.danio.gz";
+            doSystemCommand("cat gene2accession.gz | gunzip -d | grep -E '7955|tax_id' | gzip -c > gene2accession.danio.gz");
+
+            #rename file to include new md5 hash
+            $hash = md5File("gene2accession.danio.gz");
+            rename("gene2accession.danio.gz", "gene2accession.danio.$hash.gz");
+        }
 
         downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", "gene2vega.gz");
         $hash = md5File('gene2vega.gz');
@@ -614,7 +640,7 @@ sub downloadNCBIFilesForRelease {
     # If not, stop the process and send email to alert.
     #-------------------------------------------------------------------------------------------------
 
-    if (!-e "zf_gene_info.gz" || !-e "gene2accession.gz" || !-e "RefSeqCatalog.gz") {
+    if (!-e "zf_gene_info.gz" || !-e "gene2accession.gz" || !-e "RefSeqCatalog.gz" || !-e "gene2vega.gz") {
         my $subjectLine = "Auto from $dbname: NCBI_gene_load.pl :: ERROR with download";
         print LOG "\nMissing one or more downloaded NCBI file(s)\n\n";
         reportErrAndExit($subjectLine);
