@@ -4,38 +4,6 @@ import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from './Construc
 
 /*
  * This component is used to create a new construct
- * The form eventually will be submitted to the server
- * using an object like the following for Tg5(tdg.1-Hsa.TEST1:EGFP,tdg.2-Hsa.TEST2:EGFP):
- *
- * {
- *   "typeAbbreviation": "Tg",
- *   "prefix": "5",
- *   "cassettes": [
- *     {
- *       "cassetteNumber": 1,
- *       "promoterParts": [
- *         "tdg.1",
- *         "-",
- *         "Hsa.TEST1"
- *       ],
- *       "codingParts": [
- *         "EGFP"
- *       ]
- *     },
- *     {
- *       "cassetteNumber": 2,
- *       "promoterParts": [
- *         ",",
- *         "tdg.2",
- *         "-",
- *         "Hsa.TEST2"
- *       ],
- *       "codingParts": [
- *         "EGFP"
- *       ]
- *     }
- *   ]
- * }
  */
 
 interface CurateConstructNewProps {

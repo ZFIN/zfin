@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import ConstructRelationshipsTable from "./ConstructRelationshipsTable";
+import ConstructRelationshipsTable from './ConstructRelationshipsTable';
 
 interface CurateConstructRelationshipsProps {
     publicationId: string;

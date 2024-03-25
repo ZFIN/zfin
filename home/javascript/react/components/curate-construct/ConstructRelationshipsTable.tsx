@@ -152,9 +152,9 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
             const constructsData = await response.json();
-            let uniqueConstructsMap = {};
+            const uniqueConstructsMap = {};
 
-            let uniqueConstructs = [];
+            const uniqueConstructs = [];
 
             const mappedConstructRelationships = constructsData.map(({ zdbID, constructDTO, markerDTO, relationshipType }) => {
                 const { zdbID: constructZdbID, constructType: constructType, name: constructName } = constructDTO;
@@ -217,6 +217,8 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
             const newRelationshipFromServer = await submitConstructRelationship(selectedConstruct, selectedMarker, RELATIONSHIP_TO_ADD, publicationId);
             insertNewRelationshipRow(newRelationshipFromServer);
         } catch (error) {
+            //ignore linting rule for this alert
+            //eslint-disable-next-line
             alert('Failed to add construct marker relationship');
         }
     }
@@ -227,6 +229,8 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
             await deleteConstructMarkerRelationship(rel);
             removeRelationshipRow(rel);
         } catch (error) {
+            //ignore linting rule for this alert
+            //eslint-disable-next-line
             alert('Failed to delete construct marker relationship');
         }
     }
@@ -245,64 +249,64 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
 
     return <>
         <table className='searchresults groupstripes-hover' style={{width: '100%'}}>
-            <thead></thead>
+            <thead/>
             <tbody>
-            <tr className='table-header'>
-                <td>Construct</td>
-                <td>Type</td>
-                <td>Relationship</td>
-                <td>Target</td>
-                <td>Delete</td>
-            </tr>
-            {constructRelationshipRows.map(rel => (
-                <tr className={'experiment-row ' + rel.constructCssClass } key={rel.zdbID}>
+                <tr className='table-header'>
+                    <td>Construct</td>
+                    <td>Type</td>
+                    <td>Relationship</td>
+                    <td>Target</td>
+                    <td>Delete</td>
+                </tr>
+                {constructRelationshipRows.map(rel => (
+                    <tr className={'experiment-row ' + rel.constructCssClass } key={rel.zdbID}>
+                        <td>
+                            <div className='gwt-HTML'>
+                                {rel.constructLabel !== '' && <a href={`/${rel.constructZdbID}`} title={rel.constructLabel}>{rel.constructLabel}</a>}
+                            </div>
+                        </td>
+                        <td>
+                            <div className='gwt-Label'>Transgenic Construct</div>
+                        </td>
+                        <td>
+                            <div className='gwt-Label'>{rel.relationshipType}</div>
+                        </td>
+                        <td>
+                            <div className='gwt-HTML'>
+                                <a href={`/${rel.markerZdbID}`} id={rel.markerZdbID} title={rel.markerLabel}>
+                                    <span className='genedom' title={rel.markerLabel} id='Gene Symbol'>{rel.markerLabel}</span>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            {rel.relationshipType === RELATIONSHIP_TO_ADD &&
+                                <button type='button' className='gwt-Button' onClick={() => handleDeleteButton(rel)}>X</button>}
+                        </td>
+                    </tr>
+                ))}
+                <tr className='experiment-row'>
+                    <td><select className='gwt-ListBox' name='constructToAddList' onChange={(e) => setSelectedConstruct(e.target.value)}>
+                        <option value='-----------'>-----------</option>
+                        {publicationConstructs.map(construct => (
+                            <option key={construct.zdbID} value={construct.zdbID}>{construct.label}</option>
+                        ))}
+                    </select></td>
                     <td>
-                        <div className='gwt-HTML'>
-                            {rel.constructLabel !== '' && <a href={`/${rel.constructZdbID}`} title={rel.constructLabel}>{rel.constructLabel}</a>}
-                        </div>
+                        <div className='gwt-Label'/>
                     </td>
-                    <td>
-                        <div className='gwt-Label'>Transgenic Construct</div>
-                    </td>
-                    <td>
-                        <div className='gwt-Label'>{rel.relationshipType}</div>
-                    </td>
-                    <td>
-                        <div className='gwt-HTML'>
-                            <a href={`/${rel.markerZdbID}`} id={rel.markerZdbID} title={rel.markerLabel}>
-                                <span className='genedom' title={rel.markerLabel} id='Gene Symbol'>{rel.markerLabel}</span>
-                            </a>
-                        </div>
-                    </td>
-                    <td>
-                        {rel.relationshipType == RELATIONSHIP_TO_ADD &&
-                            <button type='button' className='gwt-Button' onClick={() => handleDeleteButton(rel)}>X</button>}
+                    <td><select className='gwt-ListBox'><option>{RELATIONSHIP_TO_ADD}</option></select></td>
+                    <td><select className='gwt-ListBox' onChange={(e) => setSelectedMarker(e.target.value)}>
+                        <option value='-----------'>-----------</option>
+                        {markersForRelation.map(marker => (
+                            <option key={marker.zdbID} value={marker.zdbID}>{marker.label}</option>
+                        ))}
+                    </select></td>
+                </tr>
+                <tr>
+                    <td align='left'>
+                        <button type='button' className='gwt-Button' onClick={handleAddButton}>Add</button>
                     </td>
                 </tr>
-            ))}
-            <tr className='experiment-row'>
-                <td><select className='gwt-ListBox' name='constructToAddList' onChange={(e) => setSelectedConstruct(e.target.value)}>
-                    <option value='-----------'>-----------</option>
-                    {publicationConstructs.map(construct => (
-                        <option key={construct.zdbID} value={construct.zdbID}>{construct.label}</option>
-                    ))}
-                </select></td>
-                <td>
-                    <div className='gwt-Label'></div>
-                </td>
-                <td><select className='gwt-ListBox'><option>{RELATIONSHIP_TO_ADD}</option></select></td>
-                <td><select className='gwt-ListBox' onChange={(e) => setSelectedMarker(e.target.value)}>
-                    <option value='-----------'>-----------</option>
-                    {markersForRelation.map(marker => (
-                        <option key={marker.zdbID} value={marker.zdbID}>{marker.label}</option>
-                    ))}
-                </select></td>
-            </tr>
-            <tr>
-                <td align='left'>
-                    <button type='button' className='gwt-Button' onClick={handleAddButton}>Add</button>
-                </td>
-            </tr>
             </tbody>
         </table>
     </>;
