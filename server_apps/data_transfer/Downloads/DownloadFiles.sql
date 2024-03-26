@@ -568,40 +568,44 @@ create view ameliorated_phenotype_fish as
 -- Then we join those 2 tables into the final join table.
 -- We need to do each table separately because we need to use DISTINCT and ORDER BY in the subqueries.
 
+DROP TABLE if exists experiment_with_zeco;
 CREATE TEMP TABLE experiment_with_zeco AS
 WITH distinct_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS zeco_id, term_name AS zeco_name
     FROM experiment_condition LEFT JOIN term ON expcond_zeco_term_zdb_id = term_zdb_id)
 SELECT
     expcond_exp_zdb_id,
     string_agg(zeco_id, '|' ORDER BY zeco_id) AS zeco_ids,
-    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names
+    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names,
+    count(zeco_id) as zeco_count
 FROM distinct_terms
 GROUP BY expcond_exp_zdb_id;
 
+DROP TABLE if exists experiment_with_chebi;
 CREATE TEMP TABLE experiment_with_chebi AS
 WITH distinct_chebi_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS chebi_id, term_name AS chebi_name
     FROM experiment_condition LEFT JOIN term ON expcond_chebi_term_zdb_id = term_zdb_id)
 SELECT
     expcond_exp_zdb_id,
     string_agg(chebi_id, '|' ORDER BY chebi_id) AS chebi_ids,
-    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names
+    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names,
+    count(chebi_id) as chebi_count
 FROM distinct_chebi_terms
 GROUP BY expcond_exp_zdb_id;
 
+DROP TABLE if exists experiment_condition_with_zeco_and_chebi;
 CREATE TEMP TABLE experiment_condition_with_zeco_and_chebi AS
 SELECT
     xpz.expcond_exp_zdb_id,
     zeco_ids,
     zeco_names,
+    zeco_count,
     chebi_ids,
-    chebi_names
+    chebi_names,
+    chebi_count
 FROM
     experiment_with_zeco xpz
     LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
 ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
-
-DROP TABLE experiment_with_zeco;
-DROP TABLE experiment_with_chebi;
 
 -- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
 create view ameliorated_phenotype_fish_with_chemicals as
@@ -709,7 +713,8 @@ drop view pheno_environment_fish;
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 
-create view gene_expression_phenotype as
+DROP VIEW IF EXISTS gene_expression_phenotype;
+create temp view gene_expression_phenotype as
 select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as gene,
                 psg_mrkr_zdb_id,
                 'expressed in' as expressedIn,
@@ -753,20 +758,36 @@ where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-L
  order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt' with delimiter as '	' null as '';
 
-create view gene_expression_phenotype_with_chemicals as
+DROP VIEW IF EXISTS gene_expression_phenotype_with_chemicals;
+create temp view gene_expression_phenotype_with_chemicals as
 select gep.*, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
 from gene_expression_phenotype gep
 left join experiment_condition_with_zeco_and_chebi fe on gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
 where fe.chebi_ids is not null
 order by gene, publication, figure;
+
+-- create download file for gene_expression_phenotype_with_chemicals
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
 
 --create a second copy for another downloads section
 --TODO: modify the download-registry handling to allow the same file in multiple categories
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
 
-drop view gene_expression_phenotype_with_chemicals;
-drop view gene_expression_phenotype;
+DROP VIEW IF EXISTS gene_expression_phenotype_wildtype_with_one_chemical;
+CREATE TEMP VIEW gene_expression_phenotype_wildtype_with_one_chemical as
+SELECT gep.*, fish_name, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
+FROM gene_expression_phenotype gep
+         LEFT JOIN experiment_condition_with_zeco_and_chebi fe ON gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+         LEFT JOIN fish ON gep.genox_fish_zdb_id = fish.fish_zdb_id
+WHERE fish.fish_is_wildtype = 't'
+  AND fe.chebi_count = 1;
+
+-- create download file for gene_expression_phenotype_wildtype_with_one_chemical
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical.txt' with delimiter as E'\t' null as '';
+
+--create a second copy for another downloads section
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical_2.txt' with delimiter as E'\t' null as '';
+
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
 
