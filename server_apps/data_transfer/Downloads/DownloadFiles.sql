@@ -1771,7 +1771,8 @@ CREATE TEMP TABLE tmp_wtxpat AS
         probe_id,
         antibody_id,
         fish_zdb_id
-    FROM tmp_wtxpat_with_conditions;
+    FROM tmp_wtxpat_with_conditions
+    where genox_exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5');
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
