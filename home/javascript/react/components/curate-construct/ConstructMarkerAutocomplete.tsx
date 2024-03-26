@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import {ConstructComponent} from './ConstructTypes';
+import {backendBaseUrl} from "./DomainInfo";
 
 /**
  * This is a React component that is used to allow the user to start typing
@@ -46,11 +47,7 @@ interface ConstructMarkerAutocompleteProps {
     onChangeWithObject?: (suggestion: ConstructComponent) => void;
 }
 
-//TODO: This is a hack to get the domain for developing locally.  It should be removed when this is deployed to production.
-let calculatedDomain = window.location.origin;
-if (calculatedDomain.indexOf('localhost') > -1) {
-    calculatedDomain = 'https://cell-mac.zfin.org';
-}
+let calculatedDomain = backendBaseUrl();
 
 function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
     const [input, setInput] = useState<string>('');

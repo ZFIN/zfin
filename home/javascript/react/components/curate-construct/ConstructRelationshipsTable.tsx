@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {backendBaseUrl} from "./DomainInfo";
 
 interface ConstructRelationshipsTableProps {
     publicationId: string;
@@ -37,11 +38,7 @@ type MarkerNameAndZdbId = {
     zdbID: string;
 }
 
-//TODO: This is a hack to get the domain for developing locally.  It should be removed when this is deployed to production.
-let calculatedDomain = window.location.origin;
-if (calculatedDomain.indexOf('localhost') > -1) {
-    calculatedDomain = 'https://cell-mac.zfin.org';
-}
+let calculatedDomain = backendBaseUrl();
 
 const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTableProps) => {
     const [loading, setLoading] = React.useState<boolean>(true);
