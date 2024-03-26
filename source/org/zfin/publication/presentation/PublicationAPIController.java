@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
+import org.zfin.construct.ConstructRelationship;
 import org.zfin.feature.Feature;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.figure.presentation.PhenotypeTableRow;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.root.dto.ConstructRelationshipDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.util.StringUtils;
@@ -435,6 +437,31 @@ public class PublicationAPIController {
 
         response.setResults(markerList);
         return response;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{publicationID}/{featureTypeName}/markersForRelation")
+    public List<MarkerDTO> getMarkersForRelation(@PathVariable String publicationID, @PathVariable String featureTypeName) {
+        List<Marker> markers = markerRepository.getMarkersForRelation(featureTypeName, publicationID);
+        List<MarkerDTO> markerDTOs = new ArrayList<MarkerDTO>();
+        for (Marker m : markers) {
+            markerDTOs.add(DTOConversionService.convertToMarkerDTO(m));
+        }
+        return markerDTOs;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{publicationID}/constructs")
+    public List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(@PathVariable String publicationID) {
+        List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<ConstructRelationshipDTO>();
+        List<ConstructRelationship> constructMarkerRelationships = getConstructRepository().getConstructRelationshipsByPublication(publicationID);
+        if (CollectionUtils.isNotEmpty(constructMarkerRelationships)) {
+            for (ConstructRelationship markerRelationship : constructMarkerRelationships) {
+                constructRelnDTOs.add(DTOConversionService.convertToConstructRelationshipDTO(markerRelationship));
+            }
+        }
+
+        return constructRelnDTOs;
     }
 
     @Getter

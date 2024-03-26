@@ -121,4 +121,8 @@ public class ConstructName {
     public void setTypeByAbbreviation(String componentValue) {
         getConstructTypeEnumByConstructName(componentValue).ifPresent(this::setType);
     }
+
+    public void reinitialize() {
+        cassettes.reinitialize();
+    }
 }
