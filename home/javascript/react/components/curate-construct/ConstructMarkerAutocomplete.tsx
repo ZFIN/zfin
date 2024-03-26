@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import {ConstructComponent} from './ConstructTypes';
-import {backendBaseUrl} from "./DomainInfo";
+import {backendBaseUrl} from './DomainInfo';
 
 /**
  * This is a React component that is used to allow the user to start typing

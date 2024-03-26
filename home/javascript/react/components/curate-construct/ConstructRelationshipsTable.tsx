@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {backendBaseUrl} from "./DomainInfo";
+import {backendBaseUrl} from './DomainInfo';
 
 interface ConstructRelationshipsTableProps {
     publicationId: string;

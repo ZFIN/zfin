@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from './ConstructTypes';
-import {backendBaseUrl} from "./DomainInfo";
+import {backendBaseUrl} from './DomainInfo';
 
 /*
  * This component is used to create a new construct
