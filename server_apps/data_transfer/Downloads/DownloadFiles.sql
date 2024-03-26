@@ -1778,21 +1778,6 @@ CREATE TEMP TABLE tmp_wtxpat AS
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';'
 \copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as E'\t' null as '';
 
-CREATE TEMP TABLE tmp_wtxpat_with_chemicals AS
-select DISTINCT
-    base.*,
-       fe.zeco_ids,
-       fe.zeco_names,
-       fe.chebi_ids,
-       fe.chebi_names
-from tmp_wtxpat_with_conditions base join
-     experiment_condition_with_zeco_and_chebi fe on base.genox_exp_zdb_id = fe.expcond_exp_zdb_id
-where chebi_ids is not null;
-
-\copy (select * from tmp_wtxpat_with_chemicals ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype_expression_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
-\copy (select * from tmp_wtxpat_with_chemicals ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype_expression_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
-
-
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
