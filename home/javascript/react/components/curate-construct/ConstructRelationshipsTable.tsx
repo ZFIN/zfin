@@ -38,7 +38,7 @@ type MarkerNameAndZdbId = {
     zdbID: string;
 }
 
-let calculatedDomain = backendBaseUrl();
+const calculatedDomain = backendBaseUrl();
 
 const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTableProps) => {
     const [loading, setLoading] = React.useState<boolean>(true);

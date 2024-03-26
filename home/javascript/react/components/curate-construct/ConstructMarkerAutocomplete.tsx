@@ -47,7 +47,7 @@ interface ConstructMarkerAutocompleteProps {
     onChangeWithObject?: (suggestion: ConstructComponent) => void;
 }
 
-let calculatedDomain = backendBaseUrl();
+const calculatedDomain = backendBaseUrl();
 
 function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
     const [input, setInput] = useState<string>('');

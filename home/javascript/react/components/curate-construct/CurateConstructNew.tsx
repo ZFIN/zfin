@@ -12,7 +12,7 @@ interface CurateConstructNewProps {
     show: boolean;
 }
 
-let calculatedDomain = backendBaseUrl();
+const calculatedDomain = backendBaseUrl();
 
 const CurateConstructNew = ({publicationId, show= true}: CurateConstructNewProps) => {
 
