@@ -542,7 +542,7 @@ create temp view phenotype_fish_with_chemicals as
 \copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
 \copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
 
-create view ameliorated_phenotype_fish as
+create temp view ameliorated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -622,7 +622,7 @@ FROM
 ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
 
 -- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
-create view ameliorated_phenotype_fish_with_chemicals as
+create temp view ameliorated_phenotype_fish_with_chemicals as
     select apf.*,
            fe.zeco_ids,
            fe.zeco_names,
@@ -639,10 +639,8 @@ create view ameliorated_phenotype_fish_with_chemicals as
 --TODO: modify the download-registry handling to allow the same file in multiple categories
 \copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals_2.txt' with delimiter as '	' null as '';
 
-drop view ameliorated_phenotype_fish_with_chemicals;
-drop view ameliorated_phenotype_fish;
 
-create view exacerbated_phenotype_fish as
+create temp view exacerbated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -676,7 +674,33 @@ create view exacerbated_phenotype_fish as
    and psg_tag = 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from exacerbated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/exacerbated_phenotype_fish.txt' with delimiter as '	' null as '';
-drop view exacerbated_phenotype_fish;
+
+-- create a view that joins the exacerbated phenotype fish with the zeco and chebi terms
+create temp view exacerbated_phenotype_fish_with_chemicals as
+select epf.*,
+       fe.zeco_ids,
+       fe.zeco_names,
+       fe.chebi_ids,
+       fe.chebi_names
+from exacerbated_phenotype_fish epf
+         left join experiment_condition_with_zeco_and_chebi fe on epf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+where fe.chebi_ids is not null
+order by fish_zdb_id, fig_source_zdb_id;
+
+--combine exacerbated and ameliorated phenotype views
+create temp view exacerbated_and_ameliorated_phenotype_fish_with_chemicals as
+select * from exacerbated_phenotype_fish_with_chemicals
+union
+select * from ameliorated_phenotype_fish_with_chemicals
+order by fish_zdb_id, fig_source_zdb_id;
+
+-- file title: Phenotypes Modified by Chemical - Ameliorated or Exacerbated
+-- file name: phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt
+-- sections: Phenotype Data and Toxicology
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt' with delimiter as E'\t' null as '';
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated_2.txt' with delimiter as E'\t' null as '';
+
+
 
 -- generate a file with xpatex and associated figure zdbid's
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'"
