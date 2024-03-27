@@ -596,7 +596,7 @@ sub downloadNCBIFilesForRelease {
         $hash = md5File('gene2accession.gz');
         print "gene2accession.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
-        downloadOrUseLocalFile("ftp://ftp.ncbi.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", "gene2vega.gz");
+        downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", "gene2vega.gz");
         $hash = md5File('gene2vega.gz');
         print "gene2vega.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
