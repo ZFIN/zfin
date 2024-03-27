@@ -491,7 +491,7 @@ drop view xpat_environment_fish;
 -- generate a file with genes and associated expression experiment
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'"
 
-create view phenotype_fish as
+create temp view phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -526,9 +526,23 @@ create view phenotype_fish as
    and psg_tag != 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
-drop view phenotype_fish;
 
-create view ameliorated_phenotype_fish as
+create temp view phenotype_fish_with_chemicals as
+    select pf.*,
+           fe.zeco_ids,
+           fe.zeco_names,
+           fe.chebi_ids,
+           fe.chebi_names
+    from phenotype_fish pf
+    left join experiment_condition_with_zeco_and_chebi fe on pf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+    left join fish on pf.fish_zdb_id = fish.fish_zdb_id
+    where fe.chebi_count = 1
+    and fish.fish_is_wildtype = 't'
+    order by fish_zdb_id, fig_source_zdb_id;
+\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
+\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
+
+create temp view ameliorated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -568,43 +582,47 @@ create view ameliorated_phenotype_fish as
 -- Then we join those 2 tables into the final join table.
 -- We need to do each table separately because we need to use DISTINCT and ORDER BY in the subqueries.
 
+DROP TABLE if exists experiment_with_zeco;
 CREATE TEMP TABLE experiment_with_zeco AS
 WITH distinct_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS zeco_id, term_name AS zeco_name
     FROM experiment_condition LEFT JOIN term ON expcond_zeco_term_zdb_id = term_zdb_id)
 SELECT
     expcond_exp_zdb_id,
     string_agg(zeco_id, '|' ORDER BY zeco_id) AS zeco_ids,
-    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names
+    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names,
+    count(zeco_id) as zeco_count
 FROM distinct_terms
 GROUP BY expcond_exp_zdb_id;
 
+DROP TABLE if exists experiment_with_chebi;
 CREATE TEMP TABLE experiment_with_chebi AS
 WITH distinct_chebi_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS chebi_id, term_name AS chebi_name
     FROM experiment_condition LEFT JOIN term ON expcond_chebi_term_zdb_id = term_zdb_id)
 SELECT
     expcond_exp_zdb_id,
     string_agg(chebi_id, '|' ORDER BY chebi_id) AS chebi_ids,
-    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names
+    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names,
+    count(chebi_id) as chebi_count
 FROM distinct_chebi_terms
 GROUP BY expcond_exp_zdb_id;
 
+DROP TABLE if exists experiment_condition_with_zeco_and_chebi;
 CREATE TEMP TABLE experiment_condition_with_zeco_and_chebi AS
 SELECT
     xpz.expcond_exp_zdb_id,
     zeco_ids,
     zeco_names,
+    zeco_count,
     chebi_ids,
-    chebi_names
+    chebi_names,
+    chebi_count
 FROM
     experiment_with_zeco xpz
     LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
 ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
 
-DROP TABLE experiment_with_zeco;
-DROP TABLE experiment_with_chebi;
-
 -- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
-create view ameliorated_phenotype_fish_with_chemicals as
+create temp view ameliorated_phenotype_fish_with_chemicals as
     select apf.*,
            fe.zeco_ids,
            fe.zeco_names,
@@ -621,10 +639,8 @@ create view ameliorated_phenotype_fish_with_chemicals as
 --TODO: modify the download-registry handling to allow the same file in multiple categories
 \copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals_2.txt' with delimiter as '	' null as '';
 
-drop view ameliorated_phenotype_fish_with_chemicals;
-drop view ameliorated_phenotype_fish;
 
-create view exacerbated_phenotype_fish as
+create temp view exacerbated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -658,7 +674,33 @@ create view exacerbated_phenotype_fish as
    and psg_tag = 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from exacerbated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/exacerbated_phenotype_fish.txt' with delimiter as '	' null as '';
-drop view exacerbated_phenotype_fish;
+
+-- create a view that joins the exacerbated phenotype fish with the zeco and chebi terms
+create temp view exacerbated_phenotype_fish_with_chemicals as
+select epf.*,
+       fe.zeco_ids,
+       fe.zeco_names,
+       fe.chebi_ids,
+       fe.chebi_names
+from exacerbated_phenotype_fish epf
+         left join experiment_condition_with_zeco_and_chebi fe on epf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+where fe.chebi_ids is not null
+order by fish_zdb_id, fig_source_zdb_id;
+
+--combine exacerbated and ameliorated phenotype views
+create temp view exacerbated_and_ameliorated_phenotype_fish_with_chemicals as
+select * from exacerbated_phenotype_fish_with_chemicals
+union
+select * from ameliorated_phenotype_fish_with_chemicals
+order by fish_zdb_id, fig_source_zdb_id;
+
+-- file title: Phenotypes Modified by Chemical - Ameliorated or Exacerbated
+-- file name: phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt
+-- sections: Phenotype Data and Toxicology
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt' with delimiter as E'\t' null as '';
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated_2.txt' with delimiter as E'\t' null as '';
+
+
 
 -- generate a file with xpatex and associated figure zdbid's
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'"
@@ -709,7 +751,8 @@ drop view pheno_environment_fish;
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
 
-create view gene_expression_phenotype as
+DROP VIEW IF EXISTS gene_expression_phenotype;
+create temp view gene_expression_phenotype as
 select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as gene,
                 psg_mrkr_zdb_id,
                 'expressed in' as expressedIn,
@@ -753,21 +796,36 @@ where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-L
  order by gene, publication, figure;
 \copy (select * from gene_expression_phenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt' with delimiter as '	' null as '';
 
-create view gene_expression_phenotype_with_chemicals as
+DROP VIEW IF EXISTS gene_expression_phenotype_with_chemicals;
+create temp view gene_expression_phenotype_with_chemicals as
 select gep.*, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
 from gene_expression_phenotype gep
 left join experiment_condition_with_zeco_and_chebi fe on gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
 where fe.chebi_ids is not null
 order by gene, publication, figure;
+
+-- create download file for gene_expression_phenotype_with_chemicals
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
 
 --create a second copy for another downloads section
 --TODO: modify the download-registry handling to allow the same file in multiple categories
 \copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
 
-drop view gene_expression_phenotype_with_chemicals;
-drop table experiment_condition_with_zeco_and_chebi;
-drop view gene_expression_phenotype;
+DROP VIEW IF EXISTS gene_expression_phenotype_wildtype_with_one_chemical;
+CREATE TEMP VIEW gene_expression_phenotype_wildtype_with_one_chemical as
+SELECT gep.*, fish_name, fe.zeco_ids, fe.zeco_names, fe.chebi_ids, fe.chebi_names
+FROM gene_expression_phenotype gep
+         LEFT JOIN experiment_condition_with_zeco_and_chebi fe ON gep.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+         LEFT JOIN fish ON gep.genox_fish_zdb_id = fish.fish_zdb_id
+WHERE fish.fish_is_wildtype = 't'
+  AND fe.chebi_count = 1;
+
+-- create download file for gene_expression_phenotype_wildtype_with_one_chemical
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical.txt' with delimiter as E'\t' null as '';
+
+--create a second copy for another downloads section
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical_2.txt' with delimiter as E'\t' null as '';
+
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
 
@@ -1699,113 +1757,66 @@ FROM publication pub, tmp_pubs,marker_type_group_member
 \copy (select * from gene_publication) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';
 drop view gene_publication;
 
-create temp table tmp_wtxpat (
-        mrkr_zdb_id text,
-  	mrkr_abbrev text,
-  	fish_full_name text,
-  	term_ont_id text,
-  	term_name text,
-  	subontid text,
-  	subname text,
-  	startSt text,
-  	endSt text,
-  	xpatex_assay_name text,
-  	xpatassay_mmo_id text,
-  	xpatex_source_zdb_id text,
-  	probe_id text,
-  	antibody_id text,
-  	fish_zdb_id text
-);
-insert into tmp_wtxpat (
+CREATE TEMP TABLE tmp_wtxpat_with_conditions AS
+SELECT DISTINCT
+    mrkr_zdb_id,
+    mrkr_abbrev,
+    genox_exp_zdb_id,
+    fish_full_name,
+    super.term_ont_id,
+    super.term_name,
+    nvl(sub.term_ont_id, '')    AS subontid,
+    nvl(sub.term_name, '')      AS subname,
+    startStage.stg_name         AS startSt,
+    endStage.stg_name           AS endSt,
+    xpatex_assay_name,
+    xpatassay_mmo_id,
+    xpatex_source_zdb_id,
+    xpatex_probe_feature_zdb_id AS probe_id,
+    xpatex_atb_zdb_id           AS antibody_id,
+    fish_zdb_id
+FROM marker JOIN
+     expression_experiment2   ON mrkr_zdb_id = xpatex_gene_zdb_id JOIN
+     fish_experiment          ON xpatex_genox_zdb_id = genox_zdb_id JOIN
+     fish                     ON genox_fish_zdb_id = fish_zdb_id JOIN
+     expression_figure_stage  ON xpatex_zdb_id = efs_xpatex_zdb_id JOIN
+     stage startStage         ON efs_start_stg_zdb_id = startStage.stg_zdb_id JOIN
+     stage endStage           ON efs_end_stg_zdb_id = endStage.stg_zdb_id JOIN
+     expression_result2       ON efs_pk_id = xpatres_efs_id JOIN
+     term super               ON super.term_zdb_id = xpatres_superterm_zdb_id JOIN
+     genotype                 ON fish_genotype_zdb_id = geno_zdb_id JOIN
+     expression_pattern_assay ON xpatex_assay_name = xpatassay_name LEFT JOIN
+     term AS sub              ON sub.term_zdb_id = xpatres_subterm_zdb_id
+WHERE geno_is_wildtype = 't'
+  AND xpatres_expression_found = 't'
+  AND NOT EXISTS(SELECT 'x' FROM clone WHERE clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id AND clone_problem_type = 'Chimeric')
+  AND NOT EXISTS(SELECT 'x' FROM fish_Str WHERE fish_Zdb_id = fishstr_Fish_zdb_id);
+
+CREATE TEMP TABLE tmp_wtxpat AS
+    SELECT DISTINCT
         mrkr_zdb_id,
-  	mrkr_abbrev,
-  	fish_full_name,
-  	term_ont_id,
-  	term_name,
-  	subontid,
-  	subname,
-  	startSt,
-  	endSt,
-  	xpatex_assay_name,
-  	xpatassay_mmo_id,
-  	xpatex_source_zdb_id,
-  	probe_id,
-  	antibody_id,
-  	fish_zdb_id
-)
-select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-       '' as subontid,
-       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
+        mrkr_abbrev,
+        fish_full_name,
+        term_ont_id,
+        term_name,
+        subontid,
+        subname,
+        startSt,
+        endSt,
+        xpatex_assay_name,
+        xpatassay_mmo_id,
         xpatex_source_zdb_id,
-        case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker, expression_experiment2, fish_experiment, fish, experiment, expression_result2, expression_figure_stage, stage startStage, stage endStage,
- term super, genotype, expression_pattern_assay
- where geno_is_wildtype = 't'
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
-   and xpatres_expression_found = 't'
-  and not exists (Select 'x' from clone
-  where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-  and clone_problem_type = 'Chimeric')
-   and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_assay_name=xpatassay_name
-   and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id = genox_fish_zdb_id
-
---   and fish_is_wildtype = 't'
-   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
-   and efs_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_efs_id = expression_figure_stage.efs_pk_id
-   and efs_start_stg_zdb_id = startStage.stg_zdb_id
-   and efs_end_stg_zdb_id = endStage.stg_zdb_id
-   and fish_genotype_zdb_id = geno_zdb_id
-and xpatres_subterm_zdb_id is null
- group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
-        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
-union
-select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-       sub.term_ont_id as subontid,
-       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
-        xpatex_source_zdb_id,
-        case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker, expression_experiment2, fish_experiment, fish, experiment, expression_result2, expression_figure_stage, stage startStage, stage endStage,
- term super, genotype, term sub, expression_pattern_assay
- where geno_is_wildtype = 't'
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
-   and xpatres_expression_found = 't'
-  and not exists (Select 'x' from clone
-      	  	 	 where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-  and clone_problem_type = 'Chimeric')
-   and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id =genox_fish_zdb_id
---   and fish_is_wildtype = 't'
-   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
-   and efs_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_efs_id = expression_figure_stage.efs_pk_id
-   and efs_start_stg_zdb_id = startStage.stg_zdb_id
-   and efs_end_stg_zdb_id = endStage.stg_zdb_id
-   and fish_genotype_zdb_id = geno_zdb_id
-   and sub.term_zdb_id = xpatres_subterm_zdb_id
-   and xpatex_assay_name=xpatassay_name
-and xpatres_subterm_zdb_id is not null
- group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
-        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
-;
-
-delete from tmp_wtxpat
- where probe_id in (select clone_mrkr_zdb_id from clone where clone_problem_type = 'Chimeric');
-
+        probe_id,
+        antibody_id,
+        fish_zdb_id
+    FROM tmp_wtxpat_with_conditions
+    where genox_exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5');
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_wtxpat) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt' with delimiter as '	' null as '';
+\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';'
+\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as E'\t' null as '';
+
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
