@@ -41,7 +41,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org
-<!--|MACHINE_NAME|-->	trunk2
+<!--|MACHINE_NAME|-->	trunk
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	informix\@zfin.org
