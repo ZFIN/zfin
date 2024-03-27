@@ -491,7 +491,7 @@ drop view xpat_environment_fish;
 -- generate a file with genes and associated expression experiment
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'"
 
-create view phenotype_fish as
+create temp view phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
             pg_start_stg_zdb_id,
             (select stg_name
@@ -526,7 +526,21 @@ create view phenotype_fish as
    and psg_tag != 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
-drop view phenotype_fish;
+
+create temp view phenotype_fish_with_chemicals as
+    select pf.*,
+           fe.zeco_ids,
+           fe.zeco_names,
+           fe.chebi_ids,
+           fe.chebi_names
+    from phenotype_fish pf
+    left join experiment_condition_with_zeco_and_chebi fe on pf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+    left join fish on pf.fish_zdb_id = fish.fish_zdb_id
+    where fe.chebi_count = 1
+    and fish.fish_is_wildtype = 't'
+    order by fish_zdb_id, fig_source_zdb_id;
+\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
+\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
 
 create view ameliorated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
