@@ -2517,7 +2517,7 @@ from marker, marker_sequence
 drop view talenFasta;
 
 \echo '\copy (select * from fishModelDisease) fish_model_disease.txt'
-CREATE VIEW fishModelDisease AS
+CREATE TEMP VIEW fishModelDisease AS
   SELECT
     genox_fish_zdb_id,
     genox_exp_zdb_id,
@@ -2541,7 +2541,23 @@ CREATE VIEW fishModelDisease AS
     INNER JOIN disease_annotation_model ON damo_dat_zdb_id = dat_zdb_id
     INNER JOIN fish_experiment ON genox_zdb_id = damo_genox_zdb_id;
 \copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt' with delimiter as '	' null as '';
-drop view fishModelDisease;
+
+
+-- filename: fish_model_disease_chemical.txt
+-- file title: Disease Models that Include Chemical
+CREATE TEMP VIEW fishModelDiseaseChemical AS
+    SELECT fmd.*,
+           fe.zeco_ids,
+           fe.zeco_names,
+           fe.chebi_ids,
+           fe.chebi_names
+    FROM fishModelDisease fmd
+    LEFT JOIN experiment_condition_with_zeco_and_chebi fe on genox_exp_zdb_id = fe.expcond_exp_zdb_id
+    WHERE fe.chebi_ids IS NOT NULL
+    ORDER BY genox_fish_zdb_id;
+\copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical.txt' with delimiter as E'\t' null as '';
+\copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical_2.txt' with delimiter as E'\t' null as '';
+
 
 \echo '\copy (select * from diseaseAttributions) disease_attribution.txt'
 CREATE VIEW diseaseAttributions AS
