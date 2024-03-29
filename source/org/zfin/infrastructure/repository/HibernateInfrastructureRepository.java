@@ -210,7 +210,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
+    public PublicationAttribution insertStandardPubAttribution(String dataZdbID, Publication publication) {
         PublicationAttribution publicationAttribution = new PublicationAttribution();
         publicationAttribution.setDataZdbID(dataZdbID);
         publicationAttribution.setPublication(publication);
@@ -218,6 +218,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (!existAttribution(publicationAttribution)) {
             HibernateUtil.currentSession().save(publicationAttribution);
         }
+        return publicationAttribution;
     }
 
     private boolean existAttribution(PublicationAttribution attribution) {
