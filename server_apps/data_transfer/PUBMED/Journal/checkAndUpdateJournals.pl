@@ -24,7 +24,7 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
 #remove old report and log files
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*.txt");
 
-system("/local/bin/wget ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt");
+system("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/pubmed/J_Medline.txt");
 
 open (ALLJOURNALS, "J_Medline.txt") ||  die "Cannot open J_Medline.txt : $!\n";
 
