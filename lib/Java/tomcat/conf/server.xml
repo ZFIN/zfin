@@ -105,9 +105,15 @@
                maxParameterCount="1000"
                enableLookups="false" disableUploadTimeout="true"
                SSLEnabled="true" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" compression="on"
-               keystoreFile="/opt/apache/apache-tomcat/conf/keystore"
-               URIEncoding="UTF-8"/>
+               clientAuth="false" compression="on"
+	       defaultSSLHostConfigName="zfin.org"
+	       URIEncoding="UTF-8">
+	       <SSLHostConfig hostName="zfin.org">
+                <Certificate
+                  certificateKeystoreFile="/opt/apache/apache-tomcat/conf/keystore"
+                  />
+               </SSLHostConfig>
+      </Connector>
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector protocol="AJP/1.3"
