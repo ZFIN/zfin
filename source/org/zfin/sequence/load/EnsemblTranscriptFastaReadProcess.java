@@ -3,6 +3,7 @@ package org.zfin.sequence.load;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.SequenceIterator;
@@ -15,30 +16,27 @@ import org.zfin.Species;
 import org.zfin.alliancegenome.JacksonObjectMapperFactoryZFIN;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.VocabularyTerm;
-import org.zfin.framework.exec.ExecProcess;
 import org.zfin.framework.services.VocabularyService;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.*;
 import org.zfin.marker.presentation.LinkDisplay;
+import org.zfin.marker.presentation.MarkerRelationshipFormBean;
 import org.zfin.marker.presentation.RelatedTranscriptDisplay;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
-import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
 import org.zfin.util.FileUtil;
 import si.mazi.rescu.ClientConfig;
-import si.mazi.rescu.RestProxyFactory;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,46 +53,7 @@ import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQU
 /**
  * This class runs system exec calls robustly.
  */
-public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
-
-    private DBLink dbLink;
-    private List<Sequence> sequences = new ArrayList<>();
-
-
-    public EnsemblTranscriptFastaReadProcess(List<String> commandList, DBLink dbLink) {
-        super(commandList);
-        this.dbLink = dbLink;
-    }
-
-    public List<Sequence> getSequences() {
-
-        try {
-            sequences.clear();
-
-            StringReader stringReader = new StringReader(getStandardOutput());
-            BufferedReader br = new BufferedReader(stringReader);
-            RichSequenceIterator iterator;
-            SymbolTokenization symbolTokenization;
-            if (dbLink.getReferenceDatabase().getPrimaryBlastDatabase().getType() == Database.Type.NUCLEOTIDE) {
-                symbolTokenization = RichSequence.IOTools.getNucleotideParser();
-            } else {
-                symbolTokenization = RichSequence.IOTools.getProteinParser();
-            }
-            iterator = RichSequence.IOTools.readFasta(br, symbolTokenization, new SimpleNamespace("fasta-in"));
-            while (iterator.hasNext()) {
-                RichSequence richSequence = iterator.nextRichSequence();
-                Sequence sequence = new Sequence();
-                sequence.setDbLink(dbLink);
-                sequence.setData(richSequence.getInternalSymbolList().seqString().toUpperCase());
-                sequence.setDefLine(new BioJavaDefline(richSequence));
-                sequences.add(sequence);
-            }
-        } catch (Exception ex) {
-            System.out.println("Problem reading stream" + ex);
-            ex.printStackTrace();
-        }
-        return sequences;
-    }
+public class EnsemblTranscriptFastaReadProcess {
 
     private static final String baseUrl = "https://rest.ensembl.org";
     private static final ClientConfig config = new ClientConfig();
@@ -106,23 +65,30 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
     public static void main(String[] args) throws IOException {
         AbstractScriptWrapper wrapper = new AbstractScriptWrapper();
         wrapper.initAll();
-        Map<String, List<RichSequence>> sortedGeneTranscriptMapCleaned = getSequenceMapFromDownloadFile();
-        //printFirstTerms(sortedGeneTranscriptMapCleaned, 10);
+
+        EnsemblTranscriptFastaReadProcess loader = new EnsemblTranscriptFastaReadProcess();
+        loader.init();
+    }
+
+    private Map<String, List<RichSequence>> allEnsemblProvidedGeneMap;
+
+    public void init() throws IOException {
+        loadSequenceMapFromDownloadFile();
 
         // <ensdargID, DBLink>
         Map<String, MarkerDBLink> ensdargMap = getMarkerDBLinks();
-
         Map<Marker, List<TranscriptDBLink>> geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         System.out.println("Total Number of Genes with Ensembl Transcripts In ZFIN: " + geneEnsdartMap.size());
 
-        createTranscriptRecords(sortedGeneTranscriptMapCleaned, ensdargMap, geneEnsdartMap);
+        List<Marker> ensemblGenesToBeImported = getEnsemblAccessionsToBeImported(geneEnsdartMap);
+        createTranscriptRecords(ensdargMap, geneEnsdartMap, ensemblGenesToBeImported);
         System.exit(0);
 
-        createReportFiles(sortedGeneTranscriptMapCleaned, geneEnsdartMap);
+        createReportFiles(geneEnsdartMap);
 
 
-        sortedGeneTranscriptMapCleaned.entrySet().removeIf(entry -> !ensdargMap.containsKey(entry.getKey()));
-        System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file matching a gene record in ZFIN: " + sortedGeneTranscriptMapCleaned.size());
+        allEnsemblProvidedGeneMap.entrySet().removeIf(entry -> !ensdargMap.containsKey(entry.getKey()));
+        System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file matching a gene record in ZFIN: " + allEnsemblProvidedGeneMap.size());
 
         // remove transcripts that are being found in ZFIN
 /*
@@ -131,11 +97,11 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         });
 */
         // remove accession without any new transcripts left
-        sortedGeneTranscriptMapCleaned.entrySet().removeIf(entry -> entry.getValue().size() == 0);
-        System.out.println("Total Number of Ensembl Genes with new transcripts in FASTA file matching a gene record in ZFIN: " + sortedGeneTranscriptMapCleaned.size());
-        System.out.println("Total Number of Ensembl Transcripts missing in ZFIN: " + sortedGeneTranscriptMapCleaned.values().stream().map(List::size).reduce(0, (integer, richSequences) -> integer + richSequences));
+        allEnsemblProvidedGeneMap.entrySet().removeIf(entry -> entry.getValue().size() == 0);
+        System.out.println("Total Number of Ensembl Genes with new transcripts in FASTA file matching a gene record in ZFIN: " + allEnsemblProvidedGeneMap.size());
+        System.out.println("Total Number of Ensembl Transcripts missing in ZFIN: " + allEnsemblProvidedGeneMap.values().stream().map(List::size).reduce(0, (integer, richSequences) -> integer + richSequences));
 
-        sortedGeneTranscriptMapCleaned.forEach((s, richSequences) -> {
+        allEnsemblProvidedGeneMap.forEach((s, richSequences) -> {
                 richSequences.forEach(richSequence -> {
                     System.out.println(ensdargMap.get(s).getMarker().getZdbID() + "," + getGeneIdFromVersionedAccession(richSequence.getAccession()));
                 });
@@ -143,76 +109,131 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         );
     }
 
-    private static void createTranscriptRecords(Map<String, List<RichSequence>> sortedGeneTranscriptMapCleaned, Map<String, MarkerDBLink> ensdargMap, Map<Marker, List<TranscriptDBLink>> geneEnsdartMap) {
-        VocabularyService vocabularyService = new VocabularyService();
-        List<RichSequence> sequenceListToBeGenerated = new ArrayList<>();
-        geneEnsdartMap.forEach((marker, transcriptDBLinks) -> {
-            String geneID = "ZDB-GENE-081112-1";
-            if (marker.getZdbID().equals(geneID)) {
-                MarkerDBLink link = ensdargMap.entrySet().stream().filter(entry -> entry.getValue().getMarker().getZdbID().equals(geneID)).toList().get(0).getValue();
-                List<RichSequence> transcriptsEnsembl = sortedGeneTranscriptMapCleaned.get(link.getAccessionNumber());
-                transcriptsEnsembl.forEach(richSequence -> {
-                    EnsemblTranscriptRESTInterface api = RestProxyFactory.createProxy(EnsemblTranscriptRESTInterface.class, baseUrl, config);
-                    String ensdartID = getString(richSequence);
-                    List<Transcript> tScriptList = TranscriptService.getRelatedTranscripts(marker).stream()
-                        .map(relatedMarker -> TranscriptService.convertMarkerToTranscript(relatedMarker.getMarker())).toList();
-                    List<String> existingEnsdartIDs = tScriptList.stream().map(Transcript::getEnsdartId).toList();
-                    if (existingEnsdartIDs.contains(ensdartID)) {
-                        return;
-                    }
-                    EnsemblTranscript ensemblTranscript = api.getTranscriptInfo(ensdartID, "application/json");
-                    Transcript transcript = new Transcript();
-                    transcript.setEnsdartId(ensdartID);
-                    Person person = getProfileRepository().getPerson("ZDB-PERS-060413-1");
-                    transcript.setOwner(person);
-                    transcript.setAbbreviation(ensemblTranscript.getDisplayName());
-                    transcript.setName(ensemblTranscript.getDisplayName());
-                    transcript.setMarkerType(getMarkerRepository().getMarkerTypeByName(TSCRIPT.name()));
-                    // if biotype = protein_coding => mRNA
-                    // otherwise exception
-                    if (!ensemblTranscript.getBiotype().equals("protein_coding"))
-                        throw new RuntimeException("Could not map biotype " + ensemblTranscript.getDisplayName() + " to transcript Type");
-                    transcript.setTranscriptType(getMarkerRepository().getTranscriptTypeForName(MRNA.toString()));
+    private List<RichSequence> sequenceListToBeGenerated = new ArrayList<>();
 
-                    HibernateUtil.createTransaction();
-                    MarkerRelationship relationship = new MarkerRelationship();
-                    relationship.setFirstMarker(marker);
-                    relationship.setSecondMarker(transcript);
-                    relationship.setType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
-                    marker.getFirstMarkerRelationships().add(relationship);
+    private final MarkerType transcriptMarkerType = getMarkerRepository().getMarkerTypeByName(TSCRIPT.name());
+    private final TranscriptType transcriptTypeForName = getMarkerRepository().getTranscriptTypeForName(MRNA.toString());
+    private final MarkerRelationshipType markerRelationshipType = getMarkerRepository().getMarkerRelationshipType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT.toString());
+    private final VocabularyService vocabularyService = new VocabularyService();
+    private final ReferenceDatabase database = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ENSEMBL_TRANS, ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+    private final DisplayGroup nucleotideSequ = getSequenceRepository().getDisplayGroup(DISPLAYED_NUCLEOTIDE_SEQUENCE);
+    private final VocabularyTerm annotationMethod = vocabularyService.getVocabularyTerm(TRANSCRIPT_ANNOTATION_METHOD, "Ensembl");
+    // Genotype hard-coded to TU
+    private final Genotype tu = getExpressionRepository().getGenotypeByID("ZDB-GENO-990623-3");
+    private final Publication pub = getPublicationRepository().getPublication("ZDB-PUB-240305-9");
+    private final Person person = getProfileRepository().getPerson("ZDB-PERS-060413-1");
 
-                    TranscriptDBLink transcriptDBLink = new TranscriptDBLink();
-                    transcriptDBLink.setTranscript(transcript);
-                    transcriptDBLink.setAccessionNumber(ensdartID
-                    );
-                    transcriptDBLink.setLength(ensemblTranscript.getLength());
-                    ReferenceDatabase database = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ENSEMBL_TRANS, ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-                    DisplayGroup nucleotideSequ = getSequenceRepository().getDisplayGroup(DISPLAYED_NUCLEOTIDE_SEQUENCE);
-                    database.getDisplayGroups().add(nucleotideSequ);
-                    transcriptDBLink.setReferenceDatabase(database);
+    private List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
-                    // Genotype hard-coded to TU
-                    Genotype tu = getExpressionRepository().getGenotypeByID("ZDB-GENO-990623-3");
-                    transcript.setStrain(tu);
-                    VocabularyTerm annotationMethod = vocabularyService.getVocabularyTerm(TRANSCRIPT_ANNOTATION_METHOD, "Ensembl");
-                    transcript.setAnnotationMethod(annotationMethod);
-                    HibernateUtil.currentSession().save(transcript);
-                    HibernateUtil.currentSession().save(relationship);
-                    HibernateUtil.currentSession().save(transcriptDBLink);
-                    Publication pub = getPublicationRepository().getPublication("ZDB-PUB-240305-9");
-                    PublicationAttribution attribution = getInfrastructureRepository().insertStandardPubAttribution(transcript.zdbID, pub);
-                    // attribute markerRelationship
-                    relationship.setPublications(Set.of(attribution));
+    private void createSingleTranscript(Marker marker, String ensdartID, RichSequence ensemblSequence) {
+/*
+        EnsemblTranscriptRESTInterface api = RestProxyFactory.createProxy(EnsemblTranscriptRESTInterface.class, baseUrl, config);
+        EnsemblTranscript ensemblTranscript = api.getTranscriptInfo(ensdartID, "application/json");
+*/
 
+        String transcriptName = getTranscriptName(ensdartID).toLowerCase();
+        Marker existingMarker = getMarkerRepository().getMarkerByAbbreviation(transcriptName);
+        if (existingMarker != null) {
+            EnsemblErrorRecord errorRecord = new EnsemblErrorRecord(ensdartID,
+                transcriptName,
+                ensemblSequence.length(),
+                marker.getZdbID(),
+                marker.getAbbreviation(),
+                existingMarker.getZdbID(),
+                existingMarker.getAbbreviation());
+            errorRecords.add(errorRecord);
+        }
+        String bioType = getTranscriptType(ensdartID);
+        Transcript transcript = new Transcript();
+        transcript.setEnsdartId(ensdartID);
+        transcript.setOwner(person);
+        transcript.setAbbreviation(transcriptName);
+        transcript.setName(transcriptName);
+        transcript.setMarkerType(transcriptMarkerType);
+        // if biotype = protein_coding => mRNA
+        // otherwise exception
+        if (!bioType.equals("protein_coding")) {
+            if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")) {
+                return;
+            }
+            throw new RuntimeException("Could not map biotype " + bioType + " for transcript " + transcriptName + " with accession " + ensdartID);
+        }
+        transcript.setTranscriptType(transcriptTypeForName);
 
-                    HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.createTransaction();
+        try {
+            MarkerRelationship relationship = new MarkerRelationship();
+            relationship.setFirstMarker(marker);
+            relationship.setSecondMarker(transcript);
+            relationship.setType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+            MarkerRelationshipFormBean markerRelationshipFormBean = null;
+            relationship.setMarkerRelationshipType(markerRelationshipType);
+            marker.getFirstMarkerRelationships().add(relationship);
 
-                    // create the fasta file
-                    richSequence.setDescription(transcript.getZdbID() + " " + richSequence.getDescription());
-                    sequenceListToBeGenerated.add(richSequence);
-                });
+            TranscriptDBLink transcriptDBLink = new TranscriptDBLink();
+            transcriptDBLink.setTranscript(transcript);
+            transcriptDBLink.setAccessionNumber(ensdartID);
+            transcriptDBLink.setLength(ensemblSequence.length());
+            database.getDisplayGroups().add(nucleotideSequ);
+            transcriptDBLink.setReferenceDatabase(database);
+
+            transcript.setStrain(tu);
+            transcript.setAnnotationMethod(annotationMethod);
+            HibernateUtil.currentSession().save(transcript);
+            HibernateUtil.currentSession().save(relationship);
+            HibernateUtil.currentSession().save(transcriptDBLink);
+            PublicationAttribution attribution = getInfrastructureRepository().insertStandardPubAttribution(transcript.zdbID, pub);
+            // attribute markerRelationship
+            relationship.setPublications(Set.of(attribution));
+
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            System.out.println("Failed to save transcript: " + ensdartID + " [" + transcript.getAbbreviation() + "]");
+            HibernateUtil.rollbackTransaction();
+            return;
+        }
+        //System.out.println(transcript.getZdbID());
+
+        // create the fasta file
+        ensemblSequence.setDescription(transcript.getZdbID() + " " + ensemblSequence.getDescription());
+        sequenceListToBeGenerated.add(ensemblSequence);
+    }
+
+    private void createTranscriptRecords(Map<String, MarkerDBLink> ensdargMap,
+                                         Map<Marker, List<TranscriptDBLink>> geneEnsdartMap,
+                                         List<Marker> genesToAddTranscripts) {
+        System.out.println("Number of Genes for which transcripts need to be added: " + genesToAddTranscripts.size());
+        AtomicInteger index = new AtomicInteger(0);
+        System.out.println();
+        genesToAddTranscripts.forEach(marker -> {
+            // get the ENSDARG ID for the given gene
+            List<Map.Entry<String, MarkerDBLink>> entries = ensdargMap.entrySet().stream().filter(entry -> entry.getValue().getMarker().getZdbID().equals(marker.getZdbID())).toList();
+            if (CollectionUtils.isEmpty(entries))
+                return;
+            MarkerDBLink link = entries.get(0).getValue();
+            // obtain all transcripts from Ensembl for the given ENSDARG ID
+            List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(link.getAccessionNumber());
+            if (transcriptsEnsembl == null) {
+                return;
+            }
+            transcriptsEnsembl.forEach(richSequence -> {
+                String ensdartID = getString(richSequence);
+/*
+                List<Transcript> transcriptsInZFIN = TranscriptService.getRelatedTranscripts(marker).stream()
+                    .map(relatedMarker -> TranscriptService.convertMarkerToTranscript(relatedMarker.getMarker())).toList();
+                List<String> existingEnsdartIDs = transcriptsInZFIN.stream().map(Transcript::getEnsdartId).toList();
+*/
+                // only create those ensembl transcripts that do not exist yet in ZFIN
+                if (geneEnsdartMap.get(marker).stream().map(DBLink::getAccessionNumber).toList().contains(ensdartID)) {
+                    return;
+                }
+                createSingleTranscript(marker, ensdartID, richSequence);
+            });
+            if (index.incrementAndGet() % 10 == 0) {
+                System.out.print(index + "..");
             }
         });
+
         sequenceListToBeGenerated.forEach(richSequence -> {
             RichSequence.IOTools.SingleRichSeqIterator iterator = new RichSequence.IOTools.SingleRichSeqIterator(richSequence);
             try {
@@ -221,9 +242,81 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
                 throw new RuntimeException(e);
             }
         });
+
+        errorRecords.forEach(System.out::println);
+
+        List<String> headerNames = List.of(
+            "Ensembl ID",
+            "Ensembl Name",
+            "Length of transcripts",
+            "Associated ZFIn Gene ID",
+            "Associated ZFIn Gene symbol",
+            "Existing ZFIN  Transcript ID",
+            "Existing ZFIN  Transcript symbol"
+        );
+
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(Paths.get("ensembl-error-report.txt"));
+            CSVPrinter csvPrinterImportant = new CSVPrinter(writer, CSVFormat.DEFAULT
+                .withHeader(headerNames.toArray(String[]::new)));
+            errorRecords.forEach(record -> {
+                List<String> vals = new ArrayList<>();
+                vals.add(record.ensdartID);
+                vals.add(record.ensdartName);
+                vals.add(record.ensdartLength+"");
+                vals.add(record.zfinID);
+                vals.add(record.zfinName);
+                vals.add(record.zfinIDExisting);
+                Object[] values = vals.toArray();
+
+                try {
+                    csvPrinterImportant.printRecord(values);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
-    private static void createReportFiles(Map<String, List<RichSequence>> sortedGeneTranscriptMapCleaned, Map<Marker, List<TranscriptDBLink>> geneEnsdartMap) throws IOException {
+    private List<Marker> getEnsemblAccessionsToBeImported(Map<Marker, List<TranscriptDBLink>> geneEnsdartMap) {
+        List<Marker> listOfGeneInfoToBeImported = new ArrayList<>();
+
+        geneEnsdartMap.forEach((gene, markerDBLink) -> {
+            List<LinkDisplay> list = getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE);
+            List<LinkDisplay> ensdarg = list.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG")).toList();
+            if (CollectionUtils.isEmpty(ensdarg))
+                return;
+            String ensdargAccession = ensdarg.get(0).getAccession();
+            List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(ensdargAccession);
+            if (transcriptsEnsembl == null) {
+                return;
+            }
+            Set<String> zfinAccessions = markerDBLink.stream().map(TranscriptDBLink::getAccessionNumber).collect(Collectors.toSet());
+            Set<String> ensemblAccessions = transcriptsEnsembl.stream().map(EnsemblTranscriptFastaReadProcess::getString).collect(Collectors.toSet());
+            if (!zfinAccessions.equals(ensemblAccessions)) {
+                RelatedTranscriptDisplay disp = TranscriptService.getRelatedTranscriptsForGene(gene);
+                List<Integer> lengthsZfin = disp.getTranscripts().stream().map(relatedMarker -> relatedMarker.getDisplayedSequenceDBLinks().stream().map(DBLink::getLength).collect(Collectors.toList())).flatMap(Collection::stream).sorted().toList();
+                List<Integer> lengthsEnsembl = transcriptsEnsembl.stream().map(s -> s.getInternalSymbolList().length()).sorted().toList();
+                if (lengthsEnsembl.get(lengthsEnsembl.size() - 1) > lengthsZfin.get(lengthsZfin.size() - 1)) {
+                    listOfGeneInfoToBeImported.add(gene);
+                }
+            }
+        });
+        return listOfGeneInfoToBeImported;
+    }
+
+    private void createReportFiles(Map<Marker, List<TranscriptDBLink>> geneEnsdartMap) throws IOException {
         List<String> listOfGeneIdsWithNoDifference = new ArrayList<>();
         List<String> listOfGeneIdsWithDifferencesEnsemblLongest = new ArrayList<>();
         List<String> listOfGeneIdsWithDifferences = new ArrayList<>();
@@ -254,7 +347,7 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
             if (CollectionUtils.isEmpty(ensdarg))
                 return;
             String ensdargAccession = ensdarg.get(0).getAccession();
-            List<RichSequence> transcriptsEnsembl = sortedGeneTranscriptMapCleaned.get(ensdargAccession);
+            List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(ensdargAccession);
             if (transcriptsEnsembl == null) {
                 listOfGeneIdsNotFoundInFile.add(ensdargAccession);
                 return;
@@ -319,14 +412,14 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         ensdargList.removeIf(markerDBLink -> !vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
         System.out.println("Number of Ensembl Genes that also have a Vega Gene: " + ensdargList.size());
         ensdargList.removeIf(markerDBLink -> !genbankGeneList.contains(markerDBLink.getMarker().getZdbID()));
-        System.out.println("Number of Ensembl Genes that also have a Vega and Genebank Gene: " + ensdargList.size());
+        System.out.println("Number of Ensembl Genes that also have a Vega and GenBank Gene: " + ensdargList.size());
         Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
             Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
 
         return ensdargMap;
     }
 
-    private static Map<String, List<RichSequence>> getSequenceMapFromDownloadFile() {
+    private void loadSequenceMapFromDownloadFile() {
         String fileName = "Danio_rerio.GRCz11.cdna.all.fa";
         downloadFile(fileName);
 
@@ -336,13 +429,12 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
             .sorted((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         // remove version number from accession ID
-        Map<String, List<RichSequence>> sortedGeneTranscriptMapCleaned = new LinkedHashMap<>();
+        allEnsemblProvidedGeneMap = new LinkedHashMap<>();
         sortedGeneTranscriptMap.forEach((s, richSequences) -> {
             String cleanedID = s.split("\\.")[0];
-            sortedGeneTranscriptMapCleaned.put(cleanedID, richSequences);
+            allEnsemblProvidedGeneMap.put(cleanedID, richSequences);
         });
         System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file: " + sortedGeneTranscriptMap.size());
-        return sortedGeneTranscriptMapCleaned;
     }
 
     private static void downloadFile(String fileName) {
@@ -421,5 +513,54 @@ public class EnsemblTranscriptFastaReadProcess extends ExecProcess {
         RichSequence.IOTools.writeFasta(outputStream, sequenceIterator, namespace);
     }
 
+    Map<String, EnsemblTranscript> ensemblTranscriptMap = new HashMap<>();
+
+    private String getTranscriptName(String accession) {
+        if (ensemblTranscriptMap.size() > 0) {
+            return ensemblTranscriptMap.get(accession).name();
+        }
+        extracted();
+        return ensemblTranscriptMap.get(accession).name();
+    }
+
+    private void extracted() {
+        try {
+            List<EnsemblTranscript> list = parseEnsemblBioMartFile(new File("transcript-name-ensembl.txt"));
+            ensemblTranscriptMap = list.stream().collect(Collectors.toMap(EnsemblTranscript::id, Function.identity()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getTranscriptType(String accession) {
+        if (ensemblTranscriptMap.size() > 0) {
+            return ensemblTranscriptMap.get(accession).type();
+        }
+        extracted();
+        return ensemblTranscriptMap.get(accession).type();
+    }
+
+    public List<EnsemblTranscript> parseEnsemblBioMartFile(File downloadedFile) throws Exception {
+        List<EnsemblTranscript> transcripts = new ArrayList<>();
+        Reader in = new FileReader(downloadedFile);
+        Iterable<CSVRecord> records = CSVFormat.TDF
+            .withHeader(headers)
+            .withSkipHeaderRecord()
+            .parse(in);
+        for (CSVRecord record : records) {
+            EnsemblTranscript tscript = new EnsemblTranscript(record.get(0), record.get(1), record.get(2));
+            transcripts.add(tscript);
+        }
+        System.out.println("Found " + transcripts.size() + " transcript records in BioMart export file for finding the transcript name by ensdart ID");
+        return transcripts;
+    }
+
+    private static final String[] headers = {"Transcript stable ID", "Transcript name", "Transcript typ"};
+
+    private record EnsemblTranscript(String id, String name, String type) {
+    }
+
+    private record EnsemblErrorRecord(String ensdartID, String ensdartName, int ensdartLength, String zfinID, String zfinName, String zfinIDExisting, String zfinNameExisting) {
+    }
 }
 
