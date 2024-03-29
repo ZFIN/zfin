@@ -6,7 +6,7 @@ use MIME::Lite;
 use DBI;
 use Exporter 'import';
 
-our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists getPropertyValue downloadOrUseLocalFile doSystemCommand doSystemCommandOrFailWithEmail);
+our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists assertFileExistsAndNotEmpty getPropertyValue downloadOrUseLocalFile doSystemCommand doSystemCommandOrFailWithEmail);
 
 my %monthDisplays = (
     "Jan" => "01",
@@ -211,6 +211,15 @@ sub assertEnvironment {
             print("No $var environment variable defined\n");
             exit(2);
         }
+    }
+}
+
+sub assertFileExistsAndNotEmpty {
+    my $filename = shift();
+    my $error_message = shift();
+
+    unless (-e $filename && -s $filename) {
+        die($error_message);
     }
 }
 
