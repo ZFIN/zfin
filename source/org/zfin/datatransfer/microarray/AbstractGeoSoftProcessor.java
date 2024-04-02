@@ -38,7 +38,7 @@ public abstract class AbstractGeoSoftProcessor implements SoftParser {
 
     // download stuff
     private String fileName;
-    protected String urlString = "ftp.ncbi.nih.gov";
+    protected String urlString = "ftp.ncbi.nlm.nih.gov";
     protected String tempDirectory = System.getProperty("java.io.tmpdir", null);
     protected String workingDirectory;
     protected String fileNameSuffix = "_family.soft";
