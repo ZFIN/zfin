@@ -4,6 +4,22 @@ interface ConstructName {
     cassettes: Cassette[];
 }
 
+//a type for the construct name that is returned from the server or sent to the server
+type ConstructNameDTO = {
+    type: string;
+    prefix: string;
+    cassettes: SimplifiedCassette[];
+}
+
+type ConstructFormDTO = {
+    constructNameObject: ConstructNameDTO;
+    constructAlias: string;
+    constructSequence: string;
+    constructComments: string;
+    constructCuratorNote: string;
+    pubZdbID: string;
+}
+
 interface Cassette {
     cassetteNumber?: number;
     promoter: ConstructComponent[];
@@ -68,4 +84,9 @@ function typeAbbreviationToType(typeAbbreviation: string): string {
     }
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType};
+type MarkerNameAndZdbId = {
+    label: string;
+    zdbID: string;
+}
+
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO};
