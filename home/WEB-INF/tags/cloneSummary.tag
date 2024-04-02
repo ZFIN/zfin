@@ -89,7 +89,7 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
         list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and
         ZFIN. These reference SNP identifiers were created by NCBI during periodic 'builds' of the dbSNP database.
         NCBI has phased out support for non-human organisms in dbSNP and dbVar. Zebrafish SNP details can be obtained
-        from the archive directory <a href="ftp://ftp.ncbi.nih.gov/snp/archive">ftp://ftp.ncbi.nih.gov/snp/archive</a>.
+        from the archive directory <a href="ftp://ftp.ncbi.nlm.nih.gov/snp/archive">ftp://ftp.ncbi.nlm.nih.gov/snp/archive</a>.
         <p>${formBean.dbSnps}</p>
     </c:if>
 </c:set>

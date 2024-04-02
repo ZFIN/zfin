@@ -21,7 +21,7 @@ import java.util.*;
 
 /**
  * Task for finding matches to journal records with missing abbreviations
- * Requires an input file from NCBI: (eg. ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt)
+ * Requires an input file from NCBI: (eg. ftp://ftp.ncbi.nlm.nih.gov/pubmed/J_Medline.txt)
  * Can be run from Jenkins.
  */
 public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
@@ -63,7 +63,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         }
 
         if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
-            System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
+            System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nlm.nih.gov/pubmed/J_Medline.txt, for example)");
             System.err.println("The file can also be provided through the Jenkins upload parameter (NCBI_FILE_UPLOAD) if run as jenkins job.");
             System.err.println("Example bash run:\n" +
                     " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez gradle journalAbbreviationSync\n");

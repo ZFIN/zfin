@@ -8,7 +8,7 @@
             <parameterDefinitions>
                 <hudson.model.FileParameterDefinition>
                     <name>NCBI_FILE_UPLOAD</name>
-                    <description>Upload the uncompressed NCBI Journal Export File (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)</description>
+                    <description>Upload the uncompressed NCBI Journal Export File (can be downloaded from ftp://ftp.ncbi.nlm.nih.gov/pubmed/J_Medline.txt, for example)</description>
                 </hudson.model.FileParameterDefinition>
             </parameterDefinitions>
         </hudson.model.ParametersDefinitionProperty>
