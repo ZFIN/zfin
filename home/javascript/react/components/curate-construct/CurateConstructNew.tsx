@@ -1,41 +1,10 @@
 import React, {useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from './ConstructTypes';
+import {backendBaseUrl} from './DomainInfo';
 
 /*
  * This component is used to create a new construct
- * The form eventually will be submitted to the server
- * using an object like the following for Tg5(tdg.1-Hsa.TEST1:EGFP,tdg.2-Hsa.TEST2:EGFP):
- *
- * {
- *   "typeAbbreviation": "Tg",
- *   "prefix": "5",
- *   "cassettes": [
- *     {
- *       "cassetteNumber": 1,
- *       "promoterParts": [
- *         "tdg.1",
- *         "-",
- *         "Hsa.TEST1"
- *       ],
- *       "codingParts": [
- *         "EGFP"
- *       ]
- *     },
- *     {
- *       "cassetteNumber": 2,
- *       "promoterParts": [
- *         ",",
- *         "tdg.2",
- *         "-",
- *         "Hsa.TEST2"
- *       ],
- *       "codingParts": [
- *         "EGFP"
- *       ]
- *     }
- *   ]
- * }
  */
 
 interface CurateConstructNewProps {
@@ -43,11 +12,7 @@ interface CurateConstructNewProps {
     show: boolean;
 }
 
-//TODO: This is a hack to get the domain for developing locally.  It should be removed when this is deployed to production.
-let calculatedDomain = window.location.origin;
-if (calculatedDomain.indexOf('localhost') > -1) {
-    calculatedDomain = 'https://cell-mac.zfin.org';
-}
+const calculatedDomain = backendBaseUrl();
 
 const CurateConstructNew = ({publicationId, show= true}: CurateConstructNewProps) => {
 

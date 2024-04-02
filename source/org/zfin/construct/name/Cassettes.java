@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Cassettes implements Iterable<Cassette>{
-    private static final String CASSETTE_SEPARATOR ="Cassette";
+    private static final String CASSETTE_SEPARATOR = "Cassette";
     private List<Cassette> cassettes = new ArrayList<>();
 
     public static Cassettes fromStoredName(String storedName) {
@@ -53,5 +53,11 @@ public class Cassettes implements Iterable<Cassette>{
     @Override
     public Iterator<Cassette> iterator() {
         return cassettes.iterator();
+    }
+
+    public void reinitialize() {
+        for (int i = 0; i < cassettes.size(); i++) {
+            cassettes.get(i).setCassetteNumber(i + 1);
+        }
     }
 }
