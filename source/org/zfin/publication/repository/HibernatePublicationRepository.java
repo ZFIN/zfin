@@ -1748,20 +1748,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             dateExpression = "pub.pub_arrival_date";
             currentStatusOnly = true;
         }
+
+        String currentStatusOnlyClause = currentStatusOnly ? " and history.pth_status_is_current = 't' " : "";
         String sql = String.format(
-            "select u.category as category, u.date as date, count(*) as count " +
-            "from ( " +
-            "  select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date " +
-            "  from publication pub " +
-            "  left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id " +
-            "  left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
-            "  left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
-            "  where %3$s >= :start " +
-            "  and %3$s < :end " +
-            "  and pub.jtype = :type " +
-            (currentStatusOnly ? "and history.pth_status_is_current = 't' " : "") +
-            ") as u " +
-            "group by u.category, u.date", groupExpression, groupInterval.toString(), dateExpression);
+                """
+                select u.category as category, u.date as date, count(*) as count 
+                from ( 
+                  select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date 
+                  from publication pub 
+                  left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id 
+                  left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id 
+                  left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id 
+                  where %3$s >= :start 
+                  and %3$s < :end 
+                  and pub.jtype = :type 
+                  %4$s -- current status only clause
+                ) as u
+                group by u.category, u.date
+                """, groupExpression, groupInterval.toString(), dateExpression, currentStatusOnlyClause);
         return HibernateUtil.currentSession().createSQLQuery(sql)
             .setParameter("start", start)
             .setParameter("end", end)
@@ -1781,22 +1785,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 groupExpression = "location.ptl_location_display";
                 break;
         }
-        String sql = String.format(
-            "select " +
-            "  %1$s as category, " +
-            "  avg(history.pth_days_in_status) as average, " +
-            "  stddev(history.pth_days_in_status) as \"standardDeviation\", " +
-            "  min(history.pth_days_in_status) as minimum, " +
-            "  max(history.pth_days_in_status) as maximum " +
-            "from pub_tracking_history history " +
-            "inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
-            "left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
-            "left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
-            "where history.pth_status_is_current = 'f' " +
-            "and history.pth_days_in_status is not null " +
-            "and history.pth_status_insert_date < :end " +
-            "and pub.jtype = :type " +
-            "group by %1$s", groupExpression);
+        String sql = String.format("""
+            select
+              %1$s as category,
+              avg(history.pth_days_in_status) as average,
+              stddev(history.pth_days_in_status) as "standardDeviation",
+              min(history.pth_days_in_status) as minimum,
+              max(history.pth_days_in_status) as maximum
+            from pub_tracking_history history
+            inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id
+            left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id
+            left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id
+            where history.pth_status_is_current = 'f'
+            and history.pth_days_in_status is not null
+            and history.pth_status_insert_date < :end
+            and pub.jtype = :type
+            group by %1$s
+            """, groupExpression);
         return HibernateUtil.currentSession().createSQLQuery(sql)
             .setParameter("end", end)
             .setParameter("type", PublicationType.JOURNAL.getDisplay())
@@ -1816,26 +1821,28 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 break;
         }
         String sql = String.format(
-            "select " +
-            "  grouper as category, " +
-            "  avg(age) as average, " +
-            "  stddev(age) as \"standardDeviation\", " +
-            "  min(age) as minimum, " +
-            "  max(age) as maximum, " +
-            "  avg_of_largest(cast(age as numeric)) as \"oldestAverage\" " +
-            "from ( " +
-            "  select " +
-            "    %1$s as grouper, " +
-            "    extract(day from (current_date - history.pth_status_insert_date)) as age " +
-            "  from " +
-            "    pub_tracking_history history " +
-            "        inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
-            "        left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
-            "        left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
-            "        where history.pth_status_is_current = 't' " +
-            "        and pub.jtype = :type " +
-            ") as subq " +
-            "group by grouper;", groupExpression);
+                """
+                select
+                  grouper as category,
+                  avg(age) as average,
+                  stddev(age) as "standardDeviation",
+                  min(age) as minimum,
+                  max(age) as maximum,
+                  avg_of_largest(cast(age as numeric)) as "oldestAverage"
+                from (
+                  select
+                    %1$s as grouper,
+                    extract(day from (current_date - history.pth_status_insert_date)) as age
+                  from
+                    pub_tracking_history history
+                        inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id
+                        left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id
+                        left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id
+                        where history.pth_status_is_current = 't'
+                        and pub.jtype = :type
+                ) as subq
+                group by grouper
+                """, groupExpression);
         return HibernateUtil.currentSession().createSQLQuery(sql)
             .setParameter("type", PublicationType.JOURNAL.getDisplay())
             .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
