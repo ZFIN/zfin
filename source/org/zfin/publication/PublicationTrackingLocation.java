@@ -2,6 +2,8 @@ package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.zfin.framework.api.View;
@@ -9,6 +11,8 @@ import org.zfin.framework.api.View;
 import javax.persistence.*;
 import java.util.Arrays;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "pub_tracking_location")
 public class PublicationTrackingLocation {
@@ -37,6 +41,7 @@ public class PublicationTrackingLocation {
         INDEXER_PRIORITY_1("1"),
         INDEXER_PRIORITY_2("2"),
         INDEXER_PRIORITY_3("3"),
+        INDEXER_UNPRIORITIZED("Unprioritized"), //special value without DB entry that maps to instances without any location
         DISEASE("Disease"),
         ZEBRASHARE("ZebraShare");
 
@@ -81,35 +86,4 @@ public class PublicationTrackingLocation {
     @JsonView(View.API.class)
     private int displayOrder;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
 }
