@@ -1719,59 +1719,123 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<MetricsByDateBean> getMetricsByDate(Calendar start,
                                                     Calendar end,
-                                                    PublicationMetricsFormBean.QueryType query,
+                                                    PublicationMetricsFormBean.QueryType queryType,
                                                     PublicationMetricsFormBean.Interval groupInterval,
                                                     PublicationMetricsFormBean.GroupType groupType) {
+        String sql = getMetricsByDateSQL(queryType, groupInterval, groupType);
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+            .setParameter("start", start)
+            .setParameter("end", end)
+            .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
+            .list();
+    }
+
+    @Override
+    public List<MetricsByDateBean> getLegacyMetricsByDate(Calendar start,
+                                                         Calendar end,
+                                                         PublicationMetricsFormBean.QueryType query,
+                                                         PublicationMetricsFormBean.Interval groupInterval,
+                                                         PublicationMetricsFormBean.GroupType groupType) {
+
+            String groupExpression = "";
+            String dateExpression = "";
+            boolean currentStatusOnly = false;
+            switch (groupType) {
+                case ACTIVE:
+                    groupExpression = "pub.status";
+                    currentStatusOnly = true;
+                    break;
+                case INDEXED:
+                    groupExpression = "case when pub.pub_is_indexed = 't' then 'Indexed' else 'Unindexed' end";
+                    dateExpression = "pub.pub_indexed_date";
+                    currentStatusOnly = true;
+                    break;
+                case STATUS:
+                    groupExpression = "status.pts_status_display";
+                    dateExpression = "history.pth_status_insert_date";
+                    break;
+                case LOCATION:
+                    groupExpression = "location.ptl_location_display";
+                    dateExpression = "history.pth_status_insert_date";
+                    break;
+            }
+            if (query == PublicationMetricsFormBean.QueryType.PET_DATE) {
+                dateExpression = "pub.pub_arrival_date";
+                currentStatusOnly = true;
+            }
+
+            String currentStatusOnlyClause = currentStatusOnly ? " and history.pth_status_is_current = 't' " : "";
+            String sql = String.format(
+                    """
+                    select u.category as category, u.date as date, count(*) as count 
+                    from ( 
+                      select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date 
+                      from publication pub 
+                      left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id 
+                      left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id 
+                      left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id 
+                      where %3$s >= :start 
+                      and %3$s < :end 
+                      and pub.jtype = :type 
+                      %4$s -- current status only clause
+                    ) as u
+                    group by u.category, u.date
+                    order by u.date, u.category
+                    """, groupExpression, groupInterval.toString(), dateExpression, currentStatusOnlyClause);
+            return HibernateUtil.currentSession().createSQLQuery(sql)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .setParameter("type", PublicationType.JOURNAL.getDisplay())
+                    .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
+                    .list();
+    }
+
+
+    private String getMetricsByDateSQL(PublicationMetricsFormBean.QueryType queryType,
+                                      PublicationMetricsFormBean.Interval groupInterval,
+                                      PublicationMetricsFormBean.GroupType groupType) {
         String groupExpression = "";
         String dateExpression = "";
         boolean currentStatusOnly = false;
         switch (groupType) {
             case ACTIVE:
-                groupExpression = "pub.status";
+                groupExpression = "status";
                 currentStatusOnly = true;
                 break;
             case INDEXED:
-                groupExpression = "case when pub.pub_is_indexed = 't' then 'Indexed' else 'Unindexed' end";
-                dateExpression = "pub.pub_indexed_date";
+                groupExpression = "pub_indexed_status";
+                dateExpression = "pub_indexed_date";
                 currentStatusOnly = true;
                 break;
             case STATUS:
-                groupExpression = "status.pts_status_display";
-                dateExpression = "history.pth_status_insert_date";
+                groupExpression = "pts_status_display";
+                dateExpression = "pth_status_insert_date";
                 break;
             case LOCATION:
-                groupExpression = "location.ptl_location_display";
-                dateExpression = "history.pth_status_insert_date";
+//                groupExpression = "pub_location_or_prioritization_status";
+                groupExpression = "ptl_location_display";
+                dateExpression = "pth_status_insert_date";
                 break;
         }
-        if (query == PublicationMetricsFormBean.QueryType.PET_DATE) {
-            dateExpression = "pub.pub_arrival_date";
+        if (queryType == PublicationMetricsFormBean.QueryType.PET_DATE) {
+            dateExpression = "pub_arrival_date";
             currentStatusOnly = true;
         }
 
-        String currentStatusOnlyClause = currentStatusOnly ? " and history.pth_status_is_current = 't' " : "";
+        String currentStatusOnlyClause = currentStatusOnly ? " where pth_status_is_current = 't' " : "";
         String sql = String.format(
                 """
-                select u.category as category, u.date as date, count(*) as count 
-                from ( 
-                  select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date 
-                  from publication pub 
-                  left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id 
-                  left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id 
-                  left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id 
-                  where %3$s >= :start 
-                  and %3$s < :end 
-                  and pub.jtype = :type 
-                  %4$s -- current status only clause
-                ) as u
-                group by u.category, u.date
+                select category, date, count(*) as count from 
+                 (select distinct zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date 
+                  from pub_location_metrics
+                    %4$s
+                  ) as parameterized_pub_location_metrics
+                  where date >= :start 
+                  and date < :end
+                group by date, category
+                order by date, category
                 """, groupExpression, groupInterval.toString(), dateExpression, currentStatusOnlyClause);
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-            .setParameter("start", start)
-            .setParameter("end", end)
-            .setParameter("type", PublicationType.JOURNAL.getDisplay())
-            .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
-            .list();
+        return sql;
     }
 
     @Override
