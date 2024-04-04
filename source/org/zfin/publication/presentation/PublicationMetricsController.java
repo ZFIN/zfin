@@ -41,10 +41,15 @@ public class PublicationMetricsController {
         model.addAttribute("groupTypes", PublicationMetricsFormBean.GroupType.values());
         model.addAttribute("activationStatuses", Publication.Status.values());
         model.addAttribute("indexedStatuses", PublicationMetricsFormBean.INDEXED_STATUSES);
-        model.addAttribute("locations", publicationRepository.getAllPublicationLocations().stream()
-                .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR)
+        List<PublicationTrackingLocation.Name> dbLocations = publicationRepository.getAllPublicationLocations().stream()
+                .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR || l.getRole() == PublicationTrackingLocation.Role.INDEXER)
                 .map(PublicationTrackingLocation::getName)
-                .collect(Collectors.toList()));
+                .toList();
+
+        List<PublicationTrackingLocation.Name> locations = new ArrayList<>(dbLocations);
+        locations.add(PublicationTrackingLocation.Name.INDEXER_UNPRIORITIZED);
+
+        model.addAttribute("locations", locations);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Metrics");
 
         List<String> errors = new ArrayList<>();
@@ -95,20 +100,12 @@ public class PublicationMetricsController {
 
         Map<String, Map<String, Number>> resultTable = new LinkedHashMap<>();
 
-        Object[] rowLabels = new Object[]{};
-        switch (formBean.getGroupType()) {
-            case ACTIVE:
-                rowLabels = formBean.getActivationStatuses();
-                break;
-            case INDEXED:
-                rowLabels = formBean.getIndexedStatuses();
-                break;
-            case STATUS:
-                rowLabels = formBean.getStatuses();
-                break;
-            case LOCATION:
-                rowLabels = formBean.getLocations();
-        }
+        Object[] rowLabels = switch (formBean.getGroupType()) {
+            case ACTIVE -> formBean.getActivationStatuses();
+            case INDEXED -> formBean.getIndexedStatuses();
+            case STATUS -> formBean.getStatuses();
+            case LOCATION -> formBean.getLocations();
+        };
 
         if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.SNAPSHOT) {
             List<MetricsOnDateBean> resultList = publicationRepository.getSnapshotMetrics(formBean.getGroupType());
@@ -190,6 +187,7 @@ public class PublicationMetricsController {
 
             for (MetricsByDateBean result : resultList) {
                 Object rowKey = result.getCategory();
+
                 if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
                     continue;
                 }
@@ -198,8 +196,6 @@ public class PublicationMetricsController {
         }
 
         model.addAttribute("resultsTable", resultTable);
-
-
         return "publication/metrics";
     }
 

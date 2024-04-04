@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -35,12 +36,16 @@ import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
+import org.zfin.publication.presentation.MetricsByDateBean;
+import org.zfin.publication.presentation.PublicationMetricsFormBean;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
-import java.util.Calendar;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
+import static org.apache.commons.lang3.ObjectUtils.min;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -790,5 +795,73 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
         assertTrue(numberOfStatusChanges >= 0);
     }
+
+    @Test
+    public void testAllCombosOfMetricsResults() throws IOException {
+        PublicationMetricsFormBean.QueryType[] queryTypes = validQueryTypesForMetricsByDate();
+        PublicationMetricsFormBean.Interval[] intervals = PublicationMetricsFormBean.Interval.values();
+
+        GregorianCalendar start = new GregorianCalendar(2017, 0, 1);
+        GregorianCalendar end = new GregorianCalendar(2023,11,31);
+
+        for (PublicationMetricsFormBean.QueryType queryType : queryTypes) {
+            for (PublicationMetricsFormBean.GroupType groupType : validGroupTypesForQueryType(queryType)) {
+                for (PublicationMetricsFormBean.Interval interval : intervals) {
+                    List<MetricsByDateBean> results = publicationRepository.getMetricsByDate(
+                            start,
+                            end,
+                            queryType, interval, groupType);
+                    List<MetricsByDateBean> results2 = publicationRepository.getLegacyMetricsByDate(
+                            start,
+                            end,
+                            queryType, interval, groupType);
+                    boolean resultsEqual = compareMetricsByDateBean(results, results2);
+
+                    assertTrue("Results are not equal for queryType: " + queryType + ", groupType: " + groupType + ", interval: " + interval, resultsEqual);
+                }
+            }
+        }
+    }
+
+    private boolean compareMetricsByDateBean(List<MetricsByDateBean> results, List<MetricsByDateBean> results2) {
+        if (results.size() != results2.size()) {
+            return false;
+        }
+
+        for(int i = 0; i < results.size(); i++) {
+            MetricsByDateBean bean = results.get(i);
+            MetricsByDateBean bean2 = results2.get(i);
+            if (!bean.beansEquals(bean2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    //metrics by date will only ever be called with PET_DATE or STATUS_DATE
+    private PublicationMetricsFormBean.QueryType[] validQueryTypesForMetricsByDate() {
+        //not SNAPSHOT and not CUMULATIVE
+        return new PublicationMetricsFormBean.QueryType[]{
+                PublicationMetricsFormBean.QueryType.PET_DATE,
+                PublicationMetricsFormBean.QueryType.STATUS_DATE
+        };
+    }
+
+    private List<PublicationMetricsFormBean.GroupType> validGroupTypesForQueryType(PublicationMetricsFormBean.QueryType queryType) {
+        List<PublicationMetricsFormBean.GroupType> allGroupTypes = List.of(PublicationMetricsFormBean.GroupType.values());
+        return switch (queryType) {
+            case PET_DATE -> allGroupTypes;
+            case STATUS_DATE -> List.of(PublicationMetricsFormBean.GroupType.STATUS,
+                    PublicationMetricsFormBean.GroupType.INDEXED,
+                    PublicationMetricsFormBean.GroupType.LOCATION);
+            case CUMULATIVE -> List.of(PublicationMetricsFormBean.GroupType.STATUS,
+                    PublicationMetricsFormBean.GroupType.LOCATION);
+            case SNAPSHOT -> List.of(PublicationMetricsFormBean.GroupType.STATUS,
+                    PublicationMetricsFormBean.GroupType.LOCATION);
+        };
+    }
+
+
 }
 

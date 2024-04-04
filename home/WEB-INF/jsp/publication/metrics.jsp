@@ -194,6 +194,11 @@
                     .filter(function () { return this.value.startsWith(prefix) })
                     .prop('checked', val);
             });
+
+            //set labels so locations '1', '2', '3' are displayed as 'Priority 1', 'Priority 2', 'Priority 3'
+            document.querySelector('input[value=INDEXER_PRIORITY_1]').nextElementSibling.innerText = 'Priority 1';
+            document.querySelector('input[value=INDEXER_PRIORITY_2]').nextElementSibling.innerText = 'Priority 2';
+            document.querySelector('input[value=INDEXER_PRIORITY_3]').nextElementSibling.innerText = 'Priority 3';
         });
     </script>
 </z:page>
