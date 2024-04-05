@@ -413,12 +413,6 @@ public interface PublicationRepository extends PaginationParameter {
                                              PublicationMetricsFormBean.Interval groupInterval,
                                              PublicationMetricsFormBean.GroupType groupType);
 
-    List<MetricsByDateBean> getLegacyMetricsByDate(Calendar start,
-                                                  Calendar end,
-                                                  PublicationMetricsFormBean.QueryType query,
-                                                  PublicationMetricsFormBean.Interval groupInterval,
-                                                  PublicationMetricsFormBean.GroupType groupType);
-
     List<MetricsOnDateBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType);
 
     List<MetricsOnDateBean> getSnapshotMetrics(PublicationMetricsFormBean.GroupType groupType);
