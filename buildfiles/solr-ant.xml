@@ -148,7 +148,7 @@
         </tstamp>
 
         <echo message="Backup time: ${backup.stamp}"/>
-        <property name="this.backup.dir" value="${solr.backup.dir}/${env.DBNAME}/${backup.stamp}"/>
+        <property name="this.backup.dir" value="${solr.backup.dir}/${env.INSTANCE}/${backup.stamp}"/>
         <mkdir dir="${this.backup.dir}"/>
 
         <copy todir="${this.backup.dir}" overwrite="false">
