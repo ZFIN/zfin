@@ -41,12 +41,11 @@ public class PublicationMetricsController {
         model.addAttribute("groupTypes", PublicationMetricsFormBean.GroupType.values());
         model.addAttribute("activationStatuses", Publication.Status.values());
         model.addAttribute("indexedStatuses", PublicationMetricsFormBean.INDEXED_STATUSES);
-        List<PublicationTrackingLocation.Name> dbLocations = publicationRepository.getAllPublicationLocations().stream()
+        List<PublicationTrackingLocation.Name> locations = new ArrayList<>();
+        locations.addAll(publicationRepository.getAllPublicationLocations().stream()
                 .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR || l.getRole() == PublicationTrackingLocation.Role.INDEXER)
                 .map(PublicationTrackingLocation::getName)
-                .toList();
-
-        List<PublicationTrackingLocation.Name> locations = new ArrayList<>(dbLocations);
+                .toList());
         locations.add(PublicationTrackingLocation.Name.INDEXER_UNPRIORITIZED);
 
         model.addAttribute("locations", locations);
@@ -187,7 +186,6 @@ public class PublicationMetricsController {
 
             for (MetricsByDateBean result : resultList) {
                 Object rowKey = result.getCategory();
-
                 if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
                     continue;
                 }
