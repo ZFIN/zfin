@@ -83,15 +83,6 @@
           </delay>
           <maxSchedule>3</maxSchedule>
     </com.chikli.hudson.plugin.naginator.NaginatorPublisher>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>Index-Faceted-Search-Step-3-Cleanup_d</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-        <completeBuild>true</completeBuild>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers>
   </buildWrappers>
