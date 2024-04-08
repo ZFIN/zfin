@@ -502,7 +502,7 @@ sub removeOldFiles {
             sleep(30);
         }
 
-        print "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl seq.fasta *.gz zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
+        print "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl seq.fasta zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
         system("/bin/rm -f prepareLog*");
         system("/bin/rm -f loadLog*");
         system("/bin/rm -f logNCBIgeneLoad");
@@ -514,7 +514,6 @@ sub removeOldFiles {
         system("/bin/rm -f length.unl");
         system("/bin/rm -f noLength.unl");
         system("/bin/rm -f seq.fasta");
-        system("/bin/rm -f *.gz");
 
         system("/bin/rm -f zf_gene_info.gz");
         system("/bin/rm -f gene2vega.gz");
