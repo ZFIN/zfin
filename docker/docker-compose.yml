@@ -129,7 +129,7 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - downloads_data:/opt/zfin/download-files
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
-      - ${DOCKER_RESEARCH_PATH}:/research
+      - ${DOCKER_RESEARCH_PATH}:/mnt/research
   elasticsearch:
     build: 
       context: ./elasticsearch/
