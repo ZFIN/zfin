@@ -64,9 +64,9 @@ public class EnsemblTranscriptFastaReadProcess {
     Map<Marker, List<TranscriptDBLink>> geneEnsdartMap;
     Map<String, MarkerDBLink> ensdargMap;
 
+
     public void init() throws IOException {
         loadSequenceMapFromDownloadFile();
-        System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargList.size());
 
         // <ensdargID, DBLink>
         getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions();
@@ -477,11 +477,10 @@ public class EnsemblTranscriptFastaReadProcess {
         return richSequence.getAccession().split("\\.")[0];
     }
 
-    List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
-    List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
-    List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
-
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
         genbankList.removeIf(markerDBLink -> !vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
@@ -500,6 +499,11 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargList.size());
+
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
         // genbank gene list
@@ -515,6 +519,9 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private void getMarkerDBLinksWithVegaEnsemblOnlyAccessions() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
         // genbank gene list
@@ -533,6 +540,9 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithGenbankEnsemblOnlyAccessions() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
         // genbank gene list
