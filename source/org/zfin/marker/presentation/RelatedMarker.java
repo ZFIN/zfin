@@ -35,7 +35,7 @@ public class RelatedMarker implements Comparable {
     public RelatedMarker() { }
 
     /**
-     * Create a relatedMarker object by passing in the the current marker
+     * Create a relatedMarker object by passing in the current marker
      * and the relationship.  The point of this class is to hide the
      * details about whether the marker of interest is in the 1st or
      * 2nd position within the relationship.
