@@ -527,6 +527,51 @@ create temp view phenotype_fish as
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
 
+
+-- Create a join table (experiment_condition_with_zeco_and_chebi) for connecting fish experiment to zeco and chebi terms (comma delimited for multiple terms).
+-- First, we must create 2 join tables for experiment_condition_with_zeco and experiment_condition_with_chebi.
+-- Then we join those 2 tables into the final join table.
+-- We need to do each table separately because we need to use DISTINCT and ORDER BY in the subqueries.
+
+DROP TABLE if exists experiment_with_zeco;
+CREATE TEMP TABLE experiment_with_zeco AS
+WITH distinct_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS zeco_id, term_name AS zeco_name
+                        FROM experiment_condition LEFT JOIN term ON expcond_zeco_term_zdb_id = term_zdb_id)
+SELECT
+    expcond_exp_zdb_id,
+    string_agg(zeco_id, '|' ORDER BY zeco_id) AS zeco_ids,
+    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names,
+    count(zeco_id) as zeco_count
+FROM distinct_terms
+GROUP BY expcond_exp_zdb_id;
+
+DROP TABLE if exists experiment_with_chebi;
+CREATE TEMP TABLE experiment_with_chebi AS
+WITH distinct_chebi_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS chebi_id, term_name AS chebi_name
+                              FROM experiment_condition LEFT JOIN term ON expcond_chebi_term_zdb_id = term_zdb_id)
+SELECT
+    expcond_exp_zdb_id,
+    string_agg(chebi_id, '|' ORDER BY chebi_id) AS chebi_ids,
+    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names,
+    count(chebi_id) as chebi_count
+FROM distinct_chebi_terms
+GROUP BY expcond_exp_zdb_id;
+
+DROP TABLE if exists experiment_condition_with_zeco_and_chebi;
+CREATE TEMP TABLE experiment_condition_with_zeco_and_chebi AS
+SELECT
+    xpz.expcond_exp_zdb_id,
+    zeco_ids,
+    zeco_names,
+    zeco_count,
+    chebi_ids,
+    chebi_names,
+    chebi_count
+FROM
+    experiment_with_zeco xpz
+        LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
+ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
+
 create temp view phenotype_fish_with_chemicals as
     select pf.*,
            fe.zeco_ids,
@@ -577,49 +622,6 @@ create temp view ameliorated_phenotype_fish as
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from ameliorated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish.txt' with delimiter as '	' null as '';
 
--- Create a join table (experiment_condition_with_zeco_and_chebi) for connecting fish experiment to zeco and chebi terms (comma delimited for multiple terms).
--- First, we must create 2 join tables for experiment_condition_with_zeco and experiment_condition_with_chebi.
--- Then we join those 2 tables into the final join table.
--- We need to do each table separately because we need to use DISTINCT and ORDER BY in the subqueries.
-
-DROP TABLE if exists experiment_with_zeco;
-CREATE TEMP TABLE experiment_with_zeco AS
-WITH distinct_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS zeco_id, term_name AS zeco_name
-    FROM experiment_condition LEFT JOIN term ON expcond_zeco_term_zdb_id = term_zdb_id)
-SELECT
-    expcond_exp_zdb_id,
-    string_agg(zeco_id, '|' ORDER BY zeco_id) AS zeco_ids,
-    string_agg(zeco_name, '|' ORDER BY zeco_id) AS zeco_names,
-    count(zeco_id) as zeco_count
-FROM distinct_terms
-GROUP BY expcond_exp_zdb_id;
-
-DROP TABLE if exists experiment_with_chebi;
-CREATE TEMP TABLE experiment_with_chebi AS
-WITH distinct_chebi_terms AS (SELECT DISTINCT expcond_exp_zdb_id, term_ont_id AS chebi_id, term_name AS chebi_name
-    FROM experiment_condition LEFT JOIN term ON expcond_chebi_term_zdb_id = term_zdb_id)
-SELECT
-    expcond_exp_zdb_id,
-    string_agg(chebi_id, '|' ORDER BY chebi_id) AS chebi_ids,
-    string_agg(chebi_name, '|' ORDER BY chebi_id) AS chebi_names,
-    count(chebi_id) as chebi_count
-FROM distinct_chebi_terms
-GROUP BY expcond_exp_zdb_id;
-
-DROP TABLE if exists experiment_condition_with_zeco_and_chebi;
-CREATE TEMP TABLE experiment_condition_with_zeco_and_chebi AS
-SELECT
-    xpz.expcond_exp_zdb_id,
-    zeco_ids,
-    zeco_names,
-    zeco_count,
-    chebi_ids,
-    chebi_names,
-    chebi_count
-FROM
-    experiment_with_zeco xpz
-    LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
-ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
 
 -- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
 create temp view ameliorated_phenotype_fish_with_chemicals as
