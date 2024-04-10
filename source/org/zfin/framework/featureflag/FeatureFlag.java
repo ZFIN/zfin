@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
