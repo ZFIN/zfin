@@ -3,9 +3,9 @@ package org.zfin.properties;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 /**
  * Class is used to set the context so that later ZfinProperties.init can find the proper location
