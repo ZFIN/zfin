@@ -2,7 +2,8 @@ package org.zfin.framework.featureflag;
 
 import lombok.extern.log4j.Log4j2;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
