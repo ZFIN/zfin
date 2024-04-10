@@ -13,7 +13,7 @@ import org.zfin.expression.presentation.ExpressionResultDisplay;
 import org.zfin.expression.presentation.ExpressionResultFormBean;
 import org.zfin.ontology.GenericTerm;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
@@ -38,7 +38,7 @@ public class ApplicationContextController {
                                             Model model)
             throws Exception {
 
-        WebApplicationContext context = RequestContextUtils.getWebApplicationContext(request);
+        WebApplicationContext context = RequestContextUtils.findWebApplicationContext(request);
         form.setApplicationContext(context);
 
         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
