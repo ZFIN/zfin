@@ -28,8 +28,8 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;

@@ -5,8 +5,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 public class UsernameTag extends TagSupport {

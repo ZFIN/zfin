@@ -1,6 +1,6 @@
 package org.zfin.gwt.root.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.gwt.root.ui.AccessionRPCService;

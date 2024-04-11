@@ -15,8 +15,8 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.service.WikiWebService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

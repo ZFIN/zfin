@@ -36,7 +36,7 @@ import org.zfin.search.Category;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.regex.Matcher;

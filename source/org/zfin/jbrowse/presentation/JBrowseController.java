@@ -14,7 +14,7 @@ import org.zfin.mapping.GenomeLocation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 

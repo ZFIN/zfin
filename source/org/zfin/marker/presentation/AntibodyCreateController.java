@@ -27,7 +27,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller

@@ -9,9 +9,9 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 
