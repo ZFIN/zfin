@@ -18,8 +18,8 @@ import org.zfin.publication.PublicationFile;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.repository.PublicationRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
 
