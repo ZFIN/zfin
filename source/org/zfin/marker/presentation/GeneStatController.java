@@ -20,7 +20,7 @@ import org.zfin.stats.StatisticRow;
 import org.zfin.stats.TranscriptHeaderStatisticService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.zfin.stats.GeneTranscriptStatisticService.Header.TRANSCRIPT_NON_REF_STRAIN;
 

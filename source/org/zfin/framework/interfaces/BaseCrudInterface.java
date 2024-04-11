@@ -8,10 +8,10 @@ import org.zfin.framework.api.ObjectResponse;
 import org.zfin.framework.api.SearchResponse;
 import org.zfin.framework.entity.BaseEntity;
 
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 import java.util.HashMap;
 
 @RequestMapping("/api/indexer")

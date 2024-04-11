@@ -17,7 +17,7 @@ import org.zfin.mutant.PhenotypeService;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController

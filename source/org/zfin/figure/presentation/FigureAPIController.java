@@ -10,7 +10,7 @@ import org.zfin.framework.api.*;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
