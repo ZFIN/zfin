@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 public class OrderLinkTag extends TagSupport {
 

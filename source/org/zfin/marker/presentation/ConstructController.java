@@ -16,7 +16,7 @@ import org.zfin.framework.api.View;
 import org.zfin.marker.service.ConstructService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController

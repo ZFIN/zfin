@@ -2,9 +2,9 @@ package org.zfin.framework.presentation.tags;
 
 import org.zfin.sequence.Sequence;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

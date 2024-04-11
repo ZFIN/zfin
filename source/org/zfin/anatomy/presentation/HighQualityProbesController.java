@@ -15,7 +15,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Action class that serves the Thisse probes pages.
