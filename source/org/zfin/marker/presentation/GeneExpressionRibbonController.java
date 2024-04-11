@@ -17,7 +17,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
