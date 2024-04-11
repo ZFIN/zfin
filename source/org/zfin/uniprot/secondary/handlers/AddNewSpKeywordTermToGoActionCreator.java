@@ -15,6 +15,8 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.zfin.util.ZfinCollectionUtils.uniqueBy;
+
 /**
  * Adds new SPKW terms to marker_go_term_evidence table.
  * Special case of AddNewSecondaryTermToGoHandler.
@@ -113,7 +115,8 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
             newMarkerGoTermEvidences.add(newAction);
         }
 
-        return newMarkerGoTermEvidences;
+        //only return a unique set of actions
+        return uniqueBy(newMarkerGoTermEvidences, SecondaryTermLoadAction::getMd5);
     }
 
     private List<SecondaryTermLoadAction> filterExistingTerms(List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions, SecondaryLoadContext context) {

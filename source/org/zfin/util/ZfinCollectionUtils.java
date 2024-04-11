@@ -29,6 +29,13 @@ public class ZfinCollectionUtils {
     }
 
     /**
+     * Alias for firstInEachGrouping.
+     */
+    public static <T, K> List<T> uniqueBy(List<T> inputs, Function<T, K> groupingFunction) {
+        return firstInEachGrouping(inputs, groupingFunction);
+    }
+
+    /**
      * Determines whether the provided list contains an element based on a specific attribute/key.
      *
      * @param <T> The type of elements in the list.
