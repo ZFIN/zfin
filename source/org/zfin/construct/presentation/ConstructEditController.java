@@ -22,8 +22,8 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.createNewConstructFromSubmittedForm;

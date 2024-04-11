@@ -32,7 +32,7 @@ public class RequestNewAnatomyTermController {
     }
 
     @Autowired
-    private javax.servlet.http.HttpServletRequest request;
+    private jakarta.servlet.http.HttpServletRequest request;
 
     @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {

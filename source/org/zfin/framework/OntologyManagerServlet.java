@@ -10,9 +10,9 @@ import org.zfin.util.FileUtil;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
+import jakarta.servlet.http.HttpServlet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

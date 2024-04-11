@@ -2,7 +2,7 @@ package org.zfin.security;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.Md5PasswordEncoder;
 
 
 /**

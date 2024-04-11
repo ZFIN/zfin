@@ -25,7 +25,7 @@ import org.zfin.infrastructure.presentation.PageLayoutControllerAdvice;
 import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.profile.service.ProfileService;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 

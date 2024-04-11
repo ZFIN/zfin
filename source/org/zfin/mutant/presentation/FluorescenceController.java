@@ -13,7 +13,7 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.presentation.PhenotypeStatementWarehousePresentation;
 import org.zfin.util.ZfinStringUtils;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

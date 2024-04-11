@@ -688,6 +688,7 @@ dependencies {
     testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.0-groovy-3.0'
     //changed this from groovy-2.4
     testImplementation('org.spockframework:spock-core:1.0-groovy-3.0')
+    testImplementation group: 'org.gwtproject', name: 'gwt-servlet-jakarta', version: '2.11.0'
 
 
     testImplementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
@@ -705,6 +706,9 @@ dependencies {
     implementation files('lib/Java/selenium-remote-driver-2.35.0.jar')
     implementation files('lib/Java/spring-test-6.1.1.jar')
     implementation files('lib/Java/servlet-api-5.0.0.jar')
+    implementation files('lib/Java/jakarta.servlet.jsp-api-3.1.1.jar')
+    implementation files('lib/Java/jakarta.servlet.jsp.jstl-api-3.0.0.jar')
+    implementation files('home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar')
     // not working :(
     //testImplementation group: 'org.seleniumhq.selenium', name: 'htmlunit-driver', version: '2.35'
 //    implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
