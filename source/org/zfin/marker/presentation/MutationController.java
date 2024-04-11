@@ -14,7 +14,7 @@ import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")
