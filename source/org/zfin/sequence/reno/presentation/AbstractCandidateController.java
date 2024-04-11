@@ -26,7 +26,7 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.reno.service.RenoService;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Set;
 

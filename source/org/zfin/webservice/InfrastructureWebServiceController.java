@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.database.UnloadInfo;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 

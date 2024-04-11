@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
