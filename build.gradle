@@ -1161,11 +1161,6 @@ class ZfinTargetCopy extends Copy {
         pName = projectName.replace(":", "/")
         description 'Deploy ' + pName + ' to TARGETROOT'
         group 'ZFIN Deployment'
-//
-//        // Logging each file being processed
-//        eachFile { FileCopyDetails fcd ->
-//            println "Processing file: ${fcd.file}"
-//        }
     }
 
     @TaskAction
