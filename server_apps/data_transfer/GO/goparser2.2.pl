@@ -12,7 +12,7 @@ $versionNumber += 0.001;
 open (automated_only, ">gene_association2.2_automated_only.zfin") or die "Cannot open gene_association2.2_automated_only.zfin";
 
 print automated_only "!gaf-version: 2.2\n";
-print automated_only "!Version: %.3f\n", $versionNumber;
+printf automated_only "!Version: %.3f\n", $versionNumber;
 print automated_only "!date-generated: ".`/bin/date +%Y-%m-%d`;
 print automated_only "!generated-by: ZFIN \n";
 print automated_only "! \n";
@@ -21,7 +21,7 @@ print automated_only "! \n";
 open (all_annot, ">gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin";
 
 print all_annot "!gaf-version: 2.2\n";
-print all_annot "!Version: %.3f\n", $versionNumber;
+printf all_annot "!Version: %.3f\n", $versionNumber;
 print all_annot "!date-generated: ".`/bin/date +%Y-%m-%d`;
 print all_annot "!generated-by: ZFIN \n";
 print all_annot "! \n";
