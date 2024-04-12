@@ -216,6 +216,143 @@ def translateVariableSet = [
         'WEBHOST_FASTA_FILE_PATH',
 ]
 
+//These are the only files that need to be searched and replaced (<!--|KEY|-->)
+//Let's whittle this list down over time
+//Other
+def whitelistTemplateFiles = [
+        '**/CreateMarkerSearchPage.sql',                            //server_apps/data_transfer/ExternalSearch
+        '**/CreateMarkerSearchPage.pl',                             //server_apps/data_transfer/ExternalSearch
+        '**/OMIM.pl',                                               //server_apps/data_transfer/OMIM
+        '**/loadOMIM.sql',                                          //server_apps/data_transfer/OMIM
+        '**/NCBIStartEnd.pl',                                       //server_apps/data_transfer/NCBIStartEnd
+        '**/gpad.pl',                                               //server_apps/data_transfer/GO
+        '**/gofile2_all.sql',                                       //server_apps/data_transfer/GO
+        '**/gofile.sql',                                            //server_apps/data_transfer/GO
+        '**/gofile2.sql',                                           //server_apps/data_transfer/GO
+        '**/gpad2.0.sql',                                           //server_apps/data_transfer/GO
+        '**/go.pl',                                                 //server_apps/data_transfer/GO
+        '**/gp2protein.pl',                                         //server_apps/data_transfer/GO
+        '**/validateUniprotIDsZFIN.pl',                             //server_apps/data_transfer/GO
+        '**/checkRNAConsequenceTerm.groovy',                        //server_apps/data_transfer/maintainTermDisplay
+        '**/insert_eco_go_map.sql',                                 //server_apps/data_transfer/eco_go_mapping
+        '**/zfishbook.pl',                                          //server_apps/data_transfer/zfishbook
+        '**/preprocess_zfishbook.pl',                               //server_apps/data_transfer/zfishbook
+        '**/zfishbook.sh',                                          //server_apps/data_transfer/zfishbook
+        '**/sp_load.sql',                                           //server_apps/data_transfer/SWISS-PROT
+        '**/load_protein_domain_info.sql',                          //server_apps/data_transfer/SWISS-PROT
+        '**/sp_load_ec2gopart.sql',                                 //server_apps/data_transfer/SWISS-PROT
+        '**/referenceProteome.sql',                                 //server_apps/data_transfer/SWISS-PROT
+        '**/sp_delete_ec2gopart.sql',                               //server_apps/data_transfer/SWISS-PROT
+        '**/loadTranscriptSequences.sql',                           //server_apps/data_transfer/RNACentral
+        '**/runTscriptSequenceLoad.pl',                             //server_apps/data_transfer/RNACentral
+        '**/loadTscriptSeq.pl',                                     //server_apps/data_transfer/RNACentral
+        '**/preLoadTranscriptSequence.sql',                         //server_apps/data_transfer/RNACentral
+        '**/blast_withdrawn.pl',                                    //server_apps/data_transfer/Load
+        '**/generate_special_Sanger_uniprot_nomenclature_run.sh',   //server_apps/data_transfer/Load/ReNo/Nomenclature
+        '**/load_run_report_hit.sh',                                //server_apps/data_transfer/Load/ReNo
+        '**/fetch_ensembl_agp.sh',                                  //server_apps/data_transfer/Ensembl
+        '**/notifyStaleIds.sh',                                     //server_apps/data_transfer/Ensembl
+        '**/fetch_ensdarT_dbacc.sh',                                //server_apps/data_transfer/Ensembl
+        '**/fetch_sangerMutantInfo.sh',                             //server_apps/data_transfer/Ensembl
+        '**/reportEnsembleStatistics.sh',                           //server_apps/data_transfer/Ensembl
+        '**/pullFromBioMart.pl',                                    //server_apps/data_transfer/Ensembl
+        '**/fetch_ensdarg.sh',                                      //server_apps/data_transfer/Ensembl
+        '**/fetch_ensdargOttdargTable.sh',                          //server_apps/data_transfer/Ensembl
+        '**/loadNewSNPs.sql',                                       //server_apps/data_transfer/SNP
+        '**/loadNewSNPAttrs.sql',                                   //server_apps/data_transfer/SNP
+        '**/addNewClonesJSmith.pl',                                 //server_apps/data_transfer/SNP
+        '**/addTalbotSNPAttr.sql',                                  //server_apps/data_transfer/SNP
+        '**/dbSNP.pl',                                              //server_apps/data_transfer/SNP
+        '**/parseObo.pl',                                           //server_apps/data_transfer/LoadOntology
+        '**/parseHeader.pl',                                        //server_apps/data_transfer/LoadOntology
+        '**/meow.pl',                                               //server_apps/data_transfer/MEOW
+        '**/insertJournalAlias.sql',                                //server_apps/data_transfer/PUBMED/Journal
+        '**/checkAndUpdateJournals.sql',                            //server_apps/data_transfer/PUBMED/Journal
+        '**/mergeJournals.pl',                                      //server_apps/data_transfer/PUBMED/Journal
+        '**/checkAndUpdateJournals.pl',                             //server_apps/data_transfer/PUBMED/Journal
+        '**/complete_auther_names.pl',                              //server_apps/data_transfer/PUBMED
+        '**/load_complete_author_names.sql',                        //server_apps/data_transfer/PUBMED
+        '**/loadNewPubs.sql',                                       //server_apps/data_transfer/PUBMED
+        '**/updatePublicationDate.groovy',                          //server_apps/data_transfer/PUBMED
+        '**/pubActivation.groovy',                                  //server_apps/data_transfer/PUBMED
+        '**/addMeshTermsToAllPubs.groovy',                          //server_apps/data_transfer/PUBMED
+        '**/addPMCidsToAllPubs.groovy',                             //server_apps/data_transfer/PUBMED
+        '**/gbaccession.pl',                                        //server_apps/data_transfer/Genbank
+        '**/loadHumanSynonyms.sql',                                 //server_apps/data_transfer/ORTHO
+        '**/updateZebrafishGeneNames.sql',                          //server_apps/data_transfer/ORTHO
+        '**/runOrthology.pl',                                       //server_apps/data_transfer/ORTHO
+        '**/emailOrthologyReports.pl',                              //server_apps/data_transfer/ORTHO
+        '**/reportOrthoNameChanges.pl',                             //server_apps/data_transfer/ORTHO
+        '**/parseOrthoFile.pl',                                     //server_apps/data_transfer/ORTHO
+        '**/downloadFiles.pl',                                      //server_apps/data_transfer/ORTHO
+        '**/parseHumanData.pl',                                     //server_apps/data_transfer/ORTHO
+        '**/updateZebrafishGeneNames.pl',                           //server_apps/data_transfer/ORTHO
+        '**/loadAndUpdateNCBIOrthologs.sql',                        //server_apps/data_transfer/ORTHO
+        '**/generateStagedAnatomy.pl',                              //server_apps/data_transfer/Downloads
+        '**/DownloadFiles.pl',                                      //server_apps/data_transfer/Downloads
+        '**/CZRCfeature.pl',                                        //server_apps/data_transfer/Downloads
+        '**/DownloadFiles.sql',                                     //server_apps/data_transfer/Downloads
+        '**/E_unload_ensembl_contig.sql',                           //server_apps/data_transfer/Downloads/GFF3
+        '**/patoNumbers.sql',                                       //server_apps/data_transfer/Downloads
+        '**/patoNumbers.pl',                                        //server_apps/data_transfer/Downloads
+        '**/dump.sql',                                              //server_apps/data_transfer/Downloads/intermineData
+        '**/dumper.sh',                                             //server_apps/data_transfer/Downloads/intermineData
+        '**/pullFromEZRC.pl',                                       //server_apps/data_transfer/ResourceCenters
+        '**/pullFromCZRC.pl',                                       //server_apps/data_transfer/ResourceCenters
+        '**/pullFromResourceCenter.pl',                             //server_apps/data_transfer/ResourceCenters
+        '**/pushToZirc.sql',                                        //server_apps/data_transfer/ResourceCenters
+        '**/pullFromZIRC.pl',                                       //server_apps/data_transfer/ResourceCenters
+        '**/pushToZirc.pl',                                         //server_apps/data_transfer/ResourceCenters
+        '**/orphanChecks.pl',                                       //server_apps/DB_maintenance
+        '**/fx_permission_check.pl',                                //server_apps/DB_maintenance
+        '**/loadExternalNotes.pl',                                  //server_apps/DB_maintenance
+        '**/checkVarcharOctetLength.pl',                            //server_apps/DB_maintenance
+        '**/pub_check_and_addback_volpg.pl',                        //server_apps/DB_maintenance
+        '**/generatePostMergeSQLs.pl',                              //server_apps/DB_maintenance/merge
+        '**/generateSQLsForMergingRecords.pl',                      //server_apps/DB_maintenance/merge
+        '**/merge_markers_cmdline.pl',                              //server_apps/DB_maintenance/merge
+        '**/getAllRelatedData.pl',                                  //server_apps/DB_maintenance/merge
+        '**/loadExternalNotes.sql',                                 //server_apps/DB_maintenance
+        '**/disable_updates.pl',                                    //server_apps/DB_maintenance
+        '**/set_unload_timestamp.sql',                              //server_apps/DB_maintenance
+        '**/rotateInformixLog.sh',                                  //server_apps/DB_maintenance
+        '**/compareTables.groovy',                                  //server_apps/DB_maintenance/postgres
+        '**/check_undefined_environment.pl',                        //server_apps/DB_maintenance
+        '**/dailyExtentCheck.sh',                                   //server_apps/DB_maintenance/extentMonitoring
+        '**/dailyQueryCostCheck.sh',                                //server_apps/DB_maintenance/queryMonitoring
+        '**/pushDataToPublic.sh',                                   //server_apps/DB_maintenance
+        '**/regenExpressionMart.sh',                                //server_apps/DB_maintenance/warehouse
+        '**/who_is.sh',                                             //server_apps/DB_maintenance/warehouse
+        '**/regenPhenotypeMart.sh',                                 //server_apps/DB_maintenance/warehouse
+        '**/runPhenotypeMart.sh',                                   //server_apps/DB_maintenance/warehouse/phenotypeMart
+        '**/regenChromosomeMart.sh',                                //server_apps/DB_maintenance/warehouse
+        '**/runExpressionMart.sh',                                  //server_apps/DB_maintenance/warehouse/expressionMart
+        '**/runChromosomeMart.sh',                                  //server_apps/DB_maintenance/warehouse/chromosomeMartPostgres
+        '**/who_is_not.sh',                                         //server_apps/DB_maintenance/warehouse
+        '**/switch.sh',                                             //server_apps/DB_maintenance/warehouse
+        '**/rsync.pl',                                              //server_apps/DB_maintenance/loadUp
+        '**/README_loadUp',                                         //server_apps/DB_maintenance/loadUp
+        '**/backupBlastDbsAndRsyncAlmostBlastDbs.sh',               //server_apps/DB_maintenance
+        '**/signsoflife.sh',                                        //server_apps/WebSiteTools
+        '**/gen-meetings-rss.r',                                    //server_apps/WebSiteTools
+        '**/gen-jobs-rss.r',                                        //server_apps/WebSiteTools
+        '**/gen-news-rss.r',                                        //server_apps/WebSiteTools
+        '**/inc-redirect',                                          //server_apps/apache
+        '**/crontab.production',                                    //server_apps/cron
+        '**/betterFish.sql',                                        //server_apps/Reports/BetterFish
+        '**/elsevier_report.pl',                                    //server_apps/Reports
+        '**/FinCount.pl',                                           //server_apps/Reports/PATO
+        '**/reportFeatureData.pl',                                  //server_apps/Reports
+        '**/reportPubsForGeneAndFeature.pl',                        //server_apps/Reports
+        '**/runStats.sh',                                           //server_apps/Reports/AnnualStats
+        '**/reportZfinGenesMissingEnsdarts.pl',                     //server_apps/Reports
+        '**/Count-phenotype.pl',                                    //server_apps/Reports
+        '**/runAverageTimeInBinsCumulative.sh',                     //server_apps/Reports/PubTracking
+        '**/runLongestBinResidents.sh',                             //server_apps/Reports/PubTracking
+        '**/runPaperlessPubTrackingDailyIndexedMetrics.sh',         //server_apps/Reports/PubTracking
+        '**/runMonthlyBinLengthReport.sh',                          //server_apps/Reports/PubTracking
+]
+
 // load properties into gradle
 task setup {
     project.ext.ttNameMap = new Properties()
@@ -229,7 +366,6 @@ task setup {
         }
     }
     project.ext.ttNameMap = filteredMap
-    //println filteredMap.size()
 }
 
 /*
@@ -343,23 +479,10 @@ project(':cgi-bin') {
     }
 }
 
-task deployPerlFiles(type: Copy) {
-    description 'Deploy perl files into TARGETROOT'
-    group 'ZFIN Deployment'
-
-//    uncomment below to manually cause a rebuild
-//    outputs.upToDateWhen { false }
-
-    into targetroot + '/server_apps'
-    from projectDir.path + '/server_apps'
-    include 'ZFINPerlModules.pm'
-    filter { line ->
-        ttNameMap.each { name, value ->
-            if (value != null)
-                line = line.replaceAll('<!--\\|' + name + '\\|-->', value)
-        }
-        return line
-    }
+task copyZFINPerlModules(type: Copy) {
+    description 'Copy ZFINPerlModules.pm to the target directory'
+    from "${projectDir}/server_apps/ZFINPerlModules.pm"
+    into "${targetroot}/server_apps/"
 }
 
 task deployGitInfoFile() {
@@ -380,8 +503,12 @@ task deployGitInfoFile() {
 project(':server_apps:data_transfer') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            // Apply the search and replace logic only for files that need it
+            filesMatching(whitelistTemplateFiles) { fileCopyDetails ->
+//                println("Processing template rules for file: " + fileCopyDetails.file)
+                ttNameMap.each { name, value ->
+                    fileCopyDetails.filter { String line -> line.replaceAll("<!--\\|${name}\\|-->", value) }
+                }
             }
             exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*', '**/Ensembl'
         }
@@ -561,7 +688,8 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:eco_go_mapping:deployFiles',
              ':server_apps:Reports:deployFiles',
              'deployGitInfoFile',
-             ':cgi-bin:deployFiles'
+             ':cgi-bin:deployFiles',
+             'copyZFINPerlModules',
     ]
 }
 
@@ -1032,6 +1160,11 @@ class ZfinTargetCopy extends Copy {
         pName = projectName.replace(":", "/")
         description 'Deploy ' + pName + ' to TARGETROOT'
         group 'ZFIN Deployment'
+//
+//        // Logging each file being processed
+//        eachFile { FileCopyDetails fcd ->
+//            println "Processing file: ${fcd.file}"
+//        }
     }
 
     @TaskAction
