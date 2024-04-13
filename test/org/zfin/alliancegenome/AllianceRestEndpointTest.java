@@ -19,7 +19,7 @@ public class AllianceRestEndpointTest {
         DOTerm term = new DOTerm();
         term.setCurie("DOID:4");
         DiseaseAnnotation entity = annotation.getEntity();
-        entity.setObject(term);
+        entity.setDiseaseAnnotationObject(term);
         entity.setUniqueId("hjkjh");
         entity.setId(null);
         entity.setUniqueId("Wonnit");

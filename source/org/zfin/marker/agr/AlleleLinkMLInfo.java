@@ -90,7 +90,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setCurie("ZFIN:" + feature.getZdbID());
+                dto.setModEntityId("ZFIN:" + feature.getZdbID());
                 if (feature.getFtrEntryDate() != null) {
                     dto.setDateCreated(format(feature.getFtrEntryDate()));
                 } else {

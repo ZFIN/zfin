@@ -69,10 +69,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         List<GeneGenotypeExperiment> geneGenotypeExperiments = getMutantRepository().getGeneDiseaseAnnotationModels(numberOrRecords);
 
         // group by gene records
-        Map<Marker, Set<FishExperiment>> diseaseModelMap =
-            geneGenotypeExperiments.stream().collect(
-                Collectors.groupingBy(GeneGenotypeExperiment::getGene,
-                    Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
+        Map<Marker, Set<FishExperiment>> diseaseModelMap = geneGenotypeExperiments.stream().collect(Collectors.groupingBy(GeneGenotypeExperiment::getGene, Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
 
         // loop over each gene
         diseaseModelMap.forEach((gene, fishExperimentSet) -> {
@@ -84,30 +81,12 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                 Fish fish = fishExperiment.getFish();
                 // group the diseaseAnnotation by disease
                 // so publications and evidence codes are grouped together
-                Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels()
-                    .stream()
-                    .collect(
-                        Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(),
-                            Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
-                        )
-                    );
+                Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels().stream().collect(Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(), Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())));
                 // loop over each disease
                 termMap.forEach((disease, diseaseAnnotations) -> {
                     // group disease annotations into pubs and their corresponding list of evidence codes
-                    Map<Publication, List<String>> evidenceMap = diseaseAnnotations
-                        .stream()
-                        .collect(
-                            Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                Collectors.mapping(this::getEvidenceCodeString, toList())
-                            )
-                        );
-                    Map<Publication, List<String>> publicationDateMap = diseaseAnnotations
-                        .stream()
-                        .collect(
-                            Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                Collectors.mapping(DiseaseAnnotation::getZdbID, toList())
-                            )
-                        );
+                    Map<Publication, List<String>> evidenceMap = diseaseAnnotations.stream().collect(Collectors.groupingBy(DiseaseAnnotation::getPublication, Collectors.mapping(this::getEvidenceCodeString, toList())));
+                    Map<Publication, List<String>> publicationDateMap = diseaseAnnotations.stream().collect(Collectors.groupingBy(DiseaseAnnotation::getPublication, Collectors.mapping(DiseaseAnnotation::getZdbID, toList())));
 
                     // Hack: get the date stamp from the ZDB-DAT ID.
                     // Use the earliest one we have per pub
@@ -133,30 +112,26 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
-                        annotation.setAgmCurie(model.getCurie());
+                        annotation.setModEntityId(model.getCurie());
                         annotation.setDoTermCurie(disease.getOboID());
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedByCurie("ZFIN:CURATOR");
                         //annotation.setModifiedBy("ZFIN:CURATOR");
                         if (genotype.isWildtype()) {
-                            annotation.setInferredGeneCurie("ZFIN:" + gene.getZdbID());
+                            annotation.setInferredGeneIdentifier("ZFIN:" + gene.getZdbID());
                         } else {
                             if (fish.getFishFunctionalAffectedGeneCount() == 1) {
                                 genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
                                     Feature feature = genotypeFeature.getFeature();
                                     if (feature.isSingleAlleleOfMarker(gene)) {
-                                        annotation.setInferredAlleleCurie("ZFIN:" + feature.getZdbID());
+                                        annotation.setInferredAlleleIdentifier("ZFIN:" + feature.getZdbID());
                                     }
                                 });
-                                annotation.setInferredGeneCurie("ZFIN:" + gene.getZdbID());
+                                annotation.setInferredGeneIdentifier("ZFIN:" + gene.getZdbID());
                             }
 
                         }
-                        List<String> evidenceCodes = evidenceSet.stream()
-                            .map(ZfinAllianceConverter::convertEvidenceCodes)
-                            .flatMap(Collection::stream)
-                            .map(ECOTerm::getCurie)
-                            .collect(toList());
+                        List<String> evidenceCodes = evidenceSet.stream().map(ZfinAllianceConverter::convertEvidenceCodes).flatMap(Collection::stream).map(ECOTerm::getCurie).collect(toList());
                         annotation.setEvidenceCodeCuries(evidenceCodes);
                         annotation.setReferenceCurie(getSingleReference(publication));
 
@@ -193,13 +168,12 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
-        annotation.setAgmCurie("ZFIN:" + fish.getZdbID());
+        annotation.setModEntityId("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
 
-        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream()
-            .map(ECOTerm::getCurie).collect(toList());
+        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream().map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
         annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
@@ -228,8 +202,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).toList().contains(oboID)) {
             expcond.setConditionClassCurie(oboID);
         } else {
-            Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
-                .findFirst();
+            Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm())).findFirst();
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClassCurie(highLevelterm.get().getOboID());
                 expcond.setConditionIdCurie(oboID);
@@ -308,10 +281,8 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     }
 
     private String getEvidenceCodeFromString(String ecoValue) {
-        if (ecoValue.equals("ZDB-TERM-170419-250"))
-            return "ECO:0000304";
-        if (ecoValue.equals("ZDB-TERM-170419-251"))
-            return "ECO:0000305";
+        if (ecoValue.equals("ZDB-TERM-170419-250")) return "ECO:0000304";
+        if (ecoValue.equals("ZDB-TERM-170419-251")) return "ECO:0000305";
         return "";
     }
 
