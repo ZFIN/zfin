@@ -25,5 +25,4 @@ BEGIN
   RETURN miniHashValue;
 END
 $fullName$
-LANGUAGE plpgsql
-IMMUTABLE ;
+LANGUAGE plpgsql;
