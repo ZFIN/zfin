@@ -19,7 +19,7 @@ public class ZfinAllianceConverter {
 
     public static DiseaseAnnotation convertDiseaseAnnotation(DiseaseAnnotationModel model) {
         AGMDiseaseAnnotation annotation = new AGMDiseaseAnnotation();
-        annotation.setObject(convertDisease(model.getDiseaseAnnotation().getDisease(), model.getDiseaseAnnotation().getPublication()));
+        annotation.setDiseaseAnnotationObject(convertDisease(model.getDiseaseAnnotation().getDisease(), model.getDiseaseAnnotation().getPublication()));
         //TODO annotation.setSubject(convertFish(model.getFishExperiment().getFish()));
         annotation.setEvidenceCodes(convertEvidenceCodes(model.getDiseaseAnnotation().getEvidenceCode().getZdbID()));
         //annotation.setReferenceList(convertReferences(model.getDiseaseAnnotation().getPublication()));

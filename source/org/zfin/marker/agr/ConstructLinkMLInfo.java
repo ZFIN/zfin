@@ -117,7 +117,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                                         case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_, PROMOTER_OF, PROMOTER_OF_ -> {
                                             ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
                                             associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
-                                            associationDTO.setGenomicEntityCurie("ZFIN:" + componentZdbID);
+                                            associationDTO.setGenomicEntityIdentifier("ZFIN:" + componentZdbID);
                                             associationDTO.setGenomicEntityRelationName(relationName);
                                             genomicEntityAssociationDTOList.add(associationDTO);
                                         }

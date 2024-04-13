@@ -9,14 +9,15 @@ import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -64,7 +65,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
                 dto.setDataProviderDto(dataProvider);
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setCurie("ZFIN:" + marker.getZdbID());
+                dto.setModEntityId("ZFIN:" + marker.getZdbID());
                 GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
                 dto.setDateCreated(format(date));
                 return dto;
