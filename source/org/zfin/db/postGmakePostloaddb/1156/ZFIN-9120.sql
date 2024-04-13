@@ -30,33 +30,3 @@ select * into temp table tmp_marker_go_term_evidence_duplicates_from_uniprot_loa
 
 delete from marker_go_term_evidence where mrkrgoev_zdb_id in (select mrkrgoev_zdb_id from tmp_marker_go_term_evidence_duplicates_from_uniprot_load);
 
-
-
----- Add indexes and uniqueness constraint:
-
-CREATE INDEX idx_mrkrgoev_main_cols ON marker_go_term_evidence(
-                                                          mrkrgoev_mrkr_zdb_id,
-                                                          mrkrgoev_source_zdb_id,
-                                                          mrkrgoev_evidence_code,
-                                                          mrkrgoev_notes,
-                                                          mrkrgoev_contributed_by,
-                                                          mrkrgoev_modified_by,
-                                                          mrkrgoev_gflag_name,
-                                                          mrkrgoev_term_zdb_id,
-                                                          mrkrgoev_annotation_organization,
-                                                          mrkrgoev_annotation_organization_created_by,
-                                                          mrkrgoev_relation_term_zdb_id,
-                                                          mrkrgoev_relation_qualifier,
-                                                          mrkrgoev_tag_submit_format,
-                                                          mrkrgoev_protein_accession
-    );
-
-CREATE INDEX idx_mgte_hash ON marker_go_term_evidence((mgte_hash_min(marker_go_term_evidence)));
-
-CREATE INDEX idx_infgrmem_mrkrgoev_zdb_id ON inference_group_member(infgrmem_mrkrgoev_zdb_id);
-CREATE INDEX idx_infgrmem_inferred_from ON inference_group_member(infgrmem_inferred_from);
-
-ALTER TABLE inference_group_member ADD CONSTRAINT marker_go_term_evidence_unique_by_infgrmem
-    CHECK (is_inferred_from_unique_to_mrkrgoev(infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from));
-
-
