@@ -699,6 +699,7 @@ task createEmptyDirsIfNotExists() {
     doLast {
         exec {
             commandLine "mkdir", "-p", targetroot + "/home/data_transfer/Downloads/"
+            commandLine "mkdir", "-p", targetroot + "/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/"
         }
     }
 }
