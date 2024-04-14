@@ -674,6 +674,7 @@ project(':server_apps:data_transfer:Downloads:GFF3') {
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
+             'createEmptyDirsIfNotExists',
              ':home:zf_info:deployFiles',
              ':home:ZFIN:deployFiles',
              ':server_apps:apache:deployFiles',
@@ -692,6 +693,14 @@ task make(type: GradleBuild) {
              ':cgi-bin:deployFiles',
              'copyZFINPerlModules',
     ]
+}
+
+task createEmptyDirsIfNotExists() {
+    doLast {
+        exec {
+            commandLine "mkdir", "-p", targetroot + "/home/data_transfer/Downloads/"
+        }
+    }
 }
 
 task getLatestSolrUnload() {
