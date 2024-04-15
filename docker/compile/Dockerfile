@@ -34,6 +34,12 @@ COPY ./init.d-httpd /etc/init.d/httpd
 RUN chmod 755 /etc/init.d/httpd
 RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-3.0.9.zip && \
         sha256sum -c apache-groovy-binary-3.0.9.zip.sha256 && unzip apache-groovy-binary-3.0.9.zip
+
+RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1/bowtie-1.3.1-linux-x86_64.zip/download -O bowtie-1.3.1.zip && \
+        unzip bowtie-1.3.1.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie
+RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.5.3/bowtie2-2.5.3-linux-x86_64.zip/download -O bowtie2-2.5.3.zip && \
+        unzip bowtie2-2.5.3.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2
+
 RUN ln -s /opt/misc/groovy-3.0.9 /opt/misc/groovy
 #RUN chsh -s /usr/bin/tcsh gradle
 RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
