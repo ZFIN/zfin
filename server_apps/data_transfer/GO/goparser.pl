@@ -2,15 +2,7 @@
 #
 #  goparser.pl
 #
-
-## system("/bin/rm -f gaf_from_go");
-
-## my $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.zfin.gz";
-
-## system("/local/bin/wget $url -O gaf_from_go.gz");
-
-## system("/local/bin/gunzip gaf_from_go.gz");
-
+use Scalar::Util qw(looks_like_number);
 
 #we figure out the version number by looking at the version number in the old file
 #and adding 0.001 to it.  If the old file does not exist, we set the version number to "unknown"
@@ -27,7 +19,7 @@ if (-e "gene_association.zfin.gz") {
     close OLDGAF;
     system("/bin/rm -f gene_association.zfin");
 
-    if (is_numeric($versionNumber)) {
+    if (looks_like_number($versionNumber)) {
         $versionNumber += 0.001;
         $versionLine = sprintf("!Version: %.3f", $versionNumber);
     } else {
@@ -36,7 +28,6 @@ if (-e "gene_association.zfin.gz") {
 } else {
     $versionLine = "!Version: unknown";
 }
-
 
 
 open (UNL, ">gene_association.zfin") or die "Cannot open gene_association.zfin";
