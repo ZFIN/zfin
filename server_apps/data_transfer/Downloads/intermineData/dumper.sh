@@ -204,7 +204,7 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/g
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotype_alias
 fi;
 
-/opt/postgres/postgresql/bin/psql -d <!--|DB_NAME|--> -a -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql
+psql -d <!--|DB_NAME|--> -a -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql
 
 cp /research/zprod/www_homes/zfin.org/server_apps/data_transfer/GO/gene_association.zfin.gz <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation
 gunzip <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/gene_association.zfin.gz
