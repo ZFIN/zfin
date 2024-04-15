@@ -27,6 +27,7 @@ def destination = new File(downloadDir + "zfin_genes_header.gff3")
 //.text method writes the entire content of the file, contigFile, to the new destination.
 destination.write(contigFile.text)
 
+//copying E_zfin_knockdown_reagents.gff3 from $targetRoot to the download directory (but where does E_zfin_knockdown_reagents.gff3 come from?)
 def knockdownFile = new File("$targetRoot/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/E_zfin_knockdown_reagents.gff3")
 destination = new File(downloadDir + "E_zfin_knockdown_reagents.gff3")
 //.text method writes the entire content of the file, knockdownFile, to the new destination.

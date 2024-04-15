@@ -498,8 +498,8 @@ system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 # This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
 
-system("rm /tmp/<!--|DB_NAME|-->emptyFiles.txt");
 $emptyFilesList = '/tmp/<!--|DB_NAME|-->emptyFiles.txt';
+system("rm -f $emptyFilesList");
 
 open (EMPTY, ">$emptyFilesList") || die "Can't open $emptyFilesList !\n";
 

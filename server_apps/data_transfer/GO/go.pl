@@ -85,7 +85,7 @@ try {
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association.zfin");
+  ZFINPerlModules->doSystemCommand("gzip gene_association.zfin");
 } catch {
   warn "Failed at gzip gene_association.zfin - $_";
   exit -1;
@@ -132,14 +132,14 @@ try {
 
 
 try {
-  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2.zfin");
+  ZFINPerlModules->doSystemCommand("gzip gene_association2.2.zfin");
 } catch {
   warn "Failed at gzip gene_association2.2.zfin - $_";
   exit -1;
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2_automated_only.zfin");
+  ZFINPerlModules->doSystemCommand("gzip gene_association2.2_automated_only.zfin");
 } catch {
   warn "Failed at gzip gene_association2.2_automated_only.zfin - $_";
   exit -1;
