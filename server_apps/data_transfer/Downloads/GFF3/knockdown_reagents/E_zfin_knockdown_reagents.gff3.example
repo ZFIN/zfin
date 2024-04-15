@@ -1,0 +1,15 @@
+##gff-version 3
+
+8	ZFIN_knockdown_reagent	DNA_binding_site	47151776	47151796	.	-	.	ID=STR8:47151776-1;Name=CRISPR3-ybx1;zdb_id=ZDB-CRISPR-190124-1;
+15	ZFIN_knockdown_reagent	DNA_binding_site	471763	471783	.	-	.	ID=STR15:471763-1;Name=CRISPR1-mfrp;zdb_id=ZDB-CRISPR-180816-1;
+24	ZFIN_knockdown_reagent	DNA_binding_site	24288065	24288085	.	-	.	ID=STR24:24288065-1;Name=CRISPR2-ythdf3;zdb_id=ZDB-CRISPR-211007-1;
+1	ZFIN_knockdown_reagent	DNA_binding_site	20063778	20063797	.	-	.	ID=STR1:20063778-1;Name=CRISPR5-mettl14;zdb_id=ZDB-CRISPR-211007-4;
+14	ZFIN_knockdown_reagent	DNA_binding_site	10631793	10631813	.	+	.	ID=STR14:10631793-1;Name=CRISPR1-nup62l;zdb_id=ZDB-CRISPR-200305-1;
+15	ZFIN_knockdown_reagent	DNA_binding_site	25508486	25508506	.	-	.	ID=STR15:25508486-1;Name=CRISPR3-hif1al;zdb_id=ZDB-CRISPR-180625-1;
+13	ZFIN_knockdown_reagent	DNA_binding_site	33055652	33055675	.	+	.	ID=STR13:33055652-1;Name=CRISPR1-rdh12;zdb_id=ZDB-CRISPR-230418-1;
+13	ZFIN_knockdown_reagent	DNA_binding_site	33267611	33267629	.	-	.	ID=STR13:33267611-1;Name=CRISPR3-oip5-as1;zdb_id=ZDB-CRISPR-190702-1;
+25	ZFIN_knockdown_reagent	DNA_binding_site	10718930	10718950	.	-	.	ID=STR25:10718930-1;Name=CRISPR3-lrp5;zdb_id=ZDB-CRISPR-230124-1;
+1	ZFIN_knockdown_reagent	DNA_binding_site	16626579	16626599	.	+	.	ID=STR1:16626579-1;Name=CRISPR3-pcm1;zdb_id=ZDB-CRISPR-210720-1;
+21	ZFIN_knockdown_reagent	DNA_binding_site	22973565	22973585	.	+	.	ID=STR21:22973565-1;Name=CRISPR2-rb1;zdb_id=ZDB-CRISPR-190116-1;
+13	ZFIN_knockdown_reagent	DNA_binding_site	19324865	19324885	.	-	.	ID=STR13:19324865-1;Name=CRISPR6-emx2;zdb_id=ZDB-CRISPR-201112-10;
+11	ZFIN_knockdown_reagent	DNA_binding_site	23292711	23292731	.	+	.	ID=STR11:23292711-1;Name=CRISPR3-csf1a;zdb_id=ZDB-CRISPR-231207-1;

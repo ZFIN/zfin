@@ -2,32 +2,38 @@
 #
 #  goparser.pl
 #
+use Scalar::Util qw(looks_like_number);
 
-## system("/bin/rm -f gaf_from_go");
+#we figure out the version number by looking at the version number in the old file
+#and adding 0.001 to it.  If the old file does not exist, we set the version number to "unknown"
+my $versionLine = "";
+if (-e "gene_association.zfin.gz") {
+    system("/local/bin/gunzip gene_association.zfin.gz");
+    open (OLDGAF, "gene_association.zfin") or die "Cannot open gene_association.zfin : $!\n";
+    while ($line = <OLDGAF>) {
+        if ($line =~ m/!Version:\s+([0123456789\.]+)/) {
+            $versionNumber = $1;
+            last;
+        }
+    }
+    close OLDGAF;
+    system("/bin/rm -f gene_association.zfin");
 
-## my $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.zfin.gz";
-
-## system("/local/bin/wget $url -O gaf_from_go.gz");
-
-## system("/local/bin/gunzip gaf_from_go.gz");
-
-system("/local/bin/gunzip gene_association.zfin.gz");
-
-open (OLDGAF, "gene_association.zfin") or die "Cannot open gene_association.zfin : $!\n";
-while ($line = <OLDGAF>) {
-   $gaf_version = $line if $line =~ m/!gaf-version/;
-   $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
+    if (looks_like_number($versionNumber)) {
+        $versionNumber += 0.001;
+        $versionLine = sprintf("!Version: %.3f", $versionNumber);
+    } else {
+        $versionLine = "!Version: unknown";
+    }
+} else {
+    $versionLine = "!Version: unknown";
 }
-close OLDGAF;
 
-system("/bin/rm -f gene_association.zfin");
-
-$versionNumber += 0.001;
 
 open (UNL, ">gene_association.zfin") or die "Cannot open gene_association.zfin";
 
 print UNL "!gaf_version: 2.1\n";
-printf UNL "!Version: %.3f\n", $versionNumber;
+print UNL "$versionLine\n";
 print UNL "!Date: ".`/bin/date +%Y/%m/%d`;
 print UNL "!From: ZFIN (zfin.org) \n";
 print UNL "! \n";
