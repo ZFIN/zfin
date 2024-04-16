@@ -138,7 +138,8 @@ public class EnsemblTranscriptFastaReadProcess {
         // if biotype = protein_coding => mRNA
         // otherwise exception
         if (!bioType.equals("protein_coding")) {
-            if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")) {
+            if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
+                || bioType.equals("unprocessed_pseudogene")) {
                 return;
             }
             throw new RuntimeException("Could not map biotype " + bioType + " for transcript " + transcriptName + " with accession " + ensdartID);
