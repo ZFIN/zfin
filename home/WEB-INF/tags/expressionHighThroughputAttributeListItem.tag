@@ -38,7 +38,7 @@
             </c:if>
             <c:if test="${!empty markerExpression.danioCellLink}">
                 <zfin2:externalLink href="${markerExpression.danioCellLink}">Daniocell</zfin2:externalLink>
-                (<span class="replace-with-a-tag">1</span>)
+                (<a href="/ZDB-PUB-240208-17">1</a>)
             </c:if>
         </ul>
     </z:ifHasData>
