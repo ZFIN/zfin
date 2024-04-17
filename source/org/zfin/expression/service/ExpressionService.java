@@ -274,6 +274,14 @@ public class ExpressionService {
         return "https://www.ebi.ac.uk/gxa/sc/search?q=" + marker.getAbbreviation() + "&species=Danio%20rerio";
     }
 
+    public String getDanioCellLink(Marker marker) {
+        //example URL: https://daniocell.nichd.nih.gov/gene/K/krt15/krt15.html
+        String baseUrl = "https://daniocell.nichd.nih.gov/gene";
+        String abbreviation = marker.getAbbreviation();
+        String capitalLetter = abbreviation.substring(0,1).toUpperCase();
+        return baseUrl + "/" + capitalLetter + "/" + abbreviation + "/" + abbreviation + ".html";
+    }
+
     public String getGeoLinkForMarkerIfExists(Marker marker) {
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             if (!infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
@@ -310,6 +318,7 @@ public class ExpressionService {
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
         markerExpression.setSingleCellExpressionAtlasLink(getSingleCellExpressionAtlasForMarker(marker));
+        markerExpression.setDanioCellLink(getDanioCellLink(marker));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
         markerExpression.setFishMiRnaLink(getFishMiRna(marker, ForeignDB.AvailableName.FISHMIRNA_EXPRESSION));
 
