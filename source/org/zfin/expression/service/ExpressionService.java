@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
+import org.zfin.datatransfer.daniocell.DanioCellMapping;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.*;
@@ -275,11 +276,11 @@ public class ExpressionService {
     }
 
     public String getDanioCellLink(Marker marker) {
-        //example URL: https://daniocell.nichd.nih.gov/gene/K/krt15/krt15.html
-        String baseUrl = "https://daniocell.nichd.nih.gov/gene";
-        String abbreviation = marker.getAbbreviation();
-        String capitalLetter = abbreviation.substring(0,1).toUpperCase();
-        return baseUrl + "/" + capitalLetter + "/" + abbreviation + "/" + abbreviation + ".html";
+        DanioCellMapping danioCellMapping = expressionRepository.getDanioCellMappingForMarkerID(marker.zdbID);
+        if (danioCellMapping == null) {
+            return null;
+        }
+        return danioCellMapping.getFullUrl();
     }
 
     public String getGeoLinkForMarkerIfExists(Marker marker) {

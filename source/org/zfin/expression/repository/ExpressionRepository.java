@@ -1,10 +1,10 @@
 package org.zfin.expression.repository;
 
 import org.zfin.antibody.Antibody;
+import org.zfin.datatransfer.daniocell.DanioCellMapping;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
-import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -476,4 +476,5 @@ public interface ExpressionRepository {
 
     List<ExpressionResult2> getAllExpressionResults();
 
+    DanioCellMapping getDanioCellMappingForMarkerID(String markerID);
 }

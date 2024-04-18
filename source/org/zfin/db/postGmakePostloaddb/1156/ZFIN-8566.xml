@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="rtaylor" id="ZFIN-8566-01-pre">
+        <sql>
+            DROP TABLE IF EXISTS daniocell_mapping;
+            CREATE TABLE daniocell_mapping (
+                dcm_id serial,
+               dcm_symbol varchar(255),
+               dcm_mrkr_zdb_id varchar(255),
+               dcm_url varchar(255)
+            );
+        </sql>
+    </changeSet>
+    <!-- equivalent to:   \copy daniocell_mapping from 'ZFIN-8566-daniocell-map.csv' with csv header;-->
+    <changeSet author="rtaylor" id="ZFIN-8566-02-load-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1156/ZFIN-8566-daniocell-map.csv"
+                  tableName="daniocell_mapping" encoding="UTF-8" quotchar='"'>
+            <column header="dcm_symbol" name="dcm_symbol" type="String"/>
+            <column header="dcm_mrkr_zdb_id" name="dcm_mrkr_zdb_id" type="String"/>
+            <column header="dcm_url" name="dcm_url" type="String"/>
+        </loadData>
+    </changeSet>
+
+    <!-- Useful SQL for finding symbols where they have a different symbol for the zdb id than we have:
+    `select dcm_symbol, mrkr_abbrev from daniocell_mapping dcm left join marker on mrkr_zdb_id = dcm_mrkr_zdb_id where dcm_symbol <> mrkr_abbrev`
+    -->
+
+</databaseChangeLog>
