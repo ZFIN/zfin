@@ -20,17 +20,11 @@ public class DanioCellMapping {
     private String symbol;
     @Column(name = "dcm_mrkr_zdb_id")
     private String markerZdbID;
-    @Column(name = "dcm_url")
-    private String url;
 
     public String getFullUrl() {
-        return URL_BASE + getUrl();
-    }
-
-    public String getFullUrlBasedOnSymbol() {
         //escapedSymbol should only contain A-Z, a-z, 0-9, space, and parentheses
         String escapedSymbol = getSymbol().replaceAll("[^A-Za-z0-9 \\(\\)]", "-");
         String capitalFirstLetter = escapedSymbol.substring(0, 1).toUpperCase();
-        return URL_BASE + "/" + capitalFirstLetter + "/" + escapedSymbol + "/" + escapedSymbol + ".html";
+        return URL_BASE + capitalFirstLetter + "/" + escapedSymbol + "/" + escapedSymbol + ".html";
     }
 }

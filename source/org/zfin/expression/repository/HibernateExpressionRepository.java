@@ -2553,7 +2553,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public DanioCellMapping getDanioCellMappingForMarkerID(String markerID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select dcm from DanioCellMapping dcm where dcm.markerZdbID = :markerID";
+        String hql = "from DanioCellMapping where markerZdbID = :markerID";
         Query<DanioCellMapping> query = session.createQuery(hql, DanioCellMapping.class);
         query.setParameter("markerID", markerID);
         return query.uniqueResult();

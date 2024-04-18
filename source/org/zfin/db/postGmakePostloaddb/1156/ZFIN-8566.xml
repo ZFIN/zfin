@@ -11,8 +11,7 @@
             CREATE TABLE daniocell_mapping (
                 dcm_id serial,
                dcm_symbol varchar(255),
-               dcm_mrkr_zdb_id varchar(255),
-               dcm_url varchar(255)
+               dcm_mrkr_zdb_id varchar(255)
             );
         </sql>
     </changeSet>
@@ -22,7 +21,6 @@
                   tableName="daniocell_mapping" encoding="UTF-8" quotchar='"'>
             <column header="dcm_symbol" name="dcm_symbol" type="String"/>
             <column header="dcm_mrkr_zdb_id" name="dcm_mrkr_zdb_id" type="String"/>
-            <column header="dcm_url" name="dcm_url" type="String"/>
         </loadData>
     </changeSet>
 
