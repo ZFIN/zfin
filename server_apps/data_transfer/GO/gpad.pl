@@ -40,7 +40,7 @@ while ($gpadline = <GPADDUMP>) {
 close (UNLGPAD);
 
 try {
-  ZFINPerlModules->doSystemCommand("/local/bin/gzip gpad2.0.zfin");
+  ZFINPerlModules->doSystemCommand("gzip gpad2.0.zfin");
 } catch {
   warn "Failed at gzip gpad2.0.zfin - $_";
   exit -1;

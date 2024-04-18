@@ -38,8 +38,9 @@ echo "done with runexpressionmart on <!--|DB_NAME|-->";
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/opt/zfin/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTests.txt
-cp reports/tests/expressionMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/expressionMart/.
+# run-expressionmart-unittests ant target no longer exists?
+# /opt/zfin/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTests.txt
+# cp reports/tests/expressionMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/expressionMart/.
 
 if ($? != 0) then
    echo "regen expression mart (the building tables, not the public tables) failed on unit tests";  

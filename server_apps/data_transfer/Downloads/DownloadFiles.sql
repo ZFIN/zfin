@@ -2557,8 +2557,8 @@ CREATE TEMP VIEW fishModelDiseaseChemical AS
     LEFT JOIN experiment_condition_with_zeco_and_chebi fe on genox_exp_zdb_id = fe.expcond_exp_zdb_id
     WHERE fe.chebi_ids IS NOT NULL
     ORDER BY genox_fish_zdb_id;
-\copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical.txt' with delimiter as E'\t' null as '';
-\copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical_2.txt' with delimiter as E'\t' null as '';
+\copy (select * from fishModelDiseaseChemical) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical.txt' with delimiter as E'\t' null as '';
+\copy (select * from fishModelDiseaseChemical) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical_2.txt' with delimiter as E'\t' null as '';
 
 
 \echo '\copy (select * from diseaseAttributions) disease_attribution.txt'
