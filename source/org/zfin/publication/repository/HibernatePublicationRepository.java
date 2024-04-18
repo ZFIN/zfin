@@ -1764,16 +1764,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         //which is built using various parameters in the switch statement above
         String sqlTemplate =
             """
+            WITH step1 AS (SELECT DISTINCT zdb_id, %1$s AS category, %2$s AS date FROM pub_location_metrics %4$s),
+                 step2 AS (SELECT zdb_id, category, date_trunc('%3$s', date) AS date FROM step1 WHERE date >= :start AND date < :end)
             SELECT
                 category,
                 date,
                 count(*) AS count
-            FROM 
-                (select distinct zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date from pub_location_metrics %4$s) 
-                AS parameterized_pub_location_metrics
-            WHERE
-                date >= :start
-                AND date < :end
+            FROM
+                step2
             GROUP BY
                 date,
                 category
@@ -1782,8 +1780,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 category
             """;
 
-        String currentStatusOnlyClause = currentStatusOnly ? " where pth_status_is_current = 't' " : "";
-        return String.format(sqlTemplate, groupExpression, groupInterval, dateExpression, currentStatusOnlyClause);
+        String currentStatusOnlyClause = currentStatusOnly ? " WHERE pth_status_is_current = 't' " : "";
+        return String.format(sqlTemplate, groupExpression, dateExpression, groupInterval, currentStatusOnlyClause);
     }
 
     @Override
