@@ -1550,11 +1550,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="20">Affected Structure or Process 2 superterm ID</Column>
             <Column id="21">Affected Structure or Process 2 superterm name</Column>
             <Column id="22" unique="true">Publication ID</Column>
-            <Column id="23" unique="true">Environment ID</Column>
-            <Column id="24">ZECO ID(s)</Column>
-            <Column id="25">ZECO Name(s)</Column>
-            <Column id="26">ChEBI ID</Column>
-            <Column id="27">ChEBI Name</Column>
+            <Column id="23">PubMed ID</Column>
+            <Column id="24" unique="true">Environment ID</Column>
+            <Column id="25">ZECO ID(s)</Column>
+            <Column id="26">ZECO Name(s)</Column>
+            <Column id="27">ChEBI ID</Column>
+            <Column id="28">ChEBI Name</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1593,11 +1594,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="20">Affected Structure or Process 2 superterm ID</Column>
             <Column id="21">Affected Structure or Process 2 superterm name</Column>
             <Column id="22" unique="true">Publication ID</Column>
-            <Column id="23" unique="true">Environment ID</Column>
-            <Column id="24">ZECO ID(s)</Column>
-            <Column id="25">ZECO Name(s)</Column>
-            <Column id="26">ChEBI ID</Column>
-            <Column id="27">ChEBI Name</Column>
+            <Column id="23">PubMed ID</Column>
+            <Column id="24" unique="true">Environment ID</Column>
+            <Column id="25">ZECO ID(s)</Column>
+            <Column id="26">ZECO Name(s)</Column>
+            <Column id="27">ChEBI ID</Column>
+            <Column id="28">ChEBI Name</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1859,8 +1861,6 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="27">ChEBI ID(s)</Column>
             <Column id="28">ChEBI Name(s)</Column>
         </Download>
-
-
 
 
         <Download orderIndex="1">
