@@ -572,7 +572,7 @@ FROM
         LEFT JOIN experiment_with_chebi xpc ON xpz.expcond_exp_zdb_id = xpc.expcond_exp_zdb_id;
 ALTER TABLE experiment_condition_with_zeco_and_chebi ADD PRIMARY KEY (expcond_exp_zdb_id);
 
-create temp view phenotype_fish_with_chemicals as
+create temp view phenotype_fish_with_chemicals_pre as
     select pf.*,
            fe.zeco_ids,
            fe.zeco_names,
@@ -584,6 +584,40 @@ create temp view phenotype_fish_with_chemicals as
     where fe.chebi_count = 1
     and fish.fish_is_wildtype = 't'
     order by fish_zdb_id, fig_source_zdb_id;
+
+create temp view phenotype_fish_with_chemicals as
+    select
+        fish_zdb_id,
+        fish_full_name,
+        pg_start_stg_zdb_id,
+        stg_name,
+        pg_end_stg_zdb_id,
+        name2,
+        asubterm_ont_id,
+        asubterm_name,
+        arelationship_id,
+        arelationship_name,
+        asuperterm_ont_id,
+        asuperterm_name,
+        quality_id,
+        quality_name,
+        psg_tag,
+        bsubterm_ont_id,
+        bsubterm_name,
+        brelationship_id,
+        brelationship_name,
+        bsuperterm_ont_id,
+        bsuperterm_name,
+        fig_source_zdb_id,
+        publication.pub_pmc_id as pubmed_id,
+        genox_exp_zdb_id,
+        zeco_ids,
+        zeco_names,
+        chebi_ids,
+        chebi_names
+    from  phenotype_fish_with_chemicals_pre left join publication on fig_source_zdb_id = publication.zdb_id
+    order by fish_zdb_id, fig_source_zdb_id;
+
 \copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
 \copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
 
@@ -690,11 +724,45 @@ where fe.chebi_ids is not null
 order by fish_zdb_id, fig_source_zdb_id;
 
 --combine exacerbated and ameliorated phenotype views
-create temp view exacerbated_and_ameliorated_phenotype_fish_with_chemicals as
+create temp view exacerbated_and_ameliorated_phenotype_fish_with_chemicals_before_pmcid as
 select * from exacerbated_phenotype_fish_with_chemicals
 union
 select * from ameliorated_phenotype_fish_with_chemicals
 order by fish_zdb_id, fig_source_zdb_id;
+
+create temp view exacerbated_and_ameliorated_phenotype_fish_with_chemicals AS
+select
+    fish_zdb_id,
+    fish_full_name,
+    pg_start_stg_zdb_id,
+    stg_name,
+    pg_end_stg_zdb_id,
+    name2,
+    asubterm_ont_id,
+    asubterm_name,
+    arelationship_id,
+    arelationship_name,
+    asuperterm_ont_id,
+    asuperterm_name,
+    quality_id,
+    quality_name,
+    psg_tag,
+    bsubterm_ont_id,
+    bsubterm_name,
+    brelationship_id,
+    brelationship_name,
+    bsuperterm_ont_id,
+    bsuperterm_name,
+    fig_source_zdb_id,
+    publication.pub_pmc_id as pubmed_id,
+    genox_exp_zdb_id,
+    zeco_ids,
+    zeco_names,
+    chebi_ids,
+    chebi_names
+from exacerbated_and_ameliorated_phenotype_fish_with_chemicals_before_pmcid
+         left join publication on fig_source_zdb_id = publication.zdb_id;
+
 
 -- file title: Phenotypes Modified by Chemical - Ameliorated or Exacerbated
 -- file name: phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt
