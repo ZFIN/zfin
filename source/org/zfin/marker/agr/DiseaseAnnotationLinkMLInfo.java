@@ -113,7 +113,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
                         annotation.setAgmIdentifier(model.getCurie());
-                        annotation.setModEntityId(map.get(publication));
                         annotation.setDoTermCurie(disease.getOboID());
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedByCurie("ZFIN:CURATOR");
@@ -169,7 +168,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
-        annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setAgmIdentifier("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
