@@ -111,7 +111,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         mcMapping.setChebiID(relation.getChebi());
         mcMapping.setCasID(relation.getCas());
         mcMapping.setPredicate(service.getVocabularyTerm("predicate", "exact"));
-        mcMapping.setMappingJustification(service.getVocabularyTerm("mapping justification", "LexicalMatching"));
+        mcMapping.setMappingJustification(service.getVocabularyTerm("mapping justification", "MappingChaining"));
         return mcMapping;
     }
 

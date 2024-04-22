@@ -41,6 +41,9 @@ VALUES ('LexicalMatching', 3);
 insert into vocabulary_term (vt_name, vt_v_id)
 VALUES ('LexicalSimilarityThresholdMatching', 3);
 
+insert into vocabulary_term (vt_name, vt_v_id)
+VALUES ('MappingChaining', 3);
+
 insert into vocabulary (v_name, v_description)
 VALUES ('inference method chebi-mesh', 'All allowed values for inference method');
 
