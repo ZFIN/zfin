@@ -21,6 +21,7 @@ public class MarkerExpression {
     private LinkDisplay expressionAtlasLink;
     private LinkDisplay fishMiRnaLink;
     private String singleCellExpressionAtlasLink;
+    private String danioCellLink;
     private List<String> ensdargGenes;
     private int inSituFigCount;
     private String geoGeneSymbol ;
