@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
+import org.zfin.datatransfer.daniocell.DanioCellMapping;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.*;
@@ -274,6 +275,14 @@ public class ExpressionService {
         return "https://www.ebi.ac.uk/gxa/sc/search?q=" + marker.getAbbreviation() + "&species=Danio%20rerio";
     }
 
+    public String getDanioCellLink(Marker marker) {
+        DanioCellMapping danioCellMapping = expressionRepository.getDanioCellMappingForMarkerID(marker.zdbID);
+        if (danioCellMapping == null) {
+            return null;
+        }
+        return danioCellMapping.getFullUrl();
+    }
+
     public String getGeoLinkForMarkerIfExists(Marker marker) {
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             if (!infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
@@ -310,6 +319,7 @@ public class ExpressionService {
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
         markerExpression.setSingleCellExpressionAtlasLink(getSingleCellExpressionAtlasForMarker(marker));
+        markerExpression.setDanioCellLink(getDanioCellLink(marker));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
         markerExpression.setFishMiRnaLink(getFishMiRna(marker, ForeignDB.AvailableName.FISHMIRNA_EXPRESSION));
 

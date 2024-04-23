@@ -36,6 +36,10 @@
                     FishMiRNA</zfin2:externalLink>
                 (<a href="/ZDB-PUB-220126-55">1</a>)
             </c:if>
+            <c:if test="${!empty markerExpression.danioCellLink}">
+                <zfin2:externalLink href="${markerExpression.danioCellLink}">Daniocell</zfin2:externalLink>
+                (<a href="/ZDB-PUB-240208-17">1</a>)
+            </c:if>
         </ul>
     </z:ifHasData>
 </z:attributeListItem>
