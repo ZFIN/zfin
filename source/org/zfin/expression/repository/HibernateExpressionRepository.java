@@ -12,6 +12,7 @@ import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
+import org.zfin.datatransfer.daniocell.DanioCellMapping;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
@@ -2549,5 +2550,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return query.list();
     }
 
-
+    @Override
+    public DanioCellMapping getDanioCellMappingForMarkerID(String markerID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from DanioCellMapping where markerZdbID = :markerID";
+        Query<DanioCellMapping> query = session.createQuery(hql, DanioCellMapping.class);
+        query.setParameter("markerID", markerID);
+        return query.uniqueResult();
+    }
 }
