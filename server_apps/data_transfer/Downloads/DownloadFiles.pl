@@ -522,6 +522,9 @@ if (!(-z $emptyFilesList)) {
     die "there are files with 0 data!";
 }
 
+system("cd <!--|SOURCEROOT|-->/ && gradle createMeshChebiMappingFile && cp mesh-chebi-mapping.tsv <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/.");
+
+
 # move files to production location -- assume all are good, as the file check above did not end the script
 
 
