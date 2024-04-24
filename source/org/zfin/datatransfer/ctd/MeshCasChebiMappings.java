@@ -1,11 +1,13 @@
 package org.zfin.datatransfer.ctd;
 
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Data
 public class MeshCasChebiMappings {
@@ -18,7 +20,14 @@ public class MeshCasChebiMappings {
 
     // CAS, Relation
     private Set<MeshCasChebiRelation> oneToOneRelations = new HashSet<>();
+    private Set<MeshCasChebiRelation> oneToOneWithDCRelations = new HashSet<>();
+    private List<MeshCasChebiRelation> oneToManyMeshRelations = new ArrayList<>();
     private Map<String, MeshCasChebiRelation> uniqueRelationMap = new HashMap<>();
+    // unique mesh-cas-chebi derived from multi-chebi-cas association
+    private Map<String, MeshCasChebiRelation> uniqueRelationWithDCMap = new HashMap<>();
+    private Map<String, List<MeshCasChebiRelation>> meshRelationMap = new HashMap<>();
+    private Map<String, List<MeshCasChebiRelation>> chebiRelationMap = new HashMap<>();
+    private Map<String, List<MeshCasChebiRelation>> casRelationMap = new HashMap<>();
     private Map<String, MeshCasChebiRelation> meshCasRelationMap = new HashMap<>();
     private Map<String, MeshCasChebiRelation> casMeshRelationMap = new HashMap<>();
     private Map<String, MeshCasChebiRelation> chebiCasRelationMap = new HashMap<>();
@@ -27,59 +36,113 @@ public class MeshCasChebiMappings {
     public void addMeshCasRelations(List<MeshCasChebiRelation> relations) {
         relations.forEach(relation -> casMeshRelationMap.put(relation.getCas(), relation));
         relations.forEach(relation -> meshCasRelationMap.put(relation.getMesh(), relation));
+        meshRelationMap = relations.stream().collect(groupingBy(MeshCasChebiRelation::getMesh));
+        casRelationMap = relations.stream().filter(relation -> relation.getCas() != null).collect(groupingBy(MeshCasChebiRelation::getCas));
 
         createAtoBMapping(relations.stream()
-            .collect(Collectors.groupingBy(MeshCasChebiRelation::getMesh)), meshCasMap, MeshCasChebiRelation::getCas);
+            .collect(groupingBy(MeshCasChebiRelation::getMesh)), meshCasMap, MeshCasChebiRelation::getCas);
         createAtoBMapping(relations.stream()
             .filter(relation -> StringUtils.isNotEmpty(relation.getCas()))
-            .collect(Collectors.groupingBy(MeshCasChebiRelation::getCas)), casMeshMap, MeshCasChebiRelation::getMesh);
-        if (!chebiCasRelationMap.entrySet().isEmpty()) {
-            createUniqueMapping();
-        }
+            .collect(groupingBy(MeshCasChebiRelation::getCas)), casMeshMap, MeshCasChebiRelation::getMesh);
     }
 
     public void addChebiCasRelations(List<MeshCasChebiRelation> relations) {
         relations.forEach(relation -> chebiCasRelationMap.put(relation.getChebi(), relation));
         relations.forEach(relation -> casChebiRelationMap.put(relation.getCas(), relation));
+        Map<String, List<MeshCasChebiRelation>> chebiRelationMapTemp = relations.stream().collect(groupingBy(MeshCasChebiRelation::getChebi));
+        relations.forEach(relation -> {
+            List<MeshCasChebiRelation> meshCasRelations = casRelationMap.get(relation.getCas());
+            if (CollectionUtils.isEmpty(meshCasRelations)) {
+                return;
+            }
+            List<MeshCasChebiRelation> additionalMappings = new ArrayList<>();
+            // either populate chebi onto cas-mesh mappings or create / copy a new one with the new chebi info
+            meshCasRelations.forEach(relation1 -> {
+                if (relation1.getChebi() == null) {
+                    relation1.setChebi(relation.getChebi());
+                    relation1.setChebiName(relation.getChebiName());
+                } else {
+                    MeshCasChebiRelation newMapping = new MeshCasChebiRelation();
+                    newMapping.setMesh(relation1.getMesh());
+                    newMapping.setMeshName(relation1.getMeshName());
+                    newMapping.setCas(relation1.getCas());
+                    newMapping.setChebi(relation.getChebi());
+                    newMapping.setChebiName(relation.getChebiName());
+                    additionalMappings.add(newMapping);
+                }
+            });
+            additionalMappings.forEach(relation1 -> {
+                if (!meshCasRelations.contains(relation1)) {
+                    meshCasRelations.add(relation1);
+                }
+            });
+        });
+        // populate the chebiRelationMap with
+        // 1. all matching casRelationMap (from the mesh-cas association)
+        // 2. add non-matching (to mesh-cas)) chebi-cas relations
+        chebiRelationMapTemp.forEach((chebiID, relationList) -> {
+            // add all meshCas mappings to chebiMap that have a common cas term
+            relationList.forEach(relation -> {
+                List<MeshCasChebiRelation> chebiList = chebiRelationMap.computeIfAbsent(chebiID, k -> new ArrayList<>());
+                List<MeshCasChebiRelation> casMeshRelations = casRelationMap.get(relation.getCas());
+                if (casMeshRelations != null) {
+                    casMeshRelations.forEach(relation1 -> {
+                        if (relation1.getChebi().equals(chebiID)) {
+                            chebiList.add(relation1);
+                        }
+                    });
+                } else {
+                    chebiList.add(relation);
+                }
+            });
+        });
 
         createAtoBMapping(relations.stream()
-            .collect(Collectors.groupingBy(MeshCasChebiRelation::getChebi)), chebiCasMap, MeshCasChebiRelation::getCas);
+            .collect(groupingBy(MeshCasChebiRelation::getChebi)), chebiCasMap, MeshCasChebiRelation::getCas);
         createAtoBMapping(relations.stream()
             .filter(relation -> StringUtils.isNotEmpty(relation.getCas()))
-            .collect(Collectors.groupingBy(MeshCasChebiRelation::getCas)), casChebiMap, MeshCasChebiRelation::getChebi);
-        if (!meshCasRelationMap.entrySet().isEmpty()) {
-            createUniqueMapping();
-        }
+            .collect(groupingBy(MeshCasChebiRelation::getCas)), casChebiMap, MeshCasChebiRelation::getChebi);
     }
 
-    private void createUniqueMapping() {
-        Map<String, String> uniqueCasMeshMap = new HashMap<>();
-        casMeshMap.forEach((id, values) -> {
-            if (values.size() == 1)
-                uniqueCasMeshMap.put(id, values.get(0));
-        });
-
-        Map<String, String> uniqueChebiCasMap = new HashMap<>();
-        casChebiMap.forEach((s, values) -> {
-            if (values.size() == 1)
-                uniqueChebiCasMap.put(s, values.get(0));
-        });
-        uniqueCasMeshMap.forEach((casID, meshID) -> {
-            if (uniqueChebiCasMap.containsKey(casID)) {
-                MeshCasChebiRelation relation = new MeshCasChebiRelation();
-                relation.setCas(casID);
-                relation.setMesh(meshID);
-                String chebiID = casChebiRelationMap.get(casID).getChebi();
-                relation.setChebi(chebiID);
-                relation.setMeshName(casMeshRelationMap.get(casID).getMeshName());
-                relation.setChebiName(casChebiRelationMap.get(casID).getChebiName());
-                uniqueRelationMap.put(casID, relation);
-                uniqueRelationMap.put(meshID, relation);
-                uniqueRelationMap.put(chebiID, relation);
-                oneToOneRelations.add(relation);
+    public void generateUniqueMapping() {
+        chebiRelationMap.forEach((chebiID, relations) -> {
+            MeshCasChebiRelation value = relations.get(0);
+            if (relations.size() == 1 && value.getMesh() != null) {
+                uniqueRelationMap.put(chebiID, value);
+                uniqueRelationMap.put(value.getCas(), value);
+                uniqueRelationMap.put(value.getMesh(), value);
+                oneToOneRelations.add(value);
             }
         });
-        System.out.println("There are " + (getUniqueRelationMap().size() / 3) + " unique MESH - CAS - CHEBI term relations");
+    }
+
+    public void generateUniqueMappingWithDanglingCas() {
+        chebiRelationMap.forEach((chebiID, relations) -> {
+            if (relations.size() > 1) {
+                List<MeshCasChebiRelation> list = relations.stream().filter(relation -> relation.getMesh() != null).toList();
+                if (CollectionUtils.isNotEmpty(list) && list.size() == 1) {
+                    MeshCasChebiRelation value = list.get(0);
+                    uniqueRelationWithDCMap.put(chebiID, value);
+                    uniqueRelationWithDCMap.put(value.getCas(), value);
+                    uniqueRelationWithDCMap.put(value.getMesh(), value);
+                    oneToOneWithDCRelations.add(value);
+                }
+
+                if (CollectionUtils.isNotEmpty(list) && list.size() > 1) {
+                    oneToManyMeshRelations.addAll(list);
+                }
+            }
+        });
+    }
+
+    private MeshCasChebiRelation getMeshCasChebiRelation(String casID, String meshID, String chebiID) {
+        MeshCasChebiRelation relation = new MeshCasChebiRelation();
+        relation.setCas(casID);
+        relation.setMesh(meshID);
+        relation.setChebi(chebiID);
+        relation.setMeshName(casMeshRelationMap.get(casID).getMeshName());
+        relation.setChebiName(casChebiRelationMap.get(casID).getChebiName());
+        return relation;
     }
 
     private void createAtoBMapping(Map<String, List<MeshCasChebiRelation>> map, Map<String, List<String>> groupedMap, Function<MeshCasChebiRelation, String> getElement) {
@@ -201,10 +264,6 @@ public class MeshCasChebiMappings {
                 map.put(s, values);
         });
         return map;
-    }
-
-    public Map<String, String> getChebiMeshIdMap() {
-        return null;
     }
 
     public String getCasByChebi(String chebiID) {

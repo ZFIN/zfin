@@ -6,6 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.zfin.curation.PublicationNote;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.dao.VocabularyDAO;
+import org.zfin.framework.dao.VocabularyTermDAO;
+import org.zfin.framework.services.VocabularyEnum;
+import org.zfin.framework.services.VocabularyService;
 import org.zfin.infrastructure.ant.DataReportTask;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -20,7 +24,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.loadDir;
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
@@ -42,27 +45,46 @@ public class LoadCtdData extends AbstractScriptWrapper {
     public static void main(String[] arguments) throws IOException {
 
         LoadCtdData load = new LoadCtdData();
-        load.initAll();
-        load.dao = new MeshChebiDAO(HibernateUtil.currentSession());
-        load.pubDao = new PublicationCtdDAO(HibernateUtil.currentSession());
-        load.publicationNoteDao = new PublicationNoteDAO(HibernateUtil.currentSession());
-        load.getReferenceCDT();
-        load.loadMeshAndChebi();
-        load.reportNonJointCasIds();
-        load.printOneToOneMeshChebiRelations();
-        load.reportOneToNRelations();
-        //load.reportOneToManyRelations();
-        //getChemGeneInteractionCDT();
-        ///load.execute();
+        load.execute();
         System.exit(0);
     }
 
 
-    private void printOneToOneMeshChebiRelations() {
-        Set<MeshCasChebiRelation> oneToOneRelations = mapping.getOneToOneRelations();
-        writeOneToOneFile(oneToOneRelations, "mesh-chebi-one-to-one.csv");
+    private void execute() throws IOException {
+        initAll();
+        dao = new MeshChebiDAO(HibernateUtil.currentSession());
+        vocabularyDao = new VocabularyDAO(HibernateUtil.currentSession());
+        vocabularyTermDao = new VocabularyTermDAO(HibernateUtil.currentSession());
+        pubDao = new PublicationCtdDAO(HibernateUtil.currentSession());
+        publicationNoteDao = new PublicationNoteDAO(HibernateUtil.currentSession());
+        service = new VocabularyService();
+        getReferenceCDT();
+        loadMeshAndChebi();
+        reportNonJointCasIds();
+        List<MeshChebiMapping> allMappingRecords = getMeshChebiMappings();
+        saveOneToOneMeshChebiRelations(allMappingRecords, "mesh-chebi-one-to-one.csv");
+/*
+        reportOneToNRelations();
+*/
+        //load.reportOneToManyRelations();
+        //getChemGeneInteractionCDT();
+    }
 
-        List<MeshChebiMapping> newRecords = oneToOneRelations.stream().map(LoadCtdData::getMeshChebiMapping).collect(Collectors.toList());
+    private List<MeshChebiMapping> getMeshChebiMappings() {
+        Set<MeshCasChebiRelation> oneToOneRelations = mapping.getOneToOneRelations();
+        List<MeshChebiMapping> newRecords = oneToOneRelations.stream().map(this::getMeshChebiMapping).toList();
+        newRecords.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm(VocabularyEnum.INFERENCE_METHOD_CHEBI_MESH.getName(), "chebi-cas-mesh")));
+        Set<MeshCasChebiRelation> oneToOneWithDCRelations = mapping.getOneToOneWithDCRelations();
+        List<MeshChebiMapping> newRecordsDC = oneToOneWithDCRelations.stream().map(this::getMeshChebiMapping).toList();
+        newRecordsDC.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm(VocabularyEnum.INFERENCE_METHOD_CHEBI_MESH.getName(), "cas-chebi-cas-mesh")));
+        List<MeshChebiMapping> allMappingRecords = new ArrayList<>(newRecords);
+        allMappingRecords.addAll(newRecordsDC);
+        return allMappingRecords;
+    }
+
+    private void saveOneToOneMeshChebiRelations(List<MeshChebiMapping> newRecords, String reportFileName) {
+        writeMappingToFile(newRecords, reportFileName);
+
         HibernateUtil.createTransaction();
         List<MeshChebiMapping> oldRecords = dao.forceRetrieveAll();
         oldRecords.removeAll(newRecords);
@@ -70,20 +92,26 @@ public class LoadCtdData extends AbstractScriptWrapper {
         for (MeshChebiMapping meshChebiMapping : oldRecords) {
             dao.delete(meshChebiMapping);
         }
+        System.out.println("Deleted records: " + oldRecords.size());
+        writeMappingToFile(oldRecords, reportFileName + ".delete.csv");
         List<MeshChebiMapping> updatedOldRecords = dao.forceRetrieveAll();
         newRecords.removeAll(updatedOldRecords);
 
         // add records that are only found in the ingest file
         newRecords.forEach(relation -> dao.persist(relation));
+        System.out.println("Added records: " + newRecords.size());
+        writeMappingToFile(newRecords, reportFileName + ".add.csv");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    private static MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation) {
+    private MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation) {
         MeshChebiMapping mcMapping = new MeshChebiMapping();
         mcMapping.setMeshID(relation.getMesh());
         mcMapping.setMeshName(relation.getMeshName());
         mcMapping.setChebiID(relation.getChebi());
         mcMapping.setCasID(relation.getCas());
+        mcMapping.setPredicate(service.getVocabularyTerm("predicate", "exact"));
+        mcMapping.setMappingJustification(service.getVocabularyTerm("mapping justification", "MappingChaining"));
         return mcMapping;
     }
 
@@ -130,7 +158,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
                     PublicationCtd pubCtd = new PublicationCtd();
                     pubCtd.setPublication(publication);
                     pubCtd.setCtdID(String.valueOf(pubID));
-                    PublicationNote note =  new PublicationNote();
+                    PublicationNote note = new PublicationNote();
                     note.setPublication(publication);
                     note.setDate(new Date());
                     note.setText("Curated by CTD");
@@ -155,10 +183,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
         HibernateUtil.flushAndCommitCurrentSession();
         //savePublicationCtds();
-        System.out.println("Number of new records: " + newPubCtds.size());
+        System.out.println("Number of new publications: " + newPubCtds.size());
         newPubCtds.forEach(publicationCtd -> System.out.println(publicationCtd.getCtdID()));
 
-        System.out.println("\rNumber of records not found in ZFIN: " + publicationsNotFound.size());
+        System.out.println("\rNumber of publications not found in ZFIN: " + publicationsNotFound.size());
         publicationsNotFound.forEach(System.out::println);
     }
 
@@ -186,8 +214,16 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
         mapping.addMeshCasRelations(relations);
         mapping.addChebiCasRelations(getChebiToCasMapping());
-        System.out.println("Unique Chebi-Cas relations: " + mapping.getChebiCasUnique().size());
-        System.out.println("Unique Cas-Chebi relations: " + mapping.getCasChebiUnique().size());
+        mapping.generateUniqueMapping();
+        mapping.generateUniqueMappingWithDanglingCas();
+        writeFile(mapping.getOneToManyMeshRelations(), "chebi-mesh-multiple.csv");
+
+        System.out.println("Unique Chebi-Cas relations: " + String.format("%,d", mapping.getChebiCasUnique().size()));
+        System.out.println("Unique Cas-Chebi relations: " + String.format("%,d", mapping.getCasChebiUnique().size()));
+        System.out.println("Unique Mesh-Cas relations: " + String.format("%,d", mapping.getMeshCasUnique().size()));
+        System.out.println("Unique Cas-Mesh relations: " + String.format("%,d", mapping.getCasMeshUnique().size()));
+        System.out.println("Unique Chebi-Cas-Mesh relations: " + String.format("%,d", mapping.getOneToOneRelations().size()));
+        System.out.println("Unique Chebi-Cas-Mesh relations derived from DC: " + String.format("%,d", mapping.getOneToOneWithDCRelations().size()));
     }
 
     protected DownloadService downloadService = new DownloadService();
@@ -215,9 +251,12 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    MeshChebiDAO dao;
-    PublicationCtdDAO pubDao;
-    PublicationNoteDAO publicationNoteDao;
+    private MeshChebiDAO dao;
+    private VocabularyTermDAO vocabularyTermDao;
+    private VocabularyDAO vocabularyDao;
+    private PublicationCtdDAO pubDao;
+    private VocabularyService service;
+    private PublicationNoteDAO publicationNoteDao;
 
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
@@ -325,7 +364,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void writeOneToOneFile(Collection<MeshCasChebiRelation> list, String fileName) {
+    private static void writeFile(Collection<MeshCasChebiRelation> list, String fileName) {
         Path file = Path.of(fileName);
         StringBuffer buffer = new StringBuffer();
         list.forEach(relation -> {
@@ -335,6 +374,43 @@ public class LoadCtdData extends AbstractScriptWrapper {
             joiner.add(relation.getMesh());
             joiner.add(relation.getMeshName());
             joiner.add(relation.getCas());
+            buffer.append(joiner);
+            buffer.append("\n");
+        });
+        try {
+            Files.writeString(file, buffer.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private static void writeMappingToFile(Collection<MeshChebiMapping> list, String fileName) {
+        Path file = Path.of(fileName);
+        StringBuffer buffer = new StringBuffer();
+        list.forEach(relation -> {
+            StringJoiner joiner = new StringJoiner("\t");
+            joiner.add(relation.getChebiID());
+            joiner.add(relation.getMeshID());
+            joiner.add(relation.getMeshName());
+            joiner.add(relation.getCasID());
+            buffer.append(joiner);
+            buffer.append("\n");
+        });
+        try {
+            Files.writeString(file, buffer.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void writeOneToOneFile1(Collection<MeshChebiMapping> list, String fileName) {
+        Path file = Path.of(fileName);
+        StringBuffer buffer = new StringBuffer();
+        list.forEach(relation -> {
+            StringJoiner joiner = new StringJoiner("\t");
+            joiner.add(relation.getChebiID());
+            joiner.add(relation.getMeshID());
+            joiner.add(relation.getMeshName());
+            joiner.add(relation.getCasID());
             buffer.append(joiner);
             buffer.append("\n");
         });

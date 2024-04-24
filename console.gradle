@@ -127,3 +127,8 @@ task runEnsemblTranscriptLoader(type: JavaExec) {
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReadProcess'
 }
 
+task createMeshChebiMappingFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ctd.CreateMeshChebiMappingFile'
+}
+

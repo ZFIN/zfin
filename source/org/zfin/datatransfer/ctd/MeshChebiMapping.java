@@ -1,8 +1,10 @@
 package org.zfin.datatransfer.ctd;
 
 import lombok.Data;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.zfin.framework.VocabularyTerm;
 
 import javax.persistence.*;
 
@@ -28,16 +30,24 @@ public class MeshChebiMapping {
     @Column(name = "mcm_cas_name")
     private String casName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mcm_predicate_id")
+    private VocabularyTerm predicate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mcm_mapping_justification_id")
+    private VocabularyTerm mappingJustification;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mcm_inference_method_id")
+    private VocabularyTerm inferenceMethod;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         MeshChebiMapping that = (MeshChebiMapping) o;
-        return new EqualsBuilder().append(getMeshID(), that.getMeshID())
-            .append(getChebiID(), that.getChebiID())
-            .append(getCasID(), that.getCasID()).isEquals();
+        return new EqualsBuilder().append(getMeshID(), that.getMeshID()).append(getChebiID(), that.getChebiID()).append(getCasID(), that.getCasID()).isEquals();
     }
 
     @Override
