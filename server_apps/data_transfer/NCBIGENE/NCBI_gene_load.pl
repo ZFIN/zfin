@@ -2935,7 +2935,7 @@ sub getSqlForGeneAndRnagDbLinksFromFdbContId {
 sub getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId {
     my $fdbContId = shift;
     my $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdbContId) .
-           " and exists(select 1 from record_attribution
+           " and exists (select 1 from record_attribution
                where recattrib_data_zdb_id = dblink_zdb_id
                  and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega','$pubMappedbasedOnNCBISupplement'))";
     return $sql;
