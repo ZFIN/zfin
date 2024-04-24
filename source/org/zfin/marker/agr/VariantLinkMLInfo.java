@@ -30,9 +30,7 @@ public class VariantLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 0) {
-            number = Integer.parseInt(args[0]);
-        }
+        mainParent(args);
         VariantLinkMLInfo variantLinkMLInfo = new VariantLinkMLInfo(number);
         variantLinkMLInfo.init();
         System.exit(0);
@@ -42,7 +40,6 @@ public class VariantLinkMLInfo extends LinkMLInfo {
         initAll();
         IngestDTO ingestDTO = getIngestDTO();
         List<org.alliancegenome.curation_api.model.ingest.dto.VariantDTO> allVariantDTO = getAllVariantInfo();
-        ingestDTO.setLinkMLVersion("v1.11.0");
         ingestDTO.setVariantIngestSet(allVariantDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

@@ -265,47 +265,6 @@
     <!--    </class>-->
 
 
-    <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution">
-        <id name="id" type="long">
-            <column name="recattrib_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <discriminator type="string"
-                       formula="(CASE get_obj_type(recattrib_source_zdb_id)
-                                    WHEN 'PUB' THEN
-                                    CASE get_obj_type(recattrib_data_zdb_id)
-                                         WHEN 'TERM' then 'Term   '
-                                         ELSE             'Pub    '
-                                    END
-                                    WHEN 'PERS' THEN      'Person '
-                                    WHEN 'COMPANY' THEN   'Company'
-                                    WHEN 'JRNL' THEN      'Journal'
-                                    WHEN 'LAB'  THEN      'Lab    '
-                                    ELSE                  'other  '
-                                 END)"/>
-        <property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
-        <property name="sourceZdbID" column="recattrib_source_zdb_id" type="string"/>
-        <property name="sourceType" column="recattrib_source_type" type="recordAttributionSourceType"/>
-        <subclass name="org.zfin.infrastructure.PublicationAttribution" discriminator-value="Pub    ">
-            <many-to-one name="publication" column="recattrib_source_zdb_id" insert="false" update="false"/>
-        </subclass>
-
-        <subclass name="org.zfin.infrastructure.PersonAttribution" discriminator-value="Person ">
-            <many-to-one name="person" column="recattrib_source_zdb_id" insert="false" update="false"/>
-        </subclass>
-
-        <subclass name="org.zfin.infrastructure.LabAttribution" discriminator-value="Lab    ">
-            <many-to-one name="lab" column="recattrib_source_zdb_id" insert="false" update="false"/>
-        </subclass>
-
-        <subclass name="org.zfin.infrastructure.TermAttribution" discriminator-value="Term   ">
-            <many-to-one name="publication" column="recattrib_source_zdb_id" insert="false" update="false"/>
-            <many-to-one name="term" column="recattrib_data_zdb_id" insert="false" update="false"/>
-        </subclass>
-
-    </class>
-
-
     <sql-query name="loadEntrezForProtein">
         <return alias="acc" class="org.zfin.sequence.Accession"/>
         <return-join alias="entrez" property="acc.relatedEntrezAccessions"/>

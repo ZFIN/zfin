@@ -31,9 +31,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
-        }
+        mainParent(args);
         GeneLinkMLInfo diseaseInfo = new GeneLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);
