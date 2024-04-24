@@ -36,9 +36,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 0) {
-            number = Integer.parseInt(args[0]);
-        }
+        mainParent(args);
         AlleleLinkMLInfo diseaseInfo = new AlleleLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);

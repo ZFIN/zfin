@@ -37,9 +37,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 1) {
-            number = Integer.parseInt(args[1]);
-        }
+        mainParent(args);
         DiseaseAnnotationLinkMLInfo diseaseInfo = new DiseaseAnnotationLinkMLInfo(number);
         diseaseInfo.init(LINK_ML_VERSION);
         System.exit(0);
@@ -97,9 +95,9 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                     });
                     // loop over each publication: final loop as each publication should generate an individual record in the file.
                     evidenceMap.forEach((publication, evidenceSet) -> {
+
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
-                        AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
                         org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                         dataProvider.setSourceOrganizationAbbreviation("ZFIN");
                         org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
@@ -108,11 +106,13 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         crossReferenceDTO.setPageArea("disease");
                         crossReferenceDTO.setReferencedCurie(disease.getOboID());
                         dataProvider.setCrossReferenceDto(crossReferenceDTO);
+
+                        AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
                         annotation.setDataProviderDto(dataProvider);
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
-                        annotation.setModEntityId(model.getCurie());
+                        annotation.setAgmIdentifier(model.getCurie());
                         annotation.setDoTermCurie(disease.getOboID());
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedByCurie("ZFIN:CURATOR");
@@ -168,7 +168,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
-        annotation.setModEntityId("ZFIN:" + fish.getZdbID());
+        annotation.setAgmIdentifier("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
