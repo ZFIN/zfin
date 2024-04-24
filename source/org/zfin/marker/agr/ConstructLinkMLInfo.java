@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.SecondaryMarker;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getConstructRepository;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 public class ConstructLinkMLInfo extends LinkMLInfo {
 
@@ -35,9 +37,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 0) {
-            number = Integer.parseInt(args[0]);
-        }
+        mainParent(args);
         ConstructLinkMLInfo diseaseInfo = new ConstructLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);
@@ -47,7 +47,6 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
         initAll();
         IngestDTO ingestDTO = getIngestDTO();
         List<org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO> allDiseaseDTO = getAllConstructInfo();
-        ingestDTO.setLinkMLVersion("v1.11.0");
         ingestDTO.setConstructIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -58,7 +57,6 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
         }
 
         IngestDTO ingestDTOGenomicAssociations = getIngestDTO();
-        ingestDTOGenomicAssociations.setLinkMLVersion("v1.11.0");
         ingestDTOGenomicAssociations.setConstructGenomicEntityAssociationIngestSet(genomicEntityAssociationDTOList);
         jsonInString = writer.writeValueAsString(ingestDTOGenomicAssociations);
         try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_Construct_Association_ml.json"))) {
@@ -98,7 +96,9 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                     dto.setModEntityId("ZFIN:" + construct.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(construct.getZdbID());
                     dto.setDateCreated(format(date));
-                    dto.setReferenceCuries(construct.getPublications().stream().map(publicationAttribution -> this.getSingleReference(publicationAttribution.getPublication())).toList());
+                    List<PublicationAttribution> attributions = getInfrastructureRepository().getPublicationAttributions(construct.zdbID);
+                    List<String> referenceCuries = attributions.stream().map(publicationAttribution -> this.getSingleReference(publicationAttribution.getPublication())).toList();
+                    dto.setReferenceCuries(referenceCuries);
 
                     List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
                     List<ConstructComponentSlotAnnotationDTO> componentDTOs = new ArrayList<>();

@@ -28,6 +28,14 @@ public class LinkMLInfo extends AbstractScriptWrapper {
         numfOfRecords = number;
     }
 
+    static void mainParent(String[] args){
+        if (args.length == 0)
+            throw new RuntimeException("No argument / version provided. Should start with a 'v'");
+        LINK_ML_VERSION = args[0];
+        if (!LINK_ML_VERSION.toLowerCase().startsWith("v"))
+            throw new RuntimeException("First argument is not a valid version, does not start with a 'v'");
+        System.out.println("Link ML Version: " + LINK_ML_VERSION);
+    }
 
     public String getSingleReference(Publication publication) {
         if (publication.getAccessionNumber() != null)
