@@ -9,7 +9,6 @@ import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.Fish;
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,9 +31,7 @@ public class FishLinkMLInfo extends LinkMLInfo {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-        if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
-        }
+        mainParent(args);
         FishLinkMLInfo diseaseInfo = new FishLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);
@@ -57,21 +54,21 @@ public class FishLinkMLInfo extends LinkMLInfo {
     public List<AffectedGenomicModelDTO> getAllFish(int numberOrRecords) {
         List<Fish> allFish = getFishRepository().getAllFish(numberOrRecords);
         return allFish.stream()
-                .map(fish -> {
-                    AffectedGenomicModelDTO dto = new AffectedGenomicModelDTO();
-                    dto.setName(fish.getName());
-                    dto.setCreatedByCurie("ZFIN:CURATOR");
-                    dto.setSubtypeName("fish");
-                    dto.setTaxonCurie(ZfinDTO.taxonId);
-                    dto.setModEntityId("ZFIN:" + fish.getZdbID());
-                    GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
-                    dto.setDateCreated(format(date));
-                    org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
-                    dataProvider.setSourceOrganizationAbbreviation("ZFIN");
-                    dto.setDataProviderDto(dataProvider);
-                    return dto;
-                })
-                .collect(toList());
+            .map(fish -> {
+                AffectedGenomicModelDTO dto = new AffectedGenomicModelDTO();
+                dto.setName(fish.getName());
+                dto.setCreatedByCurie("ZFIN:CURATOR");
+                dto.setSubtypeName("fish");
+                dto.setTaxonCurie(ZfinDTO.taxonId);
+                dto.setModEntityId("ZFIN:" + fish.getZdbID());
+                GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
+                dto.setDateCreated(format(date));
+                org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+                dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                dto.setDataProviderDto(dataProvider);
+                return dto;
+            })
+            .collect(toList());
     }
 
     public static String format(String zdbID) {
