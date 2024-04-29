@@ -743,69 +743,32 @@ sub getRecordCounts {
 
 
     # NCBI Gene Id
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontNCBIgeneId'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
+    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontNCBIgeneId);
     $numNCBIgeneIdBefore = ZFINPerlModules->countData($sql);
 
     #RefSeq RNA
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontRefSeqRNA'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
+    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefSeqRNA);
     $numRefSeqRNABefore = ZFINPerlModules->countData($sql);
 
     # RefPept
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontRefPept'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
+    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefPept);
     $numRefPeptBefore = ZFINPerlModules->countData($sql);
 
     #RefSeq DNA
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontRefSeqDNA'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
-     $numRefSeqDNABefore = ZFINPerlModules->countData($sql);
+    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefSeqDNA);
+    $numRefSeqDNABefore = ZFINPerlModules->countData($sql);
 
     # GenBank RNA (only those loaded - excluding curated ones)
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontGenBankRNA'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
-           and exists(select 1 from record_attribution
-                       where recattrib_data_zdb_id = dblink_zdb_id
-                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
-
-     $numGenBankRNABefore = ZFINPerlModules->countData($sql);
+    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenBankRNA);
+    $numGenBankRNABefore = ZFINPerlModules->countData($sql);
 
     # GenPept (only those loaded - excluding curated ones)
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontGenPept'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
-           and exists(select 1 from record_attribution
-                       where recattrib_data_zdb_id = dblink_zdb_id
-                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
-
-     $numGenPeptBefore = ZFINPerlModules->countData($sql);
+    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenPept);
+    $numGenPeptBefore = ZFINPerlModules->countData($sql);
 
     # GenBank DNA (only those loaded - excluding curated ones)
-    $sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = '$fdcontGenBankDNA'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
-           and exists(select 1 from record_attribution
-                       where recattrib_data_zdb_id = dblink_zdb_id
-                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
-
-     $numGenBankDNABefore = ZFINPerlModules->countData($sql);
+    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenBankDNA);
+    $numGenBankDNABefore = ZFINPerlModules->countData($sql);
 
     # number of genes with RefSeq RNA
     $sql = "select distinct dblink_linked_recid
@@ -2958,6 +2921,24 @@ sub getGenBankAndRefSeqsWithZfinGenes {
     print LOG "\nctGeneAccFdbcont = $ctGeneAccFdbcont\n\n";
 
     $curGetGenBankAndRefSeqAccs->finish();
+}
+
+sub getSqlForGeneAndRnagDbLinksFromFdbContId {
+    my $fdbContId = shift;
+    my $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdbContId'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')";
+    return $sql;
+}
+
+sub getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId {
+    my $fdbContId = shift;
+    my $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdbContId) .
+           " and exists (select 1 from record_attribution
+               where recattrib_data_zdb_id = dblink_zdb_id
+                 and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega','$pubMappedbasedOnNCBISupplement'))";
+    return $sql;
 }
 
 sub writeGenBankRNAaccessionsWithMappedGenesToLoad {
