@@ -127,25 +127,26 @@
     }
 </script>
 
-<zfin2:subsection title="GENOMIC FEATURES ORIGINATING FROM THIS LAB"
-                  test="${numOfFeatures>0}" showNoData="true">
-    <c:choose>
-        <c:when test="${numOfFeatures > 50}">
-            <span id="showAlleleLink">
-                <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show </a>
-            first 50 of <fmt:formatNumber value="${numOfFeatures}" pattern="##,###"/> genomic features
-            </span>
-        </c:when>
-        <c:otherwise>
-            <span id="showAlleleLink">
-            <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show
-                all </a> ${numOfFeatures} genomic features
-            </span>
-        </c:otherwise>
-    </c:choose>
-    <a id="hideAlleleLink" style="display: none;" href="javascript:hideAlleles()" onclick="hideAlleles()">Hide</a>
-
-</zfin2:subsection>
+<c:if test="${showGenomicFeatures}">
+    <zfin2:subsection title="GENOMIC FEATURES ORIGINATING FROM THIS LAB"
+                      test="${numOfFeatures>0}" showNoData="true">
+        <c:choose>
+            <c:when test="${numOfFeatures > 50}">
+                <span id="showAlleleLink">
+                    <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show </a>
+                first 50 of <fmt:formatNumber value="${numOfFeatures}" pattern="##,###"/> genomic features
+                </span>
+            </c:when>
+            <c:otherwise>
+                <span id="showAlleleLink">
+                <a href="javascript:" onclick="showAlleles('${lab.zdbID}');">Show
+                    all </a> ${numOfFeatures} genomic features
+                </span>
+            </c:otherwise>
+        </c:choose>
+        <a id="hideAlleleLink" style="display: none;" href="javascript:hideAlleles()" onclick="hideAlleles()">Hide</a>
+    </zfin2:subsection>
+</c:if>
 
 <div style="display: none;" id="alleleDesignation"></div>
 <br>
