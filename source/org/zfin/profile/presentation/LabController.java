@@ -31,6 +31,7 @@ import java.util.List;
 @RequestMapping("/profile")
 public class LabController {
 
+    public static final String ZFIN_DATABASE_TEAM = "ZFIN Database Team";
     private Logger logger = LogManager.getLogger(LabController.class);
 
     @Autowired
@@ -184,9 +185,13 @@ public class LabController {
 
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
         model.addAttribute("numOfFeatures", RepositoryFactory.getFeatureRepository().getFeaturesForLabCount(zdbID));
-
+        model.addAttribute("showGenomicFeatures", this.showGenomicFeaturesFromLab(lab));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/profile-view";
+    }
+
+    private boolean showGenomicFeaturesFromLab(Lab lab) {
+        return !ZFIN_DATABASE_TEAM.equals(lab.getName());
     }
 
     @RequestMapping(value = "/lab/{zdbID}", method = RequestMethod.GET)
