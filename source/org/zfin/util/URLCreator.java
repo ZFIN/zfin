@@ -1,8 +1,6 @@
 package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,9 +22,6 @@ public class URLCreator {
     // linked map to retain the order the parameters were originally in.
     private String urlWithoutParameters;
     List<NameValuePair> nameValuePairs = new ArrayList<>();
-
-
-    private static final Log LOG = LogFactory.getLog(URLCreator.class);
 
     public URLCreator(String url) {
         if (url == null) {
