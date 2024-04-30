@@ -222,8 +222,10 @@ public class RelatedDataService {
         if (Ontology.isGoOntology(ontology)) {
             getGoAnnotationData(links, id, FieldName.getFieldName(ontology));
             createExpressedGenesData(links, id, FieldName.EXPRESSED_IN_TF);
-        } else {
+        } else if(Ontology.isAnatomy(ontology)){
             createExpressedGenesData(links, id, FieldName.ANATOMY_TF);
+        }else {
+            return;
         }
         createAffectedPhenotypeData(links, id, FieldName.getAffectedFieldName(ontology));
     }
