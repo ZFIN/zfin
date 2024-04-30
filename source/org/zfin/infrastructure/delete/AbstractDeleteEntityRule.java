@@ -27,7 +27,6 @@ public abstract class AbstractDeleteEntityRule {
     protected void addToValidationReport(String validationMessage) {
         DeleteValidationReport report = new DeleteValidationReport(validationMessage);
         validationReportList.add(report);
-
     }
 
     protected void addToValidationReport(String entityName, Collection<? extends EntityZdbID> collection) {
