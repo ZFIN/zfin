@@ -1,13 +1,11 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 
-/**
- * ToDo: Please add documentation for this class.
- */
 public abstract class EntityPresentation {
 
     private static final Logger logger = LogManager.getLogger(EntityPresentation.class);
@@ -57,7 +55,7 @@ public abstract class EntityPresentation {
         if (zdbID.contains("ZDB-GENE-"))
             sb.append(abbreviation);
         else
-            sb.append(AntibodyWikiWebService.getEncodedString(abbreviation));
+            sb.append(StringEscapeUtils.escapeXml(abbreviation));
         sb.append("</a>");
         return sb.toString();
     }
