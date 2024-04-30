@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.wiki.WikiLoginException;
-import org.zfin.wiki.service.WikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +28,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @Log4j2
 public class MeetingsController {
-
-    private WikiWebService instance = WikiWebService.getInstance();
 
     public MeetingsController() throws WikiLoginException {
     }

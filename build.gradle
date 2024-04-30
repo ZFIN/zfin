@@ -957,7 +957,6 @@ dependencies {
     implementation group: 'org.biojava', name: 'core', version: '1.9.4'
     //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
     implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
-    implementation group: 'org.apache.axis', name: 'axis', version: '1.4'
     implementation group: 'javax.xml.rpc', name: 'javax.xml.rpc-api', version: '1.1.2'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.17.1'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
