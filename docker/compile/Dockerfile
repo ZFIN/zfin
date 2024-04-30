@@ -83,6 +83,8 @@ RUN mkdir -p /var/solr/data/site_index/data/snapshot_metadata && \
     mkdir -p /var/solr/data/site_index/data/tlog && \
     chgrp -R solr /var/solr && chmod -R g+ws /var/solr
 
+RUN chgrp -R zfin /mnt/research/vol && chmod -R g+ws /mnt/research/vol
+
 COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
 
