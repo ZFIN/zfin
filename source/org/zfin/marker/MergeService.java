@@ -2,10 +2,14 @@ package org.zfin.marker;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.expression.*;
+import org.zfin.expression.ExpressionExperiment2;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
+import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -14,10 +18,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.MarkerSupplier;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -146,16 +147,6 @@ public class MergeService {
         if (antibodyToMergeInto.getLightChainIsotype() == null && antibodyToDelete.getLightChainIsotype() != null) {
             antibodyToMergeInto.setLightChainIsotype(antibodyToDelete.getLightChainIsotype());
         }
-
-
-        try {
-            if (ZfinProperties.isPushToWiki()) {
-                AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto, antibodyToDelete);
-            }
-        } catch (Exception e) {
-            logger.error("Failed to update antibody: " + antibodyToMergeInto, e);
-        }
-
     }
 
     /**
@@ -464,14 +455,6 @@ public class MergeService {
     }
 
     public static boolean deleteAntibody(Antibody antibody) {
-
-        try {
-            if (ZfinProperties.isPushToWiki()) {
-                AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
-            }
-        } catch (Exception e) {
-            logger.error("Failed to remove antibody: " + antibody, e);
-        }
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(antibody, "Antibody", "Antibody Deleted");
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(antibody.getZdbID());
         // this should force a cascade

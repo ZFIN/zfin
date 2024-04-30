@@ -25,7 +25,6 @@ import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -102,7 +101,6 @@ public class AntibodyCreateController {
             HibernateUtil.flushAndCommitCurrentSession();
 
             HibernateUtil.currentSession().merge(newAntibody);
-            createAntibodyWiki(newAntibody) ;
             markerSolrService.addMarkerStub(newAntibody, Category.ANTIBODY);
 
         } catch (Exception e) {
@@ -117,15 +115,6 @@ public class AntibodyCreateController {
 
         return "redirect:/action/marker/antibody/edit/" + newAntibody.getZdbID() ;
     }
-
-    private void createAntibodyWiki(Antibody antibody) {
-        try {
-            AntibodyWikiWebService.getInstance().createPageForAntibody(antibody);
-        } catch (Exception e) {
-            LOG.error("Unable to create antibody wiki: "+antibody,e);
-        }
-    }
-
 
 }
 

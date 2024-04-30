@@ -59,7 +59,6 @@ import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.webservice.MarkerSoapDbTest;
-import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
 
 //import org.zfin.fish.repository.FishServiceTest;
 
@@ -75,7 +74,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         AntibodyServiceTest.class,
-        AntibodyWikiWebServiceTest.class,
         BlastRepositoryTest.class,
         ConstructTest.class,
         CurationRepositoryTest.class,

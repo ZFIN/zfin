@@ -22,7 +22,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.wiki.service.AntibodyWikiWebService;
+//import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,17 +152,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
         HibernateUtil.flushAndCommitCurrentSession();
         logger.info("updated clone: " + antibody);
 
-        updateAntibodyWiki(antibody);
-
         return getAntibodyForZdbID(antibody.getZdbID());
-    }
-
-    private void updateAntibodyWiki(Antibody antibody) {
-        try {
-            AntibodyWikiWebService.getInstance().updatePageForAntibody(antibody, antibody.getName());
-        } catch (Exception e) {
-            logger.error("Unable to update antibody wiki: " + antibody, e);
-        }
     }
 
     @Override
@@ -179,8 +169,6 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
             HibernateUtil.currentSession().update(antibody);
-            updateAntibodyWiki(antibody);
-
         }
         AntibodyService.setABRegistryID(antibody,dto.getRegistryID());
 

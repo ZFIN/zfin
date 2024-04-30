@@ -6,10 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.marker.Marker;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -50,13 +48,6 @@ public class DeleteAntibodyRule extends AbstractDeleteEntityRule implements Dele
     @Override
     public void prepareDelete() {
         entity = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        try {
-            if (ZfinProperties.isPushToWiki()) {
-                AntibodyWikiWebService.getInstance().dropPageIndividually(entity.getAbbreviation());
-            }
-        } catch (Exception e) {
-            logger.error("Failed to remove antibody: " + entity, e);
-        }
     }
 
     @Override
