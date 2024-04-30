@@ -41,7 +41,6 @@
 /home/WEB-INF/lib/commons-io-2.5.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-lang-2.6.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-lang3-3.1.jar filter=lfs diff=lfs merge=lfs -text
-/home/WEB-INF/lib/commons-logging-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-net-1.4.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-text-1.11.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-validator-1.1.4.jar filter=lfs diff=lfs merge=lfs -text
@@ -778,7 +777,6 @@
 /lib/Java/jwebunit/commons-collections-3.2.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/commons-io-2.4.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/commons-lang3-3.1.jar filter=lfs diff=lfs merge=lfs -text
-/lib/Java/jwebunit/commons-logging-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/cssparser-0.9.9.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/dec-0.1.2.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/htmlunit-2.62.0.jar filter=lfs diff=lfs merge=lfs -text
