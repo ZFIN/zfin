@@ -4693,6 +4693,7 @@
                                when term_ontology = 'molecular_function' then 'Molecular Function'
                                when term_ontology = 'zebrafish_anatomy' then 'Zebrafish Anatomy'
                                when term_ontology = 'disease_ontology' then 'Human Disease'
+                               when term_ontology = 'chebi_ontology' then 'Chebi'
                              end as ontology,
                              '/' || term_ont_id as url,
                              case
@@ -4702,7 +4703,7 @@
                              term_is_obsolete as root_only,
                              term_definition as definition
                       from term
-                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
+                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology', 'chebi_ontology')
                       and term_is_secondary = 'f';"
         >
 
