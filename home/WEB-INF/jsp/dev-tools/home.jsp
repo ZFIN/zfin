@@ -123,6 +123,13 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/alliance/dashboard">Alliance Data Dashboard</a>
+                            </td>
+                        </tr>
+                        <tr>
                             <th>JVM Configuration</th>
                             <th>Session Info</th>
                         </tr>
