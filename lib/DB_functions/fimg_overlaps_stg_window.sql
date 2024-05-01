@@ -1,8 +1,8 @@
 create or replace function 
 fimg_overlaps_stg_window (
-  imgZdbId       image.img_zdb_id%TYPE,
-  startStageZdbId stage.stg_zdb_id%TYPE,
-  endStageZdbId   stage.stg_zdb_id%TYPE )
+  imgZdbId       text,
+  startStageZdbId text,
+  endStageZdbId   text )
 
   returns boolean as $overlaps$
 

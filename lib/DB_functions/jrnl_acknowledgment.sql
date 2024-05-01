@@ -1,6 +1,6 @@
 create or replace function 
 jrnl_acknowledgment (
-  jrnlZdbId        journal.jrnl_zdb_id%TYPE)
+  jrnlZdbId        text)
 
   returns text as $$
 
