@@ -1,11 +1,12 @@
 FROM gradle:7-jdk17
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release 
+       gnupg lsb-release msmtp 
 
 #add the postgresql repo so we can have a postgresql client that matches the server
 ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
@@ -26,6 +27,9 @@ RUN apt update && apt install -y --no-install-recommends \
 #       docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 RUN cpanm Devel::Camelcadedb
+
+COPY ./msmtprc /etc/
+RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.9.zip.sha256 /opt/misc
@@ -68,8 +72,8 @@ RUN ln -s /mnt/research/vol/unloads /research/zunloads
 RUN ln -s /mnt/research/vol/users /research/zusers
 
 RUN groupmod -n zfin gradle
-RUN groupadd -g 1076 zfinadmin
-RUN usermod  -aG zfinadmin gradle
+RUN groupadd -g 1076 fishadmin
+RUN usermod  -aG fishadmin gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
 RUN adduser gradle solr
