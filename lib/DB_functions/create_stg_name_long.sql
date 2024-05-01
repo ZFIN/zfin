@@ -1,8 +1,8 @@
 create or replace function create_stg_name_long(
-  stgName           stage.stg_name%TYPE,
-  stgHrsStart       stage.stg_hours_start%TYPE,
-  stgHrsEnd         stage.stg_hours_end%TYPE,
-  stgOtherFeatures  stage.stg_other_features%TYPE)
+  stgName           text,
+  stgHrsStart       numeric,
+  stgHrsEnd         numeric,
+  stgOtherFeatures  text)
 
   returns text as $stgNameLong$
 
