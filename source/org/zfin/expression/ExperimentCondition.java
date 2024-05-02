@@ -10,7 +10,7 @@ import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

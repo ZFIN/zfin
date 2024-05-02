@@ -15,7 +15,7 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.sequence.STRMarkerSequence;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Objects;
 
 @Controller

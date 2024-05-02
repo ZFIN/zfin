@@ -11,7 +11,7 @@ import org.zfin.framework.api.View;
 import org.zfin.framework.entity.BaseEntity;
 import org.zfin.ontology.HumanGeneDetail;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 

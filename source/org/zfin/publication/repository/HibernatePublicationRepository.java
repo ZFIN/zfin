@@ -53,8 +53,8 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;

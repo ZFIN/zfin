@@ -2,7 +2,7 @@ package org.zfin.profile;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 public class Address implements Serializable {

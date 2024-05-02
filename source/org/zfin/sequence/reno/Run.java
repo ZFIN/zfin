@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;

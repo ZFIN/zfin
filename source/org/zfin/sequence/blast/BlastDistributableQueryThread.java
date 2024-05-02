@@ -7,7 +7,7 @@ import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastOutputMerger;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
 
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.Marshaller;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Collection;

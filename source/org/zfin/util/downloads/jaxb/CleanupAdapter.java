@@ -1,6 +1,6 @@
 package org.zfin.util.downloads.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Remove trailing and prepending white spaces including new lines.

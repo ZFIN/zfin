@@ -11,7 +11,7 @@ import org.zfin.framework.api.View;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.util.NumberAwareStringComparator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 
 /**

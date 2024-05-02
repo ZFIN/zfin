@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Date;

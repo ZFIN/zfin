@@ -16,7 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * This class serves the antibody search page.

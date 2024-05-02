@@ -5,7 +5,7 @@ import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.figure.presentation.ExpressionTableRow;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
