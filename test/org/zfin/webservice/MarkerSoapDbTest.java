@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.webservice.schema.*;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;

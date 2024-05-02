@@ -2,7 +2,7 @@ package org.zfin.framework.presentation.tags;
 
 import org.junit.Test;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

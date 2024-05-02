@@ -10,7 +10,7 @@ import org.zfin.TestConfiguration;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.webservice.schema.*;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import static org.junit.Assert.*;
 
