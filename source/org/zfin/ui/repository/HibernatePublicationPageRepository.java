@@ -11,7 +11,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.*;
 import java.util.stream.Collectors;
 

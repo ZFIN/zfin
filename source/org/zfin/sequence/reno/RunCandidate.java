@@ -14,7 +14,7 @@ import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 
 @Setter

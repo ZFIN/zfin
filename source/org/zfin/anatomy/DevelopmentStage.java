@@ -8,7 +8,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 

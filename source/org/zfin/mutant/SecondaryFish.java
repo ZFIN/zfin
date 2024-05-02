@@ -1,6 +1,6 @@
 package org.zfin.mutant;
 import org.zfin.marker.ReplacedData;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("Fish  ")

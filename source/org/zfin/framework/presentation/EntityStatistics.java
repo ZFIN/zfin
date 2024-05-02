@@ -9,7 +9,7 @@ import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

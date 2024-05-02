@@ -26,7 +26,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.wiki.presentation.Version;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 

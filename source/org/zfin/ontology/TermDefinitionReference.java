@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.zfin.sequence.ForeignDB;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Term definition reference.

@@ -11,7 +11,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

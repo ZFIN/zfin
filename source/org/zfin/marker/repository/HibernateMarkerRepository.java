@@ -56,8 +56,8 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
 import org.zfin.util.NumberAwareStringComparator;
 
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 

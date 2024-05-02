@@ -5,7 +5,7 @@ import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 

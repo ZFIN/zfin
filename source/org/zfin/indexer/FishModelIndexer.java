@@ -8,8 +8,8 @@ import org.zfin.mutant.Zygosity;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.service.OntologyService;
 
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;

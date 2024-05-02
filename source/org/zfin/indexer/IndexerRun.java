@@ -11,7 +11,7 @@ import org.zfin.framework.api.Duration;
 import org.zfin.framework.api.View;
 import org.zfin.framework.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

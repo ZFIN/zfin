@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.sequence.ForeignDB;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 

@@ -16,7 +16,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Stores a collection of entities used to display one row of the figureView expression table

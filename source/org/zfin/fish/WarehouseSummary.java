@@ -1,6 +1,6 @@
 package org.zfin.fish;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**

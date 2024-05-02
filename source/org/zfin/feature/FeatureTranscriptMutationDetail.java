@@ -3,7 +3,7 @@ package org.zfin.feature;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "feature_transcript_mutation_detail")

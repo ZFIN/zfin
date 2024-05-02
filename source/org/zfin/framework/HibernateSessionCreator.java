@@ -104,7 +104,7 @@ public class HibernateSessionCreator {
                 try {
                     ScannedGenericBeanDefinition bean = (ScannedGenericBeanDefinition) bbean;
                     Set<String> annotationSet = bean.getMetadata().getAnnotationTypes();
-                    if (annotationSet.contains("javax.persistence.Entity")) {
+                    if (annotationSet.contains("jakarta.persistence.Entity")) {
                         Class<?> clazz = Class.forName(bean.getBeanClassName());
                         config.addAnnotatedClass(clazz);
                         LOG.info("Loaded Annotated Class: " + clazz.getName());

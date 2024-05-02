@@ -22,7 +22,7 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 

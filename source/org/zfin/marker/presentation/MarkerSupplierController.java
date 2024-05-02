@@ -16,7 +16,7 @@ import org.zfin.profile.presentation.SupplierBean;
 import org.zfin.profile.presentation.SupplierBeanValidator;
 import org.zfin.profile.repository.ProfileRepository;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -6,8 +6,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.ontology.service.OntologyService;
 
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

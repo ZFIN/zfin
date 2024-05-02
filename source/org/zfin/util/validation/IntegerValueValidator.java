@@ -19,8 +19,8 @@ package org.zfin.util.validation;
 
 import org.zfin.gwt.root.util.StringUtils;
 
-import javax.validation.*;
-import javax.validation.metadata.BeanDescriptor;
+import jakarta.validation.*;
+import jakarta.validation.metadata.BeanDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

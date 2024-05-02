@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.zfin.gwt.root.dto.RelationshipType;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 public interface TermRelationship extends Serializable, Comparable<TermRelationship> {

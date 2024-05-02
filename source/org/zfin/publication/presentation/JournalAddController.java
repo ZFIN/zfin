@@ -25,7 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/publication")

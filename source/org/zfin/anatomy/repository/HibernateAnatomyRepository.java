@@ -15,7 +15,7 @@ import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

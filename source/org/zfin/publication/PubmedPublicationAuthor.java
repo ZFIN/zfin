@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.sequence.ReferenceDatabase;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pubmed_publication_author")

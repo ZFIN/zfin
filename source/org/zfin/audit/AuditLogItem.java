@@ -2,7 +2,7 @@ package org.zfin.audit;
 
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**

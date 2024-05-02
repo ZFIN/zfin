@@ -1,7 +1,7 @@
 package org.zfin.mapping;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.DiscriminatorFormula;
 import lombok.Getter;

@@ -30,7 +30,7 @@ import org.zfin.publication.presentation.AddPublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static org.zfin.repository.RepositoryFactory.*;
 

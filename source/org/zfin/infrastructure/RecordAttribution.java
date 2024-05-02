@@ -2,7 +2,7 @@ package org.zfin.infrastructure;
 
 import org.hibernate.annotations.DiscriminatorFormula;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 

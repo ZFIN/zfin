@@ -18,7 +18,7 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 

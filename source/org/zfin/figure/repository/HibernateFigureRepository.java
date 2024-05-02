@@ -15,7 +15,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;

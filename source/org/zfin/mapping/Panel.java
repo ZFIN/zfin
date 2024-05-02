@@ -6,7 +6,7 @@ import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Company;
 import org.zfin.profile.Person;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 import java.util.Date;
 import java.util.Map;
 

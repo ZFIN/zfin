@@ -3,7 +3,7 @@ package org.zfin;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
