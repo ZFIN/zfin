@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.zfin.profile.Person;
 import org.zfin.publication.presentation.PublicationEvent;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.GregorianCalendar;
 
 @Setter

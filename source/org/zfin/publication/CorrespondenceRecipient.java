@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pub_correspondence_recipient")

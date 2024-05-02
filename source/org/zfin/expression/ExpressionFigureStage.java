@@ -4,7 +4,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.ontology.ComposedFxTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

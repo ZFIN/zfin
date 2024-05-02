@@ -10,7 +10,7 @@ import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.service.OntologyService;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;

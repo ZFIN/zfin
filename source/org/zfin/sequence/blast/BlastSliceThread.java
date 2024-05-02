@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.BlastOutput;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 

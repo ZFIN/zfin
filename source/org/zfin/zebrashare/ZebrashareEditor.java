@@ -6,7 +6,7 @@ import org.hibernate.annotations.Parameter;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="zebrashare_data_edit_permission")

@@ -6,7 +6,7 @@ import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "feature_assay")
