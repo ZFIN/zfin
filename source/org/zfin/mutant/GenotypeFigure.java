@@ -4,7 +4,7 @@ import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 

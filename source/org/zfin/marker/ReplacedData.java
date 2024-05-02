@@ -3,7 +3,7 @@ package org.zfin.marker;
 
 import org.hibernate.annotations.DiscriminatorFormula;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "zdb_replaced_data")
