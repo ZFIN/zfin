@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Disease model which groups by Publications

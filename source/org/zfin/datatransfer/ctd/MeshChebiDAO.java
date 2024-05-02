@@ -2,7 +2,7 @@ package org.zfin.datatransfer.ctd;
 
 import org.hibernate.Session;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

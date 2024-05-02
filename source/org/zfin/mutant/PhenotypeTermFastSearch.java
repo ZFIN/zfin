@@ -2,7 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

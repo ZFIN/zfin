@@ -26,7 +26,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/marker")

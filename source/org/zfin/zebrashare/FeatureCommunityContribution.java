@@ -4,7 +4,7 @@ import org.hibernate.annotations.Type;
 import org.zfin.feature.Feature;
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 

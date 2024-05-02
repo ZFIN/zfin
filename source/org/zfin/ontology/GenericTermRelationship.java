@@ -3,7 +3,7 @@ package org.zfin.ontology;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.gwt.root.dto.RelationshipType;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Domain object for a term-term relationship entity.

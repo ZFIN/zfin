@@ -2,7 +2,7 @@
 package org.zfin.sequence;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 import lombok.Getter;

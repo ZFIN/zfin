@@ -3,7 +3,7 @@ package org.zfin.anatomy;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.ChoiceFormat;
 import java.util.Set;

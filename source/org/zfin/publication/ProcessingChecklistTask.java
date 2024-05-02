@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "processing_checklist_task")

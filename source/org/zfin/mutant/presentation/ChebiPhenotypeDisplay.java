@@ -13,7 +13,7 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;

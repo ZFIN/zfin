@@ -1,6 +1,6 @@
 package org.zfin.mapping.importer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Hibernate entity for storing rows from AGP file:

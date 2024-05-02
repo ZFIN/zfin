@@ -14,9 +14,12 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
-import java.util.*;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;

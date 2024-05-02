@@ -37,7 +37,7 @@ import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

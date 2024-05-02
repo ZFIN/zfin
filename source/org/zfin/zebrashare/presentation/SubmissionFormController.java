@@ -31,7 +31,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;

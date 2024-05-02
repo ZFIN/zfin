@@ -15,7 +15,7 @@ import org.zfin.framework.featureflag.FeatureFlag;
 import org.zfin.framework.featureflag.FeatureFlags;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Log4j2

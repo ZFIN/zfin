@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 /**

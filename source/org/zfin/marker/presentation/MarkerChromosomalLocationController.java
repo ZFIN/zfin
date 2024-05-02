@@ -14,7 +14,7 @@ import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.repository.MarkerRepository;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
