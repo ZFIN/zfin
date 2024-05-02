@@ -23,7 +23,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;

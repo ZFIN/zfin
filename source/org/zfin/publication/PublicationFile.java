@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.zfin.framework.api.View;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter

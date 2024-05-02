@@ -7,7 +7,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.util.URLCreator;
 import org.zfin.util.validation.IntegerValue;
 
-import javax.validation.constraints.Max;
+import jakarta.validation.constraints.Max;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;

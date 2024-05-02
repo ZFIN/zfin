@@ -1,6 +1,6 @@
 package org.zfin.mutant;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
