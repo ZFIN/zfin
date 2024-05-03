@@ -2852,16 +2852,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         hql += "order by marker.abbreviation  ";
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameterList("markerType", markerTypes).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setParameterList("markerType", markerTypes).setResultTransformer(
+
+            (Object[] tuple, String[] targetGeneAbrevs) -> {
                 Marker targetGene = (Marker) tuple[0];
                 LookupEntry targetGeneSuggestionList = new LookupEntry();
                 targetGeneSuggestionList.setId(targetGene.getZdbID());
                 targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
                 targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
                 return targetGeneSuggestionList;
-            }
         }).list();
     }
 
@@ -2880,15 +2881,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by markerRelationship.secondMarker.abbreviationOrder
             """;
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("type", GENE_PRODUCES_TRANSCRIPT).setParameter("geneID", geneZdbId).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public TranscriptPresentation transformTuple(Object[] tuple, String[] aliases) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", GENE_PRODUCES_TRANSCRIPT)
+                .setParameter("geneID", geneZdbId).setResultTransformer(
+
+            (Object[] tuple, String[] aliases) -> {
                 TranscriptPresentation transcriptPresentation = new TranscriptPresentation();
                 transcriptPresentation.setZdbID(tuple[0].toString());
                 transcriptPresentation.setName(tuple[1].toString());
                 return transcriptPresentation;
-            }
-
         }).list();
     }
 
@@ -2902,16 +2903,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] sequenceTargetingReagents) -> {
                     Marker str = (Marker) tuple[0];
                     SequenceTargetingReagentLookupEntry strSuggestionList = new SequenceTargetingReagentLookupEntry();
                     strSuggestionList.setId(str.getZdbID());
                     strSuggestionList.setLabel(str.getAbbreviation());
                     strSuggestionList.setValue(str.getAbbreviation());
                     return strSuggestionList;
-                }
             })
             .list()
             ;
@@ -2930,14 +2930,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by markerRelationship.secondMarker.abbreviationOrder
             """;
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE).setParameter("sequenceTargetingReagentID", sequenceTargetingReagent.getZdbID()).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public TargetGenePresentation transformTuple(Object[] tuple, String[] aliases) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
+                .setParameter("sequenceTargetingReagentID", sequenceTargetingReagent.getZdbID())
+                .setResultTransformer(
+
+            (Object[] tuple, String[] aliases) -> {
                 TargetGenePresentation targetGenePresentation = new TargetGenePresentation();
                 targetGenePresentation.setZdbID(tuple[0].toString());
                 targetGenePresentation.setSymbol(tuple[1].toString());
                 return targetGenePresentation;
-            }
 
         }).list();
     }
@@ -3282,16 +3284,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] regions) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] regions) -> {
                     Marker reg = (Marker) tuple[0];
                     LookupEntry regionSuggestionList = new LookupEntry();
                     regionSuggestionList.setId(reg.getZdbID());
                     regionSuggestionList.setLabel(reg.getAbbreviation());
                     regionSuggestionList.setValue(reg.getAbbreviation());
                     return regionSuggestionList;
-                }
             })
             .list()
             ;
@@ -3329,16 +3330,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] sequenceTargetingReagents) -> {
                     Marker antibody = (Marker) tuple[0];
                     AntibodyLookupEntry abSuggestionList = new AntibodyLookupEntry();
                     abSuggestionList.setId(antibody.getZdbID());
                     abSuggestionList.setLabel(antibody.getAbbreviation());
                     abSuggestionList.setValue(antibody.getAbbreviation());
                     return abSuggestionList;
-                }
             })
             .list()
             ;
