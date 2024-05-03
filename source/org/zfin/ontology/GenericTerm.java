@@ -46,7 +46,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected String oboID;
 
     @Column(name = "term_ontology")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.ontology.Ontology")})
     protected Ontology ontology;
     @Column(name = "term_is_obsolete")

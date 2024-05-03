@@ -28,11 +28,11 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     @JoinColumn(name = "mhist_mrkr_zdb_id")
     private Marker marker;
     @Column(name = "mhist_reason", nullable = false)
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Reason")})
     private Reason reason;
     @Column(name = "mhist_event", nullable = false)
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Event")})
     private Event event;
     //name after renaming event

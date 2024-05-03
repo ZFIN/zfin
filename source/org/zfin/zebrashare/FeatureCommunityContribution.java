@@ -73,11 +73,11 @@ public class FeatureCommunityContribution {
     private Feature feature;
 
     @Column(name = "fcc_functional_consequence")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$FunctionalConsequence")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$FunctionalConsequence")})
     private FunctionalConsequence functionalConsequence;
 
     @Column(name = "fcc_nmd_apparent")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$NMDApparent")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$NMDApparent")})
     private NMDApparent nmdApparent;
 
     @Column(name = "fcc_adult_viable")

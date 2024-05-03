@@ -17,7 +17,7 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
     private Long dbID;
     @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdb_db_name")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
     private AvailableName dbName;
     @Column(name = "fdb_db_query")

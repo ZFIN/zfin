@@ -54,7 +54,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @Column(name = "pub_pages")
     private String pages;
     @Column(name = "jtype")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
         parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
     private PublicationType type;
     @Column(name = "accession_no")
@@ -65,7 +65,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @Column(name = "pub_acknowledgment")
     private String acknowledgment;
     @Column(name = "status")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
         parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.Publication$Status")})
     private Status status;
     @Column(name = "keywords")

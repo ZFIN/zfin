@@ -17,12 +17,12 @@ public class FeatureAssay implements IsSerializable {
     @Column(name = "featassay_pk_id")
     private int pkid;
     @Column(name = "featassay_mutagen")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagen")})
     @JsonView(View.API.class)
     private Mutagen mutagen;
     @Column(name = "featassay_mutagee")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagee")})
     private Mutagee mutagee;
     @OneToOne

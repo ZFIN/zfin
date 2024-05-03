@@ -40,7 +40,7 @@ public class PublicationFileType implements Comparable<PublicationFileType> {
     private long id;
 
     @Column(name = "pft_type")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {
             @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationFileType$Name")
     })
     @JsonView(View.Default.class)
