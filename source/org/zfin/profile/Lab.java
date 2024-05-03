@@ -1,6 +1,5 @@
 package org.zfin.profile;
 
-import java.util.Set;
 import java.io.Serializable;
 
 /**

@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
+import jakarta.persistence.Entity;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -35,7 +37,7 @@ import java.util.stream.Collectors;
 @Table(name = "feature")
 //@Audited
 // Only update attributes that have changed.
-@org.hibernate.annotations.Entity(dynamicUpdate = true)
+@DynamicUpdate
 public class Feature implements EntityNotes, EntityZdbID {
 
     // TODO: can this be managed by spring?
@@ -112,7 +114,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSource> sources;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
-    @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
+//    @OrderBy(value = "dalias_alias_lower")
+    //TODO: hibernate: migrate "order by"
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
     @JsonView(View.FeatureAPI.class)
