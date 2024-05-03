@@ -2,9 +2,9 @@ package org.zfin.sequence;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.SelectionQuery;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         session.save(accession1);
         String hsqlString = "from Accession acc where acc.number = :number";
         Query query = session.createQuery(hsqlString);
-        query.setString("number", number);
+        query.setParameter("number", number);
 //            query.setMaxResults(1) ;
         Accession accession = (Accession) query.uniqueResult();
         assertNotNull("database contains at least one accession", accession);
@@ -114,19 +114,19 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testReferenceDatabaseEntity() {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ReferenceDatabase.class);
-        criteria.setMaxResults(1);
-        ReferenceDatabase referenceDatabase = (ReferenceDatabase) criteria.uniqueResult();
-        assertNotNull("database contains at least one reference database", referenceDatabase);
+        Query<ReferenceDatabase> query = session.createQuery("FROM ReferenceDatabase", ReferenceDatabase.class);
+        query.setMaxResults(1);
+        ReferenceDatabase referenceDatabase = query.uniqueResultOptional().orElseThrow(
+                () -> new AssertionError("database contains at least one reference database"));
     }
 
     @Test
     public void testForeignDBEntity() {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ForeignDB.class);
-        criteria.setMaxResults(1);
-        ForeignDB foreignDB = (ForeignDB) criteria.uniqueResult();
-        assertNotNull("database contains at least one foreignDB ", foreignDB);
+        Query<ForeignDB> query = session.createQuery("FROM ForeignDB", ForeignDB.class);
+        query.setMaxResults(1);
+        query.uniqueResultOptional().orElseThrow(
+                () -> new AssertionError("database contains at least one foreign database"));
     }
 
     @Test
