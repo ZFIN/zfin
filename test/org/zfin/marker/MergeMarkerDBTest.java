@@ -1,7 +1,6 @@
 package org.zfin.marker;
 
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,8 +8,6 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.profile.Person;
@@ -62,7 +59,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertTrue(notesAB1_Pre > 0);
             Query noteQuery = HibernateUtil.currentSession().createQuery(
                 "from ExternalNote en where en.externalDataZdbID = :zdbID ");
-            int noteSizeAB2_Pre = noteQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int noteSizeAB2_Pre = noteQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
             assertTrue(noteSizeAB2_Pre > 0);
 
             // * antigen genes mostly
@@ -70,7 +67,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertTrue(relatedMarkersAB1_Pre > 0);
             Query relatedMarkerQuery = HibernateUtil.currentSession().createQuery(
                 "from MarkerRelationship mr where mr.firstMarker.zdbID = :zdbID or mr.secondMarker.zdbID = :zdbID ");
-            int relatedMarkerAB2_Pre = relatedMarkerQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int relatedMarkerAB2_Pre = relatedMarkerQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
 //            assertTrue(relatedMarkerAB2_Pre>0);
 
             // * dalias
@@ -78,7 +75,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertTrue(markerAliasesAB1_Pre > 0);
             Query markerAliasQuery = HibernateUtil.currentSession().createQuery(
                 "from MarkerAlias  ma where ma.dataZdbID = :zdbID ");
-            int markerAliasAB2_Pre = markerAliasQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int markerAliasAB2_Pre = markerAliasQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
             assertTrue(markerAliasAB2_Pre > 0);
 
 
@@ -87,7 +84,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertTrue(markerSupplierAB1_Size > 0);
             Query markerSupplierQuery = HibernateUtil.currentSession().createQuery(
                 "from MarkerSupplier  ms where ms.dataZdbID = :zdbID ");
-            int markerSupplierAB2_Pre = markerSupplierQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int markerSupplierAB2_Pre = markerSupplierQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
             assertTrue(markerSupplierAB2_Pre > 0);
 
 
@@ -96,14 +93,14 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             int recordAttributionAB1_Size = antibodyToDelete.getPublications().size();
             assertTrue(recordAttributionAB1_Size > 0);
             Query recordAttributionQuery = HibernateUtil.currentSession().createQuery("from RecordAttribution ra where ra.dataZdbID = :zdbID ");
-            int recordAttributionAB2_Pre = recordAttributionQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int recordAttributionAB2_Pre = recordAttributionQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
             assertTrue(recordAttributionAB2_Pre > 0);
 
             // * expression experiments
             int expressionExperimentAB1_Size = antibodyToDelete.getAntibodyLabelings().size();
             assertTrue(expressionExperimentAB1_Size > 0);
             Query expressionExperimentQuery = HibernateUtil.currentSession().createQuery("from ExpressionExperiment2 ee where ee.antibody.zdbID = :zdbID ");
-            int expressionExperimentAB2_Pre = expressionExperimentQuery.setString("zdbID", zdbIDToMergeInto).list().size();
+            int expressionExperimentAB2_Pre = expressionExperimentQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
             assertTrue(expressionExperimentAB2_Pre > 0);
 
             /**
@@ -122,23 +119,23 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             HibernateUtil.currentSession().flush();
             // * private notes
             // * external notes
-            int noteSizeAB2_Post = noteQuery.setString("zdbID", zdbIDToMergeInto).list().size();
-            assertEquals(0, noteQuery.setString("zdbID", zdbID1).list().size());
+            int noteSizeAB2_Post = noteQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
+            assertEquals(0, noteQuery.setParameter("zdbID", zdbID1).list().size());
             assertEquals(notesAB1_Pre + noteSizeAB2_Pre, noteSizeAB2_Post);
 
             // * antigen genes
-            int relatedMarkerAB2_Post = relatedMarkerQuery.setString("zdbID", zdbIDToMergeInto).list().size();
-            assertEquals(0, relatedMarkerQuery.setString("zdbID", zdbID1).list().size());
+            int relatedMarkerAB2_Post = relatedMarkerQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
+            assertEquals(0, relatedMarkerQuery.setParameter("zdbID", zdbID1).list().size());
             assertEquals(1, relatedMarkerAB2_Pre);
             assertEquals(1, relatedMarkersAB1_Pre);
             // this one actually gets merged into alcama
             assertEquals(1, relatedMarkerAB2_Post);
 
             // * dalias
-            List<MarkerAlias> newMakerAliases = markerAliasQuery.setString("zdbID", zdbIDToMergeInto).list();
-//            int markerAliasAB2_Post = markerAliasQuery.setString("zdbID", zdbID2).list().size();
+            List<MarkerAlias> newMakerAliases = markerAliasQuery.setParameter("zdbID", zdbIDToMergeInto).list();
+//            int markerAliasAB2_Post = markerAliasQuery.setParameter("zdbID", zdbID2).list().size();
             int markerAliasAB2_Post = newMakerAliases.size();
-            assertEquals(0, markerAliasQuery.setString("zdbID", zdbID1).list().size());
+            assertEquals(0, markerAliasQuery.setParameter("zdbID", zdbID1).list().size());
             boolean hasPriorName = false;
             for (MarkerAlias markerAlias : newMakerAliases) {
                 if (markerAlias.getAlias().equalsIgnoreCase(antibodyToDelete.getAbbreviation())) {
@@ -149,8 +146,8 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertEquals(markerAliasAB2_Pre + markerAliasesAB1_Pre + 1, markerAliasAB2_Post);
 
             //* suppliers
-            int markerSupplierAB2_Post = markerSupplierQuery.setString("zdbID", zdbIDToMergeInto).list().size();
-            assertEquals(0, markerSupplierQuery.setString("zdbID", zdbID1).list().size());
+            int markerSupplierAB2_Post = markerSupplierQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
+            assertEquals(0, markerSupplierQuery.setParameter("zdbID", zdbID1).list().size());
             // they acutally merge the suppliers into each other
             assertEquals(1, markerSupplierAB2_Pre);
             assertEquals(2, markerSupplierAB1_Size);
@@ -159,16 +156,16 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 
             // * sources
             // * record attributions
-            int recordAttributionAB2_Post = recordAttributionQuery.setString("zdbID", zdbIDToMergeInto).list().size();
-            assertEquals(0, recordAttributionQuery.setString("zdbID", zdbID1).list().size());
+            int recordAttributionAB2_Post = recordAttributionQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
+            assertEquals(0, recordAttributionQuery.setParameter("zdbID", zdbID1).list().size());
             assertTrue(recordAttributionAB1_Size >= 20);
             assertTrue(recordAttributionAB2_Pre > recordAttributionAB1_Size); // just a good guess, should be > 20
             assertTrue(recordAttributionAB2_Post > recordAttributionAB2_Pre);
             assertTrue(recordAttributionAB2_Pre + recordAttributionAB1_Size > recordAttributionAB2_Post);
 
             // * expression experiments
-            int expressionExperimentAB2_Post = expressionExperimentQuery.setString("zdbID", zdbIDToMergeInto).list().size();
-            assertEquals(0, expressionExperimentQuery.setString("zdbID", zdbID1).list().size());
+            int expressionExperimentAB2_Post = expressionExperimentQuery.setParameter("zdbID", zdbIDToMergeInto).list().size();
+            assertEquals(0, expressionExperimentQuery.setParameter("zdbID", zdbID1).list().size());
             // TODO: any validation here?
 //            assertEquals(expressionExperimentAB2_Pre+expressionExperimentAB1_Size,expressionExperimentAB2_Post);
 
@@ -177,19 +174,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
-    private List<Publication> createPublications() {
-        return HibernateUtil.currentSession().createCriteria(Publication.class)
-            .setMaxResults(2).list();
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private List<FishExperiment> createGenotypeExperiments() {
-        return HibernateUtil.currentSession().createCriteria(FishExperiment.class)
-            .setMaxResults(2).list();
-    }
 
     private List<Antibody> createAntibodies(Publication pub) {
 
@@ -226,14 +210,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
         HibernateUtil.currentSession().merge(antibodyB);
 
         return antibodies;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<ExpressionAssay> createExpressionAssays() {
-
-        return HibernateUtil.currentSession().createCriteria(ExpressionAssay.class)
-            .setMaxResults(2).list();
-
     }
 
     /**
