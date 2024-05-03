@@ -554,8 +554,6 @@ dependencies {
     implementation group: 'org.springframework.security', name: 'spring-security-web', version: '6.1.1'
     implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.1'
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
-    implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
-    implementation group: 'org.glassfish.web', name: 'javax.el', version: '2.2.4'
     implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '5.0.0'
@@ -591,7 +589,6 @@ dependencies {
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
     implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.0'
     implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
-//    implementation group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
     implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.6.3'
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.2'
@@ -603,8 +600,6 @@ dependencies {
     implementation group: 'com.sun.activation', name: 'jakarta.activation', version: '2.0.1'
     implementation group: 'jakarta.mail', name: 'jakarta.mail-api', version: '2.1.2'
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
-    implementation group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.0'
-    implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
     implementation group: 'taglibs', name: 'standard', version: '1.1.2'
 
     implementation files('home/WEB-INF/lib/agr_curation_api-v0.36.0-rc1.jar')
@@ -646,7 +641,6 @@ dependencies {
     implementation group: 'org.biojava', name: 'core', version: '1.9.4'
     //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
     implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
-    implementation group: 'javax.xml.rpc', name: 'javax.xml.rpc-api', version: '1.1.2'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.17.1'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
     implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
@@ -670,9 +664,7 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
     testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.7.0'
     testImplementation group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
-    testImplementation group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
     testImplementation group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
-    testImplementation group: 'javax.jws', name: 'jsr181-api', version: '1.0-MR1'
     implementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
     implementation group: 'log4j', name: 'log4j', version: '1.2.17'
 
