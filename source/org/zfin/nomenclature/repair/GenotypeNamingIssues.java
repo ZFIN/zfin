@@ -5,7 +5,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -52,7 +52,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
     public List<NamingIssuesReportRow> getSuspiciousGenotypes() {
         String sql = NamingIssuesReportRow.reportSql();
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         return (List<NamingIssuesReportRow>) query
                 .list()
                 .stream()
@@ -157,7 +157,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
                 tx = HibernateUtil.createTransaction();
                 if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
                     LOG.info("Executing SQL: " + row.getSqlFix());
-                    query = HibernateUtil.currentSession().createSQLQuery(row.getSqlFix());
+                    query = HibernateUtil.currentSession().createNativeQuery(row.getSqlFix());
                     query.executeUpdate();
                 }
                 tx.commit();

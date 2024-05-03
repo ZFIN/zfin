@@ -1,13 +1,8 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
