@@ -12,12 +12,8 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
-import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.zfin.repository.RepositoryFactory.getMarkerGoTermEvidenceRepository;
 
 /**
@@ -55,16 +51,19 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
     @Override
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbID(String publicationID) {
-        return HibernateUtil.currentSession().createQuery(" " +
-                                                          " from MarkerGoTermEvidence ev" +
-                                                          " left join fetch ev.inferredFrom " +
-                                                          " join fetch ev.marker " +
-                                                          " where ev.source.zdbID = :pubZdbID " +
-                                                          " order by ev.marker.abbreviation , ev.goTerm.termName " +
-                                                          "", MarkerGoTermEvidence.class)
-            .setParameter("pubZdbID", publicationID)
-            .setResultTransformer(DISTINCT_ROOT_ENTITY)
-            .list();
+        List<MarkerGoTermEvidence> resultList = HibernateUtil.currentSession().createQuery("""
+                        select distinct ev
+                        from MarkerGoTermEvidence ev
+                        left join fetch ev.inferredFrom 
+                        join fetch ev.marker 
+                        where ev.source.zdbID = :pubZdbID 
+                        order by ev.marker.abbreviation , ev.goTerm.termName 
+                        """, MarkerGoTermEvidence.class)
+                .setParameter("pubZdbID", publicationID)
+                .list();
+        // Use LinkedHashSet to distinctify and preserve order
+        Set<MarkerGoTermEvidence> distinctResults = new LinkedHashSet<>(resultList);
+        return new ArrayList<>(distinctResults);
     }
 
     @Override
