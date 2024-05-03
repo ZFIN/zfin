@@ -3,6 +3,7 @@
  */
 package org.zfin.infrastructure.repository;
 
+import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +64,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertActiveDataWithoutValidationIgnoreConflict(String zdbID) {
-        currentSession().createSQLQuery("""
+        currentSession().createNativeQuery("""
                 INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES (:zdbID)
                 ON CONFLICT (zactvd_zdb_id)
                 DO NOTHING
@@ -717,7 +718,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getDataAliasesAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(" " +
+            HibernateUtil.currentSession().createNativeQuery(" " +
                                                           " select count(*) from record_attribution, data_alias" +
                                                           "      where recattrib_data_zdb_id = dalias_zdb_id" +
                                                           "      and dalias_data_zdb_id = :zdbID" +
@@ -731,7 +732,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getOrthologRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(
+            HibernateUtil.currentSession().createNativeQuery(
                     "select count(*) From ortholog as ortho, " +
                     "              ortholog_evidence as oe " +
                     "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
@@ -745,7 +746,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getMarkerFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(" " +
+            HibernateUtil.currentSession().createNativeQuery(" " +
                                                           " select count(*) from record_attribution, feature_marker_relationship " +
                                                           "      where recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
                                                           "      and fmrel_mrkr_zdb_id = :zdbID" +
@@ -760,7 +761,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getMarkerGenotypeFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(" " +
+            HibernateUtil.currentSession().createNativeQuery(" " +
                                                           " select count(*) from record_attribution, feature_marker_relationship, genotype_feature " +
                                                           "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
                                                           "      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
@@ -775,7 +776,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getFeatureGenotypeAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(" " +
+            HibernateUtil.currentSession().createNativeQuery(" " +
                                                           " select count(*) from record_attribution, genotype_feature " +
                                                           "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
                                                           "      and genofeat_feature_zdb_id = :zdbID" +
@@ -789,7 +790,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public int getGoRecordAttributions(String zdbID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "select count(*)" +
                                                                              " from record_attribution, marker_go_term_evidence " +
                                                                              "      where recattrib_data_zdb_id = mrkrgoev_zdb_id " +
@@ -803,7 +804,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public int getDBLinkAttributions(String zdbID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "select count(*)" +
                                                                              " from record_attribution, db_link " +
                                                                              "      where recattrib_data_zdb_id = dblink_zdb_id " +
@@ -817,7 +818,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public int getDBLinkAssociatedToGeneAttributions(String zdbID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "select count(*)" +
                                                                              " from record_attribution, db_link, marker_relationship " +
                                                                              "      where recattrib_data_zdb_id = dblink_zdb_id " +
@@ -836,7 +837,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * Retrieve # of related markers (in the first position) that are attributed to to this pub.
      */
     public int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                               "select count(*)" +
                                                                               " from record_attribution, marker_relationship " +
                                                                               "      where recattrib_data_zdb_id = mrel_mrkr_1_zdb_id " +
@@ -850,7 +851,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                               "select count(*)" +
                                                                               " from record_attribution, marker_relationship " +
                                                                               "      where recattrib_data_zdb_id = mrel_mrkr_2_zdb_id " +
@@ -865,7 +866,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getExpressionExperimentMarkerAttributions(Marker m, String pubZdbID) {
         if (m.isInTypeGroup(Marker.TypeGroup.ATB)) {
-            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+            return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
                                                                                  " from record_attribution ra , expression_experiment ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
@@ -879,7 +880,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         // assume its a gene
         else if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+            return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
                                                                                  " from record_attribution ra , expression_experiment ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
@@ -891,7 +892,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 .uniqueResult().toString()
             );
         } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
-            return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+            return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
                                                                                  " from record_attribution ra , expression_experiment ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
@@ -908,7 +909,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public int getSequenceTargetingReagentEnvironmentAttributions(String zdbID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "  select count(*)  " +
                                                                              " from record_attribution ra, fish_str str " +
                                                                              " where ra.recattrib_data_zdb_id = str.fishstr_fish_zdb_id " +
@@ -923,7 +924,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
     public int getGenotypeExperimentRecordAttributions(String genotypeID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "  select count(*)  " +
                                                                              " from record_attribution ra, fish_experiment ge, fish fish  " +
                                                                              " where ra.recattrib_data_zdb_id = ge.genox_exp_zdb_id " +
@@ -1215,7 +1216,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @Override
     public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement, Session session) {
-        NativeQuery query = session.createSQLQuery(statement.getQuery());
+        NativeQuery query = session.createNativeQuery(statement.getQuery());
         List objects = query.list();
         if (objects == null) {
             return null;
@@ -1285,12 +1286,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<String> getAllEntities(Class clazz, String idName, int firstNIds) {
         if (firstNIds < 0) return null;
 
-        if (HibernateUtil.currentSession().getSessionFactory().getClassMetadata(clazz) == null) {
+        Metamodel metamodel = currentSession().getSessionFactory().getMetamodel();
+        if (metamodel.entity(clazz) == null) {
             throw new NullPointerException("No Entity of type " + clazz.getName() + " found in Hibernate mapping file.");
         }
 
         String hql = "select distinct " + idName + " from " + clazz.getSimpleName() + " order by " + idName;
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+        Query query = currentSession().createQuery(hql);
         if (firstNIds > 0) {
             query.setMaxResults(firstNIds);
         }
@@ -1391,7 +1393,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                      "and ra.recattrib_source_zdb_id= :pubZdbID " +
                      "and ra.recattrib_source_type='standard' " +
                      " ";
-        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
+        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("zdbID", zdbID)
             .setParameter("pubZdbID", microarrayPub)
             .uniqueResult().toString());
@@ -1418,7 +1420,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                      " and ra.recattrib_source_type='standard' " +
                      ") as subquery" +
                      " ";
-        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
+        int numPubs = Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("zdbID", zdbID)
             .setParameter("pubZdbID", microarrayPub)
             .uniqueResult().toString());
@@ -1518,7 +1520,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID) {
-        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+        return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "  select count(*)  " +
                                                                              " from record_attribution ra, fish_experiment ge, expression_experiment ee, fish f " +
                                                                              " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
@@ -1702,7 +1704,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void setDisableUpdatesFlag(boolean readonlyMode) {
-        Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
+        Boolean.valueOf(HibernateUtil.currentSession().createNativeQuery("select " +
                                                                       "        zflag_is_on  " +
                                                                       "    from  zdb_flag " +
                                                                       "    where zflag_name='disable updates'").uniqueResult().toString());

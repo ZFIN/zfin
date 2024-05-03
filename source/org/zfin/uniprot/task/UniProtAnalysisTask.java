@@ -188,7 +188,7 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
             	count(DISTINCT dblink_linked_recid) DESC,
             	uniprot
         """;
-        List results = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List results = HibernateUtil.currentSession().createNativeQuery(sql).list();
         for(Object result : results) {
             writeCsvLine(result, csvPrinter);
         }
@@ -201,7 +201,7 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
     private void dropTemporaryTable() {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
-        session.createSQLQuery("DROP TABLE up_to_refseq_temp").executeUpdate();
+        session.createNativeQuery("DROP TABLE up_to_refseq_temp").executeUpdate();
         tx.commit();
     }
 
