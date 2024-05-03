@@ -16,7 +16,7 @@ public class ZdbFlag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "zflag_name")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.infrastructure.ZdbFlag$Type")})
     private Type type;
     @Column(name = "zflag_is_on")
