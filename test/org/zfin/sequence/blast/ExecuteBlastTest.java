@@ -647,8 +647,8 @@ public class ExecuteBlastTest {
                 "select l.accessionNumber from DBLink  l " +
                 "where l.referenceDatabase.zdbID = :referenceDatabaseZdbID " +
                 "";
-        org.hibernate.Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("referenceDatabaseZdbID", referenceDatabase.getZdbID());
+        org.hibernate.query.Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("referenceDatabaseZdbID", referenceDatabase.getZdbID());
         query.setMaxResults(1);
         String accession = query.list().get(0).toString();
 

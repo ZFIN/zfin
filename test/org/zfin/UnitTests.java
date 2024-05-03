@@ -51,7 +51,6 @@ import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.PublicationTest;
-import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
@@ -98,7 +97,6 @@ import org.zfin.util.*;
         MatchingServiceTest.class,
         MatchingTermServiceTest.class,
         MatchTypeTest.class,
-        Md5PasswordEncoderTest.class,
         MergeMarkerUnitTest.class,
         MicroarrayParseTest.class,
         OntologyServiceTest.class,
