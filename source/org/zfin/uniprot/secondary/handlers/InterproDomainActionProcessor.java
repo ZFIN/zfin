@@ -31,7 +31,7 @@ public class InterproDomainActionProcessor implements ActionProcessor {
             if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
                 getInfrastructureRepository().insertActiveDataWithoutValidationIgnoreConflict(ipr.getIpID());
 
-                currentSession().createSQLQuery("""
+                currentSession().createNativeQuery("""
             INSERT INTO interpro_protein (ip_interpro_id, ip_name, ip_type) VALUES (:interpro, :name, :type)
             ON CONFLICT (ip_interpro_id) 
             DO UPDATE SET ip_name = EXCLUDED.ip_name, ip_type = EXCLUDED.ip_type

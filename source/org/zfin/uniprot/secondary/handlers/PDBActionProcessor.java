@@ -53,7 +53,7 @@ public class PDBActionProcessor implements ActionProcessor {
                 select :uniprot, :pdb 
                 where exists (select 1 from protein where up_uniprot_id = :uniprot)
                 """;
-        currentSession().createSQLQuery(sqlQuery)
+        currentSession().createNativeQuery(sqlQuery)
             .setParameter("uniprot", uniprot)
             .setParameter("pdb", pdb)
             .executeUpdate();
@@ -71,7 +71,7 @@ public class PDBActionProcessor implements ActionProcessor {
         where ptp_uniprot_id = :uniprot
         """;
 
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("uniprot", uniprot);
         query.executeUpdate();
     }
