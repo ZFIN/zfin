@@ -1,7 +1,5 @@
 package org.zfin.datatransfer.doi;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.webservice.Citexplore;
@@ -27,10 +25,10 @@ public class DOITest extends AbstractDatabaseTest {
     @Test
     public void testDOIConnectivity() {
         List<Publication> pubs = new ArrayList<>();
-        Criteria crit = HibernateUtil.currentSession().createCriteria(Publication.class);
-        crit.setMaxResults(2);
-        crit.add(Restrictions.isNotNull("doi"));
-        List<Publication> publications = (List<Publication>) crit.list();
+
+        String hql = "from Publication where doi is not null";
+        List<Publication> publications = HibernateUtil.currentSession().createQuery(hql).setMaxResults(2).list();
+
         assertThat(publications, hasSize(2));
 
         Publication pub1 = publications.get(0);

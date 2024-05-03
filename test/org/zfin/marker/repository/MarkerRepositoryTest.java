@@ -44,6 +44,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
+import javax.persistence.Tuple;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -602,12 +603,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         List<HighQualityProbe> probes = new ArrayList<>();
         while (results.next()) {
             Marker probe = new Marker();
-            Object[] objects = results.get();
-            probe.setZdbID((String) objects[0]);
-            probe.setAbbreviation((String) objects[1]);
+            Tuple objects = (Tuple)results.get();
+            probe.setZdbID((String) objects.get(0));
+            probe.setAbbreviation((String) objects.get(1));
             Marker gene = new Marker();
-            gene.setZdbID((String) objects[2]);
-            gene.setAbbreviation((String) objects[3]);
+            gene.setZdbID((String) objects.get(2));
+            gene.setAbbreviation((String) objects.get(3));
             HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm);
             hqp.addGene(gene);
             probes.add(hqp);
@@ -621,7 +622,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "           and fstat_type = :type" +
                 "     order by mrkr_abbrev_order ";
 
-        query = session.createSQLQuery(hql);
+        query = session.createNativeQuery(hql);
         query.setParameter("aoterm", "ZDB-ANAT-010921-587");
         query.setParameter("type", "High-Quality-Probe");
         results = query.scroll();

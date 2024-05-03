@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -13,7 +14,6 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
-import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -29,7 +29,6 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
-import org.junit.Ignore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -368,7 +367,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 AND geno_is_wildtype = :wildType
                 ORDER BY term_name asc
                 """;
-        List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
+        List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createNativeQuery(sql)
                 .setParameter("zdbID", zdbID)
                 .setParameter("expressionFound", true)
                 .setParameter("wildType", true)
