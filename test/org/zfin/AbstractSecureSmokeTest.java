@@ -8,7 +8,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.profile.AccountInfo;
@@ -66,7 +65,7 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         accountInfo.setLogin("newUser");
         accountInfo.setRole("root");
 
-        String saltedPassword = new Md5PasswordEncoder().encodePassword(password, "dedicated to George Streisinger");
+        String saltedPassword = "ABCDEFGH";
         accountInfo.setPassword(saltedPassword);
         accountInfo.setName("Test Person");
         accountInfo.setLoginDate(new Date());

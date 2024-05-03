@@ -1,7 +1,7 @@
 package org.zfin.sequence.reno;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.junit.After;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -538,11 +538,11 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void populateLinkageGroups() {
         // in general, can just grab the first one
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(RunCandidate.class);
-//        criteria.add(Restrictions.eq("zdbID", "ZDB-RUNCAN-080514-255"));
-        criteria.setMaxResults(1);
+        String hql = "FROM RunCandidate";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setMaxResults(1);
 
-        RunCandidate rc = (RunCandidate) criteria.list().get(0);
+        RunCandidate rc = (RunCandidate) query.list().get(0);
         assertNotNull(rc);
         renoService.populateLinkageGroups(rc);
     }

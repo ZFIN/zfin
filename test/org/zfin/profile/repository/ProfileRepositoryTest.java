@@ -2,7 +2,6 @@ package org.zfin.profile.repository;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -293,17 +292,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 		assertEquals(1, result);
 		result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
 		assertEquals(1, result);
-	}
-
-	@Test
-	public void checkPasswords() {
-		List<Person> list = HibernateUtil.currentSession().createQuery("from Person", Person.class).list();
-		for (Person person : list) {
-			AccountInfo info = person.getAccountInfo();
-			if (info != null) {
-				new Md5PasswordEncoder().encodePassword(info.getLogin(), "dedicated to George Streisinger");
-			}
-		}
 	}
 
 	@Test
