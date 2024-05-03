@@ -37,7 +37,6 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
-import jakarta.persistence.Tuple;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -278,7 +277,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      "    and fmreltype_name = :featureRelation))";
 
 
-        List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)
+        List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("pubZdbID", publicationZdbID)
             .setParameter("featureRelation", featureRelationshipName)
             .list();
@@ -685,7 +684,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
         String hqlSeq = " select af_file_location from  amsterdam_file ams  where ams.af_feature_zdb_id =:ftrID";
-        Query queryLab = session.createSQLQuery(hqlSeq);
+        Query queryLab = session.createNativeQuery(hqlSeq);
         queryLab.setParameter("ftrID", feature.getZdbID());
         return (String) queryLab.uniqueResult();
     }
@@ -955,7 +954,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " set sfp_current_designation = :currentDesignation " +
                      " where sfp_source_zdb_id = :organizationZdbID " +
                      " and sfp_prefix_id = :prefix ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(hql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(hql);
         query.setParameter("organizationZdbID", organizationZdbId);
         String returnedPrefix = null;
         for (OrganizationFeaturePrefix organizationFeaturePrefix : organizationFeaturePrefixes) {
@@ -1022,7 +1021,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
 
         while (scrollableResults.next() && ((pagination.getLimit() == 0) || (list.size() < pagination.getLimit()))) {
-            list.add((Feature) scrollableResults.get()[0]);
+            list.add((Feature) scrollableResults.get());//TODO: hibernate migration double check logic
         }
 
         if (!scrollableResults.isLast()) {
@@ -1039,7 +1038,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String sql = " update int_data_source " +
                      " set ids_source_zdb_id = :newLabZdbId " +
                      " where ids_data_zdb_id  = :featureZdbId  ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("newLabZdbId", lab.getZdbID())
             .setParameter("featureZdbId", feature.getZdbID());
         int recordsUpdated = query.executeUpdate();
@@ -1054,7 +1053,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public void deleteLabOfOriginForFeature(Feature feature) {
         String sql = " delete FROM int_data_source " +
                      " where ids_data_zdb_id  = :featureZdbId  ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("featureZdbId", feature.getZdbID());
         int recordsUpdated = query.executeUpdate();
         if (recordsUpdated != 1) {
@@ -1068,7 +1067,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String sql = " insert into int_data_source (ids_source_zdb_id,ids_data_zdb_id)" +
                      " values ( :newLabZdbId , :featureZdbId ) " +
                      "    ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("newLabZdbId", labOfOrigin)
             .setParameter("featureZdbId", feature.getZdbID());
         int recordsUpdated = query.executeUpdate();
@@ -1124,7 +1123,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String sql = "update source_feature_prefix  " +
                      "set sfp_current_designation = 'f' " +
                      "where sfp_source_zdb_id=:labZdbId ";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
+        return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("labZdbId", zdbID)
             .executeUpdate();
 

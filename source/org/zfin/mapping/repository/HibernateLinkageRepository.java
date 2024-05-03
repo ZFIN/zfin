@@ -43,7 +43,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                      " from MappedMarker  mm where " +
                      " mm.marker.zdbID = :markerZdbID order by mm.lg  ";
         Query query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
 
 
         List<String> lgs = query.list();
@@ -88,7 +88,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "from Panel where name = :name";
         Query query = session.createQuery(hql);
-        query.setString("name", name);
+        query.setParameter("name", name);
         return (Panel) query.uniqueResult();
     }
 
@@ -97,7 +97,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "from Panel where abbreviation = :name";
         Query query = session.createQuery(hql);
-        query.setString("name", name);
+        query.setParameter("name", name);
         return (Panel) query.uniqueResult();
     }
 
@@ -233,7 +233,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "fmrel.type  = :relation and " +
             "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
         query1.setParameter("marker", marker);
-        query1.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query1.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         List<FeatureGenomeLocation> list1 = (List<FeatureGenomeLocation>) query1.list();
 
         return list1;
@@ -501,7 +501,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                          "  WHERE a.abbrev = b.target_abbrev" +
                          "  AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'" +
                          "        GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
-            List<Object[]> list = HibernateUtil.currentSession().createSQLQuery(sql).list();
+            List<Object[]> list = HibernateUtil.currentSession().createNativeQuery(sql).list();
             List<PanelCount> panelCountList = new ArrayList<>(list.size());
             for (Object[] row : list) {
                 PanelCount panelCount = new PanelCount();

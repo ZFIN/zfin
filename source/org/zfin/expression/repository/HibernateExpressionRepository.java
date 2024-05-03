@@ -1777,7 +1777,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "    and cefs_genox_zdb_id = genox_zdb_id " +
                      "    and cefs_mrkr_zdb_id = :strID ";
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("strID", sequenceTargetingReagent.getZdbID());
 
         return (List<String>) query.list();
@@ -1796,7 +1796,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
                      "   and cefs_genox_zdb_id = genox_zdb_id " +
                      "   and cefs_mrkr_zdb_id = :strID ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("strID", sequenceTargetingReagent.getZdbID());
         query.setParameter("expressedGeneID", expressedGene.getZdbID());
         return (List<String>) query.list();
@@ -1816,7 +1816,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
                      "   and cefs_mrkr_zdb_id = :strID ";
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("strID", sequenceTargetingReagent.getZdbID());
         return (List<String>) query.list();
     }
@@ -2121,7 +2121,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "             and  xpatex_source_zdb_id= :pubZdbId " +
                      "             and  xpatex_probe_feature_zdb_id=:probeZdbId";
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(sql)
+            HibernateUtil.currentSession().createNativeQuery(sql)
                 .setParameter("pubZdbId", publicationExpressionBean.getPublicationZdbID())
                 .setParameter("probeZdbId", publicationExpressionBean.getProbeFeatureZdbId())
                 .uniqueResult().toString()
@@ -2138,7 +2138,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "             and  xpatex_zdb_id=xpatres_xpatex_zdb_id " +
                      "             and  xpatex_source_zdb_id= :pubZdbId ";
         return Integer.parseInt(
-            HibernateUtil.currentSession().createSQLQuery(sql)
+            HibernateUtil.currentSession().createNativeQuery(sql)
                 .setParameter("pubZdbId", publicationExpressionBean.getPublicationZdbID())
                 .uniqueResult().toString()
         );
