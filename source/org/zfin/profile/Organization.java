@@ -1,6 +1,8 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.ObjectUtils;
@@ -10,10 +12,7 @@ import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.profile.service.ProfileService;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.util.Set;
 
 

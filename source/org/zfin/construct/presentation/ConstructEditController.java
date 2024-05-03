@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.query.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -174,7 +176,20 @@ public class ConstructEditController {
     @ResponseBody
     void deleteSequence(@PathVariable String constructID,@PathVariable String sequenceID) throws Exception{
         HibernateUtil.createTransaction();
+<<<<<<< HEAD
         constructEditService.removeSequenceFromConstruct(constructID, sequenceID);
+=======
+        Session session = HibernateUtil.currentSession();
+        Marker m=mr.getMarkerByID(constructID);
+        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+        ir.deleteActiveDataByZdbID(sequenceID);
+        String hql = "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
+        Query query = session.createQuery(hql);
+        query.setParameter("sequenceID", sequenceID);
+        query.executeUpdate();
+        ir.insertUpdatesTable(m,"sequence","deleted sequence");
+>>>>>>> efd06384f4 (Fix bugs related to hibernate 6 upgrade.)
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
