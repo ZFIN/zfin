@@ -5,15 +5,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -858,7 +855,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberDirectPublications(String zdbID) {
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery("select count(*) " +
                                                                               "from record_attribution ra " +
                                                                               "where ra.recattrib_data_zdb_id=:zdbID ")
             .setParameter("zdbID", zdbID)
@@ -1102,7 +1099,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      "     and gf.genofeat_geno_zdb_id = ra2.recattrib_data_zdb_id" +
                      "     and ra2.recattrib_source_zdb_id = :pubID" +
                      " );";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("pubID", pubZdbID);
         setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
@@ -1117,7 +1114,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      "                      from expression_result2 ee, expression_figure_stage efs " +
                      "                     where efs.efs_xpatex_zdb_id = x.xpatex_zdb_id AND ee.xpatres_efs_id = efs.efs_pk_id" +
                      "                   ); ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("pubID", publication.getZdbID());
         return query.executeUpdate();
     }
@@ -1142,7 +1139,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      "     where fmrel_ftr_zdb_id = recattrib_data_zdb_id" +
                      "     and fmrel_type = 'created by')" +
                      " );";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("pubID", pubZdbID);
         return query.list();
     }
@@ -1607,7 +1604,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                   " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
                   " and :evidenceCode = ev.mrkrgoev_evidence_code";
 
-            Query query = session.createSQLQuery(sql);
+            Query query = session.createNativeQuery(sql);
             query.setParameter("markerZdbID", markerZdbID);
             query.setParameter("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
             query.setParameter("evidenceCode", evidenceCode);
@@ -1621,7 +1618,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                   " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
                   " and :evidenceCode = ev.mrkrgoev_evidence_code" +
                   " and :inference = inf.infgrmem_inferred_from";
-            SQLQuery query = session.createSQLQuery(sql);
+            Query query = session.createNativeQuery(sql);
             query.setParameter("markerZdbID", markerZdbID);
             query.setParameter("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
             query.setParameter("evidenceCode", evidenceCode);
@@ -1638,7 +1635,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      " from record_attribution ra" +
                      " where :featureType = ra.recattrib_source_type " +
                      " and :featureID = ra.recattrib_data_zdb_id";
-        SQLQuery query = session.createSQLQuery(sql);
+        NativeQuery query = session.createNativeQuery(sql);
         query.setParameter("featureType", "feature type");
         query.setParameter("featureID", featureZdbID);
         List<String> pubIDs = query.list();
@@ -1672,7 +1669,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             sql += " AND lower(ra.recattrib_data_zdb_id) like '%" + pagination.getFieldFilter(FieldFilter.ENTITY_ID).toLowerCase() + "%'";
         }
         sql += " order by ra.recattrib_data_zdb_id ";
-        SQLQuery query = session.createSQLQuery(sql);
+        NativeQuery query = session.createNativeQuery(sql);
         query.setParameter("publicationZdbID", publicationId);
         List<String> dataIds = query.list();
         return dataIds;
@@ -1693,7 +1690,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                                                     PublicationMetricsFormBean.Interval groupInterval,
                                                     PublicationMetricsFormBean.GroupType groupType) {
         String sql = getMetricsByDateSQL(queryType, groupInterval, groupType);
-        return HibernateUtil.currentSession().createSQLQuery(sql)
+        return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("start", start)
             .setParameter("end", end)
             .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
@@ -1782,7 +1779,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             and pub.jtype = :type
             group by %1$s
             """, groupExpression);
-        return HibernateUtil.currentSession().createSQLQuery(sql)
+        return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("end", end)
             .setParameter("type", PublicationType.JOURNAL.getDisplay())
             .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
@@ -1823,7 +1820,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 ) as subq
                 group by grouper
                 """, groupExpression);
-        return HibernateUtil.currentSession().createSQLQuery(sql)
+        return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("type", PublicationType.JOURNAL.getDisplay())
             .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
             .list();

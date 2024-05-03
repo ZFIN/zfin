@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
-import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 
 
 /**
@@ -234,8 +233,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         query.setParameter("probe", probe);
         query.setParameter("term", aoTerm);
 
-        query.setResultTransformer(DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<>(query.list());
+        List<Publication> resultList = query.list();
+
+        //Use Set for Distinct entities, Use LinkedHashSet to preserve order
+        Set<Publication> distinctPublications = new LinkedHashSet<>(resultList);
+        return new PaginationResult<>(new ArrayList<>(distinctPublications));
     }
 
     public List<Antibody> getAntibodiesByPublication(Publication publication) {

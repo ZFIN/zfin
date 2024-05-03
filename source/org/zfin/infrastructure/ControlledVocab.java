@@ -1,6 +1,7 @@
 package org.zfin.infrastructure;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.framework.api.View;
 
@@ -8,7 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "controlled_vocabulary")
-@org.hibernate.annotations.Entity(dynamicUpdate = true)
+@DynamicUpdate
 public class ControlledVocab {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ControlledVocab")

@@ -1,7 +1,7 @@
 package org.zfin.zebrashare.repository;
 
-import org.hibernate.Query;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;

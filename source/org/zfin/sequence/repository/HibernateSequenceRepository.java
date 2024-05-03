@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
@@ -236,7 +235,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @SuppressWarnings("unchecked")
     public List<String> getGenbankCdnaDBLinks() {
-        return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
+        return (List<String>) HibernateUtil.currentSession().createNativeQuery("" +
                                                                             "select  dbl.dblink_acc_num from db_link dbl , marker m, marker_type_group_member gm " +
                                                                             "where dbl.dblink_fdbcont_zdb_id in  " +
                                                                             "(  " +
@@ -273,7 +272,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public Set<String> getGenbankXpatCdnaDBLinks() {
         // this currently takes 30 seconds, returns about 41K records
         Set<String> results = new HashSet<>();
-        results.addAll((List<String>) HibernateUtil.currentSession().createSQLQuery(
+        results.addAll((List<String>) HibernateUtil.currentSession().createNativeQuery(
             """
                 select dbl.dblink_acc_num  from db_link dbl, foreign_db_contains, foreign_db, foreign_db_data_type
                 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -306,7 +305,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @SuppressWarnings("unchecked")
     public List<String> getGenbankSequenceDBLinks() {
-        return (List<String>) HibernateUtil.currentSession().createSQLQuery("" +
+        return (List<String>) HibernateUtil.currentSession().createNativeQuery("" +
                                                                             " select dblink_acc_num " +
                                                                             "from db_link " +
                                                                             "where dblink_fdbcont_zdb_id in " +
@@ -821,36 +820,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      "    and mrel_type in ('clone contains gene') " +
                      "    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list') " +
                      "    ) as query ";
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(sql)
             .setString("markerZdbId", marker.getZdbID())
             .uniqueResult().toString());
     }
 
     @Override
     public List<DBLink> getDBLinksForMarkerAndDisplayGroup(Marker marker, DisplayGroup.GroupName groupName) {
-//        ResultTransformer transformer = new BasicTransformerAdapter() {
-//            @Override
-//            public Object transformTuple(Object[] tuple, String[] aliases) {
-//                DBLink linkDisplay = new MarkerDBLink();
-//                linkDisplay.setZdbID(tuple[0].toString());
-//                HibernateUtil.currentSession().handleCurationEvent(linkDisplay);
-//                return linkDisplay;
-//            }
-//        };
-//        String sql = "select distinct dbl.dblink_zdb_id from db_link dbl  " +
-//                "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
-//                "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
-//                "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-//                "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
-//                "where g.fdbcdg_name= :displayGroup " +
-//                "and " +
-//                "dbl.dblink_linked_recid= :markerZdbId ";
-//        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
-//                .setParameter("markerZdbId", marker.getZdbID())
-//                .setParameter("displayGroup", groupName.toString())
-//                .setResultTransformer(transformer)
-//                ;
-
         String hql = "select distinct dbl from DBLink dbl  " +
                      "join dbl.referenceDatabase.displayGroupMembers dgm " +
                      "where dgm.displayGroup.groupName = :displayGroup " +
@@ -880,14 +856,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
-    private class RelatedMarkerDBLinkTransformer extends BasicTransformerAdapter {
+    private class RelatedMarkerDBLinkTransformer {
         private boolean is1to2;
 
         public RelatedMarkerDBLinkTransformer(boolean is1to2) {
             this.is1to2 = is1to2;
         }
 
-        @Override
         public Object transformTuple(Object[] objects, String[] strings) {
             RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
             MarkerRelationshipType relationshipType = ((MarkerRelationship) objects[1]).getMarkerRelationshipType();
@@ -1030,14 +1005,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
             .setParameterList("types", types)
             .setParameter("dataType", ForeignDBDataType.DataType.RNA)
             .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+            .setResultTransformer(
+
+                                            (Object[] tuple, String[] aliases) -> {
                     MarkerDBLink dbLink = new MarkerDBLink();
                     dbLink.setAccessionNumber(tuple[0].toString());
                     dbLink.setDataZdbID(tuple[1].toString());
                     return dbLink;
-                }
             })
             .list();
         Map<String, String> accessionCandidates = new HashMap<String, String>();
@@ -1119,10 +1093,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("dbName", name)
-            .setString("dataZdbID", marker.getZdbID())
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public AccessionPresentation transformTuple(Object[] tuple, String[] aliases) {
+            .setParameter("dataZdbID", marker.getZdbID())
+            .setResultTransformer(
+
+                                                           (Object[] tuple, String[] aliases) -> {
                     AccessionPresentation accessionPresentation = new AccessionPresentation();
                     accessionPresentation.setAccessionNumber(tuple[0].toString());
                     if (tuple[2] == null) {
@@ -1131,7 +1105,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
                         accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString() + tuple[2].toString());
                     }
                     return accessionPresentation;
-                }
 
             })
             .list();
