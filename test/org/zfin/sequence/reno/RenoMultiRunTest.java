@@ -1,9 +1,7 @@
 package org.zfin.sequence.reno;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.validation.BindException;
@@ -272,14 +270,10 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
             String runCandidateZdbID1 = runCandidate1.getZdbID();
             String candidateZdbId1 = runCandidate1.getCandidate().getZdbID();
 
-            Criteria r1 = session.createCriteria(Run.class);
-            r1.add(Restrictions.eq("name", "TestNomenRun1"));
+            org.hibernate.query.Query rc1 = session.createQuery("from RunCandidate rc where rc.zdbID='" + runCandidateZdbID1 + "'");
+            org.hibernate.query.Query c1 = session.createQuery("from Candidate c where c.zdbID='" + candidateZdbId1 + "'");
 
-            org.hibernate.Query rc1 = session.createQuery("from RunCandidate rc where rc.zdbID='" + runCandidateZdbID1 + "'");
-            org.hibernate.Query c1 = session.createQuery("from Candidate c where c.zdbID='" + candidateZdbId1 + "'");
-
-
-            List<Run> runs = r1.list();
+            List<Run> runs = session.createQuery("FROM Run r WHERE r.name='TestNomenRun1'", Run.class).list();
             assertEquals("should be 1 run", runs.size(), 1);
             List<RunCandidate> runCandidates = rc1.list();
             assertEquals("should be one run candidate", runCandidates.size(), 1);
@@ -294,7 +288,6 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
             Candidate candidate2 = runCandidate2.getCandidate();
             assertNotNull("candidate2 is not null", candidate2);
 
-            runs = r1.list();
             assertEquals("should be no runs", runs.size(), 0);
 
             // if we are not loading with the -ee option, the cascade contraint isn't loaded.
