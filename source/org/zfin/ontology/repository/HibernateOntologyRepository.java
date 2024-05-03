@@ -90,9 +90,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "        this_.term_ontology= :ontology " +
                      "        and this_.term_is_secondary= :secondary  " +
                      "  ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("secondary", false);
-        query.setString("ontology", ontology.getOntologyName());
+        query.setParameter("ontology", ontology.getOntologyName());
 //        query.setMaxResults(5);
 
         List<Object[]> queryList = query.list();
@@ -430,9 +430,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      " ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("goTermId", goTerm.getZdbID());
+        query.setParameter("goTermId", goTerm.getZdbID());
         if (distance >= 0) {
-            query.setInteger("distance", distance);
+            query.setParameter("distance", distance);
         }
         return query.list();
     }
@@ -455,9 +455,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
         }
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("goTermId", goTerm.getZdbID());
+        query.setParameter("goTermId", goTerm.getZdbID());
         if (distance >= 0) {
-            query.setInteger("distance", distance);
+            query.setParameter("distance", distance);
         }
         return query.list();
     }
@@ -473,7 +473,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      " ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("goTermId", term.getZdbID());
+        query.setParameter("goTermId", term.getZdbID());
         return query.list();
     }
 
@@ -497,17 +497,17 @@ public class HibernateOntologyRepository implements OntologyRepository {
                                      "and  " +
                                      "atc.alltermcon_contained_zdb_id=:termZdbID ";
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sqlQualityProcesses)
-            .setString("termZdbID", term.getZdbID());
+        Query query = HibernateUtil.currentSession().createNativeQuery(sqlQualityProcesses)
+            .setParameter("termZdbID", term.getZdbID());
 
 
-        query.setString("rootQualityTerm", "ZDB-TERM-070117-1237");
+        query.setParameter("rootQualityTerm", "ZDB-TERM-070117-1237");
         value = Integer.valueOf(query.uniqueResult().toString());
         if (value > 0) {
             return Ontology.QUALITY_PROCESSES;
         }
 
-        query.setString("rootQualityTerm", "ZDB-TERM-070117-1242");
+        query.setParameter("rootQualityTerm", "ZDB-TERM-070117-1242");
         value = Integer.valueOf(query.uniqueResult().toString());
         if (value > 0) {
             return Ontology.QUALITY_QUALITIES;
@@ -564,9 +564,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "        this_.term_ontology= :ontology " +
                      "        and this_.term_is_secondary= :secondary  " +
                      "  ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("secondary", false);
-        query.setString("ontology", stage.getOntologyName());
+        query.setParameter("ontology", stage.getOntologyName());
 //        query.setMaxResults(5);
 
         List<Object[]> queryList = query.list();
@@ -604,8 +604,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "and " +
                      "t.term_is_secondary='f' ";
 
-        List<Object> results = HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("rootZdbID", zdbID)
+        List<Object> results = HibernateUtil.currentSession().createNativeQuery(sql)
+            .setParameter("rootZdbID", zdbID)
             .list();
 
         Set<String> returnZdbIDs = new HashSet<String>();
@@ -827,7 +827,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "       termStageTwo.start.name != :unknown AND" +
                      "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
-        query.setString("unknown", DevelopmentStage.UNKNOWN);
+        query.setParameter("unknown", DevelopmentStage.UNKNOWN);
         query.setParameterList("typeList", new String[]{"is_a", "part_of", "is a", "part of", "develops_from", "develops from"});
         return query.list();
     }
@@ -851,7 +851,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "       termStageTwo.end.name != :unknown AND " +
                      "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
-        query.setString("unknown", DevelopmentStage.UNKNOWN);
+        query.setParameter("unknown", DevelopmentStage.UNKNOWN);
         query.setParameterList("typeList", new String[]{"is_a", "part_of", "is a", "part of"});
         return query.list();
     }
@@ -874,8 +874,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "       termStageTwo.end.name != :unknown AND " +
                      " relationship.type = :developsFrom";
         Query query = session.createQuery(hql);
-        query.setString("unknown", DevelopmentStage.UNKNOWN);
-        query.setString("developsFrom", RelationshipSorting.DEVELOPS_FROM);
+        query.setParameter("unknown", DevelopmentStage.UNKNOWN);
+        query.setParameter("developsFrom", RelationshipSorting.DEVELOPS_FROM);
         return query.list();
     }
 
@@ -910,7 +910,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "   JOIN stage s4" +
                      "      ON ts_end_stg_zdb_id = s4.stg_zdb_id " +
                      " WHERE  Aoterm_overlaps_stg_window(xpatres_superterm_zdb_id, efs_start_stg_zdb_id, efs_end_stg_zdb_id) = 'f' ";
-        Query query = session.createSQLQuery(sql);
+        Query query = session.createNativeQuery(sql);
         //query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
         final List<BigInteger> list = query.list();
         if (CollectionUtils.isEmpty(list))
@@ -1073,7 +1073,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                      "where subset.internalName = :subsetName ";
 
         Query query = session.createQuery(hql);
-        query.setString("subsetName", subsetName);
+        query.setParameter("subsetName", subsetName);
         return query.list();
     }
 

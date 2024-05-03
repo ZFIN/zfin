@@ -58,7 +58,7 @@ public class BatchInserter {
         for(List<String> batch : batches) {
             String combinedUniprotIDs = String.join("'), ('", batch);
             String sql = String.format(sqlFormat, combinedUniprotIDs);
-            currentSession().createSQLQuery(sql).executeUpdate();
+            currentSession().createNativeQuery(sql).executeUpdate();
         }
     }
 
@@ -88,7 +88,7 @@ public class BatchInserter {
                 tempTable(),
                 baseTableName);
         log.info("create temp table sql: " + sql);
-        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
     }
 
     public void loadBatchData() {
@@ -129,7 +129,7 @@ public class BatchInserter {
         rows.forEach(a -> sqlInnerTemplates.add(singleRowOfValuesPlaceholder));
         String sql = sqlOuterTemplate + String.join(",\n", sqlInnerTemplates);
 
-        NativeQuery query = currentSession().createSQLQuery(sql);
+        NativeQuery query = currentSession().createNativeQuery(sql);
 
         int i = 1;
         for(Map<String, Object> row : rows) {
@@ -145,14 +145,14 @@ public class BatchInserter {
                 insert into %s (%s)
                 select %s from %s
                 """, baseTableName, getCommaSeparatedColumnNames(), getCommaSeparatedColumnNames(), tempTable());
-        currentSession().createSQLQuery(sql).executeUpdate();
+        currentSession().createNativeQuery(sql).executeUpdate();
     }
 
     private void dropTempTable() {
         String sql = String.format("""
                 drop table %s
                 """, tempTable());
-        currentSession().createSQLQuery(sql).executeUpdate();
+        currentSession().createNativeQuery(sql).executeUpdate();
     }
 
 

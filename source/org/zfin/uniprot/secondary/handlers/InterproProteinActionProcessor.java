@@ -53,7 +53,7 @@ public class InterproProteinActionProcessor implements ActionProcessor {
         BatchInserter.bulkLoadActiveDataZdbIDs(uniprotIds);
 
         log.info("Bulk loading protein records into temp table");
-        currentSession().createSQLQuery("""
+        currentSession().createNativeQuery("""
                 CREATE TEMP TABLE temp_protein
                 as SELECT * FROM protein WHERE false
                 """).executeUpdate();
@@ -67,21 +67,21 @@ public class InterproProteinActionProcessor implements ActionProcessor {
         BatchInserter.bulkInsert("temp_protein", insertionRows);
 
         log.info("Updating protein records");
-        currentSession().createSQLQuery("""
+        currentSession().createNativeQuery("""
                 UPDATE protein
                 SET up_length = temp_protein.up_length
                 FROM temp_protein
                 WHERE protein.up_uniprot_id = temp_protein.up_uniprot_id
                 """).executeUpdate();
 
-        int numDeleted = currentSession().createSQLQuery("""
+        int numDeleted = currentSession().createNativeQuery("""
                 DELETE FROM temp_protein
                 WHERE up_uniprot_id IN (SELECT up_uniprot_id FROM PROTEIN)
                 """).executeUpdate();
         log.info(numDeleted + " records from temp_protein already existed in protein table");
 
         log.info("Inserting protein records");
-        currentSession().createSQLQuery("""
+        currentSession().createNativeQuery("""
                 INSERT INTO protein 
                 SELECT * FROM temp_protein
                 """).executeUpdate();
@@ -89,7 +89,7 @@ public class InterproProteinActionProcessor implements ActionProcessor {
 
     private static void processDeleteQueries(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action: actions) {
-                currentSession().createSQLQuery("DELETE FROM protein WHERE up_uniprot_id = :uniprot")
+                currentSession().createNativeQuery("DELETE FROM protein WHERE up_uniprot_id = :uniprot")
                         .setParameter("uniprot", action.getAccession())
                         .executeUpdate();
         }

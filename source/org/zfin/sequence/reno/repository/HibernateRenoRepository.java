@@ -217,12 +217,11 @@ public class HibernateRenoRepository implements RenoRepository {
                     select runCandidate from RunCandidate runCandidate, Query query 
                     WHERE runCandidate.run = :run AND 
                           query.runCandidate = runCandidate AND 
-                          runCandidate.done = :done AND 
+                          runCandidate.done = false AND 
                           runCandidate.lockPerson is null  AND 
                           not exists (select 1 from Hit hit where hit.query = query) """;
             Query<RunCandidate> nonHitQuery = session.createQuery(hql1, RunCandidate.class);
             nonHitQuery.setParameter("run", run);
-            nonHitQuery.setBoolean("done", false);
             nonHitQuery.setMaxResults(maxNumRecords - runs.size());
             List<RunCandidate> nonHitRuns = nonHitQuery.list();
             list.addAll(nonHitRuns);

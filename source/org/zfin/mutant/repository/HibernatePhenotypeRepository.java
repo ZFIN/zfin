@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import jakarta.persistence.TemporalType;
 import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -458,7 +459,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Query query = session.createQuery(hql);
         GregorianCalendar cal = new GregorianCalendar();
         cal.add(Calendar.DATE, -days);
-        query.setDate("days", cal.getTime());
+        query.setParameter("days", cal.getTime(), TemporalType.DATE); //TODO: hibernate migration double check logic
         return (List<PhenotypeExperiment>) query.list();
     }
 
@@ -480,9 +481,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Query query = session.createQuery(hql);
         GregorianCalendar cal = new GregorianCalendar();
         cal.add(Calendar.DATE, -days);
-        query.setDate("days", cal.getTime());
+        query.setParameter("days", cal.getTime(), TemporalType.DATE); //TODO: hibernate migration double check logic
         if (experimentID > 0)
-            query.setInteger("experimentID", experimentID);
+            query.setParameter("experimentID", experimentID);
         return (List<PhenotypeStatement>) query.list();
     }
 

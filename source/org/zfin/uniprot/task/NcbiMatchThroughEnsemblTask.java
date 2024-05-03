@@ -231,7 +231,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             for (CSVRecord record : parser) {
                 recordCount++;
 
-                session.createSQLQuery("""
+                session.createNativeQuery("""
                         INSERT INTO tmp_ncbi_zebrafish 
                         (taxId, geneId, symbol, locusTag, synonyms, dbXrefs, chromosome, mapLocation, description, typeOfGene, symbolFromNomenclatureAuthority, fullNameFromNomenclatureAuthority, nomenclatureStatus, otherDesignations, modificationDate, featureType)
                          VALUES 
@@ -277,7 +277,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) AS t (xref)
             WHERE t.xref LIKE 'ZFIN:%'                
         """;
-        session.createSQLQuery(query).executeUpdate();
+        session.createNativeQuery(query).executeUpdate();
 
         //create ncbi2ensembl table -- based on data loaded through NCBI
         query = """
@@ -286,7 +286,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) as t(xref)
             WHERE t.xref like 'Ensembl:%' 
         """;
-        session.createSQLQuery(query).executeUpdate();
+        session.createNativeQuery(query).executeUpdate();
 
         //how many ncbi genes have a link to zfin, but we don't have a reciprocal link?
         query = """
@@ -298,7 +298,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             WHERE
                 dblink_linked_recid IS NULL) AS x
         """;
-        BigInteger count = (BigInteger) session.createSQLQuery(query).uniqueResult();
+        BigInteger count = (BigInteger) session.createNativeQuery(query).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
         // Get semi-final report using the above mapping tables.
@@ -330,7 +330,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     ensembl_id,
                     symbol ORDER BY n2z.ncbi_id
                 """;
-        session.createSQLQuery(query).executeUpdate();
+        session.createNativeQuery(query).executeUpdate();
 
         // Add the rna accessions to the report.
         query = """
@@ -364,7 +364,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 publications,
                 rna_accessions
             """;
-        List<Object[]> results = session.createSQLQuery(query).list();
+        List<Object[]> results = session.createNativeQuery(query).list();
 
         transaction.commit();
 
@@ -401,9 +401,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private void dropTemporaryTables() {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
-        session.createSQLQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
-        session.createSQLQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
-        session.createSQLQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
+        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
+        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
+        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
         tx.commit();
     }
 

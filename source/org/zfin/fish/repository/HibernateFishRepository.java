@@ -44,7 +44,7 @@ public class HibernateFishRepository implements FishRepository {
                 "where genox_fish_zdb_id = :fishZdbID ;"*/
         ;
         Session session = HibernateUtil.currentSession();
-        Query query = session.createSQLQuery(sql);
+        Query query = session.createNativeQuery(sql);
         query.setParameter("fishZdbID", fishZdbID);
         List<Object[]> fishObjects = query.list();
         if (fishObjects == null)
@@ -87,7 +87,7 @@ public class HibernateFishRepository implements FishRepository {
                              "and pfigg_genox_zdb_id = :fishID " +
                              "and fig_zdb_id = pfiggm_member_id " +
                              "and img_fig_zdb_id = fig_zdb_id";
-        Query sqlQuery = session.createSQLQuery(sqlFeatures);
+        Query sqlQuery = session.createNativeQuery(sqlFeatures);
         sqlQuery.setParameter("fishID", fishID);
         List<Object[]> objs = sqlQuery.list();
         if (objs == null)
