@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -415,11 +414,11 @@ public class HibernateProfileRepository implements ProfileRepository {
             			WHERE  id.idsup_data_zdb_id =  :OID
             """;
 
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("OID", zdbID)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+            .setTupleTransformer(
+
+                                            (Object[] tuple, String[] aliases) -> {
                     OrganizationLink organinzationLink = new OrganizationLink();
                     organinzationLink.setSupplierZdbId(tuple[0].toString());
                     if (tuple[1] != null) {
@@ -439,7 +438,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                     }
 
                     return organinzationLink;
-                }
+
             })
             .list()
             ;
@@ -620,7 +619,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             logger.error("Not a valid organization to remove member from: " + organizationZdbID);
             return 0;
         }
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID.toUpperCase())
             .setParameter("organizationZdbID", organizationZdbID.toUpperCase())
             .executeUpdate();
@@ -655,7 +654,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("personZdbID: " + personZdbID);
         logger.debug("organizationZdbID: " + organizationZdbID);
         logger.debug("positionID: " + position);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("companyZdbID", organizationZdbID)
             .setParameter("positionID", position)
@@ -669,7 +668,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("lab: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("labZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -683,7 +682,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("lab: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("labZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -733,7 +732,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("company: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("companyZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -743,7 +742,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public int removeLabMember(String personZdbID, String organizationZdbID) {
         String sql = "delete from int_person_lab where source_id = :personZdbID and target_id = :organizationID ";
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("organizationID", organizationZdbID)
             .executeUpdate();
@@ -752,7 +751,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public int removeCompanyMember(String personZdbID, String organizationZdbID) {
         String sql = "delete from int_person_company where source_id = :personZdbID and target_id = :organizationID ";
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("organizationID", organizationZdbID)
             .executeUpdate();

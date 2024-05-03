@@ -6,9 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
-import org.hibernate.type.IntegerType;
 import org.springframework.stereotype.Repository;
+import org.zfin.database.HibernateUpgradeHelper;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
@@ -1142,11 +1141,13 @@ public class HibernateFeatureRepository implements FeatureRepository {
                and aliasgrp_pk_id = dalias_group_id
                 and aliasgrp_name = 'alias'
             """;
-        return HibernateUtil.currentSession().createNativeQuery(sql)
-            .setParameter("markerZdbID", genotype.getZdbID())
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+        Query qry = currentSession().createNativeQuery(sql)
+                .setParameter("markerZdbID", genotype.getZdbID());
+
+        List<PreviousNameLight> result = HibernateUpgradeHelper.setTupleResultAndListTransformer(qry,
+
+
+                (Object[] tuple, String[] aliases) -> {
                     PreviousNameLight previousNameLight = new PreviousNameLight(genotype.getName());
                     previousNameLight.setMarkerZdbID(genotype.getZdbID());
                     previousNameLight.setAlias(tuple[0].toString());
@@ -1157,10 +1158,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
                     }
 
                     return previousNameLight;
-                }
+                },
 
-                @Override
-                public List transformList(List list) {
+
+                (List<Object> list) -> {
                     Map<String, PreviousNameLight> map = new HashMap<>();
                     for (Object o : list) {
                         PreviousNameLight previousName = (PreviousNameLight) o;
@@ -1176,13 +1177,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
                     }
 
                     list = new ArrayList(map.values());
-
-                    Collections.sort(list);
-
                     return list;
-                }
-            })
-            .list();
+                });
+        Collections.sort(result);
+        return result;
     }
 
     @Override
@@ -1394,11 +1392,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
             where fmrel_mrkr_zdb_id = :zdbID
             and fmrel_type in (:relation1, :relation2)
             """;
-        Query<Tuple> query = currentSession().createNativeQuery(sql, Tuple.class).addScalar("num", IntegerType.INSTANCE);
+        Query<Integer> query = currentSession().createNativeQuery(sql, Integer.class);
         query.setParameter("zdbID", construct.getZdbID());
         query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-        return (int) query.uniqueResult().get(0);
+        return (int) query.uniqueResult();
     }
 
     @Override
