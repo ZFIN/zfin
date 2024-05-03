@@ -26,7 +26,7 @@ public class FeatureMarkerRelationship implements Comparable {
     @Column(name = "fmrel_zdb_id")
     private String zdbID;
     @Column(name = "fmrel_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum")})
     private FeatureMarkerRelationshipTypeEnum type;
     @ManyToOne

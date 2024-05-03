@@ -1,7 +1,6 @@
 package org.zfin.framework;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.type.StandardBasicTypes;
@@ -24,7 +23,7 @@ import java.util.Properties;
  * Enumeration items are assumed to always be all upper case while the
  * the string the enumeration is mapped to does not need to be upper case.
  */
-public class StringEnumValueUserType implements UserType, ParameterizedType {
+public class StringEnumValueUserType implements UserType<Enum>, ParameterizedType {
 
     protected Class<Enum> enumClass;
 
@@ -49,14 +48,21 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
      * @return int[]
      */
     public int[] sqlTypes() {
-        return new int[]{StandardBasicTypes.STRING.sqlType()};
+        return new int[]{StandardBasicTypes.STRING.getSqlTypeCode()};
+    }
+
+    @Override
+    public int getSqlType() {
+        return StandardBasicTypes.STRING.getSqlTypeCode();
     }
 
     public Class returnedClass() {
         return enumClass;
     }
 
-    public boolean equals(Object x, Object y) throws HibernateException {
+
+    @Override
+    public boolean equals(Enum x, Enum y) {
         if (x == y) {
             return true;
         }
@@ -66,14 +72,14 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return x.equals(y);
     }
 
-    public int hashCode(Object x) throws HibernateException {
+    @Override
+    public int hashCode(Enum x) {
         return x.hashCode();
     }
 
-
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = rs.getString(names[0]);
+    public Enum nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        String name = rs.getString(position);
         if (rs.wasNull()) {
             return null;
         }
@@ -83,7 +89,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
 
         try {
             Method fromString = enumClass.getMethod("fromString", String.class);
-            return fromString.invoke(null, name);
+            return (Enum)fromString.invoke(null, name);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) { }
 
         // convert enumeration name into upper case as the names are always all upper case.
@@ -101,9 +107,9 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Enum value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            st.setNull(index, StandardBasicTypes.STRING.sqlType());
+            st.setNull(index, StandardBasicTypes.STRING.getSqlTypeCode());
         } else {
             if (value instanceof Ontology ontology) {
                 st.setString(index, ontology.getDbOntologyName());
@@ -122,7 +128,8 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
      * @return Object
      * @throws HibernateException
      */
-    public Object deepCopy(Object value) throws HibernateException {
+    @Override
+    public Enum deepCopy(Enum value) throws HibernateException {
         return value;
     }
 
@@ -136,15 +143,18 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return false;
     }
 
-    public Serializable disassemble(Object value) throws HibernateException {
+    @Override
+    public Serializable disassemble(Enum value) throws HibernateException {
         return (Serializable) value;
     }
 
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return cached;
+    @Override
+    public Enum assemble(Serializable cached, Object owner) throws HibernateException {
+        return (Enum)cached;
     }
 
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+    @Override
+    public Enum replace(Enum original, Enum target, Object owner) throws HibernateException {
         return original;
     }
 

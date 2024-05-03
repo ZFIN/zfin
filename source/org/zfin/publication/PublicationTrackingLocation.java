@@ -73,12 +73,12 @@ public class PublicationTrackingLocation {
     private long id;
 
     @Column(name = "ptl_location_display")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Name")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Name")})
     @JsonView(View.API.class)
     private Name name;
 
     @Column(name = "ptl_role")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Role")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Role")})
     @JsonView(View.API.class)
     private Role role;
 
