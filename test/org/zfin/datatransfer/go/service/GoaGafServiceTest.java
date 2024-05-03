@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * Tests GafService methods
@@ -445,8 +446,8 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
                 select ev from MarkerGoTermEvidence ev
                 where ev.evidenceCode.code = :code
                 """;
-        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery(hql)
-                .setString("code", GoEvidenceCodeEnum.ND.name())
+        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) currentSession().createQuery(hql)
+                .setParameter("code", GoEvidenceCodeEnum.ND.name())
                 .setMaxResults(1)
                 .uniqueResult();
 
@@ -509,7 +510,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
         gafReport2 = new GafJobData();
         gafService.processEntries(gafEntries, gafReport2);
-        HibernateUtil.currentSession().flush();
+        currentSession().flush();
         GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
         Set<String> existingZfinZdbIDs = new TreeSet<>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
 
@@ -621,8 +622,8 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     @SuppressWarnings("unchecked")
     public void isMoreSpecificGo() throws Exception {
 
-        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession()
-                .createCriteria(MarkerGoTermEvidence.class)
+        String hql = "from MarkerGoTermEvidence";
+        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) currentSession().createQuery(hql)
                 .setMaxResults(1)
                 .uniqueResult();
 
