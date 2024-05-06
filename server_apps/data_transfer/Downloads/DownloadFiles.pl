@@ -51,7 +51,6 @@ use ZFINPerlModules;
 # set environment variables
 
 $ENV{"DBDATE"}="Y4MD-";
-$ENV{"JAVA_HOME"}="/usr/lib/jvm/java-openjdk";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
