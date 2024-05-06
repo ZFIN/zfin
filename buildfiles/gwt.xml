@@ -88,7 +88,13 @@
         <attribute name="module"/>
         <attribute name="target"/>
         <sequential>
+            <echo message="Deleting: @{target}/@{module}"/>
             <delete dir="@{target}/@{module}"/>
+
+            <echo message="Compiling GWT module @{module} to @{target}"/>
+            <echo message="Java command details: com.google.gwt.dev.Compiler, classpathref=extended.classpath"/>
+            <echo message="Equivalent to command: java -cp $(cat /tmp/extended.classpath.txt) com.google.gwt.dev.Compiler -war @{target} -style DETAILED @{module}"/>
+            <echo message="  where extended.classpath.txt can be generated with `ant writeClassPath`"/>
             <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
                 <classpath>
                     <dirset dir="${source.dir}" defaultexcludes="true">
