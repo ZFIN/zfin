@@ -536,5 +536,5 @@ system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 
 system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
-system("/opt/zfin/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+system("ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
 
