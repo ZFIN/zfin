@@ -558,7 +558,9 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '5.0.0'
     //runtimeOnly group: 'com.google.gwt', name: 'gwt-servlet', version: '2.9.0'
-    implementation('com.google.gwt:gwt-user:2.11.0')
+//    implementation('org.gwtproject:gwt-user:2.11.0')
+    implementation files("lib/Java/gwt/gwt-user-2.11.0-eclipse-transformed.jar")
+
     implementation group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.9.1.Final'
     implementation group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.9.1.Final'
     implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '3.9.1.Final'
