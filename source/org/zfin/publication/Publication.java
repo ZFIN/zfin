@@ -92,16 +92,22 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonView(View.PubTrackerAPI.class)
     @JsonProperty("registeredAuthors")
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "int_person_pub", joinColumns = {
-        @JoinColumn(name = "target_id", nullable = false, updatable = false)},
-        inverseJoinColumns = {@JoinColumn(name = "source_id",
-            nullable = false, updatable = false)})
+    @JoinTable(name = "int_person_pub",
+            joinColumns = {
+                    //TODO: hibernate migrate, confirm this works as expected
+                    //Fixes error: Caused by: org.hibernate.AnnotationException: Join column '...' on collection
+                    // property '...' must be defined with the same insertable and updatable attributes
+                    @JoinColumn(name = "target_id", nullable = false, updatable = false, insertable = false)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "source_id", nullable = false, updatable = false, insertable = false)
+            }
+    )
     @OrderBy(value = "full_name asc")
     private Set<Person> people;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "mh_pub_zdb_id")
-    @OrderBy()
-    private SortedSet<MeshHeading> meshHeadings;
+    private Set<MeshHeading> meshHeadings;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pnote_pub_zdb_id")
     @OrderBy("date desc")
@@ -109,10 +115,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pdx_pub_zdb_id")
     private Set<PublicationDbXref> dbXrefs;
+
+    //TODO: hibernate migrate check if the ordering still works after removed SortedSet
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pf_pub_zdb_id")
     @OrderBy("originalFileName")
-    private SortedSet<PublicationFile> files;
+    private Set<PublicationFile> files;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pth_pub_zdb_id")
     private Set<PublicationTrackingHistory> statusHistory;

@@ -543,8 +543,8 @@ dependencies {
     implementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.7'
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.4.4.Final'
     implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.13.Final'
-    implementation group: 'org.hibernate.search', name: 'hibernate-search-engine', version: '6.1.0.Final'
-    implementation group: 'org.hibernate.search', name: 'hibernate-search-mapper-pojo-base', version: '6.1.0.Final'
+    implementation group: 'org.hibernate.search', name: 'hibernate-search-engine', version: '6.1.1.Final'
+    implementation group: 'org.hibernate.search', name: 'hibernate-search-mapper-pojo-base', version: '6.1.1.Final'
     implementation group: 'org.springframework', name: 'spring-orm', version: '6.1.1'
     implementation group: 'org.springframework', name: 'spring-core', version: '6.1.1'
     implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.1'
@@ -569,7 +569,12 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.13.0'
-//    implementation group: 'com.github.mmazi', name: 'rescu', version: '2.1.0'
+    implementation files("home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar")
+    implementation 'jakarta.transaction:jakarta.transaction-api:2.0.0'
+
+
+
+
 //Thanks for using https://jar-download.com
 
     /*
