@@ -9,10 +9,10 @@
     <import resource="properties.xml"/>
 
     <!--put hibernate, etc. in here-->
-        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-    </bean>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/><!-- Is this bean needed? -->
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="zfin-messages"/>
