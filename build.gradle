@@ -553,6 +553,8 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-context-support', version: '6.1.1'
     implementation group: 'org.springframework.security', name: 'spring-security-web', version: '6.1.1'
     implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.1'
+    implementation group: 'org.springframework.integration', name: 'spring-integration-core', version: '6.1.1'
+
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
     implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
@@ -567,7 +569,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.13.0'
-    implementation group: 'com.github.mmazi', name: 'rescu', version: '2.1.0'
+//    implementation group: 'com.github.mmazi', name: 'rescu', version: '2.1.0'
 //Thanks for using https://jar-download.com
 
     /*

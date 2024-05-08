@@ -4,8 +4,8 @@
         xmlns:security="http://www.springframework.org/schema/security"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security https://www.springframework.org/schema/security/spring-security.xsd">
 
     <bean id="apgLogoutHandler" class="org.zfin.security.ApgLogoutSuccessHandler">
         <property name="defaultTargetUrl" value="/"/>
@@ -20,7 +20,7 @@
     <bean id="userDetailsService" class="org.zfin.security.UserDetailServiceImpl"/>
 
     <bean id="cachingUserDetailService"
-          class="org.springframework.security.config.authentication.CachingUserDetailsService">
+          class="org.springframework.security.authentication.CachingUserDetailsService">
         <constructor-arg ref="userDetailsService"/>
     </bean>
 
@@ -117,11 +117,9 @@
 
 
         <security:intercept-url pattern="/action/login" access="permitAll"/>
-        <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}"
-                                requires-channel="https"/>
+        <security:intercept-url pattern="/action/audit-log/**" access="hasRole('root') or ${DISABLE_SECURITY}" requires-channel="https"/>
         <security:intercept-url pattern="/action/reno/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/marker/transcript-add"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene/edit/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
@@ -132,24 +130,15 @@
         <security:intercept-url pattern="/action/marker/engineeredRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/indexer*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/indexer/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/construct-add"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/construct-update"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/people/edit-user*"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
-        <security:intercept-url pattern="/action/profile/edit/**"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/profile/company/edit/**"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/profile/lab/edit/**"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/profile/person/edit/**"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/rename/**"
-                                access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/construct-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/construct-update" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
+        <security:intercept-url pattern="/action/profile/edit/**" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/profile/company/edit/**" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/profile/lab/edit/**" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/profile/person/edit/**" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/rename/**" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}"/>
 
         <security:intercept-url pattern="/action/figure/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/figure/*/images" access="hasRole('root') or ${DISABLE_SECURITY}"/>
@@ -195,11 +184,9 @@
         <security:intercept-url pattern="/action/updates/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/api/updates/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
-        <security:intercept-url pattern="/action/feature/alleleDesig-add-form"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication"
-                                access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/devtool/**" access="hasRole('root')"/>
         <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll"/>
         <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll"/>
@@ -208,9 +195,9 @@
         <security:intercept-url pattern="action/marker/sequence/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/database/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/gene/*/ortholog/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/security-check"/>
-        <security:intercept-url pattern="/action/login-redirect"/>
-        <security:intercept-url pattern="/action/login-redirect?error=true"/>
+        <security:intercept-url pattern="/action/security-check" access="permitAll"/>
+        <security:intercept-url pattern="/action/login-redirect" access="permitAll"/>
+        <security:intercept-url pattern="/action/login-redirect?error=true" access="permitAll"/>
 
 
         <security:intercept-url pattern="/ajax/session-save" access="hasRole('root') or ${DISABLE_SECURITY}"/>
