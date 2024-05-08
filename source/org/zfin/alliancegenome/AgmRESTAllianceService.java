@@ -5,10 +5,6 @@ import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 @Log4j2
 @Service
 public class AgmRESTAllianceService extends RestAllianceService {
