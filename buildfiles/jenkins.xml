@@ -287,9 +287,13 @@
     <target name="_deploy-email-configuration">
         <echo>Copying ${mail-config.xml} with default Email ${DEFAULT_EMAIL} to JENKINS_HOME</echo>
         <copy todir="${JENKINS_HOME}/" overwrite="true">
-            <fileset file="${jenkins}/${mail-config.xml}"/>
+	    <fileset dir="${jenkins}/">
+	        <include name="**/hudson.tasks.Mailer.xml"/>
+		<include name="**/hudson.plugins.emailext.ExtendedEmailPublisher.xml"/>
+	    </fileset>
             <filterset>
                 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
+                <filter token="SMTP_HOST" value="${SMTP_HOST}"/>
             </filterset>
         </copy>
     </target>
@@ -304,7 +308,7 @@
                     JENKINS_HOME
                 </echo>
                 <copy todir="${JENKINS_HOME}/">
-                    <fileset file="${jenkins}/hudson.task.Mailer.xml"/>
+                    <fileset dir="${jenkins}/hudson.task.Mailer.xml"/>
                     <filterset>
                         <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
                     </filterset>
