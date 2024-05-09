@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.tasks.Mailer_-DescriptorImpl plugin="mailer@1.5">
   <replyToAddress>@DEFAULT_EMAIL@</replyToAddress>
-  <smtpHost>localhost</smtpHost>
+  <smtpHost>@SMTP_HOST@</smtpHost>
   <defaultSuffix>@zfin.org</defaultSuffix>
   <useSsl>false</useSsl>
   <charset>UTF-8</charset>
