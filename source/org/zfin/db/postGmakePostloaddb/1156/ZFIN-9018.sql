@@ -54,5 +54,5 @@ insert into vocabulary_term (vt_name, vt_v_id)
 VALUES ('cas-chebi-cas-mesh', (select v_id from vocabulary where v_name = 'inference method chebi-mesh'));
 
 update mesh_chebi_mapping set mcm_predicate_id = (select vt_id from vocabulary_term where vt_name = 'exact');
-update mesh_chebi_mapping set mcm_mapping_justification_id = (select vt_id from vocabulary_term where vt_name = 'LexicalMatching');
+update mesh_chebi_mapping set mcm_mapping_justification_id = (select vt_id from vocabulary_term where vt_name = 'MappingChaining');
 update mesh_chebi_mapping set mcm_inference_method_id = (select vt_id from vocabulary_term where vt_name = 'chebi-cas-mesh');
