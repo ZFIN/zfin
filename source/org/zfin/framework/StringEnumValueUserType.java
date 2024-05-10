@@ -4,8 +4,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.usertype.UserType;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.ontology.Ontology;
 
@@ -17,14 +17,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+//TODO: hibernate migration changes: confirm changes to this class still work
 /**
  * Class to convert Enumeration types into Strings that get stored in the database.
  * It also converts a string from the database into an enumeration type.
  * Enumeration items are assumed to always be all upper case while the
  * the string the enumeration is mapped to does not need to be upper case.
  */
-public class StringEnumValueUserType implements UserType<Enum>, ParameterizedType {
-
+public class StringEnumValueUserType implements EnhancedUserType<Enum>, ParameterizedType {
     protected Class<Enum> enumClass;
 
     /**
@@ -60,7 +60,6 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
         return enumClass;
     }
 
-
     @Override
     public boolean equals(Enum x, Enum y) {
         if (x == y) {
@@ -83,27 +82,7 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
         if (rs.wasNull()) {
             return null;
         }
-        if (enumClass.getName().equals(GenomeLocation.Source.class.getName())) {
-            return GenomeLocation.Source.getSource(name);
-        }
-
-        try {
-            Method fromString = enumClass.getMethod("fromString", String.class);
-            return (Enum)fromString.invoke(null, name);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) { }
-
-        // convert enumeration name into upper case as the names are always all upper case.
-        // this needs to be done if the enumeration string is not all caps.
-        name = name.replace('-', '_');
-        name = name.replace('+', '_');
-        name = name.replace(' ', '_');
-        name = name.replace('(', '_');
-        name = name.replace(')', '_');
-        if (enumClass.getName().equals(Ontology.class.getName())) {
-            return Ontology.getOntology(name);
-        }
-        name = name.toUpperCase();
-        return Enum.valueOf(enumClass, name);
+        return fromStringOrValueOf(name);
     }
 
     @Override
@@ -122,7 +101,7 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
     }
 
     /**
-     * Since it is immutable this returns the argument without changes.
+     * Since it is immutable, this returns the argument without changes.
      *
      * @param value object
      * @return Object
@@ -132,7 +111,6 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
     public Enum deepCopy(Enum value) throws HibernateException {
         return value;
     }
-
 
     /**
      * Define Enumerations always as immutable.
@@ -150,7 +128,7 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
 
     @Override
     public Enum assemble(Serializable cached, Object owner) throws HibernateException {
-        return (Enum)cached;
+        return (Enum) cached;
     }
 
     @Override
@@ -158,4 +136,48 @@ public class StringEnumValueUserType implements UserType<Enum>, ParameterizedTyp
         return original;
     }
 
+    @Override
+    public String toSqlLiteral(Enum value) {
+        return "'" + toString(value) + "'";
+    }
+
+    @Override
+    public String toString(Enum value) throws HibernateException {
+        if (value instanceof Ontology ontology) {
+            return ontology.getDbOntologyName();
+        } else if (value instanceof GenomeLocation.Source) {
+            return ((GenomeLocation.Source) value).getName();
+        } else {
+            return value.toString();
+        }
+    }
+
+    @Override
+    public Enum fromStringValue(CharSequence sequence) throws HibernateException {
+        return fromStringOrValueOf(sequence.toString());
+    }
+
+    private Enum fromStringOrValueOf(String name) {
+        if (enumClass.getName().equals(GenomeLocation.Source.class.getName())) {
+            return GenomeLocation.Source.getSource(name);
+        }
+
+        try {
+            Method fromString = enumClass.getMethod("fromString", String.class);
+            return (Enum) fromString.invoke(null, name);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) { }
+
+        name = name.replace('-', '_')
+                .replace('+', '_')
+                .replace(' ', '_')
+                .replace('(', '_')
+                .replace(')', '_')
+                .toUpperCase();
+
+        if (enumClass.getName().equals(Ontology.class.getName())) {
+            return Ontology.getOntology(name);
+        }
+
+        return Enum.valueOf(enumClass, name);
+    }
 }
