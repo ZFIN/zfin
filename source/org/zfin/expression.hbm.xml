@@ -351,7 +351,7 @@
              org.zfin.expression.ExpressionExperiment xpatex
         where xpatex.gene.zdbID = :geneZdbID
           and xpatres member of xpatex.expressionResults
-          and xpatex.fishExperiment.standardOrGenericControl = 't'
+          and xpatex.fishExperiment.standardOrGenericControl = true
           and xpatex.fishExperiment.fish.genotype.wildtype = true
           and xpatres.entity.superterm.termName <> :unspecified
           and xpatres.startStage.name <> :unknown
