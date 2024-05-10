@@ -81,10 +81,11 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.ZEBRAFISH_MODELS_EVIDENCE_ASSOCIATION", joinColumns = {
-		@JoinColumn(name = "omea_zebfrafish_model_id", nullable = false, updatable = false)},
-		inverseJoinColumns = {@JoinColumn(name = "omea_term_zdb_id",
-			nullable = false, updatable = false)})
+	@JoinTable(name = "UI.ZEBRAFISH_MODELS_EVIDENCE_ASSOCIATION",
+			// TODO: hibernate migration change, confirm logic still valid
+			// Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+		joinColumns = {@JoinColumn(name = "omea_zebfrafish_model_id", nullable = false, updatable = false, insertable = false)},
+		inverseJoinColumns = {@JoinColumn(name = "omea_term_zdb_id", nullable = false, updatable = false, insertable = false)})
 	private Set<GenericTerm> evidenceCodes;
 
 	public FishModelDisplay(FishExperiment fishModel) {
