@@ -63,22 +63,25 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     @Column(name = "term_definition")
     protected String definition;
     @ManyToMany
-    @JoinTable(name = "int_image_term", joinColumns = {
-            @JoinColumn(name = "iit_term_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "int_image_term",
+            // TODO: hibernate migration change, confirm logic still valid
+            // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+            joinColumns = {@JoinColumn(name = "iit_term_zdb_id", nullable = false, updatable = false, insertable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id", nullable = false, updatable = false, insertable = false)})
     protected Set<Image> images;
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "zdb_replaced_data", joinColumns = {
-            @JoinColumn(name = "zrepld_old_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "zrepld_new_zdb_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "zdb_replaced_data",
+            // TODO: hibernate migration change, confirm logic still valid
+            // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+        joinColumns = {@JoinColumn(name = "zrepld_old_zdb_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "zrepld_new_zdb_id", nullable = false, updatable = false, insertable = false)})
     protected Set<GenericTerm> secondaryMergeTerms;
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "term_subset", joinColumns = {
-            @JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "term_subset",
+            // TODO: hibernate migration change, confirm logic still valid
+            // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+        joinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false, insertable = false)})
     private Set<Subset> subsets;
 
     @Transient
