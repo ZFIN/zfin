@@ -12,3 +12,14 @@ RUN addgroup --gid 1000 zfin && \
 USER zfishweb
 
 COPY ./postgresql-42.2.18.jar  /usr/local/tomcat/lib
+
+RUN mkdir /research
+RUN mkdir /mnt/research
+RUN ln -s /mnt/research/vol/archive /research/zarchive
+RUN ln -s /mnt/research/vol/blast /research/zblast
+RUN ln -s /mnt/research/vol/blast /research/zblastfiles
+RUN ln -s /mnt/research/vol/central /research/zcentral
+RUN ln -s /mnt/research/vol/prod /research/zprod
+RUN ln -s /mnt/research/vol/prod /research/zprodmore
+RUN ln -s /mnt/research/vol/unloads /research/zunloads
+RUN ln -s /mnt/research/vol/users /research/zusers
