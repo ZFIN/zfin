@@ -33,8 +33,10 @@ public class Subset implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "term_subset",
-            joinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)})
+            // TODO: hibernate migration change, confirm logic still valid
+            // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+            joinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false, insertable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false, insertable = false)})
     private Set<GenericTerm> terms;
 
     public long getId() {
