@@ -64,10 +64,11 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION", joinColumns = {
-		@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false)},
-		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id",
-			nullable = false, updatable = false)})
+	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION",
+			// TODO: hibernate migration change, confirm logic still valid
+			// Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
+		joinColumns = {@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false, insertable = false)},
+		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id", nullable = false, updatable = false, insertable = false)})
 	private List<Marker> zfinGene;
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)
