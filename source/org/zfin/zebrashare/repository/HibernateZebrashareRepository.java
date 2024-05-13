@@ -12,6 +12,7 @@ import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -111,6 +112,9 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
 
     @Override
     public List<Publication> getZebraSharePublicationsForPerson(Person person) {
+        if (person.getZdbID() == null) {
+            return Collections.emptyList();
+        }
         String hql = "" +
                      "select editor.publication " +
                      "from ZebrashareEditor editor " +
