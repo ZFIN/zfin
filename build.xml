@@ -408,7 +408,10 @@
                encoding="${encoding}"
                includeAntRuntime="no"
                memoryMaximumSize="556m"
-               debug="true" />
+               debug="true"
+               >
+            <compilerarg line="-parameters"/>
+        </javac>
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 
