@@ -54,9 +54,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " and referenceDatabase.organism  = :organism" +
                      " ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("dbName", foreignDBName.toString());
-        query.setParameter("type", type.toString());
-        query.setParameter("superType", superType.toString());
+        query.setParameter("dbName", foreignDBName);
+        query.setParameter("type", type);
+        query.setParameter("superType", superType);
         query.setParameter("organism", organism.toString());
 
         return (ReferenceDatabase) query.uniqueResult();
