@@ -107,6 +107,7 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
   mailhog:
     build: ./mailhog/
     restart: always
