@@ -36,7 +36,7 @@ public class GwtConversionTest extends AbstractDatabaseTest {
     @Test
     public void testNewName() {
             Feature feature = (Feature) HibernateUtil.currentSession()
-                    .createQuery("from Feature.class")
+                    .createQuery("from Feature")
                     .setMaxResults(1)
                     .uniqueResult();
             assertNotNull(feature);
