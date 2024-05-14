@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
 RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
 
+RUN mkdir -p /research/zunloads/download-files
+
 USER zfishweb
 
 COPY ./postgresql-42.2.18.jar  /usr/local/tomcat/lib
