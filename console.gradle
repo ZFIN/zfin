@@ -114,6 +114,9 @@ task imageThumbnailFixTask(type: JavaExec) {
 task runMeshChebiGenerator(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.ctd.LoadCtdData'
+    doFirst {
+        args JobName
+    }
 }
 
 //TODO: remove this task after duplicates have been fixed
