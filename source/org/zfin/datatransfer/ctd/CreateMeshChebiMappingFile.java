@@ -3,6 +3,7 @@ package org.zfin.datatransfer.ctd;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FileUtils;
 import org.zfin.curation.PublicationNote;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
@@ -17,6 +18,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,26 +56,32 @@ public class CreateMeshChebiMappingFile extends AbstractScriptWrapper {
     private void createExportFile(List<MeshChebiMapping> meshCehbiList) {
         List<String> headerNames = List.of(
             "subject_id",
+            "subject_label",
             "predicate_id",
             "object_id",
+            "object_label",
             "mapping_justification",
-            "subject_label",
-            "object_label"
+            "matching_string",
+            "mapping_date"
         );
 
         BufferedWriter writer = null;
         try {
-            writer = Files.newBufferedWriter(Paths.get("mesh-chebi-mapping.tsv"));
+            String preProcessFileName = "mesh-chebi-mapping-preprocess.tsv";
+            File preProcessFile = new File(preProcessFileName);
+            writer = Files.newBufferedWriter(Paths.get(preProcessFileName));
             CSVPrinter csvPrinterImportant = new CSVPrinter(writer, CSVFormat.TDF
                 .withHeader(headerNames.toArray(String[]::new)));
             meshCehbiList.forEach((map) -> {
                 List<String> vals = new ArrayList<>();
                 vals.add(map.getMeshID());
+                vals.add(map.getMeshName());
                 vals.add("skos:" + map.getPredicate().getName() + "Match");
                 vals.add(map.getChebiID());
-                vals.add("semapv:" + map.getMappingJustification().getName());
-                vals.add(map.getMeshName());
                 vals.add(getOntologyRepository().getTermByOboID(map.getChebiID()).getTermName());
+                vals.add("semapv:" + map.getMappingJustification().getName());
+                vals.add(map.getCasID());
+                vals.add(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
                 Object[] values = vals.toArray();
 
                 try {
@@ -82,6 +90,17 @@ public class CreateMeshChebiMappingFile extends AbstractScriptWrapper {
                     throw new RuntimeException(e);
                 }
             });
+            // Read the file as string
+            File headerFile = new File("conf","mesh-chebi-header.txt");
+            String file1Str = FileUtils.readFileToString(headerFile);
+            String file2Str = FileUtils.readFileToString(preProcessFile);
+            String finalFileName = "mesh-chebi-mapping.tsv";
+            File  finalFile =new File(finalFileName);
+
+// Write the file
+            FileUtils.write(finalFile, file1Str);
+            FileUtils.write(finalFile, file2Str, true); // true for append
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
