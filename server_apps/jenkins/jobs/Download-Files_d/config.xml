@@ -36,9 +36,6 @@
       <command>cd $TARGETROOT/server_apps/data_transfer/GO  &amp;&amp; ./go.pl  &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>touch $DOWNLOAD_DIRECTORY/reload-status/reload</command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
       <command>curl -k --silent --output /dev/null --show-error -s -D - https://$DOMAIN_NAME/action/unload/downloads/update-cache</command>
     </hudson.tasks.Shell>
   </builders>
