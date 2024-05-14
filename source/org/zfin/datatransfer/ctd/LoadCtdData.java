@@ -14,6 +14,7 @@ import org.zfin.infrastructure.ant.DataReportTask;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
+import org.zfin.util.ReportGenerator;
 
 import java.io.File;
 import java.io.FileReader;
@@ -40,11 +41,13 @@ public class LoadCtdData extends AbstractScriptWrapper {
     public LoadCtdData() {
     }
 
+    private String jobName;
     private MeshCasChebiMappings mapping = new MeshCasChebiMappings();
 
     public static void main(String[] arguments) throws IOException {
-
+        System.out.println(arguments);
         LoadCtdData load = new LoadCtdData();
+        load.jobName = arguments[0];
         load.execute();
         System.exit(0);
     }
@@ -58,11 +61,20 @@ public class LoadCtdData extends AbstractScriptWrapper {
         pubDao = new PublicationCtdDAO(HibernateUtil.currentSession());
         publicationNoteDao = new PublicationNoteDAO(HibernateUtil.currentSession());
         service = new VocabularyService();
-        getReferenceCDT();
+        List<ReportEntry> reportEntries = getReferenceCDT();
         loadMeshAndChebi();
         reportNonJointCasIds();
         List<MeshChebiMapping> allMappingRecords = getMeshChebiMappings();
-        saveOneToOneMeshChebiRelations(allMappingRecords, "mesh-chebi-one-to-one.csv");
+        List<ReportEntry> reportEntriesMeshTerms = saveOneToOneMeshChebiRelations(allMappingRecords, "mesh-chebi-one-to-one.csv");
+        reportEntries.addAll(reportEntriesMeshTerms);
+
+        ReportGenerator stats = new ReportGenerator();
+        stats.setReportTitle("Report for " + jobName);
+        stats.includeTimestamp();
+        Map<String, Object> summary = new LinkedHashMap<>();
+        reportEntries.forEach(reportEntry -> summary.put(reportEntry.entryName, reportEntry.entryValue));
+        stats.addSummaryTable("Statistics", summary);
+        stats.writeFiles(new File(jobName), "statistics");
 /*
         reportOneToNRelations();
 */
@@ -82,7 +94,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         return allMappingRecords;
     }
 
-    private void saveOneToOneMeshChebiRelations(List<MeshChebiMapping> newRecords, String reportFileName) {
+    private List<ReportEntry> saveOneToOneMeshChebiRelations(List<MeshChebiMapping> newRecords, String reportFileName) {
         writeMappingToFile(newRecords, reportFileName);
 
         HibernateUtil.createTransaction();
@@ -102,6 +114,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
         System.out.println("Added records: " + newRecords.size());
         writeMappingToFile(newRecords, reportFileName + ".add.csv");
         HibernateUtil.flushAndCommitCurrentSession();
+        List<ReportEntry> reportEntries = new ArrayList<>();
+        reportEntries.add(new ReportEntry("New Mesh-Chebi Mapping entries", newRecords.size()));
+        reportEntries.add(new ReportEntry("Deleted Mesh-Chebi Mapping entries", oldRecords.size()));
+        return reportEntries;
     }
 
     private MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation) {
@@ -130,7 +146,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     }
 
-    private void getReferenceCDT() throws IOException {
+    public record ReportEntry(String entryName, Object entryValue) {
+    }
+
+    private List<ReportEntry> getReferenceCDT() throws IOException {
         downloadPublicationFile();
         List<String> pubmedIDs = new ArrayList<>();
         Reader in = new FileReader(downloadedPublicationFile);
@@ -182,12 +201,15 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
 
         HibernateUtil.flushAndCommitCurrentSession();
-        //savePublicationCtds();
+
         System.out.println("Number of new publications: " + newPubCtds.size());
         newPubCtds.forEach(publicationCtd -> System.out.println(publicationCtd.getCtdID()));
 
         System.out.println("\rNumber of publications not found in ZFIN: " + publicationsNotFound.size());
         publicationsNotFound.forEach(System.out::println);
+        List<ReportEntry> reportEntries = new ArrayList<>();
+        reportEntries.add(new ReportEntry("New Publications", newPubCtds.size()));
+        return reportEntries;
     }
 
     private void loadMeshAndChebi() throws IOException {
@@ -383,6 +405,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
             throw new RuntimeException(e);
         }
     }
+
     private static void writeMappingToFile(Collection<MeshChebiMapping> list, String fileName) {
         Path file = Path.of(fileName);
         StringBuffer buffer = new StringBuffer();
