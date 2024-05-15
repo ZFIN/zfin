@@ -10,6 +10,7 @@ RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
 
 RUN mkdir -p /research/zunloads/download-files
+RUN mkdir -p /opt/zfin/loadUp
 
 USER zfishweb
 

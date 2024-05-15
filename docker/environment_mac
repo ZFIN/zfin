@@ -6,6 +6,7 @@ DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=~/development/blast
 DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
 DOCKER_RESEARCH_PATH=~/development/research
 DOCKER_DOWNLOADS_PATH=~/development/download-files
+DOCKER_LOADUP_PATH=~/development/loadUp
 DOCKER_SOURCE_ROOTS_PATH="../"
 DOCKER_VIRTUAL_HOST=zfin.org
 COMPOSE_PROJECT_NAME=zfin_org
