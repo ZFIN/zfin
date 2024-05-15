@@ -104,6 +104,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private SortedSet<MeshHeading> meshHeadings;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pnote_pub_zdb_id")
+    @OrderBy("date desc")
     private Set<PublicationNote> notes;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pdx_pub_zdb_id")
