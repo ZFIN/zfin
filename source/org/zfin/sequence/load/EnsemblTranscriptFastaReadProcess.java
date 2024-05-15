@@ -110,13 +110,22 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
-    private void createSingleTranscript(TranscriptRecord transcriptRecord) {
+    private void createSingleTranscript(TranscriptRecord transcriptRecord, boolean useDuplicationRenaming) {
         String ensdartID = transcriptRecord.ensdartID;
         RichSequence ensemblSequence = transcriptRecord.richSequence;
         Marker marker = transcriptRecord.marker;
 
         String transcriptName = getTranscriptName(ensdartID).toLowerCase();
-        Marker existingMarker = getMarkerRepository().getMarkerByAbbreviation(transcriptName);
+        Marker existingMarker = null;
+        if (useDuplicationRenaming) {
+            Object[] record = ensdartDuplicationMap.get(ensdartID);
+            if (record == null)
+                return;
+            transcriptName = (String) record[2];
+
+        }
+        existingMarker = getMarkerRepository().getMarkerByAbbreviation(transcriptName);
+
         if (existingMarker != null) {
             EnsemblErrorRecord errorRecord = new EnsemblErrorRecord(ensdartID,
                 transcriptName,
@@ -187,6 +196,8 @@ public class EnsemblTranscriptFastaReadProcess {
     private record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
 
+    private Map<String, Object[]> ensdartDuplicationMap;
+
     private void createTranscriptRecords(List<Marker> genesToAddTranscripts) {
         System.out.println("Number of Genes for which transcripts need to be added: " + genesToAddTranscripts.size());
         AtomicInteger index = new AtomicInteger(0);
@@ -217,17 +228,21 @@ public class EnsemblTranscriptFastaReadProcess {
         Map<String, List<String>> transcriptNameMap = getTranscriptNameEnsdartIdsMap(newTranscriptList);
         Map<String, List<String>> duplicateIDMap = writeDuplicatedReport(transcriptNameMap);
         List<String> allduplicatedEnsdartIDs = duplicateIDMap.values().stream().flatMap(Collection::stream).toList();
+        String sql = "select * from ensembl_transcript_renaming";
+        List<Object[]> results = HibernateUtil.currentSession().createNativeQuery(sql).getResultList();
+        ensdartDuplicationMap = results.stream().collect(Collectors.toMap(o -> (String) o[1], Function.identity()));
+
         System.out.println("Number of new Transcript records: " + newTranscriptList.size());
         newTranscriptList.forEach(transcriptRecord -> {
-            if (allduplicatedEnsdartIDs.contains(transcriptRecord.ensdartID))
-                return;
-            createSingleTranscript(transcriptRecord);
-            if (index.incrementAndGet() % 50 == 0) {
+            boolean isDuplicate = false;
+            if (allduplicatedEnsdartIDs.contains(transcriptRecord.ensdartID)) {
+                isDuplicate = true;
+            }
+            createSingleTranscript(transcriptRecord, isDuplicate);
+            if (index.incrementAndGet() % 100 == 0) {
                 System.out.print(index + "..");
             }
         });
-
-
 /*
         sequenceListToBeGenerated.forEach(richSequence -> {
             RichSequence.IOTools.SingleRichSeqIterator iterator = new RichSequence.IOTools.SingleRichSeqIterator(richSequence);
@@ -480,7 +495,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
-        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
@@ -501,7 +516,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
-        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargList.size());
 
@@ -521,7 +536,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private void getMarkerDBLinksWithVegaEnsemblOnlyAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
-        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
@@ -542,7 +557,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithGenbankEnsemblOnlyAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
-        List<LinkDisplay>  vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();

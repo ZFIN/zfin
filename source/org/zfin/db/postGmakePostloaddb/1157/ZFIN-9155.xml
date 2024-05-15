@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-9155-load-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1157/ensemblTranscriptRenaming.csv"
+                  tableName="ensembl_transcript_renaming" encoding="UTF-8" quotchar='"'>
+            <column header="Ensembl Transcript Symbol" name="etr_symbol" type="String"/>
+            <column header="Ensembl Transcript ID" name="etr_ensdart_id" type="String"/>
+            <column header="Proposed ZFIN transcript name" name="etr_name" type="String"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>
