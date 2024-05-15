@@ -78,7 +78,7 @@ services:
       - httpd_log:/var/log/httpd
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
-      - ${DOCKER_RESEARCH_PATH}/vol/central/loadUp:/opt/zfin/loadUp
+      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
@@ -109,6 +109,7 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
+      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
   mailhog:
     build: ./mailhog/
     restart: always
