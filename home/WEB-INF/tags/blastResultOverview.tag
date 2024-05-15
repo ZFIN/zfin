@@ -47,9 +47,6 @@
             <td>
                 <c:if test="${!hit.markerIsHit}">
                     <zfin:link entity="${hit.hitMarker}"/>
-                    <authz:authorize access="hasRole('root')">
-                      <zfin2:gbrowseHoverIcon gbrowseImage="${hit.gbrowseImage}"/>
-                    </authz:authorize>
                 </c:if>
             </td>
             <td>
@@ -62,18 +59,6 @@
             </td>
         </zfin:alternating-tr>
     </c:forEach>
-
-    <script>
-        jQuery(".gbrowse_hover").hover(
-                function () {
-                    jQuery(jQuery(this).attr("rel")).show();
-                },
-                function () {
-                    jQuery(jQuery(this).attr("rel")).hide();
-                }
-        );
-        jQuery(".gbrowse_popup").gbrowseImage({width: 300});
-    </script>
 </table>
 
 
