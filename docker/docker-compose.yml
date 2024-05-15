@@ -79,6 +79,7 @@ services:
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
       - ${DOCKER_RESEARCH_PATH}/vol/central/loadUp:/opt/zfin/loadUp
+      - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
