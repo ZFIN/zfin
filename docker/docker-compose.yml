@@ -96,6 +96,7 @@ services:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
+      UMASK: "002"
 #      #UNCOMMENT BELOW TO ENABLE DEBUGGING#
 #      JPDA_ADDRESS: "*:5000"
 #      JPDA_TRANSPORT: dt_socket
