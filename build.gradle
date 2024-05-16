@@ -782,6 +782,9 @@ task getLatestSolrIndex() {
     }
 }
 
+//loadsolr as alias for getLatestSolrIndex
+task loadsolr(dependsOn: getLatestSolrIndex)
+
 task getBlastAllDatabases() {
     doLast {
         exec {
