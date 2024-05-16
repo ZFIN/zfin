@@ -70,8 +70,10 @@ public class EnsemblTranscriptFastaReadProcess {
 
         // <ensdargID, DBLink>
         getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions();
+/*
         getMarkerDBLinksWithVegaEnsemblOnlyAccessions();
         getMarkerDBLinksWithGenbankEnsemblOnlyAccessions();
+*/
 
         ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions();
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
@@ -117,12 +119,11 @@ public class EnsemblTranscriptFastaReadProcess {
 
         String transcriptName = getTranscriptName(ensdartID).toLowerCase();
         Marker existingMarker = null;
-        if (useDuplicationRenaming) {
-            Object[] record = ensdartDuplicationMap.get(ensdartID);
-            if (record == null)
-                return;
+        Object[] record = ensdartDuplicationMap.get(ensdartID);
+        if (record == null && useDuplicationRenaming)
+            return;
+        if (record != null) {
             transcriptName = (String) record[2];
-
         }
         existingMarker = getMarkerRepository().getMarkerByAbbreviation(transcriptName);
 
@@ -255,7 +256,7 @@ public class EnsemblTranscriptFastaReadProcess {
 */
 
         errorRecords.forEach(System.out::println);
-
+        System.out.println("Error Records: "+errorRecords.size());
         List<String> headerNames = List.of(
             "Ensembl ID",
             "Ensembl Name",
@@ -598,7 +599,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
     private static void downloadFile(String fileName) {
         fileName = fileName + ".gz";
-        String fileURL = "https://ftp.ensembl.org/pub/release-111/fasta/danio_rerio/cdna/" + fileName;
+        String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/cdna/" + fileName;
 
         try {
             FileUtils.copyURLToFile(
