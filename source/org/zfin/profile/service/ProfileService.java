@@ -716,7 +716,7 @@ public class ProfileService {
     }
 
     public static boolean isRootUser() {
-        if (getCurrentSecurityUser() == null) {
+        if (getCurrentSecurityUser() == null || getCurrentSecurityUser().getAccountInfo() == null) {
             return false;
         }
         return getCurrentSecurityUser().getAccountInfo().getRoot();
