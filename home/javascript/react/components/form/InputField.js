@@ -4,6 +4,7 @@ import { splitFormProps, useField } from 'react-form';
 const InputField = React.forwardRef((props, ref) => {
     const {
         tag = 'input',
+        onPasteTransform,
         ...propsWithoutTag
     } = props;
     const [field, fieldOptions, rest] = splitFormProps(propsWithoutTag);
@@ -12,8 +13,18 @@ const InputField = React.forwardRef((props, ref) => {
     // to access field state
     const {
         meta: { error, isTouched },
-        getInputProps
+        getInputProps,
+        setValue,
     } = useField(field, fieldOptions);
+
+    const handlePaste = e => {
+        if (onPasteTransform) {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            const transformedText = onPasteTransform(text);
+            setValue(transformedText);
+        }
+    }
 
     const invalid = isTouched && error;
     const Wrapper = tag;
@@ -21,7 +32,14 @@ const InputField = React.forwardRef((props, ref) => {
     // Build the field
     return (
         <>
-            <Wrapper {...getInputProps({ ref, ...rest })} className={`form-control ${invalid ? 'is-invalid' : ''}`} />
+            <Wrapper
+                {...getInputProps({
+                    ref,
+                    ...rest,
+                    onPaste: handlePaste,
+                })}
+                className={`form-control ${invalid ? 'is-invalid' : ''}`}
+            />
             {invalid && <div className='text-danger small'>{error}</div>}
         </>
     );

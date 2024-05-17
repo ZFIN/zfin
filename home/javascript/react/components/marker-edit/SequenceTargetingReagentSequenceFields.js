@@ -26,6 +26,12 @@ function complementString(str) {
     });
 }
 
+function transformInputText(text) {
+    const modifiedData = text.replace(/\s/g, '');
+    const finalData = modifiedData.toUpperCase();
+    return finalData;
+}
+
 const SequenceTargetingReagentSequenceFields = ({
     validBases,
     reportedLabel,
@@ -39,7 +45,7 @@ const SequenceTargetingReagentSequenceFields = ({
     newRow = false,
 }) => {
     useEffect(() => {
-        let sequence = values[reportedSequenceField].toUpperCase();
+        let sequence = transformInputText(values[reportedSequenceField]);
         if (values[reversedField]) {
             sequence = reverseString(sequence);
         }
@@ -62,6 +68,7 @@ const SequenceTargetingReagentSequenceFields = ({
                         name={reportedSequenceField}
                         tag={SequenceInput}
                         style={{ textTransform: 'uppercase' }}
+                        onPasteTransform={transformInputText}
                         validate={value => {
                             if (!value) {
                                 return 'A sequence is required';
