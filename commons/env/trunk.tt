@@ -2,7 +2,7 @@
 
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
@@ -80,7 +80,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org
 <!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/blastRegeneration
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	devwiki.zfin.org
