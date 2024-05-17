@@ -68,7 +68,7 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
     }
 
     private IndexerStatus getIndexStatus() {
-        String baseUrl = "http://localhost:" + ZfinPropertiesEnum.SOLR_PORT;
+        String baseUrl = "http://" + ZfinPropertiesEnum.SOLR_HOST + ":" + ZfinPropertiesEnum.SOLR_PORT;
         log.debug(baseUrl);
         CheckIndexerRESTInterface api = RestProxyFactory.createProxy(CheckIndexerRESTInterface.class, baseUrl, config);
         IndexerStatus response = null;
