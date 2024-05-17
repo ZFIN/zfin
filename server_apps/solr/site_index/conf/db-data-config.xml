@@ -4686,7 +4686,7 @@
                              zero_pad(term_name) as name_sort,
                              to_date(get_date_from_id(term_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                              case when term_ontology = 'disease_ontology' then TRIM('Human Disease')
-                                  else TRIM('Anatomy / GO') end as category,
+                                  else TRIM('Ontologies') end as category,
                              case
                                when term_ontology = 'biological_process' then 'Biological Process'
                                when term_ontology = 'cellular_component' then 'Cellular Component'

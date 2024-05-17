@@ -52,7 +52,7 @@ public enum Category {
             SOURCE,
             HOST_ORGANISM
     ),
-    ANATOMY("Anatomy / GO",
+    ANATOMY("Ontologies",
             ONTOLOGY,
             TERM_STATUS
     ),
