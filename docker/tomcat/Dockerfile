@@ -14,6 +14,8 @@ RUN addgroup --gid 1000 zfin && \
 RUN mkdir -p /research/zunloads/download-files
 RUN mkdir -p /opt/zfin/loadUp
 
+RUN groupadd -g 1476 zfishweb
+RUN usermod  -aG zfishweb zfishweb
 RUN groupadd -g 1477 zfloadup
 RUN usermod  -aG zfloadup zfishweb
 
