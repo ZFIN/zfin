@@ -88,3 +88,19 @@ set mrkr_abbrev = 'si:dkey-91f15.8-203',
     mrkr_name   = 'si:dkey-91f15.8-203'
 where mrkr_zdb_id = 'ZDB-TSCRIPT-120213-738';
 
+update marker
+set mrkr_abbrev = 'meis2a-203',
+    mrkr_name   = 'meis2a-203'
+where mrkr_zdb_id = 'ZDB-TSCRIPT-240508-2723';
+
+update marker
+set mrkr_abbrev = 'meis2a-205',
+    mrkr_name   = 'meis2a-205'
+where mrkr_zdb_id = 'ZDB-TSCRIPT-240508-2725';
+
+update marker
+set mrkr_abbrev = 'meis2a-206',
+    mrkr_name   = 'meis2a-206'
+where mrkr_zdb_id = 'ZDB-TSCRIPT-240508-2724';
+
+
