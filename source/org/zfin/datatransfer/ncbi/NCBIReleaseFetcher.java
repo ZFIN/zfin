@@ -4,16 +4,18 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.cxf.helpers.FileUtils;
 import org.zfin.framework.exec.ExecProcess;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.System.getProperty;
 import static org.zfin.datatransfer.service.DownloadService.downloadFileViaWget;
 
 @Setter
@@ -65,7 +67,7 @@ public class NCBIReleaseFetcher {
             throw new IllegalArgumentException("Release number cannot be null for catalog");
         }
         if (destination == null) {
-            destination = FileUtils.createTmpDir();
+            destination = Files.createTempDirectory(getProperty("java.io.tmpdir") + "/ncbi-release").toFile();
         }
         if (!destination.exists()) {
             destination.mkdirs();
@@ -95,7 +97,7 @@ public class NCBIReleaseFetcher {
 
         //download file
         if (destination == null) {
-            destination = FileUtils.createTempFile(fileName.getFileName(), null, null, true);
+            destination = Files.createTempFile(Path.of(getProperty("java.io.tmpdir")), fileName.getFileName(), ".gz").toFile();
         }
         downloadFileViaWget(url, destination.toPath(), 3_600_000, log);
 
@@ -128,7 +130,7 @@ public class NCBIReleaseFetcher {
         //source is a gzipped file
         //this performs equivalent of:
         //cat source | gunzip -d | grep SomeString | gzip -c > tmpfile ; mv tmpfile source
-        File tempFile = FileUtils.createTempFile("tmp", null, null, false);
+        File tempFile = Files.createTempFile(Path.of(getProperty("java.io.tmpdir")), "temp-download-", ".gz").toFile();
         List<String> commands = List.of(
                 "/bin/bash",
                 "-c",
