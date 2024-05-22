@@ -16,22 +16,22 @@
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
     <property name="uberonSourceURL" value="http://ontologies.berkeleybop.org/uberon/basic.obo"/>
     <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
-    <property name="cellOboFile" value="file:///home/informix/Curation/cell.obo"/>
+    <property name="cellOboFile" value="file:///research/zusers/informix/Curation/cell.obo"/>
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/Ontology_Files/so.obo"/>
-    <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
-    <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
+    <property name="zecoTaxonomyOboURL" value="file:///research/zusers/informix/Curation/zeco-taxonomy.obo"/>
+    <property name="zecoTaxonomySourceURL" value="/research/zusers/informix/Curation/zeco-taxonomy-source.txt"/>
 <!-- For local development
     <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
 -->
-    <property name="zroSourceURL" value="file:///home/informix/Curation/zfin-ro.obo"/>
-    <property name="obiURL" value="file:///home/informix/Curation/obi.obo"/>
-    <property name="goQualifierSourceURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
+    <property name="zroSourceURL" value="file:///research/zusers/informix/Curation/zfin-ro.obo"/>
+    <property name="obiURL" value="file:///research/zusers/informix/Curation/obi.obo"/>
+    <property name="goQualifierSourceURL" value="file:///research/zusers/informix/Curation/go-qualifier.obo"/>
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
-    <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
-    <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
-    <property name="stageOboURL" value="file:///home/informix/Curation/zfs.obo"/>
-    <property name="mmoURL" value="file:///home/informix/Curation/mmo.obo"/>
+    <property name="zecoOboURL" value="/research/zusers/informix/Curation/zeco.obo"/>
+    <property name="anatomyOboURL" value="file:///research/zusers/informix/Curation/anatomy.obo"/>
+    <property name="stageOboURL" value="file:///research/zusers/informix/Curation/zfs.obo"/>
+    <property name="mmoURL" value="file:///research/zusers/informix/Curation/mmo.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
