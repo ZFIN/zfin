@@ -2432,9 +2432,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         hql += " where " + String.join(" and ", hqlClauses);
         if (groupBy) {
-            hql += " group by pubTrack.status.name ";
+            hql += " group by pubTrack.status.name, pubTrack.status.id ";
         }
-        hql += " order by pubTrack.status.name ";
+        hql += " order by pubTrack.status.id ";
         if (StringUtils.isNotEmpty(sort)) {
             boolean isAscending = true;
             if (sort.startsWith("-")) {
