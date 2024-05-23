@@ -1,11 +1,15 @@
 package org.zfin.publication;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.profile.Person;
 import org.zfin.publication.presentation.PublicationEvent;
 
 import javax.persistence.*;
 import java.util.GregorianCalendar;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "pub_tracking_history")
 public class PublicationTrackingHistory implements PublicationEvent {
@@ -41,69 +45,8 @@ public class PublicationTrackingHistory implements PublicationEvent {
     @Column(name = "pth_status_is_current", updatable = false, insertable = false)
     private Boolean isCurrent;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public PublicationTrackingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PublicationTrackingStatus status) {
-        this.status = status;
-    }
-
-    public PublicationTrackingLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(PublicationTrackingLocation location) {
-        this.location = location;
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Person owner) {
-        this.owner = owner;
-    }
-
-    public Person getUpdater() {
-        return updater;
-    }
-
-    public void setUpdater(Person updater) {
-        this.updater = updater;
-    }
-
-    @Override
-    public GregorianCalendar getDate() {
-        return date;
-    }
-
-    public void setDate(GregorianCalendar date) {
-        this.date = date;
-    }
-
     public Boolean isCurrent() {
         return isCurrent;
-    }
-
-    public void setIsCurrent(Boolean isCurrent) {
-        this.isCurrent = isCurrent;
     }
 
     @Override
