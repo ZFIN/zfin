@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>When we cannot get a PDF for a pub the student closes that pub "No pdf".
+    <description>
+        When we cannot get a PDF for a pub the student closes that pub "No pdf".
         Later on, we may get access to that pub, and we then process and index the pub.
         This is a monthly check to help us catch pubs where the pdf was added after they were closed (and they are not indexed or curated).
     </description>
