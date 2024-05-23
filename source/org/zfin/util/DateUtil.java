@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -42,6 +43,15 @@ public class DateUtil {
             dateDisplay.append(" ms ");
         }
         return dateDisplay.toString();
+    }
+
+    /**
+     * Return the current date in the format specified.
+     * @param format (e.g. "yyyy-MM-dd", or "yyyy-MM-dd HH:mm:ss")
+     * @return formatted date string (e.g. "2021-01-01", or "2021-01-01 12:34:56")
+     */
+    public static String nowToString(String format) {
+        return new SimpleDateFormat(format).format(new Date());
     }
 
 }

@@ -155,6 +155,9 @@ public class NCBIReleaseFetcher {
 
     private String getUrlBase() {
         if (urlBase == null) {
+            if (System.getenv("NCBI_URL_BASE") != null) {
+                return System.getenv("NCBI_URL_BASE");
+            }
             return DEFAULT_URL_BASE;
         }
         return urlBase;
