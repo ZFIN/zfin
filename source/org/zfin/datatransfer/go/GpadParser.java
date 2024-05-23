@@ -91,18 +91,24 @@ public class GpadParser extends FpInferenceGafParser {
         if (gafEntries == null)
             return;
 
+        StringBuilder errorMessages = new StringBuilder();
+        if (isErrorEncountered()) {
+            errorMessages.append(getErrorMessage());
+        }
+
         gafEntries.forEach(gafEntry -> {
             // replace ECO ID by GO Evidence Code (3-letter codes)
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(gafEntry.getEvidenceCode());
             EcoGoEvidenceCodeMapping ecoCodeMap = RepositoryFactory.getOntologyRepository().getEcoEvidenceCode(term);
             if (ecoCodeMap == null) {
-                logger.error("invalid eco code: " + gafEntry.getEvidenceCode());
-                System.out.println(term.getOboID());
+                String message = "invalid eco code: " + gafEntry.getEvidenceCode();
+                logger.error(message);
+                System.out.println(message);
+                setErrorEncountered(true);
+                errorMessages.append(message + "\n");
+                setErrorMessage(errorMessages.toString());
             } else {
-
                 String evCode = ecoCodeMap.getEvidenceCode();
-
-
                 gafEntry.setEvidenceCode(evCode);
             }
 
