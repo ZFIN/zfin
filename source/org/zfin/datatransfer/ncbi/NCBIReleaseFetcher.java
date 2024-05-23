@@ -31,14 +31,13 @@ public class NCBIReleaseFetcher {
         try {
             String url = getReleaseUrl();
             String contents = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
-            String trimmed = contents.trim();
-            if (trimmed.isEmpty()) {
+            if (contents.isEmpty()) {
                 return Optional.empty();
             }
-            if (trimmed.length() > 7) {
+            if (contents.length() > 7) {
                 return Optional.empty();
             }
-            Integer release = Integer.parseInt(trimmed);
+            Integer release = Integer.parseInt(contents);
             if (release > 0) {
                 return Optional.of(release);
             }
@@ -48,18 +47,22 @@ public class NCBIReleaseFetcher {
         return Optional.empty();
     }
 
-    public String getReleaseUrl() {
-        if (releaseUrl == null) {
-            return getUrlBase() + DEFAULT_RELEASE_NUMBER_PATH;
-        }
-        return releaseUrl;
+    public NCBIReleaseFileReader downloadLatestReleaseFileSetReader(File downloadDirectory) {
+        NCBIReleaseFileSet fileset = downloadLatestReleaseFileSet(downloadDirectory);
+        return new NCBIReleaseFileReader(fileset);
     }
 
-    public String getUrlBase() {
-        if (urlBase == null) {
-            return DEFAULT_URL_BASE;
+    public NCBIReleaseFileSet downloadLatestReleaseFileSet(File directory) {
+        Optional<Integer> release = getCurrentReleaseNumber();
+        if (release.isEmpty()) {
+            throw new RuntimeException("Could not fetch release number");
         }
-        return urlBase;
+        try {
+            log.info("Downloading release " + release.get() + " files");
+            return downloadReleaseFiles(directory, release.get());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public NCBIReleaseFileSet downloadReleaseFiles(File destination, Integer releaseNum) throws IOException {
@@ -71,6 +74,9 @@ public class NCBIReleaseFetcher {
         }
         if (!destination.exists()) {
             destination.mkdirs();
+        }
+        if (!destination.isDirectory()) {
+            throw new IllegalArgumentException("Destination must be a directory");
         }
 
         NCBIReleaseFileSet fileset = new NCBIReleaseFileSet();
@@ -140,20 +146,17 @@ public class NCBIReleaseFetcher {
 
     }
 
-    public NCBIReleaseFileSet downloadLatestReleaseFileSet(File directory) {
-        Optional<Integer> release = getCurrentReleaseNumber();
-        if (release.isEmpty()) {
-            throw new RuntimeException("Could not fetch release number");
+    private String getReleaseUrl() {
+        if (releaseUrl == null) {
+            return getUrlBase() + DEFAULT_RELEASE_NUMBER_PATH;
         }
-        try {
-            return downloadReleaseFiles(directory, release.get());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return releaseUrl;
     }
 
-    public NCBIReleaseFileReader downloadLatestReleaseFileSetReader(File downloadDirectory) {
-        NCBIReleaseFileSet fileset = downloadLatestReleaseFileSet(downloadDirectory);
-        return new NCBIReleaseFileReader(fileset);
+    private String getUrlBase() {
+        if (urlBase == null) {
+            return DEFAULT_URL_BASE;
+        }
+        return urlBase;
     }
 }
