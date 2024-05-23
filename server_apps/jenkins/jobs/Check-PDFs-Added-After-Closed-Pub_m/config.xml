@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Check and list genes and the associated ESTs with SNPs that do not belong to the gene, and vise versa.
-        Also check and list genes and associated SNPs that belong to ESTs associated with other gene.
+    <description>When we cannot get a PDF for a pub the student closes that pub "No pdf".
+        Later on, we may get access to that pub, and we then process and index the pub.
+        This is a monthly check to help us catch pubs where the pdf was added after they were closed (and they are not indexed or curated).
     </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
@@ -20,13 +21,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-SNP-Gene-Association-via-EST_m</targets>
+            <targets>validate-data-report-simple -DJobName=Check-PDFs-Added-After-Closed-Pub_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-SNP-Gene-Association-via-EST_m/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -39,8 +40,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-SNP-Gene-Association-via-EST_m</reportDir>
-                    <reportFiles>Check-SNP-Gene-Association-via-EST_m.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m</reportDir>
+                    <reportFiles>Check-PDFs-Added-After-Closed-Pub_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -54,7 +55,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-SNP-Gene-Association-via-EST_m/Check-SNP-Gene-Association-via-EST_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
