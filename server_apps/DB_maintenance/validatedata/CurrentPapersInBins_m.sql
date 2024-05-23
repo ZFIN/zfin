@@ -218,22 +218,22 @@ where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
 update monthly_curated_metric
-set mcm_number_in_xenograft_bin = nvl((select counter from newDrugs
+set mcm_number_in_drug_bin = nvl((select counter from newDrugs
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
 update monthly_curated_metric
-set mcm_number_in_xenograft_bin = nvl((select counter from newEnvironmentalTox
+set mcm_number_in_environment_tox_bin = nvl((select counter from newEnvironmentalTox
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
 update monthly_curated_metric
-set mcm_number_in_xenograft_bin = nvl((select counter from newNanomaterial
+set mcm_number_in_nanomaterial_bin = nvl((select counter from newNanomaterial
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
 update monthly_curated_metric
-set mcm_number_in_xenograft_bin = nvl((select counter from newNaturalProducts
+set mcm_number_in_natural_product_bin = nvl((select counter from newNaturalProducts
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 

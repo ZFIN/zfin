@@ -287,12 +287,7 @@ public class SearchPrototypeController {
             List<String> suggestions = searchSuggestionService.getSuggestions(q);
             // It looks a little funny when a suggestion is already the first search result, so filter
             // the suggestions list accordingly.
-            CollectionUtils.filter(suggestions, new Predicate() {
-                @Override
-                public boolean evaluate(Object o) {
-                    return !results.get(0).getName().equals(o);
-                }
-            });
+            CollectionUtils.filter(suggestions, (Predicate) o -> !results.get(0).getName().equals(o));
             model.addAttribute("suggestions", suggestions);
         }
 
