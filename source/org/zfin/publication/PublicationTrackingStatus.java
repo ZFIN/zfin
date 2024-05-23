@@ -2,11 +2,15 @@ package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import java.util.Arrays;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "pub_tracking_status")
 public class PublicationTrackingStatus {
@@ -96,52 +100,12 @@ public class PublicationTrackingStatus {
     @JsonView(View.API.class)
     private boolean hidden;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public String getQualifier() {
-        return qualifier;
-    }
-
-    public void setQualifier(String qualifier) {
-        this.qualifier = qualifier;
-    }
+    @Column(name = "pts_dashboard_order")
+    @JsonView(View.API.class)
+    private int dashboardOrder;
 
     public boolean isTerminal() {
         return isTerminal;
-    }
-
-    public void setIsTerminal(boolean isTerminal) {
-        this.isTerminal = isTerminal;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
     }
 
     @Override
