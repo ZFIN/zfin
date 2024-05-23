@@ -35,7 +35,7 @@ task importCloneAssembly(type: JavaExec) {
     main = 'org.zfin.mapping.importer.ImportCloneAssemblyTask'
 }
 
-task NCBILoadFastaTask(type: JavaExec) {
+task BatchNCBIFastaFetchTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask'
     systemProperty "ncbiLoadInput", System.getProperty("ncbiLoadInput", null)

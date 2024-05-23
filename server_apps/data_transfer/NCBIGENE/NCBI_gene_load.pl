@@ -2825,7 +2825,7 @@ sub calculateLengthForAccessionsWithoutLength {
         my $cmdEfetch = "cd " . $ENV{'SOURCEROOT'} . " ; " .
             "gradle '-DncbiLoadInput=$currentDir/noLength.unl' " .
             "       '-DncbiLoadOutput=$currentDir/seq.fasta' " .
-            "         NCBILoadFastaTask ; " .
+            "         BatchNCBIFastaFetchTask ; " .
             "cd $currentDir";
         print "Executing $cmdEfetch\n";
         print LOG "Executing $cmdEfetch\n";
