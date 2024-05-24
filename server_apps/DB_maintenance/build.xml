@@ -299,6 +299,9 @@
     <target name="validate-data-report-simple" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${validateData}/validatedata"/>
+        <echo message="Property File: ${web-inf.dir}/zfin.properties"/>
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">

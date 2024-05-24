@@ -16,10 +16,9 @@ FROM
         LEFT JOIN publication_file_type pft ON pf.pf_file_type_id = pft.pft_pk_id
 WHERE
     pth_status_is_current
-  AND pts_status = 'CLOSED'
-  AND pts_status_display <> 'Closed, Curated'
+  AND pts_status_display = 'Closed, No PDF'
   AND pf_file_type_id = 1
   AND pf_date_entered > pth_status_insert_date
   AND NOT pub_is_indexed
 ORDER BY
-    pth_status_insert_date DESC
+    pth_pub_zdb_id DESC

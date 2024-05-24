@@ -25,6 +25,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String HEADER_COLUMNS = "headerColumns";
+    public static final String INCLUDE_ARTIFACT_DIFF_LINK = "includeArtifactDiffLink";
     protected static final Logger LOG = LogManager.getLogger(AbstractValidateDataReportTask.class);
     public static final String TEMPLATE = ".template";
 
@@ -122,6 +123,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         if (reportConfiguration.isUseDefaultReportTemplate()) {
             String errorMessage = (String) reportProperties.get(reportConfiguration.getReportName() + "." + ERROR_MESSAGE);
             String columnHeader = (String) reportProperties.get(reportConfiguration.getReportName() + "." + HEADER_COLUMNS);
+            Boolean includeArtifactDiffLink = Boolean.parseBoolean((String) reportProperties.get(reportConfiguration.getReportName() + "." + INCLUDE_ARTIFACT_DIFF_LINK));
             if (StringUtils.isEmpty(errorMessage)) {
                 LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
                 reportConfiguration.getReportFile().delete();
@@ -137,6 +139,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 report.addDataTable(Arrays.asList(columnHeader.split("\\|")), resultList);
             } else {
                 report.addIntroParagraph("0 " + errorMessage);
+            }
+            LOG.info("Include artifact diff link? " + includeArtifactDiffLink);
+            if (includeArtifactDiffLink) {
+                report.addArtifactDiffLink(reportConfiguration.getReportDirectory(), reportConfiguration.getReportName());
             }
         }
         if (queryFile != null) {
