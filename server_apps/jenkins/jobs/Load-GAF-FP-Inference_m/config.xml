@@ -67,7 +67,7 @@ See full details at ${BUILD_URL}/artifact/server_apps/DB_maintenance/gafLoad/Loa
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>text/plain</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>
