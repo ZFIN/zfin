@@ -69,7 +69,7 @@
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>      </configuredTriggers>
       <contentType>text/plain</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>

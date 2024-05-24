@@ -24,7 +24,7 @@
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
             <recipientList>${CURATORS_AT_ZFIN},${TECHNICAL_AT_ZFIN}</recipientList>
-            <subject>[Jenkins][${DOMAIN_NAME}] Send Monthly Leave or Time sheets to Manager</subject>
+            <subject>[Jenkins][${INSTANCE}] Send Monthly Leave or Time sheets to Manager</subject>
             <body>Please prepare your monthly time sheet or vacation and sick leave balance sheet and give to your manager.
 
 This should be done even if you took 0 hours leave.</body>
@@ -57,7 +57,7 @@ This should be done even if you took 0 hours leave.</body>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>default</contentType>
-      <defaultSubject>[Jenkins] [Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins] [Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>

@@ -64,7 +64,7 @@
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>default</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern>server_apps/DB_maintenance/queryMonitoring/queryCostCheck.txt</attachmentsPattern>
       <presendScript></presendScript>
