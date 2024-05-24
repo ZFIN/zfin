@@ -35,7 +35,7 @@ original flat file are moved to /research/zblastfiles/files/daily for weekly BLA
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-            <subject>GenBank-Accession-Update_d failed on ${DOMAIN_NAME}</subject>
+            <subject>GenBank-Accession-Update_d failed on ${INSTANCE}</subject>
             <body></body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
@@ -50,7 +50,7 @@ original flat file are moved to /research/zblastfiles/files/daily for weekly BLA
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>default</contentType>
-      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+      <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>

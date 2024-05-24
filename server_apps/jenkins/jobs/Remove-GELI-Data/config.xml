@@ -57,7 +57,7 @@
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-            <subject>Remove-GELI-Data Failed on ${DOMAIN_NAME}</subject>
+            <subject>Remove-GELI-Data Failed on ${INSTANCE}</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
@@ -72,7 +72,7 @@
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>default</contentType>
-      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+      <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern>server_apps/DB_maintenance/report_data/Remove-GELI-Data/*</attachmentsPattern>
       <presendScript></presendScript>
