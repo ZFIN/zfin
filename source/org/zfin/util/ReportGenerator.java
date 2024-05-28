@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
+import static java.lang.System.getenv;
+
 public class ReportGenerator {
 
     public enum Format { HTML, TXT }
@@ -143,6 +145,48 @@ public class ReportGenerator {
             }
         }
     }
+
+    public void addArtifactDiffLink(File reportDirectory, String reportName) {
+        //requires HUDSON_URL and BUILD_DISPLAY_NAME environment variables
+        if (getenv("HUDSON_URL") == null || getenv("BUILD_DISPLAY_NAME") == null) {
+            log.error("HUDSON_URL and BUILD_DISPLAY_NAME environment variables must be set to add artifact diff link to report");
+            return;
+        }
+        String jenkinsBaseUrl = getenv("HUDSON_URL");
+
+        Integer buildNumber = null;
+        try {
+            buildNumber = Integer.parseInt(getenv("BUILD_DISPLAY_NAME").replace("#", ""));
+        } catch (NumberFormatException e) {
+            log.error("BUILD_DISPLAY_NAME environment variable must be a number (eg. #123) to add artifact diff link to report");
+            return;
+        }
+        if (buildNumber == 1) {
+            log.info("No previous build to compare to");
+            return;
+        }
+        Integer previousBuildNumber = buildNumber - 1;
+
+        String targetRoot = new File(ZfinPropertiesEnum.TARGETROOT.value()).getAbsolutePath();
+        String artifactRelativePath = reportDirectory.getAbsolutePath().replace(targetRoot, "");
+
+        String jobName = reportName;
+        String[] artifactDiffUrlParts = {
+            jenkinsBaseUrl,
+            "job",
+            jobName,
+            previousBuildNumber.toString(),
+            "artifact-diff",
+            buildNumber.toString(),
+            artifactRelativePath,
+            reportName + ".txt"
+        };
+        String artifactDiffUrl = String.join("/", artifactDiffUrlParts);
+        log.info("Artifact diff URL: " + artifactDiffUrl);
+
+        addIntroParagraph("Artifact diff: <a href=\"" + artifactDiffUrl + "\">" + artifactDiffUrl + "</a>");
+    }
+
 
     @SuppressWarnings("unchecked")
     private void addToList(String field, Object toAdd) {
