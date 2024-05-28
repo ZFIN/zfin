@@ -21,4 +21,4 @@ WHERE
   AND pf_date_entered > pth_status_insert_date
   AND NOT pub_is_indexed
 ORDER BY
-    pth_pub_zdb_id DESC
+    pth_pub_zdb_id DESC, 2, 3, 4, 5, 6, 7, 8, 9;
