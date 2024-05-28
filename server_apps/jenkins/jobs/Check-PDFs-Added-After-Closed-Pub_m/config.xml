@@ -69,6 +69,46 @@
                         <contentType>text/html</contentType>
                     </email>
                 </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+                        </body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+                <hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
+
+                            See report on Jenkins dashboard (for aborted build): &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+                        </body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.AbortedTrigger>
             </configuredTriggers>
             <contentType>default</contentType>
             <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
