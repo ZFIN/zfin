@@ -101,4 +101,18 @@ public class ExecProcess {
         return process.getStandardOutput();
     }
 
+    /**
+     * Like the static method "exec", but it accepts the command and args as a list instead of a string
+     * @param commands The command to execute and its arguments
+     * @param handleQuoting Boolean for whether or not to handle quoting of args
+     * @return Returns the standard output of the command as a string
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static String execList(List<String> commands, boolean handleQuoting) throws IOException, InterruptedException {
+        ExecProcess process = new ExecProcess(commands, handleQuoting);
+        process.exec();
+        return process.getStandardOutput();
+    }
+
 }
