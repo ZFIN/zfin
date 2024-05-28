@@ -18,8 +18,10 @@ public class AnnualStatsController {
 
     @RequestMapping(value = "/annual-stats-view")
     public String getAnnualStats(Model model) {
-        List<Date> dates = RepositoryFactory.getInfrastructureRepository().getDistinctDatesFromAnnualStats();
         List<AnnualStats> annualStatsList = RepositoryFactory.getInfrastructureRepository().getAnnualStats();
+
+        Map<Date,List<AnnualStats>> map = annualStatsList.stream().collect(groupingBy(AnnualStats::getDate));
+        List<Date> dates = new ArrayList<>(map.keySet());
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         // find stat dates to include for each year

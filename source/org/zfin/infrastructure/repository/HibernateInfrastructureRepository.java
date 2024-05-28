@@ -1727,15 +1727,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public List<Date> getDistinctDatesFromAnnualStats() {
-        String sql = "select distinct as_date from annual_stats order by as_date;";
-        Session session = HibernateUtil.currentSession();
-        NativeQuery<Date> sqlQuery = session.createNativeQuery(sql, Date.class);
-
-        return sqlQuery.list();
-    }
-
-    @Override
     public List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct) {
         Session session = currentSession();
         String hql = "SELECT DISTINCT cv FROM ControlledVocab as cv, " +
