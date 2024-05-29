@@ -927,7 +927,6 @@ dependencies {
 
     implementation files('home/WEB-INF/lib/agr_curation_api-v0.35.0.jar')
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
-    implementation files('home/WEB-INF/lib/confluence-soap-v2.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')
     implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
     implementation files('home/WEB-INF/lib/obo.jar')
@@ -938,17 +937,12 @@ dependencies {
     implementation files('home/WEB-INF/lib/commons-lang3-3.1.jar')
     // maven reference does not have version 1.0, so using the plain jar file
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
-    implementation files('home/WEB-INF/lib/hibernate-c3p0-5.6.5.Final.jar')
     implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
-    implementation files('home/WEB-INF/lib/jstl-1.1.jar')
-    implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
     implementation files('home/WEB-INF/lib/jakarta.persistence-api-3.1.0.jar')
     implementation files('home/WEB-INF/lib/jakarta.annotation-api-2.0.0.jar')
-    implementation files('home/WEB-INF/lib/jakarta.xml.bind-api-2.3.3.jar')
 
     implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
-    implementation files('home/WEB-INF/lib/log4j-web-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-slf4j-impl-2.13.3.jar')
 
     implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
