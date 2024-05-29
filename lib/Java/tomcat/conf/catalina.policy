@@ -134,6 +134,8 @@ grant {
     // javamail named MimePart DataSource used to send mail
     permission java.util.PropertyPermission "java.home", "read";
     permission java.util.PropertyPermission "java.naming.*", "read";
+
+    //does this need to be jakarta.sql ?
     permission java.util.PropertyPermission "javax.sql.*", "read";
 
     // OS Specific properties to allow read access

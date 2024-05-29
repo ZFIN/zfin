@@ -282,6 +282,7 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
+    <!-- TODO spring upgrade: should this be jakarta.sql.DataSource? -->
     <resource-ref>
         <description>
             Resource reference to a factory for java.sql.Connection
@@ -291,7 +292,7 @@
         <res-ref-name>
             jdbc/zfin
         </res-ref-name>
-        <res-type>                                      `
+        <res-type>
             javax.sql.DataSource
         </res-type>
         <res-auth>
@@ -299,7 +300,7 @@
         </res-auth>
     </resource-ref>
 
-
+    <!-- TODO spring upgrade: should this be jakarta.sql.DataSource? -->
     <resource-ref>
         <description>
             Resource reference to a factory for java.sql.Connection
