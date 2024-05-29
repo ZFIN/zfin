@@ -3,6 +3,8 @@
 main() {
   loadConfig $1 $2
 
+if [[ -n "$2" ]]
+then
   validateFile ZFIN_1.0.1.4_basicGeneInformation.json.gz BGI
   validateFile ZFIN_1.0.1.4_allele.json.gz ALLELE
   validateFile ZFIN_1.0.1.4_STR.json.gz SQTR
@@ -18,6 +20,9 @@ main() {
   validateFile ZFIN_1.0.1.4_Reference.json.gz REFERENCE
   validateFile ZFIN_1.0.1.4_Resource.json.gz RESOURCE
   validateFile ZFIN_1.0.1.4_ReferenceExchange.json.gz REF-EXCHANGE
+else
+   echo 'No release version provided. Not running the import / validate routine against Alliance'
+fi
 
   echo ""
 
@@ -59,8 +64,7 @@ loadConfig() {
   echo "endpoint: '$ENDPOINT'"
   echo "release version: '$RELEASE_VERSION'"
   if [ -z "$RELEASE_VERSION" ]; then
-    echo "ERROR: No release version provided!"
-    exit 1
+    echo "No release version provided!"
   fi
 
 }

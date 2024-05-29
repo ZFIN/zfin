@@ -22,7 +22,7 @@
         <hudson.model.StringParameterDefinition>
           <name>ALLIANCE_RELEASE_VERSION</name>
           <description>Release Version</description>
-          <defaultValue>4.1.1</defaultValue>
+          <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
