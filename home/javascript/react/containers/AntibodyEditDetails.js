@@ -71,6 +71,12 @@ const AntibodyEditDetails = ({
                 label='Name'
                 field='name'
                 id='name'
+                validate={value => {
+                    if (!value) {
+                        return ' Unable to save antibody. Antibodies require a name';
+                    }
+                    return false;
+                }}
             />
 
             {!isNamePristine &&
