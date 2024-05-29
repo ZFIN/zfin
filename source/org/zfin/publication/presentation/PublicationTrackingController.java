@@ -25,6 +25,7 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -43,6 +44,9 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+
 
 @Controller
 @RequestMapping("/publication")
@@ -100,8 +104,8 @@ public class PublicationTrackingController {
     public Collection<PublicationNoteDTO> getPublicationNotes(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
         return publication.getNotes().stream()
-                .map(converter::toPublicationNoteDTO)
-                .collect(Collectors.toList());
+            .map(converter::toPublicationNoteDTO)
+            .collect(Collectors.toList());
     }
 
     @ResponseBody
@@ -180,11 +184,11 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
     public Collection<PersonDTO> getAllCurators() {
         SortedSet<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
-                .map(converter::toPersonDTO)
-                .collect(Collectors.toCollection(TreeSet::new));
+            .map(converter::toPersonDTO)
+            .collect(Collectors.toCollection(TreeSet::new));
         SortedSet<PersonDTO> studentsDTOs = profileRepository.getStudents().stream()
-                .map(converter::toPersonDTO)
-                .collect(Collectors.toCollection(TreeSet::new));
+            .map(converter::toPersonDTO)
+            .collect(Collectors.toCollection(TreeSet::new));
         curatorDTOs.addAll(studentsDTOs);
         // Add currently logged in user to allow developers to act like curators on their own sites
         curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
@@ -220,6 +224,21 @@ public class PublicationTrackingController {
         newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
         newStatus.setDate(new GregorianCalendar());
 
+        Updates update = new Updates();
+        update.setFieldName("status");
+        String newValue = dto.getStatus().getName().getDisplay();
+        update.setNewValue(newValue);
+        List<Updates> updates = getInfrastructureRepository().getUpdates(zdbID);
+        Optional<Updates> up = updates.stream().filter(updates1 -> updates1.getFieldName().equals("status")).findFirst();
+        up.ifPresent(value -> update.setOldValue(value.getNewValue()));
+        update.setRecID(zdbID);
+        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
+        update.setSubmitter(currentSecurityUser);
+        if (currentSecurityUser != null) {
+            update.setSubmitterName(currentSecurityUser.getUsername());
+        }
+        update.setWhenUpdated(new Date());
+
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
@@ -234,6 +253,7 @@ public class PublicationTrackingController {
                 curationRepository.resetCurationTopics(publication);
             }
         }
+        session.save(update);
         session.save(newStatus);
         tx.commit();
 
@@ -393,11 +413,11 @@ public class PublicationTrackingController {
         Publication publication = publicationRepository.getPublication(zdbID);
         List<CorrespondenceDTO> correspondences = new ArrayList<>();
         correspondences.addAll(publication.getSentMessages().stream()
-                .map(converter::toCorrespondenceDTO)
-                .collect(Collectors.toList()));
+            .map(converter::toCorrespondenceDTO)
+            .collect(Collectors.toList()));
         correspondences.addAll(publication.getReceivedMessages().stream()
-                .map(converter::toCorrespondenceDTO)
-                .collect(Collectors.toList()));
+            .map(converter::toCorrespondenceDTO)
+            .collect(Collectors.toList()));
         Collections.sort(correspondences, Collections.reverseOrder());
         return correspondences;
     }
@@ -436,8 +456,8 @@ public class PublicationTrackingController {
             }
             recipients.add(currentUser.getEmail());
             List<String> externalRecipients = correspondence.getMessage().getRecipients().stream()
-                    .map(CorrespondenceRecipient::getEmail)
-                    .collect(Collectors.toList());
+                .map(CorrespondenceRecipient::getEmail)
+                .collect(Collectors.toList());
 
             String message = correspondence.getMessage().getText();
 
@@ -445,15 +465,15 @@ public class PublicationTrackingController {
                 recipients.addAll(externalRecipients);
             } else {
                 message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]\n\n" +
-                        message;
+                          message;
             }
 
             String sender = correspondence.getFrom().getFirstName() + " " +
-                    correspondence.getFrom().getLastName() +
-                    " <" + correspondence.getFrom().getEmail() + ">";
+                            correspondence.getFrom().getLastName() +
+                            " <" + correspondence.getFrom().getEmail() + ">";
 
             boolean sent = mailer.sendMail(correspondence.getMessage().getSubject(),
-                    message, false, sender, recipients.toArray(new String[]{}));
+                message, false, sender, recipients.toArray(new String[]{}));
 
             if (!sent) {
                 throw new InvalidWebRequestException("error sending email");
@@ -502,8 +522,8 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "{id}/notification", method = RequestMethod.POST)
     public Map<String, Boolean> sendNotificationLetter(@PathVariable String id,
-                                                    @RequestBody NotificationLetter letter,
-                                                    HttpServletResponse response) {
+                                                       @RequestBody NotificationLetter letter,
+                                                       HttpServletResponse response) {
         Map<String, Boolean> responseBody = new HashMap<>();
         responseBody.put("sent", false);
 
@@ -534,11 +554,11 @@ public class PublicationTrackingController {
         HibernateUtil.flushAndCommitCurrentSession();
 
         boolean sent = mailer.sendHtmlMail(
-                "ZFIN Author Notification",
-                letter.getMessage(),
-                false,
-                sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
-                letter.getRecipients().toArray(new String[]{}));
+            "ZFIN Author Notification",
+            letter.getMessage(),
+            false,
+            sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
+            letter.getRecipients().toArray(new String[]{}));
 
         if (!sent) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
