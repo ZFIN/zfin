@@ -37,7 +37,7 @@ public class FigureService {
         "ZDB-PUB-010810-1",
         "ZDB-PUB-140822-10",
         "ZDB-PUB-031103-23",
-        "ZDB-PUB-050502-1"
+        "ZDB-PUB-051025-1"
     );
 
     static Logger LOG = LogManager.getLogger(FigureService.class);
