@@ -113,15 +113,16 @@ public class GeneLinkMLInfo extends LinkMLInfo {
 
     private static CrossReferenceDTO getCrossReferenceDTO(MarkerDBLink link, String pageArea) {
         CrossReferenceDTO xRefDto = new CrossReferenceDTO();
-        xRefDto.setReferencedCurie(link.getAccessionNumber());
-        xRefDto.setDisplayName(link.getAccessionNumber());
         String name = link.getReferenceDatabase().getForeignDB().getDbName().name();
         String prefix = prefixMap.get(name);
         if (prefix == null)
             prefix = name;
-        if(prefix.equals("ZFIN"))
+        if (prefix.equals("ZFIN"))
             pageArea = "gene";
         xRefDto.setPageArea(pageArea);
+        String prefixedCurie = prefix + ":" + link.getAccessionNumber();
+        xRefDto.setReferencedCurie(prefixedCurie);
+        xRefDto.setDisplayName(prefixedCurie);
         allPrefixes.add(prefix);
         xRefDto.setPrefix(prefix);
         return xRefDto;
