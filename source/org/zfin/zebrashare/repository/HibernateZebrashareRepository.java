@@ -48,7 +48,7 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
     @Override
     public List<ZebrashareEditor> getZebraShareEditorsForPublication(Publication publication) {
         return HibernateUtil.currentSession()
-            .createQuery("from ZebrashareEditor where publication = :pubication", ZebrashareEditor.class)
+            .createQuery("from ZebrashareEditor where publication = :publication", ZebrashareEditor.class)
             .setParameter("publication", publication)
             .list();
     }
