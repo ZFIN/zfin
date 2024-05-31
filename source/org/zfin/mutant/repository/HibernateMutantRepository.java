@@ -14,6 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.util.StringUtils;
@@ -107,7 +108,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
             for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
@@ -140,13 +141,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 """;
 
         if (!wildtype) {
-            hql += " AND fishox.fish.genotype.wildtype = 'f' ";
+            hql += " AND fishox.fish.genotype.wildtype = false ";
         }
         hql += " ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
         query.setParameter("standardOrGeneric", false);
 
         // have to add extra select because of ordering, but we only want to return the first
@@ -210,7 +211,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
             for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
@@ -437,7 +438,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<String> query = session.createQuery(hql, String.class);
         query.setParameter("ftr", feat.getName());
-        query.setParameter("type", Marker.Type.GENE.toString());
+        query.setParameter("type", Marker.Type.GENE.toString()); //...markerType.name is a String
         return (List<String>) query.list();
     }
 
@@ -541,7 +542,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Genotype> query = currentSession().createQuery(hql, Genotype.class);
         query.setParameter("pubZdbID", publication.getZdbID());
-        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD);
         return query.list();
     }
 
@@ -569,7 +570,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("pubZdbID", publication.getZdbID());
         query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
         query.setParameter("markerZdbID", marker.getZdbID());
-        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD);
         return query.list();
     }
 
@@ -619,7 +620,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return currentSession().createQuery(hql, Genotype.class)
             .setParameter("pubZdbID", publicationZdbID)
-            .setParameter("standard", RecordAttribution.SourceType.STANDARD.toString())
+            .setParameter("standard", RecordAttribution.SourceType.STANDARD)
             .list();
     }
 
@@ -1015,7 +1016,7 @@ public class HibernateMutantRepository implements MutantRepository {
             AND tag = :tag""";
         Query<PhenotypeStatementWarehouse> query = currentSession().createQuery(hql, PhenotypeStatementWarehouse.class);
         query.setParameter("term", term);
-        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString()); //PhenotypeStatementWarehouse.tag is a String
         return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
@@ -1026,7 +1027,7 @@ public class HibernateMutantRepository implements MutantRepository {
             "AND tag = :tag";
         Query<Number> query = currentSession().createQuery(hql, Number.class);
         query.setParameter("term", term);
-        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString()); //PhenotypeStatementWarehouse.tag is a String
         return query.uniqueResult().longValue() > 0;
     }
 
@@ -1305,7 +1306,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<Feature> getAllelesForMarker(String zdbID, String type) {
+    public List<Feature> getAllelesForMarker(String zdbID, FeatureMarkerRelationshipTypeEnum type) {
         String hql = """
                 select distinct 
                 feat from FeatureMarkerRelationship fmrel, Feature feat 
@@ -1332,7 +1333,7 @@ public class HibernateMutantRepository implements MutantRepository {
             """;
         return currentSession().createQuery(hql, Marker.class)
             .setParameter("markerZdbId", gene.getZdbID())
-            .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
+            .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString()) //markerRelationshipType.name is a String
             .list();
     }
 
@@ -1629,7 +1630,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (numfOfRecords > 0)
             query.setMaxResults(numfOfRecords);
 
-        query.setParameter("genedom", Marker.Type.GENE.toString());
+        query.setParameter("genedom", Marker.Type.GENE.toString()); //...markerType.name is a String
         return query.list();
     }
 
@@ -1648,7 +1649,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (numfOfRecords > 0)
             query.setMaxResults(numfOfRecords);
 
-        query.setParameter("genedom", Marker.Type.GENE.toString());
+        query.setParameter("genedom", Marker.Type.GENE.toString()); //...markerType.name is a String
         return query.list();
     }
 

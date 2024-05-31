@@ -233,7 +233,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "fmrel.type  = :relation and " +
             "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
         query1.setParameter("marker", marker);
-        query1.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query1.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         List<FeatureGenomeLocation> list1 = (List<FeatureGenomeLocation>) query1.list();
 
         return list1;
@@ -357,7 +357,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "where markerOneZdbId = :markerID))");
         query.setParameter("marker", snp);
         query.setParameter("markerID", snp.getZdbID());
-        query.setParameter("mtype", Marker.Type.EST.toString());
+        query.setParameter("mtype", Marker.Type.EST);
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
         if (list == null) {
@@ -376,7 +376,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "m.markerType = mtype and " +
             "mtype.name = :mtype ");
         query.setParameter("marker", snp);
-        query.setParameter("mtype", Marker.Type.GENE.toString());
+        query.setParameter("mtype", Marker.Type.GENE);
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
         if (list == null) {

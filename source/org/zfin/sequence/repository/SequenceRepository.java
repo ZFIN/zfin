@@ -78,7 +78,7 @@ public interface SequenceRepository {
 
     DBLink getDBLinkByReferenceDatabaseID(String markerZdbID, String accession, String referenceDatabaseID);
 
-    List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName);
+    List<DBLink> getAtlasDBLink(String markerZdbID, ForeignDB.AvailableName referenceDBName);
     DBLink getDBLink(String markerZdbID, String accession, String referenceDBName);
     DBLink getDBLink(String featureZDbID,String accession);
 

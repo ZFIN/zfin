@@ -437,7 +437,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                            "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
             }
             if (!searchCriteria.isIncludeSubstructures()) {
-                hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                hql.append("    AND expressionTerm.originalAnnotation = true ");
             }
 
             if (numberOfTerms > 1) {
@@ -459,7 +459,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                                    "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
                     }
                     if (!searchCriteria.isIncludeSubstructures()) {
-                        hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                        hql.append("    AND expressionTerm.originalAnnotation = true ");
                     }
                     hql.append(" ) ");
                 }
@@ -914,7 +914,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql = " select rel from MarkerRelationship rel where " +
               "rel.markerRelationshipType.name = :type ";
         query = session.createQuery(hql);
-        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString());
+        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString()); //markerRelationshipType.name is a String
         List<MarkerRelationship> rels = query.list();
         antibodyMap.values().stream().flatMap(Collection::stream).forEach(antibody -> {
             List<Marker> marker = rels.stream().filter(relationship -> relationship.getSecondMarker().getZdbID().equals(antibody.getZdbID()))

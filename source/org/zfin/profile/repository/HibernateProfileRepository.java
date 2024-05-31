@@ -126,7 +126,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Query<CuratorSession> query = session.createQuery(hql, CuratorSession.class);
         query.setParameter("curatorID", curator.getZdbID());
         query.setParameter("pubID", pubID);
-        query.setParameter("field", field.toString());
+        query.setParameter("field", field.toString()); //CuratorSession.field is a String
         return query.uniqueResult();
     }
 

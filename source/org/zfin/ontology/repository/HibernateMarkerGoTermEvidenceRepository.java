@@ -116,7 +116,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     @Override
     public GafOrganization getGafOrganization(GafOrganization.OrganizationEnum organizationEnum) {
         Query<GafOrganization> query = HibernateUtil.currentSession().createQuery("from GafOrganization where organization = :organization", GafOrganization.class);
-        query.setParameter("organization", organizationEnum.toString());
+        query.setParameter("organization", organizationEnum.toString()); //GafOrganization.organization is a String
         return query.uniqueResult();
     }
 
@@ -257,7 +257,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
             .setParameter("evidenceCode", markerGoTermEvidenceToAdd.getEvidenceCode());
 
         if (markerGoTermEvidenceToAdd.getFlag() != null) {
-            query.setParameter("flag", markerGoTermEvidenceToAdd.getFlag().toString());
+            query.setParameter("flag", markerGoTermEvidenceToAdd.getFlag());
         }
         if (markerGoTermEvidenceToAdd.getQualifierRelation() != null) {
             query.setParameter("qualifierRelation", markerGoTermEvidenceToAdd.getQualifierRelation());

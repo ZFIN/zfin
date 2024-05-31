@@ -235,7 +235,8 @@ public class ExpressionService {
 
     public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName) {
         LinkDisplay gxaLinkDisplay = new LinkDisplay();
-        List<DBLink> gxaLinks = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
+        //TODO: hibernate upgrade: There could potentially be more changes needed that are similar to this change and others in this commit
+        List<DBLink> gxaLinks = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName);
         String accNumString = "";
         String linkPrefix = "[{";
         String linkSuffix = "]";
@@ -343,7 +344,7 @@ public class ExpressionService {
     }
 
     public LinkDisplay getFishMiRna(Marker marker, ForeignDB.AvailableName foreignDBName) {
-        List<DBLink> dbLinks = sequenceRepository.getAtlasDBLink(marker.getZdbID(), foreignDBName.toString());
+        List<DBLink> dbLinks = sequenceRepository.getAtlasDBLink(marker.getZdbID(), foreignDBName);
         if (CollectionUtils.isEmpty(dbLinks))
             return null;
         LinkDisplay display = new LinkDisplay();

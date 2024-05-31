@@ -107,7 +107,8 @@ public class HibernateUtil {
         // create a new session
         s = sessionFactory.openSession();
         localSession.set(s);
-        s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
+        s.enableFilter("noSecondaryAliasesForAO")
+         .setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString()); //Should we remove .toString() ???
         return s;
     }
 
