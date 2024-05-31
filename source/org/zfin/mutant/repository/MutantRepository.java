@@ -6,6 +6,7 @@ import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.marker.agr.BasicPhenotypeDTO;
 import org.zfin.mutant.*;
@@ -231,7 +232,7 @@ public interface MutantRepository {
      */
     Map<TermHistogramBean, Long> getTermPhenotypeUsage();
 
-    List<Feature> getAllelesForMarker(String zdbID, String type);
+    List<Feature> getAllelesForMarker(String zdbID, FeatureMarkerRelationshipTypeEnum type);
 
     List<Marker> getKnockdownReagents(Marker gene);
 

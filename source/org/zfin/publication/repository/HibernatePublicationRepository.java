@@ -197,7 +197,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.addScalar("numOfImg", StandardBasicTypes.INTEGER);
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setParameter("withdrawn", Marker.WITHDRAWN);
-        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here // NativeQuery so chimeric is a String
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
@@ -259,7 +259,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         query.setParameter("termZdbId", anatomyTerm.getZdbID());
         query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
-        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString());
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); //NativeQuery so chimeric is a String
 
         return query.getSingleResult().intValue();
     }
@@ -670,7 +670,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             select distinct geno from Genotype geno, PublicationAttribution record
             where record.publication.zdbID = :pubID
                and record.dataZdbID = geno.zdbID
-               and geno.wildtype = 'f'
+               and geno.wildtype = false
             order by geno.handle
             """;
         Query<Genotype> query = session.createQuery(hql, Genotype.class);
@@ -749,7 +749,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query<MarkerDBLink> query = session.createQuery(hql, MarkerDBLink.class);
         query.setParameter("pubID", publicationID);
         query.setParameter("geneID", geneID);
-        query.setParameter("foreignDB", ForeignDB.AvailableName.GENBANK.toString());
+        query.setParameter("foreignDB", ForeignDB.AvailableName.GENBANK); //MarkerDBLink.referenceDatabase.foreignDB.dbName is an AvailableName
 
         return query.list();
     }
@@ -781,7 +781,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query<MarkerDBLink> query = session.createQuery(hql, MarkerDBLink.class);
         query.setParameter("pubID", pubID);
         query.setParameter("geneID", geneID);
-        query.setParameter("foreignDB", ForeignDB.AvailableName.GENBANK.toString());
+        query.setParameter("foreignDB", ForeignDB.AvailableName.GENBANK);
         query.setParameter("type", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
 
         return query.list();
@@ -1380,7 +1380,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Fish> getWildtypeFish() {
         String hql = """
             from Fish as fish where
-              fish.wildtype = 't'
+              fish.wildtype = true
             order by fish.name
             """;
         Query<Fish> query = HibernateUtil.currentSession().createQuery(hql, Fish.class);
@@ -1785,7 +1785,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 category
             """;
 
-        String currentStatusOnlyClause = currentStatusOnly ? " WHERE pth_status_is_current = 't' " : "";
+        String currentStatusOnlyClause = currentStatusOnly ? " WHERE pth_status_is_current = true " : "";
         return String.format(sqlTemplate, groupExpression, dateExpression, groupInterval, currentStatusOnlyClause);
     }
 

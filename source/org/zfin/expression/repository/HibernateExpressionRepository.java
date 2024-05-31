@@ -71,8 +71,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "                join fish" +
                      "           on fish_zdb_id = genox_fish_zdb_id" +
                      "          where xpatex_gene_zdb_id = :markerZdbID " +
-                     "           and genox_is_std_or_generic_control = 't'" +
-                     "           and fish_is_wildtype = 't'" +
+                     "           and genox_is_std_or_generic_control = true " +
+                     "           and fish_is_wildtype = true " +
 
                      "         and not exists " +
                      "         ( " +
@@ -407,7 +407,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "     join figure on xpatres_fig_zdb_id = fig_zdb_id " +
                      "     join image on img_fig_zdb_id = fig_zdb_id " +
                      "     join publication on publication.zdb_id = fig_source_zdb_id " +
-                     "where pub_can_show_images = 't' " +
+                     "where pub_can_show_images = true " +
                      "      and jtype = 'Unpublished'";
 
         Query query = HibernateUtil.currentSession().createNativeQuery(sql);
@@ -1698,10 +1698,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "join term super_term on er.xpatres_superterm_zdb_id=super_term.term_zdb_id " +
                      "left outer join term sub_term on er.xpatres_subterm_zdb_id = sub_term.term_zdb_id " +
                      "where ee.xpatex_gene_zdb_id= :markerZdbID " +
-                     "and fe.genox_is_std_or_generic_control='t' " +
-                     "and er.xpatres_expression_found='t' " +
-                     "and g.geno_is_wildtype='t' " +
-                     "and fish.fish_is_wildtype = 't'" +
+                     "and fe.genox_is_std_or_generic_control=true " +
+                     "and er.xpatres_expression_found=true " +
+                     "and g.geno_is_wildtype=true " +
+                     "and fish.fish_is_wildtype = true " +
                      "and (exists (select 'x' from clone where ee.xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id  " +
                      "and (clone_problem_type !='Chimeric' or clone_problem_type is null)) " +
                      "or ee.xpatex_probe_feature_Zdb_id is null)";
@@ -1736,17 +1736,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 */
     public List<ExpressionFigureStage> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
-
-
-       /* String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
-                "        where fishox = xpExp.fishExperiment " +
-                "        and fish = fishox.fish " +
-                "        and geno = fish.genotype " +
-                "        and geno.wildtype = 't' " +
-                "        and xpRslt.expressionExperiment = xpExp " +
-                " and (xpExp.gene.zdbID like 'ZDB-GENE%' or xpExp.gene.zdbID like '%RNAG%')" +
-                " and cefs.fishExperiment=fishox" +
-                " and cefs.gene=:str";*/
 
         String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
                      "        where fishox = xpExp.fishExperiment " +
@@ -1907,9 +1896,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      " WHERE " +
                      "ee.gene.zdbID = :zdbID " +
                      "AND er.entity.superterm.oboID = ai.oboID " +
-                     "AND er.expressionFound = 't' " +
-                     "AND ge.standard = 't' " +
-                     "AND g.wildtype= 't' " +
+                     "AND er.expressionFound = true " +
+                     "AND ge.standard = true " +
+                     "AND g.wildtype= true " +
                      "ORDER BY ai.termName asc";
         return currentSession().createQuery(hql, GenericTerm.class)
             .setParameter("zdbID", zdbID)
