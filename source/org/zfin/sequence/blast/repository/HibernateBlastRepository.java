@@ -35,7 +35,7 @@ public class HibernateBlastRepository implements BlastRepository {
         Session session = HibernateUtil.currentSession();
         String hql = " select o from Origination o where o.type = :type";
         Query<Origination> query = session.createQuery(hql, Origination.class);
-        query.setParameter("type", type.toString());
+        query.setParameter("type", type);
         return query.uniqueResult();
     }
 
@@ -81,7 +81,7 @@ public class HibernateBlastRepository implements BlastRepository {
         Session session = HibernateUtil.currentSession();
         String hql = " select dr from DatabaseRelationship dr  where dr.child.origination.type = :type";
         Query<DatabaseRelationship> query = session.createQuery(hql, DatabaseRelationship.class);
-        query.setParameter("type", originationType.toString());
+        query.setParameter("type", originationType);
         return query.list();
     }
 
@@ -141,7 +141,7 @@ public class HibernateBlastRepository implements BlastRepository {
             .createNativeQuery(sql)
             .addScalar("abbrev", StandardBasicTypes.STRING)
             .addScalar("num", StandardBasicTypes.LONG);
-        query.setParameter("originationType", Origination.Type.EXTERNAL.toString());
+        query.setParameter("originationType", Origination.Type.EXTERNAL.toString()); //NativeQuery so originationType is a String
         List<Object[]> blastDatabaseCounts = query.list();
 
         if (blastDatabaseCounts == null)

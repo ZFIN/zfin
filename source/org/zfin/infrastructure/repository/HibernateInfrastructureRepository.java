@@ -281,7 +281,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.setParameter("dataZdbID", dataZdbID);
         query.setParameter("sourceZdbID", sourceZdbId);
         // if not specified, load the default inserted type
-        query.setParameter("sourceType", Objects.requireNonNullElse(sourceType, RecordAttribution.SourceType.STANDARD).toString());
+        query.setParameter("sourceType", Objects.requireNonNullElse(sourceType, RecordAttribution.SourceType.STANDARD));
         return query.uniqueResult();
     }
 
@@ -290,7 +290,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         String hql = "FROM RecordAttribution WHERE sourceZdbID = :sourceZdbID AND sourceType = :sourceType";
         Query<RecordAttribution> query = session.createQuery(hql, RecordAttribution.class);
         query.setParameter("sourceZdbID", sourceZdbID);
-        query.setParameter("sourceType", sourceType.toString());
+        query.setParameter("sourceType", sourceType);
         return query.list();
     }
 
@@ -301,7 +301,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             AND sourceType = :sourceType
             """, RecordAttribution.class);
         query.setParameter("dataZdbID", dataZdbID);
-        query.setParameter("sourceType", sourceType.toString());
+        query.setParameter("sourceType", sourceType);
         return query.list();
     }
 
@@ -351,7 +351,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                                                                   "where dataZdbID = :dataZdbID " +
                                                                   "AND sourceType= :sourceType", PublicationAttribution.class);
         query.setParameter("dataZdbID", dataZdbID);
-        query.setParameter("sourceType", type.toString());
+        query.setParameter("sourceType", type);
         return query.list();
     }
 
@@ -583,7 +583,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
         query.setParameter("zdbID", zdbID);
         query.setParameter("datazdbID", datazdbID);
-        query.setParameter("sourceType", RecordAttribution.SourceType.FEATURE_TYPE.toString());
+        query.setParameter("sourceType", RecordAttribution.SourceType.FEATURE_TYPE);
         query.executeUpdate();
         currentSession().flush();
     }
@@ -593,7 +593,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:datazdbID and ra.sourceZdbID=:zdbID and ra.sourceType=:sourceType");
         query.setParameter("zdbID", zdbID);
         query.setParameter("datazdbID", datazdbID);
-        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
         query.executeUpdate();
         currentSession().flush();
     }
@@ -740,7 +740,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                                                          "                and aliasgrp_name != :aliasGroup ");
         sqlQuery.addScalar("abbreviation");
         sqlQuery.setParameter("aliasLowerName", aliasLowerName);
-        sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
+        sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString()); //NativeQuery so aliasGroup is a String
         return (List<String>) sqlQuery.list();
     }
 

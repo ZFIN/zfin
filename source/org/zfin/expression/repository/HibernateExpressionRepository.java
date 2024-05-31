@@ -71,8 +71,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "                join fish" +
                      "           on fish_zdb_id = genox_fish_zdb_id" +
                      "          where xpatex_gene_zdb_id = :markerZdbID " +
-                     "           and genox_is_std_or_generic_control = 't'" +
-                     "           and fish_is_wildtype = 't'" +
+                     "           and genox_is_std_or_generic_control = true " +
+                     "           and fish_is_wildtype = true " +
 
                      "         and not exists " +
                      "         ( " +
@@ -268,7 +268,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                         when container.stg_name_long like 'Larval%' then 'post embryonic, pre-adult'
                         when container.stg_name_long like 'Juvenile%' then 'post embryonic, pre-adult'
                         when container.stg_name = 'Adult' then 'UBERON:0000113'
-                   end as uberon_stage,
+                   else null end as uberon_stage, 
                    container.stg_name as stage_name
               from expression_experiment
               join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
@@ -407,7 +407,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "     join figure on xpatres_fig_zdb_id = fig_zdb_id " +
                      "     join image on img_fig_zdb_id = fig_zdb_id " +
                      "     join publication on publication.zdb_id = fig_source_zdb_id " +
-                     "where pub_can_show_images = 't' " +
+                     "where pub_can_show_images = true " +
                      "      and jtype = 'Unpublished'";
 
         Query query = HibernateUtil.currentSession().createNativeQuery(sql);
@@ -544,11 +544,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public int getExpressionFigureCountForFish(Fish fish) {
         String sql = """
-            select count(distinct efs_fig_zdb_id)
-            	           from expression_figure_stage
-            	                join expression_result2 on efs_pk_id = xpatres_efs_id
-            	                join expression_experiment on efs_xpatex_zdb_id = xpatex_zdb_id
-            	                join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
+            select count(distinct xpatfig_fig_zdb_id)
+            	           from expression_pattern_figure
+            	                join expression_result
+            				on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+            	                join expression_experiment
+            				on xpatex_zdb_id = xpatres_xpatex_zdb_id
+            	                join fish_experiment
+            	           on xpatex_genox_zdb_id = genox_zdb_id
             	          where genox_fish_zdb_id = :fishID
             	         and xpatex_atb_zdb_id is null
             	         """;
@@ -1149,6 +1152,35 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     // run the script to update the fast search table for antibodies-anatomy
 
+    public void runAntibodyAnatomyFastSearchUpdate(ExpressionResult result) {
+        Session session = currentSession();
+        session.doWork(new Work() {
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                CallableStatement statement = null;
+                String sql = "execute procedure add_ab_ao_fast_search(?)";
+                try {
+                    statement = connection.prepareCall(sql);
+                    String zdbID = "";
+                    ////String zdbID = result.getZdbID();
+                    statement.setString(1, zdbID);
+                    statement.execute();
+                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
+                } catch (SQLException e) {
+                    logger.error("Could not run: " + sql, e);
+                } finally {
+                    if (statement != null) {
+                        try {
+                            statement.close();
+                        } catch (SQLException e) {
+                            logger.error(e);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Delete a expressionFigureStage record including all expression results on it
      *
@@ -1315,6 +1347,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 */
     }
 
+    private void createUnspecifiedExpressionResult(ExpressionResult result, Figure figure) {
+        Session session = HibernateUtil.currentSession();
+        GenericTerm unspecifiedTerm = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
+
+        ExpressionResult unspecifiedResult = new ExpressionResult();
+        unspecifiedResult.setExpressionExperiment(result.getExpressionExperiment());
+        unspecifiedResult.setSuperTerm(unspecifiedTerm);
+        unspecifiedResult.setStartStage(result.getStartStage());
+        unspecifiedResult.setEndStage(result.getEndStage());
+        unspecifiedResult.setExpressionFound(true);
+        unspecifiedResult.addFigure(figure);
+        session.save(unspecifiedResult);
+    }
+
     /**
      * Check if a pile structure already exists.
      * check for:
@@ -1464,6 +1510,49 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         session.save(structure);
     }
 
+    /**
+     * Retrieve Expressions for a given term.
+     *
+     * @param term term
+     * @return list of expressions
+     */
+    @Override
+    public List<ExpressionResult> getExpressionsWithEntity(GenericTerm term) {
+        String hql = "select distinct expression from ExpressionResult expression where " +
+                     "(entity.superterm = :term OR entity.subterm = :term) " +
+                     " AND expressionFound = true ";
+        Query<ExpressionResult> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult.class);
+        query.setParameter("term", term);
+        return query.list();
+    }
+
+    /**
+     * Retrieve Expressions for a given list of terms.
+     *
+     * @param terms term
+     * @return list of expressions
+     */
+    @Override
+    public List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms) {
+        List<ExpressionResult> allExpressions = new ArrayList<>(50);
+        for (GenericTerm term : terms) {
+            List<ExpressionResult> phenotypes = getExpressionsWithEntity(term);
+            allExpressions.addAll(phenotypes);
+        }
+        List<ExpressionResult> nonDuplicateExpressions = removeDuplicateExpressions(allExpressions);
+        Collections.sort(nonDuplicateExpressions);
+        return nonDuplicateExpressions;
+    }
+
+    private List<ExpressionResult> removeDuplicateExpressions(List<ExpressionResult> allExpressions) {
+        Set<ExpressionResult> results = new HashSet<>();
+        results.addAll(allExpressions);
+        List<ExpressionResult> expressionResults = new ArrayList<>(results.size());
+        expressionResults.addAll(results);
+        return expressionResults;
+    }
+
+
     private void validateFigureAnnotationKey(String experimentZdbID, String figureID, String startStageID, String endStageID) {
         ActiveData data = new ActiveData();
         // these calls validate the keys according to zdb id syntax.
@@ -1491,7 +1580,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionFigureStage> getExpressionFigureStagesByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox " +
+        String hql = "select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
                      "      where fishox.fish = :fish " +
                      "        and fishox = xpExp.fishExperiment " +
                      "        and xpRslt.expressionExperiment = xpExp " +
@@ -1505,11 +1594,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public long getExpressionResultsByFishAndPublication(Fish fish, String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = """
-                     select count(result) from ExpressionResult2 result
-                     where  result.expressionFigureStage.expressionExperiment.publication.zdbID = :publicationID
-                     and result.expressionFigureStage.expressionExperiment.fishExperiment.fish = :fish 
-                     """;
+        String hql = "select count(result) from ExpressionResult result " +
+                     "      where  result.expressionExperiment.publication.zdbID = :publicationID" +
+                     "        and result.expressionExperiment.fishExperiment.fish = :fish ";
 
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
@@ -1611,10 +1698,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      "join term super_term on er.xpatres_superterm_zdb_id=super_term.term_zdb_id " +
                      "left outer join term sub_term on er.xpatres_subterm_zdb_id = sub_term.term_zdb_id " +
                      "where ee.xpatex_gene_zdb_id= :markerZdbID " +
-                     "and fe.genox_is_std_or_generic_control='t' " +
-                     "and er.xpatres_expression_found='t' " +
-                     "and g.geno_is_wildtype='t' " +
-                     "and fish.fish_is_wildtype = 't'" +
+                     "and fe.genox_is_std_or_generic_control=true " +
+                     "and er.xpatres_expression_found=true " +
+                     "and g.geno_is_wildtype=true " +
+                     "and fish.fish_is_wildtype = true " +
                      "and (exists (select 'x' from clone where ee.xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id  " +
                      "and (clone_problem_type !='Chimeric' or clone_problem_type is null)) " +
                      "or ee.xpatex_probe_feature_Zdb_id is null)";
@@ -1730,12 +1817,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     @Override
     public Set<String> getAllDistinctExpressionTermIDs() {
-        String hql = "select distinct result.superTerm.id from ExpressionResult2 as result";
+        String hql = "select distinct result.entity.superterm.id from ExpressionResult as result";
         List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
         Set<String> expressedTerms = new HashSet<>(2000);
         expressedTerms.addAll(results);
         // sub terms
-        hql = "select distinct result.subTerm.id from ExpressionResult2 as result";
+        hql = "select distinct result.entity.subterm.id from ExpressionResult as result";
         results = HibernateUtil.currentSession().createQuery(hql).list();
         expressedTerms.addAll(results);
         return expressedTerms;
@@ -1789,8 +1876,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public ExpressionResult2 getExpressionResult(Long expressionResultID) {
-        return HibernateUtil.currentSession().get(ExpressionResult2.class, expressionResultID);
+    public ExpressionResult getExpressionResult(Long expressionResultID) {
+        return HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
     }
 
     @Override

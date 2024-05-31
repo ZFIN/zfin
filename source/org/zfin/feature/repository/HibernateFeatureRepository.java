@@ -93,7 +93,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " where fmrel.type in (:relation) and fmrel.feature = feature and feature.zdbID = :featureZdbId";
 
         Query<Marker> query = currentSession().createQuery(hql, Marker.class);
-        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         query.setParameter("featureZdbId", featureZdbId);
         return query.uniqueResult();
     }
@@ -106,8 +106,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " and fmrel1.feature.zdbID = :featureZdbId";
 
         Query<Marker> query = currentSession().createQuery(hql, Marker.class);
-        query.setParameter("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        query.setParameter("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setParameter("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
+        query.setParameter("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE);
         query.setParameter("featureZdbId", featureZdbId);
 
         return query.list();
@@ -130,9 +130,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
 
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
-        query.setParameter("transversion", FeatureTypeEnum.TRANSLOC.toString());
-        query.setParameter("deficiency", FeatureTypeEnum.DEFICIENCY.toString());
-        query.setParameter("inversion", FeatureTypeEnum.INVERSION.toString());
+        query.setParameter("transversion", FeatureTypeEnum.TRANSLOC);
+        query.setParameter("deficiency", FeatureTypeEnum.DEFICIENCY);
+        query.setParameter("inversion", FeatureTypeEnum.INVERSION);
         if (feature != null) {
             query.setParameter("feature", feature);
         }
@@ -884,7 +884,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " and pa.sourceType= :sourceType  ";
         Query<Feature> query = HibernateUtil.currentSession().createQuery(hql, Feature.class);
         query.setParameter("pubZdbID", publication.getZdbID());
-        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD);
         return query.list();
     }
 
@@ -900,9 +900,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query<Marker> query = session.createQuery(hql, Marker.class);
 
         query.setParameter("feat", feature.getZdbID());
-        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
-        query.setParameter("relationship1", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT.toString());
-        query.setParameter("relationship2", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING.toString());
+        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        query.setParameter("relationship1", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT);
+        query.setParameter("relationship2", FeatureMarkerRelationshipTypeEnum.MARKERS_MISSING);
         return query.list();
     }
 
@@ -918,7 +918,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         Query<Marker> query = session.createQuery(hql, Marker.class);
         query.setParameter("feat", feature.getZdbID());
-        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         return query.list();
     }
 
@@ -933,12 +933,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " and m.markerType =:type";
 
         Query<Marker> query = session.createQuery(hql, Marker.class);
-        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT.toString());
+        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT);
         query.setParameter("feat", feature.getZdbID());
 
 
         //SEE ZFIN-8676 before uncommenting?
-        //query.setParameter("type", Marker.Type.GENE.toString());
+        //query.setParameter("type", Marker.Type.GENE);
 
         return (List<Marker>) query.list();
     }
@@ -1121,7 +1121,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     public int setNoLabPrefix(String zdbID) {
         String sql = "update source_feature_prefix  " +
-                     "set sfp_current_designation = 'f' " +
+                     "set sfp_current_designation = false " +
                      "where sfp_source_zdb_id=:labZdbId ";
         return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("labZdbId", zdbID)
@@ -1195,7 +1195,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         Query<Feature> query = session.createQuery(hql, Feature.class);
         query.setParameter("marker", marker);
-        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         return query.list();
     }
 
@@ -1212,8 +1212,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query<Feature> query = session.createQuery(hql, Feature.class);
 
         query.setParameter("marker", marker);
-        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
+        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE);
 
         return query.list();
     }
@@ -1228,8 +1228,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query<Marker> query = session.createQuery(hql, Marker.class);
 
         query.setParameter("feature", feature);
-        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
+        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE);
 
         return query.list();
     }
@@ -1393,8 +1393,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
             """;
         Query<Integer> query = currentSession().createNativeQuery(sql, Integer.class);
         query.setParameter("zdbID", construct.getZdbID());
-        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
+        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE);
         return (int) query.uniqueResult();
     }
 
