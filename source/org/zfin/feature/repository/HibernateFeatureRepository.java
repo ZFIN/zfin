@@ -1393,9 +1393,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
             """;
         Query<Integer> query = currentSession().createNativeQuery(sql, Integer.class);
         query.setParameter("zdbID", construct.getZdbID());
-        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
-        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE);
-        return (int) query.uniqueResult();
+        query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString()); //NativeQuery so we need to pass strings
+        query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString()); //NativeQuery so we need to pass strings
+        return query.uniqueResult();
     }
 
     @Override
