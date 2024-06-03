@@ -9,6 +9,7 @@ import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.feature.Feature;
@@ -25,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -62,21 +64,17 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     public List<AGMDiseaseAnnotationDTO> getDiseaseInfo(int numberOrRecords) {
         List<AGMDiseaseAnnotationDTO> diseaseDTOList = new ArrayList<>();
 
-
+        List<FishExperiment> fishExperiments = getMutantRepository().getAllFishExperiment();
+        Map<Fish, List<FishExperiment>> fishFishExpMap = fishExperiments.stream().collect(groupingBy(FishExperiment::getFish));
         // get all genes from mutant_fast_search table and list their disease info
         List<GeneGenotypeExperiment> geneGenotypeExperiments = getMutantRepository().getGeneDiseaseAnnotationModels(numberOrRecords);
 
-        // group by gene records
-        Map<Marker, Set<FishExperiment>> diseaseModelMap = geneGenotypeExperiments.stream().collect(Collectors.groupingBy(GeneGenotypeExperiment::getGene, Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
-
-        // loop over each gene
-        diseaseModelMap.forEach((gene, fishExperimentSet) -> {
+        // loop over each fish
+        fishFishExpMap.forEach((fish, fishExperimentSet) -> {
             // loop over each FishExperiment
-
             fishExperimentSet.forEach((FishExperiment fishExperiment) -> {
-                Genotype genotype = fishExperiment.getFish().getGenotype();
+                Genotype genotype = fish.getGenotype();
 
-                Fish fish = fishExperiment.getFish();
                 // group the diseaseAnnotation by disease
                 // so publications and evidence codes are grouped together
                 Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels().stream().collect(Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(), Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())));
@@ -118,10 +116,13 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedByCurie("ZFIN:CURATOR");
                         //annotation.setModifiedBy("ZFIN:CURATOR");
+                        List<Marker> affectedGenes = fish.getAffectedGenes();
                         if (genotype.isWildtype()) {
-                            annotation.setInferredGeneIdentifier("ZFIN:" + gene.getZdbID());
+                            if (CollectionUtils.isNotEmpty(affectedGenes) && affectedGenes.size() == 1)
+                                annotation.setInferredGeneIdentifier("ZFIN:" + affectedGenes.get(0).getZdbID());
                         } else {
-                            if (fish.getFishFunctionalAffectedGeneCount() == 1) {
+                            if (CollectionUtils.isNotEmpty(affectedGenes) && affectedGenes.size() == 1) {
+                                Marker gene = affectedGenes.get(0);
                                 genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
                                     Feature feature = genotypeFeature.getFeature();
                                     if (feature.isSingleAlleleOfMarker(gene)) {
@@ -147,7 +148,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
             });
         });
-//
 //        // get all genes from mutant_fast_search table and list their disease info
         List<DiseaseAnnotationModel> damos = getMutantRepository().getDiseaseAnnotationModelsNoStd(numfOfRecords);
         for (DiseaseAnnotationModel damo : damos) {

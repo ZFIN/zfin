@@ -1618,11 +1618,11 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
         String hql = """
-                select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel 
-                join fetch geneGenotype.gene 
-                join fetch geneGenotype.fishExperiment 
-                where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment 
-                and geneGenotype.gene.markerType.name = :genedom 
+                select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel
+                join fetch geneGenotype.gene
+                join fetch geneGenotype.fishExperiment
+                where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment
+                and geneGenotype.gene.markerType.name = :genedom
             """;
 
         Query<GeneGenotypeExperiment> query = currentSession().createQuery(hql, GeneGenotypeExperiment.class);
@@ -1666,6 +1666,17 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public Experiment getExperiment(String experimentID) {
         return HibernateUtil.currentSession().get(Experiment.class, experimentID);
+    }
+
+    @Override
+    public List<FishExperiment> getAllFishExperiment() {
+        String hql = """
+                select fishExp from FishExperiment as fishExp
+                where fishExp.diseaseAnnotationModels is not empty
+            """;
+
+        Query<FishExperiment> query = currentSession().createQuery(hql, FishExperiment.class);
+        return query.list();
     }
 
 

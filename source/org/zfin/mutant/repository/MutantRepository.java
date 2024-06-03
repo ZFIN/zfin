@@ -523,5 +523,7 @@ public interface MutantRepository {
     List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termID);
 
     Experiment getExperiment(String experimentID);
+
+    List<FishExperiment> getAllFishExperiment();
 }
 
