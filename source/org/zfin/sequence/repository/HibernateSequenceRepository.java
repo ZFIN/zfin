@@ -1,5 +1,6 @@
 package org.zfin.sequence.repository;
 
+import jakarta.persistence.Tuple;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -877,31 +878,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
-    private class RelatedMarkerDBLinkTransformer {
-        private boolean is1to2;
-
-        public RelatedMarkerDBLinkTransformer(boolean is1to2) {
-            this.is1to2 = is1to2;
-        }
-
-        public Object transformTuple(Object[] objects, String[] strings) {
-            RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
-            MarkerRelationshipType relationshipType = ((MarkerRelationship) objects[1]).getMarkerRelationshipType();
-            String relationshipLabel;
-            if (is1to2) {
-                relationshipLabel = relationshipType.getFirstToSecondLabel();
-            } else {
-                relationshipLabel = relationshipType.getSecondToFirstLabel();
-            }
-            display.setRelationshipType(relationshipLabel);
-            display.setLink((MarkerDBLink) objects[0]);
-            return display;
-        }
+    @Override
+    public List<RelatedMarkerDBLinkDisplay> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+        return getDBLinksForNthRelatedMarker(true, marker, groupName, markerRelationshipTypes);
     }
 
     @Override
-    public List<RelatedMarkerDBLinkDisplay> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+    public List<RelatedMarkerDBLinkDisplay> getDBLinksForSecondRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+        return getDBLinksForNthRelatedMarker(false, marker, groupName, markerRelationshipTypes);
+    }
 
+    private List<RelatedMarkerDBLinkDisplay> getDBLinksForNthRelatedMarker(boolean isFirstMarker, Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
         String hql = """
                 select distinct dbl, mr 
                 from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,
@@ -910,10 +897,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 and dbl.referenceDatabase=ref 
                 and dgm.referenceDatabase = ref
                 and dgm.displayGroup = dg
-                and mr.secondMarker.zdbID=dbl.dataZdbID 
                 and mr.markerRelationshipType.name in (:types) 
-                and mr.firstMarker.zdbID = :markerZdbId 
             """;
+
+        if (isFirstMarker) {
+            hql += """
+                and mr.secondMarker.zdbID = dbl.dataZdbID
+                and mr.firstMarker.zdbID = :markerZdbId
+                """;
+        } else {
+            hql += """
+                and mr.firstMarker.zdbID = dbl.dataZdbID
+                and mr.secondMarker.zdbID = :markerZdbId
+                """;
+        }
+
         Set<String> types = new HashSet<>();
         if (markerRelationshipTypes.length != 0) {
             for (MarkerRelationship.Type type : markerRelationshipTypes) {
@@ -924,45 +922,28 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 types.add(type.toString());
             }
         }
-        Query query = HibernateUtil.currentSession().createQuery(hql)
-            .setParameter("markerZdbId", marker.getZdbID())
-            .setParameter("displayGroup", groupName)
-            .setParameterList("types", types);
-        HibernateUpgradeHelper.setTupleResultTransformer(query,(new RelatedMarkerDBLinkTransformer(true))::transformTuple);
-        return query.list();
-    }
+        Query<Tuple> query = HibernateUtil.currentSession().createQuery(hql, Tuple.class)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName)
+                .setParameterList("types", types);
+        List<Tuple> results = query.list();
+        return results.stream().map(dblinkMrTuple -> {
+            MarkerDBLink dblink = (MarkerDBLink)dblinkMrTuple.get(0);
+            MarkerRelationship mr = (MarkerRelationship)dblinkMrTuple.get(1);
 
-    @Override
-    public List<RelatedMarkerDBLinkDisplay> getDBLinksForSecondRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
-        String hql = " select distinct dbl, mr " +
-                     " from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,  " +
-                     " MarkerRelationship  mr  " +
-                     " where dg.groupName = :displayGroup " +
-                     " and dbl.referenceDatabase=ref " +
-                     " and dgm.referenceDatabase = ref " +
-                     " and dgm.displayGroup = dg " +
-                     " and mr.firstMarker.zdbID=dbl.dataZdbID " +
-                     " and mr.markerRelationshipType.name in (:types) " +
-                     " and mr.secondMarker.zdbID = :markerZdbId ";
+            RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
+            MarkerRelationshipType relationshipType = mr.getMarkerRelationshipType();
+            String relationshipLabel;
 
-
-        Set<String> types = new HashSet<String>();
-        if (markerRelationshipTypes.length != 0) {
-            for (MarkerRelationship.Type type : markerRelationshipTypes) {
-                types.add(type.toString());
+            if (isFirstMarker) {
+                relationshipLabel = relationshipType.getFirstToSecondLabel();
+            } else {
+                relationshipLabel = relationshipType.getSecondToFirstLabel();
             }
-        } else {
-            for (MarkerRelationship.Type type : MarkerRelationship.Type.values()) {
-                types.add(type.toString());
-            }
-
-        }
-        Query query = HibernateUtil.currentSession().createQuery(hql)
-            .setParameter("markerZdbId", marker.getZdbID())
-            .setParameter("displayGroup", groupName)
-            .setParameterList("types", types);
-        HibernateUpgradeHelper.setTupleResultTransformer(query,(new RelatedMarkerDBLinkTransformer(false))::transformTuple);
-        return query.list();
+            display.setRelationshipType(relationshipLabel);
+            display.setLink(dblink);
+            return display;
+        }).toList();
     }
 
     @Override
