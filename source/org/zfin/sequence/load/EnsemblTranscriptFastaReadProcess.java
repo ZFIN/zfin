@@ -231,11 +231,12 @@ public class EnsemblTranscriptFastaReadProcess {
         String sql = "select * from ensembl_transcript_renaming";
         List<Object[]> results = HibernateUtil.currentSession().createNativeQuery(sql).getResultList();
         ensdartDuplicationMap = results.stream().collect(Collectors.toMap(o -> (String) o[1], Function.identity()));
-
+        List<String> duplicateIDs = new ArrayList<>(allduplicatedEnsdartIDs);
+        duplicateIDs.addAll(ensemblTranscriptMap.keySet());
         System.out.println("Number of new Transcript records: " + newTranscriptList.size());
         newTranscriptList.forEach(transcriptRecord -> {
             boolean isDuplicate = false;
-            if (allduplicatedEnsdartIDs.contains(transcriptRecord.ensdartID)) {
+            if (duplicateIDs.contains(transcriptRecord.ensdartID)) {
                 isDuplicate = true;
             }
             createSingleTranscript(transcriptRecord, isDuplicate);
