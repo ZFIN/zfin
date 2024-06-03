@@ -25,6 +25,7 @@ import org.zfin.sequence.blast.Origination;
 import org.zfin.sequence.presentation.AccessionPresentation;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class HibernateSequenceRepository implements SequenceRepository {
@@ -927,9 +928,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 .setParameter("displayGroup", groupName)
                 .setParameterList("types", types);
         List<Tuple> results = query.list();
-        return results.stream().map(dblinkMrTuple -> {
-            MarkerDBLink dblink = (MarkerDBLink)dblinkMrTuple.get(0);
-            MarkerRelationship mr = (MarkerRelationship)dblinkMrTuple.get(1);
+        return results.stream().map(tuple -> {
+            MarkerDBLink dblink = (MarkerDBLink)tuple.get(0);
+            MarkerRelationship mr = (MarkerRelationship)tuple.get(1);
 
             RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
             MarkerRelationshipType relationshipType = mr.getMarkerRelationshipType();
@@ -943,7 +944,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
             display.setRelationshipType(relationshipLabel);
             display.setLink(dblink);
             return display;
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     @Override
