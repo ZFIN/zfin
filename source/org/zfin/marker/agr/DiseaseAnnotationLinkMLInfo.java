@@ -111,7 +111,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
                         annotation.setAgmIdentifier(model.getCurie());
-                        annotation.setModInternalId(map.get(publication));
                         annotation.setDoTermCurie(disease.getOboID());
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedByCurie("ZFIN:CURATOR");
@@ -136,6 +135,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         List<String> evidenceCodes = evidenceSet.stream().map(ZfinAllianceConverter::convertEvidenceCodes).flatMap(Collection::stream).map(ECOTerm::getCurie).collect(toList());
                         annotation.setEvidenceCodeCuries(evidenceCodes);
                         annotation.setReferenceCurie(getSingleReference(publication));
+                        annotation.setModInternalId(getUniqueID(fish, publication, evidenceCodes, fishExperiment.getExperiment().getName(), disease));
 
                         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
                         condition.setHandle(fishExperiment.getExperiment().getName().replace("_", ""));
@@ -158,6 +158,21 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         return diseaseDTOList;
     }
 
+    private String getUniqueID(Fish fish, Publication publication, List<String> evidenceCodes, String experiment, GenericTerm disease) {
+        String uniqueID = fish.getZdbID();
+        uniqueID +="|";
+        uniqueID += disease.getOboID();
+        uniqueID +="|";
+        uniqueID += publication.getZdbID();
+        uniqueID +="|";
+        StringJoiner values = new StringJoiner(",");
+        evidenceCodes.forEach(values::add);
+        uniqueID += values.toString();
+        uniqueID +="|";
+        uniqueID += experiment;
+        return uniqueID;
+    }
+
     private AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
@@ -169,7 +184,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
-        annotation.setModInternalId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setAgmIdentifier("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
@@ -178,6 +192,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream().map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
         annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        annotation.setModInternalId(getUniqueID(fish, damo.getDiseaseAnnotation().getPublication(), ecoTerms, damo.getFishExperiment().getExperiment().getName(), damo.getDiseaseAnnotation().getDisease()));
 
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
         List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
