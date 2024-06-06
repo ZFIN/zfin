@@ -60,8 +60,6 @@ public class EnsemblRecordFinder {
         loader.init();
     }
 
-    private Map<String, List<RichSequence>> allEnsemblProvidedGeneMap;
-
     Map<Marker, List<TranscriptDBLink>> geneEnsdartMap;
     Map<String, MarkerDBLink> ensdargMap;
 
@@ -69,10 +67,10 @@ public class EnsemblRecordFinder {
     public void init() throws IOException {
 
         // <ensdargID, DBLink>
-        ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions();
+
+        ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions(ForeignDB.AvailableName.ENSEMBL);
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         Set<String> ensdargsIDs = ensdargMap.keySet();
-        createReportFiles(geneEnsdartMap, new ArrayList<>(ensdargsIDs));
         System.out.println("Total Number of Genes with Ensembl Transcripts In ZFIN: " + geneEnsdartMap.size());
         System.out.println("Total Number of Genes in ZFIN with ENSDARG accessions: " + ensdargMap.size());
 
@@ -121,87 +119,8 @@ public class EnsemblRecordFinder {
         System.exit(0);
     }
 
-    private void createReportFiles(Map<Marker, List<TranscriptDBLink>> geneEnsdartMap, List<String> genesToBeConsidered) throws IOException {
-        List<String> listOfGeneIdsWithNoDifference = new ArrayList<>();
-        List<String> listOfGeneIdsWithDifferencesEnsemblLongest = new ArrayList<>();
-        List<String> listOfGeneIdsWithDifferences = new ArrayList<>();
-        List<String> listOfGeneIdsNotFoundInFile = new ArrayList<>();
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get("report-transcript-ensembl.txt"));
-
-        List<String> headerNames = List.of(
-            "GeneID",
-            "Number of Transcripts ZFIN",
-            "Lengths of transcripts ZFIN",
-            "Length of Transcripts not found in ensembl",
-            "Ensembl ID",
-            "Number of Transcripts Ensembl",
-            "Lengths of transcripts Ensembl",
-            "Length of Transcripts not found in ZFIN"
-        );
-        CSVPrinter csvPrinterImportant = new CSVPrinter(writer, CSVFormat.DEFAULT
-            .withHeader(headerNames.toArray(String[]::new)));
-
-        geneEnsdartMap.forEach((gene, markerDBLink) -> {
-            List<String> values = new ArrayList<>(headerNames.size());
-
-            List<LinkDisplay> list = getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE);
-            List<LinkDisplay> ensdarg = list.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG")).toList();
-            if (CollectionUtils.isEmpty(ensdarg))
-                return;
-            String ensdargAccession = ensdarg.get(0).getAccession();
-            if (!genesToBeConsidered.contains(gene.getZdbID())) {
-                return;
-            }
-            List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(ensdargAccession);
-            if (transcriptsEnsembl == null) {
-                listOfGeneIdsNotFoundInFile.add(ensdargAccession);
-                return;
-            }
-            Set<String> zfinAccessions = markerDBLink.stream().map(TranscriptDBLink::getAccessionNumber).collect(Collectors.toSet());
-            Set<String> ensemblAccessions = transcriptsEnsembl.stream().map(EnsemblRecordFinder::getString).collect(Collectors.toSet());
-            if (zfinAccessions.equals(ensemblAccessions)) {
-                listOfGeneIdsWithNoDifference.add(gene.getZdbID());
-            } else {
-                RelatedTranscriptDisplay disp = TranscriptService.getRelatedTranscriptsForGene(gene);
-                List<Integer> lengthsZfin = disp.getTranscripts().stream().map(relatedMarker -> relatedMarker.getDisplayedSequenceDBLinks().stream().map(DBLink::getLength).collect(Collectors.toList())).flatMap(Collection::stream).sorted().toList();
-                List<Integer> lengthsEnsembl = transcriptsEnsembl.stream().map(s -> s.getInternalSymbolList().length()).sorted().toList();
-                if (lengthsEnsembl.get(lengthsEnsembl.size() - 1) > lengthsZfin.get(lengthsZfin.size() - 1)) {
-                    listOfGeneIdsWithDifferencesEnsemblLongest.add(gene.getZdbID());
-                } else {
-                    listOfGeneIdsWithDifferences.add(gene.getZdbID());
-                }
-
-                values.add(gene.getZdbID());
-                values.add(String.valueOf(zfinAccessions.size()));
-                values.add(disp.getTranscripts().stream().map(relatedMarker -> relatedMarker.getDisplayedSequenceDBLinks().stream().map(link -> String.valueOf(link.getLength())).collect(joining(",")))
-                    .collect(joining("|")));
-                values.add(CollectionUtils.subtract(lengthsZfin, lengthsEnsembl) + "");
-                values.add(ensdargAccession);
-                values.add(ensemblAccessions.size() + "");
-                values.add(transcriptsEnsembl.stream().map(s -> String.valueOf(s.getInternalSymbolList().length())).collect(Collectors.joining("|")));
-                values.add(CollectionUtils.subtract(lengthsEnsembl, lengthsZfin) + "");
-
-                try {
-                    String[] values1 = values.toArray(String[]::new);
-                    csvPrinterImportant.printRecord((Object[]) values1);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        try {
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String getString(RichSequence richSequence) {
-        return richSequence.getAccession().split("\\.")[0];
-    }
-
-    private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+    private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions(ForeignDB.AvailableName foreignDB) {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(foreignDB);
         Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
             Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
 

@@ -1231,11 +1231,14 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
-    public List<MarkerDBLink> getAllEnsemblGenes() {
-        String hql = " from MarkerDBLink  " +
-                     " where referenceDatabase.foreignDB.dbName = (:dbName) ";
+    public List<MarkerDBLink> getAllEnsemblGenes(ForeignDB.AvailableName foreignDB) {
+        String hql = """ 
+                  from MarkerDBLink
+                  where referenceDatabase.foreignDB.dbName = (:dbName)
+                  AND accessionNumber like 'ENSDARG%'
+            """;
         Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
-        query.setParameter("dbName", ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+        query.setParameter("dbName", foreignDB);
         return query.list();
     }
 

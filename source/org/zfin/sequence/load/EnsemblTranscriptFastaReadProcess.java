@@ -495,7 +495,7 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
@@ -516,7 +516,7 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         System.out.println("Total Number of Ensembl Genes In ZFIN: " + ensdargList.size());
@@ -536,7 +536,7 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private void getMarkerDBLinksWithVegaEnsemblOnlyAccessions() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
@@ -557,7 +557,7 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithGenbankEnsemblOnlyAccessions() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes();
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         // vega gene list
