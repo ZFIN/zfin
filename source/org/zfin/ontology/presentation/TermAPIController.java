@@ -218,30 +218,18 @@ public class TermAPIController {
         if (isAmelioratedExacerbated != null) {
             pagination.addToNotNullFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch");
         }
-        if (wildType != null) {
-            pagination.addToExactFilterMap("chebiPhenotype.fish.wildtype", wildType ? "t" : "f");
-        }
-        if (isMultiChebiCondition != null) {
-            pagination.addToExactFilterMap("chebiPhenotype.multiChebiCondition", isMultiChebiCondition ? "t" : "f");
-        }
-        if (StringUtils.isNotEmpty(filterConditionName)) {
-            pagination.addToFilterMap("chebiPhenotype.conditionSearch", filterConditionName);
-        }
-        if (StringUtils.isNotEmpty(filterModification)) {
-            pagination.addToFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch", filterModification);
-        }
-        if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("chebiPhenotype.fish.name", filterFishName);
-        }
-        if (StringUtils.isNotEmpty(filterPhenotype)) {
-            pagination.addToFilterMap("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
-        }
-        if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("chebiPhenotype.expConditionChebiSearch", filterTermName);
-        }
 
-        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseDirect = getDiseasePageRepository().getPhenotypeChebi(term, pagination, false);
-        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseAll = getDiseasePageRepository().getPhenotypeChebi(term, pagination, true);
+        pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.fish.wildtype", wildType);
+        pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.multiChebiCondition", isMultiChebiCondition);
+
+        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.conditionSearch", filterConditionName);
+        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.amelioratedExacerbatedPhenoSearch", filterModification);
+        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.fish.name", filterFishName);
+        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
+        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.expConditionChebiSearch", filterTermName);
+
+        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseDirect = getDiseasePageRepository().getPhenotypeChebi(term, pagination, filterPhenotype, false);
+        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseAll = getDiseasePageRepository().getPhenotypeChebi(term, pagination, filterPhenotype, true);
 
         int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
         response.addSupplementalData("countDirect", totalCountDirect);
