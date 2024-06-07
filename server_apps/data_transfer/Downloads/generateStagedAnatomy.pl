@@ -9,24 +9,30 @@
 # INPUT:
 #     none
 # OUTPUT:
-#     <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_structure.txt
+#     $ROOT_PATH/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_structure.txt
 #
 
 use strict;
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
+
+my $rootPath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbusername = "";
+my $dbpassword = "";
+
 
 my ($stgZdbId, $lastStgZdbId, $stgName, $anatName, $dispIndent);
 my $mailprog = '/usr/lib/sendmail -t -oi -oem';
-my $output = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/staged_anatomy.other";
+my $output = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/staged_anatomy.other";
 
 open (OUT,">$output") or &emailError ("Can not open $output to write");
 
-my $dbname = "<!--|DB_NAME|-->";
-
-my $dbhost = "<!--|PGHOST|-->";
-my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=$dbhost",
-                       "", "", 
-                      )
+my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=$dbhost", $dbusername, $dbpassword)
     or die "Cannot connect to database: $DBI::errstr\n"; 
 
 $lastStgZdbId = "";

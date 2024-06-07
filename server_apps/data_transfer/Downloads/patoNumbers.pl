@@ -8,19 +8,26 @@
 # do some text processing would fix the problem.
 
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
+
+my $rootPath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbusername = "";
+my $dbpassword = "";
+
 
 # set environment variables
 
 # call patoNumbers.sql to prepare some download files and some pre-processed files
-system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
+system("psql -v ON_ERROR_STOP=1 -d $dbname -a -f patoNumbers.sql");
 
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) 
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $dbusername, $dbpassword)
     or die "Cannot connect to database: $DBI::errstr\n";
 
 # get the ZDB Gene Id/NCBI Gene Id pairs
@@ -53,8 +60,8 @@ $cur->finish();
 
 $dbh->disconnect(); 
 
-$prephenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt";
-$phenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_fish.txt";
+$prephenofile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt";
+$phenofile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/pheno_fish.txt";
 
 
 
@@ -110,8 +117,8 @@ close (PHENO);
 
 #system("rm -f $prephenofile");
 
-$preorthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt";
-$orthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ortho.txt";
+$preorthofile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt";
+$orthofile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/ortho.txt";
 
 open (PREORTHO, "$preorthofile") ||  die "Cannot open $preorthofile : $!\n";
 open (ORTHO, ">$orthofile") || die "can not open $orthofile: $!\n";
