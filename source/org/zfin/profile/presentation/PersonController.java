@@ -25,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  */
@@ -277,6 +278,11 @@ public class PersonController {
             e.printStackTrace();
             logger.error(e);
             errors.reject("", "There was a problem updating your user record.");
+        }
+
+        Optional<String> errorMessage = profileService.validateEmailChange(newPerson, fields);
+        if (errorMessage.isPresent()) {
+            errors.reject("", errorMessage.get());
         }
 
         if (errors.hasErrors()) {
