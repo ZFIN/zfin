@@ -3,13 +3,12 @@ package org.zfin.ui.repository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.hibernate.ScrollMode;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -18,12 +17,10 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.repository.PaginationResultFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import static java.util.stream.Collectors.groupingBy;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
 
@@ -143,7 +140,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     }
 
     @Override
-    public PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, boolean includeChildren) {
+    public PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, String filterPhenotype, boolean includeChildren) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
         String hql;
         if (!includeChildren) {
@@ -158,10 +155,10 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        if (MapUtils.isNotEmpty(pagination.getExactFilterMap())) {
-            for (var entry : pagination.getExactFilterMap().entrySet()) {
+        if (MapUtils.isNotEmpty(pagination.getBooleanFilterMap())) {
+            for (var entry : pagination.getBooleanFilterMap().entrySet()) {
                 hql += " AND ";
-                hql += entry.getKey() + "= '" + entry.getValue() + "' ";
+                hql += entry.getKey() + " = " + (entry.getValue() ? "true" : "false" ) + " ";
             }
         }
         if (CollectionUtils.isNotEmpty(pagination.getNotNullFilterMap())) {
@@ -178,6 +175,9 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
             var psws = chebiPhenotypeDisplay.getPhenotypeStatements();
             psws = firstInEachGrouping(psws, p -> p.getDisplayName());
+            if (StringUtils.isNotEmpty(filterPhenotype)) {
+                psws = psws.stream().filter(p -> containsIgnoreCase(p.getDisplayName(), filterPhenotype)).toList();
+            }
             chebiPhenotypeDisplay.setPhenotypeStatements(psws);
         });
         return result;

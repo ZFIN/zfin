@@ -21,7 +21,7 @@ public class Pagination {
     private List<String> invalidFilterList = new ArrayList<>();
 
     private Map<String, String> filterMap = new HashMap<>();
-    private Map<String, String> exactFilterMap = new HashMap<>();
+    private Map<String, Boolean> booleanFilterMap = new HashMap<>();
     private Set<String> notNullFilterMap = new HashSet<>();
     private Set<String> nullFilterMap = new HashSet<>();
     private boolean isCount = false;
@@ -181,8 +181,16 @@ public class Pagination {
         filterMap.put(key, value);
     }
 
-    public void addToExactFilterMap(String key, String value) {
-        exactFilterMap.put(key, value);
+    public void addToBooleanFilterMapIfNotNull(String s, Boolean booleanValue) {
+        if (booleanValue != null) {
+            booleanFilterMap.put(s, booleanValue);
+        }
+    }
+
+    public void addToFilterMapIfNotEmpty(String key, String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            filterMap.put(key, value);
+        }
     }
 
     public void addToNotNullFilterMap(String value) {
@@ -195,10 +203,6 @@ public class Pagination {
 
     public Map<String, String> getFilterMap() {
         return filterMap;
-    }
-
-    public Map<String, String> getExactFilterMap() {
-        return exactFilterMap;
     }
 
     public Set<String> getNotNullFilterMap() {

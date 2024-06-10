@@ -22,7 +22,7 @@ public interface DiseasePageRepository {
     List<ChebiFishModelDisplay> getFishDiseaseChebiModels(GenericTerm term, boolean includeChildren);
     List<FishModelDisplay> getAllFishDiseaseModels();
 
-    PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, boolean includeChildren);
+    PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, String filterPhenotype, boolean includeChildren);
 
     int deleteUiTables(String... tableName);
 }

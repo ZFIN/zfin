@@ -44,6 +44,15 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
         setFilter(event.target.value);
     }
 
+    const handlePageSizeChange = (e) => {
+        const newPageSize = e.target.value;
+        const newLastPageNumber = lastPageNumberByPageSize(newPageSize);
+        setPageSize(newPageSize);
+        if (page > newLastPageNumber) {
+            setPage(newLastPageNumber);
+        }
+    }
+
     //important!  the input to a filter is the entire list, not one record at a time
     const filteredValues = () => {
         let input = facetValues;
@@ -106,6 +115,10 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
         return Math.ceil(filteredValues().length / pageSize);
     }
 
+    const lastPageNumberByPageSize = (byPageSize) => {
+        return Math.ceil(filteredValues().length / byPageSize);
+    }
+
     const nextPage = () => {
         if (page < lastPageNumber()) {
             setPage(page + 1);
@@ -137,7 +150,9 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
                         <a className='facet-exclude' href={baseUrlWithoutPage + 'fq=-' + field + ':%22' + row.name + '%22'}>
                             <i className='include-exclude-icon fa fa-minus-circle'/>
                         </a>{' '}
-                        {' '}<a href={baseUrlWithoutPage + 'fq=' + field + ':%22' + row.name + '%22'}>{row.value}</a>{' '}
+                        {' '}
+                        <a href={baseUrlWithoutPage + 'fq=' + field + ':%22' + row.name + '%22'} dangerouslySetInnerHTML={{__html: row.value}}/>
+                        {' '}
                         {' '}<span style={{'paddingLeft': '1em'}} className='float-right'>({row.count})</span>{' '}
                     </li>
                 )}
@@ -156,7 +171,7 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
                     Show:{' '}
                     <select
                         value={pageSize}
-                        onChange={(e) => {setPageSize(e.target.value)}}
+                        onChange={handlePageSizeChange}
                         style={{'width': '4em', 'position': 'relative', 'top': '.3em'}}
                     >
                         <option value='10'>10</option>
