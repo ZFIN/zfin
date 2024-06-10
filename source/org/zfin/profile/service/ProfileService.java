@@ -753,4 +753,22 @@ public class ProfileService {
     private EmailPrivacyPreference getDefaultEmailPrivacyPreference() {
         return profileRepository.getEmailPrivacyPreference(EmailPrivacyPreference.Name.PUBLIC);
     }
+
+    /**
+     * Returns an error message if the email change is not allowed.
+     * @param fields fields changed from comparePersonFields method
+     * @return
+     */
+    public Optional<String> validateEmailChange(Person person, List<BeanFieldUpdate> fields) {
+        for (BeanFieldUpdate field : fields) {
+            if (field.getField().equals("email")) {
+                String newEmail = (String) field.getTo();
+                Person existingPerson = profileRepository.getPersonByEmail(newEmail);
+                if (existingPerson != null && !existingPerson.getZdbID().equals(person.getZdbID())) {
+                    return Optional.of("Email address is already in use by another user.");
+                }
+            }
+        }
+        return Optional.empty();
+    }
 }
