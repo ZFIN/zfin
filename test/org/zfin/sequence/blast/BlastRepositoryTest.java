@@ -257,14 +257,12 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         for (Database database : databases) {
             assertNotNull(database.getAbbrev().toString() + " should be in the accession count map", map.get(database.getAbbrev().toString()));
         }
-
     }
 
     @Test
     public void testEnsemblGenes() {
-        List<MarkerDBLink> map = getSequenceRepository().getAllEnsemblGenes();
+        List<MarkerDBLink> map = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         assertNotNull("accession count map is not null", map);
-
     }
 
 }
