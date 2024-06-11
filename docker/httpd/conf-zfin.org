@@ -41,6 +41,9 @@
     RewriteCond %{HTTPS} =off
     RewriteCond %{REQUEST_URI} ^/jobs
     RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+    RewriteCond %{HTTPS} =off
+    RewriteCond %{REQUEST_URI} ^/logs
+    RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
     Include /srv/www/zfin.org/server_apps/apache/inc-redirect
 
@@ -83,6 +86,12 @@
         ProxyPassReverse  http://watson.zfin.org/jobs
         ProxyPassReverse  http://crick.zfin.org/jobs
         ProxyPassReverse  http://stage.zfin.org/jobs
+    </Location>
+    <Location /logs>
+        SSLRequireSSL
+        Require env ZfinRestrictedHosts
+        ProxyPass         http://kibana:5601/logs
+        ProxyPassReverse  http://kibana:5601/logs
     </Location>
 </VirtualHost>
 
@@ -177,6 +186,12 @@
 
       ProxyPass         http://localhost:8983/solr
       ProxyPassReverse  http://localhost:8983/solr
+    </Location>
+    <Location /logs>
+        SSLRequireSSL
+        Require env ZfinRestrictedHosts
+        ProxyPass          http://kibana:5601/logs
+        ProxyPassReverse   http://kibana:5601/logs
     </Location>
             
     Include /srv/www/zfin.org/server_apps/apache/inc-redirect
