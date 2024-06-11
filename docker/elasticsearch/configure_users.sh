@@ -11,13 +11,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/helpers.sh"
 
 declare -A users_passwords
 users_passwords=(
-	[logstash_internal]="${LOGSTASH_INTERNAL_PASSWORD:-}"
 	[kibana_system]="${KIBANA_SYSTEM_PASSWORD:-}"
 )
 
 declare -A users_roles
 users_roles=(
-	[logstash_internal]='logstash_writer'
 )
 
 # --------------------------------------------------------
@@ -25,7 +23,6 @@ users_roles=(
 
 declare -A roles_files
 roles_files=(
-	[logstash_writer]='logstash_writer.json'
 )
 
 # --------------------------------------------------------
@@ -85,6 +82,11 @@ for user in "${!users_passwords[@]}"; do
 		sublog 'No password defined, skipping'
 		continue
 	fi
+
+	if [[ "${users_passwords[$user]}" == "ChangeMe!" ]]; then
+                err  'Cannot use "ChangeMe!" as a password. Please change.'
+		continue
+        fi
 
 	declare -i user_exists=0
 	user_exists="$(check_user_exists "$user")"
