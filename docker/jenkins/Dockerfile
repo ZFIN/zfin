@@ -6,7 +6,7 @@ RUN apt update && apt install -y --no-install-recommends \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release msmtp 
+       gnupg lsb-release msmtp jq
 
 #add the postgresql repo so we can have a postgresql client that matches the server
 ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
