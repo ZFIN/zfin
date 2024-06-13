@@ -69,6 +69,44 @@ function cassettesToSimplifiedCassettes(cassettes: Cassette[]): SimplifiedCasset
     return cassettes.map(cassetteToSimplifiedCassette);
 }
 
+function simplifiedCassetteToCassette(simplifiedCassette: SimplifiedCassette): Cassette {
+    const promoter = [];
+    const coding = [];
+    for (const component of simplifiedCassette.coding) {
+        coding.push({
+            id: null,
+            name: null,
+            label: '',
+            value: component,
+            url: null,
+            category: null,
+            type: null,
+            separator: ''
+        });
+    }
+    for (const component of simplifiedCassette.promoter) {
+        promoter.push({
+            id: null,
+            name: null,
+            label: '',
+            value: component,
+            url: null,
+            category: null,
+            type: null,
+            separator: ''
+        });
+    }
+    return {
+        cassetteNumber: simplifiedCassette.cassetteNumber,
+        promoter: promoter,
+        coding: coding
+    };
+}
+
+function simplifiedCassettesToCassettes(simplifiedCassettes: SimplifiedCassette[]): Cassette[] {
+    return simplifiedCassettes.map(simplifiedCassetteToCassette);
+}
+
 function typeAbbreviationToType(typeAbbreviation: string): string {
     switch (typeAbbreviation) {
     case 'Tg':
@@ -89,4 +127,4 @@ type MarkerNameAndZdbId = {
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, simplifiedCassettesToCassettes};

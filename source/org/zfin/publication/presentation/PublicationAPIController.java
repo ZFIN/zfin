@@ -461,7 +461,16 @@ public class PublicationAPIController {
             }
         }
 
-        return constructRelnDTOs;
+        getMarkerRepository().getConstructsForAttribution(publicationID).forEach(construct -> {
+            Set<ConstructRelationship> crels = construct.getConstructRelations();
+            for(ConstructRelationship crel : crels) {
+                ConstructRelationshipDTO dto = DTOConversionService.convertToConstructRelationshipDTO(crel);
+                constructRelnDTOs.add(dto);
+            }
+        });
+
+        HashSet<ConstructRelationshipDTO> uniqueConstructRelationships = new HashSet<>(constructRelnDTOs);
+        return uniqueConstructRelationships.stream().toList();
     }
 
     @Getter

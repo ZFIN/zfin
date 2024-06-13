@@ -1,6 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
-import {cassettesToSimplifiedCassettes, ConstructFormDTO, typeAbbreviationToType} from './ConstructTypes';
+import {
+    cassettesToSimplifiedCassettes,
+    ConstructFormDTO,
+    SimplifiedCassette,
+    typeAbbreviationToType
+} from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
 const calculatedDomain = backendBaseUrl();
 
@@ -23,6 +28,7 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
     const [publicNote, setPublicNote] = useState('');
     const [curatorNote, setCuratorNote] = useState('');
     const [cassettes, setCassettes] = useState([]);
+    const [initialCassettes, setInitialCassettes] = useState<SimplifiedCassette[]>([]);
     const [cassettesDisplay, setCassettesDisplay] = useState('');
     const [saving, setSaving] = useState(false);
     const [resetFlag, setResetFlag] = useState<number>(0);
@@ -69,17 +75,19 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
             fetch(`${calculatedDomain}/action/construct/json/${constructId}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('construct data', data);
                     setChosenType(data.typeAbbreviation);
                     setPrefix(data.prefix);
                     // setSynonym(data.synonym);
                     // setSequence(data.sequence);
                     // setPublicNote(data.publicNote);
                     // setCuratorNote(data.curatorNote);
-                    setCassettes(data.cassettes);
+                    console.log('cassettes', data.cassettes);
+                    setInitialCassettes(data.cassettes);
                     // setCassettesDisplay(cassetteHumanReadableList(data.cassettes));
                 });
         }
-    }, []);
+    }, [constructId]);
 
     return <>
             <div className='mb-3' style={{backgroundColor: '#eee'}}>
@@ -129,7 +137,7 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                     </tbody>
                 </table>
                 <div className='mb-3'>
-                    <ConstructCassetteListEditor publicationId={publicationId} onChange={handleCassettesChanged} resetFlag={resetFlag}/>
+                    <ConstructCassetteListEditor publicationId={publicationId} onChange={handleCassettesChanged} resetFlag={resetFlag} initialCassettes={initialCassettes}/>
                 </div>
                 <div className='mb-3'>
                     <p>
