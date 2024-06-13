@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-9240-load-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1158/ZFIN-9240.csv"
+                  tableName="ensembl_remove_temp" quotchar='"'>
+            <column  header="ID" name="ert_accession" type="String"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>
