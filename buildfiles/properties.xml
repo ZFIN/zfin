@@ -158,7 +158,6 @@
         <echo message="INSTANCE:             ${INSTANCE}"/>
         <echo message="USER:                 ${USER}"/>
         <echo message="DBNAME:               ${DBNAME}"/>
-        <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
         <echo message="isinformix:           ${isinformix}"/>
         <echo message="isdocker:             ${isdocker}"/>
         <echo message="isproduction:         ${isproduction}"/>
