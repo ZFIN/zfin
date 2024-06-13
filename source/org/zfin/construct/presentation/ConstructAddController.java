@@ -90,9 +90,9 @@ public class ConstructAddController {
     String createConstruct(@RequestBody AddConstructFormFields constructValues) {
         Marker newConstruct;
         //set the construct name from the object
+        constructValues.getConstructNameObject().reinitialize();
         constructValues.setConstructName(constructValues.getConstructNameObject().toString());
         constructValues.setConstructSequence(constructValues.getConstructSequence().toUpperCase());
-        constructValues.getConstructNameObject().reinitialize();
         try {
             HibernateUtil.createTransaction();
             newConstruct = createNewConstructFromSubmittedForm(constructValues);
