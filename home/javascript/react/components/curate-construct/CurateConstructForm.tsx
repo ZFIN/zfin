@@ -17,7 +17,7 @@ interface CurateConstructFormProps {
     publicationId: string;
     constructId: string;
     submitButtonLabel: string;
-    onSubmit: (submissionObject: any) => Promise<void>;
+    onSubmit: (submissionObject) => Promise<void>;
 }
 
 const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onSubmit}: CurateConstructFormProps) => {
@@ -84,7 +84,6 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
             fetch(`${calculatedDomain}/action/construct/json/${constructId}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('construct data', data);
                     setChosenType(data.typeAbbreviation);
                     setPrefix(data.prefix);
                     // setSynonym(data.synonym);
@@ -104,14 +103,14 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
     }, [chosenType, prefix, cassettesDisplay]);
 
     return <>
-            <div className='mb-3' style={{backgroundColor: '#eee'}}>
-                <table>
-                    <thead/>
-                    <tbody>
+        <div className='mb-3' style={{backgroundColor: '#eee'}}>
+            <table>
+                <thead/>
+                <tbody>
                     {constructId &&
                         <tr>
                             <td><b>Construct ID</b></td>
-                            <td><a href={'/' + constructId} target='_blank'>{constructId}</a></td>
+                            <td><a href={'/' + constructId} target='_blank' rel='noreferrer'>{constructId}</a></td>
                         </tr>
                     }
                     <tr>
@@ -138,11 +137,25 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                     </tr>
                     <tr>
                         <td><b>Synonym</b>:</td>
-                        <td><input autoComplete='off' type='text' size='50' value={synonym} onChange={e => setSynonym(e.target.value)}/></td>
+                        <td><input
+                            autoComplete='off'
+                            type='text'
+                            size='50'
+                            value={synonym}
+                            onChange={e => setSynonym(e.target.value)}
+                        />
+                        </td>
                     </tr>
                     <tr>
                         <td><b>Sequence</b>:</td>
-                        <td><input autoComplete='off' type='text' size='50' value={sequence} onChange={e => setSequence(e.target.value)}/></td>
+                        <td><input
+                            autoComplete='off'
+                            type='text'
+                            size='50'
+                            value={sequence}
+                            onChange={e => setSequence(e.target.value)}
+                        />
+                        </td>
                     </tr>
                     <tr>
                         <td><b>Public Note</b>:</td>
@@ -154,22 +167,22 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                             <textarea rows='3' cols='50' value={curatorNote} onChange={e => setCuratorNote(e.target.value)}/>
                         </td>
                     </tr>
-                    </tbody>
-                </table>
-                <div className='mb-3'>
-                    <ConstructCassetteListEditor publicationId={publicationId} onChange={handleCassettesChanged} resetFlag={resetFlag} initialCassettes={initialCassettes}/>
-                </div>
-                <div className='mb-3'>
-                    <p>
-                        <b>Display Name:</b>
-                        <input name='constructDisplayName' disabled='disabled' type='text' value={constructDisplayName} size='150'/>
-                    </p>
-                </div>
-                <div className='mb-3'>
-                    <button type='button' className='mr-2' onClick={submitForm} disabled={saving}>{submitButtonLabel}</button>
-                    <button type='button' onClick={clearForm} disabled={saving}>Cancel</button>
-                </div>
+                </tbody>
+            </table>
+            <div className='mb-3'>
+                <ConstructCassetteListEditor publicationId={publicationId} onChange={handleCassettesChanged} resetFlag={resetFlag} initialCassettes={initialCassettes}/>
             </div>
+            <div className='mb-3'>
+                <p>
+                    <b>Display Name:</b>
+                    <input name='constructDisplayName' disabled='disabled' type='text' value={constructDisplayName} size='150'/>
+                </p>
+            </div>
+            <div className='mb-3'>
+                <button type='button' className='mr-2' onClick={submitForm} disabled={saving}>{submitButtonLabel}</button>
+                <button type='button' onClick={clearForm} disabled={saving}>Cancel</button>
+            </div>
+        </div>
     </>;
 }
 
