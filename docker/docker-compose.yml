@@ -12,6 +12,7 @@ services:
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       SSH_USER: ${DOCKER_SSH_USER}
       TZ: ${TZ}
+      ELK_VERSION: ${ELK_VERSION}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
       INSTANCE: ${DOCKER_INSTANCE}
