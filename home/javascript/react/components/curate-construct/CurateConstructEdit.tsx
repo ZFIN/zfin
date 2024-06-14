@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import CurateConstructForm from "./CurateConstructForm";
-import {backendBaseUrl} from "./DomainInfo";
+import CurateConstructForm from './CurateConstructForm';
+import {backendBaseUrl} from './DomainInfo';
 import {ConstructFormDTO, MarkerNameAndZdbId} from './ConstructTypes';
 
 const calculatedDomain = backendBaseUrl();
@@ -12,8 +12,8 @@ interface CurateConstructEditProps {
 const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [display, setDisplay] = useState<boolean>(false);
     const [displayEditForm, setDisplayEditForm] = useState<boolean>(false);
-    const [selectedConstruct, setSelectedConstruct] = useState<any>(null);
-    const [constructList, setConstructList] = useState<any[]>([]);
+    const [selectedConstruct, setSelectedConstruct] = useState<string>(null);
+    const [constructList, setConstructList] = useState<MarkerNameAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
 
@@ -24,7 +24,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     async function loadConstructList() {
         const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
         const data = await response.json();
-        const constructIdNameList = data.map((row: any) : MarkerNameAndZdbId => {
+        const constructIdNameList = data.map((row) : MarkerNameAndZdbId => {
             return {
                 zdbID: row.constructDTO.zdbID,
                 label: row.constructDTO.name
