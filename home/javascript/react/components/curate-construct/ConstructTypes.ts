@@ -122,9 +122,18 @@ function typeAbbreviationToType(typeAbbreviation: string): string {
     }
 }
 
+function normalizeSimplifiedCassettes(simplifiedCassettes) {
+    return simplifiedCassettes.map((cassette, i) => ({
+        cassetteNumber: cassette.cassetteNumber,
+        promoter: cassette.promoter.filter((component, j) => !(j === 0 && i > 0 && component === ',')),
+        coding: [...cassette.coding]
+    }));
+}
+
+
 type MarkerNameAndZdbId = {
     label: string;
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, simplifiedCassettesToCassettes};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes};

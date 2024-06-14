@@ -3,6 +3,7 @@ import ConstructCassetteListEditor, {cassetteHumanReadableList} from './Construc
 import {
     cassettesToSimplifiedCassettes,
     ConstructFormDTO,
+    normalizeSimplifiedCassettes,
     SimplifiedCassette,
     typeAbbreviationToType
 } from './ConstructTypes';
@@ -69,6 +70,10 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
         });
     }
 
+    function setInitialCassettesFromApiResult(normalizedCassettes) {
+        setInitialCassettes(normalizeSimplifiedCassettes(normalizedCassettes));
+    }
+
     //eg. ZDB-TGCONSTRCT-220310-1
     useEffect(() => {
         if (constructId) {
@@ -82,9 +87,10 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                     // setSequence(data.sequence);
                     // setPublicNote(data.publicNote);
                     // setCuratorNote(data.curatorNote);
-                    console.log('cassettes', data.cassettes);
-                    setInitialCassettes(data.cassettes);
-                    // setCassettesDisplay(cassetteHumanReadableList(data.cassettes));
+                    if (data.cassettes) {
+                        setInitialCassettesFromApiResult(normalizeSimplifiedCassettes(data.cassettes));
+                        setCassettesDisplay(data.displayName);
+                    }
                 });
         }
     }, [constructId]);
