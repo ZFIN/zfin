@@ -68,6 +68,8 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
         onSubmit(submissionObject).then(() => {
             setSaving(false);
             clearForm();
+        }).catch(() => {
+            setSaving(false);
         });
     }
 
@@ -106,6 +108,12 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                 <table>
                     <thead/>
                     <tbody>
+                    {constructId &&
+                        <tr>
+                            <td><b>Construct ID</b></td>
+                            <td><a href={'/' + constructId} target='_blank'>{constructId}</a></td>
+                        </tr>
+                    }
                     <tr>
                         <td><b>Construct Type</b></td>
                         <td>

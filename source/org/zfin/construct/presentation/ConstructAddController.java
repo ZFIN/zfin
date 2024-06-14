@@ -57,7 +57,7 @@ public class ConstructAddController {
     @RequestMapping(value = "/construct-add-component", method = RequestMethod.POST)
     public
     @ResponseBody
-        String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Marker newConstruct;
         AddConstructFormFields form = AddConstructFormFields.fromRequest(request);
 

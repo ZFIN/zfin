@@ -470,7 +470,9 @@ public class PublicationAPIController {
         });
 
         HashSet<ConstructRelationshipDTO> uniqueConstructRelationships = new HashSet<>(constructRelnDTOs);
-        return uniqueConstructRelationships.stream().toList();
+        ArrayList<ConstructRelationshipDTO> uniqueList = new ArrayList<>(uniqueConstructRelationships);
+        uniqueList.sort(Comparator.comparing(constructRelationshipDTO -> constructRelationshipDTO.getConstructDTO().getName()));
+        return uniqueList;
     }
 
     @Getter
