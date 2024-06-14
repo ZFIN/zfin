@@ -31,6 +31,7 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
     const [cassettes, setCassettes] = useState([]);
     const [initialCassettes, setInitialCassettes] = useState<SimplifiedCassette[]>([]);
     const [cassettesDisplay, setCassettesDisplay] = useState('');
+    const [constructDisplayName, setConstructDisplayName] = useState('');
     const [saving, setSaving] = useState(false);
     const [resetFlag, setResetFlag] = useState<number>(0);
 
@@ -77,6 +78,7 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
     //eg. ZDB-TGCONSTRCT-220310-1
     useEffect(() => {
         if (constructId) {
+            clearForm();
             fetch(`${calculatedDomain}/action/construct/json/${constructId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -89,11 +91,15 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                     // setCuratorNote(data.curatorNote);
                     if (data.cassettes) {
                         setInitialCassettesFromApiResult(normalizeSimplifiedCassettes(data.cassettes));
-                        setCassettesDisplay(data.displayName);
+                        setConstructDisplayName(data.displayName);
                     }
                 });
         }
     }, [constructId]);
+
+    useEffect(() => {
+        setConstructDisplayName(chosenType + prefix + '(' + cassettesDisplay + ')');
+    }, [chosenType, prefix, cassettesDisplay]);
 
     return <>
             <div className='mb-3' style={{backgroundColor: '#eee'}}>
@@ -148,7 +154,7 @@ const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onS
                 <div className='mb-3'>
                     <p>
                         <b>Display Name:</b>
-                        <input name='constructDisplayName' disabled='disabled' type='text' value={chosenType + prefix + '(' + cassettesDisplay + ')'} size='150'/>
+                        <input name='constructDisplayName' disabled='disabled' type='text' value={constructDisplayName} size='150'/>
                     </p>
                 </div>
                 <div className='mb-3'>
