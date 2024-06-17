@@ -169,6 +169,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
+        <mapping class="org.zfin.profile.AccountInfo"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceNeed"/>
         <mapping class="org.zfin.publication.CorrespondenceNeedReason"/>

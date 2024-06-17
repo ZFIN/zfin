@@ -112,7 +112,7 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
 
     @Override
     public List<Publication> getZebraSharePublicationsForPerson(Person person) {
-        if (person.getZdbID() == null) {
+        if (person == null || person.getZdbID() == null) {
             return Collections.emptyList();
         }
         String hql = "" +
