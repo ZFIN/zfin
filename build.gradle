@@ -289,15 +289,7 @@ def whitelistTemplateFiles = [
         '**/parseHumanData.pl',
         '**/updateZebrafishGeneNames.pl',
         '**/loadAndUpdateNCBIOrthologs.sql',
-        '**/generateStagedAnatomy.pl',                              //server_apps/data_transfer/Downloads
-        '**/DownloadFiles.pl',
-        '**/CZRCfeature.pl',
-        '**/DownloadFiles.sql',
-        '**/patoNumbers.sql',
-        '**/patoNumbers.pl',
         '**/E_unload_ensembl_contig.sql',                           //server_apps/data_transfer/Downloads/GFF3
-        '**/dump.sql',                                              //server_apps/data_transfer/Downloads/intermineData
-        '**/dumper.sh',
         '**/pullFromEZRC.pl',                                       //server_apps/data_transfer/ResourceCenters
         '**/pullFromCZRC.pl',
         '**/pullFromResourceCenter.pl',
