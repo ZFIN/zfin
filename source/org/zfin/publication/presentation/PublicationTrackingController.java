@@ -226,8 +226,13 @@ public class PublicationTrackingController {
 
         Updates update = new Updates();
         update.setFieldName("status");
-        String newValue = dto.getStatus().getName().getDisplay();
+        
+        String newValue = null;
+        if (dto.getStatus() != null && dto.getStatus().getName() != null) {
+            newValue = dto.getStatus().getName().getDisplay();
+        }
         update.setNewValue(newValue);
+
         List<Updates> updates = getInfrastructureRepository().getUpdates(zdbID);
         Optional<Updates> up = updates.stream().filter(updates1 -> updates1.getFieldName().equals("status")).findFirst();
         up.ifPresent(value -> update.setOldValue(value.getNewValue()));
