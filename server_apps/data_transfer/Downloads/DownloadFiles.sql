@@ -149,7 +149,7 @@ end
 );
 
 -- create antibody download file
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt'"
+--! echo "'./downloadsStaging/antibodies2.txt'"
 create view antibodies as
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 	atb_immun_organism, atb_host_organism, szm_term_ont_id,'' as atb_reg_id
@@ -166,11 +166,11 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
  and dblink_linked_recid=atb_zdb_id
  and dblink_acc_num  like '%AB%'
  order by 1;
-\copy (select * from antibodies) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt' with delimiter as '	' null as '';
+\copy (select * from antibodies) to './downloadsStaging/antibodies2.txt' with delimiter as '	' null as '';
 drop view antibodies;
 
 -- create antibody expression download file
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions_fish.txt'"
+--! echo "'./downloadsStaging/antibody_expressions_fish.txt'"
 create view antibodyExpression as
 select  mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id as subontid, sub.term_name as subname
  from marker, expression_experiment2, expression_result2, expression_figure_stage, fish, term as super
@@ -221,23 +221,23 @@ where efs_xpatex_zdb_id = xpatex_zdb_id
  order by mrkr_zdb_id
 ;
 
-\copy (select * from antibodyExpression) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions_fish.txt' with delimiter as '	' null as '';
+\copy (select * from antibodyExpression) to './downloadsStaging/antibody_expressions_fish.txt' with delimiter as '	' null as '';
 drop view antibodyExpression;
 
 -- create all marker file
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genetic_markers.txt'"
+--! echo "'./downloadsStaging/genetic_markers.txt'"
 
 create view geneticMarkers as
 select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type, szm_term_ont_id
  from marker, so_zfin_mapping
  where szm_object_type = mrkr_type
   order by 1;
-\copy (select * from geneticMarkers) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genetic_markers.txt' with delimiter as '	' null as '';
+\copy (select * from geneticMarkers) to './downloadsStaging/genetic_markers.txt' with delimiter as '	' null as '';
 drop view geneticMarkers;
 
 -- create other names file
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/aliases.txt'"
+--! echo "'./downloadsStaging/aliases.txt'"
 create view aliasView as
 select mrkr_zdb_id , mrkr_name, mrkr_abbrev, dalias_alias, szm_term_ont_id
  from marker, data_alias, so_zfin_mapping
@@ -255,11 +255,11 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
  and szm_object_type = 'GENOTYPE'
  order by 1, 4
 ;
-\copy (select * from aliasView) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/aliases.txt' with delimiter as '	' null as '';
+\copy (select * from aliasView) to './downloadsStaging/aliases.txt' with delimiter as '	' null as '';
 drop view aliasView;
 
 -- Create marker realtionship file
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_marker_relationship.txt'"
+--! echo "'./downloadsStaging/gene_marker_relationship.txt'"
 
 create view gene_marker_relationship as
 select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id as mrkrId2, b.szm_term_ont_id as ontId2, seq.mrkr_abbrev as symbol2, mrel_type
@@ -283,7 +283,7 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id as
    and b.szm_object_type = seq.mrkr_type
 ;
 
-\copy (select * from gene_marker_relationship) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_marker_relationship.txt' with delimiter as '	' null as '';
+\copy (select * from gene_marker_relationship) to './downloadsStaging/gene_marker_relationship.txt' with delimiter as '	' null as '';
 drop view gene_marker_relationship;
 
 -- ==== BEGIN ORTHOLOGY QUERIES ====
@@ -342,7 +342,7 @@ INSERT INTO tmp_flybase
   INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
   WHERE fdb_db_name = 'FLYBASE';
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'"
+--! echo "'./downloadsStaging/human_orthos.txt'"
 create view human_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   tmp_omim.accession, tmp_gene.accession as accession2, tmp_hgnc.accession as accession3, oev_evidence_code, oev_pub_zdb_id
@@ -356,10 +356,10 @@ create view human_orthos as
     WHERE organism_common_name = 'Human'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
-\copy (select * from human_orthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt' with delimiter as '	' null as '';
+\copy (select * from human_orthos) to './downloadsStaging/human_orthos.txt' with delimiter as '	' null as '';
 drop view human_orthos;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
+--! echo "'./downloadsStaging/fly_orthos.txt'"
 create view fly_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   tmp_flybase.accession, tmp_gene.accession as accession2, oev_evidence_code, oev_pub_zdb_id
@@ -372,10 +372,10 @@ create view fly_orthos as
     WHERE organism_common_name = 'Fruit fly'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
-\copy (select * from fly_orthos) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt' with delimiter as '	' null as '';
+\copy (select * from fly_orthos) TO './downloadsStaging/fly_orthos.txt' with delimiter as '	' null as '';
 drop view fly_orthos;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
+--! echo "'./downloadsStaging/mouse_orthos.txt'"
 create view mouse_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   'MGI:' || tmp_mgi.accession, tmp_gene.accession as accession2, oev_evidence_code, oev_pub_zdb_id
@@ -388,7 +388,7 @@ create view mouse_orthos as
     WHERE organism_common_name = 'Mouse'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
-\copy (select * from mouse_orthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt' with delimiter as '	' null as '';
+\copy (select * from mouse_orthos) to './downloadsStaging/mouse_orthos.txt' with delimiter as '	' null as '';
 drop view mouse_orthos;
 
 DROP TABLE tmp_omim;
@@ -449,11 +449,11 @@ update tmp_xpat_fish
  set clone_rating = (select clone_rating from clone where clone_mrkr_zdb_id = probe_zdb_id);
 
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'"
-\copy (select * from tmp_xpat_fish order by gene_zdb_id,xpatex_zdb_id,probe_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt' with delimiter as '	' null as '';
+--! echo "'./downloadsStaging/xpat_fish.txt'"
+\copy (select * from tmp_xpat_fish order by gene_zdb_id,xpatex_zdb_id,probe_zdb_id) to './downloadsStaging/xpat_fish.txt' with delimiter as '	' null as '';
 
 -- generate a file to map experiment id to environment condition description
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
+--! echo "'./downloadsStaging/xpat_environment_fish.txt'"
 
 create view xpat_environment_fish as
 select exp_zdb_id, zeco.term_name, zeco.term_ont_id, chebi.term_name as name2, chebi.term_ont_id as id2,
@@ -485,11 +485,11 @@ select exp_zdb_id, 'standard environment', '', '', '', '', '', '', '', '', ''
            and genox_zdb_id = xpatex_genox_zdb_id)
  order by 1, 2, 4
 ;
-\copy (select * from xpat_environment_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt' with delimiter as '	' null as '';
+\copy (select * from xpat_environment_fish) to './downloadsStaging/xpat_environment_fish.txt' with delimiter as '	' null as '';
 drop view xpat_environment_fish;
 
 -- generate a file with genes and associated expression experiment
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'"
+--! echo "'./downloadsStaging/phenotype_fish.txt'"
 
 create temp view phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
@@ -525,7 +525,7 @@ create temp view phenotype_fish as
    and psg_tag != 'ameliorated'
    and psg_tag != 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
-\copy (select * from phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
+\copy (select * from phenotype_fish) to './downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
 
 
 -- Create a join table (experiment_condition_with_zeco_and_chebi) for connecting fish experiment to zeco and chebi terms (comma delimited for multiple terms).
@@ -618,8 +618,8 @@ create temp view phenotype_fish_with_chemicals as
     from  phenotype_fish_with_chemicals_pre left join publication on fig_source_zdb_id = publication.zdb_id
     order by fish_zdb_id, fig_source_zdb_id;
 
-\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
-\copy (select * from phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
+\copy (select * from phenotype_fish_with_chemicals) to './downloadsStaging/phenotype_fish_with_chemicals.txt' with delimiter as E'\t' null as '';
+\copy (select * from phenotype_fish_with_chemicals) to './downloadsStaging/phenotype_fish_with_chemicals_2.txt' with delimiter as E'\t' null as '';
 
 create temp view ameliorated_phenotype_fish as
  select distinct f.fish_zdb_id, f.fish_full_name,
@@ -654,7 +654,7 @@ create temp view ameliorated_phenotype_fish as
    and ps.psg_id = tps.phenos_pk_id
    and psg_tag = 'ameliorated'
  order by fish_zdb_id, fig_source_zdb_id;
-\copy (select * from ameliorated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish.txt' with delimiter as '	' null as '';
+\copy (select * from ameliorated_phenotype_fish) to './downloadsStaging/ameliorated_phenotype_fish.txt' with delimiter as '	' null as '';
 
 
 -- create a view that joins the ameliorated phenotype fish with the zeco and chebi terms
@@ -669,11 +669,11 @@ create temp view ameliorated_phenotype_fish_with_chemicals as
     where fe.chebi_ids is not null
     order by fish_zdb_id, fig_source_zdb_id;
 
-\copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals.txt' with delimiter as '	' null as '';
+\copy (select * from ameliorated_phenotype_fish_with_chemicals) to './downloadsStaging/ameliorated_phenotype_fish_with_chemicals.txt' with delimiter as '	' null as '';
 
 --create a second copy for another downloads section
 --TODO: modify the download-registry handling to allow the same file in multiple categories
-\copy (select * from ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish_with_chemicals_2.txt' with delimiter as '	' null as '';
+\copy (select * from ameliorated_phenotype_fish_with_chemicals) to './downloadsStaging/ameliorated_phenotype_fish_with_chemicals_2.txt' with delimiter as '	' null as '';
 
 
 create temp view exacerbated_phenotype_fish as
@@ -709,7 +709,7 @@ create temp view exacerbated_phenotype_fish as
    and ps.psg_id = tps.phenos_pk_id
    and psg_tag = 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
-\copy (select * from exacerbated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/exacerbated_phenotype_fish.txt' with delimiter as '	' null as '';
+\copy (select * from exacerbated_phenotype_fish) to './downloadsStaging/exacerbated_phenotype_fish.txt' with delimiter as '	' null as '';
 
 -- create a view that joins the exacerbated phenotype fish with the zeco and chebi terms
 create temp view exacerbated_phenotype_fish_with_chemicals as
@@ -767,13 +767,13 @@ from exacerbated_and_ameliorated_phenotype_fish_with_chemicals_before_pmcid
 -- file title: Phenotypes Modified by Chemical - Ameliorated or Exacerbated
 -- file name: phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt
 -- sections: Phenotype Data and Toxicology
-\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt' with delimiter as E'\t' null as '';
-\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated_2.txt' with delimiter as E'\t' null as '';
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to './downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated.txt' with delimiter as E'\t' null as '';
+\copy (select * from exacerbated_and_ameliorated_phenotype_fish_with_chemicals) to './downloadsStaging/phenotypes_modified_by_chemicals_ameliorated_or_exacerbated_2.txt' with delimiter as E'\t' null as '';
 
 
 
 -- generate a file with xpatex and associated figure zdbid's
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'"
+--! echo "'./downloadsStaging/xpatfig_fish.txt'"
 create view xpatfig_fish as
 select distinct xpatex_zdb_id, xpatres_pk_id, efs_fig_zdb_id
  from expression_experiment2, expression_result2,expression_figure_stage
@@ -783,20 +783,20 @@ select distinct xpatex_zdb_id, xpatres_pk_id, efs_fig_zdb_id
      	 	where clone_problem_type = 'Chimeric'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id)
  order by xpatex_zdb_id;
-\copy (select * from xpatfig_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt' with delimiter as '	' null as '';
+\copy (select * from xpatfig_fish) to './downloadsStaging/xpatfig_fish.txt' with delimiter as '	' null as '';
 drop view xpatfig_fish;
 
 -- generate a file with genotype id's and associated figure zdbid's
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'"
+--! echo "'./downloadsStaging/genofig_fish.txt'"
 create view genofig_fish as
  select distinct genox_fish_zdb_id, pg_fig_zdb_id
  from fish_experiment, phenotype_source_generated
  where genox_zdb_id = pg_genox_zdb_id
  order by genox_fish_zdb_id;
-\copy (select * from genofig_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt' with delimiter as '	' null as '';
+\copy (select * from genofig_fish) to './downloadsStaging/genofig_fish.txt' with delimiter as '	' null as '';
 drop view genofig_fish;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
+--! echo "'./downloadsStaging/pheno_environment_fish.txt'"
 
 create view pheno_environment_fish as
 select exp_zdb_id, zeco.term_name, zeco.term_ont_id, chebi.term_name as name2, chebi.term_ont_id as id2,
@@ -816,10 +816,10 @@ left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
            and genox_zdb_id = pg_genox_zdb_id)
 order by 1, 2, 4
 ;
-\copy (select * from pheno_environment_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt' with delimiter as '	' null as '';
+\copy (select * from pheno_environment_fish) to './downloadsStaging/pheno_environment_fish.txt' with delimiter as '	' null as '';
 drop view pheno_environment_fish;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt'"
+--! echo "'./downloadsStaging/gene_expression_phenotype.txt'"
 
 DROP VIEW IF EXISTS gene_expression_phenotype;
 create temp view gene_expression_phenotype as
@@ -864,7 +864,7 @@ where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-L
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id
  order by gene, publication, figure;
-\copy (select * from gene_expression_phenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype.txt' with delimiter as '	' null as '';
+\copy (select * from gene_expression_phenotype) to './downloadsStaging/gene_expression_phenotype.txt' with delimiter as '	' null as '';
 
 DROP VIEW IF EXISTS gene_expression_phenotype_with_chemicals;
 create temp view gene_expression_phenotype_with_chemicals as
@@ -875,11 +875,11 @@ where fe.chebi_ids is not null
 order by gene, publication, figure;
 
 -- create download file for gene_expression_phenotype_with_chemicals
-\copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
+\copy (select * from gene_expression_phenotype_with_chemicals) to './downloadsStaging/gene_expression_phenotype_with_chemicals.txt' with delimiter as '	' null as '';
 
 --create a second copy for another downloads section
 --TODO: modify the download-registry handling to allow the same file in multiple categories
-\copy (select * from gene_expression_phenotype_with_chemicals) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
+\copy (select * from gene_expression_phenotype_with_chemicals) to './downloadsStaging/gene_expression_phenotype_with_chemicals_2.txt' with delimiter as '	' null as '';
 
 DROP VIEW IF EXISTS gene_expression_phenotype_wildtype_with_one_chemical;
 CREATE TEMP VIEW gene_expression_phenotype_wildtype_with_one_chemical as
@@ -891,13 +891,13 @@ WHERE fish.fish_is_wildtype = 't'
   AND fe.chebi_count = 1;
 
 -- create download file for gene_expression_phenotype_wildtype_with_one_chemical
-\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical.txt' with delimiter as E'\t' null as '';
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to './downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical.txt' with delimiter as E'\t' null as '';
 
 --create a second copy for another downloads section
-\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical_2.txt' with delimiter as E'\t' null as '';
+\copy (select * from gene_expression_phenotype_wildtype_with_one_chemical order by gene, publication, figure) to './downloadsStaging/gene_expression_phenotype_wildtype_with_one_chemical_2.txt' with delimiter as E'\t' null as '';
 
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt'"
+--! echo "'./downloadsStaging/antibody_labeling_phenotype.txt'"
 
 create view antibody_labeling_phenotype as
 select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id) as antibody,
@@ -940,34 +940,34 @@ where substring(psg_mrkr_zdb_id from 1 for 7) = 'ZDB-ATB'
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id
  order by antibody, publication, figure;
-\copy (select * from antibody_labeling_phenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_labeling_phenotype.txt' with delimiter as '	' null as '';
+\copy (select * from antibody_labeling_phenotype) to './downloadsStaging/antibody_labeling_phenotype.txt' with delimiter as '	' null as '';
 drop view antibody_labeling_phenotype;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'"
+--! echo "'./downloadsStaging/fishPub.txt'"
 
 create view fishPub as
  select zdb_id, accession_no, recattrib_data_zdb_id from publication, fish, record_attribution
  	   where recattrib_Data_zdb_id = fish_Zdb_id
 	   and recattrib_source_zdb_id = zdb_id
 	   and recattrib_source_type = 'standard' ;
-\copy (select * from fishPub) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt' with delimiter as '	' null as '';
+\copy (select * from fishPub) to './downloadsStaging/fishPub.txt' with delimiter as '	' null as '';
 drop view fishPub;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genoPub.txt'"
+--! echo "'./downloadsStaging/genoPub.txt'"
 
 create view genoPub as
  select zdb_id, accession_no, recattrib_data_zdb_id from publication, genotype, record_attribution
  	   where recattrib_Data_zdb_id = geno_Zdb_id
 	   and recattrib_source_zdb_id = zdb_id
 	   and recattrib_source_type = 'standard' ;
-\copy (select * from genoPub) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genoPub.txt' with delimiter as '	' null as '';
+\copy (select * from genoPub) to './downloadsStaging/genoPub.txt' with delimiter as '	' null as '';
 drop view genoPub;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'"
-\copy (select zdb_id, accession_no from publication) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt' with delimiter as '	' null as '';
+--! echo "'./downloadsStaging/pub_to_pubmed_id_translation.txt'"
+\copy (select zdb_id, accession_no from publication) to './downloadsStaging/pub_to_pubmed_id_translation.txt' with delimiter as '	' null as '';
 
 -- Create mapping data file
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'"
+--! echo "'./downloadsStaging/mappings.txt'"
 
 create view mappings as
 select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev, mm_chromosome, mm_chrom_location, p.metric
@@ -985,12 +985,12 @@ select paneled_markers.zdb_id, mrkr_Abbrev, szm_term_ont_id, p.abbrev,or_lg, lg_
  where target_id = p.zdb_id and paneled_markers.zdb_id = mrkr_zdb_id
  and  mrkr_type = szm_object_type
 order by 1;
-\copy (select * from mappings) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt' with delimiter as '	' null as '';
+\copy (select * from mappings) to './downloadsStaging/mappings.txt' with delimiter as '	' null as '';
 drop view mappings;
 
 -- Generate sequence data files for GenBank, RefSeq, Entrez, UniProt, Interpro and GenPept
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genbank.txt'"
+--! echo "'./downloadsStaging/genbank.txt'"
 
 create view genbank as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
@@ -1005,11 +1005,11 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
    	substring(dblink_linked_recid from 1 for 12) = 'ZDB-TSCRIPT-'
    	and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
  ) order by 1;
-\copy (select * from genbank) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genbank.txt' with delimiter as '	' null as '';
+\copy (select * from genbank) to './downloadsStaging/genbank.txt' with delimiter as '	' null as '';
 drop view genbank;
 
 -- the last condition is added to filter out mis-placed acc
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/refseq.txt'"
+--! echo "'./downloadsStaging/refseq.txt'"
 
 create view refSeq as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
@@ -1021,10 +1021,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and fdb_db_name = 'RefSeq'
    and substring(dblink_acc_num from 3 for 1) = '_'
  order by 1;
-\copy (select * from refSeq) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/refseq.txt' with delimiter as '	' null as '';
+\copy (select * from refSeq) to './downloadsStaging/refseq.txt' with delimiter as '	' null as '';
 drop view refSeq;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene.txt'"
+--! echo "'./downloadsStaging/gene.txt'"
 
 create view genes as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
@@ -1035,10 +1035,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and fdb_db_name = 'Gene'
  order by 1;
-\copy (select * from genes) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene.txt' with delimiter as '	' null as '';
+\copy (select * from genes) to './downloadsStaging/gene.txt' with delimiter as '	' null as '';
 drop view genes;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/uniprot.txt' with delimiter as '	' null as '';"
 create view uniprot as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -1048,10 +1048,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and fdbcont_fdb_db_id = fdb_db_pk_id
   and fdb_db_name = 'UniProtKB'
 order by 1;
-\copy (select * from uniprot) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot.txt' with delimiter as '	' null as '';
+\copy (select * from uniprot) to './downloadsStaging/uniprot.txt' with delimiter as '	' null as '';
 drop view uniprot;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/interpro.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/interpro.txt' with delimiter as '	' null as '';"
 create view interpro as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -1060,10 +1060,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdb_db_name = 'InterPro'
 order by 1;
-\copy (select * from interpro) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/interpro.txt' with delimiter as '	' null as '';
+\copy (select * from interpro) to './downloadsStaging/interpro.txt' with delimiter as '	' null as '';
 drop view interpro;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pfam.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/pfam.txt' with delimiter as '	' null as '';"
 create view pfam as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -1073,10 +1073,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdb_db_name = 'Pfam'
 order by 1;
-\copy (select * from pfam) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pfam.txt' with delimiter as '	' null as '';
+\copy (select * from pfam) to './downloadsStaging/pfam.txt' with delimiter as '	' null as '';
 drop view pfam;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genpept.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/genpept.txt' with delimiter as '	' null as '';"
 create view genpept as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
  where mrkr_zdb_id = dblink_linked_recid
@@ -1085,10 +1085,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num from marker, db_
    and fdbcont_zdb_id = dblink_fdbcont_zdb_id
    and fdb_db_name = 'GenPept'
  order by 1;
-\copy (select * from genpept) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genpept.txt' with delimiter as '	' null as '';
+\copy (select * from genpept) to './downloadsStaging/genpept.txt' with delimiter as '	' null as '';
 drop view genpept;
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/vega.txt' with delimiter as '	' null as '';"
 create view vega as
 select mrkr_zdb_id, szm_term_ont_id,mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -1098,13 +1098,13 @@ and szm_object_type = mrkr_type
    and fdbcont_zdb_id = dblink_fdbcont_zdb_id
    and fdb_db_name in ('VEGA','unreleasedRNA')
  order by 1;
-\copy (select * from vega) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega.txt' with delimiter as '	' null as '';
+\copy (select * from vega) to './downloadsStaging/vega.txt' with delimiter as '	' null as '';
 drop view vega;
 
 -- vega_transcript.txt is only used by tomc and Sanger.
 -- please check before changing thanks.
 
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega_transcript.txt' with delimiter as '	' null as '';"
+--! echo "'./downloadsStaging/vega_transcript.txt' with delimiter as '	' null as '';"
 create view vega_transcript as
 select distinct mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, marker_relationship, so_zfin_mapping
@@ -1118,12 +1118,12 @@ select distinct mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    	and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
    ) order by 1
 ;
-\copy (select * from vega_transcript) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega_transcript.txt' with delimiter as '	' null as '';
+\copy (select * from vega_transcript) to './downloadsStaging/vega_transcript.txt' with delimiter as '	' null as '';
 drop view vega_transcript;
 
 -- the changing assembly version number in db_name
 -- is apt to come back to bite us so I am opting for the zdb_id
---! echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';'
+--! echo ''./downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';'
 create view ensembl_1_to_1 as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, so_zfin_mapping
@@ -1131,10 +1131,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and szm_object_type = mrkr_type
    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
  order by 1;
-\copy (select * from ensembl_1_to_1) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';
+\copy (select * from ensembl_1_to_1) to './downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';
 drop view ensembl_1_to_1;
 
---! echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt' with delimiter as '	' null as '';'
+--! echo ''./downloadsStaging/all_rna_accessions.txt' with delimiter as '	' null as '';'
 create view all_rna_accessions as
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
  from db_link, marker gene, marker_type_group_member,foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
@@ -1173,7 +1173,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
    --       but since neither catch anything go with the faster/cheaper
    and substring(dblink_acc_num from 1 for 6) != 'OTTDAR'
 ;
-\copy (select * from all_rna_accessions) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt' with delimiter as '	' null as '';
+\copy (select * from all_rna_accessions) to './downloadsStaging/all_rna_accessions.txt' with delimiter as '	' null as '';
 drop view all_rna_accessions;
 
 -- Generate genotype_feature file
@@ -1363,7 +1363,7 @@ update tmp_geno_data set feature_type_display=(case when feature_type_display in
                            else feature_type
                            end);
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';'
 create view genotype_features as
 select distinct
 	genotype_id,
@@ -1383,13 +1383,13 @@ select distinct
  order by genotype_id, geno_display_name;
 
 
-\copy (select * from genotype_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';
+\copy (select * from genotype_features) to './downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';
 drop view genotype_features;
 drop table tmp_dups;
 drop table tmp_extras;
 drop table tmp_geno_data;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';'
 create view tgInsertions as
     SELECT DISTINCT
         feature_zdb_id,
@@ -1418,10 +1418,10 @@ create view tgInsertions as
       AND get_obj_type ( mrkr_zdb_id ) = b.szm_object_type
       AND feature_type = a.szm_object_type;
 
-\copy (select * from tgInsertions) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';
+\copy (select * from tgInsertions) to './downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';
 drop view tgInsertions;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/constructComponents.txt' with delimiter as '	' null as '';'
 create view constructComponents as
 select distinct a.mrkr_zdb_id,
                 a.mrkr_name,
@@ -1439,10 +1439,10 @@ select distinct a.mrkr_zdb_id,
 	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type
 	 and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
          order by a.mrkr_zdb_id ;
-\copy (select * from constructComponents) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt' with delimiter as '	' null as '';
+\copy (select * from constructComponents) to './downloadsStaging/constructComponents.txt' with delimiter as '	' null as '';
 drop view constructComponents;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/genotype_features_missing_markers.txt' with delimiter as '	' null as '';'
 create view genotype_features_missing_markers as
 select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
  from feature_marker_relationship,marker_type_group_member, feature, genotype, genotype_feature, marker
@@ -1454,20 +1454,20 @@ select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_
    and feature_zdb_id = genofeat_feature_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
 ;
-\copy (select * from genotype_features_missing_markers) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt' with delimiter as '	' null as '';
+\copy (select * from genotype_features_missing_markers) to './downloadsStaging/genotype_features_missing_markers.txt' with delimiter as '	' null as '';
 drop view genotype_features_missing_markers;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/genotype_backgrounds.txt' with delimiter as '	' null as '';'
 create view genotype_backgrounds as
 select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name as name2
  from genotype a, genotype_background, genotype b
  where a.geno_Zdb_id = genoback_geno_Zdb_id
  and b.geno_zdb_id=genoback_background_zdb_id
 ;
-\copy (select * from genotype_backgrounds) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt' with delimiter as '	' null as '';
+\copy (select * from genotype_backgrounds) to './downloadsStaging/genotype_backgrounds.txt' with delimiter as '	' null as '';
 drop view genotype_backgrounds;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.tx''
+\echo ''./downloadsStaging/wildtypes_fish.tx''
 create view wildtypes_fish as
 select distinct fish_zdb_id, fish_full_name, fish_handle, geno_zdb_id
  from genotype, fish
@@ -1475,10 +1475,10 @@ select distinct fish_zdb_id, fish_full_name, fish_handle, geno_zdb_id
   and fish_genotype_Zdb_id = geno_zdb_id
  and not exists (Select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id)
 ;
-\copy (select * from wildtypes_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.txt' with delimiter as '	' null as '';
+\copy (select * from wildtypes_fish) to './downloadsStaging/wildtypes_fish.txt' with delimiter as '	' null as '';
 drop view wildtypes_fish;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.tx''
+\echo ''./downloadsStaging/fish_components_fish.tx''
 create view fish_components_fish as
 select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev as abbr2, fc_construct_zdb_id, c.mrkr_abbrev as abbr3, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
    from fish_components
@@ -1512,17 +1512,17 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
      on c.mrkr_Zdb_id = fc_construct_zdb_id
    where fc_affector_zdb_id like 'ZDB-ALT%'
 ;
-\copy (select * from fish_components_fish order by fc_fish_name) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
+\copy (select * from fish_components_fish order by fc_fish_name) to './downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
 drop view fish_components_fish;
 
 -- generate a file with zdb history data
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zdb_history.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/zdb_history.txt' with delimiter as '	' null as '';'
 create view zdb_history as
 select zrepld_old_zdb_id, zrepld_new_zdb_id
 from zdb_replaced_data
 order by zrepld_old_zdb_id, zrepld_new_zdb_id
 ;
-\copy (select * from zdb_history) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zdb_history.txt' with delimiter as '	' null as '';
+\copy (select * from zdb_history) to './downloadsStaging/zdb_history.txt' with delimiter as '	' null as '';
 drop view zdb_history;
 
 -- indirect sequence links for genes
@@ -1547,20 +1547,20 @@ from marker gene, marker_type_group_member,marker est, db_link, marker_relations
    and fdb_db_name = 'GenBank'
    and fdbcont_fdb_db_id = fdb_db_pk_id;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_seq.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_veg order by 1,3) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_seq.txt' with delimiter as '	' null as '';
+\echo ''./downloadsStaging/gene_seq.txt' with delimiter as '	' null as '';'
+\copy (select * from tmp_veg order by 1,3) to './downloadsStaging/gene_seq.txt' with delimiter as '	' null as '';
 drop table tmp_veg;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/stage_ontology.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/stage_ontology.txt' with delimiter as '	' null as '';'
 create view stage_ontology as
 select stg_zdb_id, stg_obo_id, stg_name, stg_hours_start, stg_hours_end
   from stage
   order by stg_hours_start, stg_hours_end desc
 ;
-\copy (select * from stage_ontology) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/stage_ontology.txt' with delimiter as '	' null as '';
+\copy (select * from stage_ontology) to  './downloadsStaging/stage_ontology.txt' with delimiter as '	' null as '';
 drop view stage_ontology;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_item.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/anatomy_item.txt' with delimiter as '	' null as '';'
 create view anatomy_item as
 select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
  from term, term_stage
@@ -1568,10 +1568,10 @@ select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
    and term_ontology = 'zebrafish_anatomy'
  order by term_name
  ;
-\copy (select * from anatomy_item) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_item.txt' with delimiter as '	' null as '';
+\copy (select * from anatomy_item) to  './downloadsStaging/anatomy_item.txt' with delimiter as '	' null as '';
 drop view anatomy_item;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_relationship.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/anatomy_relationship.txt' with delimiter as '	' null as '';'
 create view anatomy_relationship as
 select term1.term_ont_id, term2.term_ont_id as id2, termrel_type
  from term_relationship, term as term1, term as term2
@@ -1580,10 +1580,10 @@ select term1.term_ont_id, term2.term_ont_id as id2, termrel_type
    and term1.term_zdb_id = termrel_term_1_zdb_id
    and term2.term_zdb_id = termrel_term_2_zdb_id
 ;
-\copy (select * from anatomy_relationship) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_relationship.txt' with delimiter as '	' null as '';
+\copy (select * from anatomy_relationship) to  './downloadsStaging/anatomy_relationship.txt' with delimiter as '	' null as '';
 drop view anatomy_relationship;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';'
 create view xpat_stage_anatomy as
   SELECT
     xpatres_pk_id,
@@ -1606,10 +1606,10 @@ create view xpat_stage_anatomy as
                          AND xpatex_gene_zdb_id = mrkr_zdb_id
                          AND mrkr_abbrev LIKE 'WITHDRAWN%')
   ORDER BY efs_xpatex_zdb_id;
-\copy (select * from xpat_stage_anatomy) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';
+\copy (select * from xpat_stage_anatomy) to  './downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';
 drop view xpat_stage_anatomy;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_synonyms.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/anatomy_synonyms.txt' with delimiter as '	' null as '';'
 create view anatomy_synonyms as
 select term_ont_id, term_name, dalias_alias
  from data_alias, term, alias_group
@@ -1621,22 +1621,22 @@ select term_ont_id, term_name, dalias_alias
    and aliasgrp_name not in ('plural','secondary id')
  order by term_name
 ;
-\copy (select * from anatomy_synonyms) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_synonyms.txt' with delimiter as '	' null as '';
+\copy (select * from anatomy_synonyms) to  './downloadsStaging/anatomy_synonyms.txt' with delimiter as '	' null as '';
 drop view anatomy_synonyms;
 
 -- Image data
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/ImageFigures.txt' with delimiter as '	' null as '';'
 create view ImageFigures as
 select img_zdb_id, img_fig_zdb_id, img_preparation
  from image
  where img_fig_zdb_id is not null
  order by img_zdb_id;
-\copy (select * from ImageFigures) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt' with delimiter as '	' null as '';
+\copy (select * from ImageFigures) to  './downloadsStaging/ImageFigures.txt' with delimiter as '	' null as '';
 drop view ImageFigures;
 
 -- Transcript data
 -- Get clones and genes if available but still report if not (a small subset)
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/transcripts.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/transcripts.txt' with delimiter as '	' null as '';'
 create view transcripts as
 select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone' as cloneRelated ,tt.tscriptt_type,ts.tscripts_status
  from transcript t
@@ -1665,7 +1665,7 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
  where gener.mrel_type='gene produces transcript'
    and cloner.mrel_type='clone contains transcript'
 ;
-\copy (select * from transcripts) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/transcripts.txt' with delimiter as '	' null as '';
+\copy (select * from transcripts) to  './downloadsStaging/transcripts.txt' with delimiter as '	' null as '';
 drop view transcripts;
 
 create temp table tmp_pubs (
@@ -1811,7 +1811,7 @@ AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
 ;
 
 -- publication - gene/genep association file
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';'
 create view gene_publication as
 SELECT distinct mrkr_abbrev,
        mrkr_zdb_id,
@@ -1824,7 +1824,7 @@ SELECT distinct mrkr_abbrev,
 FROM publication pub, tmp_pubs,marker_type_group_member
  where source_id = zdb_id
  and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM_AND_NTR';
-\copy (select * from gene_publication) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';
+\copy (select * from gene_publication) to  './downloadsStaging/gene_publication.txt' with delimiter as '	' null as '';
 drop view gene_publication;
 
 CREATE TEMP TABLE tmp_wtxpat_with_conditions AS
@@ -1884,15 +1884,15 @@ CREATE TEMP TABLE tmp_wtxpat AS
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt' with delimiter as E'\t' null as '';
+\echo ''./downloadsStaging/wildtype-expression_fish.txt' with delimiter as '	' null as '';'
+\copy (select * from tmp_wtxpat ORDER BY mrkr_abbrev, fish_full_name, term_name, subname, startst, xpatassay_mmo_id, xpatex_source_zdb_id) to './downloadsStaging/wildtype-expression_fish.txt' with delimiter as E'\t' null as '';
 
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
 --only for Sanger, will be picked up by sanger folks.
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';'
 create view saAlleles as
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||coalesce(jrnl_name,'') ||' '|| ' ' || coalesce(pub_volume,'') ||' '|| coalesce(pub_pages,''), feature_abbrev
 from feature, record_attribution, publication, journal
@@ -1902,11 +1902,11 @@ and zdb_id=recattrib_source_zdb_id
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
-\copy (select * from saAlleles) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';
+\copy (select * from saAlleles) to './downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';
 drop view saAlleles;
 
 --case 9235
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fhAlleles.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/fhAlleles.txt' with delimiter as '	' null as '';'
 create view fhAlleles as
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
 from feature, record_attribution, publication, journal
@@ -1916,11 +1916,11 @@ and zdb_id=recattrib_source_zdb_id
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
-\copy (select * from fhAlleles) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fhAlleles.txt' with delimiter as '	' null as '';
+\copy (select * from fhAlleles) to './downloadsStaging/fhAlleles.txt' with delimiter as '	' null as '';
 drop view fhAlleles;
 
 -- case 13856
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/huAlleles2.txt' with delimiter as '	' null as '';'
 create view huAlleles as
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
 from feature, record_attribution, publication, journal
@@ -1930,7 +1930,7 @@ and zdb_id=recattrib_source_zdb_id
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
-\copy (select * from huAlleles) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt' with delimiter as '	' null as '';
+\copy (select * from huAlleles) to './downloadsStaging/huAlleles2.txt' with delimiter as '	' null as '';
 drop view huAlleles;
 
 --case 4402  Weekly download file available via the web.
@@ -1951,7 +1951,7 @@ select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
 
 --update statistics low for table tmp_gene_pubcount;
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/uniprot-zfinpub.txt' with delimiter as '	' null as '';'
 create view uniprotZfinpub as
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id, accession_no, 'Expression' as  cur_topic
 from db_link, foreign_db_contains fdbc, foreign_db fdb, publication, tmp_gene_pubcount, expression_experiment2, so_zfin_mapping, marker
@@ -2135,18 +2135,18 @@ and pubcount > 20
 and phenos_tag !='normal'
 and jtype='Journal';
 
-\copy (select * from uniprotZfinpub) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt' with delimiter as '	' null as '';
+\copy (select * from uniprotZfinpub) to './downloadsStaging/uniprot-zfinpub.txt' with delimiter as '	' null as '';
 drop view uniprotZfinpub;
 
 -- download file Case 4693 as reuqested by uniprot
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zfinpubs.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/zfinpubs.txt' with delimiter as '	' null as '';'
 create view zfinpubs as
 select zdb_id, accession_no, authors,title,jrnl_name,extract(year from pub_date),pub_volume,pub_pages
  from publication, journal
  where pub_jrnl_zdb_id = jrnl_zdb_id
    and jtype = 'Journal'
 ;
-\copy (select * from zfinpubs) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zfinpubs.txt' with delimiter as '	' null as '';
+\copy (select * from zfinpubs) to './downloadsStaging/zfinpubs.txt' with delimiter as '	' null as '';
 drop view zfinpubs;
 
 create temp table tmp_features (feature_id text, term_o_id text, f_abbrev text,
@@ -2252,16 +2252,16 @@ update tmp_features set ftypedisp=(case when ftypedisp in ('Point Mutation','Sma
                            else ftypedisp
                            end);
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt' with delimiter as '	' null as '';
+\echo ''./downloadsStaging/features.txt' with delimiter as '	' null as '';'
+\copy (select * from tmp_features) to './downloadsStaging/features.txt' with delimiter as '	' null as '';
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/snpData.txt' with delimiter as '	' null as '';'
 create view snpData as
 select mrkr_zdb_id, mrkr_abbrev, snpd_rs_acc_num, snpdattr_pub_zdb_id
   from marker, snp_download, snp_download_attribution
  where mrkr_zdb_id = snpd_mrkr_zdb_id
  and snpdattr_snpd_pk_id = snpd_pk_id;
-\copy (select * from snpData) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt' with delimiter as '	' null as '';
+\copy (select * from snpData) to './downloadsStaging/snpData.txt' with delimiter as '	' null as '';
 drop view snpData;
 
 
@@ -2386,7 +2386,7 @@ group by feature_zdb_id
 ;
 
 
-\echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';'
+\echo ''./downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';'
 create view featuresAffectedGenes as
   SELECT
     f.feature_zdb_id,
@@ -2446,7 +2446,7 @@ create view featuresAffectedGenes as
     (f.feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
   AND tmp_feat_zdb_id = f.feature_zdb_id
   ORDER BY LOWER(f.feature_name);
-\copy (select * from featuresAffectedGenes) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';
+\copy (select * from featuresAffectedGenes) to './downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';
 drop view featuresAffectedGenes;
 
 DROP TABLE tmp_term_names_and_ids;
@@ -2557,7 +2557,7 @@ create view phenoGeneCleanDataFish as
 and mrkr_Zdb_id = gene_zdb_id
   and tps.quality_tag = 'abnormal'
   order by mrkr_abbrev;
-\copy (select * from phenoGeneCleanDataFish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt' with delimiter as '	' null as '';
+\copy (select * from phenoGeneCleanDataFish) to './downloadsStaging/phenoGeneCleanData_fish.txt' with delimiter as '	' null as '';
 drop view phenoGeneCleanDataFish;
 
 \echo '\copy (select * from crisprFasta) crispr fasta file'
@@ -2567,7 +2567,7 @@ select '>lcl|', mrkr_zdb_id, mrkr_name as text2, '
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-CRISPR%';
-\COPY (SELECT * FROM crisprFasta) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
+\COPY (SELECT * FROM crisprFasta) TO './downloadsStaging/crispr_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
 drop view crisprFasta;
 
 \echo '\copy (select * from talenFasta) talen fasta file'
@@ -2583,7 +2583,7 @@ select '>lcl|',mrkr_zdb_id||' sequence2',mrkr_name||'|', '
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like 'ZDB-TALEN%';
-\COPY (SELECT * FROM talenFasta) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
+\COPY (SELECT * FROM talenFasta) TO './downloadsStaging/talen_fasta.fa' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
 drop view talenFasta;
 
 \echo '\copy (select * from fishModelDisease) fish_model_disease.txt'
@@ -2610,7 +2610,7 @@ CREATE TEMP VIEW fishModelDisease AS
     INNER JOIN publication ON dat_source_zdb_id = zdb_id
     INNER JOIN disease_annotation_model ON damo_dat_zdb_id = dat_zdb_id
     INNER JOIN fish_experiment ON genox_zdb_id = damo_genox_zdb_id;
-\copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt' with delimiter as '	' null as '';
+\copy (select * from fishModelDisease) to './downloadsStaging/fish_model_disease.txt' with delimiter as '	' null as '';
 
 
 -- filename: fish_model_disease_chemical.txt
@@ -2625,8 +2625,8 @@ CREATE TEMP VIEW fishModelDiseaseChemical AS
     LEFT JOIN experiment_condition_with_zeco_and_chebi fe on genox_exp_zdb_id = fe.expcond_exp_zdb_id
     WHERE fe.chebi_ids IS NOT NULL
     ORDER BY genox_fish_zdb_id;
-\copy (select * from fishModelDiseaseChemical) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical.txt' with delimiter as E'\t' null as '';
-\copy (select * from fishModelDiseaseChemical) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease_chemical_2.txt' with delimiter as E'\t' null as '';
+\copy (select * from fishModelDiseaseChemical) to './downloadsStaging/fish_model_disease_chemical.txt' with delimiter as E'\t' null as '';
+\copy (select * from fishModelDiseaseChemical) to './downloadsStaging/fish_model_disease_chemical_2.txt' with delimiter as E'\t' null as '';
 
 
 \echo '\copy (select * from diseaseAttributions) disease_attribution.txt'
@@ -2644,7 +2644,7 @@ CREATE VIEW diseaseAttributions AS
   FROM disease_annotation
     INNER JOIN term ON dat_term_zdb_id = term.term_zdb_id
     INNER JOIN publication ON dat_source_zdb_id = zdb_id;
-\copy (select * from diseaseAttributions) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_attribution.txt' with delimiter as '	' null as '';
+\copy (select * from diseaseAttributions) to './downloadsStaging/disease_attribution.txt' with delimiter as '	' null as '';
 drop view diseaseAttributions;
 
 \echo 'experiment details file'
@@ -2662,7 +2662,7 @@ CREATE VIEW experimentDetails AS
     LEFT OUTER JOIN term g ON expcond_go_cc_term_Zdb_id = g.term_Zdb_id
     LEFT OUTER JOIN term c ON expcond_chebi_term_zdb_id = c.term_Zdb_id
     LEFT OUTER JOIN term t ON expcond_taxon_Term_zdb_id = t.term_Zdb_id;
-\copy (select * from experimentDetails) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/experiment_details.txt' with delimiter as '	' null as '';
+\copy (select * from experimentDetails) to './downloadsStaging/experiment_details.txt' with delimiter as '	' null as '';
 DROP VIEW experimentDetails;
 
 \echo 'inno/pheno construct report'
@@ -2672,7 +2672,7 @@ select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feature_name
  where feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_Zdb_id = mrkr_zdb_id
  and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
-\copy (select * from innophenoconstructs) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/innophenoconstructs.txt' with delimiter as '	' null as '';
+\copy (select * from innophenoconstructs) to './downloadsStaging/innophenoconstructs.txt' with delimiter as '	' null as '';
 drop view innophenoconstructs;
 
 -- generate a file to map Disease to Genes via Orthology
@@ -2704,7 +2704,7 @@ select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_i
    and omimp_ortho_zdb_id = ortho_zdb_id
    and omimp_omim_id is null
 order by 2, 4, 5, 7;
-\copy (select * from diseaseGeneOrtholog) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene2DiseaseViaOrthology.txt' with delimiter as '	' null as '';
+\copy (select * from diseaseGeneOrtholog) to './downloadsStaging/gene2DiseaseViaOrthology.txt' with delimiter as '	' null as '';
 drop view diseaseGeneOrtholog;
 
 commit work;

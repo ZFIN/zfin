@@ -43,8 +43,17 @@
 
 use DBI;
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SOURCEROOT');
+
+my $sourceRoot = $ENV{'SOURCEROOT'};
+my $rootPath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbusername = "";
+my $dbpassword = "";
 
 # define GLOBALS
 
@@ -52,29 +61,26 @@ use ZFINPerlModules;
 
 $ENV{"DBDATE"}="Y4MD-";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
+chdir "$rootPath/server_apps/data_transfer/Downloads";
 
-$downloadStagingDir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging";
+$downloadStagingDir = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging";
 if (-e $downloadStagingDir) {
-
-    system("rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*");
-
+    system("rm -rf $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/*");
 }
 else {
     mkdir $downloadStagingDir;
-
 }
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f DownloadFiles.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f DownloadFiles.sql");
 } catch {
   warn "Failed at DownloadFiles.sql - $_";
   exit -1;
 };
 
 try {
-  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa");
-  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa");
+  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa");
+  system("sed -i 's/^[ \\t]*//;s/[ \\t]*\$//' $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa");
 } catch {
   warn "Failed to remove trailing white spaces - $_";
   exit -1;
@@ -94,13 +100,9 @@ try {
   exit -1;
 };
 
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) 
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $dbusername, $dbpassword)
     or die "Cannot connect to database: $DBI::errstr\n";
 
 ## create downloadsStaging/identifiersForIntermine.txt
@@ -146,26 +148,31 @@ foreach $id (keys %identifiers) {
 }
 close IDS;
 
-### FB case 8651, Include Publication in Morpholino Data Download
-
-$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, mo.mrkr_abbrev as abbr2,
-	       seq_sequence, mo.mrkr_comments
-          from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-           and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-           and a.szm_object_type = gn.mrkr_type
-           and b.szm_object_type = mo.mrkr_type
-           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-'   -- note ommits pseudogenes, hope that was deliberate
-           and substring(mrel_mrkr_1_zdb_id from 1 for 12) = 'ZDB-MRPHLNO-'
-           and mrel_type = 'knockdown reagent targets gene'
-           and mo.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;";
-
+### Parent Query for All Knockdown Reagent Data Downloads:
+$sql = "
+    create temp view knockdown_parent_query as
+        select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, knockdown.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, knockdown.mrkr_abbrev as abbr2,
+               seq_sequence, seq_sequence_2, knockdown.mrkr_comments
+        from marker gn, marker knockdown, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+        where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+          and knockdown.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+          and a.szm_object_type = gn.mrkr_type
+          and b.szm_object_type = knockdown.mrkr_type
+          and mrel_type = 'knockdown reagent targets gene'
+          and knockdown.mrkr_zdb_id = seq_mrkr_zdb_id
+        order by gn.mrkr_abbrev
+";
 $cur = $dbh->prepare($sql);
 $cur->execute();
-$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$MoId, \$b_szm_term_ont_id, \$Mo, \$MoSeq, \$note); 
 
-$MOfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos.txt';
+### FB case 8651, Include Publication in Morpholino Data Download
+
+$sql = "select * from knockdown_parent_query where get_obj_type(id2) = 'MRPHLNO' order by mrkr_abbrev";
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$MoId, \$b_szm_term_ont_id, \$Mo, \$MoSeq, \$MoSeq2Unused, \$note);
+
+$MOfileWithPubsAndNoHTMLtags = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos.txt";
 
 open (MOWITHPUBS, ">$MOfileWithPubsAndNoHTMLtags") || die "Cannot open $MOfileWithPubsAndNoHTMLtags : $!\n";
 
@@ -252,7 +259,7 @@ $cur->execute();
 $cur->bind_columns(\$abId, \$abSym, \$geneId, \$geneSym,  \$xpId, \$xpType, \$xpTypeId, \$pubId, \$fishId, \$envId);
 
 
-$abXpatFishFile = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt';
+$abXpatFishFile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt";
 
 open (ABXPFISH, ">$abXpatFishFile") || die "Cannot open $abXpatFishFile : $!\n";
 
@@ -269,22 +276,11 @@ while ($cur->fetch()) {
 
 close ABXPFISH;
 
-$TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/TALEN.txt';
+$TALENfileWithPubsAndNoHTMLtags = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/TALEN.txt";
 
 open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";
 
-$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, talen.mrkr_abbrev as abbr2,
-	       seq_sequence, seq_sequence_2, talen.mrkr_comments
-          from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-           and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-           and a.szm_object_type = gn.mrkr_type
-           and b.szm_object_type = talen.mrkr_type
-           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-' -- note ommits pseudogenes, hope that was deliberate
-           and substring(mrel_mrkr_1_zdb_id from 1 for 10) = 'ZDB-TALEN-'
-           and mrel_type = 'knockdown reagent targets gene'
-           and talen.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;";
+$sql = "select * from knockdown_parent_query where get_obj_type(id2) = 'TALEN' order by mrkr_abbrev";
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
@@ -329,26 +325,15 @@ while ($cur->fetch()) {
 
 close TALENWITHPUBS;
 
-$CRISPRfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/CRISPR.txt';
+$CRISPRfileWithPubsAndNoHTMLtags = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/CRISPR.txt";
 
 open (CRISPRWITHPUBS, ">$CRISPRfileWithPubsAndNoHTMLtags") || die "Cannot open $CRISPRfileWithPubsAndNoHTMLtags : $!\n";
 
-$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, crispr.mrkr_abbrev as abbr2,
-	       seq_sequence, crispr.mrkr_comments
-          from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-           and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-           and a.szm_object_type = gn.mrkr_type
-           and b.szm_object_type = crispr.mrkr_type
-           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-' -- note ommits pseudogenes, hope that was deliberate
-           and substring(mrel_mrkr_1_zdb_id from 1 for 11) = 'ZDB-CRISPR-'
-           and mrel_type = 'knockdown reagent targets gene'
-           and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;";
+$sql = "select * from knockdown_parent_query where get_obj_type(id2) = 'CRISPR' order by mrkr_abbrev";
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
-$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$crispr_id, \$b_szm_term_ont_id, \$crispr, \$crispr_seq, \$note); 
+$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$crispr_id, \$b_szm_term_ont_id, \$crispr, \$crispr_seq, \$crispr_seq2_unused, \$note);
 
 while ($cur->fetch()) {
     # remove HTML tags and back slash from the public note column of the download file of CRISPR data
@@ -394,14 +379,14 @@ $curInner->finish();
 
 # FB case 7670, add Source field to antibodies.txt download file
 
-$antibodyFile = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt';
+$antibodyFile = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt";
 
 open (AB, "$antibodyFile") || die "Cannot open antibodies2.txt : $!\n";
 @lines=<AB>;
 close(AB);
 
 
-$antibodyFileWithSupplier = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies.txt';
+$antibodyFileWithSupplier = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/antibodies.txt";
 
 open (ABSOURCE, ">$antibodyFileWithSupplier") || die "Cannot open $antibodyFileWithSupplier : $!\n";
 
@@ -455,12 +440,12 @@ $dbh->disconnect
 
 # FB case 8886, remove HTML tags from the download file of Sanger Alleles
 
-$sangerAllelesWithHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt';
+$sangerAllelesWithHTMLtags = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt";
 
 open (SAHTML, $sangerAllelesWithHTMLtags) || die "Can't open $sangerAllelesWithHTMLtags : $!\n";
 
 @lines=<SAHTML>;
-$sangerAlleles = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles.txt';
+$sangerAlleles = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles.txt";
 
 open (SA,  ">$sangerAlleles") || die "Can't open: $sangerAlleles $!\n";
 foreach $line (@lines) {
@@ -473,14 +458,14 @@ close SA;
 
 # remove temporary files
 
-system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
+system("rm $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
 
-$huAllelesHtml = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt';
+$huAllelesHtml = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt";
 
 open (HUALLELEHTML, $huAllelesHtml) || die "Can't open $huAllelesHtml : $!\n";
 
 @lines=<HUALLELEHTML>;
-$huAlleles = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles.txt';
+$huAlleles = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles.txt";
 
 open (HUALLELE,  ">$huAlleles") || die "Can't open: $huAlleles $!\n";
 foreach $line (@lines) {
@@ -491,18 +476,18 @@ foreach $line (@lines) {
 close HUALLELEHTML;
 close HUALLELE;
 
-system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt");
+system("rm $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/huAlleles2.txt");
 
 
 # This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
 
-$emptyFilesList = '/tmp/<!--|DB_NAME|-->emptyFiles.txt';
+$emptyFilesList = "/tmp/${dbname}emptyFiles.txt";
 system("rm -f $emptyFilesList");
 
 open (EMPTY, ">$emptyFilesList") || die "Can't open $emptyFilesList !\n";
 
-$dir = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging';
+$dir = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging";
 
 opendir(DH, $dir) or die $!;
 
@@ -521,20 +506,20 @@ if (!(-z $emptyFilesList)) {
     die "there are files with 0 data!";
 }
 
-system("cd <!--|SOURCEROOT|-->/ && gradle createMeshChebiMappingFile && cp mesh-chebi-mapping.tsv <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/.");
+system("cd $sourceRoot/ && gradle createMeshChebiMappingFile && cp mesh-chebi-mapping.tsv $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/.");
 
 
 # move files to production location -- assume all are good, as the file check above did not end the script
 
 
-system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*.txt");
-system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*.unl");
-system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/intermineData/*");
+system("rm -rf $rootPath/home/data_transfer/Downloads/*.txt");
+system("rm -rf $rootPath/home/data_transfer/Downloads/*.unl");
+system("rm -rf $rootPath/home/data_transfer/Downloads/intermineData/*");
 
-system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/") and die "can not cp files to production location";
+system("cp $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/*  $rootPath/home/data_transfer/Downloads/") and die "can not cp files to production location";
 
 
-system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
+system("$rootPath/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
-system("ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+system("ant -f $rootPath/server_apps/data_transfer/Downloads/build.xml archive-download-files");
 

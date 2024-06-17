@@ -6,14 +6,19 @@
 
 
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
+my $rootPath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbusername = "";
+my $dbpassword = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $dbusername, $dbpassword)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur_feature = $dbh->prepare("select feature_zdb_id, feature_name, ftrtype_type_display, date(now()) from feature, feature_type where feature_type = ftrtype_name;");
@@ -351,7 +356,7 @@ foreach $featureName (sort keys %featureNames) {
   
 }
 
-$featureFileForCZRC = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/CZRCfeature.txt";
+$featureFileForCZRC = "$rootPath/server_apps/data_transfer/Downloads/downloadsStaging/CZRCfeature.txt";
 open (CZRCFEATURES, ">$featureFileForCZRC") || die "can not open $featureFileForCZRC: $!\n";
 
 foreach $featureName (sort keys %featureNames) {

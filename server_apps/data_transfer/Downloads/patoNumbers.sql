@@ -202,7 +202,7 @@ create index tmp_ortho_pheno_index
   on tmp_ortho_pheno (phenos_id);
 
 
-\copy (select distinct gene_id,  mrkr_abbrev from tmp_ortho_pheno order by gene_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/test_preprocessed_pheno.txt' with delimiter as '|' null as '';
+\copy (select distinct gene_id,  mrkr_abbrev from tmp_ortho_pheno order by gene_id) to './downloadsStaging/test_preprocessed_pheno.txt' with delimiter as '|' null as '';
 
 create view preprocessedPheno as
   select distinct ortho_zdb_id, gene_id, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
@@ -211,14 +211,14 @@ create view preprocessedPheno as
     from tmp_ortho_pheno, tmp_phenotype_statement
     where phenos_id = phenos_pk_id
     order by gene_id, mrkr_abbrev;
-\copy (select * from preprocessedPheno) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt'  with delimiter as '|' null as '';
+\copy (select * from preprocessedPheno) to './downloadsStaging/preprocessed_pheno.txt'  with delimiter as '|' null as '';
 drop view preprocessedPheno;
 
 create view preprocessedOrtho as
   select distinct ortho_zdb_id, gene_id, mrkr_abbrev, ortho_other_species_symbol
      from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev, ortho_other_species_symbol;
-\copy (select * from preprocessedOrtho) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt' with delimiter as '|' null as '';
+\copy (select * from preprocessedOrtho) to './downloadsStaging/preprocessed_ortho.txt' with delimiter as '|' null as '';
 drop view preprocessedOrtho;
 
 commit work;
