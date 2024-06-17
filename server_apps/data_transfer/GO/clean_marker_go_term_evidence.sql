@@ -122,5 +122,9 @@ DELETE FROM marker_go_term_evidence WHERE mrkrgoev_zdb_id IN (SELECT old_mrkrgoe
 ---- END OF Part 2.                                                            ---------------
 ----------------------------------------------------------------------------------------------
 
+DROP TABLE IF EXISTS tmp_dbg_clean_marker_go_term_evidence;
+DROP TABLE IF EXISTS tmp_to_delete_marker_go_term_evidence;
+DROP TABLE IF EXISTS tmp_inference_group_member_updates;
+
 
 commit work;
