@@ -6,4 +6,5 @@
 # skos: http://www.w3.org/2004/02/skos/core#
 # orcid: https://orcid.org/
 # obo: http://purl.obolibrary.org/obo/
-# semapv: https://w3id.org/semapv/vocab/
+# semapv: https://w-1id.org/semapv/vocab/
+
