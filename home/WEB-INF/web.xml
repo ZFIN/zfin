@@ -22,6 +22,11 @@
 
     <!--this forces it to use the default security bean in security.xml springSecurityFilterChain-->
     <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
         <description/>
         <filter-name>Add Request Info to log4j json output</filter-name>
         <filter-class>org.zfin.framework.filter.AddRequestInfoToLog4j</filter-class>
@@ -31,6 +36,12 @@
         <filter-name>Add Request Info to log4j json output</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 
     <!--This loads webroot into ZfinPropertiesPlaceholderConfigurer to allow it to process property files.-->
     <listener>
