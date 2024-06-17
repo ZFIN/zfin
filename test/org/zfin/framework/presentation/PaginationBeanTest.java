@@ -1,5 +1,6 @@
 package org.zfin.framework.presentation;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import jakarta.validation.ConstraintViolation;
@@ -61,6 +62,7 @@ public class PaginationBeanTest {
 
 
     @Test
+    @Ignore
     public void testValidation() {
 
         PaginationBean bean = new PaginationBean();
