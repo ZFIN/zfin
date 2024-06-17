@@ -548,6 +548,7 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-orm', version: '6.1.1'
     implementation group: 'org.springframework', name: 'spring-core', version: '6.1.1'
     implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.1'
+    implementation group: 'org.springframework.security', name: 'spring-security-config', version: '6.1.1'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '6.1.1'
     implementation group: 'org.springframework', name: 'spring-web', version: '6.1.1'
     implementation group: 'org.springframework', name: 'spring-context-support', version: '6.1.1'
