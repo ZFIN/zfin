@@ -204,23 +204,25 @@ public class EnsemblTranscriptFastaReadProcess {
         List<TranscriptRecord> newTranscriptList = new ArrayList<>();
 
         genesToAddTranscripts.forEach(marker -> {
-            // get the ENSDARG ID for the given gene
-            String accessionNumber = getAccessionNumber(marker);
-            if (accessionNumber == null)
-                return;
-
-            // obtain all transcripts from Ensembl for the given ENSDARG ID
-            List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(accessionNumber);
-            if (transcriptsEnsembl == null) {
+            // get all ENSDARG IDs for the given gene (including 1-N)
+            List<String> accessionNumbers = getAccessionNumber(marker);
+            if (CollectionUtils.isEmpty(accessionNumbers)) {
                 return;
             }
-            transcriptsEnsembl.forEach(richSequence -> {
-                String ensdartID = getString(richSequence);
-                // only create those ensembl transcripts that do not exist yet in ZFIN
-                if (transcriptExist(marker, ensdartID)) {
+            accessionNumbers.forEach(accessionNumber -> {
+                // obtain all transcripts from Ensembl for the given ENSDARG ID
+                List<RichSequence> transcriptsEnsembl = allEnsemblProvidedGeneMap.get(accessionNumber);
+                if (transcriptsEnsembl == null) {
                     return;
                 }
-                newTranscriptList.add(new TranscriptRecord(marker, ensdartID, richSequence));
+                transcriptsEnsembl.forEach(richSequence -> {
+                    String ensdartID = getString(richSequence);
+                    // only create those ensembl transcripts that do not exist yet in ZFIN
+                    if (transcriptExist(marker, ensdartID)) {
+                        return;
+                    }
+                    newTranscriptList.add(new TranscriptRecord(marker, ensdartID, richSequence));
+                });
             });
         });
 
@@ -232,7 +234,7 @@ public class EnsemblTranscriptFastaReadProcess {
         List<Object[]> results = HibernateUtil.currentSession().createNativeQuery(sql).getResultList();
         ensdartDuplicationMap = results.stream().collect(Collectors.toMap(o -> (String) o[1], Function.identity()));
         List<String> duplicateIDs = new ArrayList<>(allduplicatedEnsdartIDs);
-        duplicateIDs.addAll(ensemblTranscriptMap.keySet());
+        duplicateIDs.addAll(ensdartDuplicationMap.keySet());
         System.out.println("Number of new Transcript records: " + newTranscriptList.size());
         newTranscriptList.forEach(transcriptRecord -> {
             boolean isDuplicate = false;
@@ -359,13 +361,9 @@ public class EnsemblTranscriptFastaReadProcess {
         return geneEnsdartMap.get(marker).stream().map(DBLink::getAccessionNumber).toList().contains(ensdartID);
     }
 
-    private String getAccessionNumber(Marker marker) {
+    private List<String> getAccessionNumber(Marker marker) {
         List<Map.Entry<String, MarkerDBLink>> entries = ensdargMap.entrySet().stream().filter(entry -> entry.getValue().getMarker().getZdbID().equals(marker.getZdbID())).toList();
-        if (CollectionUtils.isEmpty(entries))
-            return null;
-
-        String accessionNumber = entries.get(0).getValue().getAccessionNumber();
-        return accessionNumber;
+        return entries.stream().map(entry -> entry.getValue().getAccessionNumber()).toList();
     }
 
     private List<Marker> getEnsemblAccessionsToBeImported(Map<Marker, List<TranscriptDBLink>> geneEnsdartMap) {
