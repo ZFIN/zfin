@@ -1,11 +1,14 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
@@ -13,11 +16,10 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -93,7 +95,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private Set<Lab> labs;
     private Set<Company> companies;
     private Set<Publication> publications;
-    private AccountInfo accountInfo;
+    private Set<AccountInfo> accountInfoList;
     private String image;
     private boolean hidden;
 
@@ -111,10 +113,10 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public Collection<GrantedAuthority> getAuthorities() {
-        if (accountInfo == null) {
+        if (getAccountInfo() == null) {
             return null;
         }
-        String role = accountInfo.getRole();
+        String role = getAccountInfo().getRole();
         GrantedAuthority gr = new SimpleGrantedAuthority(role);
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(gr);
@@ -122,17 +124,17 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public String getPassword() {
-        if (accountInfo == null) {
+        if (getAccountInfo() == null) {
             return null;
         }
-        return accountInfo.getPassword();
+        return getAccountInfo().getPassword();
     }
 
     public String getUsername() {
-        if (accountInfo == null) {
+        if (getAccountInfo() == null) {
             return null;
         }
-        return accountInfo.getUsername();
+        return getAccountInfo().getUsername();
     }
 
     public boolean isAccountNonExpired() {
@@ -152,11 +154,11 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public boolean isLoginAccount() {
-        return accountInfo != null;
+        return getAccountInfo() != null;
     }
 
     public boolean isRootAccount() {
-        return accountInfo != null && accountInfo.getRole().equals(AccountInfo.Role.ROOT.toString());
+        return getAccountInfo() != null && getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
     }
 
     public static boolean isDeveloper() {
@@ -165,6 +167,17 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             return false;
         }
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
+    }
+
+    public AccountInfo getAccountInfo() {
+        return CollectionUtils.isEmpty(accountInfoList) ? null : accountInfoList.iterator().next();
+    }
+
+    public void setAccountInfo(AccountInfo accountInfo) {
+        if(CollectionUtils.isEmpty(accountInfoList)){
+            accountInfoList = new HashSet<>();
+        }
+        accountInfoList.add(accountInfo);
     }
 
     public int hashCode() {
@@ -203,11 +216,11 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @Override
     public String toString() {
         String sb = "Person" +
-                "{zdbID='" + zdbID + '\'' +
-                ", fullName='" + getFullName() + '\'' +
-                ", name='" + shortName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+                    "{zdbID='" + zdbID + '\'' +
+                    ", fullName='" + getFullName() + '\'' +
+                    ", name='" + shortName + '\'' +
+                    ", email='" + email + '\'' +
+                    '}';
         return sb;
     }
 

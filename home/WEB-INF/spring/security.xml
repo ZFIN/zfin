@@ -71,6 +71,7 @@
         <property name="defaultFailureUrl" value="/action/login-redirect?error=true"/>
     </bean>
 
+    <bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
     <!--maps action-->
     <!--filter action should correspond to this:-->
     <!--http://static.springsource.org/spring-security/site/docs/3.0.x/reference/ns-config.html#ns-requires-channel-->
@@ -210,6 +211,7 @@
         <security:intercept-url pattern="/ajax/curation*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/ajax/curation/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/curation/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/**" access="permitAll"/>
 
     </security:http>
 

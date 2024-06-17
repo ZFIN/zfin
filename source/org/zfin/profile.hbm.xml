@@ -47,6 +47,12 @@
         <many-to-one name="emailPrivacyPreference" column="pers_epp_pk_id" class="org.zfin.profile.EmailPrivacyPreference" fetch="join"/>
 
         <!--not lazy because it is used in the header on every page-->
+
+        <set name="accountInfoList">
+            <key column="zdb_id"/>
+            <one-to-many class="org.zfin.profile.AccountInfo"/>
+        </set>
+
         <set name="labs" table="int_person_lab">
             <key column="source_id"/>
             <many-to-many class="org.zfin.profile.Lab" column="target_id"/>
@@ -61,26 +67,6 @@
             <key column="source_id"/>
             <many-to-many class="org.zfin.publication.Publication" column="target_id" order-by="pub_date desc"/>
         </set>
-
-
-        <join table="zdb_submitters" optional="false">
-            <key column="zdb_id"/>
-            <component name="accountInfo">
-                <property name="login" not-null="true"/>
-                <property name="password"/>
-                <property name="role" column="access" not-null="true"/>
-                <property name="name" not-null="true"/>
-                <property name="cookie"/>
-                <property name="loginDate" column="issue_time"/>
-                <property name="previousLoginDate" column="previous_login"/>
-                <property name="accountCreationDate" column="create_date" not-null="true"/>
-                <property name="curator" column="is_curator" not-null="true"/>
-                <property name="student" column="is_student"/>
-                <property name="passwordResetKey" column="password_reset_key"/>
-                <property name="passwordResetDate" column="password_reset_date"/>
-                <property name="passwordLastUpdated" column="password_last_updated"/>
-            </component>
-        </join>
 
     </class>
 
