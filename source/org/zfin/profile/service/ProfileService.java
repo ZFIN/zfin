@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+import static org.zfin.repository.RepositoryFactory.getUserRepository;
 
 /**
  *
@@ -741,7 +742,7 @@ public class ProfileService {
     public static Person getPersonByEmailOrLogin(String emailOrLogin) {
         Person person = getProfileRepository().getPersonByEmail(emailOrLogin);
         if (person == null) {
-            person = getProfileRepository().getPersonByName(emailOrLogin);
+            person = getUserRepository().getPersonByLoginName(emailOrLogin);
         }
         return person;
     }
