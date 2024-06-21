@@ -24,22 +24,22 @@ insert into ensembl_transcript_renaming
 values ('ENSDART00000188969','ENSDART00000188969','si:ch211-204c21.1-203');
 
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-203'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-203'
 where etr_ensdart_id = 'ENSDART00000187095';
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-201'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-201'
 where etr_ensdart_id = 'ENSDART00000083296';
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-207'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-207'
 where etr_ensdart_id = 'ENSDART00000190237';
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-204'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-204'
 where etr_ensdart_id = 'ENSDART00000189345';
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-206'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-206'
 where etr_ensdart_id = 'ENSDART00000190203';
 
-update ensembl_transcript_renaming set etr_symbol = 'si:ch211-216l23.1-205'
+update ensembl_transcript_renaming set etr_name = 'si:ch211-216l23.1-205'
 where etr_ensdart_id = 'ENSDART00000189493';
 
 insert into ensembl_transcript_renaming
