@@ -45,3 +45,9 @@ where etr_ensdart_id = 'ENSDART00000189493';
 insert into ensembl_transcript_renaming
 values ('ENSDART00000146133','ENSDART00000146133','si:ch211-216l23.1-202');
 
+update marker set  mrkr_abbrev = 'tenm2a-202' where mrkr_zdb_id = 'ZDB-TSCRIPT-090929-19001';
+
+update marker set  mrkr_abbrev = 'rgs13b-201' where mrkr_zdb_id = 'ZDB-TSCRIPT-110912-242';
+
+update ensembl_transcript_renaming set etr_name = 'tenm2a-203'
+where etr_ensdart_id = 'ENSDART00000157943'
