@@ -22,7 +22,7 @@ create unique index u_omimp_termxref_mapping_primary_key_index
 insert into updated_omimp_termxref_mapping (u_otm_omimp_id, u_otm_tx_id)
 select distinct omimp_pk_id, tx_pk_id
   from omim_phenotype, term_xref
- where tx_prefix = 'OMIM'
+ where tx_prefix = 'MIM'
    and tx_fdb_db_id = 24
    and tx_accession = omimp_omim_id;
 
@@ -36,7 +36,7 @@ delete from omimp_termxref_mapping
 insert into omimp_termxref_mapping (otm_omimp_id, otm_tx_id)
 select distinct omimp_pk_id, tx_pk_id
   from omim_phenotype, term_xref
- where tx_prefix = 'OMIM'
+ where tx_prefix = 'MIM'
    and tx_fdb_db_id = 24
    and tx_accession = omimp_omim_id
    and not exists(select 1 from omimp_termxref_mapping
