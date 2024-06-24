@@ -184,8 +184,8 @@
       </RequireAll>
       #Satisfy any
 
-      ProxyPass         http://localhost:8983/solr
-      ProxyPassReverse  http://localhost:8983/solr
+      ProxyPass         http://solr:8983/solr
+      ProxyPassReverse  http://solr:8983/solr
     </Location>
     <Location /logs>
         SSLRequireSSL
