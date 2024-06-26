@@ -5,8 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
+import org.zfin.framework.OntologyEnumType;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.util.NumberAwareStringComparator;
@@ -46,8 +49,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected String oboID;
 
     @Column(name = "term_ontology")
-    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.ontology.Ontology")})
+    @Convert(converter = OntologyEnumType.class)
     protected Ontology ontology;
     @Column(name = "term_is_obsolete")
     protected boolean obsolete;
