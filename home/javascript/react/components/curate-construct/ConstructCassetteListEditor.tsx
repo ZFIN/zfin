@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
-import {Cassette} from './ConstructTypes';
+import {Cassette, SimplifiedCassette, simplifiedCassettesToCassettes} from './ConstructTypes';
 
 interface ConstructCassetteListEditorProps {
     publicationId: string;
     onChange?: (cassettes: Cassette[]) => void;
     resetFlag?: number;
+    initialCassettes?: SimplifiedCassette[];
 }
 
-const ConstructCassetteListEditor = ({publicationId, onChange, resetFlag}: ConstructCassetteListEditorProps) => {
+const ConstructCassetteListEditor = ({publicationId, onChange, resetFlag, initialCassettes}: ConstructCassetteListEditorProps) => {
     const [cassettes, setCassettes] = useState<Cassette[]>([]);
     const [cassette, setCassette] = useState<Cassette>(null);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -59,6 +60,13 @@ const ConstructCassetteListEditor = ({publicationId, onChange, resetFlag}: Const
     useEffect(() => {
         resetState();
     }, [resetFlag]);
+
+    useEffect( () => {
+        if (!initialCassettes) {
+            return;
+        }
+        setCassettes(simplifiedCassettesToCassettes(initialCassettes));
+    }, [initialCassettes]);
 
     return (
         <>

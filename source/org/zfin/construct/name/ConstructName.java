@@ -1,5 +1,6 @@
 package org.zfin.construct.name;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -104,6 +105,11 @@ public class ConstructName {
                 "(" +
                 cassettes.toString() +
                 ")";
+    }
+
+    @JsonProperty("displayName")
+    public String getDisplayName() {
+        return toString();
     }
 
     public void addCassette(Cassette cassette) {

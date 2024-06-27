@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
+import org.zfin.antibody.AntibodyService;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.InvalidConstructNameException;
@@ -14,6 +15,7 @@ import org.zfin.database.InformixUtil;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.infrastructure.ControlledVocab;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
@@ -255,10 +257,11 @@ public class ConstructComponentService {
 
     public static Marker updateConstructName(String constructZdbID, ConstructName newName, String pubZdbID) throws InvalidConstructNameException {
         Marker oldMarker = mr.getMarkerByID(constructZdbID);
+        String oldName = oldMarker.getName();
 
         //TODO: add better handling for this
         // Do we want to support changing marker type for constructs?
-        String oldNameType = oldMarker.getName().substring(0, 2);
+        String oldNameType = oldName.substring(0, 2);
         String newNameType = newName.getTypeAbbreviation();
         if (!oldNameType.equals(newNameType)) {
             throw new InvalidConstructNameException("Cannot change construct type");
@@ -277,6 +280,9 @@ public class ConstructComponentService {
 
         //update the construct name
         cr.updateConstructName(constructZdbID, newName.toString());
+
+        //create alias for old name
+        AntibodyService.addDataAliasRelatedEntity(constructZdbID, oldName, pubZdbID);
 
         //adding construct record to marker table
         InformixUtil.runProcedure("regen_construct_marker", constructZdbID + "");

@@ -41,4 +41,8 @@ public class Promoter {
     public void addPromoterPart(String componentValue) {
         promoter.add(componentValue);
     }
+
+    public void prependPromoterPart(String componentValue) {
+        promoter.add(0, componentValue);
+    }
 }

@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
-import {cassettesToSimplifiedCassettes, typeAbbreviationToType} from './ConstructTypes';
+import {cassettesToSimplifiedCassettes, ConstructFormDTO, typeAbbreviationToType} from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
+
+
+//TODO: There is some duplication of CurateConstructForm.tsx
+//      use that file to refactor this one
 
 /*
  * This component is used to create a new construct
@@ -38,7 +42,7 @@ const CurateConstructNew = ({publicationId, show= true}: CurateConstructNewProps
     }
 
     const submitForm = async () => {
-        const submissionObject = {
+        const submissionObject : ConstructFormDTO = {
             constructNameObject: {
                 type: typeAbbreviationToType(chosenType),
                 prefix: prefix,

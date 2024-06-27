@@ -70,42 +70,54 @@
         //     "pubZdbID": "ZDB-PUB-190507-21",
         //     "constructType": "Tg",
         //     "constructPrefix": "",
-        //     "constructStoredName": "en.epi#-#Hsa.HBB#:EGFP"
+        //     "constructStoredName": "en.epi#-#Hsa.HBB#:EGFP",
+        //     "constructOldName": "Tg(and1-Hsa.HBB:EGFP)",
+        //     "issueNumber": "ZFIN-7073"
         // },
         // {
         //     "constructID": "ZDB-TGCONSTRCT-161115-3",
         //     "pubZdbID": "ZDB-PUB-190507-21",
         //     "constructType": "Tg",
         //     "constructPrefix": "",
-        //     "constructStoredName": "rr.2pand1#:EGFP"
+        //     "constructStoredName": "rr.2pand1#:EGFP",
+        //     "constructOldName": "Tg(and1:EGFP)",
+        //     "issueNumber": "ZFIN-7073"
         // },
         // {
         //     "constructID": "ZDB-TGCONSTRCT-161115-4",
         //     "pubZdbID": "ZDB-PUB-190507-21",
         //     "constructType": "Tg",
         //     "constructPrefix": "2",
-        //     "constructStoredName": "rr.2pand1#:EGFP"
+        //     "constructStoredName": "rr.2pand1#:EGFP",
+        //     "constructOldName": "Tg2(rr.2pand1:EGFP)",
+        //     "issueNumber": "ZFIN-7073"
         // },
         // {
         //     "constructID": "ZDB-TGCONSTRCT-220422-1",
         //     "pubZdbID": "ZDB-PUB-220103-2",
         //     "constructType": "Tg",
         //     "constructPrefix": "",
-        //     "constructStoredName": "pth2#:EGFP#Cassette#,#cryaa#:EGFP"
+        //     "constructStoredName": "pth2#:EGFP#Cassette#,#cryaa#:EGFP",
+        //     "constructOldName": "Tg(pth2:EGFP)",
+        //     "issueNumber": "ZFIN-8967"
         // },
         // {
         //     "constructID": "ZDB-TGCONSTRCT-220422-2",
         //     "pubZdbID": "ZDB-PUB-220103-2",
         //     "constructType": "Tg",
         //     "constructPrefix": "",
-        //     "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry"
+        //     "constructStoredName": "pth2#:TagRFP#Cassette#,#cryaa#:mCherry",
+        //     "constructOldName": "Tg(pth2:TagRFP)",
+        //     "issueNumber": "ZFIN-8967"
         // },
         // {
         //     "constructID": "ZDB-TGCONSTRCT-190812-12",
         //     "pubZdbID": "ZDB-PUB-190209-17",
         //     "constructType": "Tg",
         //     "constructPrefix": "BAC",
-        //     "constructStoredName": "cdh1#:cdh1#-#TagRFP#Cassette#,#cryaa#:Cerulean"
+        //     "constructStoredName": "cdh1#:cdh1#-#TagRFP#Cassette#,#cryaa#:Cerulean",
+        //     "constructOldName": "TgBAC(cdh1:cdh1-TagBFP,cryaa:Cerulean)",
+        //     "issueNumber": "ZFIN-8986"
         // },
         {
             "constructID": "ZDB-TGCONSTRCT-220928-1",

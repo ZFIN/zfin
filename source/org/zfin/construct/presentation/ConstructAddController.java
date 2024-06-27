@@ -57,7 +57,7 @@ public class ConstructAddController {
     @RequestMapping(value = "/construct-add-component", method = RequestMethod.POST)
     public
     @ResponseBody
-        String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Marker newConstruct;
         AddConstructFormFields form = AddConstructFormFields.fromRequest(request);
 
@@ -90,9 +90,9 @@ public class ConstructAddController {
     String createConstruct(@RequestBody AddConstructFormFields constructValues) {
         Marker newConstruct;
         //set the construct name from the object
+        constructValues.getConstructNameObject().reinitialize();
         constructValues.setConstructName(constructValues.getConstructNameObject().toString());
         constructValues.setConstructSequence(constructValues.getConstructSequence().toUpperCase());
-        constructValues.getConstructNameObject().reinitialize();
         try {
             HibernateUtil.createTransaction();
             newConstruct = createNewConstructFromSubmittedForm(constructValues);
