@@ -56,8 +56,21 @@ public class Cassettes implements Iterable<Cassette>{
     }
 
     public void reinitialize() {
+        //make sure cassette numbers are correct
         for (int i = 0; i < cassettes.size(); i++) {
             cassettes.get(i).setCassetteNumber(i + 1);
+        }
+        //make sure the first promoter in each cassette (after first cassette) has a leading comma
+        for (int i = 1; i < cassettes.size(); i++) {
+            Cassette tempCassette = cassettes.get(i);
+            Promoter promoter = tempCassette.getPromoter();
+            if (promoter.size() == 0) {
+                continue;
+            }
+            String firstPromoterPart = promoter.getPromoter().get(0);
+            if (!",".equals(firstPromoterPart)) {
+                promoter.prependPromoterPart(",");
+            }
         }
     }
 }

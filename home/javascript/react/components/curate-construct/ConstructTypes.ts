@@ -4,6 +4,22 @@ interface ConstructName {
     cassettes: Cassette[];
 }
 
+//a type for the construct name that is returned from the server or sent to the server
+type ConstructNameDTO = {
+    type: string;
+    prefix: string;
+    cassettes: SimplifiedCassette[];
+}
+
+type ConstructFormDTO = {
+    constructNameObject: ConstructNameDTO;
+    constructAlias: string;
+    constructSequence: string;
+    constructComments: string;
+    constructCuratorNote: string;
+    pubZdbID: string;
+}
+
 interface Cassette {
     cassetteNumber?: number;
     promoter: ConstructComponent[];
@@ -53,6 +69,44 @@ function cassettesToSimplifiedCassettes(cassettes: Cassette[]): SimplifiedCasset
     return cassettes.map(cassetteToSimplifiedCassette);
 }
 
+function simplifiedCassetteToCassette(simplifiedCassette: SimplifiedCassette): Cassette {
+    const promoter = [];
+    const coding = [];
+    for (const component of simplifiedCassette.coding) {
+        coding.push({
+            id: null,
+            name: null,
+            label: '',
+            value: component,
+            url: null,
+            category: null,
+            type: null,
+            separator: ''
+        });
+    }
+    for (const component of simplifiedCassette.promoter) {
+        promoter.push({
+            id: null,
+            name: null,
+            label: '',
+            value: component,
+            url: null,
+            category: null,
+            type: null,
+            separator: ''
+        });
+    }
+    return {
+        cassetteNumber: simplifiedCassette.cassetteNumber,
+        promoter: promoter,
+        coding: coding
+    };
+}
+
+function simplifiedCassettesToCassettes(simplifiedCassettes: SimplifiedCassette[]): Cassette[] {
+    return simplifiedCassettes.map(simplifiedCassetteToCassette);
+}
+
 function typeAbbreviationToType(typeAbbreviation: string): string {
     switch (typeAbbreviation) {
     case 'Tg':
@@ -68,4 +122,18 @@ function typeAbbreviationToType(typeAbbreviation: string): string {
     }
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType};
+function normalizeSimplifiedCassettes(simplifiedCassettes) {
+    return simplifiedCassettes.map((cassette, i) => ({
+        cassetteNumber: cassette.cassetteNumber,
+        promoter: cassette.promoter.filter((component, j) => !(j === 0 && i > 0 && component === ',')),
+        coding: [...cassette.coding]
+    }));
+}
+
+
+type MarkerNameAndZdbId = {
+    label: string;
+    zdbID: string;
+}
+
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes};

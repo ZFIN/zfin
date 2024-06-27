@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {backendBaseUrl} from './DomainInfo';
+import {MarkerNameAndZdbId} from './ConstructTypes';
 
 interface ConstructRelationshipsTableProps {
     publicationId: string;
@@ -31,11 +32,6 @@ type NewConstructRelationshipServerResponse = {
         zdbID: string;
         name: string;
     };
-}
-
-type MarkerNameAndZdbId = {
-    label: string;
-    zdbID: string;
 }
 
 const calculatedDomain = backendBaseUrl();

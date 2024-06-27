@@ -242,6 +242,31 @@ public class ConstructEditController {
                 """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
     }
 
+    //must be logged in to use this
+    //example request:
+    // curl -X POST -k https://<SITE>.zfin.org/action/construct/rename/ZDB-TGCONSTRCT-161115-2 -H "Content-Type: application/json" -d '{"constructStoredName": "tdg.1#-#Hsa.TEST1#:EGFP#Cassette#,#tdg.2#-#Hsa.TEST2#:EGFP#", "pubZdbID": "ZDB-PUB-190507-21", "constructType": "Tg", "constructPrefix": ""}'
+    @RequestMapping(value = "/update/{constructID}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String updateConstruct(@PathVariable String constructID,
+                           @RequestBody AddConstructFormFields request) throws Exception{
+
+        ConstructName constructName = request.getConstructNameObject();
+        constructName.reinitialize();
+        String pubZdbID = request.getPubZdbID();
+
+        HibernateUtil.createTransaction();
+        Marker newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return """
+                {
+                    "message": "%s",
+                    "success": true
+                }
+                """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
+    }
+
     //Send the json representation of a construct name to the client
     @RequestMapping(value = "/json/{constructID}", method = RequestMethod.GET)
     public
@@ -251,8 +276,6 @@ public class ConstructEditController {
         return oldConstructName;
     }
 }
-
-
 
 
 
