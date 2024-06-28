@@ -172,6 +172,8 @@
                 <filter token="JBROWSE_BASE_URL" value="${JBROWSE_BASE_URL}"/>
                 <filter token="JBROWSE_USE_LOCAL_PROXY" value="${JBROWSE_USE_LOCAL_PROXY}"/>
                 <filter token="JBROWSE_PROXY_BASE_URL" value="${JBROWSE_PROXY_BASE_URL}"/>
+                <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
+                <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
                 <filter token="PGHOST" value="${PGHOST}"/>
             </filterset>
         </copy>
