@@ -34,7 +34,7 @@
         <div class="__react-root"
              id="MarkerEditNomenclature"
              data-marker-id="${transcript.zdbID}"
-             data-show-abbreviation-field="false"
+             data-show-abbreviation-field="true"
              data-show-reason-fields="false">
         </div>
     </z:section>
