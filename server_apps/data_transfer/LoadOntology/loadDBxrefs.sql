@@ -12,7 +12,12 @@ type varchar(30));
 load from term_xref.unl
   insert into tmp_dbxrefs;
 
+-- fix up the term_xref table for OMIM load
+-- the prefix has changed from OMIM to MIM
+-- so we need to adjust this for the foreign_db
 
+update tmp_dbxrefs set xref_db = 'OMIM'
+where xref_db = 'MIM';
 
 create temp table tmp_dbxrefs_with_ids (
 tmp_term_zdb_id varchar(30),
