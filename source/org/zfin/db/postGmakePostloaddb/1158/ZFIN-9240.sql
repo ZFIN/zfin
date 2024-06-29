@@ -20,3 +20,5 @@ delete
 from db_link
 where dblink_acc_num in (select * from ensembl_remove_temp);
 
+-- list of ensembl DB_LINK records associated to older assemblies (non-GRCz11)
+select * from db_link where dblink_acc_num like 'ENSDARG%' AND  dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-131021-1';
