@@ -5,24 +5,29 @@
 
 use DBI;
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME', 'ROOT_PATH', 'TARGETROOT');
+
 
 #set environment variables
 
-$dbname = "<!--|DB_NAME|-->";
+$targetRoot = $ENV{'TARGETROOT'};
+$rootPath = $ENV{'ROOT_PATH'};
+$dbname = $ENV{'DB_NAME'};
 $username = "";
 $password = "";
 
 print "$dbname\n\n";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
+my $dbhost = $ENV{'PGHOST'};
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 #remove old report and log files
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*.txt");
+system("/bin/rm -f $rootPath/server_apps/data_transfer/PUBMED/Journal/*.txt");
 
 system("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/pubmed/J_Medline.txt");
 
@@ -73,19 +78,19 @@ close ALLJOURNALS;
 close NCBIJOURNALS;
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f  checkAndUpdateJournals.sql");
 } catch {
   warn "Failed to execute checkAndUpdateJournals.sql - $_";
   exit -1;
 };
 
-open (WRONGISSN, "><!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt") ||  die "Cannot open wrongIssnPrintByMedAbbr.txt : $!\n";
+open (WRONGISSN, ">$rootPath/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt") ||  die "Cannot open wrongIssnPrintByMedAbbr.txt : $!\n";
 
 print WRONGISSN "journal zdbID|journal abbrev|issn print currently stored|issn print at nlm|journal name|nlm ID|\n";
 
 close WRONGISSN;
 
-system("/bin/cat <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
+system("/bin/cat $targetRoot/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> $rootPath/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
 
 $cur_nlmids = $dbh->prepare("select jrnl_nlmid, jrnl_zdb_id, jrnl_abbrev from journal where jrnl_nlmid is not null order by jrnl_zdb_id;");
