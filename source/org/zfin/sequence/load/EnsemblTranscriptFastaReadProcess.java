@@ -74,12 +74,20 @@ public class EnsemblTranscriptFastaReadProcess {
         getMarkerDBLinksWithGenbankEnsemblOnlyAccessions();
 
         ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions();
+        ensdargMap.putAll(getMarkerDBLinksWithGenbankEnsemblOnlyAccessions());
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
+        // add all marker that do not have a single Ensembl transcript associated.
+        ensdargMap.values().forEach(markerDBLink -> {
+            if (!geneEnsdartMap.containsKey(markerDBLink.getMarker())) {
+                geneEnsdartMap.put(markerDBLink.getMarker(), null);
+            }
+        });
         createReportFiles(geneEnsdartMap, new ArrayList<>(ensdargMap.keySet()));
         System.out.println("Total Number of Genes with Ensembl Transcripts In ZFIN: " + geneEnsdartMap.size());
 
         List<Marker> ensemblGenesToBeImported = getEnsemblAccessionsToBeImported(geneEnsdartMap);
         createTranscriptRecords(ensemblGenesToBeImported);
+
         System.exit(0);
 
         allEnsemblProvidedGeneMap.entrySet().removeIf(entry -> !ensdargMap.containsKey(entry.getKey()));
@@ -146,7 +154,7 @@ public class EnsemblTranscriptFastaReadProcess {
         transcript.setMarkerType(transcriptMarkerType);
         // if biotype = protein_coding => mRNA
         // otherwise exception
-        if (!bioType.equals("protein_coding")) {
+        if (!(bioType.equals("protein_coding") || bioType.equals("pseudogene"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
                 || bioType.equals("unprocessed_pseudogene")) {
                 return;
@@ -257,6 +265,9 @@ public class EnsemblTranscriptFastaReadProcess {
         });
 */
 
+        for (Marker genesToAddTranscript : genesToAddTranscripts) {
+
+        }
         errorRecords.forEach(System.out::println);
 
         List<String> headerNames = List.of(
@@ -358,7 +369,17 @@ public class EnsemblTranscriptFastaReadProcess {
     }
 
     private boolean transcriptExist(Marker marker, String ensdartID) {
-        return geneEnsdartMap.get(marker).stream().map(DBLink::getAccessionNumber).toList().contains(ensdartID);
+        List<TranscriptDBLink> transcriptDBLinks = geneEnsdartMap.get(marker);
+        if (CollectionUtils.isEmpty(transcriptDBLinks)) {
+            return false;
+        }
+
+/*
+        transcriptDBLinks.stream().map(transcriptDBLink -> transcriptDBLink.getTranscript().getAbbreviation()).toList().forEach(s -> {
+            System.out.println(marker.getZdbID() + " " + ensdartID + " " + s);
+        });
+*/
+        return transcriptDBLinks.stream().map(DBLink::getAccessionNumber).toList().contains(ensdartID);
     }
 
     private List<String> getAccessionNumber(Marker marker) {
