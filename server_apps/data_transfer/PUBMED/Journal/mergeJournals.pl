@@ -4,22 +4,26 @@
 # and perform journal-merging actions
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME', 'ROOT_PATH');
+
 use ZFINPerlModules;
 use Try::Tiny;
 
 #set environment variables
-
-
-$dbname = "<!--|DB_NAME|-->";
+$rootPath = $ENV{'ROOT_PATH'};
+$dbhost = $ENV{'PGHOST'};
+$dbname = $ENV{'DB_NAME'};
 $username = "";
 $password = "";
 
 #remove old log file and alias list
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/journalMergeLog");
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/aliasList");
+system("/bin/rm -f $rootPath/server_apps/data_transfer/PUBMED/Journal/journalMergeLog");
+system("/bin/rm -f $rootPath/server_apps/data_transfer/PUBMED/Journal/aliasList");
 
-system("/usr/bin/scp /research/zarchive/load_files/Journal/mergeJournalInput <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/");
+system("/usr/bin/scp /research/zarchive/load_files/Journal/mergeJournalInput $rootPath/server_apps/data_transfer/PUBMED/Journal/");
 
 open (LOG, ">journalMergeLog") || die "Cannot open journalMergeLog : $!\n";
 
@@ -43,7 +47,6 @@ $sql = 'select jrnl_zdb_id from journal;';
 $numJournalsBefore = ZFINPerlModules->countData($sql);
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to database: $DBI::errstr\n";
 
@@ -133,7 +136,7 @@ close LOG;
 print "\nct = $ct\n\n";
 
 #remove the used input file
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
+system("/bin/rm -f $rootPath/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
 
 try {
   ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f insertJournalAlias.sql");

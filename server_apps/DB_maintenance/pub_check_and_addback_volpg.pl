@@ -19,12 +19,12 @@ use XML::Twig;
 #
 
 print "processing the publication checking and would add missing vol and page numbers ... \n";
-
+print "current time: " . localtime() . "\n";
 print "remove and re-create Update-Publication-Volume-And-Pages_w directory\n";
 system("/bin/rm -rf Update-Publication-Volume-And-Pages_w");
-system("/bin/mkdir Update-Publication-Volume-And-Pages_w"); 
+system("/bin/mkdir Update-Publication-Volume-And-Pages_w");
 
-my $dbname = "<!--|DB_NAME|-->";
+my $dbname = $ENV{'DB_NAME'};
 my $username = "";
 my $password = "";
 
@@ -96,6 +96,7 @@ my $updated = 0;
 my $notupdated = 0;
 
 foreach $key (sort keys %pmids) {
+  print("processing $key pmid at " . localtime() . "\n");
   $ctTotal++;
 
   my $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=".$pmids{$key}."&retmode=xml";
@@ -164,7 +165,7 @@ print "$updated pubs fixed with vol and/or page numbers\n\n\n";
 ###########################################################################
 
 print "processing the publication checking and would fix the bad pub_doi ... \n";
-
+print "current time: " . localtime() . "\n";
 
 $sql = "select distinct zdb_id, pub_doi
           from publication

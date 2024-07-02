@@ -9,11 +9,12 @@ final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_
 WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
 DBNAME = System.getenv("DBNAME")
 
-
+println("Running complete_auther_names.pl at " + new Date())
 def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
 def command = "perl -w $scriptPath"
 println command.execute().text
 
+println("Running pub_check_and_addback_volpg.pl at " + new Date())
 def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
 def command2 = "perl -w $scriptPath2"
 println command2.execute().text
@@ -31,6 +32,8 @@ PubmedUtils.dbaccess DBNAME, """
   and status != 'active' ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
+println("Got the list of pubs to check and stored in $PUB_IDS_TO_CHECK")
+println("File size: " + new File(PUB_IDS_TO_CHECK).length())
 
 count = 0
 toActivateCount = 0
@@ -47,10 +50,15 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
     }
 }
 
+println("Number of pubs to check: " + ids.size())
+println("Contents of idsToUpdate: \n" + idsToUpdate)
 
+
+println("Fetching articles from PubMed at " + new Date())
 def articleSet = PubmedUtils.getFromPubmed(ids)
 
 toActivateCount += articleSet.PubmedArticle.size()
+println("Number of articles fetched: " + toActivateCount)
 
 articleSet.PubmedArticle.each { article ->
     def pubmedId = article.MedlineCitation.PMID
@@ -84,16 +92,26 @@ println("ctUpdated = $count")
 println("")
 println("")
 
-PubmedUtils.dbaccess DBNAME, """
+builtQuery = ""
+
+builtQuery += """
  BEGIN WORK;
 
   CREATE TEMP TABLE tmp_activation (
     zdbId text,
     pmid integer
   );
+  
+"""
 
-  \\copy tmp_activation FROM '$PUBS_TO_ACTIVATE' null '' delimiter ',';
+//check if PUBS_TO_ACTIVATE exists
+if (PUBS_TO_ACTIVATE.exists() ) {
+    builtQuery += """
+        \\copy tmp_activation FROM '$PUBS_TO_ACTIVATE' null '' delimiter ',';
+    """
+}
 
+builtQuery += """
   UPDATE publication
     SET status = 'active'
     WHERE EXISTS (select 'x' from tmp_activation where pmid = accession_no);
@@ -102,9 +120,16 @@ PubmedUtils.dbaccess DBNAME, """
     zdbId text,
    altId text,
    idType text );
+"""
 
-   \\copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
+//check if PMC_ID_PUBS exists
+if (PMC_ID_PUBS.exists() ) {
+    builtQuery += """
+        \\copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
+    """
+}
 
+builtQuery += """
   UPDATE publication
     SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and zdbId = zdb_id)
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE zdbId = zdb_id)
@@ -130,7 +155,10 @@ PubmedUtils.dbaccess DBNAME, """
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE zdbId = zdb_id)
     and pub_doi is null ;
 
-
-
   COMMIT WORK;
 """
+
+println("Running the following query: \n" + builtQuery)
+println("Running the query at " + new Date())
+PubmedUtils.dbaccess DBNAME, builtQuery
+println("Query completed at " + new Date())

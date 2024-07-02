@@ -6,10 +6,13 @@ use DBI;
 use XML::Twig;
 use utf8;
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME');
 
-$dbname = "<!--|DB_NAME|-->";
+$dbhost = $ENV{'PGHOST'};
+$dbname = $ENV{'DB_NAME'};
 $username = "";
 $password = "";
 
@@ -17,7 +20,6 @@ system("/bin/date");
 system("/bin/rm -f authors");
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
 $sql = "select distinct zdb_id, accession_no, title
@@ -51,7 +53,7 @@ open(my $AUTHOR, ">:encoding(utf-8)", "authors") || die "Cannot open authors : $
 %uniqueNames = ();
 
 foreach $pmid (sort keys %pmids) {
-  
+  print("Processing $pmid at ".localtime()."\n");
   $pubZdbId = $pmids{$pmid};
   
   $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=".$pmid."&retmode=xml";
@@ -94,7 +96,7 @@ $dbh->disconnect();
 close $AUTHOR;
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f load_complete_author_names.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f load_complete_author_names.sql");
 } catch {
   warn "Failed to execute load_complete_author_names.sql - $_";
   exit -1;

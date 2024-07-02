@@ -269,10 +269,7 @@ def whitelistTemplateFiles = [
         '**/meow.pl',                                               //server_apps/data_transfer/MEOW
         '**/insertJournalAlias.sql',                                //server_apps/data_transfer/PUBMED/Journal
         '**/checkAndUpdateJournals.sql',
-        '**/mergeJournals.pl',
-        '**/checkAndUpdateJournals.pl',
-        '**/complete_auther_names.pl',                              //server_apps/data_transfer/PUBMED
-        '**/load_complete_author_names.sql',
+        '**/load_complete_author_names.sql',                        //server_apps/data_transfer/PUBMED
         '**/loadNewPubs.sql',
         '**/updatePublicationDate.groovy',
         '**/pubActivation.groovy',
@@ -300,7 +297,6 @@ def whitelistTemplateFiles = [
         '**/fx_permission_check.pl',
         '**/loadExternalNotes.pl',
         '**/checkVarcharOctetLength.pl',
-        '**/pub_check_and_addback_volpg.pl',
         '**/loadExternalNotes.sql',
         '**/disable_updates.pl',
         '**/set_unload_timestamp.sql',
