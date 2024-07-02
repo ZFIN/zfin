@@ -42,6 +42,13 @@ const FPBase = ({efgId,}) => {
         );
     };
 
+    const validateFPBase = (value) => {
+        if (!value) {
+            return 'An FPBase Protein is required';
+        }
+        return false;
+    };
+
 
     if (!fpBaseProteins) {
         return null;
@@ -74,6 +81,7 @@ const FPBase = ({efgId,}) => {
                             id='fpId'
                             field='fpId'
                             tag={FPBaseProteinInput}
+                            validate={validateFPBase}
                         />
                     </>
                 }
