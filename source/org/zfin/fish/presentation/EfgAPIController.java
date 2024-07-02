@@ -57,17 +57,16 @@ public class EfgAPIController {
         HibernateUtil.createTransaction();
         Marker efg = getMarkerRepository().getMarkerByID(efgID);
 
-        List<FluorescentProtein> efgs = getMarkerRepository().getFluorescentProteins(fpbase.fpId);
+        FluorescentProtein protein = getMarkerRepository().getFluorescentProteinByName(fpbase.fpId);
 
         //If no EFG is found in our FluorescentProtein table, send back a 404 with error message
-        if (efgs.isEmpty()) {
+        if (protein == null) {
             HibernateUtil.rollbackTransaction();
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             FpbaseDTO fpbaseDTO = new FpbaseDTO(null, null, Optional.of("Fluorescent protein with ID of " + fpbase.fpId + " not found in ZFIN."));
             return fpbaseDTO;
         }
 
-        FluorescentProtein protein = efgs.get(0);
         FluorescentMarker flMarker = new FluorescentMarker();
         flMarker.setEfg(efg);
         flMarker.setProtein(protein);
@@ -97,7 +96,4 @@ public class EfgAPIController {
             .toList();
         return list;
     }
-
-
 }
-
