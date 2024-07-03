@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import si.mazi.rescu.ClientConfig;
@@ -35,7 +36,11 @@ public class EntityRecognition {
         //getEntityList("PMID:34033651", "fgf");
         List<String> pubIDs = new ArrayList<>();
         Map<String, String> pubMedZdbIdMap = new HashMap<>();
-        getPubList("fgf").forEach(textpressoDocument -> {
+        //String entity = "Allele";
+        String entity = "Gene";
+        //String category = "Gene (D. rerio) (tpgdr:0000000)";
+        String category = "Allele (D. rerio) (tpadr:0000000)";
+        getPubList("h", category).forEach(textpressoDocument -> {
             String[] token = textpressoDocument.getAccession().split(" ");
             Optional<String> pubmedID = Arrays.stream(token).filter(s -> s.startsWith("PMID:")).findFirst();
             pubmedID.ifPresent(pubIDs::add);
@@ -44,31 +49,48 @@ public class EntityRecognition {
         });
         System.out.println("Total Publications: " + pubIDs.size());
         AtomicInteger index = new AtomicInteger();
+        AtomicInteger numberOfFalsePositive = new AtomicInteger();
+        AtomicInteger numberOfFalseNegative = new AtomicInteger();
         pubIDs.forEach(pubID -> {
             if (index.incrementAndGet() % 10 == 0) {
                 System.out.println(index.get());
             }
             try {
-                List<String> geneIDs = getEntityList(pubID, "");
-                List<Marker> attributedGenes = getPublicationRepository().getGenesByPublication(pubMedZdbIdMap.get(pubID), false);
-                List<String> attributdGeneSymbol = attributedGenes.stream().map(Marker::getAbbreviation).toList();
-                if (CollectionUtils.isNotEmpty(attributdGeneSymbol) && !new HashSet<>(geneIDs).containsAll(attributdGeneSymbol)) {
-                    System.out.println("Publication: " + pubID + " [" + pubMedZdbIdMap.get(pubID) + "] has genes not identified by TP: " + attributdGeneSymbol.stream().filter(o -> !geneIDs.contains(o)).toList());
+                List<String> entityDs = getEntityList(pubID, "", category);
+                if (CollectionUtils.isNotEmpty(entityDs)) {
+                    entityDs.replaceAll(String::toLowerCase);
+                }
+                List<String> attributedEntitySymbol = null;
+                if (entity.equals("Gene")) {
+                    List<Marker> attributedGenes = getPublicationRepository().getGenesByPublication(pubMedZdbIdMap.get(pubID), false);
+                    attributedEntitySymbol = attributedGenes.stream().map(Marker::getAbbreviation).toList();
+                } else if (entity.equals("Allele")) {
+                    List<Feature> attributedGenes = getPublicationRepository().getFeaturesByPublication(pubMedZdbIdMap.get(pubID));
+                    attributedEntitySymbol = attributedGenes.stream().map(Feature::getAbbreviation).toList();
+                }
+                if (CollectionUtils.isNotEmpty(attributedEntitySymbol) && !new HashSet<>(entityDs).containsAll(attributedEntitySymbol)) {
+                    numberOfFalseNegative.incrementAndGet();
+                    System.out.println("Publication: " + pubID + " [" + pubMedZdbIdMap.get(pubID) + "] has " + entity + " not identified by TP: " + attributedEntitySymbol.stream().filter(s -> entityDs != null).filter(o -> !entityDs.contains(o)).toList());
+                }
+                if (CollectionUtils.isEmpty(attributedEntitySymbol) && CollectionUtils.isNotEmpty(entityDs)) {
+                    numberOfFalsePositive.incrementAndGet();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+        System.out.println("Number of false positive: " + numberOfFalsePositive.get());
+        System.out.println("Number of false negative: " + numberOfFalseNegative.get());
         String n = null;
     }
 
     public static final String ACCESSION_VAR = "[%accession]";
 
-    public Set<TextpressoDocument> getPubList(String keywords) throws IOException {
+    public Set<TextpressoDocument> getPubList(String keywords, String category) throws IOException {
         String jsonInputString = """
                         {
                            "token": "DlrmI3M7D1ZN2FSATd3R",
-                            "category": "Gene (D. rerio) (tpgdr:0000000)",
+                            "category": "[%category]",
                            "query": {
                               "keywords": "[%keywords]",
                               "type": "document",
@@ -82,6 +104,7 @@ public class EntityRecognition {
                         }
             """;
         jsonInputString = jsonInputString.replace("[%keywords]", keywords);
+        jsonInputString = jsonInputString.replace("[%category]", category);
 
         StringBuilder responseBuilder = retrieveResult(jsonInputString, "search_documents");
 
@@ -94,11 +117,11 @@ public class EntityRecognition {
         return matches;
     }
 
-    public List<String> getEntityList(String pubmedID, String keywords) throws IOException {
+    public List<String> getEntityList(String pubmedID, String keywords, String category) throws IOException {
         String jsonInputString = """
                         {
                            "token": "DlrmI3M7D1ZN2FSATd3R",
-                            "category": "Gene (D. rerio) (tpgdr:0000000)",
+                            "category": "[%category]",
                            "query": {
                               "keywords": "[%keywords]",
                               "accession": "[%accession]",
@@ -114,6 +137,7 @@ public class EntityRecognition {
             """;
         jsonInputString = jsonInputString.replace(ACCESSION_VAR, pubmedID);
         jsonInputString = jsonInputString.replace("[%keywords]", keywords);
+        jsonInputString = jsonInputString.replace("[%category]", category);
 
         StringBuilder responseBuilder = retrieveResult(jsonInputString, "get_category_matches_document_fulltext");
 
