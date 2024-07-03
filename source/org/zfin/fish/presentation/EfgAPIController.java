@@ -63,7 +63,7 @@ public class EfgAPIController {
         if (protein == null) {
             HibernateUtil.rollbackTransaction();
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            FpbaseDTO fpbaseDTO = new FpbaseDTO(null, null, Optional.of("Fluorescent protein with ID of " + fpbase.fpId + " not found in ZFIN."));
+            FpbaseDTO fpbaseDTO = new FpbaseDTO(null, null, Optional.of("Fluorescent protein named " + fpbase.fpId + " not found in ZFIN."));
             return fpbaseDTO;
         }
 

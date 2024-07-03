@@ -71,7 +71,7 @@ const FPBase = ({efgId,}) => {
                 formatItem={formatFpBase}
             />
 
-            <AddEditDeleteModal {...modalProps} header='FPBase Protein'>
+            <AddEditDeleteModal {...modalProps} header='FPBase Protein (Name, not ID)'>
                 {values &&
                     <>
                         <FormGroup
