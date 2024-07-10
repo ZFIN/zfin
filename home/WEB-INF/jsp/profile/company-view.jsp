@@ -19,7 +19,6 @@
     <jsp:attribute name="pageBar">
         <authz:authorize access="hasRole('root')">
             <nav class="navbar navbar-light admin text-center border-bottom">
-                <a class="col-sm" href="/action/profile/company/view/${company.zdbID}">Old View</a>
                 <a class="col-sm" href="/action/profile/company/edit/${company.zdbID}">Edit</a>
                 <a href="javascript:" class="root" onclick="location.replace('/action/infrastructure/deleteRecord/${company.zdbID}');">Delete</a>
                 <a class="col-sm" href='/action/profile/lab/all-labs'>All labs</a>
