@@ -1026,17 +1026,22 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<Person> getCurators() {
         Query<Person> query = currentSession()
             .createQuery("""
-                select person from Person person, AccountInfo accountInfo
-                where accountInfo in elements(person.accountInfoList)
-                AND accountInfo.curator = true
-                ORDER BY fullName
+            select distinct p from Person p
+            join p.accountInfoList a
+            where a.curator = true
+            order by p.fullName
                 """, Person.class);
         return query.list();
     }
 
     public List<Person> getStudents() {
         Query<Person> query = currentSession()
-            .createQuery("from Person where accountInfo.student = true ORDER BY fullName", Person.class);
+            .createQuery("""
+                    select distinct p from Person p
+                    join p.accountInfoList a
+                    where a.student = true
+                    order by p.fullName
+                """, Person.class);
         return query.list();
     }
 
