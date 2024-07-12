@@ -2,9 +2,11 @@ package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -22,15 +24,19 @@ import java.util.Date;
 @JsonIgnoreProperties({"accountCreationDate", "cookie", "pass1", "pass2", "password", "previousLoginDate"})
 public class AccountInfo implements Serializable {
 
-    @Id
-    @GeneratedValue
+    @NotNull
     @Column(name = "login", nullable = false)
     private String login;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zdb_id")
     private Person person;
 
-    @Column(name = "zdb_id", insertable = false, updatable = false)
+    @Id
+    @Column(name = "zdb_id", insertable=false, updatable=false)
+    @GeneratedValue(generator = "foreignGenerator")
+    @GenericGenerator(name = "foreignGenerator", strategy = "foreign",
+            parameters = @org.hibernate.annotations.Parameter(name = "property", value = "person"))
     private String zdbID;
     @Column(name = "password", nullable = false)
     private String password;

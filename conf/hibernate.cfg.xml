@@ -60,6 +60,7 @@
         <mapping class="org.zfin.anatomy.DevelopmentStage"/>
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
         <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
+        <mapping class="org.zfin.profile.Person"/>
         <mapping class="org.zfin.audit.AuditLogItem"/>
         <mapping class="org.zfin.curation.Curation"/>
         <mapping class="org.zfin.curation.PublicationNote"/>
