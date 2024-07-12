@@ -1,10 +1,12 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,85 +24,149 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Domain business object that describes a single person.
- * AccountInfo composite contains login information which is optional.
- */
 @Setter
 @Getter
+@Entity
+@Table(name = "person")
 public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasImage, EntityZdbID {
 
+    @Id
     @NotNull
     @Size(min = 17, max = 50)
     @JsonView(View.Default.class)
+    @Column(name = "zdb_id", nullable = false)
+    @GeneratedValue(generator = "zdbIdGenerator")
+    @GenericGenerator(name = "zdbIdGenerator", strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "PERS"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+            })
     private String zdbID;
 
     @NotNull
     @Size(max = 40, message = "Must not be empty and less than 40 characters.")
     @JsonView(View.Default.class)
+    @Column(name = "first_name")
     private String firstName;
 
     @NotNull
     @Size(max = 40, message = "Must not be empty and less than 40 characters.")
     @JsonView(View.Default.class)
+    @Column(name = "last_name")
     private String lastName;
 
 
     // not a hibernate property, just for ease of use
+    @Transient
     private String putativeLoginName;
 
     // not a hibernate property, just for ease of use
+    @Transient
     private String pass1;
+
+    @Transient
     private String pass2;
 
     // not a hibernate property, just for...using person as a formbean, which is kind of wrong
+    @Transient
     private String organizationZdbId;
+
+    @Transient
     private Integer position;
 
 
     //    @NotNull
     @Size(max = 150, message = "Must not be empty and less than 150 characters.")
+    @Column(name = "name")
     private String shortName;
 
     @JsonView(View.Default.class)
+    @Column(name = "full_name")
     private String fullName;
 
     @Size(max = 150, message = "Must not be empty and less than 150 characters.")
     @JsonView(View.Default.class)
+    @Column(name = "email")
     private String email;
 
     @Size(max = 100, message = "Must not be empty and less than 100 characters.")
+    @Column(name = "fax")
     private String fax;
 
     @Size(max = 19, message = "16 numerals with 3 dashed separating the four-by-four groups")
+    @Column(name = "orcid_id")
     private String orcidID;
 
+    @Column(name = "phone")
     private String phone;
 
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "person_country")
     private String country;
 
     @Size(max = 2000, message = "Must be less than 2000 characters.")
+    @Column(name = "url")
     private String url;
 
     @Size(max = 12000, message = "Must be less than 12000 characters.")
+    @Column(name = "nonzf_pubs")
     private String nonZfinPublications;
 
     @Size(max = 12000, message = "Must be less than 12000 characters.")
+    @Column(name = "pers_bio")
     private String personalBio;
 
+    @Column(name = "on_dist_list")
     private Boolean emailList;
+
+    @Column(name = "pers_is_deceased")
     private Boolean deceased = Boolean.FALSE;
-    //    private String ownerID;
-    private Set<Lab> labs;
-    private Set<Company> companies;
-    private Set<Publication> publications;
-    private Set<AccountInfo> accountInfoList;
+
+    @Column(name = "image")
     private String image;
+
+    @Column(name = "pers_is_hidden")
     private boolean hidden;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pers_epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 
+    //    private String ownerID;
+
+    //TODO: Add translation for <key column="zdb_id"/>?
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AccountInfo> accountInfoList;
+
+    @ManyToMany
+    @JoinTable(
+            name = "int_person_lab",
+            joinColumns = @JoinColumn(name = "source_id"),
+            inverseJoinColumns = @JoinColumn(name = "target_id")
+    )
+    private Set<Lab> labs = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "int_person_company",
+            joinColumns = @JoinColumn(name = "source_id"),
+            inverseJoinColumns = @JoinColumn(name = "target_id")
+    )
+    private Set<Company> companies = new HashSet<>();
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "int_person_pub",
+            joinColumns = @JoinColumn(name = "source_id"),
+            inverseJoinColumns = @JoinColumn(name = "target_id")
+    )
+    @OrderBy("pub_date desc")
+    private Set<Publication> publications = new HashSet<>();
+
+    
     public String getFirstLastName() {
         String ret = "";
         if (firstName != null) {
