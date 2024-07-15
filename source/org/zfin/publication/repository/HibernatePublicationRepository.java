@@ -1818,7 +1818,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id
                         left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id
                         left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id
-                        where history.pth_status_is_current = 't'
+                        where history.pth_status_is_current = true
                         and pub.jtype = :type
                 ) as subq
                 group by grouper
