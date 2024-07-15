@@ -16,6 +16,10 @@ public class Lab extends Organization implements Serializable  {
         return memberList;
     }
 
+    public void setMemberList(Set<Person> memberList) {
+        this.memberList = memberList;
+    }
+
     @ManyToMany
     @JoinTable(
             name = "int_person_lab",
