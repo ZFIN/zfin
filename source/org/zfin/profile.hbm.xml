@@ -8,67 +8,6 @@
      could potentially break the code (e.g. moving a clas  into a different package. -->
 <hibernate-mapping package="org.zfin.profile">
 
-    <class name="org.zfin.profile.Person" table="person">
-        <id name="zdbID" type="string">
-            <column name="zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">PERS</param>
-                <param name="insertActiveSource">true</param>
-            </generator>
-        </id>
-
-        <!--<property name="ownerID" column="owner"/>-->
-        <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
-        <property name="personalBio" column="pers_bio" lazy="true"/>
-
-        <property name="image"/>
-        <property name="url"/>
-        <property name="email"/>
-        <property name="fax"/>
-        <property name="phone"/>
-        <property name="orcidID" column="orcid_id"/>
-        <property name="address" column="address"/>
-        <property name="country" column="person_country"/>
-        <property name="shortName" column="name"/>
-        <property name="fullName" column="full_name"/>
-
-
-        <property name="emailList" column="on_dist_list" type="java.lang.Boolean"/>
-        <property name="deceased" column="pers_is_deceased" type="java.lang.Boolean"/>
-        <property name="hidden" column="pers_is_hidden" type="boolean" />
-
-        <property name="firstName" column="first_name"/>
-        <property name="lastName" column="last_name"/>
-        <!--<property name="middleNameOrInitial" column="middle_name_or_initial"/>-->
-
-        <!--not really mapped this way mapped from the other other direction -->
-        <!--<many-to-one name="addressFields" column="zdb_id" class="org.zfin.profile.Address" insert="false" update="false" lazy="true"/>-->
-
-        <many-to-one name="emailPrivacyPreference" column="pers_epp_pk_id" class="org.zfin.profile.EmailPrivacyPreference" fetch="join"/>
-
-        <!--not lazy because it is used in the header on every page-->
-
-        <set name="accountInfoList">
-            <key column="zdb_id"/>
-            <one-to-many class="org.zfin.profile.AccountInfo"/>
-        </set>
-
-        <set name="labs" table="int_person_lab">
-            <key column="source_id"/>
-            <many-to-many class="org.zfin.profile.Lab" column="target_id"/>
-        </set>
-
-        <set name="companies" lazy="true" table="int_person_company">
-            <key column="source_id"/>
-            <many-to-many class="org.zfin.profile.Company" column="target_id"/>
-        </set>
-
-        <set name="publications" lazy="true" table="int_person_pub">
-            <key column="source_id"/>
-            <many-to-many class="org.zfin.publication.Publication" column="target_id" order-by="pub_date desc"/>
-        </set>
-
-    </class>
 
     <!--
         <class name="org.zfin.profile.Address" table="address">
