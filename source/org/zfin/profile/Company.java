@@ -1,16 +1,17 @@
 package org.zfin.profile;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 import java.util.Set;
 
 /**
  * Company domain model.
  */
+@Entity
+@Table(name = "company")
 public class Company extends Organization {
 
+    @Column(name = "bio")
     private String bio;
 
 
