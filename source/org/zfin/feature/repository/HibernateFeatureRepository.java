@@ -595,7 +595,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hqlLab1 = " select lfp from OrganizationFeaturePrefix lfp  " +
                          " join lfp.organization lb " +
                          " where lb.zdbID=:labZdbID " +
-                         " and lfp.currentDesignation='t' " +
+                         " and lfp.currentDesignation = true " +
                          " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
 
         List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1, OrganizationFeaturePrefix.class)

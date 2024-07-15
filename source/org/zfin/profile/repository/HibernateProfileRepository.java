@@ -983,7 +983,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<String> getDistributionList() {
         String hql = """
             select distinct email from person
-            				where on_dist_list='t'
+            				where on_dist_list = true
             				and email is not null
             				and email != ''
             """;
@@ -999,7 +999,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             				and labpos_position in ('PI/Director', 'Co-PI/Senior Scientist')
             				and email is not null
             				and email != ''
-            				and on_dist_list='t'
+            				and on_dist_list = true
             							""";
         List<Tuple> resultList = currentSession().createNativeQuery(hql, Tuple.class).getResultList();
         return resultList.stream().map(o -> (String) o.get(0)).collect(toList());
@@ -1008,7 +1008,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<String> getUsaDistributionList() {
         String hql = """
             select distinct email from person
-            				where on_dist_list='t'
+            				where on_dist_list = true
             				and upper(address) like '%USA%'
             				and email is not null
             				and email != ''
