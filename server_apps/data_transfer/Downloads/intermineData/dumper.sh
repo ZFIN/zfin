@@ -15,7 +15,8 @@ BASE_PATH="$ROOT_PATH/server_apps/data_transfer/Downloads/intermineData"
 rm -rf $BASE_PATH/*/*.txt
 rm -rf $BASE_PATH/*/*.obo
 rm -rf $BASE_PATH/*/*.zfin
-rm -rf $BASE_PATH
+
+rm -rf "$ROOT_PATH/home/data_transfer/Downloads/intermineData/"
 
 # Define a space-separated list of subdirectories
 subdirs="disease dnaMutationDetail transcriptMutationDetail proteinMutationDetail allele eap phenoWarehouse dataDate featurePrefix mutagenMutagee cleanPhenotype ontologySubset images dataSourceSupplier featureCrossReferences people markerSequences omimPhenotype mutantAttributions chromosome lab company zfin_phenotypes zfin_orthos zfin_expression zfin_experiments zfin_markers zfin_stages zfin_genofeats zfin_genoenvs zfin_anatomy zfin_genotypes fish zfin_figures zfin_features zfin_pubs zfin_pato zfin_fmrels go-annotation go zfinSpatial zfin_kegg zfin_journals genotypePubs featurePubs feature_alias chromosome identifiers genotype_alias"
