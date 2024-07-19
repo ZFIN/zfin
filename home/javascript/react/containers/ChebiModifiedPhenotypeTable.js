@@ -103,8 +103,8 @@ const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl 
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.fish.zdbID}
-            />
+                rowKey={row => JSON.stringify(row)}
+                />
         </>
     );
 };
