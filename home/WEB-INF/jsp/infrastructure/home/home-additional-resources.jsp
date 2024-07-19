@@ -41,9 +41,6 @@
     <b>Order cDNAs and ESTs</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-            <zfin2:externalLink href="http://zgc.nci.nih.gov/">ZGC</zfin2:externalLink>
-        </li>
-        <li class="list-inline-item">
             <zfin2:externalLink href="http://zebrafish.org/est/estAll.php">ZIRC</zfin2:externalLink>
         </li>
     </ul>
