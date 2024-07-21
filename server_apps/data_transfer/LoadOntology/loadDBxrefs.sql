@@ -48,6 +48,13 @@ select 'x' from foreign_db where
 tmp_xref_db_id = fdb_db_pk_id
 );
 
+update tmp_dbxrefs set xref_db = 'MIM'
+where xref_db = 'OMIM';
+
+update tmp_dbxrefs_with_ids set  tmp_xref_db = 'MIM'
+where tmp_xref_db = 'OMIM';
+
+
 --for statistics dump the xrefs that will be deleted from this load
 unload to removed_xrefs
 SELECT tx_term_zdb_id,
