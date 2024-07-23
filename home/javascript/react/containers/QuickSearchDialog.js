@@ -26,6 +26,12 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
         });
     }, []);
 
+    useEffect(() => {
+        if (filter !== '') {
+            handlePageSizeChange(pageSize);
+        }
+    }, [filter]);
+
     const fetchFacetValues = (field) => {
         if (!field) {
             return;
@@ -44,8 +50,7 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
         setFilter(event.target.value);
     }
 
-    const handlePageSizeChange = (e) => {
-        const newPageSize = e.target.value;
+    const handlePageSizeChange = (newPageSize) => {
         const newLastPageNumber = lastPageNumberByPageSize(newPageSize);
         setPageSize(newPageSize);
         if (page > newLastPageNumber) {
@@ -171,7 +176,7 @@ const QuickSearchDialog = ({baseUrlWithoutPage, queryString, eventBus}) => {
                     Show:{' '}
                     <select
                         value={pageSize}
-                        onChange={handlePageSizeChange}
+                        onChange={(e) => handlePageSizeChange(e.target.value)}
                         style={{'width': '4em', 'position': 'relative', 'top': '.3em'}}
                     >
                         <option value='10'>10</option>
