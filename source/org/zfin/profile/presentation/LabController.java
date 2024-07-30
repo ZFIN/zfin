@@ -185,59 +185,6 @@ public class LabController {
 
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
         model.addAttribute("numOfFeatures", RepositoryFactory.getFeatureRepository().getFeaturesForLabCount(zdbID));
-        model.addAttribute("showGenomicFeatures", this.showGenomicFeaturesFromLab(lab));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
-        return "profile/profile-view";
-    }
-
-    private boolean showGenomicFeaturesFromLab(Lab lab) {
-        return !ZFIN_DATABASE_TEAM.equals(lab.getName());
-    }
-
-    @RequestMapping(value = "/lab/{zdbID}", method = RequestMethod.GET)
-    public String viewLabPage(@PathVariable String zdbID, Model model) {
-        Lab lab = profileRepository.getLabById(zdbID);
-        if (lab == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        boolean isOwner = profileService.isCurrentSecurityUserRoot();
-        if (!isOwner && profileService.getCurrentSecurityUser() != null && lab.getContactPerson() != null) {
-            isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(lab.getContactPerson().getZdbID());
-        }
-        model.addAttribute(LookupStrings.IS_OWNER, isOwner);
-
-        model.addAttribute(LookupStrings.FORM_BEAN, lab);
-        List<PersonMemberPresentation> labMembers = profileRepository.getLabMembers(zdbID);
-        model.addAttribute("members", labMembers);
-        int numCoPIs = profileService.findMembersEquals(2, labMembers);
-        model.addAttribute("hasCoPi", numCoPIs > 0);
-        List<Publication> publications = profileRepository.getPublicationsForLab(zdbID);
-        model.addAttribute("publications", publications);
-        List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixesById(lab.getZdbID(), false);
-        logger.info("featurePrefixCount" + featurePrefixes.size());
-        model.addAttribute("prefixes", featurePrefixes);
-        model.addAttribute("country", profileService.getCountryDisplayName(lab.getCountry()));
-
-        boolean noPrefixes = featurePrefixes.isEmpty();
-        if (!noPrefixes) {
-            int ctNoneActiveForSet = 0;
-            for (FeaturePrefix fpf : featurePrefixes) {
-                logger.info("featurePrefix is:" + fpf.getPrefixString());
-                if (!fpf.isActiveForSet()) {
-                    ctNoneActiveForSet++;
-                }
-            }
-
-            if (ctNoneActiveForSet == featurePrefixes.size()) {
-                noPrefixes = true;
-            }
-        }
-        model.addAttribute("noPrefixes", noPrefixes);
-
-        // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
-        model.addAttribute("numOfFeatures", RepositoryFactory.getFeatureRepository().getFeaturesForLabCount(zdbID));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/lab-view";

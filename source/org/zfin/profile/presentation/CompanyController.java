@@ -149,32 +149,6 @@ public class CompanyController {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute(LookupStrings.FORM_BEAN, company);
-
-        boolean isOwner = profileService.isCurrentSecurityUserRoot();
-        if (!isOwner && profileService.getCurrentSecurityUser() != null && company.getContactPerson() != null) {
-            isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(company.getContactPerson().getZdbID());
-        }
-        model.addAttribute(LookupStrings.IS_OWNER, isOwner);
-
-        model.addAttribute("members", profileRepository.getCompanyMembers(zdbID));
-        List<Publication> publications = profileRepository.getPublicationsForCompany(zdbID);
-        model.addAttribute("publications", publications);
-        List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(company.getName(), false);
-        model.addAttribute("prefixes", featurePrefixes);
-        model.addAttribute("country", profileService.getCountryDisplayName(company.getCountry()));
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
-        return "profile/profile-view";
-    }
-
-    @RequestMapping(value = "/company/{zdbID}", method = RequestMethod.GET)
-    public String showCompany(@PathVariable String zdbID, Model model) {
-        Company company = profileRepository.getCompanyById(zdbID);
-        if (company == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
         model.addAttribute("company", company);
 
         boolean isOwner = profileService.isCurrentSecurityUserRoot();

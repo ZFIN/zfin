@@ -304,33 +304,6 @@ public class PersonController {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute(LookupStrings.FORM_BEAN, person);
-
-        boolean isOwner = profileService.isCurrentSecurityUserRoot();
-        if (!isOwner && profileService.getCurrentSecurityUser() != null) {
-            isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(zdbID);
-        }
-        model.addAttribute(LookupStrings.IS_OWNER, isOwner);
-        List<CompanyPresentation> companies = profileRepository.getCompanyForPersonId(zdbID);
-        model.addAttribute("companies", companies);
-        List<LabPresentation> labs = profileRepository.getLabsForPerson(zdbID);
-        model.addAttribute("labs", labs);
-        model.addAttribute("country", profileService.getCountryDisplayName(person.getCountry()));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
-        return "profile/profile-view";
-    }
-
-    @RequestMapping(value = "/person/{zdbID}", method = RequestMethod.GET)
-    public String showPerson(@PathVariable String zdbID, Model model) {
-        Person person = profileRepository.getPerson(zdbID);
-        if (person == null) {
-            String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
-            person = profileRepository.getPerson(replacedZdbID);
-        }
-        if (person == null || (person.isHidden() && !profileService.isCurrentSecurityUserRoot())) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
         model.addAttribute("person", person);
 
         boolean isOwner = profileService.isCurrentSecurityUserRoot();
