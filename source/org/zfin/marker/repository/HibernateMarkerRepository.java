@@ -3397,6 +3397,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public FluorescentProtein getFluorescentProteinByName(String name) {
+        String hql = " from FluorescentProtein where name like :name ";
+        Session session = currentSession();
+        Query<FluorescentProtein> query = session.createQuery(hql, FluorescentProtein.class);
+        query.setParameter("name", name);
+        List<FluorescentProtein> list = query.list();
+        if (list.size() > 1) {
+            log.error("More than one fluorescent protein found for " + name);
+        }
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public FluorescentProtein getFluorescentProtein(Long identifier) {
         return HibernateUtil.currentSession().get(FluorescentProtein.class, identifier);
     }
