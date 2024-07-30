@@ -119,32 +119,50 @@
         //     "constructOldName": "TgBAC(cdh1:cdh1-TagBFP,cryaa:Cerulean)",
         //     "issueNumber": "ZFIN-8986"
         // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-220928-1",
+        //     "pubZdbID": "ZDB-PUB-210114-8",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructOldName": "Tg(mylpfa:hsa.tpm3,myl7-:egfp)",
+        //     "constructStoredName": "mylpfa#:hsa.tpm3#Cassette#,#myl7#:EGFP",
+        //     "issueNumber": "ZFIN-9012"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-230502-2",
+        //     "pubZdbID": "ZDB-PUB-210630-8",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructOldName": "Tg(rho:GAP-YFP-2A-NTR2.0)",
+        //     "constructStoredName": "rho#:GAP#-#TagYFP#-#2A#-#NTR2.0",
+        //     "issueNumber": "ZFIN-9034"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-211019-1",
+        //     "pubZdbID": "ZDB-PUB-210105-1",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructOldName": "Tg(uts2d:GFP-CAAX)",
+        //     "constructStoredName": "uts2d#:GFP#-#CAAX#Cassette#,#myl7#:EGFP",
+        //     "issueNumber": "ZFIN-9036"
+        // },
         {
-            "constructID": "ZDB-TGCONSTRCT-220928-1",
-            "pubZdbID": "ZDB-PUB-210114-8",
+            "constructID": "ZDB-TGCONSTRCT-230811-2",
+            "pubZdbID": "ZDB-PUB-220302-19",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructOldName": "Tg(mylpfa:hsa.tpm3,myl7-:egfp)",
-            "constructStoredName": "mylpfa#:hsa.tpm3#Cassette#,#myl7#:EGFP",
-            "issueNumber": "ZFIN-9012"
+            "constructOldName": "Tg(myl7:ERK KTR-mClover-2A-Hsa.H2B-mScarlet)",
+            "constructStoredName": "myl7#:ERK KTR#-#Clover#-#2A#-#Hsa.H2B#-#mScarlet",
+            "issueNumber": "ZFIN-9288"
         },
         {
-            "constructID": "ZDB-TGCONSTRCT-230502-2",
-            "pubZdbID": "ZDB-PUB-210630-8",
+            "constructID": "ZDB-TGCONSTRCT-190211-3",
+            "pubZdbID": "ZDB-PUB-181016-11",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructOldName": "Tg(rho:GAP-YFP-2A-NTR2.0)",
-            "constructStoredName": "rho#:GAP#-#TagYFP#-#2A#-#NTR2.0",
-            "issueNumber": "ZFIN-9034"
-        },
-        {
-            "constructID": "ZDB-TGCONSTRCT-211019-1",
-            "pubZdbID": "ZDB-PUB-210105-1",
-            "constructType": "Tg",
-            "constructPrefix": "",
-            "constructOldName": "Tg(uts2d:GFP-CAAX)",
-            "constructStoredName": "uts2d#:GFP#-#CAAX#Cassette#,#myl7#:EGFP",
-            "issueNumber": "ZFIN-9036"
+            "constructOldName": "Tg(ubb:Mmu.Elk1-KTR-mClover)",
+            "constructStoredName": "ubb#:Mmu.Elk1#-#KTR#-#Clover",
+            "issueNumber": "ZFIN-9288"
         }
     ];
 
