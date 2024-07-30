@@ -138,7 +138,7 @@ public class DbScriptFileParserTest {
         parser = new DbScriptFileParser(file);
         queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(14, queries.size());
+        assertEquals(16, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/loadSubsets.sql";
         file = new File(fileName);
