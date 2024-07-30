@@ -567,6 +567,9 @@ public interface MarkerRepository {
     List<String> getProblemTypes();
 
     List<FluorescentProtein> getFluorescentProteins(String query);
+
+    FluorescentProtein getFluorescentProteinByName(String name);
+
     FluorescentProtein getFluorescentProtein(Long identifier);
 
     void updateMarkerName(String constructZdbID, String toString);
