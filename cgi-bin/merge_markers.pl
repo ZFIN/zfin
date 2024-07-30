@@ -17,6 +17,8 @@ my $recordToBeDeleted = $data->param("OID");
 my $recordToBeMergedInto = $data->param("merge_oid");
 
 my $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
+
 my $username = "";
 my $password = "";
 
@@ -24,7 +26,7 @@ print "Content-type: text/HTML\n\n<HTML>\n\n";
 
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "\n\nCannot connect to PostgreSQL database: $DBI::errstr\n\n";
 
 my $type1;
@@ -184,18 +186,32 @@ my $curUpdateRecordAttribution = $dbh->prepare($sqlUpdateRecordAttribution);
 $curUpdateRecordAttribution->execute();
 $curUpdateRecordAttribution->finish();
 
+## Does the alias that we want to create already exist? If so, we can just use that daliasID
+my $sqlGetAlias = "select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$recordToBeMergedInto' and dalias_alias = '$markerAbbrevToBeDeleted' and dalias_group_id = 1;";
+my $curGetAlias = $dbh->prepare_cached($sqlGetAlias);
+$curGetAlias->execute();
+my $existingAliasID;
+$curGetAlias->bind_columns(\$existingAliasID);
+my $existingAliasFound = 0;
+while ($curGetAlias->fetch()) {
+   $existingAliasFound = 1;
+}
 
-## add new data_alias record
-my $sqlInsertZdbActiveData = "insert into zdb_active_data values('$daliasID');";
-my $curInsertZdbActiveData = $dbh->prepare_cached($sqlInsertZdbActiveData);
-$curInsertZdbActiveData->execute();
-$curInsertZdbActiveData->finish();
+if ($existingAliasFound) {
+    $daliasID = $existingAliasID;
+} else {
+    ## add new data_alias record
+    my $sqlInsertZdbActiveData = "insert into zdb_active_data values('$daliasID');";
+    my $curInsertZdbActiveData = $dbh->prepare_cached($sqlInsertZdbActiveData);
+    $curInsertZdbActiveData->execute();
+    $curInsertZdbActiveData->finish();
 
-my $sqlInsertDataAlias = "insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
-                          values ('$daliasID', '$recordToBeMergedInto', '$markerAbbrevToBeDeleted', '1');";
-my $curAddNewDataAlias = $dbh->prepare($sqlInsertDataAlias);
-$curAddNewDataAlias->execute();
-$curAddNewDataAlias->finish();
+    my $sqlInsertDataAlias = "insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+                              values ('$daliasID', '$recordToBeMergedInto', '$markerAbbrevToBeDeleted', '1');";
+    my $curAddNewDataAlias = $dbh->prepare($sqlInsertDataAlias);
+    $curAddNewDataAlias->execute();
+    $curAddNewDataAlias->finish();
+}
 
 ## add new marker_history record
 my $sqlInsertZdbActiveData2 = "insert into zdb_active_data values('$nomenID');";
@@ -758,7 +774,7 @@ sub recursivelyGetSQLs {
   my $depth = shift;
   $depth++;
 
-  my $sql = "select distinct c.table_name, k1.column_name, k2.table_name, k2.column_name
+  my $sql = "select distinct c.table_name, k1.column_name, k2.table_name, k2.column_name, k1.table_schema, k2.table_schema
                      from information_schema.constraint_table_usage c,
                           information_schema.key_column_usage k1, information_schema.table_constraints tc1,
                           information_schema.key_column_usage k2, information_schema.table_constraints tc2
@@ -776,13 +792,13 @@ sub recursivelyGetSQLs {
 
   my $cur = $dbh->prepare_cached($sql);
   $cur->execute();
-  my ($parentTableName, $colName, $childTableName, $foreignKeyColumn);
-  $cur->bind_columns(\$parentTableName, \$colName, \$childTableName, \$foreignKeyColumn) ;
+  my ($parentTableName, $colName, $childTableName, $foreignKeyColumn, $parentTableSchema, $childTableSchema);
+  $cur->bind_columns(\$parentTableName, \$colName, \$childTableName, \$foreignKeyColumn, \$parentTableSchema, \$childTableSchema);
   
   while ($cur->fetch()) {  # the while loop to go thru all the child table one level deeper
     ## only process those that have not been processed before
     if (!exists($processed{$childTableName.$foreignKeyColumn})) {               
-      my $sqlMakeSense = "select * from $childTableName where $foreignKeyColumn = '$toBeDeleted';";
+      my $sqlMakeSense = "select * from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted';";
       my $curMakeSense = $dbh->prepare_cached($sqlMakeSense);
       $curMakeSense->execute();
       my $numberOfResults = 0;
@@ -855,7 +871,7 @@ sub recursivelyGetSQLs {
                     
           my $selectList = join (", ", keys %uniqueKeyColumns);
               
-          my $sqlCheckValuesForMergedInto = "select $primaryKeyOfChildTable, " . $selectList . " from $childTableName where $foreignKeyColumn = '$toBeMergedInto';";             
+          my $sqlCheckValuesForMergedInto = "select $primaryKeyOfChildTable, " . $selectList . " from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeMergedInto';";
                                    
           my $curCheckValuesForMergedInto = $dbh->prepare_cached($sqlCheckValuesForMergedInto);
           $curCheckValuesForMergedInto->execute();
@@ -895,7 +911,7 @@ sub recursivelyGetSQLs {
           ## No need for delete SQL or go to deeper level if there is nothing to check against for unique constraint violation 
           if ($ctValuePairsMergedInto > 0) {
                                                                
-            my $sqlCheckValuesForDeleted = "select $primaryKeyOfChildTable, " . $selectList . " from $childTableName where $foreignKeyColumn = '$toBeDeleted';";             
+            my $sqlCheckValuesForDeleted = "select $primaryKeyOfChildTable, " . $selectList . " from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted';";
                                     
             my $curCheckValuesForDeleted = $dbh->prepare_cached($sqlCheckValuesForDeleted);
             $curCheckValuesForDeleted->execute();
@@ -910,7 +926,7 @@ sub recursivelyGetSQLs {
               while ($curCheckValuesForDeleted->fetch()) {  
                 # violation found! Need to construct and store the delete SQL:
                 if (exists($valuePairsForMergedInto{$uniqueValueForDeleted})) {
-                  $deleteSQL = "delete from $childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
+                  $deleteSQL = "delete from $childTableSchema.$childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
                   $mergeSQLs{$deleteSQL} = $depth;
                         
                   $primaryKeyColValueForMergedIntoAsPara = $valuePairsForMergedInto{$uniqueValueForDeleted};
@@ -926,7 +942,7 @@ sub recursivelyGetSQLs {
                 while ($curCheckValuesForDeleted->fetch()) {  
                   # violation found! Need to construct and store the delete SQL:
                   if (exists($valuePairsForMergedInto{$uniqueValueForDeleted1.$uniqueValueForDeleted2})) {
-                    $deleteSQL = "delete from $childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
+                    $deleteSQL = "delete from $childTableSchema.$childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
                     $mergeSQLs{$deleteSQL} = $depth;
                         
                     $primaryKeyColValueForMergedIntoAsPara = $valuePairsForMergedInto{$uniqueValueForDeleted1.$uniqueValueForDeleted2};
@@ -941,7 +957,7 @@ sub recursivelyGetSQLs {
                 while ($curCheckValuesForDeleted->fetch()) {  
                   # violation found! Need to construct and store the delete SQL:
                   if (exists($valuePairsForMergedInto{$uniqueValueForDeleted1.$uniqueValueForDeleted2.$uniqueValueForDeleted3})) {
-                    $deleteSQL = "delete from $childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
+                    $deleteSQL = "delete from $childTableSchema.$childTableName where $primaryKeyOfChildTable = '$primaryKeyColValueForDeleted';";
                     $mergeSQLs{$deleteSQL} = $depth;
                         
                     $primaryKeyColValueForMergedIntoAsPara = $valuePairsForMergedInto{$uniqueValueForDeleted1.$uniqueValueForDeleted2.$uniqueValueForDeleted3};
@@ -965,7 +981,7 @@ sub recursivelyGetSQLs {
                       
           my $selectListP = join (", ", keys %primaryKeyColumns);
               
-          my $sqlCheckValuesForMergedIntoP = "select " . $selectListP . " from $childTableName where $foreignKeyColumn = '$toBeMergedInto';";             
+          my $sqlCheckValuesForMergedIntoP = "select " . $selectListP . " from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeMergedInto';";
                         
           my $curCheckValuesForMergedIntoP = $dbh->prepare_cached($sqlCheckValuesForMergedIntoP);
           $curCheckValuesForMergedIntoP->execute();
@@ -1003,7 +1019,7 @@ sub recursivelyGetSQLs {
           ## No need for delete SQL if there is nothing to check againt for primary key unique constraint violation 
           if ($ctValuePairsMergedIntoP > 0) {
                                                                
-            my $sqlCheckValuesForDeletedP = "select " . $selectListP . " from $childTableName where $foreignKeyColumn = '$toBeDeleted';";             
+            my $sqlCheckValuesForDeletedP = "select " . $selectListP . " from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted';";
                                     
             my $curCheckValuesForDeletedP = $dbh->prepare_cached($sqlCheckValuesForDeletedP);
             $curCheckValuesForDeletedP->execute();
@@ -1016,7 +1032,7 @@ sub recursivelyGetSQLs {
               while ($curCheckValuesForDeletedP->fetch()) {  
                 # violation found! Need to construct and store the delete SQL:
                 if (exists($valuePairsForMergedIntoP{$uniqueValueForDeletedP})) {
-                  $deleteSQL = "delete from $childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
+                  $deleteSQL = "delete from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
                   foreach my $primaryKeyComponent (keys %primaryKeyColumns) {
                     $deleteSQL = $deleteSQL . $primaryKeyComponent . " = '$uniqueValueForDeletedP';";
                   }
@@ -1031,7 +1047,7 @@ sub recursivelyGetSQLs {
                 while ($curCheckValuesForDeletedP->fetch()) {  
                   # violation found! Need to construct and store the delete SQL:
                   if (exists($valuePairsForMergedIntoP{$uniqueValueForDeletedP1.$uniqueValueForDeletedP2})) {
-                    $deleteSQL = "delete from $childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
+                    $deleteSQL = "delete from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
                     my $ct = 0;
                     foreach my $primaryKeyComponent (keys %primaryKeyColumns) {
                       $ct++;                         
@@ -1052,7 +1068,7 @@ sub recursivelyGetSQLs {
                 while ($curCheckValuesForDeletedP->fetch()) {  
                   # violation found! Need to construct and store the delete SQL:
                   if (exists($valuePairsForMergedIntoP{$uniqueValueForDeletedP1.$uniqueValueForDeletedP2.$uniqueValueForDeletedP3})) {
-                    $deleteSQL = "delete from $childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
+                    $deleteSQL = "delete from $childTableSchema.$childTableName where $foreignKeyColumn = '$toBeDeleted' and ";
                     my $ct = 0;
                     foreach my $primaryKeyComponent (keys %primaryKeyColumns) {
                       $ct++;
@@ -1083,7 +1099,7 @@ sub recursivelyGetSQLs {
             
         } else {
             ## construct and store the update SQLs first, if flagged 
-            my $updateSQL = "update $childTableName 
+            my $updateSQL = "update $childTableSchema.$childTableName
                                 set $foreignKeyColumn = '$toBeMergedInto'
                               where $foreignKeyColumn = '$toBeDeleted';";
             $mergeSQLs{$updateSQL} = $depth;           
