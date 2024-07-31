@@ -43,7 +43,7 @@ public class HibernateBlastRepository implements BlastRepository {
         return getDatabases(type, false, false);
     }
 
-    public List<Database> qgetDatabases(Database.Type type, boolean excludePrivate, boolean excludeExternal) {
+    public List<Database> getDatabases(Database.Type type, boolean excludePrivate, boolean excludeExternal) {
         Session session = HibernateUtil.currentSession();
         String hql = """
             from Database
