@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN ln -s /usr/bin/convert /usr/local/bin/convert
 
+#Delete the user with id 1000 (ubuntu) if they exist -- will also delete group with id of 1000
+RUN id -u 1000 && userdel $(id -un 1000)
+
 #TODO: figure out how to use tomcat instead of zfishweb (needs postgresql permission)
 RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
