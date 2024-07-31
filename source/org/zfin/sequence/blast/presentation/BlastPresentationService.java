@@ -24,15 +24,16 @@ public class BlastPresentationService {
      */
     public static List<DatabasePresentationBean> orderDatabasesFromRoot(Collection<Database> databases) {
         if (CollectionUtils.isEmpty(databases)) {
-            return new ArrayList<DatabasePresentationBean>();
+            return new ArrayList<>();
         }
 
         // 1. get parent nodes
-        List<DatabasePresentationBean> databasePresentationBeans = new ArrayList<DatabasePresentationBean>();
+        List<DatabasePresentationBean> databasePresentationBeans;
+        databasePresentationBeans = new ArrayList<>();
 
         for (Database database : databases) {
             // get relationships where I am the child, but there is no parent, thus I am the root
-            TreeSet<DatabaseRelationship> childRelationships = new TreeSet<DatabaseRelationship>(database.getChildrenRelationships());
+            TreeSet<DatabaseRelationship> childRelationships = new TreeSet<>(database.getChildrenRelationships());
 
             // if there is no parent, then we must be the parent
             // as such, set the order based on the child
