@@ -146,23 +146,77 @@
         //     "constructStoredName": "uts2d#:GFP#-#CAAX#Cassette#,#myl7#:EGFP",
         //     "issueNumber": "ZFIN-9036"
         // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-230811-2",
+        //     "pubZdbID": "ZDB-PUB-220302-19",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructOldName": "Tg(myl7:ERK KTR-mClover-2A-Hsa.H2B-mScarlet)",
+        //     "constructStoredName": "myl7#:ERK KTR#-#Clover#-#2A#-#Hsa.H2B#-#mScarlet",
+        //     "issueNumber": "ZFIN-9288"
+        // },
+        // {
+        //     "constructID": "ZDB-TGCONSTRCT-190211-3",
+        //     "pubZdbID": "ZDB-PUB-181016-11",
+        //     "constructType": "Tg",
+        //     "constructPrefix": "",
+        //     "constructOldName": "Tg(ubb:Mmu.Elk1-KTR-mClover)",
+        //     "constructStoredName": "ubb#:Mmu.Elk1#-#KTR#-#Clover",
+        //     "issueNumber": "ZFIN-9288"
+        // }
         {
-            "constructID": "ZDB-TGCONSTRCT-230811-2",
-            "pubZdbID": "ZDB-PUB-220302-19",
+            "constructID": "ZDB-TGCONSTRCT-221228-2",
+            "pubZdbID": "ZDB-PUB-220103-2",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructOldName": "Tg(myl7:ERK KTR-mClover-2A-Hsa.H2B-mScarlet)",
-            "constructStoredName": "myl7#:ERK KTR#-#Clover#-#2A#-#Hsa.H2B#-#mScarlet",
-            "issueNumber": "ZFIN-9288"
+            "constructOldName": "Tg(myo6b:odf3l2a-emGFP)",
+            "constructStoredName": "myo6b#:odf3l2a#-#emGFP#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9309"
         },
         {
-            "constructID": "ZDB-TGCONSTRCT-190211-3",
-            "pubZdbID": "ZDB-PUB-181016-11",
+            "constructID": "ZDB-TGCONSTRCT-221228-3",
+            "pubZdbID": "ZDB-PUB-220103-2",
             "constructType": "Tg",
             "constructPrefix": "",
-            "constructOldName": "Tg(ubb:Mmu.Elk1-KTR-mClover)",
-            "constructStoredName": "ubb#:Mmu.Elk1#-#KTR#-#Clover",
-            "issueNumber": "ZFIN-9288"
+            "constructOldName": "Tg(myo6b:saxo2-emGFP)",
+            "constructStoredName": "myo6b#:saxo2#-#emGFP#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9309"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-120926-1",
+            "pubZdbID": "ZDB-PUB-120822-6",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructOldName": "Tg(myo6b:actb1-EGFP)",
+            "constructStoredName": "myo6b#:actb1#-#EGFP#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9309"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-210824-2",
+            "pubZdbID": "ZDB-PUB-210105-1",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructOldName": "Tg(myo6b:yfp-Hsa.TUBA)",
+            "constructStoredName": "myo6b#:yfp#-#Hsa.TUBA#,#myl7#:EGFP",
+            "issueNumber": "ZFIN-9309"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-221228-1",
+            "pubZdbID": "ZDB-PUB-220103-2",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructOldName": "Tg(myo6b:ankef1a-emGFP)",
+            "constructStoredName": "myo6b#:ankef1a#-#emGFP#,#cryaa#:mCherry",
+            "issueNumber": "ZFIN-9309"
+        },
+        {
+            "constructID": "ZDB-TGCONSTRCT-221228-4",
+            "pubZdbID": "ZDB-PUB-220103-2",
+            "constructType": "Tg",
+            "constructPrefix": "",
+            "constructOldName": "Tg(myo6b:saxo2-mKate2)",
+            "constructStoredName": "myo6b#:saxo2#-#mKate2#,#cryaa#:mCherry",
+            "issueNumber": "ZFIN-9309"
         }
     ];
 
