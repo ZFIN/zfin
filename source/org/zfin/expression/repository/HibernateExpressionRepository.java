@@ -891,20 +891,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     public List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID) {
-        String hql = "select distinct experiment from ExpressionExperiment2 experiment "
-                     + "       left join experiment.gene as gene "
-                     + "       left join experiment.fishExperiment as fishox"
-                     + "     where experiment.publication.zdbID = :pubID ";
-        if (geneZdbID != null) {
-            hql += "           and gene.zdbID = :geneID ";
-        }
-        if (fishID != null) {
-            hql += "           and fishox.fish.zdbID = :fishID ";
-        }
-        hql += "    order by gene.abbreviationOrder, " +
-               "             fishox.fish.name, " +
-               "             fishox.experiment.name, " +
-               "             experiment.assay.displayOrder ";
+        String hql = """
+                     select distinct experiment from ExpressionExperiment2 experiment
+                           left join experiment.gene as gene
+                           left join experiment.fishExperiment as fishox
+                         where experiment.publication.zdbID = :pubID
+                    """ +
+                    (geneZdbID != null ? " and gene.zdbID = :geneID " : "") +
+                    (fishID != null ? " and fishox.fish.zdbID = :fishID " : "");
+
+// TODO: hibernate migration change, need to implement ordering in the query
+//        hql += "    order by gene.abbreviationOrder, " +
+//               "             fishox.fish.name, " +
+//               "             fishox.experiment.name, " +
+//               "             experiment.assay.displayOrder ";
         Query<ExpressionExperiment2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionExperiment2.class);
         query.setParameter("pubID", publicationID);
         if (geneZdbID != null) {
