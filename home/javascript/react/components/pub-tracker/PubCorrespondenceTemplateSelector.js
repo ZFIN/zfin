@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const templates = [
     {
         label: 'PDF Request',
-        subject: 'Requesting a copy of your recent article',
+        subject: 'Requesting a copy of your recent article and supplementary material',
         body: (citation, sender) => `Dear [[NAME]],
 
 I am writing to request a full text PDF and published supplemental data from the following article:
