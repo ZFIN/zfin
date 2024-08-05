@@ -18,7 +18,6 @@
 <c:set var="ZEBRAFISH_MODELS" value="${NavigationMenuOptions.ZEBRAFISH_MODELS.value}"/>
 <c:set var="EXPRESSION" value="${NavigationMenuOptions.EXPRESSION.value}"/>
 <c:set var="OTHER_PAGES" value="${NavigationMenuOptions.OTHER_PAGE.value}"/>
-<c:set var="CITATIONS" value="${NavigationMenuOptions.CITATION.value}"/>
 
 <c:set var="secs"/>
 
@@ -161,10 +160,6 @@
                 ></div>
             </z:section>
         </c:if>
-
-        <z:section title="${CITATIONS}">
-            <div class="__react-root" id="CitationTable" data-marker-id="${term.zdbID}"></div>
-        </z:section>
     </jsp:body>
 
 
