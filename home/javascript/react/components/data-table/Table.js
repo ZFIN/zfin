@@ -12,14 +12,22 @@ const Table = ({
     rowKey,
     supplementalData,
     total,
+    tableFixed = true,
 }) => {
     return (
         <div className='horizontal-scroll-container'>
-            <table className='data-table table-fixed'>
+            <table className={'data-table' + (tableFixed ? ' table-fixed' : '')}>
                 <thead>
                     <tr>
                         {columns.map(column => !column.hidden && (
-                            <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
+                            <th
+                                key={column.key || column.label}
+                                style={{
+                                    width: column.width,
+                                    textAlign: column.align,
+                                    ...(column.whiteSpace && { whiteSpace: column.whiteSpace })
+                                }}
+                            >
                                 {columnHeaderFormat ?
                                     columnHeaderFormat(column, supplementalData) :
                                     column.label
@@ -67,6 +75,7 @@ Table.propTypes = {
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     supplementalData: PropTypes.object,
     total: PropTypes.number,
+    tableFixed: PropTypes.bool,
 };
 
 export default Table;

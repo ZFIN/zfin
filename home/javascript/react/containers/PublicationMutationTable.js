@@ -13,7 +13,6 @@ const PublicationMarkerTable = ({url, title, navigationCounter}) => {
         {
             label: 'Construct',
             content: row => (<EntityList entities={row.tgConstructs}/>),
-            width: '250px',
         },
         {
             label: 'Type',
@@ -22,6 +21,7 @@ const PublicationMarkerTable = ({url, title, navigationCounter}) => {
         {
             label: 'Affected Genomic Region',
             content: row => (<EntityList entities={row.affectedGenes}/>),
+            whiteSpace: 'nowrap',
         },
     ];
 
@@ -38,6 +38,7 @@ const PublicationMarkerTable = ({url, title, navigationCounter}) => {
             rowKey={row => row.zdbID}
             pagination={true}
             onDataLoaded={handleDataLoadedCount}
+            tableFixed={false}
         />
     );
 };
