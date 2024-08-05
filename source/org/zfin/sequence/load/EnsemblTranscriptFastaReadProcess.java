@@ -4,14 +4,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.FileUtils;
-import org.biojava.bio.BioException;
 import org.biojava.bio.seq.SequenceIterator;
-import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.Namespace;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.RichSequenceIterator;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.VocabularyTerm;
@@ -26,20 +22,15 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.service.TranscriptService;
-import org.zfin.util.FileUtil;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
 import static java.util.stream.Collectors.joining;
 import static org.zfin.framework.services.VocabularyEnum.TRANSCRIPT_ANNOTATION_METHOD;
 import static org.zfin.marker.Marker.Type.TSCRIPT;
@@ -47,9 +38,7 @@ import static org.zfin.marker.TranscriptType.Type.MRNA;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
 
-public class EnsemblTranscriptFastaReadProcess {
-
-    private static final String baseUrl = "https://rest.ensembl.org";
+public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
     public static void main(String[] args) throws IOException {
         AbstractScriptWrapper wrapper = new AbstractScriptWrapper();
@@ -66,6 +55,7 @@ public class EnsemblTranscriptFastaReadProcess {
 
 
     public void init() throws IOException {
+        downloadFile(cdnaFileName);
         loadSequenceMapFromDownloadFile();
 
         // <ensdargID, DBLink>
@@ -245,10 +235,7 @@ public class EnsemblTranscriptFastaReadProcess {
         duplicateIDs.addAll(ensdartDuplicationMap.keySet());
         System.out.println("Number of new Transcript records: " + newTranscriptList.size());
         newTranscriptList.forEach(transcriptRecord -> {
-            boolean isDuplicate = false;
-            if (duplicateIDs.contains(transcriptRecord.ensdartID)) {
-                isDuplicate = true;
-            }
+            boolean isDuplicate = duplicateIDs.contains(transcriptRecord.ensdartID);
             createSingleTranscript(transcriptRecord, isDuplicate);
             if (index.incrementAndGet() % 100 == 0) {
                 System.out.print(index + "..");
@@ -265,9 +252,6 @@ public class EnsemblTranscriptFastaReadProcess {
         });
 */
 
-        for (Marker genesToAddTranscript : genesToAddTranscripts) {
-
-        }
         errorRecords.forEach(System.out::println);
 
         List<String> headerNames = List.of(
@@ -509,10 +493,6 @@ public class EnsemblTranscriptFastaReadProcess {
         }
     }
 
-    private static String getString(RichSequence richSequence) {
-        return richSequence.getAccession().split("\\.")[0];
-    }
-
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
@@ -616,65 +596,8 @@ public class EnsemblTranscriptFastaReadProcess {
         System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file: " + sortedGeneTranscriptMap.size());
     }
 
-    private static void downloadFile(String fileName) {
-        fileName = fileName + ".gz";
-        String fileURL = "https://ftp.ensembl.org/pub/release-111/fasta/danio_rerio/cdna/" + fileName;
-
-        try {
-            FileUtils.copyURLToFile(
-                new URL(fileURL),
-                new File(fileName),
-                60000,
-                READ_TIMEOUT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        FileUtil.gunzipFile(fileName);
-    }
-
-    private static Map<String, List<RichSequence>> getGeneTranscriptMap(String fileName) {
-        try {
-            List<RichSequence> transcriptList = getFastaIterator(fileName);
-            return transcriptList.stream().collect(Collectors.groupingBy(EnsemblTranscriptFastaReadProcess::getGeneId));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static String getGeneId(RichSequence sequence) {
-
-        String line = sequence.getDescription();
-        String pattern = "(.*)(gene:)(ENSDARG.*)( gene_biotype)(.*)";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(line);
-
-        if (m.find()) {
-            return m.group(3);
-        }
-        return null;
-    }
-
     private static String getGeneIdFromVersionedAccession(String accession) {
         return accession.split("\\.")[0];
-    }
-
-    private static List<RichSequence> getFastaIterator(String fileName) throws FileNotFoundException {
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader br = new BufferedReader(fileReader);
-        RichSequenceIterator iterator;
-        SymbolTokenization symbolTokenization = RichSequence.IOTools.getNucleotideParser();
-        iterator = RichSequence.IOTools.readFasta(br, symbolTokenization, new SimpleNamespace(""));
-
-        List<RichSequence> sequenceList = new ArrayList<>();
-        while (iterator.hasNext()) {
-            try {
-                sequenceList.add(iterator.nextRichSequence());
-            } catch (BioException e) {
-                e.printStackTrace();
-            }
-        }
-        return sequenceList;
     }
 
     private static void write(String fileName, SequenceIterator sequenceIterator) throws IOException {
