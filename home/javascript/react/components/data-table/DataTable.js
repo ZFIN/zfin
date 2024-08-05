@@ -21,6 +21,7 @@ const DataTable = ({
     setTableState,
     sortOptions,
     tableState,
+    tableFixed = true,
 }) => {
     [tableState, setTableState] = useTableState(tableState, setTableState);
 
@@ -51,6 +52,7 @@ const DataTable = ({
             rowKey={rowKey}
             supplementalData={response.supplementalData}
             total={response.total}
+            tableFixed={tableFixed}
         />
     );
 
@@ -83,6 +85,7 @@ DataTable.propTypes = {
     setTableState: PropTypes.func,
     sortOptions: PropTypes.arrayOf(sortOptionType),
     tableState: tableStateType,
+    tableFixed: PropTypes.bool,
 };
 
 export default DataTable;
