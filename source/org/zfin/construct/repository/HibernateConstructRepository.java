@@ -65,11 +65,13 @@ public class HibernateConstructRepository implements ConstructRepository {
         constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
-        String hql = "select distinct cmr from ConstructRelationship as cmr, " +
-                     "PublicationAttribution as attribution " +
-                     "where  attribution.dataZdbID = cmr.zdbID AND " +
-                     "cmr.type in (:constructRelationshipType)AND " +
-                     "attribution.publication.zdbID = :pubID ";
+        String hql = """
+            select distinct cmr from ConstructRelationship as cmr,
+            PublicationAttribution as attribution
+            where  attribution.dataZdbID = cmr.zdbID AND
+            cmr.type in (:constructRelationshipType) AND
+            attribution.publication.zdbID = :pubID
+        """;
 
         Query<ConstructRelationship> query = session.createQuery(hql, ConstructRelationship.class);
         query.setParameter("pubID", publicationZdbID);
