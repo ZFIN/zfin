@@ -3204,6 +3204,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // max number of records.
         if (number < 1) {
             hql += "left join fetch marker.dbLinks ";
+            hql += "left join fetch marker.aliases ";
         }
         hql += "where marker.markerType.name in (:names) and mrkr_abbrev not like :withdrawn ";
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
