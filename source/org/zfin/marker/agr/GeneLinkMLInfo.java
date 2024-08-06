@@ -11,6 +11,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAn
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -61,6 +62,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
                 org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
                 dto.setGeneSymbolDto(getNameSlotAnnotationDTOAbbrev(marker.getAbbreviation()));
                 dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getAbbreviation()));
+                dto.setGeneSynonymDtos(getNameSlotAnnotationDTOAliases(marker.getAliases()));
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
@@ -154,6 +156,20 @@ public class GeneLinkMLInfo extends LinkMLInfo {
         slotAnnotation.setFormatText(name);
         slotAnnotation.setNameTypeName("full_name");
         return slotAnnotation;
+    }
+
+    public static List<NameSlotAnnotationDTO> getNameSlotAnnotationDTOAliases(Set<MarkerAlias> aliasSet) {
+        if (CollectionUtils.isEmpty(aliasSet))
+            return null;
+        List<NameSlotAnnotationDTO> aliases = new ArrayList<>();
+        aliasSet.forEach(markerAlias -> {
+            NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
+            slotAnnotation.setDisplayText(markerAlias.getAlias());
+            slotAnnotation.setFormatText(markerAlias.getAlias());
+            slotAnnotation.setNameTypeName("unspecified");
+            aliases.add(slotAnnotation);
+        });
+        return aliases;
     }
 
     public static NameSlotAnnotationDTO getNameSlotAnnotationDTOAbbrev(String abbreviation) {
