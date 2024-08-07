@@ -22,7 +22,6 @@ public class DiseaseNavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.OTHER_PAGE).showCount(false),
             title(NavigationMenuOptions.GENES_INVOLVED).showCount(false),
             title(NavigationMenuOptions.ZEBRAFISH_MODELS).showCount(false),
-            title(NavigationMenuOptions.CITATION).showCount(false),
             isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA) ?
                 title(NavigationMenuOptions.ALLELE).showCount(false) : null
         );
