@@ -20,8 +20,7 @@ public class ChebiNavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.SUMMARY).showCount(false),
             title(NavigationMenuOptions.RELATIONSHIPS).showCount(false),
             title(NavigationMenuOptions.PHENOTYPE_CHEBI).showCount(false),
-            title(NavigationMenuOptions.CHEBI_HUMAN_DISEASE).showCount(false),
-            title(NavigationMenuOptions.CITATION).showCount(false)
+            title(NavigationMenuOptions.CHEBI_HUMAN_DISEASE).showCount(false)
             );
     }
 
