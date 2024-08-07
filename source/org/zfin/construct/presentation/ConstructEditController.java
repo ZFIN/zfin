@@ -4,8 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,16 +16,12 @@ import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -43,8 +39,6 @@ import static org.zfin.construct.presentation.ConstructComponentService.getExist
 @RequestMapping("/construct")
 public class ConstructEditController {
 
-    private static Logger LOG = LogManager.getLogger(ConstructEditController.class);
-
     @Autowired
     private MarkerRepository mr;
     @Autowired
@@ -56,12 +50,8 @@ public class ConstructEditController {
     @Autowired
     private SequenceRepository sr;
 
+    private static final Logger logger = LogManager.getLogger(ConstructEditController.class);
 
-    private static Logger logger = LogManager.getLogger(ConstructEditController.class);
-
-    private ConstructAddValidator validator = new ConstructAddValidator();
-
-    private Person currentUser = ProfileService.getCurrentSecurityUser();
 
     @ModelAttribute("formBean")
     private ConstructUpdateBean getDefaultSearchForm(@RequestParam(value = "constructPublicationZdbID", required = false) String pubZdbID) {
@@ -471,10 +461,3 @@ public class ConstructEditController {
         return oldConstructName;
     }
 }
-
-
-
-
-
-
-

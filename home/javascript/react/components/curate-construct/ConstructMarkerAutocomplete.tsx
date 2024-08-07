@@ -49,17 +49,11 @@ interface ConstructMarkerAutocompleteProps {
 const calculatedDomain = backendBaseUrl();
 
 function ConstructMarkerAutocomplete({onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
-    const {state, setStateByProxy} = useCurateConstructEditContext();
+    const {state} = useCurateConstructEditContext();
     const [input, setInput] = useState<string>('');
     const [suggestions, setSuggestions] = useState<ConstructComponent[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
     const dropdownRef = useRef<HTMLUListElement>(null);
-
-    const resetState = () => {
-        setInput('');
-        setSuggestions([]);
-        setSelectedIndex(-1);
-    }
 
     useEffect(() => {
         if (input.length > 1) {

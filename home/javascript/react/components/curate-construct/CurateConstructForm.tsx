@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {
     cassettesToSimplifiedCassettes,
-    ConstructFormDTO,
     EditConstructFormDTO,
     normalizeSimplifiedCassettes,
     simplifiedCassettesToCassettes,

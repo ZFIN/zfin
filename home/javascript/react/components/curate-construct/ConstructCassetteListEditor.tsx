@@ -1,14 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
-import {Cassette, SimplifiedCassette, simplifiedCassettesToCassettes} from './ConstructTypes';
+import {Cassette} from './ConstructTypes';
 import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
-interface ConstructCassetteListEditorProps {
-    onChange?: (cassettes: Cassette[]) => void;
-}
-
-const ConstructCassetteListEditor = ({onChange}: ConstructCassetteListEditorProps) => {
+const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
     const [cassette, setCassette] = useState<Cassette>(null);
 

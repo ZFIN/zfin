@@ -19,7 +19,7 @@ interface ConstructRegulatoryCodingUnitListProps {
  * @constructor
  */
 const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatoryCodingUnitListProps) => {
-    const {state, setStateByProxy} = useCurateConstructEditContext();
+    const {state} = useCurateConstructEditContext();
     const [rcUnitItems, setRcUnitItems] = useState<ConstructComponent[]>([]);
     const defaultSeparator = '-';
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
