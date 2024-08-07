@@ -152,19 +152,25 @@ end
 --! echo "'./downloadsStaging/antibodies2.txt'"
 create view antibodies as
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
-	atb_immun_organism, atb_host_organism, szm_term_ont_id,'' as atb_reg_id
-  from marker, antibody, so_zfin_mapping
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,'' as atb_reg_id, STRING_AGG(dalias_alias, ',')
+  from marker, antibody, so_zfin_mapping, data_alias
  where mrkr_zdb_id = atb_zdb_id
  and szm_object_type = mrkr_type
  and atb_zdb_id not in (Select dblink_linked_recid from db_link where dblink_linked_recid like 'ZDB-ATB%')
+   and dalias_data_zdb_id = mrkr_zdb_id
+group by mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+         atb_immun_organism, atb_host_organism, szm_term_ont_id
  union
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
-	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id
-  from marker, antibody, so_zfin_mapping, db_link
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id, STRING_AGG(dalias_alias, ',')
+  from marker, antibody, so_zfin_mapping, db_link, data_alias
  where mrkr_zdb_id = atb_zdb_id
  and szm_object_type = mrkr_type
  and dblink_linked_recid=atb_zdb_id
  and dblink_acc_num  like '%AB%'
+   and dalias_data_zdb_id = mrkr_zdb_id
+group by mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+    atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num
  order by 1;
 \copy (select * from antibodies) to './downloadsStaging/antibodies2.txt' with delimiter as '	' null as '';
 drop view antibodies;
