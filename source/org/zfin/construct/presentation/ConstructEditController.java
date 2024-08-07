@@ -1,5 +1,6 @@
 package org.zfin.construct.presentation;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,10 +16,13 @@ import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -30,6 +34,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
@@ -111,11 +116,15 @@ public class ConstructEditController {
         String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
-        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-        mr.addDBLink(m, constructSequence, genBankRefDB,pubid);
+        addGenBankSequenceToConstruct(constructSequence, pubid, m);
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"sequence","added sequence");
         HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private void addGenBankSequenceToConstruct(String constructSequence, String pubid, Marker m) {
+        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+        mr.addDBLink(m, constructSequence, genBankRefDB, pubid);
     }
 
     @RequestMapping(value = "/update-comments/{constructID}/constructEditComments/{constructUpdateComments}"
@@ -180,20 +189,10 @@ public class ConstructEditController {
     @ResponseBody
     void deleteSequence(@PathVariable String constructID,@PathVariable String sequenceID) throws Exception{
         HibernateUtil.createTransaction();
-        Session session = HibernateUtil.currentSession();
-        Marker m=mr.getMarkerByID(constructID);
-        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-        ir.deleteActiveDataByZdbID(sequenceID);
-        String hql = "" +
-                "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
-        Query query = session.createQuery(hql);
-        query.setParameter("sequenceID", sequenceID);
-        query.executeUpdate();
-        ir.insertUpdatesTable(m,"sequence","deleted sequence");
+        removeSequenceFromConstruct(constructID, sequenceID);
         HibernateUtil.flushAndCommitCurrentSession();
-
     }
+
 
     @RequestMapping(value = "/delete-note/{constructID}/noteID/{noteID}", method = RequestMethod.DELETE)
     public
@@ -249,14 +248,111 @@ public class ConstructEditController {
     public
     @ResponseBody
     String updateConstruct(@PathVariable String constructID,
-                           @RequestBody AddConstructFormFields request) throws Exception{
+                           @RequestBody EditConstructFormFields request) throws Exception{
 
-        ConstructName constructName = request.getConstructNameObject();
+        boolean changesMade = false;
+
+        ConstructName constructName = request.getConstructName();
         constructName.reinitialize();
-        String pubZdbID = request.getPubZdbID();
+
+        //figure out if constructName has changed
+        ConstructName oldName = getExistingConstructName(constructID);
+        if (!constructName.equals(oldName)) {
+            changesMade = true;
+        }
+
+        //figure out if synonyms have changed ( could have new synonyms, or removed synonyms)
+        List<MarkerNameAndZdbId> removedSynonyms = calculateRemovedSynonyms(constructID, request.getSynonyms());
+        List<MarkerNameAndZdbId> addedSynonyms = calculateAddedSynonyms(constructID, request.getSynonyms());
+
+        //figure out if sequences have changed
+        List<MarkerNameAndZdbId> removedSequences = calculateRemovedSequences(constructID, request.getSequences());
+        List<MarkerNameAndZdbId> addedSequences = calculateAddedSequences(constructID, request.getSequences());
+
+        //figure out if notes have changed
+        List<MarkerNameAndZdbId> removedNotes = calculateRemovedNotes(constructID, request.getNotes());
+        List<MarkerNameAndZdbId> addedNotes = calculateAddedNotes(constructID, request.getNotes());
+
+        if (!removedSynonyms.isEmpty() ||
+                !addedSynonyms.isEmpty() ||
+                !removedSequences.isEmpty() ||
+                !addedSequences.isEmpty() ||
+                !removedNotes.isEmpty() ||
+                !addedNotes.isEmpty()) {
+            changesMade = true;
+        }
+
+        //figure out if publicNote has changed
+        String newPublicNote = request.getPublicNote();
+        String oldPublicNote = mr.getMarkerByID(constructID).getPublicComments();
+        if (!newPublicNote.equals(oldPublicNote)) {
+            changesMade = true;
+        }
+
+        if (!changesMade) {
+            return """
+                    {
+                        "message": "No changes made",
+                        "success": true
+                    }
+                    """;
+        }
+
+        String pubZdbID = request.getPublicationZdbID();
 
         HibernateUtil.createTransaction();
-        Marker newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+
+        Marker newMarker;
+        if (constructName.equals(oldName)) {
+            newMarker = mr.getMarkerByID(constructID);
+        } else {
+            newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+        }
+
+        //synonyms
+        for(MarkerNameAndZdbId addedSynonym : addedSynonyms) {
+            mr.addMarkerAlias(newMarker, addedSynonym.getLabel(), pr.getPublication(pubZdbID));
+            ir.insertUpdatesTable(newMarker,"alias","added data alias");
+            logger.debug("Added synonym: " + addedSynonym.getLabel());
+        }
+        for(MarkerNameAndZdbId removedSynonym : removedSynonyms) {
+            mr.deleteMarkerAlias(newMarker, mr.getMarkerAlias(removedSynonym.getZdbID()));
+            ir.insertUpdatesTable(newMarker,"alias","deleted data alias");
+            logger.debug("Removed synonym: " + removedSynonym.getLabel());
+        }
+
+        //sequences
+        for(MarkerNameAndZdbId addedSequence : addedSequences) {
+            addGenBankSequenceToConstruct(addedSequence.getLabel(), pubZdbID, newMarker);
+            logger.debug("Added sequence: " + addedSequence.getLabel());
+        }
+        for (MarkerNameAndZdbId removedSequence : removedSequences) {
+            removeSequenceFromConstruct(constructID, removedSequence.getZdbID());
+            logger.debug("Removed sequence: " + removedSequence.getZdbID());
+        }
+
+        //notes
+        for(MarkerNameAndZdbId addedNote : addedNotes) {
+            mr.addMarkerDataNote(newMarker, addedNote.getLabel());
+            ir.insertUpdatesTable(mr.getMarkerByID(constructID),"curator notes","added new curator note");
+            logger.debug("Added note: " + addedNote.getLabel());
+        }
+        for (MarkerNameAndZdbId removedNote : removedNotes) {
+            DataNote curatorNote = ir.getDataNoteByID(removedNote.getZdbID());
+            ir.insertUpdatesTable(mr.getMarkerByID(constructID), "curator notes", "deleted curator note");
+            mr.removeCuratorNote(newMarker, curatorNote);
+            logger.debug("Removed note: " + removedNote.getLabel());
+        }
+
+        //public note
+        if (!newPublicNote.equals(oldPublicNote)) {
+            newMarker.setPublicComments(newPublicNote);
+            ConstructCuration c = cr.getConstructByID(constructID);
+            c.setPublicComments(newPublicNote);
+            ir.insertUpdatesTable(newMarker, "comments", "updated public notes");
+            logger.debug("Updated public note: " + newPublicNote);
+        }
+
         HibernateUtil.flushAndCommitCurrentSession();
 
         return """
@@ -265,6 +361,105 @@ public class ConstructEditController {
                     "success": true
                 }
                 """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
+    }
+
+
+    private void removeSequenceFromConstruct(String constructID, String sequenceID) {
+        Session session = HibernateUtil.currentSession();
+        Marker m = mr.getMarkerByID(constructID);
+        ir.deleteActiveDataByZdbID(sequenceID);
+        String hql = "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
+        Query query = session.createQuery(hql);
+        query.setParameter("sequenceID", sequenceID);
+        query.executeUpdate();
+        ir.insertUpdatesTable(m,"sequence","deleted sequence");
+    }
+
+    private List<MarkerNameAndZdbId> calculateAddedNotes(String constructID, List<MarkerNameAndZdbId> notes) {
+        List<MarkerNameAndZdbId> existingNotes = getExistingNotesAsMarkerNameAndZdbIds(constructID);
+        List<MarkerNameAndZdbId> addedNotes = notes.stream().filter(note -> note.getZdbID() == null).toList();
+        List<MarkerNameAndZdbId> addedNotesWithoutDuplicatesOfExisting = addedNotes.stream().filter(
+                addedNote -> existingNotes.stream().noneMatch(
+                        existingNote -> existingNote.getLabel().equals(addedNote.getLabel())
+                )
+        ).toList();
+
+        return addedNotesWithoutDuplicatesOfExisting;
+    }
+
+    private List<MarkerNameAndZdbId> calculateRemovedNotes(String constructID, List<MarkerNameAndZdbId> notes) {
+        List<MarkerNameAndZdbId> existingNotes = getExistingNotesAsMarkerNameAndZdbIds(constructID);
+        List<MarkerNameAndZdbId> removedNotes = new ArrayList<>(CollectionUtils.subtract(existingNotes, notes));
+        return removedNotes;
+    }
+
+    private List<MarkerNameAndZdbId> getExistingNotesAsMarkerNameAndZdbIds(String constructID) {
+        return DTOMarkerService.getCuratorNoteDTOs(mr.getMarkerByID(constructID)).stream().map(
+                note -> {
+                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
+                    mnzdb.setZdbID(note.getZdbID());
+                    mnzdb.setLabel(note.getNoteData());
+                    return mnzdb;
+                }).toList();
+    }
+
+    private List<MarkerNameAndZdbId> calculateAddedSequences(String constructID, List<MarkerNameAndZdbId> sequences) {
+        List<MarkerNameAndZdbId> existingSequences = getExistingSequencesAsMarkerNameAndZdbIds(constructID);
+        List<MarkerNameAndZdbId> addedSequences = sequences.stream().filter(sequence -> sequence.getZdbID() == null).toList();
+        List<MarkerNameAndZdbId> addedSequencesWithoutDuplicatesOfExisting = addedSequences.stream().filter(
+                addedSequence -> existingSequences.stream().noneMatch(
+                        existingSequence -> existingSequence.getLabel().equals(addedSequence.getLabel())
+                )
+        ).toList();
+
+        return addedSequencesWithoutDuplicatesOfExisting;
+    }
+
+    private List<MarkerNameAndZdbId> calculateRemovedSequences(String constructID, List<MarkerNameAndZdbId> sequences) {
+        List<MarkerNameAndZdbId> existingSequences = getExistingSequencesAsMarkerNameAndZdbIds(constructID);
+        List<MarkerNameAndZdbId> removedSequences = new ArrayList<>(CollectionUtils.subtract(existingSequences, sequences));
+        return removedSequences;
+    }
+
+    private List<MarkerNameAndZdbId> getExistingSequencesAsMarkerNameAndZdbIds(String constructID) {
+        return DTOMarkerService.getSupportingSequenceDTOs(mr.getMarkerByID(constructID)).stream().map(
+                sequence -> {
+                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
+                    mnzdb.setZdbID(sequence.getZdbID());
+                    mnzdb.setLabel(sequence.getView());
+                    return mnzdb;
+                }).toList();
+    }
+
+    private List<MarkerNameAndZdbId> calculateRemovedSynonyms(String constructID, List<MarkerNameAndZdbId> newSynonyms) {
+        List<MarkerNameAndZdbId> existingSynonyms = getExistingSynonymsAsMarkerNameAndZdbIds(constructID);
+        List<MarkerNameAndZdbId> removedSynonyms = new ArrayList<>(CollectionUtils.subtract(existingSynonyms, newSynonyms));
+
+        return removedSynonyms;
+    }
+
+    private List<MarkerNameAndZdbId> calculateAddedSynonyms(String constructID, List<MarkerNameAndZdbId> newSynonyms) {
+        List<MarkerNameAndZdbId> existingSynonyms = getExistingSynonymsAsMarkerNameAndZdbIds(constructID);
+
+        List<MarkerNameAndZdbId> addedSynonyms = newSynonyms.stream().filter(syn -> syn.getZdbID() == null).toList();
+        List<MarkerNameAndZdbId> addedSynonymsWithoutDuplicatesOfExisting = addedSynonyms.stream().filter(
+                addedSynonym -> existingSynonyms.stream().noneMatch(
+                        existingSynonym -> existingSynonym.getLabel().equals(addedSynonym.getLabel())
+                )
+        ).toList();
+
+        return addedSynonymsWithoutDuplicatesOfExisting;
+    }
+
+    private List<MarkerNameAndZdbId> getExistingSynonymsAsMarkerNameAndZdbIds(String constructID) {
+        List<MarkerNameAndZdbId> existingSynonyms = mr.getPreviousNamesLight(mr.getMarkerByID(constructID)).stream().map(
+                previousNameLight -> {
+                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
+                    mnzdb.setZdbID(previousNameLight.getAliasZdbID());
+                    mnzdb.setLabel(previousNameLight.getAlias());
+                    return mnzdb;
+                }).toList();
+        return existingSynonyms;
     }
 
     //Send the json representation of a construct name to the client

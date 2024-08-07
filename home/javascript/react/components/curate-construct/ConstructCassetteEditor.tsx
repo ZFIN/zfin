@@ -3,20 +3,20 @@ import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitLi
 import {Cassette, ConstructComponent} from './ConstructTypes';
 
 interface ConstructCassetteEditorProps {
-    publicationId: string;
     onChange: (cassette: Cassette) => void;
-    resetFlag?: number;
+    cassette?: Cassette;
 }
 
-const ConstructCassetteEditor = ({publicationId, onChange, resetFlag}: ConstructCassetteEditorProps) => {
-
-    const [state, setState] = useState<Cassette>({
-        promoter: [],
-        coding: []
-    });
+const ConstructCassetteEditor = ({ onChange, cassette: initialCassette}: ConstructCassetteEditorProps) => {
+    const blankCassette = {promoter: [], coding: []};
+    const [cassetteForEdit, setCassetteForEdit] = useState<Cassette>(blankCassette);
+    useEffect(() => {
+        if (initialCassette) {
+            setCassetteForEdit(initialCassette);
+        }
+    }, [initialCassette]);
 
     const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type) => {
-
         //the last item should have its separator set to ''
         const transformedConstructComponents = constructComponents.map((item, index) => {
             if (index === constructComponents.length - 1) {
@@ -26,33 +26,30 @@ const ConstructCassetteEditor = ({publicationId, onChange, resetFlag}: Construct
         });
 
         const newState = {
-            ...state,
+            ...cassetteForEdit,
             [type]: transformedConstructComponents
         }
-        setState(newState);
+        setCassetteForEdit(newState);
 
         if (onChange) {
             onChange(newState);
         }
     }
 
-    const resetState = () => {
-        setState({
-            promoter: [],
-            coding: []
-        });
-    }
-
-    useEffect(() => {
-        resetState();
-    }, [resetFlag]);
-
     return <div>
         <b>Promoter</b>
-        <ConstructRegulatoryCodingUnitList resetFlag={resetFlag} publicationId={publicationId} onChange={(items) => handleRegulatoryCodingUnitChange(items, 'promoter') }/>
+        <ConstructRegulatoryCodingUnitList
+            onChange={(items) => handleRegulatoryCodingUnitChange(items, 'promoter') }
+            type='promoter'
+            cassette={cassetteForEdit}
+        />
 
         <b>Coding</b>
-        <ConstructRegulatoryCodingUnitList resetFlag={resetFlag} publicationId={publicationId} onChange={(items) => handleRegulatoryCodingUnitChange(items, 'coding') }/>
+        <ConstructRegulatoryCodingUnitList
+            onChange={(items) => handleRegulatoryCodingUnitChange(items, 'coding') }
+            type='coding'
+            cassette={cassetteForEdit}
+        />
     </div>;
 }
 

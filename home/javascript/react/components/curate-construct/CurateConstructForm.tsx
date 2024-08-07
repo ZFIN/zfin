@@ -1,189 +1,199 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {
     cassettesToSimplifiedCassettes,
     ConstructFormDTO,
+    EditConstructFormDTO,
     normalizeSimplifiedCassettes,
-    SimplifiedCassette,
+    simplifiedCassettesToCassettes,
     typeAbbreviationToType
 } from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
+import {blankConstruct, CurateConstructEditProvider, useCurateConstructEditContext} from "./CurateConstructEditContext";
+import CurateConstructSynonymEditor from "./CurateConstructSynonymEditor";
+import CurateConstructSequenceEditor from "./CurateConstructSequenceEditor";
+import CurateConstructNoteEditor from "./CurateConstructNoteEditor";
+import CurateConstructPublicNoteEditor from "./CurateConstructPublicNoteEditor";
+
 const calculatedDomain = backendBaseUrl();
 
 /*
  * This component is used to create a new construct
  */
 interface CurateConstructFormProps {
-    publicationId: string;
-    constructId: string;
     submitButtonLabel: string;
+    onCancel: () => void;
     onSubmit: (submissionObject) => Promise<void>;
 }
 
-const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onSubmit}: CurateConstructFormProps) => {
+const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: CurateConstructFormProps) => {
 
-    const [chosenType, setChosenType] = useState('Tg');
-    const [prefix, setPrefix] = useState('');
-    const [synonym, setSynonym] = useState('');
-    const [sequence, setSequence] = useState('');
-    const [publicNote, setPublicNote] = useState('');
-    const [curatorNote, setCuratorNote] = useState('');
-    const [cassettes, setCassettes] = useState([]);
-    const [initialCassettes, setInitialCassettes] = useState<SimplifiedCassette[]>([]);
-    const [cassettesDisplay, setCassettesDisplay] = useState('');
+    const {state, setStateByProxy} = useCurateConstructEditContext();
+
     const [constructDisplayName, setConstructDisplayName] = useState('');
     const [saving, setSaving] = useState(false);
-    const [resetFlag, setResetFlag] = useState<number>(0);
+
+    useEffect(() => {
+        const display = cassetteHumanReadableList(state.selectedConstruct.cassettes);
+        setConstructDisplayName(state.selectedConstruct.chosenType + state.selectedConstruct.prefix + '(' + display + ')' );
+    },[state]);
 
     const handleCassettesChanged = (cassettesChanged) => {
-        setCassettes(cassettesChanged);
-        setCassettesDisplay(cassetteHumanReadableList(cassettesChanged));
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.cassettes = cassettesChanged;
+        });
     }
 
     const clearForm = () => {
-        setChosenType('Tg');
-        setPrefix('');
-        setSynonym('');
-        setSequence('');
-        setPublicNote('');
-        setCuratorNote('');
-        setCassettesDisplay('');
-        setResetFlag(resetFlag + 1);
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct = blankConstruct();
+            proxy.selectedConstructId = null;
+        });
+        if (onCancel) {
+            onCancel();
+        }
     }
 
     function submitForm() {
-        const submissionObject : ConstructFormDTO = {
-            constructNameObject: {
-                type: typeAbbreviationToType(chosenType),
-                prefix: prefix,
-                cassettes: cassettesToSimplifiedCassettes(cassettes)
+        const submissionObject : EditConstructFormDTO = {
+            constructName: {
+                type: typeAbbreviationToType(state.selectedConstruct.chosenType),
+                prefix: state.selectedConstruct.prefix,
+                cassettes: cassettesToSimplifiedCassettes(state.selectedConstruct.cassettes)
             },
-            constructAlias: synonym,
-            constructSequence: sequence,
-            constructComments: publicNote,
-            constructCuratorNote: curatorNote,
-            pubZdbID: publicationId
+            synonyms: state.selectedConstruct.synonyms,
+            sequences: state.selectedConstruct.sequences,
+            notes: state.selectedConstruct.notes,
+            publicNote: state.selectedConstruct.publicNote,
+            publicationZdbID: state.publicationId
         }
         setSaving(true);
         onSubmit(submissionObject).then(() => {
             setSaving(false);
-            clearForm();
+            // clearForm();
         }).catch(() => {
             setSaving(false);
         });
     }
 
-    function setInitialCassettesFromApiResult(normalizedCassettes) {
-        setInitialCassettes(normalizeSimplifiedCassettes(normalizedCassettes));
-    }
-
     //eg. ZDB-TGCONSTRCT-220310-1
     useEffect(() => {
+        const constructId = state.selectedConstructId;
         if (constructId) {
-            clearForm();
+            // clearForm();
             fetch(`${calculatedDomain}/action/construct/json/${constructId}`)
                 .then(response => response.json())
                 .then(data => {
-                    setChosenType(data.typeAbbreviation);
-                    setPrefix(data.prefix);
-                    // setSynonym(data.synonym);
-                    // setSequence(data.sequence);
-                    // setPublicNote(data.publicNote);
-                    // setCuratorNote(data.curatorNote);
-                    if (data.cassettes) {
-                        setInitialCassettesFromApiResult(normalizeSimplifiedCassettes(data.cassettes));
-                        setConstructDisplayName(data.displayName);
-                    }
+                    setStateByProxy(proxy => {
+                        const blank = blankConstruct();
+                        const fetchedCassettes = normalizeSimplifiedCassettes(data.cassettes);
+                        const fullCassettes = simplifiedCassettesToCassettes(fetchedCassettes);
+                        proxy.selectedConstruct = {
+                            ...blank,
+                            chosenType: data.typeAbbreviation,
+                            prefix: data.prefix,
+                            publicNote: data.publicNote,
+                            curatorNote: data.curatorNote,
+                            cassettes: fullCassettes,
+                            editCassetteMode: false,
+                            editCassetteIndex: null,
+                            addCassetteMode: false
+                        };
+                    });
+                })
+                .then(() => {
+                })
+                .catch(error => {
+                    console.error('Error fetching construct', error);
                 });
         }
-    }, [constructId]);
-
-    useEffect(() => {
-        setConstructDisplayName(chosenType + prefix + '(' + cassettesDisplay + ')');
-    }, [chosenType, prefix, cassettesDisplay]);
+    }, [state.selectedConstructId]);
 
     return <>
         <div className='mb-3' style={{backgroundColor: '#eee'}}>
             <table>
                 <thead/>
                 <tbody>
-                    {constructId &&
-                        <tr>
-                            <td><b>Construct ID</b></td>
-                            <td><a href={'/' + constructId} target='_blank' rel='noreferrer'>{constructId}</a></td>
-                        </tr>
-                    }
+                {state.selectedConstructId &&
                     <tr>
-                        <td><b>Construct Type</b></td>
-                        <td>
-                            {/*Select dropdown associated with React const chosenType (Tg, Et, Gt, Pt)*/}
-                            <select value={chosenType} onChange={e => setChosenType(e.target.value)}>
-                                <option value='Tg'>Tg</option>
-                                <option value='Et'>Et</option>
-                                <option value='Gt'>Gt</option>
-                                <option value='Pt'>Pt</option>
-                            </select>
-                            <label htmlFor='prefix'><b>Prefix:</b></label>
-                            <input
-                                id='prefix'
-                                size='15'
-                                className='prefix'
-                                name='prefix'
-                                value={prefix}
-                                onChange={e => setPrefix(e.target.value)}
-                                type='text'
-                            />
-                        </td>
+                        <td><b>Construct ID</b></td>
+                        <td><a href={'/' + state.selectedConstructId} target='_blank'
+                               rel='noreferrer'>{state.selectedConstructId}</a></td>
                     </tr>
-                    <tr>
-                        <td><b>Synonym</b>:</td>
-                        <td><input
-                            autoComplete='off'
+                }
+                <tr>
+                    <td><b>Construct Type</b></td>
+                    <td>
+                        {/*Select dropdown associated with React const chosenType (Tg, Et, Gt, Pt)*/}
+                        <select value={state.selectedConstruct.chosenType || ''}
+                                onChange={e => setStateByProxy(proxy => {
+                                    proxy.selectedConstruct.chosenType = e.target.value
+                                })}>
+                            <option value='Tg'>Tg</option>
+                            <option value='Et'>Et</option>
+                            <option value='Gt'>Gt</option>
+                            <option value='Pt'>Pt</option>
+                        </select>
+                        <label htmlFor='prefix'><b>Prefix:</b></label>
+                        <input
+                            id='prefix'
+                            size='15'
+                            className='prefix'
+                            name='prefix'
+                            value={state.selectedConstruct.prefix || ''}
+                            onChange={e => setStateByProxy(proxy => {
+                                proxy.selectedConstruct.prefix = e.target.value
+                            })}
                             type='text'
-                            size='50'
-                            value={synonym}
-                            onChange={e => setSynonym(e.target.value)}
                         />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Sequence</b>:</td>
-                        <td><input
-                            autoComplete='off'
-                            type='text'
-                            size='50'
-                            value={sequence}
-                            onChange={e => setSequence(e.target.value)}
-                        />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Public Note</b>:</td>
-                        <td>
-                            <textarea rows='3' cols='50' value={publicNote} onChange={e => setPublicNote(e.target.value)}/>
-                        </td>
-                        <td><b>Curator Note</b>:</td>
-                        <td>
-                            <textarea rows='3' cols='50' value={curatorNote} onChange={e => setCuratorNote(e.target.value)}/>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Synonym</b>:</td>
+                    <td><CurateConstructSynonymEditor/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Sequence</b>:</td>
+                    <td><CurateConstructSequenceEditor/></td>
+                </tr>
+                <tr>
+                    <td><b>Public Note</b>:</td>
+                    <td>
+                        <CurateConstructPublicNoteEditor/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Curator Notes</b>:</td>
+                    <td>
+                        <CurateConstructNoteEditor/>
+                    </td>
+                </tr>
                 </tbody>
             </table>
             <div className='mb-3'>
-                <ConstructCassetteListEditor publicationId={publicationId} onChange={handleCassettesChanged} resetFlag={resetFlag} initialCassettes={initialCassettes}/>
+                <ConstructCassetteListEditor onChange={handleCassettesChanged}/>
             </div>
             <div className='mb-3'>
                 <p>
                     <b>Display Name:</b>
-                    <input name='constructDisplayName' disabled='disabled' type='text' value={constructDisplayName} size='150'/>
+                    <input name='constructDisplayName' disabled={true} type='text' value={constructDisplayName || ''}
+                           size='150'/>
                 </p>
             </div>
             <div className='mb-3'>
-                <button type='button' className='mr-2' onClick={submitForm} disabled={saving}>{submitButtonLabel}</button>
+                <button type='button' className='mr-2' onClick={submitForm}
+                        disabled={saving}>{submitButtonLabel}</button>
                 <button type='button' onClick={clearForm} disabled={saving}>Cancel</button>
             </div>
         </div>
     </>;
+}
+
+const CurateConstructForm = ({publicationId, constructId, submitButtonLabel, onSubmit, onCancel}: CurateConstructFormProps) => {
+    return <CurateConstructEditProvider publicationId={publicationId} selectedConstructId={constructId}>
+        <CurateConstructFormInner submitButtonLabel={submitButtonLabel} onSubmit={onSubmit} onCancel={onCancel}/>
+    </CurateConstructEditProvider>
 }
 
 export default CurateConstructForm;

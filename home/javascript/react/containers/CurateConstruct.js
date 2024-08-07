@@ -8,7 +8,7 @@ import CurateConstructRelationships from '../components/curate-construct/CurateC
 const CurateConstruct = ({publicationId}) => {
     return (
         <>
-            <CurateConstructNew publicationId={publicationId}/>
+            {/*<CurateConstructNew publicationId={publicationId}/>*/}
             <CurateConstructEdit publicationId={publicationId}/>
             <CurateConstructRelationships publicationId={publicationId}/>
         </>

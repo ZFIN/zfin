@@ -12,7 +12,7 @@ interface CurateConstructEditProps {
 const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [display, setDisplay] = useState<boolean>(false);
     const [displayEditForm, setDisplayEditForm] = useState<boolean>(false);
-    const [selectedConstruct, setSelectedConstruct] = useState<string>(null);
+    const [selectedConstruct, setSelectedConstruct] = useState<string>('');
     const [constructList, setConstructList] = useState<MarkerNameAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
@@ -32,14 +32,12 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         });
         const uniqueConstructIdNameList = constructIdNameList.filter((v, i, a) => a.findIndex(t => (t.zdbID === v.zdbID)) === i);
         setConstructList(uniqueConstructIdNameList);
-        return data;
     }
 
     async function submitForm(submissionObject : ConstructFormDTO) {
         setSuccessMessage('');
         setErrorMessage('');
         try {
-            //post with fetch to `/action/construct/create`
             const result = await fetch(`${calculatedDomain}/action/construct/update/${selectedConstruct}`, {
                 method: 'POST',
                 headers: {
@@ -63,6 +61,11 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         setDisplayEditForm(true);
     }
 
+    function cancelEdit() {
+        toggleDisplay();
+        setSelectedConstruct('');
+    }
+
     useEffect(() => {
         loadConstructList();
     }, []);
@@ -73,16 +76,21 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             <a onClick={toggleDisplay} style={{textDecoration: 'underline'}}>{display ? 'Hide' : 'Show'}</a>
             {display && <div className='mt-2'>
                 <div>
-                    <select onChange={(e) => handleConstructSelected(e.target.value)}>
-                        <option value={''} selected={!selectedConstruct}>Select a construct</option>
+                    <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
+                        <option>Select a construct</option>
                         {constructList.map((row: MarkerNameAndZdbId) => {
-                            return <option key={row.zdbID} value={row.zdbID} selected={row.zdbID === selectedConstruct}>{row.label}</option>
+                            return <option key={row.zdbID} value={row.zdbID} >{row.label}</option>
                         })}
                     </select>
                 </div>
             </div>}
-            {displayEditForm && <div className='mt-2'>
-                <CurateConstructForm publicationId={publicationId} constructId={selectedConstruct} submitButtonLabel='Update' onSubmit={submitForm}/>
+            {display && displayEditForm && <div className='mt-2'>
+                <CurateConstructForm
+                    publicationId={publicationId}
+                    constructId={selectedConstruct}
+                    submitButtonLabel='Update'
+                    onCancel={cancelEdit}
+                    onSubmit={submitForm}/>
                 <div className='mt-2'>
                     {successMessage && <div className='alert alert-success'>{successMessage}</div>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}

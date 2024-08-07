@@ -20,6 +20,16 @@ type ConstructFormDTO = {
     pubZdbID: string;
 }
 
+
+type EditConstructFormDTO = {
+    constructName: ConstructNameDTO;
+    synonyms: MarkerNameAndZdbId[];
+    sequences: MarkerNameAndZdbId[];
+    notes: MarkerNameAndZdbId[];
+    publicNote: string;
+    publicationZdbID: string;
+}
+
 interface Cassette {
     cassetteNumber?: number;
     promoter: ConstructComponent[];
@@ -73,6 +83,10 @@ function simplifiedCassetteToCassette(simplifiedCassette: SimplifiedCassette): C
     const promoter = [];
     const coding = [];
     for (const component of simplifiedCassette.coding) {
+        if (coding.length > 0 && (component === '.' || component === ',' || component === '-')) {
+            coding[coding.length - 1].separator = component;
+            continue;
+        }
         coding.push({
             id: null,
             name: null,
@@ -85,6 +99,10 @@ function simplifiedCassetteToCassette(simplifiedCassette: SimplifiedCassette): C
         });
     }
     for (const component of simplifiedCassette.promoter) {
+        if (promoter.length > 0 && (component === '.' || component === ',' || component === '-')) {
+            promoter[promoter.length - 1].separator = component;
+            continue;
+        }
         promoter.push({
             id: null,
             name: null,
@@ -136,4 +154,4 @@ type MarkerNameAndZdbId = {
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes};

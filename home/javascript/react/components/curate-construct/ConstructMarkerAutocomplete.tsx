@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import {ConstructComponent} from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
+import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 /**
  * This is a React component that is used to allow the user to start typing
@@ -40,8 +41,6 @@ import {backendBaseUrl} from './DomainInfo';
 
 
 interface ConstructMarkerAutocompleteProps {
-    publicationId: string;
-    resetFlag?: number;
     onSelect: (suggestion: ConstructComponent) => void;
     onChange?: (value: string) => void;
     onChangeWithObject?: (suggestion: ConstructComponent) => void;
@@ -49,7 +48,8 @@ interface ConstructMarkerAutocompleteProps {
 
 const calculatedDomain = backendBaseUrl();
 
-function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
+function ConstructMarkerAutocomplete({onSelect, onChange, onChangeWithObject}: ConstructMarkerAutocompleteProps) {
+    const {state, setStateByProxy} = useCurateConstructEditContext();
     const [input, setInput] = useState<string>('');
     const [suggestions, setSuggestions] = useState<ConstructComponent[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -63,18 +63,14 @@ function ConstructMarkerAutocomplete({publicationId, resetFlag, onSelect, onChan
 
     useEffect(() => {
         if (input.length > 1) {
-            fetch(`${calculatedDomain}/action/construct/find-constructMarkers?term=${input}&pub=${publicationId}`)
+            fetch(`${calculatedDomain}/action/construct/find-constructMarkers?term=${input}&pub=${state.publicationId}`)
                 .then(response => response.json())
                 .then(data => setSuggestions(data))
                 .catch(error => console.error('Error fetching data:', error));
         } else {
             setSuggestions([]);
         }
-    }, [input, publicationId]);
-
-    useEffect(() => {
-        resetState();
-    }, [resetFlag]);
+    }, [input]);
 
     // Handle keyboard navigation
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
