@@ -1,11 +1,8 @@
 package org.zfin.construct.presentation;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +13,6 @@ import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -30,7 +26,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
@@ -49,6 +44,9 @@ public class ConstructEditController {
     private ConstructRepository cr;
     @Autowired
     private SequenceRepository sr;
+
+    @Autowired
+    private ConstructEditService constructEditService;
 
     private static final Logger logger = LogManager.getLogger(ConstructEditController.class);
 
@@ -179,7 +177,7 @@ public class ConstructEditController {
     @ResponseBody
     void deleteSequence(@PathVariable String constructID,@PathVariable String sequenceID) throws Exception{
         HibernateUtil.createTransaction();
-        removeSequenceFromConstruct(constructID, sequenceID);
+        constructEditService.removeSequenceFromConstruct(constructID, sequenceID);
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -252,16 +250,16 @@ public class ConstructEditController {
         }
 
         //figure out if synonyms have changed ( could have new synonyms, or removed synonyms)
-        List<MarkerNameAndZdbId> removedSynonyms = calculateRemovedSynonyms(constructID, request.getSynonyms());
-        List<MarkerNameAndZdbId> addedSynonyms = calculateAddedSynonyms(constructID, request.getSynonyms());
+        List<MarkerNameAndZdbId> removedSynonyms = constructEditService.calculateRemovedSynonyms(constructID, request.getSynonyms());
+        List<MarkerNameAndZdbId> addedSynonyms = constructEditService.calculateAddedSynonyms(constructID, request.getSynonyms());
 
         //figure out if sequences have changed
-        List<MarkerNameAndZdbId> removedSequences = calculateRemovedSequences(constructID, request.getSequences());
-        List<MarkerNameAndZdbId> addedSequences = calculateAddedSequences(constructID, request.getSequences());
+        List<MarkerNameAndZdbId> removedSequences = constructEditService.calculateRemovedSequences(constructID, request.getSequences());
+        List<MarkerNameAndZdbId> addedSequences = constructEditService.calculateAddedSequences(constructID, request.getSequences());
 
         //figure out if notes have changed
-        List<MarkerNameAndZdbId> removedNotes = calculateRemovedNotes(constructID, request.getNotes());
-        List<MarkerNameAndZdbId> addedNotes = calculateAddedNotes(constructID, request.getNotes());
+        List<MarkerNameAndZdbId> removedNotes = constructEditService.calculateRemovedNotes(constructID, request.getNotes());
+        List<MarkerNameAndZdbId> addedNotes = constructEditService.calculateAddedNotes(constructID, request.getNotes());
 
         if (!removedSynonyms.isEmpty() ||
                 !addedSynonyms.isEmpty() ||
@@ -317,7 +315,7 @@ public class ConstructEditController {
             logger.debug("Added sequence: " + addedSequence.getLabel());
         }
         for (MarkerNameAndZdbId removedSequence : removedSequences) {
-            removeSequenceFromConstruct(constructID, removedSequence.getZdbID());
+            constructEditService.removeSequenceFromConstruct(constructID, removedSequence.getZdbID());
             logger.debug("Removed sequence: " + removedSequence.getZdbID());
         }
 
@@ -354,103 +352,6 @@ public class ConstructEditController {
     }
 
 
-    private void removeSequenceFromConstruct(String constructID, String sequenceID) {
-        Session session = HibernateUtil.currentSession();
-        Marker m = mr.getMarkerByID(constructID);
-        ir.deleteActiveDataByZdbID(sequenceID);
-        String hql = "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
-        Query query = session.createQuery(hql);
-        query.setParameter("sequenceID", sequenceID);
-        query.executeUpdate();
-        ir.insertUpdatesTable(m,"sequence","deleted sequence");
-    }
-
-    private List<MarkerNameAndZdbId> calculateAddedNotes(String constructID, List<MarkerNameAndZdbId> notes) {
-        List<MarkerNameAndZdbId> existingNotes = getExistingNotesAsMarkerNameAndZdbIds(constructID);
-        List<MarkerNameAndZdbId> addedNotes = notes.stream().filter(note -> note.getZdbID() == null).toList();
-        List<MarkerNameAndZdbId> addedNotesWithoutDuplicatesOfExisting = addedNotes.stream().filter(
-                addedNote -> existingNotes.stream().noneMatch(
-                        existingNote -> existingNote.getLabel().equals(addedNote.getLabel())
-                )
-        ).toList();
-
-        return addedNotesWithoutDuplicatesOfExisting;
-    }
-
-    private List<MarkerNameAndZdbId> calculateRemovedNotes(String constructID, List<MarkerNameAndZdbId> notes) {
-        List<MarkerNameAndZdbId> existingNotes = getExistingNotesAsMarkerNameAndZdbIds(constructID);
-        List<MarkerNameAndZdbId> removedNotes = new ArrayList<>(CollectionUtils.subtract(existingNotes, notes));
-        return removedNotes;
-    }
-
-    private List<MarkerNameAndZdbId> getExistingNotesAsMarkerNameAndZdbIds(String constructID) {
-        return DTOMarkerService.getCuratorNoteDTOs(mr.getMarkerByID(constructID)).stream().map(
-                note -> {
-                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
-                    mnzdb.setZdbID(note.getZdbID());
-                    mnzdb.setLabel(note.getNoteData());
-                    return mnzdb;
-                }).toList();
-    }
-
-    private List<MarkerNameAndZdbId> calculateAddedSequences(String constructID, List<MarkerNameAndZdbId> sequences) {
-        List<MarkerNameAndZdbId> existingSequences = getExistingSequencesAsMarkerNameAndZdbIds(constructID);
-        List<MarkerNameAndZdbId> addedSequences = sequences.stream().filter(sequence -> sequence.getZdbID() == null).toList();
-        List<MarkerNameAndZdbId> addedSequencesWithoutDuplicatesOfExisting = addedSequences.stream().filter(
-                addedSequence -> existingSequences.stream().noneMatch(
-                        existingSequence -> existingSequence.getLabel().equals(addedSequence.getLabel())
-                )
-        ).toList();
-
-        return addedSequencesWithoutDuplicatesOfExisting;
-    }
-
-    private List<MarkerNameAndZdbId> calculateRemovedSequences(String constructID, List<MarkerNameAndZdbId> sequences) {
-        List<MarkerNameAndZdbId> existingSequences = getExistingSequencesAsMarkerNameAndZdbIds(constructID);
-        List<MarkerNameAndZdbId> removedSequences = new ArrayList<>(CollectionUtils.subtract(existingSequences, sequences));
-        return removedSequences;
-    }
-
-    private List<MarkerNameAndZdbId> getExistingSequencesAsMarkerNameAndZdbIds(String constructID) {
-        return DTOMarkerService.getSupportingSequenceDTOs(mr.getMarkerByID(constructID)).stream().map(
-                sequence -> {
-                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
-                    mnzdb.setZdbID(sequence.getZdbID());
-                    mnzdb.setLabel(sequence.getView());
-                    return mnzdb;
-                }).toList();
-    }
-
-    private List<MarkerNameAndZdbId> calculateRemovedSynonyms(String constructID, List<MarkerNameAndZdbId> newSynonyms) {
-        List<MarkerNameAndZdbId> existingSynonyms = getExistingSynonymsAsMarkerNameAndZdbIds(constructID);
-        List<MarkerNameAndZdbId> removedSynonyms = new ArrayList<>(CollectionUtils.subtract(existingSynonyms, newSynonyms));
-
-        return removedSynonyms;
-    }
-
-    private List<MarkerNameAndZdbId> calculateAddedSynonyms(String constructID, List<MarkerNameAndZdbId> newSynonyms) {
-        List<MarkerNameAndZdbId> existingSynonyms = getExistingSynonymsAsMarkerNameAndZdbIds(constructID);
-
-        List<MarkerNameAndZdbId> addedSynonyms = newSynonyms.stream().filter(syn -> syn.getZdbID() == null).toList();
-        List<MarkerNameAndZdbId> addedSynonymsWithoutDuplicatesOfExisting = addedSynonyms.stream().filter(
-                addedSynonym -> existingSynonyms.stream().noneMatch(
-                        existingSynonym -> existingSynonym.getLabel().equals(addedSynonym.getLabel())
-                )
-        ).toList();
-
-        return addedSynonymsWithoutDuplicatesOfExisting;
-    }
-
-    private List<MarkerNameAndZdbId> getExistingSynonymsAsMarkerNameAndZdbIds(String constructID) {
-        List<MarkerNameAndZdbId> existingSynonyms = mr.getPreviousNamesLight(mr.getMarkerByID(constructID)).stream().map(
-                previousNameLight -> {
-                    MarkerNameAndZdbId mnzdb = new MarkerNameAndZdbId();
-                    mnzdb.setZdbID(previousNameLight.getAliasZdbID());
-                    mnzdb.setLabel(previousNameLight.getAlias());
-                    return mnzdb;
-                }).toList();
-        return existingSynonyms;
-    }
 
     //Send the json representation of a construct name to the client
     @RequestMapping(value = "/json/{constructID}", method = RequestMethod.GET)

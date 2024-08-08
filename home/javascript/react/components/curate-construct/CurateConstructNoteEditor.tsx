@@ -1,8 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useCurateConstructEditContext} from "./CurateConstructEditContext";
-import {backendBaseUrl} from "./DomainInfo";
-
-const calculatedDomain = backendBaseUrl();
 
 function CurateConstructNoteEditor() {
 
@@ -23,25 +20,6 @@ function CurateConstructNoteEditor() {
         });
         setNoteTextValue('');
     }
-
-    useEffect(() => {
-        // https://cell-mac.zfin.org/action/construct/construct-do-update/ZDB-TGCONSTRCT-140416-4
-        if (state.selectedConstructId) {
-            fetch(`${calculatedDomain}/action/construct/construct-do-update/${state.selectedConstructId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const normalizedNotes = data[0].constructCuratorNotes.map(note => { return {label: note.noteData, zdbID: note.zdbID}});
-
-                        setStateByProxy(proxy => {
-                            proxy.selectedConstruct.notes = normalizedNotes;
-                        });
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    }, [state.selectedConstructId]);
-
 
     return <>
         {state.selectedConstruct.notes && state.selectedConstruct.notes.map((note, index) => {
