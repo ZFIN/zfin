@@ -94,9 +94,10 @@ const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstruct
                     constructId={selectedConstruct}
                     submitButtonLabel='Update'
                     onCancel={cancelEdit}
-                    onSubmit={submitForm}/>
+                    onSubmit={submitForm}
+                />
                 <div className='mt-2'>
-                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}></div>}
+                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}

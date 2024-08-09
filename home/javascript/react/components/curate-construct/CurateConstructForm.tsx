@@ -14,21 +14,29 @@ import {
     blankConstruct,
     CurateConstructEditProvider,
     useCurateConstructEditContext
-} from "./CurateConstructEditContext";
-import CurateConstructSynonymEditor from "./CurateConstructSynonymEditor";
-import CurateConstructSequenceEditor from "./CurateConstructSequenceEditor";
-import CurateConstructNoteEditor from "./CurateConstructNoteEditor";
-import CurateConstructPublicNoteEditor from "./CurateConstructPublicNoteEditor";
+} from './CurateConstructEditContext';
+import CurateConstructSynonymEditor from './CurateConstructSynonymEditor';
+import CurateConstructSequenceEditor from './CurateConstructSequenceEditor';
+import CurateConstructNoteEditor from './CurateConstructNoteEditor';
+import CurateConstructPublicNoteEditor from './CurateConstructPublicNoteEditor';
 
 const calculatedDomain = backendBaseUrl();
 
 interface CurateConstructFormProps {
+    publicationId: string;
+    submitButtonLabel: string;
+    onCancel: () => void;
+    onSubmit: (submissionObject: EditConstructFormDTO) => Promise<void>;
+    constructId?: string;
+}
+
+interface CurateConstructFormInnerProps {
     submitButtonLabel: string;
     onCancel: () => void;
     onSubmit: (submissionObject: EditConstructFormDTO) => Promise<void>;
 }
 
-const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: CurateConstructFormProps) => {
+const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: CurateConstructFormInnerProps) => {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
@@ -53,7 +61,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
 
         if (state.selectedConstruct.addCassetteMode) {
             //change trailing separator to '' for the last items of staged cassette
-            let stagedCassette = {...state.stagedCassette};
+            const stagedCassette = {...state.stagedCassette};
             stagedCassette.coding = normalizeConstructComponents(stagedCassette.coding);
             stagedCassette.promoter = normalizeConstructComponents(stagedCassette.promoter);
 
@@ -100,7 +108,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     }
 
     function submitForm() {
-        let submissionObject: EditConstructFormDTO = {
+        const submissionObject: EditConstructFormDTO = {
             constructName: {
                 type: typeAbbreviationToType(state.selectedConstruct.chosenType),
                 prefix: state.selectedConstruct.prefix,
@@ -232,55 +240,62 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                 <table>
                     <thead />
                     <tbody>
-                    {state.selectedConstructId &&
+                        {state.selectedConstructId &&
+                            <tr>
+                                <td><b>Construct ID</b></td>
+                                <td>
+                                    <a
+                                        href={'/' + state.selectedConstructId}
+                                        target='_blank'
+                                        rel='noreferrer'
+                                    >{state.selectedConstructId}</a>
+                                </td>
+                            </tr>
+                        }
                         <tr>
-                            <td><b>Construct ID</b></td>
-                            <td><a href={'/' + state.selectedConstructId} target='_blank'
-                                   rel='noreferrer'>{state.selectedConstructId}</a></td>
-                        </tr>
-                    }
-                    <tr>
-                        <td><b>Construct Type</b></td>
-                        <td>
-                            <select value={state.selectedConstruct.chosenType || ''}
+                            <td><b>Construct Type</b></td>
+                            <td>
+                                <select
+                                    value={state.selectedConstruct.chosenType || ''}
                                     onChange={e => setStateByProxy(proxy => {
                                         proxy.selectedConstruct.chosenType = e.target.value
-                                    })}>
-                                <option value='Tg'>Tg</option>
-                                <option value='Et'>Et</option>
-                                <option value='Gt'>Gt</option>
-                                <option value='Pt'>Pt</option>
-                            </select>{' '}
-                            <label htmlFor='prefix'><b>Prefix:</b></label>{' '}
-                            <input
-                                id='prefix'
-                                size='15'
-                                className='prefix'
-                                name='prefix'
-                                value={state.selectedConstruct.prefix || ''}
-                                onChange={e => setStateByProxy(proxy => {
-                                    proxy.selectedConstruct.prefix = e.target.value
-                                })}
-                                type='text'
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Synonym</b>:</td>
-                        <td><CurateConstructSynonymEditor /></td>
-                    </tr>
-                    <tr>
-                        <td><b>Sequence</b>:</td>
-                        <td><CurateConstructSequenceEditor /></td>
-                    </tr>
-                    <tr>
-                        <td><b>Public Note</b>:</td>
-                        <td><CurateConstructPublicNoteEditor /></td>
-                    </tr>
-                    <tr>
-                        <td><b>Curator Notes</b>:</td>
-                        <td><CurateConstructNoteEditor /></td>
-                    </tr>
+                                    })}
+                                >
+                                    <option value='Tg'>Tg</option>
+                                    <option value='Et'>Et</option>
+                                    <option value='Gt'>Gt</option>
+                                    <option value='Pt'>Pt</option>
+                                </select>{' '}
+                                <label htmlFor='prefix'><b>Prefix:</b></label>{' '}
+                                <input
+                                    id='prefix'
+                                    size='15'
+                                    className='prefix'
+                                    name='prefix'
+                                    value={state.selectedConstruct.prefix || ''}
+                                    onChange={e => setStateByProxy(proxy => {
+                                        proxy.selectedConstruct.prefix = e.target.value
+                                    })}
+                                    type='text'
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Synonym</b>:</td>
+                            <td><CurateConstructSynonymEditor /></td>
+                        </tr>
+                        <tr>
+                            <td><b>Sequence</b>:</td>
+                            <td><CurateConstructSequenceEditor /></td>
+                        </tr>
+                        <tr>
+                            <td><b>Public Note</b>:</td>
+                            <td><CurateConstructPublicNoteEditor /></td>
+                        </tr>
+                        <tr>
+                            <td><b>Curator Notes</b>:</td>
+                            <td><CurateConstructNoteEditor /></td>
+                        </tr>
                     </tbody>
                 </table>
                 <div className='mb-3'>
@@ -289,13 +304,23 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                 <div className='mb-3'>
                     <p>
                         <b>Display Name:</b>
-                        <input name='constructDisplayName' disabled={true} type='text' value={constructDisplayName || ''}
-                               size='150' />
+                        <input
+                            name='constructDisplayName'
+                            disabled={true}
+                            type='text'
+                            value={constructDisplayName || ''}
+                            size='150'
+                        />
                     </p>
                 </div>
                 <div className='mb-3'>
-                    <button type='button' className='mr-2' onClick={submitForm}
-                            disabled={saving || !isDirty(state)}>{submitButtonLabel}</button>
+                    <button
+                        type='button'
+                        className='mr-2'
+                        onClick={submitForm}
+                        disabled={saving || !isDirty(state)}
+                    >{submitButtonLabel}
+                    </button>
                     <button type='button' onClick={handleCancelButton} disabled={saving}>Cancel</button>
                 </div>
             </div>

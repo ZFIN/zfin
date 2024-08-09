@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, KeyboardEvent } from 'react';
 import {ConstructComponent} from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 /**
  * This is a React component that is used to allow the user to start typing
@@ -11,28 +11,28 @@ import {useCurateConstructEditContext} from "./CurateConstructEditContext";
  *
  * Response example: [
  *     {
- *         "id": null,
- *         "name": null,
- *         "label": "Kaede (EFG)",
- *         "value": "Kaede",
- *         "url": null,
- *         "category": null
+ *         'id': null,
+ *         'name': null,
+ *         'label': 'Kaede (EFG)',
+ *         'value': 'Kaede',
+ *         'url': null,
+ *         'category': null
  *     },
  *     {
- *         "id": null,
- *         "name": null,
- *         "label": "TAEL (EREGION)",
- *         "value": "TAEL",
- *         "url": null,
- *         "category": null
+ *         'id': null,
+ *         'name': null,
+ *         'label': 'TAEL (EREGION)',
+ *         'value': 'TAEL',
+ *         'url': null,
+ *         'category': null
  *     },
  *     {
- *         "id": null,
- *         "name": null,
- *         "label": "Tae. (Triticum aestivum)",
- *         "value": "Tae.",
- *         "url": null,
- *         "category": null
+ *         'id': null,
+ *         'name': null,
+ *         'label': 'Tae. (Triticum aestivum)',
+ *         'value': 'Tae.',
+ *         'url': null,
+ *         'category': null
  *     }
  * ]
  *

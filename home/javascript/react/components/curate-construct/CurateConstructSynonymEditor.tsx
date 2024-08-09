@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 function CurateConstructSynonymEditor() {
 
@@ -33,24 +33,25 @@ function CurateConstructSynonymEditor() {
     return <>
         {state.selectedConstruct.synonyms && state.selectedConstruct.synonyms.map((synonym, index) => {
             return <div key={index}>
-                <span dangerouslySetInnerHTML={{__html: synonym.label}}></span>{' '}
-                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveSynonym(index)}></a>
+                <span dangerouslySetInnerHTML={{__html: synonym.label}}/>{' '}
+                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveSynonym(index)}/>
             </div>
         })}
         <input
-            autoComplete="off"
-            type="text"
-            size="50"
+            autoComplete='off'
+            type='text'
+            size='50'
             value={state.stagedSynonym}
             onChange={e => setSynonymTextValue(e.target.value)}
             onKeyDown={handleAddSynonymKeyDown}
         />
-        <input type='button'
-               value='+'
-               disabled={!state.stagedSynonym}
-               onClick={handleAddSynonym}
-               />
-        </>;
+        <input
+            type='button'
+            value='+'
+            disabled={!state.stagedSynonym}
+            onClick={handleAddSynonym}
+        />
+    </>;
 }
 
 export default CurateConstructSynonymEditor;

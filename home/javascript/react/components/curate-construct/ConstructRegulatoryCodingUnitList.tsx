@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import type {Cassette, ConstructComponent} from './ConstructTypes';
 import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructRegulatoryCodingUnitListProps {
     onChange?: (value: ConstructComponent[]) => void;

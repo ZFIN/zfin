@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {Cassette} from './ConstructTypes';
-import {blankCassette, useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
 
 const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
@@ -22,7 +22,7 @@ const ConstructCassetteListEditor = () => {
 
     const handleAddCassette = (event) => {
         event.preventDefault();
-        let newCassettes = [...state.selectedConstruct.cassettes];
+        const newCassettes = [...state.selectedConstruct.cassettes];
         if (state.selectedConstruct.addCassetteMode) {
             newCassettes.push(cassette);
         } else if (state.selectedConstruct.editCassetteMode) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 function CurateConstructSequenceEditor() {
 
@@ -33,24 +33,25 @@ function CurateConstructSequenceEditor() {
     return <>
         {state.selectedConstruct.sequences && state.selectedConstruct.sequences.map((sequence, index) => {
             return <div key={index}>
-                <span dangerouslySetInnerHTML={{__html: sequence.label}}></span>{' '}
-                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveSequence(index)}></a>
+                <span dangerouslySetInnerHTML={{__html: sequence.label}}/>{' '}
+                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveSequence(index)}/>
             </div>
         })}
         <input
-            autoComplete="off"
-            type="text"
-            size="50"
+            autoComplete='off'
+            type='text'
+            size='50'
             value={state.stagedSequence}
             onChange={e => setSequenceTextValue(e.target.value)}
             onKeyDown={handleAddSequenceKeyDown}
         />
-        <input type='button'
-               value='+'
-               disabled={!state.stagedSequence}
-               onClick={handleAddSequence}
-               />
-        </>;
+        <input
+            type='button'
+            value='+'
+            disabled={!state.stagedSequence}
+            onClick={handleAddSequence}
+        />
+    </>;
 }
 
 export default CurateConstructSequenceEditor;

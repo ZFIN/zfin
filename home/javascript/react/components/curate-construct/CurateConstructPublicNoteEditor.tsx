@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 function CurateConstructPublicNoteEditor() {
 
@@ -7,13 +7,13 @@ function CurateConstructPublicNoteEditor() {
 
     return <>
         <textarea
-            autoComplete="off"
+            autoComplete='off'
             value={state.selectedConstruct.publicNote || ''}
             rows={3}
             cols={50}
             onChange={e => setStateByProxy(proxy => {proxy.selectedConstruct.publicNote = e.target.value;})}
         />
-        </>;
+    </>;
 }
 
 export default CurateConstructPublicNoteEditor;

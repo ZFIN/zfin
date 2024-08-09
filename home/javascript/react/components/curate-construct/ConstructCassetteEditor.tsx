@@ -1,11 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
-import {
-    Cassette,
-    ConstructComponent,
-    normalizeConstructComponents,
-    normalizeSimplifiedCassettes
-} from './ConstructTypes';
+import {Cassette, ConstructComponent, normalizeConstructComponents} from './ConstructTypes';
 
 interface ConstructCassetteEditorProps {
     onChange: (cassette: Cassette) => void;
