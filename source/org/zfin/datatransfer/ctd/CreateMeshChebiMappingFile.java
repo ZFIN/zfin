@@ -82,10 +82,14 @@ public class CreateMeshChebiMappingFile extends AbstractScriptWrapper {
                 vals.add("semapv:" + map.getMappingJustification().getName());
                 vals.add(map.getCasID());
                 vals.add(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-                Object[] values = vals.toArray();
 
                 try {
-                    csvPrinterImportant.printRecord(values);
+                    csvPrinterImportant.printRecord(vals);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    csvPrinterImportant.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
