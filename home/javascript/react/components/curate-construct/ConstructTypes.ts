@@ -148,10 +148,19 @@ function normalizeSimplifiedCassettes(simplifiedCassettes) {
     }));
 }
 
+function normalizeConstructComponents(constructComponents : ConstructComponent[]) {
+    return constructComponents.map((item, index) => {
+        if (index === constructComponents.length - 1) {
+            return {...item, separator: ''};
+        }
+        return item;
+    });
+}
+
 
 type MarkerNameAndZdbId = {
     label: string;
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents};

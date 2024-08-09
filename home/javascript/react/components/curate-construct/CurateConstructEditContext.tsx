@@ -22,12 +22,19 @@ interface CurateConstructEditState {
     stagedSynonym: string;
     stagedSequence: string;
     stagedNote: string;
+    stagedCassette: Cassette;
 }
 
 interface CurateConstructEditStateAndSetter {
     state: CurateConstructEditState;
-    // setState: React.Dispatch<React.SetStateAction<CurateConstructEditState>>;
     setStateByProxy: (fn: (draft: CurateConstructEditState) => void) => void;
+}
+
+export function blankCassette() : Cassette {
+    return {
+        promoter: [],
+        coding: []
+    };
 }
 
 export function blankConstruct() : ConstructUnderEdit {
@@ -45,14 +52,15 @@ export function blankConstruct() : ConstructUnderEdit {
     };
 }
 
-export function blankState() {
+function blankState() {
     return {
         publicationId: '',
         selectedConstructId: '',
         selectedConstruct: blankConstruct(),
         stagedSynonym: '',
         stagedSequence: '',
-        stagedNote: ''
+        stagedNote: '',
+        stagedCassette: blankCassette()
     };
 }
 

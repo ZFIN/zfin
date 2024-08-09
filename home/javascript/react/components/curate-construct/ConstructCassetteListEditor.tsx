@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {Cassette} from './ConstructTypes';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {blankCassette, useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
@@ -37,6 +37,7 @@ const ConstructCassetteListEditor = () => {
             proxy.selectedConstruct.addCassetteMode = false;
             proxy.selectedConstruct.editCassetteMode = false;
             proxy.selectedConstruct.editCassetteIndex = null;
+            proxy.stagedCassette = blankCassette();
         });
     }
 
@@ -85,6 +86,7 @@ const ConstructCassetteListEditor = () => {
             proxy.selectedConstruct.addCassetteMode = false;
             proxy.selectedConstruct.editCassetteMode = false;
             proxy.selectedConstruct.editCassetteIndex = null;
+            proxy.stagedCassette = blankCassette();
         });
     }
 

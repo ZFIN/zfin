@@ -1,21 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import CurateConstructForm from './CurateConstructForm';
 import {backendBaseUrl} from './DomainInfo';
-import {ConstructFormDTO, MarkerNameAndZdbId} from './ConstructTypes';
+import {EditConstructFormDTO, MarkerNameAndZdbId} from './ConstructTypes';
 
 const calculatedDomain = backendBaseUrl();
 
 interface CurateConstructEditProps {
     publicationId: string;
+    createdConstructs: EditConstructFormDTO[];
 }
 
-const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
+const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstructEditProps) => {
     const [display, setDisplay] = useState<boolean>(false);
     const [displayEditForm, setDisplayEditForm] = useState<boolean>(false);
     const [selectedConstruct, setSelectedConstruct] = useState<string>('');
     const [constructList, setConstructList] = useState<MarkerNameAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
+
+    useEffect(() => {
+        loadConstructList();
+    }, [createdConstructs]);
 
     function toggleDisplay() {
         setDisplay(!display);
@@ -34,7 +39,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         setConstructList(uniqueConstructIdNameList);
     }
 
-    async function submitForm(submissionObject : ConstructFormDTO) {
+    async function submitForm(submissionObject : EditConstructFormDTO) {
         setSuccessMessage('');
         setErrorMessage('');
         try {
@@ -48,7 +53,6 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             loadConstructList();
             const bodyJson = await result.json();
             setSuccessMessage(bodyJson.message);
-            setSelectedConstruct(null);
         } catch (error) {
             setErrorMessage('Error updating construct');
         }
@@ -92,7 +96,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                     onCancel={cancelEdit}
                     onSubmit={submitForm}/>
                 <div className='mt-2'>
-                    {successMessage && <div className='alert alert-success'>{successMessage}</div>}
+                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}></div>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}

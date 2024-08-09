@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
-import {Cassette, ConstructComponent} from './ConstructTypes';
+import {
+    Cassette,
+    ConstructComponent,
+    normalizeConstructComponents,
+    normalizeSimplifiedCassettes
+} from './ConstructTypes';
 
 interface ConstructCassetteEditorProps {
     onChange: (cassette: Cassette) => void;
@@ -18,13 +23,7 @@ const ConstructCassetteEditor = ({ onChange, cassette: initialCassette}: Constru
 
     const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type) => {
         //the last item should have its separator set to ''
-        const transformedConstructComponents = constructComponents.map((item, index) => {
-            if (index === constructComponents.length - 1) {
-                return {...item, separator: ''};
-            }
-            return item;
-        });
-
+        const transformedConstructComponents = normalizeConstructComponents(constructComponents);
         const newState = {
             ...cassetteForEdit,
             [type]: transformedConstructComponents

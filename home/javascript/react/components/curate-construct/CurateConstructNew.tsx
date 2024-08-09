@@ -7,9 +7,10 @@ const calculatedDomain = backendBaseUrl();
 
 interface CurateConstructNewProps {
     publicationId: string;
+    onSuccess: (submissionObject: EditConstructFormDTO) => void;
 }
 
-const CurateConstructNew = ({publicationId}: CurateConstructNewProps) => {
+const CurateConstructNew = ({publicationId, onSuccess}: CurateConstructNewProps) => {
     const [display, setDisplay] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
@@ -31,6 +32,9 @@ const CurateConstructNew = ({publicationId}: CurateConstructNewProps) => {
             });
             const bodyJson = await result.json();
             setSuccessMessage(bodyJson.message);
+            if (bodyJson.success) {
+                onSuccess(submissionObject);
+            }
         } catch (error) {
             setErrorMessage('Error saving construct');
         }
@@ -51,7 +55,7 @@ const CurateConstructNew = ({publicationId}: CurateConstructNewProps) => {
                     onCancel={cancelEdit}
                     onSubmit={submitForm}/>
                 <div className='mt-2'>
-                    {successMessage && <div className='alert alert-success'>{successMessage}</div>}
+                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}></div>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}

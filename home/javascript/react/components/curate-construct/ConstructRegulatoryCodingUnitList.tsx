@@ -19,10 +19,20 @@ interface ConstructRegulatoryCodingUnitListProps {
  * @constructor
  */
 const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatoryCodingUnitListProps) => {
-    const {state} = useCurateConstructEditContext();
+    const {state, setStateByProxy} = useCurateConstructEditContext();
     const [rcUnitItems, setRcUnitItems] = useState<ConstructComponent[]>([]);
     const defaultSeparator = '-';
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
+
+    const setStagedCassette = (value) => {
+        setStateByProxy(proxy => {
+            proxy.stagedCassette = value;
+        });
+    }
+
+    const getStagedCassette = () => {
+        return state.stagedCassette;
+    }
 
     useEffect(() => {
         if (state.selectedConstruct && state.selectedConstruct.editCassetteMode) {
@@ -43,11 +53,14 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         const itemWithSeparator = {...item, separator: ''};
         setActiveTextBoxValue(itemWithSeparator);
         if(item.value === '') {
+            setStagedCassette({...getStagedCassette(), [type]: rcUnitItems});
             onChange(rcUnitItems);
             return;
         }
 
         const newItems = [...rcUnitItems, itemWithSeparator];
+        setStagedCassette({...getStagedCassette(), [type]: newItems});
+
         onChange(newItems);
     }
 
@@ -74,6 +87,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     }
 
     const setRcUnitItemsAndNotify = (items) => {
+        setStagedCassette({...getStagedCassette(), [type]: items});
         setRcUnitItems(items);
         onChange(items);
     }

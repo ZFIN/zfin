@@ -1,14 +1,20 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {
     cassettesToSimplifiedCassettes,
     EditConstructFormDTO,
+    normalizeConstructComponents,
     normalizeSimplifiedCassettes,
     simplifiedCassettesToCassettes,
     typeAbbreviationToType
 } from './ConstructTypes';
 import {backendBaseUrl} from './DomainInfo';
-import {blankConstruct, CurateConstructEditProvider, useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {
+    blankCassette,
+    blankConstruct,
+    CurateConstructEditProvider,
+    useCurateConstructEditContext
+} from "./CurateConstructEditContext";
 import CurateConstructSynonymEditor from "./CurateConstructSynonymEditor";
 import CurateConstructSequenceEditor from "./CurateConstructSequenceEditor";
 import CurateConstructNoteEditor from "./CurateConstructNoteEditor";
@@ -29,18 +35,45 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     const [constructDisplayName, setConstructDisplayName] = useState('');
     const [saving, setSaving] = useState(false);
     const [initialState, setInitialState] = useState(null);
-    const [isDirty, setIsDirty] = useState(false);
 
     useEffect(() => {
-        const display = cassetteHumanReadableList(state.selectedConstruct.cassettes);
+        const display = cassetteHumanReadableList(cassettesWithStagedCassette());
         setConstructDisplayName(state.selectedConstruct.chosenType + state.selectedConstruct.prefix + '(' + display + ')');
     }, [state]);
+
+    const isStagedCassetteBlank = () => {
+        return state.stagedCassette.coding.length === 0 && state.stagedCassette.promoter.length === 0;
+    }
+
+    const cassettesWithStagedCassette = () => {
+        //is there a staged cassette?
+        if (isStagedCassetteBlank()) {
+            return state.selectedConstruct.cassettes;
+        }
+
+        if (state.selectedConstruct.addCassetteMode) {
+            //change trailing separator to '' for the last items of staged cassette
+            let stagedCassette = {...state.stagedCassette};
+            stagedCassette.coding = normalizeConstructComponents(stagedCassette.coding);
+            stagedCassette.promoter = normalizeConstructComponents(stagedCassette.promoter);
+
+            return [...state.selectedConstruct.cassettes, stagedCassette];
+        } else if (state.selectedConstruct.editCassetteMode) {
+            //ignore the staged cassette if we are editing a cassette
+            return state.selectedConstruct.cassettes;
+        } else {
+            return state.selectedConstruct.cassettes;
+        }
+    }
 
     const handleCassettesChanged = (cassettesChanged) => {
         setStateByProxy(proxy => {
             proxy.selectedConstruct.cassettes = cassettesChanged;
         });
-        checkDirtyState();
+    }
+
+    const isDirty = (stateObject) => {
+        return captureStateForDirtyCheck(stateObject) !== initialState;
     }
 
     const captureStateForDirtyCheck = (stateObject) => {
@@ -52,21 +85,18 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         );
     }
 
-    const checkDirtyState = useCallback(() => {
-        if (!initialState) return;
-        const currentState = captureStateForDirtyCheck(state);
-        const isDataChanged = initialState !== currentState;
-        setIsDirty(isDataChanged);
-    }, [initialState, state.selectedConstruct, state.stagedNote, state.stagedSequence, state.stagedSynonym]);
+    const handleCancelButton = () => {
+        clearForm();
+        if (onCancel) {
+            onCancel();
+        }
+    }
 
     const clearForm = () => {
         setStateByProxy(proxy => {
             proxy.selectedConstruct = blankConstruct();
             proxy.selectedConstructId = null;
         });
-        if (onCancel) {
-            onCancel();
-        }
     }
 
     function submitForm() {
@@ -102,15 +132,24 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
             setStateByProxy(proxy => {proxy.stagedNote = '';});
         }
 
+        if (!isStagedCassetteBlank()) {
+            submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, state.stagedCassette]);
+            setStateByProxy(proxy => {proxy.selectedConstruct.cassettes.push(state.stagedCassette);});
+            setStateByProxy(proxy => {proxy.stagedCassette = blankCassette();});
+        }
+
         setSaving(true);
         onSubmit(submissionObject).then(() => {
+            if (!state.selectedConstructId) {
+                // Clear the form if we are creating a new construct
+                clearForm();
+            }
+
             setSaving(false);
-            // clearForm();
         }).catch(() => {
             setSaving(false);
         });
     }
-
 
     const initializeDataForConstructID = async (constructId) => {
         try {
@@ -171,7 +210,6 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     };
 
     const initializeDataForNewConstruct = () => {
-        console.log('initializeDataForNewConstruct');
         setStateByProxy(proxy => {
             proxy.selectedConstruct = blankConstruct();
             proxy.selectedConstruct.addCassetteMode = true;
@@ -187,11 +225,6 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
             initializeDataForNewConstruct();
         }
     }, [state.selectedConstructId]);
-
-    useEffect(() => {
-        checkDirtyState();
-    }, [checkDirtyState]);
-
 
     return (
         <>
@@ -260,13 +293,10 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                size='150' />
                     </p>
                 </div>
-                {/*<div className='mb-3'>*/}
-                {/*    <span>{isDirty ? "Data Changed" : "No Changes"}</span>*/}
-                {/*</div>*/}
                 <div className='mb-3'>
                     <button type='button' className='mr-2' onClick={submitForm}
-                            disabled={saving || !isDirty}>{submitButtonLabel}</button>
-                    <button type='button' onClick={clearForm} disabled={saving}>Cancel</button>
+                            disabled={saving || !isDirty(state)}>{submitButtonLabel}</button>
+                    <button type='button' onClick={handleCancelButton} disabled={saving}>Cancel</button>
                 </div>
             </div>
         </>

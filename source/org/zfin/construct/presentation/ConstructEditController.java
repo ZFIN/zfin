@@ -272,7 +272,9 @@ public class ConstructEditController {
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), true);
+            String message = String.format("%s saved as <a target=\"_blank\" href=\"%s\">%s</a>",
+                    newMarker.getZdbID(), newMarker.getZdbID(), newMarker.getName());
+            return new ConstructUpdateResult(message, true);
 
             //catch both types of exceptions
         } catch (Exception e) {
