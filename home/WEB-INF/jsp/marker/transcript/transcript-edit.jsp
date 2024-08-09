@@ -35,7 +35,7 @@
              id="MarkerEditNomenclature"
              data-marker-id="${transcript.zdbID}"
              data-show-abbreviation-field="true"
-             data-show-reason-fields="false">
+             data-show-reason-fields="true">
         </div>
     </z:section>
         <z:section title="${ATTRIBUTES}">

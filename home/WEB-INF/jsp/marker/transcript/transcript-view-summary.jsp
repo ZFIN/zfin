@@ -10,6 +10,7 @@
 
     <z:attributeListItem label="Name">
         <zfin:name entity="${formBean.marker}"/>
+        <a class="small" href="/action/nomenclature/history/${formBean.marker.zdbID}">Nomenclature History</a>
     </z:attributeListItem>
 
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
