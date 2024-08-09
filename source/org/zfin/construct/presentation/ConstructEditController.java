@@ -3,12 +3,13 @@ package org.zfin.construct.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.Species;
 import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.InvalidConstructNameException;
 import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
@@ -19,20 +20,21 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static org.zfin.construct.presentation.ConstructComponentService.createNewConstructFromSubmittedForm;
 import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
+
 
 @Controller
 @RequestMapping("/construct")
 public class ConstructEditController {
+
+    public record ConstructUpdateResult(String message, boolean success) {}
 
     @Autowired
     private MarkerRepository mr;
@@ -104,16 +106,11 @@ public class ConstructEditController {
         String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
-        addGenBankSequenceToConstruct(constructSequence, pubid, m);
+        constructEditService.addGenBankSequenceToConstruct(constructSequence, pubid, m);
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"sequence","added sequence");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    private void addGenBankSequenceToConstruct(String constructSequence, String pubid, Marker m) {
-        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-        mr.addDBLink(m, constructSequence, genBankRefDB, pubid);
-    }
 
     @RequestMapping(value = "/update-comments/{constructID}/constructEditComments/{constructUpdateComments}"
             , method = RequestMethod.POST)
@@ -235,120 +232,61 @@ public class ConstructEditController {
     @RequestMapping(value = "/update/{constructID}", method = RequestMethod.POST)
     public
     @ResponseBody
-    String updateConstruct(@PathVariable String constructID,
+    ConstructUpdateResult updateConstruct(@PathVariable String constructID,
                            @RequestBody EditConstructFormFields request) throws Exception{
 
-        boolean changesMade = false;
-
-        ConstructName constructName = request.getConstructName();
-        constructName.reinitialize();
-
-        //figure out if constructName has changed
-        ConstructName oldName = getExistingConstructName(constructID);
-        if (!constructName.equals(oldName)) {
-            changesMade = true;
-        }
-
-        //figure out if synonyms have changed ( could have new synonyms, or removed synonyms)
-        List<MarkerNameAndZdbId> removedSynonyms = constructEditService.calculateRemovedSynonyms(constructID, request.getSynonyms());
-        List<MarkerNameAndZdbId> addedSynonyms = constructEditService.calculateAddedSynonyms(constructID, request.getSynonyms());
-
-        //figure out if sequences have changed
-        List<MarkerNameAndZdbId> removedSequences = constructEditService.calculateRemovedSequences(constructID, request.getSequences());
-        List<MarkerNameAndZdbId> addedSequences = constructEditService.calculateAddedSequences(constructID, request.getSequences());
-
-        //figure out if notes have changed
-        List<MarkerNameAndZdbId> removedNotes = constructEditService.calculateRemovedNotes(constructID, request.getNotes());
-        List<MarkerNameAndZdbId> addedNotes = constructEditService.calculateAddedNotes(constructID, request.getNotes());
-
-        if (!removedSynonyms.isEmpty() ||
-                !addedSynonyms.isEmpty() ||
-                !removedSequences.isEmpty() ||
-                !addedSequences.isEmpty() ||
-                !removedNotes.isEmpty() ||
-                !addedNotes.isEmpty()) {
-            changesMade = true;
-        }
-
-        //figure out if publicNote has changed
-        String newPublicNote = request.getPublicNote();
-        String oldPublicNote = mr.getMarkerByID(constructID).getPublicComments();
-        if (!newPublicNote.equals(oldPublicNote)) {
-            changesMade = true;
-        }
-
-        if (!changesMade) {
-            return """
-                    {
-                        "message": "No changes made",
-                        "success": true
-                    }
-                    """;
-        }
-
-        String pubZdbID = request.getPublicationZdbID();
 
         HibernateUtil.createTransaction();
 
-        Marker newMarker;
-        if (constructName.equals(oldName)) {
-            newMarker = mr.getMarkerByID(constructID);
-        } else {
-            newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
-        }
-
-        //synonyms
-        for(MarkerNameAndZdbId addedSynonym : addedSynonyms) {
-            mr.addMarkerAlias(newMarker, addedSynonym.getLabel(), pr.getPublication(pubZdbID));
-            ir.insertUpdatesTable(newMarker,"alias","added data alias");
-            logger.debug("Added synonym: " + addedSynonym.getLabel());
-        }
-        for(MarkerNameAndZdbId removedSynonym : removedSynonyms) {
-            mr.deleteMarkerAlias(newMarker, mr.getMarkerAlias(removedSynonym.getZdbID()));
-            ir.insertUpdatesTable(newMarker,"alias","deleted data alias");
-            logger.debug("Removed synonym: " + removedSynonym.getLabel());
-        }
-
-        //sequences
-        for(MarkerNameAndZdbId addedSequence : addedSequences) {
-            addGenBankSequenceToConstruct(addedSequence.getLabel(), pubZdbID, newMarker);
-            logger.debug("Added sequence: " + addedSequence.getLabel());
-        }
-        for (MarkerNameAndZdbId removedSequence : removedSequences) {
-            constructEditService.removeSequenceFromConstruct(constructID, removedSequence.getZdbID());
-            logger.debug("Removed sequence: " + removedSequence.getZdbID());
-        }
-
-        //notes
-        for(MarkerNameAndZdbId addedNote : addedNotes) {
-            mr.addMarkerDataNote(newMarker, addedNote.getLabel());
-            ir.insertUpdatesTable(mr.getMarkerByID(constructID),"curator notes","added new curator note");
-            logger.debug("Added note: " + addedNote.getLabel());
-        }
-        for (MarkerNameAndZdbId removedNote : removedNotes) {
-            DataNote curatorNote = ir.getDataNoteByID(removedNote.getZdbID());
-            ir.insertUpdatesTable(mr.getMarkerByID(constructID), "curator notes", "deleted curator note");
-            mr.removeCuratorNote(newMarker, curatorNote);
-            logger.debug("Removed note: " + removedNote.getLabel());
-        }
-
-        //public note
-        if (!newPublicNote.equals(oldPublicNote)) {
-            newMarker.setPublicComments(newPublicNote);
-            ConstructCuration c = cr.getConstructByID(constructID);
-            c.setPublicComments(newPublicNote);
-            ir.insertUpdatesTable(newMarker, "comments", "updated public notes");
-            logger.debug("Updated public note: " + newPublicNote);
-        }
+        constructEditService.updateConstruct(constructID, request);
+        Marker newMarker = mr.getMarkerByID(constructID);
 
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return """
-                {
-                    "message": "%s",
-                    "success": true
-                }
-                """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
+        return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), true);
+    }
+
+//    /action/construct/create-and-update
+    @RequestMapping(value = "/create-and-update", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ConstructUpdateResult createAndUpdate(@RequestBody EditConstructFormFields request) throws Exception{
+
+        //set the construct name from the object
+        ConstructName constructName = request.getConstructName();
+        constructName.reinitialize();
+
+        AddConstructFormFields createConstructValues = new AddConstructFormFields();
+        createConstructValues.setConstructNameObject(constructName);
+        createConstructValues.setConstructName(constructName.toString());
+        createConstructValues.setPubZdbID(request.getPublicationZdbID());
+        createConstructValues.setConstructType(constructName.getTypeAbbreviation());
+        createConstructValues.setConstructPrefix(constructName.getPrefix());
+
+        try {
+            HibernateUtil.createTransaction();
+
+            Marker newConstruct = createNewConstructFromSubmittedForm(createConstructValues);
+            constructEditService.updateConstruct(newConstruct.getZdbID(), request);
+            Marker newMarker = mr.getMarkerByID(newConstruct.getZdbID());
+
+            HibernateUtil.flushAndCommitCurrentSession();
+
+            return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), true);
+
+            //catch both types of exceptions
+        } catch (Exception e) {
+            try {
+                HibernateUtil.rollbackTransaction();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            if (e instanceof InvalidConstructNameException) {
+                return new ConstructUpdateResult(e.getMessage(), false);
+            }
+            return new ConstructUpdateResult("Construct could not be created", false);
+        }
     }
 
 

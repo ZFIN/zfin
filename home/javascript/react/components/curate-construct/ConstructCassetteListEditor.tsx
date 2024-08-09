@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {Cassette} from './ConstructTypes';
@@ -98,6 +98,12 @@ const ConstructCassetteListEditor = () => {
     const shouldDisableDoneButton = () => {
         return !isValidCassette(cassette);
     }
+
+    useEffect(() => {
+        if (state.selectedConstruct.cassettes.length === 0) {
+            setStateByProxy(proxy => {proxy.selectedConstruct.addCassetteMode = true;});
+        }
+    }, [state.selectedConstruct]);
 
     return (
         <>

@@ -43,14 +43,21 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         checkDirtyState();
     }
 
+    const captureStateForDirtyCheck = (stateObject) => {
+        return JSON.stringify(
+            { selectedConstruct: stateObject.selectedConstruct,
+                stagedSynonym: stateObject.stagedSynonym,
+                stagedSequence: stateObject.stagedSequence,
+                stagedNote: stateObject.stagedNote}
+        );
+    }
 
     const checkDirtyState = useCallback(() => {
         if (!initialState) return;
-        const currentState = JSON.stringify(state.selectedConstruct);
+        const currentState = captureStateForDirtyCheck(state);
         const isDataChanged = initialState !== currentState;
-
         setIsDirty(isDataChanged);
-    }, [initialState, state.selectedConstruct]);
+    }, [initialState, state.selectedConstruct, state.stagedNote, state.stagedSequence, state.stagedSynonym]);
 
     const clearForm = () => {
         setStateByProxy(proxy => {
@@ -63,7 +70,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     }
 
     function submitForm() {
-        const submissionObject: EditConstructFormDTO = {
+        let submissionObject: EditConstructFormDTO = {
             constructName: {
                 type: typeAbbreviationToType(state.selectedConstruct.chosenType),
                 prefix: state.selectedConstruct.prefix,
@@ -75,6 +82,26 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
             publicNote: state.selectedConstruct.publicNote,
             publicationZdbID: state.publicationId
         }
+
+        //add the staged text values if they have not been added to the construct yet
+        if (state.stagedSynonym) {
+            submissionObject.synonyms = [...submissionObject.synonyms, {label: state.stagedSynonym, zdbID: null}];
+            setStateByProxy(proxy => {proxy.selectedConstruct.synonyms.push({label: state.stagedSynonym, zdbID: null});});
+            setStateByProxy(proxy => {proxy.stagedSynonym = '';});
+        }
+
+        if (state.stagedSequence) {
+            submissionObject.sequences = [...submissionObject.sequences, {label: state.stagedSequence, zdbID: null}];
+            setStateByProxy(proxy => {proxy.selectedConstruct.sequences.push({label: state.stagedSequence, zdbID: null});});
+            setStateByProxy(proxy => {proxy.stagedSequence = '';});
+        }
+
+        if (state.stagedNote) {
+            submissionObject.notes = [...submissionObject.notes, {label: state.stagedNote, zdbID: null}];
+            setStateByProxy(proxy => {proxy.selectedConstruct.notes.push({label: state.stagedNote, zdbID: null});});
+            setStateByProxy(proxy => {proxy.stagedNote = '';});
+        }
+
         setSaving(true);
         onSubmit(submissionObject).then(() => {
             setSaving(false);
@@ -136,17 +163,28 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                 }
 
                 // Set the initial state for dirty checking
-                setInitialState(JSON.stringify(proxy.selectedConstruct));
+                setInitialState(captureStateForDirtyCheck(proxy));
             });
         } catch (error) {
             console.error('Error initializing data for construct ID', error);
         }
     };
 
+    const initializeDataForNewConstruct = () => {
+        console.log('initializeDataForNewConstruct');
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct = blankConstruct();
+            proxy.selectedConstruct.addCassetteMode = true;
+        });
+        setInitialState(captureStateForDirtyCheck(state));
+    }
+
     useEffect(() => {
         const constructId = state.selectedConstructId;
         if (constructId) {
             initializeDataForConstructID(constructId);
+        } else {
+            initializeDataForNewConstruct();
         }
     }, [state.selectedConstructId]);
 
@@ -179,8 +217,8 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                 <option value='Et'>Et</option>
                                 <option value='Gt'>Gt</option>
                                 <option value='Pt'>Pt</option>
-                            </select>
-                            <label htmlFor='prefix'><b>Prefix:</b></label>
+                            </select>{' '}
+                            <label htmlFor='prefix'><b>Prefix:</b></label>{' '}
                             <input
                                 id='prefix'
                                 size='15'

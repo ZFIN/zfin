@@ -19,6 +19,9 @@ interface CurateConstructEditState {
     publicationId: string;
     selectedConstructId: string;
     selectedConstruct: ConstructUnderEdit;
+    stagedSynonym: string;
+    stagedSequence: string;
+    stagedNote: string;
 }
 
 interface CurateConstructEditStateAndSetter {
@@ -46,7 +49,10 @@ export function blankState() {
     return {
         publicationId: '',
         selectedConstructId: '',
-        selectedConstruct: blankConstruct()
+        selectedConstruct: blankConstruct(),
+        stagedSynonym: '',
+        stagedSequence: '',
+        stagedNote: ''
     };
 }
 

@@ -2,30 +2,20 @@ package org.zfin.construct.presentation;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
-import org.zfin.antibody.AntibodyService;
-import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.InvalidConstructNameException;
-import org.zfin.construct.name.*;
+import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
-import org.zfin.database.InformixUtil;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOMarkerService;
-import org.zfin.gwt.root.ui.DuplicateEntryException;
-import org.zfin.infrastructure.ControlledVocab;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.service.MarkerAttributionService;
-import org.zfin.profile.Person;
-import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -33,11 +23,10 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.zfin.construct.name.Cassette.COMPONENT_SEPARATOR;
-import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
 
 @Service
 @Log4j2
@@ -133,6 +122,114 @@ public class ConstructEditService {
 
         return removedSynonyms;
     }
+
+    public boolean updateConstruct(String constructID, EditConstructFormFields request) throws InvalidConstructNameException {
+        boolean changesMade = false;
+
+        ConstructName constructName = request.getConstructName();
+        constructName.reinitialize();
+
+        //figure out if constructName has changed
+        ConstructName oldName = getExistingConstructName(constructID);
+        if (!constructName.equals(oldName)) {
+            changesMade = true;
+        }
+
+        //figure out if synonyms have changed ( could have new synonyms, or removed synonyms)
+        List<MarkerNameAndZdbId> removedSynonyms = calculateRemovedSynonyms(constructID, request.getSynonyms());
+        List<MarkerNameAndZdbId> addedSynonyms = calculateAddedSynonyms(constructID, request.getSynonyms());
+
+        //figure out if sequences have changed
+        List<MarkerNameAndZdbId> removedSequences = calculateRemovedSequences(constructID, request.getSequences());
+        List<MarkerNameAndZdbId> addedSequences = calculateAddedSequences(constructID, request.getSequences());
+
+        //figure out if notes have changed
+        List<MarkerNameAndZdbId> removedNotes = calculateRemovedNotes(constructID, request.getNotes());
+        List<MarkerNameAndZdbId> addedNotes = calculateAddedNotes(constructID, request.getNotes());
+
+        if (!removedSynonyms.isEmpty() ||
+                !addedSynonyms.isEmpty() ||
+                !removedSequences.isEmpty() ||
+                !addedSequences.isEmpty() ||
+                !removedNotes.isEmpty() ||
+                !addedNotes.isEmpty()) {
+            changesMade = true;
+        }
+
+        //figure out if publicNote has changed
+        String newPublicNote = request.getPublicNote();
+        String oldPublicNote = mr.getMarkerByID(constructID).getPublicComments();
+        if (!newPublicNote.equals(oldPublicNote)) {
+            changesMade = true;
+        }
+
+        if (!changesMade) {
+            return false;
+        }
+
+        String pubZdbID = request.getPublicationZdbID();
+
+        Marker newMarker;
+        if (constructName.equals(oldName)) {
+            newMarker = mr.getMarkerByID(constructID);
+        } else {
+            newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+        }
+
+        //synonyms
+        for(MarkerNameAndZdbId addedSynonym : addedSynonyms) {
+            mr.addMarkerAlias(newMarker, addedSynonym.getLabel(), pr.getPublication(pubZdbID));
+            ir.insertUpdatesTable(newMarker,"alias","added data alias");
+            log.debug("Added synonym: " + addedSynonym.getLabel());
+        }
+        for(MarkerNameAndZdbId removedSynonym : removedSynonyms) {
+            mr.deleteMarkerAlias(newMarker, mr.getMarkerAlias(removedSynonym.getZdbID()));
+            ir.insertUpdatesTable(newMarker,"alias","deleted data alias");
+            log.debug("Removed synonym: " + removedSynonym.getLabel());
+        }
+
+        //sequences
+        for(MarkerNameAndZdbId addedSequence : addedSequences) {
+            addGenBankSequenceToConstruct(addedSequence.getLabel(), pubZdbID, newMarker);
+            log.debug("Added sequence: " + addedSequence.getLabel());
+        }
+        for (MarkerNameAndZdbId removedSequence : removedSequences) {
+            removeSequenceFromConstruct(constructID, removedSequence.getZdbID());
+            log.debug("Removed sequence: " + removedSequence.getZdbID());
+        }
+
+        //notes
+        for(MarkerNameAndZdbId addedNote : addedNotes) {
+            mr.addMarkerDataNote(newMarker, addedNote.getLabel());
+            ir.insertUpdatesTable(mr.getMarkerByID(constructID),"curator notes","added new curator note");
+            log.debug("Added note: " + addedNote.getLabel());
+        }
+        for (MarkerNameAndZdbId removedNote : removedNotes) {
+            DataNote curatorNote = ir.getDataNoteByID(removedNote.getZdbID());
+            ir.insertUpdatesTable(mr.getMarkerByID(constructID), "curator notes", "deleted curator note");
+            mr.removeCuratorNote(newMarker, curatorNote);
+            log.debug("Removed note: " + removedNote.getLabel());
+        }
+
+        //public note
+        if (!newPublicNote.equals(oldPublicNote)) {
+            newMarker.setPublicComments(newPublicNote);
+            ConstructCuration c = cr.getConstructByID(constructID);
+            c.setPublicComments(newPublicNote);
+            ir.insertUpdatesTable(newMarker, "comments", "updated public notes");
+            log.debug("Updated public note: " + newPublicNote);
+        }
+
+        return changesMade;
+
+    }
+
+    public void addGenBankSequenceToConstruct(String constructSequence, String pubid, Marker m) {
+        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+        mr.addDBLink(m, constructSequence, genBankRefDB, pubid);
+    }
+
 
     public List<MarkerNameAndZdbId> calculateAddedSynonyms(String constructID, List<MarkerNameAndZdbId> newSynonyms) {
         List<MarkerNameAndZdbId> existingSynonyms = getExistingSynonymsAsMarkerNameAndZdbIds(constructID);

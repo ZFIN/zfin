@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 function CurateConstructSynonymEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
-    const [synonymTextValue, setSynonymTextValue] = useState('');
+
+    function setSynonymTextValue(value) {
+        setStateByProxy(proxy => {proxy.stagedSynonym = value;});
+    }
 
     function handleRemoveSynonym(index) {
         const newSynonyms = [...state.selectedConstruct.synonyms];
@@ -14,8 +17,8 @@ function CurateConstructSynonymEditor() {
 
     function handleAddSynonym() {
         setStateByProxy(proxy => {
-            if (synonymTextValue) {
-                proxy.selectedConstruct.synonyms.push({label: synonymTextValue, zdbID: null});
+            if (state.stagedSynonym) {
+                proxy.selectedConstruct.synonyms.push({label: state.stagedSynonym, zdbID: null});
             }
         });
         setSynonymTextValue('');
@@ -38,13 +41,13 @@ function CurateConstructSynonymEditor() {
             autoComplete="off"
             type="text"
             size="50"
-            value={synonymTextValue}
+            value={state.stagedSynonym}
             onChange={e => setSynonymTextValue(e.target.value)}
             onKeyDown={handleAddSynonymKeyDown}
         />
         <input type='button'
                value='+'
-               disabled={!synonymTextValue}
+               disabled={!state.stagedSynonym}
                onClick={handleAddSynonym}
                />
         </>;

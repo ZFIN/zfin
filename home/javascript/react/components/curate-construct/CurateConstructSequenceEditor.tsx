@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 function CurateConstructSequenceEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
-    const [sequenceTextValue, setSequenceTextValue] = useState('');
+
+    function setSequenceTextValue(value) {
+        setStateByProxy(proxy => {proxy.stagedSequence = value;});
+    }
 
     function handleRemoveSequence(index) {
         const newSequences = [...state.selectedConstruct.sequences];
@@ -14,8 +17,8 @@ function CurateConstructSequenceEditor() {
 
     function handleAddSequence() {
         setStateByProxy(proxy => {
-            if (sequenceTextValue) {
-                proxy.selectedConstruct.sequences.push({label: sequenceTextValue, zdbID: null});
+            if (state.stagedSequence) {
+                proxy.selectedConstruct.sequences.push({label: state.stagedSequence, zdbID: null});
             }
         });
         setSequenceTextValue('');
@@ -38,13 +41,13 @@ function CurateConstructSequenceEditor() {
             autoComplete="off"
             type="text"
             size="50"
-            value={sequenceTextValue}
+            value={state.stagedSequence}
             onChange={e => setSequenceTextValue(e.target.value)}
             onKeyDown={handleAddSequenceKeyDown}
         />
         <input type='button'
                value='+'
-               disabled={!sequenceTextValue}
+               disabled={!state.stagedSequence}
                onClick={handleAddSequence}
                />
         </>;

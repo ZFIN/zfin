@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 function CurateConstructNoteEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
-    const [noteTextValue, setNoteTextValue] = useState('');
+
+    function setNoteTextValue(value) {
+        setStateByProxy(proxy => {proxy.stagedNote = value;});
+    }
 
     function handleRemoveNote(index) {
         const newNotes = [...state.selectedConstruct.notes];
@@ -14,8 +17,8 @@ function CurateConstructNoteEditor() {
 
     function handleAddNote() {
         setStateByProxy(proxy => {
-            if (noteTextValue) {
-                proxy.selectedConstruct.notes.push({label: noteTextValue, zdbID: null});
+            if (state.stagedNote) {
+                proxy.selectedConstruct.notes.push({label: state.stagedNote, zdbID: null});
             }
         });
         setNoteTextValue('');
@@ -30,7 +33,7 @@ function CurateConstructNoteEditor() {
         })}
         <textarea
             autoComplete="off"
-            value={noteTextValue}
+            value={state.stagedNote}
             rows={3}
             cols={50}
             onChange={e => setNoteTextValue(e.target.value)}
@@ -38,7 +41,7 @@ function CurateConstructNoteEditor() {
         <br/>
         <input type='button'
                value='Add Note'
-               disabled={!noteTextValue}
+               disabled={!state.stagedNote}
                onClick={handleAddNote}
                />
         </>;
