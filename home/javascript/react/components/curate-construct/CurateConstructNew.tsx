@@ -22,21 +22,19 @@ const CurateConstructNew = ({publicationId, onSuccess}: CurateConstructNewProps)
     async function submitForm(submissionObject : EditConstructFormDTO) {
         setSuccessMessage('');
         setErrorMessage('');
-        try {
-            const result = await fetch(`${calculatedDomain}/action/construct/create-and-update`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submissionObject),
-            });
-            const bodyJson = await result.json();
-            setSuccessMessage(bodyJson.message);
-            if (bodyJson.success) {
-                onSuccess(submissionObject);
-            }
-        } catch (error) {
-            setErrorMessage('Error saving construct');
+        const result = await fetch(`${calculatedDomain}/action/construct/create-and-update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(submissionObject),
+        });
+        const bodyJson = await result.json();
+        setSuccessMessage(bodyJson.message);
+        if (bodyJson.success) {
+            onSuccess(submissionObject);
+        } else {
+            throw new Error('Error saving construct');
         }
     }
 
