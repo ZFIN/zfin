@@ -8,23 +8,20 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.antibody.Antibody;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.InvalidWebRequestException;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.presentation.JSONMessageList;
-import org.zfin.marker.*;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.nomenclature.presentation.Nomenclature;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -62,10 +59,15 @@ public class MarkerEditController {
         nomenclature.setAbbreviation(marker.getAbbreviation());
         nomenclature.setReason("");
         nomenclature.setComments("");
-        nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.Reason.values())
+        if (marker.getMarkerType().getType().equals(Marker.Type.TSCRIPT)) {
+            nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.TranscriptReason.values())
+                .map(MarkerHistory.TranscriptReason::toString)
+                .toArray());
+        } else {
+            nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.Reason.values())
                 .map(MarkerHistory.Reason::toString)
-                .toArray()
-        );
+                .toArray());
+        }
         return nomenclature;
     }
 

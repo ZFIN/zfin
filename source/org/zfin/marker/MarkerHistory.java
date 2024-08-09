@@ -110,6 +110,32 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         }
     }
 
+
+    public enum TranscriptReason {
+        NOT_SPECIFIED("Not Specified"),
+        RENAMED_TO_CONFORM_WITH_ENSEMBL_GUIDELINES("Renamed to conform with Ensembl transcript nomenclature"),
+        RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES("renamed to conform with zebrafish guidelines"),
+        SAME_TRANSCRIPT("same transcript");
+
+        private String value;
+
+        TranscriptReason(String value) {
+            this.value = value;
+        }
+
+        public static TranscriptReason getReason(String reasonValue) {
+            for (TranscriptReason reason : values()) {
+                if (reason.value.equals(reasonValue))
+                    return reason;
+            }
+            return null;
+        }
+
+        public String toString() {
+            return value;
+        }
+    }
+
     public enum Event {
         // original
         ASSIGNED("assigned", "assigned"),
