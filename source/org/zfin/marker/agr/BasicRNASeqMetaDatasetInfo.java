@@ -81,7 +81,7 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
                                     datasetId.setPreferredCrossReference(preferredCrossReference);
 
                                 }
-                                datasetId.setSecondaryId(htpSecondaryIds);
+                                datasetId.setAlternateIds(htpSecondaryIds);
                             }
                             dto.setDatasetId(datasetId);
 
