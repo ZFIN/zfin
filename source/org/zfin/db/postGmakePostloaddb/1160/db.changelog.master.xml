@@ -5,11 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-<<<<<<< HEAD
+
     <include file="source/org/zfin/db/postGmakePostloaddb/1160/ZFIN-9318.sql" />
-=======
+
     <include file="source/org/zfin/db/postGmakePostloaddb/1160/ZFIN-9244.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1160/ZFIN-9258.sql" />
->>>>>>> 45b8b14f47 (ZFIN-9258 synchronize abbrev and name for transcripts)
+
 
 </databaseChangeLog>
