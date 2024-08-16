@@ -118,7 +118,7 @@ $sqlMissingCor = "select dblink_linked_recid, dblink_acc_num
                      and fdbcont_fdb_db_id = 10
                      and not exists(select 1 from sequence_feature_chromosome_location_generated
                                      where sfclg_data_zdb_id = dblink_linked_recid
-                                       and sfclg_locatoni_source = 'NCBIStartEndLoader'
+                                       and sfclg_location_source = 'NCBIStartEndLoader'
                                        and sfclg_fdb_db_id = 10);";
            
 $curMissingCor = $handle->prepare($sqlMissingCor);
