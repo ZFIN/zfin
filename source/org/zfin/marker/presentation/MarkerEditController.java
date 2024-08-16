@@ -23,7 +23,10 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.nomenclature.presentation.Nomenclature;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -60,11 +63,11 @@ public class MarkerEditController {
         nomenclature.setReason("");
         nomenclature.setComments("");
         if (marker.getMarkerType().getType().equals(Marker.Type.TSCRIPT)) {
-            nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.TranscriptReason.values())
-                .map(MarkerHistory.TranscriptReason::toString)
+            nomenclature.putMeta("reasons", MarkerHistory.Reason.getTranscriptReasons().stream()
+                .map(MarkerHistory.Reason::toString)
                 .toArray());
         } else {
-            nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.Reason.values())
+            nomenclature.putMeta("reasons", MarkerHistory.Reason.getMarkerReasons().stream()
                 .map(MarkerHistory.Reason::toString)
                 .toArray());
         }
