@@ -10,7 +10,7 @@
         </div>
     </c:if>
 
-    <form:form method="GET" commandName="formBean">
+    <form:form method="GET" modelAttribute="formBean">
         <table class="primary-entity-attributes metrics-table">
             <tr>
                 <th width="75px">Dates</th>

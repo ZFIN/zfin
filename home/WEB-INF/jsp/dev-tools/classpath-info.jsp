@@ -13,7 +13,7 @@
     </tr>
     <tr>
         <td align="center">
-            <form:form method="GET" action="/action/devtool/classpath-info" commandName="formBean">
+            <form:form method="GET" action="/action/devtool/classpath-info" modelAttribute="formBean">
                 <table cellpadding="2" cellspacing="1" border="0"
                        bgcolor="#003366">
                     <tr>

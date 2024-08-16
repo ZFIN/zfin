@@ -7,7 +7,7 @@
 
 <%@ attribute name="formBean" type="org.zfin.fish.presentation.FishSearchFormBean" required="true" %>
 
-<form:form method="Get" action="do-search" commandName="formBean" name="fishsearchform" id="fish-search-form"
+<form:form method="Get" action="do-search" modelAttribute="formBean" name="fishsearchform" id="fish-search-form"
            onsubmit="return false;">
 
 <table width="100%" class="error-box">

@@ -6,7 +6,7 @@
 <z:page bootstrap="true">
     <div class="container-fluid">
         <h2 class="page-header">New NTR</h2>
-        <form:form id="nonTranscribedRegion-add" cssClass="form-horizontal" commandName="formBean" action="nonTranscribedRegion-add">
+        <form:form id="nonTranscribedRegion-add" cssClass="form-horizontal" modelAttribute="formBean" action="nonTranscribedRegion-add">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-6">

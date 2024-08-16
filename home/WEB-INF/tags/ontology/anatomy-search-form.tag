@@ -31,7 +31,7 @@
                         <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
                         <BR>
                         <form:form method="GET" action="/action/ontology/show-anatomy-terms-by-stage"
-                                   commandName="formBean"
+                                   modelAttribute="formBean"
                                    name="formBean">
                             <form:select path="stage.zdbID" onchange="document.formBean.submit();" id="stages"
                                          htmlEscape="false">
