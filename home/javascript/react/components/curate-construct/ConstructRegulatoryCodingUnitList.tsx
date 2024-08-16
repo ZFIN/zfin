@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import type {ConstructComponent} from './ConstructTypes';
+import type {Cassette, ConstructComponent} from './ConstructTypes';
 import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructRegulatoryCodingUnitListProps {
-    publicationId: string;
     onChange?: (value: ConstructComponent[]) => void;
-    resetFlag?: number;
+    type: string;
+    cassette?: Cassette;
 }
 
 
@@ -17,10 +18,28 @@ interface ConstructRegulatoryCodingUnitListProps {
  * @returns JSX Element
  * @constructor
  */
-const ConstructRegulatoryCodingUnitList = ({publicationId, onChange, resetFlag}: ConstructRegulatoryCodingUnitListProps) => {
+const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatoryCodingUnitListProps) => {
+    const {state, setStateByProxy} = useCurateConstructEditContext();
     const [rcUnitItems, setRcUnitItems] = useState<ConstructComponent[]>([]);
     const defaultSeparator = '-';
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
+
+    const setStagedCassette = (value) => {
+        setStateByProxy(proxy => {
+            proxy.stagedCassette = value;
+        });
+    }
+
+    const getStagedCassette = () => {
+        return state.stagedCassette;
+    }
+
+    useEffect(() => {
+        if (state.selectedConstruct && state.selectedConstruct.editCassetteMode) {
+            const cassette = state.selectedConstruct.cassettes[state.selectedConstruct.editCassetteIndex];
+            setRcUnitItems(cassette[type]);
+        }
+    }, [state.selectedConstruct]);
 
     const styles = {
         rcUnitItems: {
@@ -34,11 +53,14 @@ const ConstructRegulatoryCodingUnitList = ({publicationId, onChange, resetFlag}:
         const itemWithSeparator = {...item, separator: ''};
         setActiveTextBoxValue(itemWithSeparator);
         if(item.value === '') {
+            setStagedCassette({...getStagedCassette(), [type]: rcUnitItems});
             onChange(rcUnitItems);
             return;
         }
 
         const newItems = [...rcUnitItems, itemWithSeparator];
+        setStagedCassette({...getStagedCassette(), [type]: newItems});
+
         onChange(newItems);
     }
 
@@ -65,18 +87,10 @@ const ConstructRegulatoryCodingUnitList = ({publicationId, onChange, resetFlag}:
     }
 
     const setRcUnitItemsAndNotify = (items) => {
+        setStagedCassette({...getStagedCassette(), [type]: items});
         setRcUnitItems(items);
         onChange(items);
     }
-
-    const resetState = () => {
-        setRcUnitItems([]);
-        setActiveTextBoxValue(null);
-    }
-
-    useEffect(() => {
-        resetState();
-    }, [resetFlag]);
 
     return <div className='promoters' style={styles.rcUnitItems}>
         {rcUnitItems.map((part, index) => (
@@ -100,10 +114,8 @@ const ConstructRegulatoryCodingUnitList = ({publicationId, onChange, resetFlag}:
         ))}
         <div className='promoter-autocomplete'>
             <ConstructMarkerAutocomplete
-                publicationId={publicationId}
                 onSelect={handleItemSelected}
                 onChangeWithObject={handleAutoCompleteChange}
-                resetFlag={resetFlag}
             />
         </div>
     </div>;
