@@ -12,7 +12,7 @@
         </tr>
     </table>
 
-    <form:form method="GET" action="/action/devtool/log4j-configuration" commandName="formBean">
+    <form:form method="GET" action="/action/devtool/log4j-configuration" modelAttribute="formBean">
         <table width="500" class="sortable">
             <tr bgcolor="#ccccc0">
                 <td class="bold left-align">Name</td>
