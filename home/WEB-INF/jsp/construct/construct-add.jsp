@@ -3,7 +3,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructAddBean" scope="request"/>
 
-<form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
+<form:form modelAttribute="formBean" id="constructadd" style="background-color:#EEEEEE;">
 
 
     <table>

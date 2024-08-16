@@ -6,7 +6,7 @@
 
     <script src="${zfn:getAssetPath("profiles.js")}"></script>
 
-    <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
+    <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                action="/action/profile/person/create" enctype="multipart/form-data"
                style="border: 2px solid gray;   background-color: #FEF7D6; "
             >
