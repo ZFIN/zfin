@@ -5,7 +5,9 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -88,7 +90,10 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         RENAMED_TO_CONFORM_WITH_HUMAN_NOMENCLATURE("renamed to conform with human nomenclature"),
         RENAMED_TO_CONFORM_WITH_MOUSE_NOMENCLATURE("renamed to conform with mouse nomenclature"),
         RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES("renamed to conform with zebrafish guidelines"),
-        SAME_MARKER("same marker");
+        SAME_MARKER("same marker"),
+        RENAMED_TO_CONFORM_WITH_ENSEMBL_TRANSCRIPT_NOMENCLATURE("Renamed to conform with Ensembl transcript nomenclature"),
+        SAME_TRANSCRIPT("same transcript");
+
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 
         private String value;
@@ -103,6 +108,33 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
                     return reason;
             }
             return null;
+        }
+
+        static List<Reason> transcriptReasons = new ArrayList<>();
+        static {
+            transcriptReasons.add(NOT_SPECIFIED);
+            transcriptReasons.add(PER_GENE_FAMILY_REVISION);
+            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
+            transcriptReasons.add(PER_PERSONAL_COMMUNICATION_WITH_AUTHORS);
+            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_HUMAN_NOMENCLATURE);
+            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_MOUSE_NOMENCLATURE);
+            transcriptReasons.add(SAME_MARKER);
+        }
+
+        static List<Reason> markerReasons = new ArrayList<>();
+        static {
+            markerReasons.add(NOT_SPECIFIED);
+            markerReasons.add(RENAMED_TO_CONFORM_WITH_ENSEMBL_TRANSCRIPT_NOMENCLATURE);
+            markerReasons.add(RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
+            markerReasons.add(SAME_TRANSCRIPT);
+        }
+
+        public static List<Reason> getTranscriptReasons() {
+            return transcriptReasons;
+        }
+
+        public static List<Reason> getMarkerReasons() {
+            return markerReasons;
         }
 
         public String toString() {
@@ -273,15 +305,12 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     }
 
     public String getOldSymbol() {
-        switch (event) {
-            case REASSIGNED:
-                return (markerAlias == null ? "" : markerAlias.getAlias());
-            case MERGED:
-                return (markerAlias == null ? "" : markerAlias.getAlias());
-            case RENAMED:
-                return oldMarkerName;
-        }
-        return "";
+        return switch (event) {
+            case REASSIGNED -> (markerAlias == null ? "" : markerAlias.getAlias());
+            case MERGED -> (markerAlias == null ? "" : markerAlias.getAlias());
+            case RENAMED -> oldMarkerName;
+            default -> "";
+        };
     }
 
     public String getNewValue() {

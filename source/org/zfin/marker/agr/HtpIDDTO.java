@@ -15,7 +15,7 @@ import java.util.Set;
 public class HtpIDDTO {
 
     private String primaryId;
-    private List<String> secondaryId;
+    private List<String> alternateIds;
     private List<CrossReferenceDTO> crossReferences;
     private CrossReferenceDTO preferredCrossReference;
 
