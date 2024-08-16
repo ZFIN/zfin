@@ -140,7 +140,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AccountInfo> accountInfoList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "int_person_lab",
             joinColumns = @JoinColumn(name = "source_id"),
@@ -148,7 +148,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     )
     private Set<Lab> labs = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "int_person_company",
             joinColumns = @JoinColumn(name = "source_id"),
