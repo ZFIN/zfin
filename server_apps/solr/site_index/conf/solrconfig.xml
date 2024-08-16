@@ -684,7 +684,7 @@
         id
       </str>
       <str name="bf">recip(complexity,1,1,1)^10 sqrt(popularity)^20</str>
-      <str name="fq">-category:Publication -category:Figure</str>
+      <str name="fq">-category:Publication -category:Figure -category:"GO Annotation"</str>
       <str name="hl">true</str>
       <str name="hl.snippets">1</str>
       <str name="hl.fl">
