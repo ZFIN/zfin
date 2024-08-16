@@ -16,6 +16,7 @@ import org.zfin.gwt.marker.ui.SequenceValidator;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
+import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.presentation.JSONMessageList;
@@ -34,6 +35,7 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.zfin.marker.service.MarkerService.addMarkerLinkByAccession;
 
 
@@ -284,6 +286,9 @@ public class MarkerLinkController {
                     markerRepository.addDBLinkAttribution(link, publicationIterator.next(), marker);
                 }
 
+                String updateComment = "Adding " + sequenceType + " sequence " + link.getAccessionNumber() + " to " + marker.getAbbreviation();
+                InfrastructureService.insertUpdate(marker, updateComment);
+
             } catch (Exception e) {
                 LOG.error("Failure to add internal protein sequence", e);
                 LOG.info("fail");
@@ -358,8 +363,14 @@ public class MarkerLinkController {
         LinkDisplay linkDisplay = getLinkDisplayById(linkId);
         HibernateUtil.createTransaction();
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
+        Marker marker = markerRepository.getMarker(link.getDataZdbID());
         sequenceRepository.deleteReferenceProteinByDBLinkID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
+
+        String publicationIDs = link.getPublicationIds();
+        String updateComment = "Deleting dblink " + linkDisplay.getDisplayName() + (isEmpty(publicationIDs) ? "" : " with attributions " + publicationIDs);
+        InfrastructureService.insertUpdate(marker, updateComment);
+
         HibernateUtil.flushAndCommitCurrentSession();
         return linkDisplay;
     }
