@@ -11,7 +11,7 @@
 
     <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.RequestNewAnatomyTermBean" scope="request"/>
 
-    <form:form action="request-new-anatomy-term-submit" commandName="formBean" method="post">
+    <form:form action="request-new-anatomy-term-submit" modelAttribute="formBean" method="post">
 
 
         <input type=hidden name="subject" VALUE="Request a new Anatomical Structure">

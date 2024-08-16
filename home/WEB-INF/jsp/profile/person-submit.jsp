@@ -8,7 +8,7 @@
         <p>Please fill out the following information and we will get back to you as soon as we have reviewed it
             and approved the request.</p>
 
-        <form:form action="" method="POST" commandName="submission" id="nomenclature">
+        <form:form action="" method="POST" modelAttribute="submission" id="nomenclature">
 
             <div class="form-group row">
                 <form:label path="firstName" cssClass="col-md-3 col-form-label required">First Name</form:label>

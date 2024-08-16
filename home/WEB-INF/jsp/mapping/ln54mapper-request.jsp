@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page title="Request LN54 Mapping">
-    <form:form commandName="formBean">
+    <form:form modelAttribute="formBean">
 
         <h3>Request LN54 Mapping</h3>
         <p>

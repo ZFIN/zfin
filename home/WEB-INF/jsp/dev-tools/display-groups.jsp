@@ -5,7 +5,7 @@
 <z:devtoolsPage>
     <h3>RefDB Display Groups</h3>
 
-    <form:form commandName="formBean">
+    <form:form modelAttribute="formBean">
         <form:select path="displayGroupToEditID">
             <option value="">-Display Group to Edit-</option>
             <form:options items="${formBean.displayGroups}" itemLabel="groupName" itemValue="id"/>
