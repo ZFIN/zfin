@@ -5,7 +5,7 @@
 
 <z:page>
     <c:set var="isnomen" value="${formBean.runCandidate.run.nomenclature ? true : false }"/>
-    <form:form name="candidateform" commandName="formBean" method="post"
+    <form:form name="candidateform" modelAttribute="formBean" method="post"
                action="/action/reno/${isnomen ? 'nomenclature' : 'redundancy'}-candidate-view/${formBean.runCandidate.zdbID}"
                cssStyle="display: inline;">
 

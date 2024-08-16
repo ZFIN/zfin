@@ -24,7 +24,7 @@
 
     <hr>
 
-    <form:form action="" method="POST" cssClass="form-horizontal" commandName="submission" id="nomenclature">
+    <form:form action="" method="POST" cssClass="form-horizontal" modelAttribute="submission" id="nomenclature">
 
         <h3>Contact Information</h3>
 

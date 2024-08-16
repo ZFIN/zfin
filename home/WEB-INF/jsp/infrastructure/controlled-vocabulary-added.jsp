@@ -9,7 +9,7 @@
     <div class="container-fluid">
       <h2 class="page-header">You have added the following new species</h2>
 
-      <form:form id="cv-form-added" commandName="formBean" class="form-horizontal">
+      <form:form id="cv-form-added" modelAttribute="formBean" class="form-horizontal">
         <div class="form-group">
           <form:label path="termName" class="col-md-2 control-label">Term Name: ${formBean.termName}</form:label>
         </div>

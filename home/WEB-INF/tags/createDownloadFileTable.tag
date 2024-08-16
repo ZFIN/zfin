@@ -36,7 +36,7 @@
                 ${fileInfo.downloadFile.description}
             </td>
             <td>
-                <form:form action="downloads/file/" commandName="formBean"
+                <form:form action="downloads/file/" modelAttribute="formBean"
                            method="GET" id="${fileInfo.name}">
                     <input value="${fileInfo.downloadFile.fileFormat}"
                            onclick="downloadFile('${formBean.date}','${fileInfo.name}')"
