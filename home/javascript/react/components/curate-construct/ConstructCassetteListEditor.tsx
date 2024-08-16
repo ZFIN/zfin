@@ -1,87 +1,133 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
-import {Cassette, SimplifiedCassette, simplifiedCassettesToCassettes} from './ConstructTypes';
+import {Cassette} from './ConstructTypes';
+import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
 
-interface ConstructCassetteListEditorProps {
-    publicationId: string;
-    onChange?: (cassettes: Cassette[]) => void;
-    resetFlag?: number;
-    initialCassettes?: SimplifiedCassette[];
-}
-
-const ConstructCassetteListEditor = ({publicationId, onChange, resetFlag, initialCassettes}: ConstructCassetteListEditorProps) => {
-    const [cassettes, setCassettes] = useState<Cassette[]>([]);
+const ConstructCassetteListEditor = () => {
+    const {state, setStateByProxy} = useCurateConstructEditContext();
     const [cassette, setCassette] = useState<Cassette>(null);
-    const [isEditMode, setIsEditMode] = useState(false);
 
     const handleCassetteChange = (updatedCassette) => {
         setCassette(updatedCassette);
-        const eventPayload = [...cassettes, updatedCassette];
-        notifyParentOfChange(eventPayload);
+    }
+
+    const handleAddCassetteClick = (e) => {
+        e.preventDefault();
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.addCassetteMode = true;
+            proxy.selectedConstruct.editCassetteMode = false;
+        });
     }
 
     const handleAddCassette = (event) => {
         event.preventDefault();
-        const newCassettes = [...cassettes, cassette];
-        setCassettes(newCassettes);
+        const newCassettes = [...state.selectedConstruct.cassettes];
+        if (state.selectedConstruct.addCassetteMode) {
+            newCassettes.push(cassette);
+        } else if (state.selectedConstruct.editCassetteMode) {
+            newCassettes[state.selectedConstruct.editCassetteIndex] = cassette;
+        }
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.cassettes = newCassettes;
+        });
+
         setCassette(null);
-        setIsEditMode(false);
-        notifyParentOfChange(newCassettes);
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.addCassetteMode = false;
+            proxy.selectedConstruct.editCassetteMode = false;
+            proxy.selectedConstruct.editCassetteIndex = null;
+            proxy.stagedCassette = blankCassette();
+        });
     }
 
     const handleRemoveCassette = (index) => {
-        const newCassettes = [...cassettes];
+        const newCassettes = [...state.selectedConstruct.cassettes];
         newCassettes.splice(index, 1);
-        setCassettes(newCassettes);
-        notifyParentOfChange(newCassettes);
+        setStateByProxy(proxy => {proxy.selectedConstruct.cassettes = newCassettes;});
     }
 
-    const notifyParentOfChange = (cassettes) => {
-        if (onChange) {
-            onChange(cassettes);
+    const handleEditCassetteClick = (e, index: number) => {
+        e.preventDefault();
+        handleEditCassette(index);
+    }
+
+    const handleMoveUpClick = (e, index: number) => {
+        handleMoveClick(e, index, -1);
+    }
+
+    const handleMoveDownClick = (e, index: number) => {
+        handleMoveClick(e, index, 1);
+    }
+
+    const handleMoveClick = (e, index: number, direction: number) => {
+        e.preventDefault();
+        const newCassettes = [...state.selectedConstruct.cassettes];
+        if (index + direction >= 0 && index + direction < newCassettes.length) {
+            const temp = newCassettes[index + direction];
+            newCassettes[index + direction] = newCassettes[index];
+            newCassettes[index] = temp;
+            setStateByProxy(proxy => {proxy.selectedConstruct.cassettes = newCassettes;});
         }
     }
 
+    const handleEditCassette = (index) => {
+        setCassette(state.selectedConstruct.cassettes[index]);
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.addCassetteMode = false;
+            proxy.selectedConstruct.editCassetteMode = true;
+            proxy.selectedConstruct.editCassetteIndex = index;
+        });
+    }
+
+    const handleCancelCassette = () => {
+        setCassette(null);
+        setStateByProxy(proxy => {
+            proxy.selectedConstruct.addCassetteMode = false;
+            proxy.selectedConstruct.editCassetteMode = false;
+            proxy.selectedConstruct.editCassetteIndex = null;
+            proxy.stagedCassette = blankCassette();
+        });
+    }
+
     const showCassetteEditor = () => {
-        return cassettes.length === 0 || isEditMode;
+        if (state.selectedConstruct.cassettes.length === 0) {
+            return true;
+        }
+        return state.selectedConstruct.addCassetteMode || state.selectedConstruct.editCassetteMode;
     }
 
     const shouldDisableDoneButton = () => {
         return !isValidCassette(cassette);
     }
 
-    const resetState = () => {
-        setCassettes([]);
-        setCassette(null);
-        setIsEditMode(false);
-    }
-
     useEffect(() => {
-        resetState();
-    }, [resetFlag]);
-
-    useEffect( () => {
-        if (!initialCassettes) {
-            return;
+        if (state.selectedConstruct.cassettes.length === 0) {
+            setStateByProxy(proxy => {proxy.selectedConstruct.addCassetteMode = true;});
         }
-        setCassettes(simplifiedCassettesToCassettes(initialCassettes));
-    }, [initialCassettes]);
+    }, [state.selectedConstruct]);
 
     return (
         <>
-            {cassettes && cassettes.length > 0 && <b>Cassettes</b>}
+            {state.selectedConstruct.cassettes && state.selectedConstruct.cassettes.length > 0 && <b>Cassettes</b>}
             <ol>
-                {cassettes.map((cassette, index) => <li key={index}>
-                    <ConstructCassetteView cassette={cassette}/> <a href='#' onClick={() => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>
+                {state.selectedConstruct.cassettes.map((cassetteIterator, index) => <li key={index}>
+                    <ConstructCassetteView cassette={cassetteIterator}/>{' '}
+                    <a href='#' onClick={() => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>{' '}
+                    <a href='#' onClick={(e) => {handleEditCassetteClick(e, index);}}><i className='fa fa-edit'/></a>{' '}
+                    {index > 0 && <a href='#' onClick={(e) => {handleMoveUpClick(e, index);}}><i className='fa fa-arrow-up'/></a>}{' '}
+                    {index < state.selectedConstruct.cassettes.length - 1 &&
+                        <a href='#' onClick={(e) => {handleMoveDownClick(e, index);}}><i className='fa fa-arrow-down'/></a>
+                    }
                 </li>)}
             </ol>
             {(!showCassetteEditor() &&
-                <a onClick={(e) => {e.preventDefault(); setIsEditMode(true);}} title='Add' href='#'>Add cassette</a>
+                <a onClick={(e) => {handleAddCassetteClick(e)}} title='Add' href='#'>Add cassette</a>
             )}
             {showCassetteEditor() && <>
-                <ConstructCassetteEditor publicationId={publicationId} onChange={handleCassetteChange} resetFlag={resetFlag}/>
+                <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange}/>
                 <input style={{marginTop: '10px'}} type='button' onClick={handleAddCassette} value='Save Cassette' disabled={shouldDisableDoneButton()}/>
+                <input style={{marginTop: '10px'}} type='button' onClick={handleCancelCassette} value='Cancel'/>
             </>}
         </>
     );

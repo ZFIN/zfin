@@ -3,14 +3,13 @@ package org.zfin.construct.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.Species;
 import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.InvalidConstructNameException;
 import org.zfin.construct.name.ConstructName;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.framework.HibernateUtil;
@@ -20,25 +19,22 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static org.zfin.construct.presentation.ConstructComponentService.createNewConstructFromSubmittedForm;
 import static org.zfin.construct.presentation.ConstructComponentService.getExistingConstructName;
+
 
 @Controller
 @RequestMapping("/construct")
 public class ConstructEditController {
 
-    private static Logger LOG = LogManager.getLogger(ConstructEditController.class);
+    public record ConstructUpdateResult(String message, boolean success) {}
 
     @Autowired
     private MarkerRepository mr;
@@ -51,12 +47,11 @@ public class ConstructEditController {
     @Autowired
     private SequenceRepository sr;
 
+    @Autowired
+    private ConstructEditService constructEditService;
 
-    private static Logger logger = LogManager.getLogger(ConstructEditController.class);
+    private static final Logger logger = LogManager.getLogger(ConstructEditController.class);
 
-    private ConstructAddValidator validator = new ConstructAddValidator();
-
-    private Person currentUser = ProfileService.getCurrentSecurityUser();
 
     @ModelAttribute("formBean")
     private ConstructUpdateBean getDefaultSearchForm(@RequestParam(value = "constructPublicationZdbID", required = false) String pubZdbID) {
@@ -111,12 +106,11 @@ public class ConstructEditController {
         String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
-        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-        mr.addDBLink(m, constructSequence, genBankRefDB,pubid);
+        constructEditService.addGenBankSequenceToConstruct(constructSequence, pubid, m);
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"sequence","added sequence");
         HibernateUtil.flushAndCommitCurrentSession();
     }
+
 
     @RequestMapping(value = "/update-comments/{constructID}/constructEditComments/{constructUpdateComments}"
             , method = RequestMethod.POST)
@@ -180,20 +174,10 @@ public class ConstructEditController {
     @ResponseBody
     void deleteSequence(@PathVariable String constructID,@PathVariable String sequenceID) throws Exception{
         HibernateUtil.createTransaction();
-        Session session = HibernateUtil.currentSession();
-        Marker m=mr.getMarkerByID(constructID);
-        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
-        ir.deleteActiveDataByZdbID(sequenceID);
-        String hql = "" +
-                "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
-        Query query = session.createQuery(hql);
-        query.setParameter("sequenceID", sequenceID);
-        query.executeUpdate();
-        ir.insertUpdatesTable(m,"sequence","deleted sequence");
+        constructEditService.removeSequenceFromConstruct(constructID, sequenceID);
         HibernateUtil.flushAndCommitCurrentSession();
-
     }
+
 
     @RequestMapping(value = "/delete-note/{constructID}/noteID/{noteID}", method = RequestMethod.DELETE)
     public
@@ -248,24 +232,66 @@ public class ConstructEditController {
     @RequestMapping(value = "/update/{constructID}", method = RequestMethod.POST)
     public
     @ResponseBody
-    String updateConstruct(@PathVariable String constructID,
-                           @RequestBody AddConstructFormFields request) throws Exception{
+    ConstructUpdateResult updateConstruct(@PathVariable String constructID,
+                           @RequestBody EditConstructFormFields request) throws Exception{
 
-        ConstructName constructName = request.getConstructNameObject();
-        constructName.reinitialize();
-        String pubZdbID = request.getPubZdbID();
 
         HibernateUtil.createTransaction();
-        Marker newMarker = ConstructComponentService.updateConstructName(constructID, constructName, pubZdbID);
+
+        constructEditService.updateConstruct(constructID, request);
+        Marker newMarker = mr.getMarkerByID(constructID);
+
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return """
-                {
-                    "message": "%s",
-                    "success": true
-                }
-                """.formatted(newMarker.getZdbID() + " renamed to " + newMarker.getName());
+        return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), true);
     }
+
+//    /action/construct/create-and-update
+    @RequestMapping(value = "/create-and-update", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ConstructUpdateResult createAndUpdate(@RequestBody EditConstructFormFields request) throws Exception{
+
+        //set the construct name from the object
+        ConstructName constructName = request.getConstructName();
+        constructName.reinitialize();
+
+        AddConstructFormFields createConstructValues = new AddConstructFormFields();
+        createConstructValues.setConstructNameObject(constructName);
+        createConstructValues.setConstructName(constructName.toString());
+        createConstructValues.setPubZdbID(request.getPublicationZdbID());
+        createConstructValues.setConstructType(constructName.getTypeAbbreviation());
+        createConstructValues.setConstructPrefix(constructName.getPrefix());
+
+        try {
+            HibernateUtil.createTransaction();
+
+            Marker newConstruct = createNewConstructFromSubmittedForm(createConstructValues);
+            constructEditService.updateConstruct(newConstruct.getZdbID(), request);
+            Marker newMarker = mr.getMarkerByID(newConstruct.getZdbID());
+
+            HibernateUtil.flushAndCommitCurrentSession();
+
+            String message = String.format("%s saved as <a target=\"_blank\" href=\"%s\">%s</a>",
+                    newMarker.getZdbID(), newMarker.getZdbID(), newMarker.getName());
+            return new ConstructUpdateResult(message, true);
+
+            //catch both types of exceptions
+        } catch (Exception e) {
+            try {
+                HibernateUtil.rollbackTransaction();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            if (e instanceof InvalidConstructNameException) {
+                return new ConstructUpdateResult(e.getMessage(), false);
+            }
+            return new ConstructUpdateResult("Construct could not be created", false);
+        }
+    }
+
+
 
     //Send the json representation of a construct name to the client
     @RequestMapping(value = "/json/{constructID}", method = RequestMethod.GET)
@@ -276,10 +302,3 @@ public class ConstructEditController {
         return oldConstructName;
     }
 }
-
-
-
-
-
-
-
