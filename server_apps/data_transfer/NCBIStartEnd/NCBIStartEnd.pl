@@ -51,8 +51,10 @@ foreach $line (@lines) {
     $end =~ s/\s+$//; 
     $symbol = $fields[14];
     $ID = $fields[15];
+      print "ID: $ID $symbol";
     if ($feature eq "gene" && $assmblUnit eq 'Primary Assembly' && $start && $end && $start ne "" && $end ne "" && $start =~ /^\d+$/ && $end =~ /^\d+$/) {
       $ctGenes++;
+      print "ID: $ID $symbol";
       $chrsGeneIDs{$ID} = $chromosome;
       $startsGeneIDs{$ID} = $start;
       $endsGeneIDs{$ID} = $end;
@@ -110,14 +112,14 @@ foreach $accNum (keys %zdbGeneIDs) {
 
 close UPDATELIST;
 
-$sqlMissingCor = "select dblink_linked_recid, dblink_acc_num 
-                    from db_link, foreign_db_contains 
-                   where dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+$sqlMissingCor = "select dblink_linked_recid, dblink_acc_num
+                    from db_link, foreign_db_contains
+                   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                      and fdbcont_fdb_db_id = 10
-                     and not exists(select 1 from sequence_feature_chromosome_location_generated 
-                                     where sfclg_data_zdb_id = dblink_linked_recid 
-                                       and sfclg_location_source = 'NCBIStartEndLoader' 
-                                       and sfclg_fdb_db_id = 10);";           
+                     and not exists(select 1 from sequence_feature_chromosome_location_generated
+                                     where sfclg_data_zdb_id = dblink_linked_recid
+                                       and sfclg_location_source = 'NCBIStartEndLoader'
+                                       and sfclg_fdb_db_id = 10);";
            
 $curMissingCor = $handle->prepare($sqlMissingCor);
 
@@ -143,9 +145,9 @@ open (ADDLIST, ">addList") || die "Cannot open addList : $!\n";
 
 foreach $zdbID (keys %zdbIDsMissingCor) {
   $ncbiID = $zdbIDsMissingCor{$zdbID};
-  if (exists($chrsGeneIDs{$ncbiID}) && exists($startsGeneIDs{$ncbiID}) && exists($endsGeneIDs{$ncbiID})) {
-     print ADDLIST "$zdbID|$ncbiID|$chrsGeneIDs{$ncbiID}|$startsGeneIDs{$ncbiID}|$endsGeneIDs{$ncbiID}\n"; 
-  }       
+  if (exists($chrsGeneIDs{$zdbID}) && exists($startsGeneIDs{$zdbID}) && exists($endsGeneIDs{$zdbID})) {
+     print ADDLIST "$ncbiID|$zdbID|$chrsGeneIDs{$zdbID}|$startsGeneIDs{$zdbID}|$endsGeneIDs{$zdbID}\n";
+  }
 }
 
 close ADDLIST;
