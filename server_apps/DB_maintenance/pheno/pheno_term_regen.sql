@@ -1,10 +1,14 @@
 begin work;
 
-delete from pheno_term_fast_search_tmp;
+-- delete from pheno_term_fast_search_tmp;
+drop table if exists pheno_term_fast_search_tmp;
 
 commit work ;
 
 begin work ;
+
+-- create empty temp table
+create temp table pheno_term_fast_search_tmp as select * from pheno_term_fast_search where false;
 
 insert into pheno_term_fast_search_tmp
 (
