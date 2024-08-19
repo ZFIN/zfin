@@ -55,10 +55,6 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     private Set<PublicationAttribution> attributions;
 
 
-    public Reason[] getReasonArray() {
-        return Reason.values();
-    }
-
     @Override
     public int compareTo(MarkerHistory o) {
         if (date.compareTo(o.getDate()) != 0)
@@ -110,23 +106,23 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
             return null;
         }
 
-        static List<Reason> transcriptReasons = new ArrayList<>();
-        static {
-            transcriptReasons.add(NOT_SPECIFIED);
-            transcriptReasons.add(PER_GENE_FAMILY_REVISION);
-            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-            transcriptReasons.add(PER_PERSONAL_COMMUNICATION_WITH_AUTHORS);
-            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_HUMAN_NOMENCLATURE);
-            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_MOUSE_NOMENCLATURE);
-            transcriptReasons.add(SAME_MARKER);
-        }
-
-        static List<Reason> markerReasons = new ArrayList<>();
+        static final List<Reason> markerReasons = new ArrayList<>();
         static {
             markerReasons.add(NOT_SPECIFIED);
-            markerReasons.add(RENAMED_TO_CONFORM_WITH_ENSEMBL_TRANSCRIPT_NOMENCLATURE);
+            markerReasons.add(PER_GENE_FAMILY_REVISION);
             markerReasons.add(RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-            markerReasons.add(SAME_TRANSCRIPT);
+            markerReasons.add(PER_PERSONAL_COMMUNICATION_WITH_AUTHORS);
+            markerReasons.add(RENAMED_TO_CONFORM_WITH_HUMAN_NOMENCLATURE);
+            markerReasons.add(RENAMED_TO_CONFORM_WITH_MOUSE_NOMENCLATURE);
+            markerReasons.add(SAME_MARKER);
+        }
+
+        static final List<Reason> transcriptReasons = new ArrayList<>();
+        static {
+            transcriptReasons.add(NOT_SPECIFIED);
+            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_ENSEMBL_TRANSCRIPT_NOMENCLATURE);
+            transcriptReasons.add(RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
+            transcriptReasons.add(SAME_TRANSCRIPT);
         }
 
         public static List<Reason> getTranscriptReasons() {
@@ -143,31 +139,6 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     }
 
 
-    public enum TranscriptReason {
-        NOT_SPECIFIED("Not Specified"),
-        RENAMED_TO_CONFORM_WITH_ENSEMBL_GUIDELINES("Renamed to conform with Ensembl transcript nomenclature"),
-        RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES("renamed to conform with zebrafish guidelines"),
-        SAME_TRANSCRIPT("same transcript");
-
-        private String value;
-
-        TranscriptReason(String value) {
-            this.value = value;
-        }
-
-        public static TranscriptReason getReason(String reasonValue) {
-            for (TranscriptReason reason : values()) {
-                if (reason.value.equals(reasonValue))
-                    return reason;
-            }
-            return null;
-        }
-
-        public String toString() {
-            return value;
-        }
-    }
-
     public enum Event {
         // original
         ASSIGNED("assigned", "assigned"),
@@ -180,7 +151,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
         private String value;
         private String display;
 
-        private Event(String value, String display) {
+        Event(String value, String display) {
             this.value = value;
             this.display = display;
         }
@@ -306,8 +277,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     public String getOldSymbol() {
         return switch (event) {
-            case REASSIGNED -> (markerAlias == null ? "" : markerAlias.getAlias());
-            case MERGED -> (markerAlias == null ? "" : markerAlias.getAlias());
+            case REASSIGNED, MERGED -> (markerAlias == null ? "" : markerAlias.getAlias());
             case RENAMED -> oldMarkerName;
             default -> "";
         };
