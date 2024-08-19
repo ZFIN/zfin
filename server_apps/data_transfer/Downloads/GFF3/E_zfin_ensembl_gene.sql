@@ -366,9 +366,6 @@ select
    and substring(gff_source from  1 for 8) = 'Ensembl_'
    and gff_feature in ('mRNA','transcript')
    and not exists (
-   	select 't' from tmp_vega_zeg where gene.mrkr_zdb_id = tmp_vega_zeg.alias
-  )
-   and not exists (
     select 't' from tmp_ensembl_not_one_to_one tenoto where tenoto.mrkr_zdb_id = gene.mrkr_zdb_id
    )
  group by 1,3,7,9,10
@@ -391,6 +388,44 @@ select count(*) vega_mapping from tmp_vega_zeg;
 select count(*) Ens_1to1 from tmp_ensembl_zeg;
 
 --! echo 'Save both zfin gene placement collections'
+-- If there is an Ensembl record use that one
+-- Vega is only used in case no Ensembl is available
+insert into zfin_ensembl_gene (
+    zeg_seqname,
+    zeg_source,
+    zeg_feature,
+    zeg_start,
+    zeg_end,
+    zeg_score,
+    zeg_strand,
+    zeg_frame,
+    zeg_ID_Name,
+    zeg_gene_zdb_id
+)
+SELECT
+    gff_seqname,
+    source,
+    trim(feature),
+    min(gstart) gstart,
+    max(gend)   gend,
+    score,
+    gff_strand,
+    frame,
+    ID_Name,
+    Alias
+FROM tmp_ensembl_zeg
+GROUP BY
+    gff_seqname,
+    source,
+    feature,
+    score,
+    gff_strand,
+    frame,
+    ID_Name,
+    Alias
+;
+
+--
 insert into zfin_ensembl_gene (
     zeg_seqname,
     zeg_source,
@@ -413,8 +448,9 @@ select
     strand,
     frame,
     ID_Name,
-    Alias
+    Alias as gene_zdb_id
  from tmp_vega_zeg
+ where not exists (select * from zfin_ensembl_gene where zeg_gene_zdb_id = Alias)
  group by
     gff_seqname,
     source,
@@ -424,41 +460,6 @@ select
     frame,
     ID_Name,
     Alias
-;
-
-insert into zfin_ensembl_gene (
-    zeg_seqname,
-    zeg_source,
-    zeg_feature,
-    zeg_start,
-    zeg_end,
-    zeg_score,
-    zeg_strand,
-    zeg_frame,
-    zeg_ID_Name,
-    zeg_gene_zdb_id
-)
-	SELECT
-		 gff_seqname,
-		 source,
-		 trim(feature),
-		 min(gstart) gstart,
-		 max(gend)   gend,
-		 score,
-		 gff_strand,
-		 frame,
-		 ID_Name,
-		 Alias
-	 FROM tmp_ensembl_zeg
-	 GROUP BY
-		 gff_seqname,
-		 source,
-		 feature,
-		 score,
-		 gff_strand,
-		 frame,
-		 ID_Name,
-		 Alias
 ;
 
 -------------------------------------------------------------------------
