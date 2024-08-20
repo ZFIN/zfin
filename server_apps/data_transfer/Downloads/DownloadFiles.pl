@@ -158,7 +158,7 @@ $sql = "
           and knockdown.mrkr_zdb_id = mrel_mrkr_1_zdb_id
           and a.szm_object_type = gn.mrkr_type
           and b.szm_object_type = knockdown.mrkr_type
-          and mrel_type = 'knockdown reagent targets gene'
+          and mrel_type in ('knockdown reagent targets gene', 'crispr targets region')
           and knockdown.mrkr_zdb_id = seq_mrkr_zdb_id
         order by gn.mrkr_abbrev
 ";

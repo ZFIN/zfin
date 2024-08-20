@@ -2807,23 +2807,10 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <FileName>Morpholinos</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, mo.mrkr_abbrev,
-                        seq_sequence, mo.mrkr_comments
-                     from marker gn, marker mo, marker_sequence, marker_relationship
-                     where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                       and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                       and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-"
-                       and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
-                       and mrel_type = "knockdown reagent targets gene"
-                       and mo.mrkr_zdb_id = seq_mrkr_zdb_id
-                       order by gn.mrkr_abbrev
-                ]]>
-            </Query>
-            <Column id="1" unique="true">Gene ID</Column>
-            <Column id="2">Gene SO ID</Column>
-            <Column id="3">Gene Symbol</Column>
+            <Query><![CDATA[]]></Query>
+            <Column id="1" unique="true">Target ID</Column>
+            <Column id="2">Target SO ID</Column>
+            <Column id="3">Target Symbol</Column>
             <Column id="4">Morpholino ID</Column>
             <Column id="5">Morpholino SO ID</Column>
             <Column id="6">Morpholino Symbol</Column>
@@ -2843,25 +2830,10 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <FileName>TALEN</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
-                   seq_sequence, seq_sequence_2, talen.mrkr_comments
-                from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                   and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                   and a.szm_object_type = gn.mrkr_type
-                   and b.szm_object_type = talen.mrkr_type
-                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-                   and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
-                   and mrel_type = "knockdown reagent targets gene"
-                   and talen.mrkr_zdb_id = seq_mrkr_zdb_id
-                order by gn.mrkr_abbrev
-                ]]>
-            </Query>
-            <Column id="1" unique="true">Gene ID</Column>
-            <Column id="2">Gene SO ID</Column>
-            <Column id="3">Gene Symbol</Column>
+            <Query><![CDATA[]]></Query>
+            <Column id="1" unique="true">Target ID</Column>
+            <Column id="2">Target SO ID</Column>
+            <Column id="3">Target Symbol</Column>
             <Column id="4">TALEN ID</Column>
             <Column id="5">TALEN SO ID</Column>
             <Column id="6">TALEN Symbol</Column>
@@ -2882,25 +2854,10 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <FileName>CRISPR</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
-                   seq_sequence, crispr.mrkr_comments
-                from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
-                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                   and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                   and a.szm_object_type = gn.mrkr_type
-                   and b.szm_object_type = crispr.mrkr_type
-                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-                   and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
-                   and mrel_type = "knockdown reagent targets gene"
-                   and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
-                order by gn.mrkr_abbrev
-                ]]>
-            </Query>
-            <Column id="1" unique="true">Gene ID</Column>
-            <Column id="2">Gene SO ID</Column>
-            <Column id="3">Gene Symbol</Column>
+            <Query><![CDATA[]]></Query>
+            <Column id="1" unique="true">Target ID</Column>
+            <Column id="2">Target SO ID</Column>
+            <Column id="3">Target Symbol</Column>
             <Column id="4">CRISPR ID</Column>
             <Column id="5">CRISPR SO ID</Column>
             <Column id="6">CRISPR Symbol</Column>
