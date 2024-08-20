@@ -531,17 +531,21 @@ public class SearchPrototypeController {
         for (SearchResult result : results) {
             FacetLookupEntry entry = new FacetLookupEntry();
             StringBuilder label = new StringBuilder();
+            String resultAutocompleteLabel = result.getAutocompleteLabel();
+            resultAutocompleteLabel = sanitizeAutocompleteLabel(resultAutocompleteLabel);
+
+
 
             //The injectAutocompleteHighlighting method will set a the autocomplete label if there
             //is going to be some special highlighting in there, otherwise, use the name.
-            if (StringUtils.isNotEmpty(result.getAutocompleteLabel())) {
-                label.append(result.getAutocompleteLabel());
+            if (StringUtils.isNotEmpty(resultAutocompleteLabel)) {
+                label.append(resultAutocompleteLabel);
             } else {
                 label.append(result.getName());
             }
 
             //Only show additional highlighting information if the name didn't create a highlight match
-            if (StringUtils.isNotEmpty(result.getMatchingText()) && StringUtils.isEmpty(result.getAutocompleteLabel())) {
+            if (StringUtils.isNotEmpty(result.getMatchingText()) && StringUtils.isEmpty(resultAutocompleteLabel)) {
                 label.append(" [");
                 label.append(result.getMatchingText());
                 label.append("]");
@@ -558,6 +562,34 @@ public class SearchPrototypeController {
         }
 
         return values;
+    }
+
+    /**
+     * Do not highlight tags themselves in the autocomplete results.
+     * For example, if a search result has the name:
+     * "<i>cox4i2</i> expression in cox17<sup>hza3/hza3</sup> from Zhao <i>et al.</i>, 2020 Fig. 6"
+     * and the search term contained an "i", the normal highlighting would highlight the "i" in the tag for "<i>et al.</i>"
+     * This would result in that tag becoming "<<span class=\"search-result-highlight\">i</span>>et al..."
+     * This method removes the tags from the autocomplete label in those cases.
+     *
+     * @param resultAutocompleteLabel the autocomplete label from the search result to clean up
+     * @return the cleaned up autocomplete label
+     */
+    private String sanitizeAutocompleteLabel(String resultAutocompleteLabel) {
+        if (StringUtils.isEmpty(resultAutocompleteLabel)) {
+            return resultAutocompleteLabel;
+        }
+        String regexOpeningTag = """
+                                <<span class=\"search-result-highlight\">(.*?)</span>>
+                                """;
+
+        String regexClosingTag = """
+                                 </<span class=\"search-result-highlight\">(.*?)</span>>
+                                 """;
+        resultAutocompleteLabel = resultAutocompleteLabel.replaceAll(regexOpeningTag.trim(), "<$1>");
+        resultAutocompleteLabel = resultAutocompleteLabel.replaceAll(regexClosingTag.trim(), "</$1>");
+
+        return resultAutocompleteLabel;
     }
 
     @RequestMapping(value = "/download")
