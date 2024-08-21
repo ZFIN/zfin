@@ -424,6 +424,8 @@ public interface InfrastructureRepository {
     UniProtRelease getUniProtReleaseByDate(Date date);
     UniProtRelease getLatestUnprocessedUniProtRelease();
 
+    UniProtRelease getLatestProcessedUniProtRelease();
+
     List<UniProtRelease> getAllUniProtReleases();
 
     UniProtRelease getUniProtReleaseByID(Long id);
