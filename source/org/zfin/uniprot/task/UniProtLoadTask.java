@@ -76,9 +76,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
         Date startTime = new Date();
         String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
-        String outputJsonName = getArgOrEnvironmentVar(args, 1, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
-        String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
-        String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
+        String commitChanges = getArgOrEnvironmentVar(args, 1, "UNIPROT_COMMIT_CHANGES", "false");
+        String outputJsonName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
+        String outputReportName = getArgOrEnvironmentVar(args, 3, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
         String contextInputFile = getArgOrEnvironmentVar(args, 5, "UNIPROT_CONTEXT_INPUT_FILE", "");
 

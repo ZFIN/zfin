@@ -463,6 +463,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public void insertUpdatesTableWithoutPerson(String recID, String fieldName, String oldValue, String newValue, String comments) {
+        insertUpdatesTable(recID, null, fieldName, oldValue, newValue, comments);
+    }
+
+    @Override
     public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
         insertUpdatesTable(recID, beanFieldUpdate, null);
     }
