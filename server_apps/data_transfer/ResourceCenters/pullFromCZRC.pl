@@ -105,7 +105,7 @@ sub downloadFiles($$) {
 	if (system("/local/bin/wget http://www.zfish.cn/$filename")) {
 	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
 	}
-	$labZdbId = "ZDB-LAB-130226-1";
+	# $labZdbId = "ZDB-LAB-130226-1";
     }
     if (-z $filename) {
 	&errorExit("Downloaded file $filename is empty.  Aborting.",
@@ -138,7 +138,7 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoF
 # Hard code the ZDB ID of ZIRC
 
 my $czrcZdbId = "ZDB-LAB-130226-1";
-my $labZdbId;
+# my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
 open(ZIRCREPORT, ">> <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") or die "can't open loadReport.txt";
@@ -167,7 +167,6 @@ my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $passwo
 $dbh->commit();
 $dbh->disconnect();
 
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
            or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 

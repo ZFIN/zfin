@@ -5,7 +5,7 @@
 
 use DBI;
 use FindBin;
-use lib "$FindBin::Bin/../../";
+use lib "$FindBin::Bin/../../../";
 use ZFINPerlModules qw(assertEnvironment);
 assertEnvironment('PGHOST', 'DB_NAME', 'ROOT_PATH');
 
