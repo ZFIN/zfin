@@ -42,11 +42,12 @@
     <hudson.tasks.Shell>
       <command>
         <![CDATA[
+TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
 echo "WORKSPACE=$WORKSPACE"
 echo "PWD=$PWD"
 echo "UNIPROT_LOAD_MODE=$UNIPROT_LOAD_MODE"
-rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report.json.report.html
-export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report.json"
+rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report.json.report.html $PWD/uniprot_secondary_load_report*.json.zip $PWD/uniprot_secondary_load_report*.html.zip
+export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report_$TIMESTAMP.json.zip"
 cd $SOURCEROOT
 gradle uniprotSecondaryTermLoadTask
         ]]>

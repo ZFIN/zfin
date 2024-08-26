@@ -30,7 +30,7 @@ public class InterproProteinActionCreator implements ActionCreator {
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
-        List<ProteinDTO> existingProteins = context.getExistingProteinRecords();
+        List<ProteinDTO> existingProteins = (context.getExistingProteinRecords() != null) ? context.getExistingProteinRecords() : new ArrayList<>();
         List<ProteinDTO> proteinsToKeep = new ArrayList<>();
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 

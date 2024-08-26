@@ -28,7 +28,7 @@ public class PDBActionCreator implements ActionCreator {
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
-        List<PdbDTO> existingRecords = context.getExistingPdbRecords();
+        List<PdbDTO> existingRecords = (context.getExistingPdbRecords() != null) ? context.getExistingPdbRecords() : new ArrayList<>();
         List<PdbDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 

@@ -463,6 +463,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public void insertUpdatesTableWithoutPerson(String recID, String fieldName, String oldValue, String newValue, String comments) {
+        insertUpdatesTable(recID, null, fieldName, oldValue, newValue, comments);
+    }
+
+    @Override
     public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
         insertUpdatesTable(recID, beanFieldUpdate, null);
     }
@@ -1772,6 +1777,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
         Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
         query.where(criteriaBuilder.isNull(uniProtRelease.get("processedDate")));
+        query.orderBy(criteriaBuilder.desc(uniProtRelease.get("date")));
+
+        return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public UniProtRelease getLatestProcessedUniProtRelease() {
+        Session session = currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
+        Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
+        query.where(criteriaBuilder.isNotNull(uniProtRelease.get("processedDate")));
         query.orderBy(criteriaBuilder.desc(uniProtRelease.get("date")));
 
         return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
