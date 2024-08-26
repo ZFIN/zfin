@@ -293,8 +293,7 @@ def whitelistTemplateFiles = [
         '**/pushToZirc.sql',
         '**/pullFromZIRC.pl',
         '**/pushToZirc.pl',
-        '**/orphanChecks.pl',                                       //server_apps/DB_maintenance
-        '**/fx_permission_check.pl',
+        '**/fx_permission_check.pl',                                //server_apps/DB_maintenance
         '**/loadExternalNotes.pl',
         '**/checkVarcharOctetLength.pl',
         '**/loadExternalNotes.sql',

@@ -8,7 +8,7 @@
 
 use Getopt::Long qw(:config bundling);
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 #######################  Main ###########################################
@@ -37,7 +37,7 @@ if (@ARGV < 1) {
 #
 
 $globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
-$globalpghost = "<!--|PGHOST|-->";
+$globalpghost = $ENV{'PGHOST'};
 $globalUsername = "";
 $globalPassword = "";
 
@@ -45,7 +45,7 @@ $globalPassword = "";
 
 $dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=$globalpghost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
 
-$dbaEmail = '<!--|VALIDATION_EMAIL_DBA|-->';
+$dbaEmail = $ENV{'VALIDATION_EMAIL_DBA'};
   
 $now_string = localtime;
 
