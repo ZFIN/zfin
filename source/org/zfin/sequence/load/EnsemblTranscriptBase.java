@@ -7,6 +7,8 @@ import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.FileUtil;
 
 import java.io.*;
@@ -19,11 +21,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 abstract public class EnsemblTranscriptBase {
 
     protected static final String baseUrl = "https://rest.ensembl.org";
     protected String cdnaFileName = "Danio_rerio.GRCz11.cdna.all.fa";
+    protected String ncrnaFileName = "Danio_rerio.GRCz11.ncrna.fa";
 
     protected List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
@@ -89,6 +93,9 @@ abstract public class EnsemblTranscriptBase {
         return sequenceList;
     }
 
+    public List<MarkerDBLink> getMarkerDbLinks(){
+        return getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+    }
 
     public static String getString(RichSequence richSequence) {
         return getUnversionedAccession(richSequence.getAccession());
