@@ -154,14 +154,15 @@ print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
 
 print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
-if ($doTheLoad > 0)[
-  try {
-    ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") ;
-  } catch {
-    warn "Failed to execute loadZfishbookData.sql - $_";
-    exit -1;
-  };
-]
+if ($doTheLoad > 0) {
+    try {
+        ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2");
+    }
+    catch {
+        warn "Failed to execute loadZfishbookData.sql - $_";
+        exit -1;
+    }
+}
 
 #sendLoadLogs("$dbname") if $doTheLoad > 0;
 
