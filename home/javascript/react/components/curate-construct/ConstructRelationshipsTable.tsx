@@ -259,7 +259,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
                             </div>
                         </td>
                         <td>
-                            <div className='gwt-Label'>Transgenic Construct</div>
+                            <div className='gwt-Label'>{rel.constructType}</div>
                         </td>
                         <td>
                             <div className='gwt-Label'>{rel.relationshipType}</div>

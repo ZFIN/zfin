@@ -453,7 +453,7 @@ public class PublicationAPIController {
     @ResponseBody
     @RequestMapping(value = "/{publicationID}/constructs")
     public List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(@PathVariable String publicationID) {
-        List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<ConstructRelationshipDTO>();
+        List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<>();
         List<ConstructRelationship> constructMarkerRelationships = getConstructRepository().getConstructRelationshipsByPublication(publicationID);
         if (CollectionUtils.isNotEmpty(constructMarkerRelationships)) {
             for (ConstructRelationship markerRelationship : constructMarkerRelationships) {
@@ -469,10 +469,14 @@ public class PublicationAPIController {
             }
         });
 
-        HashSet<ConstructRelationshipDTO> uniqueConstructRelationships = new HashSet<>(constructRelnDTOs);
-        ArrayList<ConstructRelationshipDTO> uniqueList = new ArrayList<>(uniqueConstructRelationships);
-        uniqueList.sort(Comparator.comparing(constructRelationshipDTO -> constructRelationshipDTO.getConstructDTO().getName()));
-        return uniqueList;
+        //Create a Set to ensure uniqueness
+        //Filter down the unique set of construct relationship DTOs to only include those that are in the original list constructMarkerRelationships
+        //Sort by name
+        return new HashSet<>(constructRelnDTOs).stream()
+            .filter(cmrel -> constructMarkerRelationships.stream()
+                .anyMatch(cmrel2 -> cmrel2.getZdbID().equals(cmrel.getZdbID())))
+            .sorted(Comparator.comparing(constructRelationshipDTO -> constructRelationshipDTO.getConstructDTO().getName()))
+            .toList();
     }
 
     @Getter
