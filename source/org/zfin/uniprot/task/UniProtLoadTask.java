@@ -26,6 +26,7 @@ import org.zfin.uniprot.persistence.UniProtRelease;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoMap;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
+import static org.zfin.util.FileUtil.writeToFileOrZip;
 
 /**
  * The UniProtLoadTask class loads UniProt data from a given dat file,
@@ -75,9 +76,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
         Date startTime = new Date();
         String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
-        String outputJsonName = getArgOrEnvironmentVar(args, 1, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
-        String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
-        String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
+        String commitChanges = getArgOrEnvironmentVar(args, 1, "UNIPROT_COMMIT_CHANGES", "false");
+        String outputJsonName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
+        String outputReportName = getArgOrEnvironmentVar(args, 3, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
         String contextInputFile = getArgOrEnvironmentVar(args, 5, "UNIPROT_CONTEXT_INPUT_FILE", "");
 
@@ -146,7 +147,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 log.info("Writing context file: " + contextOutputFile + ".");
-                objectMapper.writeValue(new File(contextOutputFile), context);
+                writeToFileOrZip(new File(contextOutputFile), objectMapper.writeValueAsString(context), "UTF-8");
             } catch (IOException e) {
                 log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
             }
@@ -154,10 +155,18 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     }
 
     private void setInputFileName() {
-        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
-        if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
-            inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
-            release = releaseOptional.get();
+        Optional<UniProtRelease> latestUnprocessedUniProtRelease = getLatestUnprocessedUniProtRelease();
+        if (inputFileName.isEmpty() && latestUnprocessedUniProtRelease.isPresent()) {
+
+            //if the latest unprocessed release is older than a processed release, throw an exception
+            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+            if (latestProcessed != null && latestProcessed.getDownloadDate().after(latestUnprocessedUniProtRelease.get().getDownloadDate())) {
+                throw new RuntimeException("The latest unprocessed UniProt release (from " + latestUnprocessedUniProtRelease.get().getDownloadDate() + ") is older than the latest processed UniProt release (from " + latestProcessed.getDownloadDate() + ").");
+            }
+
+            log.info("No input file specified, using latest unprocessed UniProt release: " + latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath() + ".");
+            inputFileName = latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath();
+            release = latestUnprocessedUniProtRelease.get();
         } else if (inputFileName.isEmpty()) {
             throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
@@ -199,8 +208,8 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
-            FileUtils.writeStringToFile(new File(jsonFile), jsonContents, "UTF-8");
+            writeToFileOrZip(new File(reportFile), filledTemplate, "UTF-8");
+            writeToFileOrZip(new File(jsonFile), jsonContents, "UTF-8");
             log.info("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);

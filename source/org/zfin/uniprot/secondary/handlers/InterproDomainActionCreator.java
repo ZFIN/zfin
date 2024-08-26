@@ -38,10 +38,10 @@ public class InterproDomainActionCreator implements ActionCreator {
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 
         //existing records
-        List<InterProProteinDTO> existingProteinDomains = context.getExistingInterproDomainRecords();
+        List<InterProProteinDTO> existingProteinDomains = (context.getExistingInterproDomainRecords() != null) ? context.getExistingInterproDomainRecords() : new ArrayList<>();
 
         //new records from download file
-        List<InterProProteinDTO> newProteinDomains = downloadedInterproDomainRecords;
+        List<InterProProteinDTO> newProteinDomains = (downloadedInterproDomainRecords != null) ? downloadedInterproDomainRecords : new ArrayList<>();
 
         //create new result set that contains only records in the existing records and not in the new records
         List<InterProProteinDTO> toDeleteProteinDomains = ListUtils.subtract(existingProteinDomains, newProteinDomains);

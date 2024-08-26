@@ -115,6 +115,8 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments);
 
+    void insertUpdatesTableWithoutPerson(String recID, String fieldName, String oldValue, String newValue, String comments);
+
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 
     void insertUpdatesTable(String recID, List<BeanFieldUpdate> beanFieldUpdates);
@@ -423,6 +425,8 @@ public interface InfrastructureRepository {
 
     UniProtRelease getUniProtReleaseByDate(Date date);
     UniProtRelease getLatestUnprocessedUniProtRelease();
+
+    UniProtRelease getLatestProcessedUniProtRelease();
 
     List<UniProtRelease> getAllUniProtReleases();
 

@@ -18,10 +18,13 @@ import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.secondary.handlers.*;
+import org.zfin.util.FileUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,6 +37,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
+import static org.zfin.util.FileUtil.writeToFileOrZip;
 
 @Log4j2
 @Getter
@@ -140,8 +144,19 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         this.mode = mode;
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
-        this.outputReportName = outputJsonName + ".report.html";
-        this.contextOutputFile = outputJsonName + ".context.json";
+
+        //get the file stem from the output file name
+        Path outputJsonPath = Paths.get(outputJsonName);
+        String outputJsonNameWithoutPath = outputJsonPath.getFileName().toString();
+        String outputJsonNameStemWithoutPath = outputJsonNameWithoutPath.substring(0, outputJsonNameWithoutPath.indexOf("."));
+        String outputJsonNameStem = Paths.get(outputJsonPath.getParent().toString(), outputJsonNameStemWithoutPath).toString();
+
+        this.outputReportName = outputJsonNameStem + ".report.html.zip";
+        this.contextOutputFile = outputJsonNameStem + ".context.json.zip";
+
+        log.info("Output JSON file: " + outputJsonName);
+        log.info("Output report file: " + this.outputReportName);
+        log.info("Output context file: " + this.contextOutputFile);
 
         this.ipToGoTranslationFile = ipToGoTranslationFile;
         this.ecToGoTranslationFile = ecToGoTranslationFile;
@@ -312,7 +327,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private void writeActionsToFile(SecondaryTermLoadActionsContainer actionsContainer) {
         try {
-            (new ObjectMapper()).writeValue(new File(this.outputJsonName), actionsContainer);
+            String json = (new ObjectMapper()).writeValueAsString(actionsContainer);
+            FileUtil.writeToFileOrZip(new File(this.outputJsonName), json, "UTF-8");
         } catch (IOException e) {
             log.error("Failed to write JSON file: " + this.outputJsonName, e);
             //do nothing
@@ -344,7 +360,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
+            writeToFileOrZip(new File(reportFile), filledTemplate, "UTF-8");
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }
@@ -359,7 +375,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 log.info("Writing context file: " + contextOutputFile + ".");
-                objectMapper.writeValue(new File(contextOutputFile), context);
+                writeToFileOrZip(new File(contextOutputFile), objectMapper.writeValueAsString(context), "UTF-8");
             } catch (IOException e) {
                 log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
             }

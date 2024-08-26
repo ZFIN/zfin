@@ -1,7 +1,6 @@
 package org.zfin.uniprot;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
@@ -19,6 +18,7 @@ import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.sequence.ForeignDBDataType.DataType.POLYPEPTIDE;
 import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
 import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
+import static org.zfin.uniprot.UniProtTools.LOAD_PUBS;
 
 @Log4j2
 public class UniProtLoadService {
@@ -96,8 +96,15 @@ public class UniProtLoadService {
             newLink.setLinkInfo(getUniProtLoadLinkInfo());
             dblinks.add(newLink);
         }
+        addHistoryUpdatesForNewDbLinks(dblinks);
         Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
         getSequenceRepository().addDBLinks(dblinks, publication, 50);
+    }
+
+    private static void addHistoryUpdatesForNewDbLinks(List<MarkerDBLink> dblinks) {
+        for(MarkerDBLink dblink : dblinks) {
+            getInfrastructureRepository().insertUpdatesTableWithoutPerson(dblink.getMarker().getZdbID(), "dblink", null, dblink.getAccessionNumber(), "UniProtKB link added by load process.");
+        }
     }
 
     private static void bulkDeleteAction(List<UniProtLoadAction> actions) {
@@ -106,26 +113,39 @@ public class UniProtLoadService {
         for(UniProtLoadAction action : actions) {
             DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
             List<String> pubIDs = dblink.getPublicationIdsAsList();
-            if (pubIDs.size() == 1 && pubIDs.get(0).equals(PUBLICATION_ATTRIBUTION_ID)) {
-                //only delete if this is the only attribution
-                log.info("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-                getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
+            if (pubIDs.size() >= 1) {
+                //are all of the existing attributions load pubs? if so, remove the dblink
+                if (pubIDs.stream().allMatch(UniProtTools::isLoadPublication)) {
+                    log.info("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+                    getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
+                    dblinksToDelete.add(dblink);
+                //are some of the existing attributions load pubs? if so, remove the load pub attributions
+                } else if (pubIDs.stream().anyMatch(UniProtTools::isLoadPublication)) {
+                    removeAttribution(dblink, action);
+                }
+            } else { //pubIDs.size() == 0
+                //if there are no attributions, just remove the dblink
+                log.info("Removing dblink with no attribution: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
                 dblinksToDelete.add(dblink);
-            } else {
-                //otherwise just remove the attribution
-                removeAttribution(dblink, action);
             }
         }
+        addHistoryUpdatesForDeletedDbLinks(dblinksToDelete);
         getSequenceRepository().removeDBLinks(dblinksToDelete);
     }
 
+    private static void addHistoryUpdatesForDeletedDbLinks(List<DBLink> dblinksToDelete) {
+        for(DBLink dblink : dblinksToDelete) {
+            getInfrastructureRepository().insertUpdatesTableWithoutPerson(dblink.getDataZdbID(), "dblink", dblink.getAccessionNumber(),null, "UniProtKB link removed by load process.");
+        }
+    }
+
     private static void removeAttribution(DBLink dblink, UniProtLoadAction action) {
-        log.info("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+        log.info("Removing attribution(s) from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
         dblink.getPublications()
             .stream()
-            .filter(attribution -> attribution.getSourceZdbID().equals(PUBLICATION_ATTRIBUTION_ID))
+            .filter(attribution -> List.of(LOAD_PUBS).contains(attribution.getSourceZdbID()))
             .forEach(attribution -> {
-                getInfrastructureRepository().deleteRecordAttribution(dblink.getZdbID(),PUBLICATION_ATTRIBUTION_ID);
+                getInfrastructureRepository().deleteRecordAttribution(dblink.getZdbID(),attribution.getSourceZdbID());
             });
     }
 

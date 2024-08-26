@@ -17,7 +17,7 @@ public class UniProtTools {
     public static final String CURATION_OF_PROTEIN_DATABASE_LINKS = "ZDB-PUB-020723-2";
     public static final String AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS = "ZDB-PUB-230615-71";
 
-    public static final String[] LOAD_PUBS = new String[]{CURATION_OF_PROTEIN_DATABASE_LINKS, AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS};
+    public static final String[] LOAD_PUBS = new String[]{CURATION_OF_PROTEIN_DATABASE_LINKS, AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS, UNIPROT_ID_LOAD_FROM_ENSEMBL};
 
 
     //use passed in lambda expression to transform the notes
