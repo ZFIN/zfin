@@ -5,7 +5,7 @@
 # to the ZGC project. The result is mailed to curators.
 #
 use strict;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 # set environment variables

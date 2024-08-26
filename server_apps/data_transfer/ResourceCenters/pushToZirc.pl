@@ -3,7 +3,7 @@
 #  output files are written to <!--|ROOT_PATH|-->/home/data_transfer/ZIRC/
 
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters";

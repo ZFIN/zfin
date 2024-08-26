@@ -23,6 +23,8 @@ my %monthDisplays = (
     "Dec" => "12"
 );
 
+
+
 #------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
 my $WHIRLEY_COUNT=-1;
 # my @WHIRLEY=('-', '\\', '|', '/');
