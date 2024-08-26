@@ -468,10 +468,11 @@ project(':cgi-bin') {
     }
 }
 
-task copyZFINPerlModules(type: Copy) {
-    description 'Copy ZFINPerlModules.pm to the target directory'
-    from "${projectDir}/server_apps/ZFINPerlModules.pm"
-    into "${targetroot}/server_apps/"
+project(':server_apps:perl_lib') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from project.projectDir
+        into targetroot + pName
+    }
 }
 
 task deployGitInfoFile() {
@@ -679,7 +680,7 @@ task make(type: GradleBuild) {
              ':server_apps:Reports:deployFiles',
              'deployGitInfoFile',
              ':cgi-bin:deployFiles',
-             'copyZFINPerlModules',
+             ':server_apps:perl_lib:deployFiles',
     ]
 }
 
