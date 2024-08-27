@@ -1,23 +1,54 @@
+logging.level: info
+
 filebeat.inputs:
-- type: log
+- type: filestream
   id: tomcat-log
   paths:
     - /opt/zfin/catalina_bases/zfin.org/logs/catalina.json
-  multiline.pattern: '^{'
-  multiline.negate: true
-  multiline.match:  after
+  fields:
+    event.dataset: tomcat-log
+  fields_under_root: true
+  parsers:
+    - multiline:
+        type: pattern
+        pattern: '^{'
+        negate: true
+        match:  after
   processors:
-  - decode_json_fields:
-      fields: ['message']
-      target: tomcat
-- type: log
+    - decode_json_fields:
+        fields: ['message']
+        target: tomcat
+- type: filestream
   id: httpd-log
   paths:
     - /var/log/httpd/zfin_access.json
+  fields:
+    event.dataset: httpd-log
+  fields_under_root: true
   processors:
-  - decode_json_fields:
-      fields: ['message']
-      target: httpd
+    - decode_json_fields:
+        fields: ['message']
+        target: httpd
+- type: filestream
+  id: solr-log
+  paths:
+    - /var/solr/logs/solr.log
+  fields:
+    event.dataset: solr-log
+  fields_under_root: true
+  processors:
+    - dissect:
+        tokenizer: "%{+start_time} %{+start_time} %{debug_level} (%{worker}) %{log_entry}"
+        field: "message"
+        target_prefix: ""
+    - timestamp:
+        field: start_time
+        layouts:
+          - '2006-01-02 15:04:05.999'
+        test:
+          - '2024-08-23 17:58:59.655'
+    - drop_fields:
+        fields: [start_time]
 
 filebeat.config.modules:
   path: "${path.config}/modules.d/*.yml"
