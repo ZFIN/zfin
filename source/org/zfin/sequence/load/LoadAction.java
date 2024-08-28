@@ -53,19 +53,12 @@ public class LoadAction implements Comparable<LoadAction> {
     public enum SubType {
         MULTIPLE_GENES_PER_ACCESSION("Multiple Genes per Accession"),
         MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED("Multiple Genes per Accession: Contains Approved Accession"),
-        MATCH_BY_REFSEQ("Matched via RefSeq: Single Gene per Accession"),
-        LOST_UNIPROT("ZFIN Gene Losing UniProt Accession"),
-        LOST_UNIPROT_PREV_MATCH_BY_GB("Previously Matched by GenBank: No RefSeq Match"),
-        LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match"),
-        LEGACY_PROBLEM_FILE("Legacy Problem File"),
-        LEGACY_PROBLEM_FILE_LOAD("Legacy Problem File - Load"),
-        LEGACY_PROBLEM_FILE_DELETE("Legacy Problem File - Delete"),
-        REMOVE_ATTRIBUTION("Remove Attribution"),
         UPDATE_LENGTH_NULL("Update length info on DB_LINK for transcripts that had no value"),
         UPDATE_LENGTH_NON_NULL("Update length info on DB_LINK for transcripts that had a value"),
-        ENSDART_MISSING("ENSDART ID Missing in ZFIN"),
-        ENSDARG_MISSING("ENSDARG ID Missing in ZFIN"),
+        ENSDART_MISSING("Transcripts (ENSDARTs) Missing in ZFIN"),
+        ENSDARG_MISSING("Genes (ENSDARGs) Missing in ZFIN"),
         ZFIN_OBSOLETE("OBSOLETED ENSDARG IDs in ZFIN"),
+        ZFIN_OBSOLETE_MULTIPLE("OBSOLETED ENSDARG IDs in ZFIN on multiple ZDB IDs"),
         ZFIN_TRANSCRIPT_OBSOLETE("OBSOLETED ENSDART IDs in ZFIN"),
         ADD_ATTRIBUTION("Add Attribution");
 

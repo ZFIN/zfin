@@ -25,35 +25,35 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.load.LoadAction.SubType.*;
 
 @Log4j2
-public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
+public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
 
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     public static final String HTTPS_WWW_ENSEMBL_ORG_DANIO_RERIO_GENE_SUMMARY_G = "https://www.ensembl.org/Danio_rerio/Gene/Summary?g=";
+
+    public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
 
     public static void main(String[] args) throws IOException {
         AbstractScriptWrapper wrapper = new AbstractScriptWrapper();
         wrapper.initAll();
 
-        EnsemblTranscriptLengthUpdate loader = new EnsemblTranscriptLengthUpdate();
+        EnsemblTranscriptUpdateLengthTask loader = new EnsemblTranscriptUpdateLengthTask();
         loader.init();
     }
-
-    private Map<String, List<RichSequence>> allEnsemblProvidedGeneMap;
 
     Map<Marker, List<TranscriptDBLink>> geneEnsdartMap;
 
     public void init() throws IOException {
-        downloadFile(cdnaFileName);
+        super.init();
         loadSequenceMapFromDownloadFile();
         System.exit(0);
     }
 
     private void loadSequenceMapFromDownloadFile() {
 
-        EnsemblLoadSummaryItemDTO dto = new EnsemblLoadSummaryItemDTO();
-
         // <ensdargID, List<RichSequence>>
-        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(cdnaFileName);
+        Map<String, List<RichSequence>> geneTranscriptMap = getAllGeneTranscriptsFromFile();
+
+        EnsemblLoadSummaryItemDTO dto = new EnsemblLoadSummaryItemDTO();
         dto.getCounts().put("ensemblGeneCount", (long) geneTranscriptMap.size());
         dto.getCounts().put("zfinEnsemblGeneCount", (long) getMarkerDbLinks().size());
         Set<RichSequence> transcriptSet = new HashSet<>(geneTranscriptMap.values().stream().flatMap(Collection::stream).toList());
@@ -77,6 +77,10 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
                 LoadLink link = new LoadLink(idConcat, "https://zfin.org/" + zdbID);
                 obsoletedAction.addLink(link);
             });
+            if (zdbIDs.size() > 1) {
+                obsoletedAction.setType(LoadAction.Type.WARNING);
+                obsoletedAction.setSubType(ZFIN_OBSOLETE_MULTIPLE);
+            }
             actions.add(obsoletedAction);
         });
 
@@ -86,9 +90,6 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         // remove version number from accession ID
-        allEnsemblProvidedGeneMap = new LinkedHashMap<>();
-        sortedGeneTranscriptMap.forEach((versionedAccession, richSequences) -> allEnsemblProvidedGeneMap.put(getUnversionedAccession(versionedAccession), richSequences));
-
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         List<TranscriptDBLink> ensemblTranscripts = geneEnsdartMap.values().stream().flatMap(Collection::stream).toList();
         List<RichSequence> richSequences = sortedGeneTranscriptMap.values().stream().flatMap(Collection::stream).toList();
@@ -113,8 +114,11 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
         Map<String, List<TranscriptDBLink>> tmap = ensemblTranscripts.stream().collect(Collectors.groupingBy(DBLink::getAccessionNumber));
         CollectionUtils.removeAll(zfinEnsemblTranscriptIDs, ensemblTranscriptIDs).forEach(missingID -> {
             List<String> zdbIDs = tmap.get(missingID).stream().map(transcriptDBLink -> transcriptDBLink.getTranscript().getZdbID()).toList();
-            String idConcat = missingID + " - " + StringUtils.join(zdbIDs, ",");
+            String idConcat = StringUtils.join(zdbIDs, ",");
             LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_TRANSCRIPT_OBSOLETE, missingID, idConcat, "This ENSDART ID is not found at ENSEMBL", 0, new TreeSet<>());
+            if (zdbIDs.size() > 1) {
+                obsoletedAction.setType(LoadAction.Type.WARNING);
+            }
             zdbIDs.forEach(zdbID -> {
                 LoadLink link = new LoadLink(idConcat, "https://zfin.org/" + zdbID);
                 obsoletedAction.addLink(link);
@@ -155,7 +159,6 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
             HibernateUtil.flushAndCommitCurrentSession();
             System.out.println("Number of ZFIN transcripts in ZFIN with no length: " + numberOfNullLengthAdded);
             System.out.println("Number of ZFIN transcripts in ZFIN with length adjusted: " + numberOfNonNullLengthAltered);
-            System.out.println("Adjusted Tx: " + modifiedTx);
 
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
@@ -165,14 +168,6 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
         dto.setDescription("Loading Ensembl Transcripts into ZFIN");
         LoadActionsContainer container = new LoadActionsContainer(dto, actions);
         writeOutputReportFile(actions, dto);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(container);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(json);
         System.exit(0);
     }
 
@@ -193,7 +188,6 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
 
     private void writeOutputReportFile(Set<LoadAction> actions, EnsemblLoadSummaryItemDTO summary) {
         String reportFile = "ensembl-transcript-load-report.html";
-        String jsonFile = "ensemb-transcript-output.json";
 
         log.info("Creating report file: " + reportFile);
         try {
@@ -202,12 +196,10 @@ public class EnsemblTranscriptLengthUpdate extends EnsemblTranscriptBase {
                 .summary(summary)
                 .build();
             String jsonContents = actionsToJson(actionsContainer);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/ensembl-transcript-report-template.html";
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + REPORT_HOME_DIRECTORY + "/ensembl-transcript-report-template.html";
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
             FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
-            FileUtils.writeStringToFile(new File(jsonFile), jsonContents, "UTF-8");
-            log.info("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }

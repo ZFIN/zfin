@@ -34,10 +34,22 @@ abstract public class EnsemblTranscriptBase {
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
 
+    public void init() throws IOException {
+        downloadFile(cdnaFileName, "cdna");
+        downloadFile(ncrnaFileName, "ncrna");
+    }
 
-    protected static void downloadFile(String fileName) {
+    protected  Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
+        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(cdnaFileName);
+        Map<String, List<RichSequence>> geneNcRNATranscriptMap = getGeneTranscriptMap(ncrnaFileName);
+        geneTranscriptMap.putAll(geneNcRNATranscriptMap);
+        return geneTranscriptMap;
+    }
+
+
+    protected static void downloadFile(String fileName, String directory) {
         String zippedFileName = fileName + ".gz";
-        String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/cdna/" + zippedFileName;
+        String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/" + directory + "/" + zippedFileName;
 
         try {
             FileUtils.copyURLToFile(
@@ -93,7 +105,7 @@ abstract public class EnsemblTranscriptBase {
         return sequenceList;
     }
 
-    public List<MarkerDBLink> getMarkerDbLinks(){
+    public List<MarkerDBLink> getMarkerDbLinks() {
         return getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
     }
 
