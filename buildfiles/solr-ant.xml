@@ -186,6 +186,7 @@
             </fileset>
             <filterset refid="allfilters"/>
         </copy>
+        <chmod file="${env.SOLR_HOME}/**" perm="g+w" type="both"/>
 
         <antcall target="start-solr"/>
     </target>
