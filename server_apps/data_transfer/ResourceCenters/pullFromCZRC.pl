@@ -18,7 +18,7 @@
 use DBI;
 use MIME::Lite;
 use Try::Tiny;
-use lib "$ENV{'ROOT_PATH'}/server_apps/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 my $rootPath = $ENV{'ROOT_PATH'};
