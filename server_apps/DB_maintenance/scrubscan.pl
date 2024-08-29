@@ -25,7 +25,7 @@
 
 use English;			# enable longer special variable names
 
-use lib "$ENV{'ROOT_PATH'}/server_apps/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 #
