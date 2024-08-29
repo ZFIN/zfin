@@ -137,7 +137,7 @@ task runEnsemblTranscriptChecker(type: JavaExec) {
 
 task runEnsemblTranscriptLengthUpdater(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.sequence.load.EnsemblTranscriptLengthUpdate'
+    main = 'org.zfin.sequence.load.EnsemblTranscriptUpdateLengthTask'
 }
 
 task createMeshChebiMappingFile(type: JavaExec) {

@@ -7,6 +7,8 @@ import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.FileUtil;
 
 import java.io.*;
@@ -19,21 +21,35 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 abstract public class EnsemblTranscriptBase {
 
     protected static final String baseUrl = "https://rest.ensembl.org";
     protected String cdnaFileName = "Danio_rerio.GRCz11.cdna.all.fa";
+    protected String ncrnaFileName = "Danio_rerio.GRCz11.ncrna.fa";
 
     protected List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
 
+    public void init() throws IOException {
+        downloadFile(cdnaFileName, "cdna");
+        downloadFile(ncrnaFileName, "ncrna");
+    }
 
-    protected static void downloadFile(String fileName) {
+    protected  Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
+        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(cdnaFileName);
+        Map<String, List<RichSequence>> geneNcRNATranscriptMap = getGeneTranscriptMap(ncrnaFileName);
+        geneTranscriptMap.putAll(geneNcRNATranscriptMap);
+        return geneTranscriptMap;
+    }
+
+
+    protected static void downloadFile(String fileName, String directory) {
         String zippedFileName = fileName + ".gz";
-        String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/cdna/" + zippedFileName;
+        String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/" + directory + "/" + zippedFileName;
 
         try {
             FileUtils.copyURLToFile(
@@ -89,6 +105,9 @@ abstract public class EnsemblTranscriptBase {
         return sequenceList;
     }
 
+    public List<MarkerDBLink> getMarkerDbLinks() {
+        return getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+    }
 
     public static String getString(RichSequence richSequence) {
         return getUnversionedAccession(richSequence.getAccession());

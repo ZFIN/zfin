@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Load Ensembl Transcript (cdna) file and update the length of all ensembl accessions</description>
+  <description>Load Ensembl Transcript (cdna, ncrna) file and update the length of all ensembl accessions accordingly</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>

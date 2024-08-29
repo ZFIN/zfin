@@ -416,7 +416,7 @@ public final class FileUtil {
 
             gZIPInputStream.close();
             fileOutputStream.close();
-            LOG.info("The file was decompressed successfully!");
+            LOG.info("The file " + compressedFile + "was decompressed successfully!");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
