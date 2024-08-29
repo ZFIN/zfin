@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,9 +9,12 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Utility class for creating file path names and other things.
@@ -412,9 +416,50 @@ public final class FileUtil {
 
             gZIPInputStream.close();
             fileOutputStream.close();
-            LOG.info("The file was decompressed successfully!");
+            LOG.info("The file " + compressedFile + "was decompressed successfully!");
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Create a zip file with the given content and encoding.
+     * @param zipFile The zip file to create. Expect the file to end with ".ORIGINALEXTENSION.zip" (eg. examplefile.html.zip)
+     * @param content The content to write to the zip file
+     * @param encoding The encoding to use when writing the content
+     * @throws IOException
+     */
+    public static void stringToZipFile(File zipFile, String content, String encoding) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile), StandardCharsets.UTF_8)) {
+            zos.setLevel(9);
+            // Create a zip entry with the same name as the zip file but without the ".zip" extension
+            String entryName = zipFile.getName().replaceFirst("\\.zip$", "");
+            zos.putNextEntry(new ZipEntry(entryName));
+
+            // Write the content to the zip entry
+            byte[] bytes = content.getBytes(encoding);
+            zos.write(bytes, 0, bytes.length);
+            zos.closeEntry();
+        }
+    }
+
+    /**
+     * Writes the specified content to the given file, optionally compressing it into a ZIP format.
+     *
+     * If the file name ends with ".zip", the content will be written as a zipped file. Otherwise,
+     * the content will be written as a plain text file.
+     *
+     * @param file     the file to write the content to; if the file name ends with ".zip", the content will be zipped
+     * @param content  the content to be written to the file
+     * @param encoding the encoding to be used when writing the content to the file
+     * @throws IOException if an I/O error occurs during writing
+     */
+    public static void writeToFileOrZip(File file, String content, String encoding) throws IOException {
+        if (file.getName().endsWith(".zip")) {
+            stringToZipFile(file, content, encoding);
+        } else {
+            FileUtils.writeStringToFile(file, content, encoding);
         }
     }
 

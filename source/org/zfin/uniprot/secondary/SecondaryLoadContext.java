@@ -374,14 +374,18 @@ public class SecondaryLoadContext {
     }
 
     public Map<String, List<DBLinkSlimDTO>> getMapOfDbLinksByAccession(ForeignDB.AvailableName dbName) {
-        return switch (dbName) {
+        Map<String, List<DBLinkSlimDTO>> dblinks = switch (dbName) {
             case INTERPRO -> getInterproDbLinks();
             case EC -> getEcDbLinks();
             case PFAM -> getPfamDbLinks();
             case PROSITE -> getPrositeDbLinks();
             case UNIPROTKB -> getUniprotDbLinks();
-            default -> null;
+            default -> Collections.emptyMap();
         };
+        if (dblinks == null) {
+            return Collections.emptyMap();
+        }
+        return dblinks;
     }
 
     public List<DBLinkSlimDTO> getFlattenedDbLinksByDbName(ForeignDB.AvailableName dbName) {
@@ -414,6 +418,11 @@ public class SecondaryLoadContext {
     }
     public List<MarkerGoTermEvidenceSlimDTO> getExistingMarkerGoTermEvidenceRecords(ForeignDB.AvailableName dbName) {
         String pubID = getPubIDForMarkerGoTermEvidenceByDB(dbName);
+
+        if (getExistingMarkerGoTermEvidenceRecords() == null) {
+            return Collections.emptyList();
+        }
+
         return this.getExistingMarkerGoTermEvidenceRecords()
                 .stream()
                 .filter(markerGoTermEvidenceSlimDTO -> markerGoTermEvidenceSlimDTO.getPublicationID().equals(pubID))

@@ -88,7 +88,7 @@ sub geno_available_parse($$){
 	
 	  $lineNumber++;
 	  ##($genoId)=split(/\t/,$newGenoAvailableLine);
-	if ($newGenoAvailableLine !~ m/^ZDB\-ALT\-\d{6}\-\d+$/ && $resourceFile =~ 'CZRCresource.txt'){
+	if ($newGenoAvailableLine !~ m/^ZDB\-ALT\-\d{6}\-\d+$/ && $resourceFile =~ 'resourceforzfin.txt'){
 	    $badInputData{$lineNumber} = $newGenoAvailableLine;
 	    $ctBadRows++;
 	    next;
@@ -714,7 +714,7 @@ sub geno_main($$$) {
 	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
     }
     elsif ($resourceCenter eq "CZRC"){
-	$resourceFile = "CZRCresource.txt"; # which genos supplied from CZRC
+	$resourceFile = "resourceforzfin.txt"; # which genos supplied from CZRC
 	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
     }
     elsif ($resourceCenter eq "Baier"){

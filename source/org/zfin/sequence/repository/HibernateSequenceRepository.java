@@ -1230,8 +1230,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
+    private List<MarkerDBLink> cachedMarkerDbLinks;
+
     @Override
     public List<MarkerDBLink> getAllEnsemblGenes(ForeignDB.AvailableName foreignDB) {
+        if (CollectionUtils.isNotEmpty(cachedMarkerDbLinks)) {
+            return cachedMarkerDbLinks;
+        }
         String hql = """ 
                   from MarkerDBLink
                   where referenceDatabase.foreignDB.dbName = (:dbName)
@@ -1239,7 +1244,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
             """;
         Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
         query.setParameter("dbName", foreignDB);
-        return query.list();
+        cachedMarkerDbLinks = query.list();
+        return cachedMarkerDbLinks;
     }
 
     public List<MarkerDBLink>
@@ -1286,10 +1292,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //        query.setParameter("vega", ForeignDB.AvailableName.VEGA_TRANS);
         query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         List<Object[]> list = query.list();
-        System.out.println("Total Number of Ensembl Transcript records: "+list.size());
+        System.out.println("Total Number of Ensembl Transcript records: " + list.size());
         Map<Marker, List<TranscriptDBLink>> map = new HashMap<>();
         list.forEach(tuple -> {
-            List<TranscriptDBLink> transcriptList = map.computeIfAbsent(((Marker)tuple[1]), k -> new ArrayList<>());
+            List<TranscriptDBLink> transcriptList = map.computeIfAbsent(((Marker) tuple[1]), k -> new ArrayList<>());
             transcriptList.add((TranscriptDBLink) tuple[0]);
         });
         return map;

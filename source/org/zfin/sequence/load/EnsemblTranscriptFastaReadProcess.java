@@ -55,7 +55,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
 
     public void init() throws IOException {
-        downloadFile(cdnaFileName);
+        super.init();
         loadSequenceMapFromDownloadFile();
 
         // <ensdargID, DBLink>
@@ -579,11 +579,9 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
     }
 
     private void loadSequenceMapFromDownloadFile() {
-        String fileName = "Danio_rerio.GRCz11.cdna.all.fa";
-        downloadFile(fileName);
 
         // <ensdargID, List<RichSequence>>
-        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(fileName);
+        Map<String, List<RichSequence>> geneTranscriptMap = getAllGeneTranscriptsFromFile();
         Map<String, List<RichSequence>> sortedGeneTranscriptMap = geneTranscriptMap.entrySet().stream()
             .sorted((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));

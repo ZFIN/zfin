@@ -18,8 +18,12 @@
 use DBI;
 use MIME::Lite;
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
+
+my $rootPath = $ENV{'ROOT_PATH'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 
 #----------------------------------------------------------------------
 # Write a line to the report 
@@ -94,7 +98,7 @@ sub errorExit(@) {
 sub downloadFiles($$) {
     my $filename = $_[0];
 
-    my $wgetStatusFile = "/tmp/pullFromResourceCenter.<!--|DB_NAME|-->.$filename";
+    my $wgetStatusFile = "/tmp/pullFromResourceCenter." . $dbname . "." . $filename;
     system("rm -f $wgetStatusFile");
    system("rm -f $wgetStatusFile*");
    system("rm -f $filename*");
@@ -105,7 +109,7 @@ sub downloadFiles($$) {
 	if (system("/local/bin/wget http://www.zfish.cn/$filename")) {
 	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
 	}
-	# $labZdbId = "ZDB-LAB-130226-1";
+	$labZdbId = "ZDB-LAB-130226-1";
     }
     if (-z $filename) {
 	&errorExit("Downloaded file $filename is empty.  Aborting.",
@@ -122,9 +126,9 @@ sub downloadFiles($$) {
 #
 # Now, get the subroutines for handling each type of data.
 
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter.pl");
-#require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
+require ("$rootPath/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc.pl");
+require ("$rootPath/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter.pl");
+#require ("$rootPath/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
 
 #----------------------------------------------------------------------
 # Main
@@ -138,18 +142,16 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoF
 # Hard code the ZDB ID of ZIRC
 
 my $czrcZdbId = "ZDB-LAB-130226-1";
-# my $labZdbId;
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
+my $labZdbId;
+system("/bin/rm -f $rootPath/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
-open(ZIRCREPORT, ">> <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") or die "can't open loadReport.txt";
-system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
+open(ZIRCREPORT, ">> $rootPath/server_apps/data_transfer/ResourceCenters/loadReport.txt") or die "can't open loadReport.txt";
+system("/bin/chmod ug+w $rootPath/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 # Prepare to do some work.
 #  CD into working directory
 #  remove old downloaded files.
 #  Open Database.
-my $dbname = "<!--|DB_NAME|-->";
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
-my $dbhost = "<!--|PGHOST|-->";
+chdir "$rootPath/server_apps/data_transfer/ZIRC/";
 my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
               or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
@@ -181,8 +183,8 @@ $dbh->commit();
 $dbh->disconnect();
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f syncFishOrderThisLinks.sql");
-  #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f syncFishOrderThisLinks.sql");
+  #&sendLoadReport("Data transfer report", $ENV{'VALIDATION_EMAIL_DBA'} , "$rootPath/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 } catch {
   warn "Failed to execute syncFishOrderThisLinks.sh - $_";
   exit -1;
