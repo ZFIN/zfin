@@ -8,7 +8,7 @@
             <b>Record not found.</b>
         </c:when>
         <c:otherwise>
-            <b>Requested ID: <span style="color:red; font-size: large;"> ${zdbID}</span> not found on ZFIN.</b>
+            <b>Requested ID: <span style="color:red; font-size: large;"><c:out value="${zdbID}" /></span> not found on ZFIN.</b>
         </c:otherwise>
     </c:choose>
 </div>

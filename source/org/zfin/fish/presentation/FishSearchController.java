@@ -1,6 +1,7 @@
 package org.zfin.fish.presentation;
 
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,7 @@ public class FishSearchController {
             formBean.setFishSearchResult(searchResult);
         }
         attachMetaData(model, formBean);
+        model.addAttribute("xmlEscapedAnatomyTermNames", StringEscapeUtils.escapeHtml4(formBean.getAnatomyTermNames()));
 
         return "fish/fish-search-result";
     }
