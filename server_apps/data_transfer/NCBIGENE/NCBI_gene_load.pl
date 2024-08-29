@@ -34,7 +34,7 @@ use Try::Tiny;
 use FindBin;
 
 #relative path to library file(s) (ZFINPerlModules.pm)
-use lib "$FindBin::Bin/../../";
+use lib "$FindBin::Bin/../../perl_lib/";
 use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File assertFileExistsAndNotEmpty) ;
 
 our $debug = 1;

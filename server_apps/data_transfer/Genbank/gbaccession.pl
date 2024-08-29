@@ -9,7 +9,7 @@
 use strict;
 use Try::Tiny;
 use POSIX;
-use lib "$ENV{'ROOT_PATH'}/server_apps/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);

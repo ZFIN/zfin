@@ -9,7 +9,7 @@
 use DBI;
 use Try::Tiny;
 
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 # set environment variables
