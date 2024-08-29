@@ -288,8 +288,6 @@ def whitelistTemplateFiles = [
         '**/loadAndUpdateNCBIOrthologs.sql',
         '**/E_unload_ensembl_contig.sql',                           //server_apps/data_transfer/Downloads/GFF3
         '**/pullFromEZRC.pl',                                       //server_apps/data_transfer/ResourceCenters
-        '**/pullFromCZRC.pl',
-        '**/pullFromResourceCenter.pl',
         '**/pushToZirc.sql',
         '**/pullFromZIRC.pl',
         '**/pushToZirc.pl',
