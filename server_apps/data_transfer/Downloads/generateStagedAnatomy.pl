@@ -15,7 +15,7 @@
 use strict;
 use DBI;
 use FindBin;
-use lib "$FindBin::Bin/../../";
+use lib "$FindBin::Bin/../../perl_lib/";
 use ZFINPerlModules qw(assertEnvironment);
 assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 

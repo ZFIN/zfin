@@ -2,7 +2,7 @@
 
 use DBI;
 
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
 use Try::Tiny;
 

@@ -17,7 +17,7 @@
 
 use DBI;
 use MIME::Lite;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 #----------------------------------------------------------------------
 # Write a line to the report 

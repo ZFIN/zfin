@@ -6,7 +6,7 @@
 use DBI;
 use Try::Tiny;
 use FindBin;
-use lib "$FindBin::Bin/../../../";
+use lib "$FindBin::Bin/../../../perl_lib/";
 use ZFINPerlModules qw(assertEnvironment);
 assertEnvironment('PGHOST', 'DB_NAME', 'ROOT_PATH', 'TARGETROOT');
 

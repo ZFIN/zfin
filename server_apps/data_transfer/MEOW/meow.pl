@@ -4,7 +4,7 @@
 ##$ENV{"DBDATE"}="Y4MD-";
 
 use Try::Tiny;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
+use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 if (! -e "<!--|FTP_ROOT|-->/pub/transfer/MEOW") {
