@@ -94,7 +94,8 @@
                 input#searchTerm.error { color: black; }
             </style>
             <form:hidden path="anatomyTermIDs"/>
-            <form:hidden path="anatomyTermNames"/>
+            <input id="anatomyTermNames" name="anatomyTermNames" type="hidden" value="${xmlEscapedAnatomyTermNames}"/>
+
             <script type="text/javascript">
                 var LookupProperties = {
                     inputDiv:"anatomyTermInput",
@@ -102,7 +103,7 @@
                     inputName:"searchTerm",
                     showError:true,
                     <c:if test='${formBean.anatomyTermNames != null}' >
-                    previousTableValues:"${formBean.anatomyTermNames}",
+                    previousTableValues:"${xmlEscapedAnatomyTermNames}",
                     </c:if>
                     hiddenNames:"anatomyTermNames",
                     hiddenIds:"anatomyTermIDs",
