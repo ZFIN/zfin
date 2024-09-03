@@ -87,4 +87,8 @@ public class ZdbIDValidator {
         return (List<String>) CollectionUtils.subtract(invalidIDs, mergedIDs);
     }
 
+    public static boolean isValidFormat(String ID) {
+        return ID.matches("ZDB-[A-Z]+-\\d{6}-\\d+");
+    }
+
 }
