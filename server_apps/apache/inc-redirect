@@ -82,7 +82,7 @@ RewriteRule ^.*$ /action/marker/citation-list/%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}     ^genotype.zdbID=([\w-]+)$    [NC]
 RewriteRule ^.*$ /%1? [NC,R=301]
 
-RewriteCond %{QUERY_STRING}     ^anatomyItem.zdbID=([\w-:]+)$    [NC]
+RewriteCond %{QUERY_STRING}     ^anatomyItem.zdbID=([\w:-]+)$    [NC]
 RewriteRule ^.*$ /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-anatomy_item.apg&OID=([\w-]+)$    [NC]
@@ -130,7 +130,7 @@ RewriteRule ^.*$ /action/marker/%1/phenotype-summary? [NC,R=301]
 RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
 
-RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
+RewriteCond %{QUERY_STRING} ^termID=([\w:-]+)$ [NC]
 RewriteRule ^/action/ontology/term-detail$ /action/ontology/term/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
@@ -142,14 +142,14 @@ RewriteRule ^/action/marker/transcript-view /%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
 
-RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
+RewriteCond %{QUERY_STRING}    ^termID=([\w:-]+)$    [NC]
 RewriteRule ^/action/ontology/term/ /%1? [NC,R=301]
 
-RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w:-]+)$    [NC]
 RewriteRule ^/action/genotype/genotype-detail$ /%1? [NC,R=301]
 
 
-RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w:-]+)$    [NC]
 RewriteRule ^/action/feature/feature-detail /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^query=(.*)$ [NC]
@@ -205,7 +205,7 @@ RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
 RewriteRule ^/action/antibody/antibody-search /action/antibody/search [NC,R=301]
 
 # normal ZFIN_jump requests
-RewriteCond %{QUERY_STRING}     ^record=([\w-0-9:]+)$    [NC]
+RewriteCond %{QUERY_STRING}     ^record=([\w:0-9-]+)$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
 
 # catch the jump-to.apg as well!

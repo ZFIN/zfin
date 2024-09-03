@@ -1,16 +1,21 @@
-FROM centos:7
-
-RUN sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
-RUN sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
-RUN sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+FROM fedora:latest
 
 # Install Apache
 RUN yum -y update
-RUN yum -y install httpd httpd-tools mod_ssl mod_ldap
+RUN yum -y install httpd httpd-tools mod_ssl mod_ldap \
+                   perl-DBI perl-DBD-Pg \
+                   perl-CGI perl-Carp perl-Net-HTTP perl-libwww-perl perl-URI
+
+RUN sed -i \
+		-e 's/^\(SSLCertificateFile \/etc\/pki\/tls\/certs\/localhost.crt\)/#\1/' \
+		-e 's/^\(SSLCertificateKeyFile \/etc\/pki\/tls\/private\/localhost.key\)/#\1/' \
+		/etc/httpd/conf.d/ssl.conf
 
 RUN groupadd -g 1000 zfin && \
     usermod -a -G zfin apache
 
+RUN mkdir -p /opt/zfin/bin
+RUN /bin/ln -s /usr/bin/perl /opt/zfin/bin/perl
 RUN /bin/ln -s /opt/zfin/www_homes /srv/www
 
 COPY ./httpd.conf /etc/httpd/conf/httpd.conf
