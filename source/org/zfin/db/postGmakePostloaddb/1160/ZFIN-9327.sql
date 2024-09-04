@@ -22,15 +22,4 @@ select mrkrgoev_mrkr_zdb_id, mrkr_abbrev, count(*) as ct from marker_go_records_
 group by mrkrgoev_mrkr_zdb_id, mrkr_abbrev order by ct desc;
 
 
-
 \COPY (SELECT * FROM marker_go_records_temp) TO 'marker_go_many_BP.csv' WITH (FORMAT CSV, DELIMITER E'\t', QUOTE ' ');
-
-drop table marker_go_temp;
-
-
-
-
-
-select count(*) from marker_go_term_evidence, term
-where mrkrgoev_term_zdb_id = term.term_zdb_id
-and term.term_ontology = 'biological_process';
