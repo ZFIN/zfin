@@ -38,6 +38,8 @@ public class FluorescentProtein extends AbstractFluorescence {
     private String excitationColor;
     @Column(name = "fp_aliases")
     private String aliases;
+    @Column(name = "fp_uuid")
+    private String uuid;
 
     @ManyToMany
     @JoinTable(name = "fpProtein_efg", joinColumns = {
