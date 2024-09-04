@@ -27,7 +27,7 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $SOURCEROOT &amp;&amp; gradle runEnsemblTranscriptLengthUpdater && cp ensembl-transcript-load-report.html $TARGETROOT/.</command>
+            <command>cd $SOURCEROOT &amp;&amp; gradle runEnsemblTranscriptLengthUpdater &amp;&amp; cp ensembl-transcript-load-report.html $TARGETROOT/.</command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
