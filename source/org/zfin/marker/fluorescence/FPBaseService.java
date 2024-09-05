@@ -8,7 +8,10 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 public class FPBaseService {
@@ -52,6 +55,38 @@ public class FPBaseService {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public List<FluorescentProtein> importMissingProteins() {
+        List<FluorescentProtein> allExistingProteinsLocally = getMarkerRepository().getAllFluorescentProteins();
+        Set<String> existingProteinUUIDs = allExistingProteinsLocally.stream().map(FluorescentProtein::getUuid).collect(Collectors.toSet());
+        List<FluorescentProtein> imported = new ArrayList<>();
+
+        List<FPBaseApiResultItem> upstreamProteins = fetchAllProteinData();
+        for (FPBaseApiResultItem protein : upstreamProteins) {
+            if (!existingProteinUUIDs.contains(protein.uuid())) {
+                imported.addAll(importProtein(protein));
+            }
+        }
+        return imported;
+    }
+
+    private List<FluorescentProtein> importProtein(FPBaseApiResultItem protein) {
+        List<FluorescentProtein> newProteins = new ArrayList<>();
+        int numStates = protein.states().size();
+        for(FPBaseApiResultState state : protein.states()) {
+            FluorescentProtein newProtein = new FluorescentProtein();
+            newProtein.setUuid(protein.uuid());
+            newProtein.setName(protein.name());
+            if (numStates > 1) {
+                newProtein.setName(protein.name() + " (" + state.name() + ")");
+            }
+            newProtein.setEmissionLength(state.em_max());
+            newProtein.setExcitationLength(state.ex_max());
+            getMarkerRepository().addFluorescentProtein(newProtein);
+            newProteins.add(newProtein);
+        }
+        return newProteins;
     }
 
     public List<FPBaseApiResultItem> deserializeApiResponse(String json) throws JsonProcessingException {

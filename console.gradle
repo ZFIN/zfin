@@ -145,3 +145,8 @@ task createMeshChebiMappingFile(type: JavaExec) {
     main = 'org.zfin.datatransfer.ctd.CreateMeshChebiMappingFile'
 }
 
+task importMissingFPBaseProteinsTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.fluorescence.ImportMissingFPBaseProteinsTask'
+}
+
