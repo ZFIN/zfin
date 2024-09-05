@@ -39,6 +39,13 @@
                 </a>
             </nav>
         </authz:authorize>
+        <authz:authorize access="hasRole('submit')">
+            <c:if test="${isOwner}">
+                <nav class="navbar navbar-light admin text-center border-bottom">
+                    <a class="col-sm" href="/action/profile/lab/edit/${formBean.zdbID}">Edit</a>
+                </nav>
+            </c:if>
+       </authz:authorize>
     </jsp:attribute>
 
     <jsp:body>
