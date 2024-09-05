@@ -127,6 +127,7 @@ task loadSolrIndex(type: GradleBuild) {
     tasks = ['getLatestSolrIndex']
 }
 
+task getdb(dependsOn: downloadDB) //alias for downloadDB (aka getLatestDatabaseUnload)
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
 
@@ -771,6 +772,9 @@ task getLatestSolrIndex() {
 
     }
 }
+
+//getsolr as alias for getLatestSolrUnload
+task getsolr(dependsOn: getLatestSolrUnload)
 
 //loadsolr as alias for getLatestSolrIndex
 task loadsolr(dependsOn: getLatestSolrIndex)
