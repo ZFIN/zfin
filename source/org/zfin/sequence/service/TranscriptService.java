@@ -1,5 +1,6 @@
 package org.zfin.sequence.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
@@ -90,16 +91,22 @@ public class TranscriptService {
         for (RelatedMarker rm : relatedTranscripts) {
             Transcript transcript = convertMarkerToTranscript(rm.getMarker());
             rm.setMarker(transcript);
-            rm.setDisplayedSequenceDBLinks(RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
+            List<TranscriptDBLink> transcriptDisplayGroups = RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
+            if (CollectionUtils.isNotEmpty(transcriptDisplayGroups) && transcriptDisplayGroups.size() == 1) {
+                rm.setDisplayedSequenceDBLinks(transcriptDisplayGroups);
+            } else {
+                rm.setDisplayedSequenceDBLinks(transcriptDisplayGroups.stream().filter(transcriptDBLink -> transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.ENSEMBL_TRANS)).toList());
+            }
+            rm.setHasHavanna(transcriptDisplayGroups.stream().anyMatch(transcriptDBLink -> transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.VEGA_TRANS)));
             rtd.add(rm);
         }
 
         if (displayGBrowseImage
-                && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
-                && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
+            && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
+            && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                    .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
-                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
+                .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
             }
@@ -208,7 +215,6 @@ public class TranscriptService {
     }
 
 
-
     /**
      * Build the TranscriptTargets presentation object for a given transcript
      *
@@ -275,13 +281,13 @@ public class TranscriptService {
 
     public static List<MarkerDBLink> getProteinMarkerDBLinksForAccessionForRefDBName(String accessionString, String dbName) {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.getType(dbName),
-                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+            ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         return RepositoryFactory.getSequenceRepository().getMarkerDBLinksForAccession(accessionString, referenceDatabase);
     }
 
     public static List<TranscriptDBLink> getProteinTranscriptDBLinksForAccessionForRefDBName(String accessionString, String dbName) {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.getType(dbName),
-                ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+            ForeignDBDataType.DataType.POLYPEPTIDE, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         return RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForAccession(accessionString, referenceDatabase);
     }
 
@@ -335,7 +341,7 @@ public class TranscriptService {
         Integer length = 0;
         for (DBLink link : RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, displayGroup)) {
             if ((link.getLength() != null)
-                    && (link.getLength() > length))
+                && (link.getLength() > length))
                 length = link.getLength();
         }
         if (length == 0) return null;
@@ -378,7 +384,7 @@ public class TranscriptService {
         List<RelatedMarker> sortedTranscripts = new ArrayList<>();
         if (transcriptsAsMRelatedMarker.size() > 0) {
             transcriptlist.sort(
-                    Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
+                Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
             );
             ;
             for (Transcript t : transcriptlist) {

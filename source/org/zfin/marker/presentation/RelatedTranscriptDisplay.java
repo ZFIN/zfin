@@ -1,11 +1,13 @@
 package org.zfin.marker.presentation;
 
+import lombok.Data;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
 
+@Data
 public class RelatedTranscriptDisplay  {
 
     private List<RelatedMarker> transcripts;
@@ -18,33 +20,8 @@ public class RelatedTranscriptDisplay  {
         transcripts = new ArrayList<>();
     }
 
-    public List<RelatedMarker> getTranscripts() {
-        List<RelatedMarker> transcriptsList = new ArrayList<>(transcripts);
-        return transcriptsList;
-    }
-
-    public void setTranscripts(List<RelatedMarker> transcripts) {
-        this.transcripts = transcripts;
-    }
-
-    public Marker getGene() {
-        return gene;
-    }
-
-    public void setGene(Marker gene) {
-        this.gene = gene;
-    }
-
     public void add(RelatedMarker rm) {
         transcripts.add(rm);
-    }
-
-    public GenomeBrowserImage getGbrowseImage() {
-        return gbrowseImage;
-    }
-
-    public void setGbrowseImage(GenomeBrowserImage gbrowseImage) {
-        this.gbrowseImage = gbrowseImage;
     }
 
     /* This method is made to make CreateAlternatingTR happy, since it wants a list,
