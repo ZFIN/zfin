@@ -170,7 +170,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:odf3l2a-emGFP)",
-            "constructStoredName": "myo6b#:odf3l2a#-#emGFP#,#myl7#:EGFP",
+            "constructStoredName": "myo6b#:odf3l2a#-#emGFP#Cassette#,#myl7#:EGFP",
             "issueNumber": "ZFIN-9309"
         },
         {
@@ -179,7 +179,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:saxo2-emGFP)",
-            "constructStoredName": "myo6b#:saxo2#-#emGFP#,#myl7#:EGFP",
+            "constructStoredName": "myo6b#:saxo2#-#emGFP#Cassette#,#myl7#:EGFP",
             "issueNumber": "ZFIN-9309"
         },
         {
@@ -188,7 +188,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:actb1-EGFP)",
-            "constructStoredName": "myo6b#:actb1#-#EGFP#,#myl7#:EGFP",
+            "constructStoredName": "myo6b#:actb1#-#EGFP#Cassette#,#myl7#:EGFP",
             "issueNumber": "ZFIN-9309"
         },
         {
@@ -197,7 +197,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:yfp-Hsa.TUBA)",
-            "constructStoredName": "myo6b#:yfp#-#Hsa.TUBA#,#myl7#:EGFP",
+            "constructStoredName": "myo6b#:yfp#-#Hsa.TUBA#Cassette#,#myl7#:EGFP",
             "issueNumber": "ZFIN-9309"
         },
         {
@@ -206,7 +206,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:ankef1a-emGFP)",
-            "constructStoredName": "myo6b#:ankef1a#-#emGFP#,#cryaa#:mCherry",
+            "constructStoredName": "myo6b#:ankef1a#-#emGFP#Cassette#,#cryaa#:mCherry",
             "issueNumber": "ZFIN-9309"
         },
         {
@@ -215,7 +215,7 @@
             "constructType": "Tg",
             "constructPrefix": "",
             "constructOldName": "Tg(myo6b:saxo2-mKate2)",
-            "constructStoredName": "myo6b#:saxo2#-#mKate2#,#cryaa#:mCherry",
+            "constructStoredName": "myo6b#:saxo2#-#mKate2#Cassette#,#cryaa#:mCherry",
             "issueNumber": "ZFIN-9309"
         }
     ];
