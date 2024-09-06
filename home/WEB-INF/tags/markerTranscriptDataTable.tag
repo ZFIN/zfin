@@ -9,6 +9,7 @@
             <th>Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
             <th>Name</th>
             <th>Annotation Method</th>
+            <th width="10%">Has Havana Data</th>
             <th class="text-right">Length (nt)</th>
             <th>Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
         </tr>
@@ -36,7 +37,8 @@
                     </c:choose>
                 </td>
                 <td>${transcript.marker.annotationMethod.name}</td>
-                <td class="text-right">${transcript.marker.length} nt</td>
+                <td><c:if test="${transcript.hasHavanna}"><i class="fas fa-check"></i></c:if></td>
+                <td class="text-right"><fmt:formatNumber type="number" maxFractionDigits="2" value="${transcript.marker.length}"/> nt</td>
                 <td>
                     <c:if test="${empty transcript}">
                         no sequence available
