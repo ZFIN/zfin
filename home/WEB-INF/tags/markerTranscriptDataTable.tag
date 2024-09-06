@@ -9,7 +9,7 @@
             <th>Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
             <th>Name</th>
             <th>Annotation Method</th>
-            <th width="10%">Has Havanna Data</th>
+            <th width="10%">Has Havana Data</th>
             <th class="text-right">Length (nt)</th>
             <th>Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
         </tr>
