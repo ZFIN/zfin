@@ -9,7 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
