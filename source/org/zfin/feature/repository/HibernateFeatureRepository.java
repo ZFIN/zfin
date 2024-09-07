@@ -1021,7 +1021,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         }
 
         while (scrollableResults.next() && ((pagination.getLimit() == 0) || (list.size() < pagination.getLimit()))) {
-            list.add((Feature) scrollableResults.get());//TODO: hibernate migration double check logic
+            list.add((Feature) scrollableResults.get());//TODO (ZFIN-9354): hibernate migration double check logic
         }
 
         if (!scrollableResults.isLast()) {

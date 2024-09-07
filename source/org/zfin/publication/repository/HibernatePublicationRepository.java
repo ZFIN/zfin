@@ -110,7 +110,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         List<Tuple> list = new ArrayList<>();
         while (results.next() && results.getRowNumber() < maxRow) {
-            list.add((Tuple) results.get()); //TODO: hibernate migration double check logic
+            list.add((Tuple) results.get()); //TODO (ZFIN-9354): hibernate migration double check logic
         }
 
         int totalCount = 0;
@@ -206,7 +206,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         ScrollableResults results = query.scroll();
 
-        //TODO: hibernate migration double check logic
+        //TODO (ZFIN-9354): hibernate migration double check logic
         List<Tuple> list = new ArrayList<>();
         results.beforeFirst();
         if (firstRow > 0) {
@@ -2078,7 +2078,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
     }
 
-    //TODO: hibernate migration double check logic
+    //TODO (ZFIN-9354): hibernate migration double check logic
     private List<MarkerStatistic> createMarkerStatistics(List<Tuple> list, GenericTerm anatomyTerm) {
         if (list == null) {
             return null;
@@ -2096,7 +2096,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return markers;
     }
 
-    //TODO: hibernate migration double check logic
+    //TODO (ZFIN-9354): hibernate migration double check logic
     private List<HighQualityProbe> createHighQualityProbeObjects(List<Tuple> list, Term aoTerm) {
         List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
         if (list != null) {

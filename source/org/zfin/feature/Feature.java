@@ -115,7 +115,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Set<FeatureSource> sources;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
 //    @OrderBy(value = "dalias_alias_lower")
-    //TODO: hibernate: migrate "order by"
+    //TODO (ZFIN-9354): hibernate: migrate "order by"
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
     @JsonView(View.FeatureAPI.class)

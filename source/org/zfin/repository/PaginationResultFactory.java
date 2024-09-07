@@ -25,7 +25,7 @@ public class PaginationResultFactory {
         PaginationResult<T> returnResult = new PaginationResult<T>();
         List<T> list = new ArrayList<T>();
         while (scrollableResults.next() && scrollableResults.getRowNumber() < maxRecords) {
-            list.add((T) scrollableResults.get()); //TODO: hibernate migration double check this contains expected results
+            list.add((T) scrollableResults.get()); //TODO (ZFIN-9354): hibernate migration double check this contains expected results
         }
 
         scrollableResults.last();
@@ -60,7 +60,7 @@ public class PaginationResultFactory {
         boolean foundAtLeastOneRecord = false;
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
-            list.add((T) scrollableResults.get()); //TODO: hibernate migrations double check this works correctly
+            list.add((T) scrollableResults.get()); //TODO (ZFIN-9354): hibernate migrations double check this works correctly
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.
@@ -103,7 +103,7 @@ public class PaginationResultFactory {
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
 
-                //TODO: hibernate migration double check logic
+                //TODO (ZFIN-9354): hibernate migration double check logic
                 if (!list.contains((T) scrollableResults.get())) {
                     list.add((T) scrollableResults.get());
                 } else {
@@ -190,7 +190,7 @@ public class PaginationResultFactory {
         while (scrollableResults.next()) {
             foundAtLeastOneRecord = true;
 
-                //TODO: hibernate migration double check logic
+                //TODO (ZFIN-9354): hibernate migration double check logic
                 Object objects = scrollableResults.get();
                 list.add((T)objects);
         }

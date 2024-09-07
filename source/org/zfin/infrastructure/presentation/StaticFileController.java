@@ -14,7 +14,7 @@ import java.io.IOException;
 @RequestMapping("/zf_info")
 public class StaticFileController {
 
-    //TODO: spring migration change, test this method works for all levels of html files
+    //TODO (ZFIN-9354): spring migration change, test this method works for all levels of html files
 //    @RequestMapping("/**/{filename:.+}.html")
 //    public String viewStaticFile(Model model,
 //                                 HttpServletRequest request,

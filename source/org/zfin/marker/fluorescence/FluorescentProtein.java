@@ -44,7 +44,7 @@ public class FluorescentProtein extends AbstractFluorescence {
 
     @ManyToMany
     @JoinTable(name = "fpProtein_efg",
-            // TODO: hibernate migration change, confirm logic still valid
+            // TODO (ZFIN-9354): hibernate migration change, confirm logic still valid
             // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
             joinColumns = {@JoinColumn(name = "fe_fl_protein_id", nullable = false, updatable = false, insertable = false)},
             inverseJoinColumns = {@JoinColumn(name = "fe_mrkr_zdb_id", nullable = false, updatable = false, insertable = false)})
@@ -53,7 +53,7 @@ public class FluorescentProtein extends AbstractFluorescence {
 
     @ManyToMany
     @JoinTable(name = "fpProtein_construct",
-            // TODO: hibernate migration change, confirm logic still valid
+            // TODO (ZFIN-9354): hibernate migration change, confirm logic still valid
             // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
             joinColumns = {@JoinColumn(name = "fc_fl_protein_id", nullable = false, updatable = false, insertable = false)},
             inverseJoinColumns = {@JoinColumn(name = "fc_mrkr_zdb_id", nullable = false, updatable = false, insertable = false)})
