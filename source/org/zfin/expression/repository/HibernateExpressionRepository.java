@@ -898,7 +898,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                     (geneZdbID != null ? " and gene.zdbID = :geneID " : "") +
                     (fishID != null ? " and fishox.fish.zdbID = :fishID " : "");
 
-// TODO: hibernate migration change, need to implement ordering in the query
+// TODO (ZFIN-9354): hibernate migration change, need to implement ordering in the query
 //        hql += "    order by gene.abbreviationOrder, " +
 //               "             fishox.fish.name, " +
 //               "             fishox.experiment.name, " +
@@ -979,7 +979,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         }
 
 //
-// TODO: hibernate migration change, need to implement ordering in the query
+// TODO (ZFIN-9354): hibernate migration change, need to implement ordering in the query
 //        hql += """
 //                order by efs.figure.orderingLabel, gene.abbreviationOrder
 //                         , fish.name
