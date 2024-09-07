@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-//TODO: hibernate migration changes: confirm changes to this class still work
+//TODO (ZFIN-9354): hibernate migration changes: confirm changes to this class still work
 /**
  * Class to convert Enumeration types into Strings that get stored in the database.
  * It also converts a string from the database into an enumeration type.

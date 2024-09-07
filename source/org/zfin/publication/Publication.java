@@ -94,7 +94,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_person_pub",
             joinColumns = {
-                    //TODO: hibernate migrate, confirm this works as expected
+                    //TODO (ZFIN-9354): hibernate migrate, confirm this works as expected
                     //Fixes error: Caused by: org.hibernate.AnnotationException: Join column '...' on collection
                     // property '...' must be defined with the same insertable and updatable attributes
                     @JoinColumn(name = "target_id", nullable = false, updatable = false, insertable = false)
@@ -116,7 +116,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JoinColumn(name = "pdx_pub_zdb_id")
     private Set<PublicationDbXref> dbXrefs;
 
-    //TODO: hibernate migrate check if the ordering still works after removed SortedSet
+    //TODO (ZFIN-9354): hibernate migrate check if the ordering still works after removed SortedSet
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pf_pub_zdb_id")
     @OrderBy("originalFileName")

@@ -42,7 +42,7 @@ public class TermExternalReference implements Comparable, Serializable {
 
     @ManyToMany()
     @JoinTable(name = "omimp_termxref_mapping",
-            // TODO: hibernate migration change, confirm logic still valid
+            // TODO (ZFIN-9354): hibernate migration change, confirm logic still valid
             // Fixes this error: org.hibernate.AnnotationException: Join column 'otm_tx_id' on collection property 'org.zfin.ontology.TermExternalReference.omimPhenotypes' must be defined with the same insertable and updatable attributes
         joinColumns = {@JoinColumn(name = "otm_tx_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "otm_omimp_id", nullable = false, updatable = false, insertable = false)})

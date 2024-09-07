@@ -173,7 +173,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         ScrollableResults results = query.scroll();
 
-        //TODO: hibernate migration double check logic
+        //TODO (ZFIN-9354): hibernate migration double check logic
         List<Tuple> list = new ArrayList<>();
         results.beforeFirst();
         if (firstRow > 0) {
@@ -317,13 +317,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = """
-            select distinct efs.figure from ExpressionResult2 res, ExpressionExperiment2 exp,
-            FishExperiment fishox, ExpressionFigureStage efs
+            select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp,
+            FishExperiment fishox, ExpressionResultFigure xpatfig
             where
-               exp.gene = :marker AND
-               res.expressionFigureStage = efs AND
-               (res.superTerm = :aoTerm OR res.subTerm = :aoTerm) AND
-               efs.expressionExperiment = exp AND
+               marker = :marker AND
+               exp.gene = marker AND
+               res.expressionExperiment = exp AND
+               (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) AND
+               xpatfig.expressionResult = res AND
+               xpatfig.figure = fig AND
                res.expressionFound = :expressionFound AND
                exp.fishExperiment = fishox AND
                fishox.standardOrGenericControl = :condition AND

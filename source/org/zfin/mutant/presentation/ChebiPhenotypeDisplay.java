@@ -48,7 +48,7 @@ public class ChebiPhenotypeDisplay {
     @JsonView(View.API.class)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "UI.CHEBI_PHENOTYPE_WAREHOUSE_ASSOCIATION",
-            // TODO: hibernate migration change, confirm logic still valid
+            // TODO (ZFIN-9354): hibernate migration change, confirm logic still valid
             // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
         joinColumns = {@JoinColumn(name = "cpwa_phenotype_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "cpwa_phenotype_warehouse_id", nullable = false, updatable = false, insertable = false)})
