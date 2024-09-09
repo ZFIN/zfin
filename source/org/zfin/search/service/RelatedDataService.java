@@ -3,7 +3,8 @@ package org.zfin.search.service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -30,7 +31,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
@@ -74,6 +74,13 @@ public class RelatedDataService {
     private String[] diseaseRelatedDataCategories = {RELATED_GENE, DISEASE_MODELS, Category.PUBLICATION.getName()};
 
     private String entityName;
+
+
+    public void injectRelatedLinks(List<SearchResult> results) {
+        for (SearchResult result : results) {
+            result.setRelatedLinks(getRelatedDataLinks(result));
+        }
+    }
 
     public List<String> getRelatedDataLinks(SearchResult result) {
 
@@ -205,6 +212,45 @@ public class RelatedDataService {
         }
 
         return links;
+    }
+
+    public Map<String, List<String>> getRelatedLinksForPubIDs(List<String> publicationIDs) {
+        String pubIds = String.join(" ", publicationIDs);
+
+        SolrClient client = SolrService.getSolrClient();
+        SolrQuery query = new SolrQuery();
+
+        query.set("fq", "id:(" + pubIds + ")");
+        query.setQuery("*:*");
+        query.set("q.op", "OR");
+
+        query.setRows(publicationIDs.size());
+
+        QueryResponse queryResponse = new QueryResponse();
+        try {
+            queryResponse = client.query(query);
+        } catch (Exception e) {
+        }
+
+        List<SearchResult> results = new ArrayList<>();
+        if (queryResponse.getResults() != null) {
+            results = queryResponse.getBeans(SearchResult.class);
+        }
+        injectRelatedLinks(results);
+
+        Map <String, List<String>> relatedLinks = new HashMap<>();
+        for(SearchResult result : results) {
+            relatedLinks.put(result.getId(), result.getRelatedLinks());
+        }
+
+        //empty collection for any publications that didn't have related links
+        for(String pubID : publicationIDs) {
+            if(!relatedLinks.containsKey(pubID)) {
+                relatedLinks.put(pubID, Collections.emptyList());
+            }
+        }
+
+        return relatedLinks;
     }
 
     private String makeGenomeBrowserLinkByID(String id) {

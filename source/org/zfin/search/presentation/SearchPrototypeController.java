@@ -316,7 +316,7 @@ public class SearchPrototypeController {
 
         injectHighlighting(results, response);
         resultService.injectAttributes(results);
-        injectRelatedLinks(results); //this cost 200-300ms per request, it's less now, but still a good place to optimize
+        relatedDataService.injectRelatedLinks(results); //this cost 200-300ms per request, it's less now, but still a good place to optimize
 
         Map<String, List<String>> fqMap = SolrService.getFilterQueryMap(filterQuery);
 
@@ -851,14 +851,6 @@ public class SearchPrototypeController {
 
         for (SearchResult result : results) {
             result.setHighlightsPreservingPrivacy(solrService.getHighlights(result.getId(), response));
-        }
-
-    }
-
-
-    private void injectRelatedLinks(List<SearchResult> results) {
-        for (SearchResult result : results) {
-            result.setRelatedLinks(relatedDataService.getRelatedDataLinks(result));
         }
 
     }
