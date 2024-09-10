@@ -1506,6 +1506,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         result.setPublications(histories.getPopulatedResults().stream()
             .map(converter::toDashboardPublicationBean)
             .collect(Collectors.toList()));
+        converter.setRelatedLinks(result);
         result.setStatusCounts(counts);
 
         return result;

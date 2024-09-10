@@ -151,6 +151,13 @@ class CuratingBin extends React.Component {
                         <p>{pub.citation}</p>
                         <p>{pub.authors}</p>
                         <p dangerouslySetInnerHTML={{__html: pub.abstractText}} />
+                        <p className='search-result-related-links mb-2 small'>
+                            <ul>
+                                {pub.relatedLinks.map(link => (
+                                    <li key={link} dangerouslySetInnerHTML={{__html: link}} />
+                                ))}
+                            </ul>
+                        </p>
                         <FigureGallery images={pub.images} />
                     </div>
                 ),
