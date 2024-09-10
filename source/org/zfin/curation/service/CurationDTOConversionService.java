@@ -14,7 +14,9 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationBean;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.publication.presentation.ProcessingTaskBean;
+import org.zfin.search.service.RelatedDataService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +26,10 @@ public class CurationDTOConversionService {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private RelatedDataService relatedDataService;
+
 
     private static final String DEFAULT_IMAGE = "/images/LOCAL/smallogo.gif";
 
@@ -205,4 +211,12 @@ public class CurationDTOConversionService {
         return bean;
     }
 
+    public void setRelatedLinks(DashboardPublicationList result) {
+        List<String> ids = result.getPublications().stream().map(DashboardPublicationBean::getZdbId).toList();
+        Map<String, List<String>> relatedLinks = relatedDataService.getRelatedLinksForPubIDs(ids);
+
+        for (DashboardPublicationBean bean : result.getPublications()) {
+            bean.setRelatedLinks(relatedLinks.get(bean.getZdbId()));
+        }
+    }
 }
