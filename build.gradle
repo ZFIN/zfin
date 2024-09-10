@@ -329,10 +329,8 @@ def whitelistTemplateFiles = [
         '**/reportFeatureData.pl',
         '**/reportPubsForGeneAndFeature.pl',
         '**/reportZfinGenesMissingEnsdarts.pl',
-        '**/Count-phenotype.pl',
         '**/runStats.sh',                                           //server_apps/Reports/AnnualStats
         '**/betterFish.sql',                                        //server_apps/Reports/BetterFish
-        '**/FinCount.pl',                                           //server_apps/Reports/PATO
         '**/runAverageTimeInBinsCumulative.sh',                     //server_apps/Reports/PubTracking
         '**/runLongestBinResidents.sh',
         '**/runPaperlessPubTrackingDailyIndexedMetrics.sh',
