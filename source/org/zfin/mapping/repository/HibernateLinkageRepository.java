@@ -357,7 +357,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "where markerOneZdbId = :markerID))");
         query.setParameter("marker", snp);
         query.setParameter("markerID", snp.getZdbID());
-        query.setParameter("mtype", Marker.Type.EST);
+        query.setParameter("mtype", Marker.Type.EST.toString());
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
         if (list == null) {
