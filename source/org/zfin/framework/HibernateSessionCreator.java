@@ -157,7 +157,7 @@ public class HibernateSessionCreator {
     private Configuration createConfiguration(String db) {
         Configuration config = new Configuration();
         config.setInterceptor(new StringCleanInterceptor());
-        config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
+        config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
 
         config.setProperty("hibernate.connection.autocommit", String.valueOf(autocommit));
