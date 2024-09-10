@@ -7,15 +7,22 @@
 
 use DBI;
 
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
+use FindBin;
+use lib "$FindBin::Bin/../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME');
+
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
+my $username = "";
+my $password = "";
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 system("/bin/rm -f feature_data_report.txt") if (-e "feature_data_report.txt");
 
-### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
-    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur_feature = $dbh->prepare("select feature_abbrev, feature_zdb_id, feature_type from feature;");
 $cur_feature->execute();
