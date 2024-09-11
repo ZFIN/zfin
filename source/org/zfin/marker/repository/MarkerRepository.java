@@ -572,8 +572,9 @@ public interface MarkerRepository {
 
     FluorescentProtein getFluorescentProtein(Long identifier);
 
-    void updateMarkerName(String constructZdbID, String toString);
+    void addFluorescentProtein(FluorescentProtein newProtein);
 
+    void updateMarkerName(String constructZdbID, String toString);
 
     List<SequenceTargetingReagent> getSequenceTargetingReagents(List<String> markerIDs);
 

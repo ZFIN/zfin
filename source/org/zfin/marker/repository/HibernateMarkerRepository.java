@@ -3390,10 +3390,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<FluorescentProtein> getFluorescentProteins(String query) {
-        String hql = " from FluorescentProtein where lower(name) like :query ";
+        String hql = " from FluorescentProtein where lower(name) like :query or lower(uuid) = :exactQuery";
         Session session = currentSession();
         Query<FluorescentProtein> query1 = session.createQuery(hql, FluorescentProtein.class);
         query1.setParameter("query", "%" + query.toLowerCase() + "%");
+        query1.setParameter("exactQuery", query.toLowerCase());
         return query1.list();
     }
 
@@ -3408,6 +3409,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
             log.error("More than one fluorescent protein found for " + name);
         }
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public void addFluorescentProtein(FluorescentProtein newProtein) {
+        HibernateUtil.currentSession().save(newProtein);
     }
 
     @Override

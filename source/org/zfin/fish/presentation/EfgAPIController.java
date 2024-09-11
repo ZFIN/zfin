@@ -90,7 +90,11 @@ public class EfgAPIController {
                 LookupEntry entry = new LookupEntry();
                 entry.setId(String.valueOf(fluorescentProtein.getIdentifier()));
                 entry.setValue(fluorescentProtein.getName());
-                entry.setLabel(fluorescentProtein.getName());
+                if (fluorescentProtein.getUuid().equalsIgnoreCase(query)) {
+                    entry.setLabel(fluorescentProtein.getName() + " [ID=" + fluorescentProtein.getUuid() + "]");
+                } else {
+                    entry.setLabel(fluorescentProtein.getName());
+                }
                 return entry;
             })
             .toList();
