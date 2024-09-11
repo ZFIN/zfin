@@ -345,6 +345,13 @@
     </tag>
 
     <tag>
+        <name>clearBuffer</name>
+        <tagclass>org.zfin.framework.presentation.tags.ClearBufferTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>Clear the output buffer</info>
+    </tag>
+
+    <tag>
         <name>databaseLock</name>
         <tagclass>org.zfin.framework.presentation.tags.CheckUpdatesTag</tagclass>
         <info>Check if the database is currently locked for updates.
