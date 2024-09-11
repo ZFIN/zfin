@@ -131,7 +131,7 @@ public interface FeatureRepository {
 
     Feature getFeatureByAbbreviation(String featureAbbrev);
 
-    String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
+    FeatureTracking getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
 
     String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID);
 
