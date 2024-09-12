@@ -376,7 +376,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "m.markerType = mtype and " +
             "mtype.name = :mtype ");
         query.setParameter("marker", snp);
-        query.setParameter("mtype", Marker.Type.GENE);
+        query.setParameter("mtype", Marker.Type.GENE.toString());
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
         List<Marker> list = (List<Marker>) query.list();
         if (list == null) {
