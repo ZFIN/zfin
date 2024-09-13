@@ -742,7 +742,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             select distinct link from MarkerDBLink link, PublicationAttribution record
                  where record.publication.zdbID = :pubID
                        and record.dataZdbID = :geneID
-                       and link.marker = :geneID
+                       and link.marker.zdbID = :geneID
                        and link.referenceDatabase.foreignDB.dbName = :foreignDB
                 order by link.accessionNumber
                 """;
