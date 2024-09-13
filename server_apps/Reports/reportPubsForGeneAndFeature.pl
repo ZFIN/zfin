@@ -8,6 +8,21 @@ use strict;
 use MIME::Lite;
 use DBI;
 
+use FindBin;
+use lib "$FindBin::Bin/../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
+
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
+my $username = "";
+my $password = "";
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
+
 
 #------------------ Send Checking Result ----------------
 # No parameter
@@ -78,7 +93,7 @@ system("rm -f pubListForFeature");
 
 print "getting the publications for genes and features ... \n";
 
-my $dir = "<!--|ROOT_PATH|-->";
+my $dir = $ENV{'ROOT_PATH'};
 
 my @dirPieces = split(/www_homes/,$dir);
 
@@ -86,14 +101,6 @@ my $databasename = $dirPieces[1];
 $databasename =~ s/\///;
 
 print "$databasename\n\n";
-
-my $dbname = "<!--|DB_NAME|-->";
-my $username = "";
-my $password = "";
-
-### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
-    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 my $sqlPubGene = "
            select recattrib_data_zdb_id, recattrib_source_zdb_id 
