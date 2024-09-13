@@ -1,10 +1,14 @@
 package org.zfin.feature;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "feature_dna_mutation_detail")
 public class FeatureDnaMutationDetail implements Cloneable {
@@ -50,118 +54,6 @@ public class FeatureDnaMutationDetail implements Cloneable {
     @JoinColumn(name = "fdmd_dna_mutation_term_zdb_id")
     private DnaMutationTerm dnaMutationTerm;
 
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public ReferenceDatabase getReferenceDatabase() {
-        return referenceDatabase;
-    }
-
-    public void setReferenceDatabase(ReferenceDatabase referenceDatabase) {
-        this.referenceDatabase = referenceDatabase;
-    }
-
-    public DnaMutationTerm getDnaMutationTerm() {
-        return dnaMutationTerm;
-    }
-
-    public void setDnaMutationTerm(DnaMutationTerm dnaMutationTerm) {
-        this.dnaMutationTerm = dnaMutationTerm;
-    }
-
-    public Integer getDnaPositionEnd() {
-        return dnaPositionEnd;
-    }
-
-    public void setDnaPositionEnd(Integer dnaPositionEnd) {
-        this.dnaPositionEnd = dnaPositionEnd;
-    }
-
-    public Integer getDnaPositionStart() {
-        return dnaPositionStart;
-    }
-
-    public void setDnaPositionStart(Integer dnaPositionStart) {
-        this.dnaPositionStart = dnaPositionStart;
-    }
-
-    public String getDnaSequenceReferenceAccessionNumber() {
-        return dnaSequenceReferenceAccessionNumber;
-    }
-
-    public void setDnaSequenceReferenceAccessionNumber(String dnaSequenceReferenceAccessionNumber) {
-        this.dnaSequenceReferenceAccessionNumber = dnaSequenceReferenceAccessionNumber;
-    }
-
-    public Integer getNumberAddedBasePair() {
-        return numberAddedBasePair;
-    }
-
-    public void setNumberAddedBasePair(Integer numberAdditionalBasePair) {
-        this.numberAddedBasePair = numberAdditionalBasePair;
-    }
-
-    public Integer getExonNumber() {
-        return exonNumber;
-    }
-
-    public void setExonNumber(Integer exonNumber) {
-        this.exonNumber = exonNumber;
-    }
-
-    public Integer getIntronNumber() {
-        return intronNumber;
-    }
-
-    public void setIntronNumber(Integer intronNumber) {
-        this.intronNumber = intronNumber;
-    }
-
-    public Integer getNumberRemovedBasePair() {
-        return numberRemovedBasePair;
-    }
-
-    public void setNumberRemovedBasePair(Integer numberRemovedBasePair) {
-        this.numberRemovedBasePair = numberRemovedBasePair;
-    }
-
-    public String getInsertedSequence() {
-        return insertedSequence;
-    }
-
-    public void setInsertedSequence(String insertedSequence) {
-        this.insertedSequence = insertedSequence;
-    }
-
-    public String getDeletedSequence() {
-        return deletedSequence;
-    }
-
-    public void setDeletedSequence(String deletedSequence) {
-        this.deletedSequence = deletedSequence;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public GeneLocalizationTerm getGeneLocalizationTerm() {
-        return geneLocalizationTerm;
-    }
-
-    public void setGeneLocalizationTerm(GeneLocalizationTerm geneLocalizationTerm) {
-        this.geneLocalizationTerm = geneLocalizationTerm;
-    }
 
     public FeatureDnaMutationDetail clone() {
         try {

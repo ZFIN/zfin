@@ -784,12 +784,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @Override
-    public String getFeatureByAbbreviationInTrackingTable(String featTrackingFeatAbbrev) {
+    public FeatureTracking getFeatureByAbbreviationInTrackingTable(String featTrackingFeatAbbrev) {
         Session session = HibernateUtil.currentSession();
-        String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.feature.zdbID =:featTrackingFeatAbbrev ";
-        Query queryTracker = session.createQuery(hqlFtrTrack);
+        String hqlFtrTrack = "from FeatureTracking where featTrackingFeatAbbrev = :featTrackingFeatAbbrev";
+        Query<FeatureTracking> queryTracker = session.createQuery(hqlFtrTrack, FeatureTracking.class);
         queryTracker.setParameter("featTrackingFeatAbbrev", featTrackingFeatAbbrev);
-        return (String) queryTracker.uniqueResult();
+        return queryTracker.uniqueResult();
     }
 
     public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
