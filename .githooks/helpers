@@ -19,3 +19,17 @@ run_cmd () {
 run_if_changes () {
 	echo "$1" | grep --quiet "$2" && print "$2 changed" && run_cmd $3
 }
+
+check_for_comment_marker () {
+  FILES="$1"
+  FLAG_STRING="REMOVE BEFORE COMMIT"
+
+  # Loop through each file and search for "$FLAG_STRING"
+  for FILE in $FILES; do
+    if grep -q "$FLAG_STRING" "$FILE"; then
+      echo "Error: '$FILE' contains '$FLAG_STRING'."
+      echo "Please remove this string before committing."
+      exit 1
+    fi
+  done
+}
