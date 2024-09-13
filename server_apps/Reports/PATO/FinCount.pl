@@ -10,17 +10,20 @@ use strict;
 use DBI;
 
 # set environment variables
-
-chdir "<!--|ROOT_PATH|-->/server_apps/Reports/PATO";
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
 print "\nStart counting Fin phenotypes\n\n";
 
-my $dbname = "<!--|DB_NAME|-->";
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
     
 my $cur = $dbh->prepare("select to_char(now(), 'MM/DD/YYYY') from organism where organism_common_name = ?;");
@@ -151,6 +154,6 @@ print SQLFILE "\nselect count (distinct id) from tmp_contains;\n\n\n";
 
 close(SQLFILE);
 
-system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -f FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
+system("psql -v ON_ERROR_STOP=1 -d $dbname -f FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
 
 exit;

@@ -302,10 +302,6 @@ def whitelistTemplateFiles = [
         '**/check_undefined_environment.pl',
         '**/pushDataToPublic.sh',
         '**/backupBlastDbsAndRsyncAlmostBlastDbs.sh',
-        '**/generatePostMergeSQLs.pl',                              //server_apps/DB_maintenance/merge
-        '**/generateSQLsForMergingRecords.pl',
-        '**/merge_markers_cmdline.pl',
-        '**/getAllRelatedData.pl',
         '**/compareTables.groovy',                                  //server_apps/DB_maintenance/postgres
         '**/dailyExtentCheck.sh',                                   //server_apps/DB_maintenance/extentMonitoring
         '**/dailyQueryCostCheck.sh',                                //server_apps/DB_maintenance/queryMonitoring
@@ -327,13 +323,9 @@ def whitelistTemplateFiles = [
         '**/inc-redirect',                                          //server_apps/apache
         '**/crontab.production',                                    //server_apps/cron
         '**/elsevier_report.pl',                                    //server_apps/Reports
-        '**/reportFeatureData.pl',
         '**/reportPubsForGeneAndFeature.pl',
-        '**/reportZfinGenesMissingEnsdarts.pl',
-        '**/Count-phenotype.pl',
         '**/runStats.sh',                                           //server_apps/Reports/AnnualStats
         '**/betterFish.sql',                                        //server_apps/Reports/BetterFish
-        '**/FinCount.pl',                                           //server_apps/Reports/PATO
         '**/runAverageTimeInBinsCumulative.sh',                     //server_apps/Reports/PubTracking
         '**/runLongestBinResidents.sh',
         '**/runPaperlessPubTrackingDailyIndexedMetrics.sh',

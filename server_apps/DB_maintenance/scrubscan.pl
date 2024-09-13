@@ -35,11 +35,12 @@ use ZFINPerlModules;
 # ain't got none, everything in main. (put another way - they are all globals!)
 
 my $dbname = $ENV{'DBNAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
 
 # Define tests:

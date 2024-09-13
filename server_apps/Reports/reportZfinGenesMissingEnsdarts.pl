@@ -3,8 +3,20 @@
 
 use DBI;
 
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME');
+
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
+my $username = "";
+my $password = "";
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
 
 system("/bin/date");
 
@@ -46,16 +58,7 @@ foreach $line (@lines) {
 
 }
 
-
 print "\nENSMBLE:  ctGenes = $ctGenes\n\nctTranscripts\t$ctTranscripts\n\n";
-
-
-$dbname = "<!--|DB_NAME|-->";
-$username = "";
-$password = "";
-
-### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
 $sql = "select tscript_ensdart_id, tscript_mrkr_zdb_id
           from transcript 

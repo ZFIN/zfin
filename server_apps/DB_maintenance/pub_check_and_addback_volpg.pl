@@ -11,6 +11,20 @@ use strict;
 use MIME::Lite;
 use DBI;
 use XML::Twig;
+use FindBin;
+use lib "$FindBin::Bin/../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+
+assertEnvironment('PGHOST', 'DB_NAME');
+
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
+my $username = "";
+my $password = "";
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 
 #=======================================================
@@ -24,12 +38,7 @@ print "remove and re-create Update-Publication-Volume-And-Pages_w directory\n";
 system("/bin/rm -rf Update-Publication-Volume-And-Pages_w");
 system("/bin/mkdir Update-Publication-Volume-And-Pages_w");
 
-my $dbname = $ENV{'DB_NAME'};
-my $username = "";
-my $password = "";
-
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
 my $sql = "select distinct zdb_id, accession_no, title
           from publication 

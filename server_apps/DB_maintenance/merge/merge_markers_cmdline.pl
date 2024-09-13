@@ -2,22 +2,28 @@
 
 use strict;
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
 
 ## merge_markers_cmdline.pl Marker_ZDB_ID1 Marker_ZDB_ID2
 
 ## check commandline parameters
 die "Usage: merge_markers_cmdline.pl Marker_ZDB_ID1 Marker_ZDB_ID2\n" if @ARGV != 2;
 
-my $recordToBeDeleted = $ARGV[0]; 
-my $recordToBeMergedInto = $ARGV[1];
+assertEnvironment('PGHOST', 'DB_NAME');
 
-my $dbname = "<!--|DB_NAME|-->";
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
-    or die "\n\nCannot connect to PostgreSQL database: $DBI::errstr\n\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
+my $recordToBeDeleted = $ARGV[0]; 
+my $recordToBeMergedInto = $ARGV[1];
 
 my $type1;
 if ($recordToBeDeleted =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {

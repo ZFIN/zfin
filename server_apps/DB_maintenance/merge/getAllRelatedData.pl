@@ -8,18 +8,24 @@
 use strict;
 use DBI;
 
-## check commandline parameters
-die "Usage: getAllRelatedData.pl ZDBID\n" if @ARGV != 1;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME');
 
-my $record = $ARGV[0]; 
-
-my $dbname = "<!--|DB_NAME|-->";
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
-    or die "\n\nCannot connect to PostgreSQL database: $DBI::errstr\n\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
+## check commandline parameters
+die "Usage: getAllRelatedData.pl ZDBID\n" if @ARGV != 1;
+
+my $record = $ARGV[0]; 
 
 my $type;
 if ($record =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
