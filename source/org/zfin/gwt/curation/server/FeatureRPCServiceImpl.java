@@ -47,6 +47,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -96,14 +98,36 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
-    private void checkDupesinTrackingTable(FeatureDTO featureDTO) throws DuplicateEntryException {
-        String featureInTrackingTable = featureRepository.getFeatureByAbbreviationInTrackingTable(featureDTO.getAbbreviation());
-
+    private void checkDupesinTrackingTable(String featureAbbreviation) throws DuplicateEntryException {
+        FeatureTracking featureInTrackingTable = featureRepository.getFeatureByAbbreviationInTrackingTable(featureAbbreviation);
 
         if (featureInTrackingTable != null) {
-            throw new DuplicateEntryException("Feature exists in the tracking table for this abbreviation: " + featureDTO.getAbbreviation());
-        }
+            String labPrefix = getLabPrefixFromFeatureAbbreviation(featureAbbreviation);
 
+            String nextLine = null;
+            if (labPrefix != null) {
+                nextLine = getFeatureRepository().getNextLineNumberForLabPrefix(labPrefix);
+            }
+
+            String helpfulTip = "";
+            if (nextLine != null && labPrefix != null) {
+                helpfulTip = " Next line number for this lab prefix is: " + nextLine + ".";
+            }
+
+            throw new DuplicateEntryException(
+                    "Feature exists in the tracking table for this abbreviation: " + featureAbbreviation + ". " + helpfulTip);
+        }
+    }
+
+    private String getLabPrefixFromFeatureAbbreviation(String line) {
+        String pattern = "(.*?)(\\d+)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(line);
+
+        if (m.find()) {
+            return m.group(1);
+        }
+        return null;
     }
 
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) {
@@ -579,7 +603,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         DTOConversionService.escapeFeatureDTO(featureDTO);
         checkDupes(featureDTO);
-        checkDupesinTrackingTable(featureDTO);
+        checkDupesinTrackingTable(featureDTO.getAbbreviation());
         validateUnspecified(featureDTO);
 
         FeatureDTO newFeatureDTO;
@@ -607,7 +631,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.getAliases().add(featureAlias);
             }
 
-
+            checkDupesinTrackingTable(feature.getAbbreviation());
             getFeatureRepository().saveFeature(feature, publication);
             if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
 

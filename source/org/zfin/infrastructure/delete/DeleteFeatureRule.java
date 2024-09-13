@@ -41,6 +41,16 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
             addToValidationReport(feature.getAbbreviation() + " has the following accession numbers associated: ", feature.getDbLinks());
         }
 
+        // Can't delete the feature if it has mutation details
+        if (CollectionUtils.isNotEmpty(feature.getFeatureDnaMutationDetailSet())) {
+            addToValidationReport("Need to remove Mutation Detail data.");
+        }
+
+        // Can't delete the feature if it has protein mutation details
+        if (CollectionUtils.isNotEmpty(feature.getFeatureProteinMutationDetailSet())) {
+            addToValidationReport("Need to remove Protein Mutation Detail data.");
+        }
+
         // Can't delete the feature if it has more than 1 publications
         if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
             addToValidationReport(feature.getAbbreviation() + " associated with more than one publication: ", featurePublications);
