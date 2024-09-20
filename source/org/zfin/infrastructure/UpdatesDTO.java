@@ -1,9 +1,12 @@
 package org.zfin.infrastructure;
 
-import java.util.Date;
-import java.util.List;
-
 import org.zfin.profile.HasImage;
+import org.zfin.profile.Person;
+import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.PublicationTrackingStatus;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public record UpdatesDTO(
         String submitterName,
@@ -19,15 +22,15 @@ public record UpdatesDTO(
 
     public static List<UpdatesDTO> fromUpdates(List<Updates> updates) {
         return updates.stream()
-                .map(u -> updateToDTO(u))
-                .toList();
+                .map(UpdatesDTO::updateToDTO)
+                .collect(Collectors.toList());
     }
 
     private static UpdatesDTO updateToDTO(Updates update) {
         String name = update.getSubmitter() != null ? update.getSubmitter().getDisplay() : update.getSubmitterName();
         String image = update.getSubmitter() != null ? update.getSubmitter().getImage() : null;
         String zdbID = update.getSubmitter() != null ? update.getSubmitter().getZdbID() : null;
-        UpdatesDTO dto = new UpdatesDTO(
+        return new UpdatesDTO(
                 name,
                 image,
                 update.getFieldName(),
@@ -37,7 +40,51 @@ public record UpdatesDTO(
                 update.getWhenUpdated(),
                 zdbID
         );
-        return dto;
+    }
+
+    public static List<UpdatesDTO> fromPublicationEvents(List<PublicationTrackingHistory> events) {
+        List<UpdatesDTO> updates = new ArrayList<>();
+        UpdatesDTO previous = null;
+
+        List<PublicationTrackingHistory> orderedEvents = events.stream().sorted(Comparator.comparing(PublicationTrackingHistory::getDate)).toList();
+
+        for(PublicationTrackingHistory event : orderedEvents) {
+            UpdatesDTO tempEvent = publicationEventToDTO(event, previous);
+            updates.add(tempEvent);
+            previous = tempEvent;
+        }
+        updates.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated));
+        for(UpdatesDTO update : updates) {
+            System.out.println(update.getWhenUpdated());
+        }
+
+        return updates;
+    }
+
+    private static UpdatesDTO publicationEventToDTO(PublicationTrackingHistory publicationEvent, UpdatesDTO previous) {
+        PublicationTrackingStatus.Name statusName = publicationEvent.getStatus().getName();
+        Calendar date = publicationEvent.getDate();
+        Person performedBy = publicationEvent.getPerformedBy();
+
+        String submitterName = performedBy != null ? performedBy.getDisplay() : null;
+        String image = performedBy != null ? performedBy.getImage() : null;
+        String fieldName = "Status";
+        String oldValue = previous != null ? previous.getNewValue() : null;
+        String newValue = statusName.toString();
+        String display = publicationEvent.getDisplay();
+        Date updated = date.getTime();
+        String submitterZdbID = performedBy != null ? performedBy.getZdbID() : null;
+
+        return new UpdatesDTO(
+                submitterName,
+                image,
+                fieldName,
+                oldValue,
+                newValue,
+                display,
+                updated,
+                submitterZdbID
+        );
     }
 
     //getters for jsp access
