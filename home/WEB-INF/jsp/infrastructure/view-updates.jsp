@@ -14,22 +14,15 @@
                 <div class="mr-3">
                     <div class="thumb-container">
                         <c:choose>
-                            <c:when test="${!empty update.submitter}">
-                                <zfin2:profileImage className="thumb-image" value="${update.submitter}"/>
+                            <c:when test="${!empty update.submitterName}">
+                                <zfin2:profileImage className="thumb-image" value="${update}"/>
                             </c:when>
                         </c:choose>
                     </div>
                 </div>
                 <div class="media-body">
                     <h5>
-                        <c:choose>
-                            <c:when test="${!empty update.submitter}">
-                                ${update.submitter.display}
-                            </c:when>
-                            <c:otherwise>
-                                ${update.submitterName}
-                            </c:otherwise>
-                        </c:choose>
+                        ${update.submitterName}
                         &nbsp;<small class="text-muted"><fmt:formatDate value="${update.whenUpdated}" pattern="yyyy-MM-dd"/></small>
                     </h5>
                     <dl class="row">
