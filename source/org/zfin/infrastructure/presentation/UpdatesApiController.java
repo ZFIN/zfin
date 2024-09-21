@@ -39,19 +39,17 @@ public class UpdatesApiController {
                                                        HttpServletRequest request) {
         List<UpdatesDTO> updatesDTO = UpdatesDTO.fromUpdates(infrastructureRepository.getUpdates(zdbID));
 
-        //is this a publication?
+        //is this a publication? If so, add pub tracking events
         Publication publication = publicationRepository.getPublication(zdbID);
         if (publication != null) {
             List<PublicationTrackingHistory> events = publicationRepository.fullTrackingHistory(publication);
             List<UpdatesDTO> publicationUpdates = UpdatesDTO.fromPublicationEvents(events);
             updatesDTO.addAll(publicationUpdates);
         }
-        updatesDTO.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated).reversed());
-
-        JsonResultResponse<UpdatesDTO> response = new JsonResultResponse<>();
-
+        updatesDTO.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated, Comparator.nullsLast(Comparator.reverseOrder())));
         PaginationResult<UpdatesDTO> pagedResult = PaginationResultFactory.createPaginationResultFromList(updatesDTO, pagination);
 
+        JsonResultResponse<UpdatesDTO> response = new JsonResultResponse<>();
         response.setResults(pagedResult.getPopulatedResults());
         response.setHttpServletRequest(request);
         response.setTotal(updatesDTO.size());
