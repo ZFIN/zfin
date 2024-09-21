@@ -1,5 +1,9 @@
 package org.zfin.infrastructure;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.profile.HasImage;
 import org.zfin.profile.Person;
 import org.zfin.publication.PublicationTrackingHistory;
@@ -9,15 +13,40 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public record UpdatesDTO(
+        @JsonView(View.API.class)
+        Long id,
+
+        @JsonView(View.API.class)
         String submitterName,
+
+        @JsonView(View.API.class)
         String submitterImage,
+
+        @JsonView(View.API.class)
         String fieldName,
+
+        @JsonView(View.API.class)
         String oldValue,
+
+        @JsonView(View.API.class)
         String newValue,
+
+        @JsonView(View.API.class)
         String comments,
+
+        @JsonView(View.API.class)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         Date whenUpdated,
+
+        @JsonView(View.API.class)
         String submitterZdbID
 ) implements HasImage {
+
+    @JsonView(View.API.class)
+    @JsonProperty("uniqueKey")
+    public String uniqueKey() {
+        return id + fieldName + whenUpdated;
+    }
 
 
     public static List<UpdatesDTO> fromUpdates(List<Updates> updates) {
@@ -31,6 +60,7 @@ public record UpdatesDTO(
         String image = update.getSubmitter() != null ? update.getSubmitter().getImage() : null;
         String zdbID = update.getSubmitter() != null ? update.getSubmitter().getZdbID() : null;
         return new UpdatesDTO(
+                update.getID(),
                 name,
                 image,
                 update.getFieldName(),
@@ -76,6 +106,7 @@ public record UpdatesDTO(
         String submitterZdbID = performedBy != null ? performedBy.getZdbID() : null;
 
         return new UpdatesDTO(
+                publicationEvent.getId(),
                 submitterName,
                 image,
                 fieldName,

@@ -224,26 +224,6 @@ public class PublicationTrackingController {
         newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
         newStatus.setDate(new GregorianCalendar());
 
-        Updates update = new Updates();
-        update.setFieldName("status");
-        
-        String newValue = null;
-        if (dto.getStatus() != null && dto.getStatus().getName() != null) {
-            newValue = dto.getStatus().getName().getDisplay();
-        }
-        update.setNewValue(newValue);
-
-        List<Updates> updates = getInfrastructureRepository().getUpdates(zdbID);
-        Optional<Updates> up = updates.stream().filter(updates1 -> updates1.getFieldName().equals("status")).findFirst();
-        up.ifPresent(value -> update.setOldValue(value.getNewValue()));
-        update.setRecID(zdbID);
-        Person currentSecurityUser = ProfileService.getCurrentSecurityUser();
-        update.setSubmitter(currentSecurityUser);
-        if (currentSecurityUser != null) {
-            update.setSubmitterName(currentSecurityUser.getUsername());
-        }
-        update.setWhenUpdated(new Date());
-
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
@@ -258,7 +238,6 @@ public class PublicationTrackingController {
                 curationRepository.resetCurationTopics(publication);
             }
         }
-        session.save(update);
         session.save(newStatus);
         tx.commit();
 

@@ -29,17 +29,8 @@ public class UpdatesController {
     @RequestMapping("/{zdbID}")
     public String viewUpdates(Model model, @PathVariable String zdbID) {
         List<UpdatesDTO> updatesDTO = UpdatesDTO.fromUpdates(infrastructureRepository.getUpdates(zdbID));
-        model.addAttribute("zdbID", zdbID);
-        model.addAttribute("updates", updatesDTO);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Updates for " + zdbID);
-        return "infrastructure/view-updates";
-    }
 
-    @RequestMapping("/v2/{zdbID}")
-    public String viewUpdates2(Model model, @PathVariable String zdbID) {
-        List<UpdatesDTO> updatesDTO = UpdatesDTO.fromUpdates(infrastructureRepository.getUpdates(zdbID));
-
-        //is this a publication?
+        //is this a publication? If so, add pub tracking events
         Publication publication = publicationRepository.getPublication(zdbID);
         if (publication != null) {
             List<PublicationTrackingHistory> events = publicationRepository.fullTrackingHistory(publication);
@@ -52,5 +43,24 @@ public class UpdatesController {
         model.addAttribute("updates", updatesDTO);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Updates for " + zdbID);
         return "infrastructure/view-updates";
+    }
+
+    @RequestMapping("/v2/{zdbID}")
+    public String viewUpdates2(Model model, @PathVariable String zdbID) {
+        List<UpdatesDTO> updatesDTO = UpdatesDTO.fromUpdates(infrastructureRepository.getUpdates(zdbID));
+
+        //is this a publication? If so, add pub tracking events
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication != null) {
+            List<PublicationTrackingHistory> events = publicationRepository.fullTrackingHistory(publication);
+            List<UpdatesDTO> publicationUpdates = UpdatesDTO.fromPublicationEvents(events);
+            updatesDTO.addAll(publicationUpdates);
+        }
+        updatesDTO.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated).reversed());
+
+        model.addAttribute("zdbID", zdbID);
+        model.addAttribute("updates", updatesDTO);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Updates for " + zdbID);
+        return "infrastructure/view-updates-v2";
     }
 }
