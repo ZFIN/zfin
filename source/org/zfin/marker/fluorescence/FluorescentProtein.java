@@ -18,6 +18,7 @@ import java.util.List;
 public class FluorescentProtein extends AbstractFluorescence {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fp_pk_id")
     @JsonView(View.API.class)
     private long id;
@@ -38,6 +39,8 @@ public class FluorescentProtein extends AbstractFluorescence {
     private String excitationColor;
     @Column(name = "fp_aliases")
     private String aliases;
+    @Column(name = "fp_uuid")
+    private String uuid;
 
     @ManyToMany
     @JoinTable(name = "fpProtein_efg", joinColumns = {
@@ -72,4 +75,7 @@ public class FluorescentProtein extends AbstractFluorescence {
         return id;
     }
 
+    public String toStringSingleLine() {
+        return "ID:" + id + " UUID:" + uuid + " Name:" + name + " Emission:" + emissionColor + " Excitation:" + excitationColor + " Emission Length:" + emissionLength + " Excitation Length:" + excitationLength;
+    }
 }
