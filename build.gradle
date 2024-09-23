@@ -585,7 +585,7 @@ dependencies {
     implementation group: 'org.codehaus.jackson', name: 'jackson-jaxrs', version: '1.9.13'
     implementation group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
 */
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
 /*
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
