@@ -1,3 +1,4 @@
+<%--This file has the side effect of adding lots of empty whitespace lines wherever it is included--%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="zfin" uri="/WEB-INF/tld/zfin-tags.tld" %>

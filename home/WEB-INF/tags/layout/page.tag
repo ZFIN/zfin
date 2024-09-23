@@ -1,5 +1,3 @@
-<!doctype html>
-
 <%@ tag pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
@@ -23,6 +21,8 @@
     </c:set>
 </c:if>
 
+<%-- Clear the buffer before rendering the page --%>
+<zfin:clearBuffer/><!doctype html>
 <html lang="en">
     <!-- Server: @INSTANCE@ -->
     <head>
