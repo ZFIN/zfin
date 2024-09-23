@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { EnvironmentPlugin } = require('webpack');
+const webpack = require('webpack');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -79,6 +80,11 @@ const config = {
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].bundle.[contenthash].css'
+        }),
+        new webpack.BannerPlugin({ //Add UTF-8 charset to top of style css file
+            banner: '@charset "UTF-8";',
+            raw: true,
+            test: /style\.bundle\.\w+\.css$/
         }),
         new WebpackAssetsManifest({
             output: '../asset-manifest.json', // relative to output.path
