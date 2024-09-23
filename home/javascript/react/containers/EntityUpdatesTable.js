@@ -1,8 +1,21 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
+import useTableState from "../hooks/useTableState";
+import produce from "immer";
 
-const EntityUpdatesTable = ({entityId}) => {
+const EntityUpdatesTable = ({entityId, fieldNameFilter}) => {
+    const [tableState, setTableState] = useTableState();
+
+    useEffect(() => {
+        if (fieldNameFilter) {
+            setTableState(produce(state => {
+                state.filter = {
+                    fieldName: fieldNameFilter
+                }
+            }));
+        }
+    }, []);
 
     const columns = [
         {
@@ -13,6 +26,7 @@ const EntityUpdatesTable = ({entityId}) => {
         },
         {
             label: 'Field',
+            filterName: 'fieldName',
             content: ({fieldName}) => {
                 return <span>{fieldName}</span>;
             },
@@ -47,12 +61,15 @@ const EntityUpdatesTable = ({entityId}) => {
             columns={columns}
             dataUrl={`/action/api/updates/${entityId}`}
             rowKey={row => row.uniqueKey}
+            tableState={tableState}
+            setTableState={setTableState}
         />
     );
 };
 
 EntityUpdatesTable.propTypes = {
     entityId: PropTypes.string,
+    fieldNameFilter: PropTypes.string,
 };
 
 export default EntityUpdatesTable;

@@ -2,9 +2,12 @@ package org.zfin.infrastructure.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -34,7 +37,8 @@ public class UpdatesApiController {
 
     @RequestMapping("/{zdbID}")
     @JsonView(View.API.class)
-    public JsonResultResponse<UpdatesDTO> viewUpdates2(@PathVariable String zdbID,
+    public JsonResultResponse<UpdatesDTO> viewUpdates(@PathVariable String zdbID,
+                                                       @RequestParam(value = "filter.fieldName", required = false) String filterFieldName,
                                                        @Version Pagination pagination,
                                                        HttpServletRequest request) {
         List<UpdatesDTO> updatesDTO = UpdatesDTO.fromUpdates(infrastructureRepository.getUpdates(zdbID));
@@ -46,6 +50,10 @@ public class UpdatesApiController {
             List<UpdatesDTO> publicationUpdates = UpdatesDTO.fromPublicationEvents(events);
             updatesDTO.addAll(publicationUpdates);
         }
+        if (StringUtils.isNotEmpty(filterFieldName)) {
+            updatesDTO.removeIf(updatesDTO1 -> !updatesDTO1.fieldName().toLowerCase().contains(filterFieldName.toLowerCase()));
+        }
+
         updatesDTO.sort(Comparator.comparing(UpdatesDTO::whenUpdated, Comparator.nullsLast(Comparator.reverseOrder())));
         PaginationResult<UpdatesDTO> pagedResult = PaginationResultFactory.createPaginationResultFromList(updatesDTO, pagination);
 

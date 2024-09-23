@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -21,9 +22,16 @@ public class UpdatesController {
 
 
     @RequestMapping("/{zdbID}")
-    public String viewUpdates(Model model, @PathVariable String zdbID) {
+    public String viewUpdates(Model model,
+                              @PathVariable String zdbID,
+                              @RequestParam(value = "fieldNameFilter", required = false) String fieldNameFilter
+                              ) {
         model.addAttribute("zdbID", zdbID);
+        model.addAttribute("publication", publicationRepository.getPublication(zdbID));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Updates for " + zdbID);
+        if (fieldNameFilter != null) {
+            model.addAttribute("fieldNameFilter", fieldNameFilter);
+        }
         return "infrastructure/view-updates";
     }
 }

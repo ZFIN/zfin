@@ -269,26 +269,6 @@ public class PublicationTrackingController {
         return converter.toIndexedStatusDTO(publication);
     }
 
-    @RequestMapping(value = "/{zdbID}/status-history")
-    public String showPubStatusHistory(Model model, @PathVariable String zdbID) {
-        Publication publication = publicationRepository.getPublication(zdbID);
-        if (publication == null) {
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        List<PublicationEvent> events = new ArrayList<>();
-        events.addAll(publicationRepository.fullTrackingHistory(publication));
-        if (publication.isIndexed()) {
-            events.add(new IndexedEvent(publication));
-        }
-        events.sort(Comparator.comparing(PublicationEvent::getDate).reversed());
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Status History for " + publication.getTitle());
-        model.addAttribute("publication", publication);
-        model.addAttribute("events", events);
-        return "publication/status-history";
-    }
-
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/validate", method = RequestMethod.POST)
     public JSONMessageList validatePublication(@PathVariable String zdbID) {
