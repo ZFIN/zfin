@@ -157,7 +157,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             ORDER BY numOfFig DESC, geneSymbol
                 """;
 
-        NativeQuery query = session.createNativeQuery(sql);
+        NativeQuery query = session.createNativeQuery(sql, Tuple.class);
         query.addScalar("geneID", StandardBasicTypes.STRING);
         query.addScalar("geneSymbol", StandardBasicTypes.STRING);
         query.addScalar("numOfFig", StandardBasicTypes.INTEGER);
