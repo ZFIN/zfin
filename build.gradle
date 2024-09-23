@@ -878,7 +878,7 @@ dependencies {
     implementation group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.9.1.Final'
     implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '3.9.1.Final'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
     implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.13.0'
     implementation files("home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar")
     implementation 'jakarta.transaction:jakarta.transaction-api:2.0.0'
