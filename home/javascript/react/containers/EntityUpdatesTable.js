@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import useTableState from "../hooks/useTableState";
-import produce from "immer";
+import useTableState from '../hooks/useTableState';
+import produce from 'immer';
 
 const EntityUpdatesTable = ({entityId, fieldNameFilter}) => {
     const [tableState, setTableState] = useTableState();
