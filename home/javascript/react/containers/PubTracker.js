@@ -274,7 +274,7 @@ class PubTracker extends React.Component {
                         </div>
                     </div>
                     <small>
-                        <a href={`/action/publication/${pubId}/status-history`} target='_blank' rel='noopener noreferrer'>
+                        <a href={`/action/updates/${pubId}?fieldNameFilter=status`} target='_blank' rel='noopener noreferrer'>
                             History <i className='fas fa-external-link-alt' />
                         </a>
                     </small>

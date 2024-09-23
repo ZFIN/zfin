@@ -178,7 +178,6 @@
         <security:intercept-url pattern="/action/publication/*/notes" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/notification" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/status" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/publication/*/status-history" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/topics" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/track" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/*/validate" access="hasRole('root') or ${DISABLE_SECURITY}"/>
@@ -194,6 +193,7 @@
         <security:intercept-url pattern="/action/str/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
         <security:intercept-url pattern="/action/updates/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/api/updates/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form"
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
