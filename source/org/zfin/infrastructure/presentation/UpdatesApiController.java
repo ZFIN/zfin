@@ -46,7 +46,7 @@ public class UpdatesApiController {
             List<UpdatesDTO> publicationUpdates = UpdatesDTO.fromPublicationEvents(events);
             updatesDTO.addAll(publicationUpdates);
         }
-        updatesDTO.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated, Comparator.nullsLast(Comparator.reverseOrder())));
+        updatesDTO.sort(Comparator.comparing(UpdatesDTO::whenUpdated, Comparator.nullsLast(Comparator.reverseOrder())));
         PaginationResult<UpdatesDTO> pagedResult = PaginationResultFactory.createPaginationResultFromList(updatesDTO, pagination);
 
         JsonResultResponse<UpdatesDTO> response = new JsonResultResponse<>();

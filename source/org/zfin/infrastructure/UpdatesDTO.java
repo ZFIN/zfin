@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
-import org.zfin.profile.HasImage;
 import org.zfin.profile.Person;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingStatus;
@@ -40,7 +39,7 @@ public record UpdatesDTO(
 
         @JsonView(View.API.class)
         String submitterZdbID
-) implements HasImage {
+) {
 
     @JsonView(View.API.class)
     @JsonProperty("uniqueKey")
@@ -83,9 +82,9 @@ public record UpdatesDTO(
             updates.add(tempEvent);
             previous = tempEvent;
         }
-        updates.sort(Comparator.comparing(UpdatesDTO::getWhenUpdated));
+        updates.sort(Comparator.comparing(UpdatesDTO::whenUpdated));
         for(UpdatesDTO update : updates) {
-            System.out.println(update.getWhenUpdated());
+            System.out.println(update.whenUpdated);
         }
 
         return updates;
@@ -99,7 +98,7 @@ public record UpdatesDTO(
         String submitterName = performedBy != null ? performedBy.getDisplay() : null;
         String image = performedBy != null ? performedBy.getImage() : null;
         String fieldName = "Status";
-        String oldValue = previous != null ? previous.getNewValue() : null;
+        String oldValue = previous != null ? previous.newValue() : null;
         String newValue = statusName.toString();
         String display = publicationEvent.getDisplay();
         Date updated = date.getTime();
@@ -116,46 +115,5 @@ public record UpdatesDTO(
                 updated,
                 submitterZdbID
         );
-    }
-
-    //getters for jsp access
-    public String getSubmitterName() {
-        return submitterName;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public String getOldValue() {
-        return oldValue;
-    }
-
-    public String getNewValue() {
-        return newValue;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public Date getWhenUpdated() {
-        return whenUpdated;
-    }
-
-    //implement interface for HasImage
-    @Override
-    public String getZdbID() {
-        return submitterZdbID;
-    }
-
-    @Override
-    public String getImage() {
-        return submitterImage;
-    }
-
-    @Override
-    public void setImage(String image) {
-        // do nothing
     }
 }
