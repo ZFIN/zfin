@@ -164,6 +164,36 @@ public class PaginationResultFactory {
         return createResultFromScrollableAndArray(bean.getFirstRecord() - 1, bean.getLastRecord(), scrollableResults);
     }
 
+    /**
+     * Return a paginated subset of the list provided based on the pagination object provided
+     * It will use the parameters of pagination (size, page number, etc.) to figure out the subset
+     * @param list
+     * @param pagination
+     * @return subset
+     * @param <T>
+     */
+    public static <T> PaginationResult<T> createPaginationResultFromList(List<T> list, Pagination pagination) {
+        PaginationResult<T> returnResult = new PaginationResult<T>();
+        Integer page = pagination.getPage();
+        Integer limit = pagination.getLimit();
+        int start = (page - 1) * limit;
+        int end = page * limit;
+        if (end > list.size())
+            end = list.size();
+        if (start > list.size())
+            start = list.size();
+        if (start < 0)
+            start = 0;
+        if (end < 0)
+            end = 0;
+        if (start > end)
+            start = end;
+        List<T> sublist = list.subList(start, end);
+        returnResult.setPopulatedResults(sublist);
+        returnResult.setTotalCount(list.size());
+        return returnResult;
+    }
+
     private static <T> PaginationResult<T> createAllRecordsFromScrollable(ScrollableResults scrollableResults) {
         PaginationResult<T> returnResult = new PaginationResult<T>();
         List<T> list = new ArrayList<T>();
