@@ -620,10 +620,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = """
                      select distinct fish from Genotype fish, PublicationAttribution record
-                          where record.publication.zdbID = :pubID 
+                          where record.publication.zdbID = :pubID
                                 and record.dataZdbID = fish.zdbID
                                 and record.sourceType = :sourceType
-                         order by fish.handle 
+                         order by fish.handle
                      """;
         Query<Genotype> query = session.createQuery(hql, Genotype.class);
         query.setParameter("pubID", publicationID);
@@ -684,10 +684,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Antibody> getAntibodiesByPublication(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct antibody from Antibody antibody, PublicationAttribution record" +
-                     "     where record.publication.zdbID = :pubID " +
-                     "           and record.dataZdbID = antibody.zdbID" +
-                     "    order by antibody.abbreviationOrder ";
+        String hql = """
+                     select distinct antibody from Antibody antibody, PublicationAttribution record
+                          where record.publication.zdbID = :pubID 
+                                and record.dataZdbID = antibody.zdbID
+                         order by antibody.abbreviationOrder 
+                     """;
         Query<Antibody> query = session.createQuery(hql, Antibody.class);
         query.setParameter("pubID", publicationID);
 
@@ -814,17 +816,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      */
     public List<Publication> getPublicationsWithAccessionButNoDOIAndLessAttempts(int maxAttempts, int maxResults) {
         Session session = HibernateUtil.currentSession();
-        String hql = " select p from Publication p" +
-                     " where p.doi is null  " +
-                     " and p.accessionNumber is not null  " +
-                     " and ( not exists ( " +
-                     "   select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID " +
-                     " ) OR exists ( " +
-                     "   select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID " +
-                     "   and da.numAttempts < :attempts " +
-                     " )  )" +
-                     " order by p.publicationDate desc " +
-                     "";
+        String hql = """
+                      select p from Publication p
+                      where p.doi is null  
+                      and p.accessionNumber is not null  
+                      and ( not exists ( 
+                        select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID 
+                      ) OR exists ( 
+                        select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID 
+                        and da.numAttempts < :attempts 
+                      )  )
+                      order by p.publicationDate desc 
+                     """;
         Query<Publication> query = session.createQuery(hql, Publication.class);
         query.setParameter("attempts", maxAttempts);
         if (maxResults >= 0) {
@@ -858,19 +861,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Publication> resultList;
         Session session = HibernateUtil.currentSession();
 
-        hql = "select p.publication " +
-              " from PublicationAttribution p " +
-              " where p.dataZdbID = :genotypeZdbID ";
+        hql = """
+              select p.publication 
+               from PublicationAttribution p 
+               where p.dataZdbID = :genotypeZdbID 
+              """;
         query = session.createQuery(hql, Publication.class);
         query.setParameter("genotypeZdbID", genotype.getZdbID());
         resultList = query.list();
         Set<Publication> pubList = new HashSet<>(resultList);
 
 
-        hql = "select p.publication " +
-              " from PublicationAttribution p, DataAlias da " +
-              "  where p.dataZdbID = da.zdbID " +
-              " and da.dataZdbID = :genotypeZdbID ";
+        hql = """
+              select p.publication 
+               from PublicationAttribution p, DataAlias da 
+                where p.dataZdbID = da.zdbID 
+               and da.dataZdbID = :genotypeZdbID 
+              """;
         query = session.createQuery(hql, Publication.class);
         query.setParameter("genotypeZdbID", genotype.getZdbID());
         resultList = query.list();
@@ -895,9 +902,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberDirectPublications(String zdbID) {
-        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery("select count(*) " +
-                                                                              "from record_attribution ra " +
-                                                                              "where ra.recattrib_data_zdb_id=:zdbID ")
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery("""
+                                                                              select count(*) 
+                                                                              from record_attribution ra 
+                                                                              where ra.recattrib_data_zdb_id=:zdbID 
+                                                                              """)
             .setParameter("zdbID", zdbID)
             .uniqueResult()
             .toString()
@@ -908,11 +917,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Ortholog> getOrthologListByPub(String pubID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
-                     "from Ortholog as ortho " +
-                     "join ortho.evidenceSet as evidence " +
-                     "where evidence.publication.zdbID = :pubID " +
-                     "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
+        String hql = """
+                     select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder 
+                     from Ortholog as ortho 
+                     join ortho.evidenceSet as evidence 
+                     where evidence.publication.zdbID = :pubID 
+                     order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder
+                     """;
         Query query = session.createQuery(hql);
         query.setParameter("pubID", pubID);
 
