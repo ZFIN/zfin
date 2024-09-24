@@ -46,7 +46,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     @ManyToOne
     @JoinColumn(name = "mhist_dalias_zdb_id")
     private MarkerAlias markerAlias;
-    @Column(name = "mhist_mrkr_prev_name", nullable = false)
+    @Column(name = "mhist_mrkr_prev_name")
     private String oldMarkerName;
     @Column(name = "mhist_comments")
     private String comments;
