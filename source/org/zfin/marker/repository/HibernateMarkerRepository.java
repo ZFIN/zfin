@@ -494,21 +494,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         currentSession().save(mrel);
         currentSession().flush();
-        currentSession().refresh(mrel);
-
-        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation()
-                               + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
-                               + " " + mrel.getSecondMarker().getAbbreviation()
-                               + "\" with Attribution: " + sourceZdbID;
-        log.debug(updateComment);
-        InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
-        InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
 
         //now deal with attribution
         if (sourceZdbID != null && sourceZdbID.length() > 0) {
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
             addMarkerRelationshipAttribution(mrel, publication);
         }
+
+        currentSession().refresh(mrel);
+
+        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation()
+                + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
+                + " " + mrel.getSecondMarker().getAbbreviation()
+                + "\" with Attribution: " + sourceZdbID;
+        log.debug(updateComment);
+        InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
+        InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
 
         return mrel;
     }
