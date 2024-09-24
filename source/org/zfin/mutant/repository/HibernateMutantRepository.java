@@ -108,7 +108,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
             for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
@@ -147,7 +147,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
         query.setParameter("standardOrGeneric", false);
 
         // have to add extra select because of ordering, but we only want to return the first
@@ -211,7 +211,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Tuple> query = session.createQuery(hql, Tuple.class);
         query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
             for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");

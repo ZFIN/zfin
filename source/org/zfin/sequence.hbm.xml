@@ -312,15 +312,14 @@
 
     <!--    Note:  this should go away when the types are properly discriminated-->
     <sql-query name="loadBlastableDBLinksForAccession">
-        <return alias="acc" class="org.zfin.sequence.Accession"/>
-        <return-join alias="link" property="acc.blastableMarkerDBLinks"/>
+        <return alias="link" class="org.zfin.sequence.MarkerDBLink"/>
+        <return-join alias="acc" property="acc.blastableMarkerDBLinks"/>
         select
-        acc.accbk_pk_id ,
-        link.dblink_zdb_id ,
-        link.dblink_acc_num ,
-        link.dblink_info ,
-        link.dblink_length ,
-        link.dblink_fdbcont_zdb_id ,
+        link.dblink_zdb_id,
+        link.dblink_acc_num,
+        link.dblink_info,
+        link.dblink_length,
+        link.dblink_fdbcont_zdb_id,
         link.dblink_linked_recid,
         link.dblink_acc_num_display,
         av.accver_version,
@@ -332,7 +331,7 @@
         left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
         where acc.accbk_pk_id=?
         and fdbdt.fdbdt_super_type = 'sequence'
-        and fdbdt.fdbdt_data_type in ( 'RNA','Polypeptide' )
+        and fdbdt.fdbdt_data_type in ('RNA','Polypeptide')
     </sql-query>
 
     <!--    <database-object>
