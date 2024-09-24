@@ -618,11 +618,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Genotype> getGenotypesInPublication(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fish from Genotype fish, PublicationAttribution record" +
-                     "     where record.publication.zdbID = :pubID " +
-                     "           and record.dataZdbID = fish.zdbID" +
-                     "           and record.sourceType = :sourceType" +
-                     "    order by fish.handle ";
+        String hql = """
+                     select distinct fish from Genotype fish, PublicationAttribution record
+                          where record.publication.zdbID = :pubID 
+                                and record.dataZdbID = fish.zdbID
+                                and record.sourceType = :sourceType
+                         order by fish.handle 
+                     """;
         Query<Genotype> query = session.createQuery(hql, Genotype.class);
         query.setParameter("pubID", publicationID);
         query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
