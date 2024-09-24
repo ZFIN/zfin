@@ -977,17 +977,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Publication> getPublicationWithPubMedId(Integer maxResult) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = """
-                    from Publication as publication
-                    where publication.accessionNumber is not null
-                    AND publication.type in (:type)
-                    AND publication.status = :status
-                """;
-
+        String hql = "from Publication as publication" +
+                     "      where publication.accessionNumber is not null " +
+                     "      AND publication.type in (:type) " +
+                     "      AND publication.status = :status";
 
         Query<Publication> query = session.createQuery(hql, Publication.class);
-        query.setParameterList("type", List.of(PublicationType.JOURNAL, PublicationType.REVIEW));
-        query.setParameter("status", Publication.Status.ACTIVE);
+        query.setParameterList("type", new String[]{"Journal", "Review"});
+        query.setParameter("status", "active");
         if (maxResult != null) {
             query.setMaxResults(maxResult);
         }
@@ -1001,35 +998,29 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Publication> resultList;
         Session session = HibernateUtil.currentSession();
 
-        hql = """
-                select p.publication "
-                from PublicationAttribution p
-                where p.dataZdbID = :featureZdbID
-                """;
+        hql = "select p.publication " +
+              " from PublicationAttribution p " +
+              " where p.dataZdbID = :featureZdbID ";
         query = session.createQuery(hql, Publication.class);
         query.setParameter("featureZdbID", feature.getZdbID());
         resultList = query.list();
         SortedSet<Publication> pubList = new TreeSet<>(resultList);
 
 
-        hql = """
-                select p.publication
-                from PublicationAttribution p , DataAlias  da
-                where p.dataZdbID = da.zdbID
-                and da.dataZdbID = :featureZdbID
-                """;
+        hql = "select p.publication " +
+              " from PublicationAttribution p , DataAlias  da " +
+              "  where p.dataZdbID = da.zdbID " +
+              " and da.dataZdbID = :featureZdbID ";
         query = session.createQuery(hql, Publication.class);
         query.setParameter("featureZdbID", feature.getZdbID());
         resultList = query.list();
         pubList.addAll(resultList);
 
 
-        hql = """
-                select p.publication
-                from PublicationAttribution p , FeatureMarkerRelationship fmr
-                where fmr.feature.zdbID  = :featureZdbID
-                and fmr.feature.zdbID  = p.dataZdbID
-                """;
+        hql = "select p.publication " +
+              " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
+              " where fmr.feature.zdbID  = :featureZdbID " +
+              " and fmr.feature.zdbID  = p.dataZdbID ";
 
         query = session.createQuery(hql, Publication.class);
         query.setParameter("featureZdbID", feature.getZdbID());
@@ -1427,15 +1418,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Long getPublicationTrackingStatus(Person person, int days, PublicationTrackingStatus... status) {
-        Calendar dateInPast = Calendar.getInstance();
-        dateInPast.add(Calendar.DATE, -days);
-
         String hql = "select count(m) from PublicationTrackingHistory as m where " +
-                     "m.updater = :person AND m.status in (:status) and m.date > :dateInPast";
+                     "m.updater = :person AND m.status in (:status) and m.date > current_date - :days";
         return HibernateUtil.currentSession().createQuery(hql, Long.class)
             .setParameter("person", person)
             .setParameterList("status", status)
-            .setParameter("dateInPast", dateInPast)
+            .setParameter("days", days)
             .uniqueResult();
     }
 
