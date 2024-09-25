@@ -39,16 +39,28 @@ abstract public class EnsemblTranscriptBase {
         downloadFile(ncrnaFileName, "ncrna");
     }
 
-    protected  Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
+    protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
         Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(cdnaFileName);
         Map<String, List<RichSequence>> geneNcRNATranscriptMap = getGeneTranscriptMap(ncrnaFileName);
         geneTranscriptMap.putAll(geneNcRNATranscriptMap);
         return geneTranscriptMap;
     }
 
+    protected List<RichSequence> getAllFastaRecordsFromFile() {
+        List<RichSequence> cdnaRecords = getAllFastaRecords(cdnaFileName);
+        List<RichSequence> ncRnaRecords = getAllFastaRecords(ncrnaFileName);
+        cdnaRecords.addAll(ncRnaRecords);
+        return cdnaRecords;
+    }
+
 
     protected static void downloadFile(String fileName, String directory) {
         String zippedFileName = fileName + ".gz";
+        File file = new File(zippedFileName);
+        if (file.exists()) {
+            return;
+        }
+
         String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/" + directory + "/" + zippedFileName;
 
         try {
@@ -73,7 +85,16 @@ abstract public class EnsemblTranscriptBase {
         return null;
     }
 
-    private static String getGeneId(RichSequence sequence) {
+    protected static List<RichSequence> getAllFastaRecords(String fileName) {
+        try {
+            return getFastaIterator(fileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("Could not read FASTA files");
+    }
+
+    public static String getGeneId(RichSequence sequence) {
 
         String line = sequence.getDescription();
         String pattern = "(.*)(gene:)(ENSDARG.*)( gene_biotype)(.*)";
