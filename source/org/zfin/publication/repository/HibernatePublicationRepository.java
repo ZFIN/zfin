@@ -1003,9 +1003,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                            AND publication.status = :status
                      """;
 
+
         Query<Publication> query = session.createQuery(hql, Publication.class);
-        query.setParameterList("type", new String[]{"Journal", "Review"});
-        query.setParameter("status", "active");
+        query.setParameterList("type", List.of(PublicationType.JOURNAL, PublicationType.REVIEW));
+        query.setParameter("status", Publication.Status.ACTIVE);
         if (maxResult != null) {
             query.setMaxResults(maxResult);
         }
@@ -1473,14 +1474,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Long getPublicationTrackingStatus(Person person, int days, PublicationTrackingStatus... status) {
-        String hql = """
-                     select count(m) from PublicationTrackingHistory as m where 
-                     m.updater = :person AND m.status in (:status) and m.date > current_date - :days
-                     """;
+
+        Calendar dateInPast = Calendar.getInstance();
+        dateInPast.add(Calendar.DATE, -days);
+
+        String hql = "select count(m) from PublicationTrackingHistory as m where " +
+                     "m.updater = :person AND m.status in (:status) and m.date > :dateInPast";
         return HibernateUtil.currentSession().createQuery(hql, Long.class)
             .setParameter("person", person)
             .setParameterList("status", status)
-            .setParameter("days", days)
+            .setParameter("dateInPast", dateInPast)
             .uniqueResult();
     }
 

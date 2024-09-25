@@ -10,8 +10,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
@@ -29,7 +27,6 @@ import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -44,7 +41,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
