@@ -150,3 +150,8 @@ task importMissingFPBaseProteinsTask(type: JavaExec) {
     main = 'org.zfin.marker.fluorescence.ImportMissingFPBaseProteinsTask'
 }
 
+task createEnsembTranscriptFastaFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReader'
+}
+
