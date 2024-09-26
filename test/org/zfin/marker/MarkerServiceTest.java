@@ -20,6 +20,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -31,6 +32,7 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;

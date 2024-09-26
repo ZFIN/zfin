@@ -1,7 +1,11 @@
 package org.zfin.marker;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
+@Setter
+@Getter
 public class TranscriptStatus {
 
     private static Logger logger = LogManager.getLogger(TranscriptStatus.class) ;
@@ -10,38 +14,6 @@ public class TranscriptStatus {
     private Status status;
     private String display;
     private String order;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
 
     public enum Status{
         NONE(null),
