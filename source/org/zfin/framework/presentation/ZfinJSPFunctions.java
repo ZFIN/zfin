@@ -15,7 +15,9 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.infrastructure.UpdatesDTO;
 import org.zfin.infrastructure.ZdbID;
+import org.zfin.infrastructure.service.UpdatesService;
 import org.zfin.infrastructure.service.VersionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.mutant.PhenotypeService;
@@ -398,6 +400,16 @@ public class ZfinJSPFunctions {
     public static AuditLogItem getLastUpdate(String entityID) {
         return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
     }
+
+    public static Date getLastUpdateDateIncludingTracking(String entityID) {
+        UpdatesService updatesService = new UpdatesService();
+        List<UpdatesDTO> updates = updatesService.getUpdatesDTOS(entityID, null);
+        if (updates.isEmpty()) {
+            return null;
+        }
+        return updates.get(0).whenUpdated();
+    }
+
 
     public static String getAssetPath(String name) {
         ObjectMapper mapper = new ObjectMapper();
