@@ -653,7 +653,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Query query = session.createQuery(hql);
         query.setParameter("accession", accession);
         query.setParameter("markerZdbID", markerZdbID);
-        query.setParameter("referenceDBName", referenceDBName);
+        query.setParameter("referenceDBName", ForeignDB.AvailableName.getType(referenceDBName));
         return (DBLink) query.uniqueResult();
     }
 

@@ -24,6 +24,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import jakarta.persistence.Tuple;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -333,9 +334,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public List<Person> getRootUsers() {
         Session session = currentSession();
-        Query<Person> query = session.createQuery("from Person where accountInfo.role = :role", Person.class);
+        Query<AccountInfo> query = session.createQuery("from AccountInfo where role = :role", AccountInfo.class);
         query.setParameter("role", "root");
-        return query.list();
+        List<Person> rootUsers = new ArrayList<>();
+        rootUsers.addAll(
+                query.list().stream().map(AccountInfo::getPerson).collect(Collectors.toSet())
+        );
+        return rootUsers;
     }
 
     /**
