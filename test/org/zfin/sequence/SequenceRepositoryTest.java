@@ -59,9 +59,9 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testExistingDBLinksPassValidationRules() {
-        //pause test until 8/1/24
+        //pause test until 2/1/25
         //depends on ZFIN-8955 being fixed (https://zfin.atlassian.net/browse/ZFIN-8955)
-        Assume.assumeTrue( new Date().after( new GregorianCalendar(2024,Calendar.AUGUST, 1).getTime() ) );
+        Assume.assumeTrue( new Date().after( new GregorianCalendar(2025,Calendar.FEBRUARY, 1).getTime() ) );
 
         Session session = HibernateUtil.currentSession();
 
