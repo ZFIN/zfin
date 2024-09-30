@@ -58,6 +58,33 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void testExistingDBLinksPassValidationRules() {
+        //pause test until 2/1/25
+        //depends on ZFIN-8955 being fixed (https://zfin.atlassian.net/browse/ZFIN-8955)
+        Assume.assumeTrue( new Date().after( new GregorianCalendar(2025,Calendar.FEBRUARY, 1).getTime() ) );
+
+        Session session = HibernateUtil.currentSession();
+
+        //get all dblinks that have validation rules
+        String hqlString = "from ReferenceDatabase refDb join fetch refDb.validationRules as rule where rule is not null";
+        Query query = session.createQuery(hqlString);
+        List<ReferenceDatabase> dbs = query.list();
+
+        List<String> failedLinkAccessions = new ArrayList<>();
+        dbs.forEach(db -> {
+            List<DBLink> dblinks = getSequenceRepository().getDBLinks(db.getForeignDB().getDbName());
+            dblinks.forEach(dblink -> {
+                if (!dblink.isValidAccessionFormat()) {
+                    failedLinkAccessions.add(dblink.getAccessionNumber());
+                }
+            });
+        });
+
+        assertEquals("existing dblinks should all pass validation rules: " +
+                        String.join("; ", failedLinkAccessions), 0, failedLinkAccessions.size());
+    }
+
+    @Test
     public void testGenBankAccessionFormatValidationRulesFail() {
         SequenceRepository sr = RepositoryFactory.getSequenceRepository();
         ReferenceDatabase refDb = sr.getReferenceDatabase(

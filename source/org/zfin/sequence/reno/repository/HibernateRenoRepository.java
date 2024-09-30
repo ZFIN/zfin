@@ -58,7 +58,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         criteriaQuery.select(criteriaBuilder.count(root)).where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("run"), oneRun),
+                        oneRun == null ? criteriaBuilder.isNull(root.get("run")) : criteriaBuilder.equal(root.get("run"), oneRun),
                         criteriaBuilder.isFalse(root.get("done")),
                         criteriaBuilder.isNull(root.get("lockPerson"))
                 )
@@ -75,7 +75,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         criteriaQuery.select(root).where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("run"), run),
+                        run == null ? criteriaBuilder.isNull(root.get("run")) : criteriaBuilder.equal(root.get("run"), run),
                         criteriaBuilder.isFalse(root.get("done")),
                         criteriaBuilder.isNotNull(root.get("lockPerson"))
                 )
@@ -92,7 +92,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         criteriaQuery.select(criteriaBuilder.count(root)).where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("run"), oneRun),
+                        oneRun == null ? criteriaBuilder.isNull(root.get("run")) : criteriaBuilder.equal(root.get("run"), oneRun),
                         criteriaBuilder.isFalse(root.get("done")),
                         criteriaBuilder.isNotNull(root.get("lockPerson"))
                 )
@@ -109,7 +109,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         criteriaQuery.select(criteriaBuilder.count(root)).where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("run"), oneRun),
+                        oneRun == null ? criteriaBuilder.isNull(root.get("run")) : criteriaBuilder.equal(root.get("run"), oneRun),
                         criteriaBuilder.isTrue(root.get("done")),
                         criteriaBuilder.isNull(root.get("lockPerson"))
                 )
