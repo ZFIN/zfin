@@ -192,7 +192,6 @@ public class MutantRepositoryTest {
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertThat(phenotypes, notNullValue());
-//        System.out.println("null " + phenotypes.size());
 
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
@@ -200,7 +199,6 @@ public class MutantRepositoryTest {
         for(var ontology : Ontology.values()) {
             List<PhenotypeStatement> results = mutantRepository.getPhenotypesOnObsoletedTerms(ontology);
             assertThat(results, notNullValue());
-//            System.out.println(ontology.toString() + " " + results.size());
         }
     }
 
