@@ -34,7 +34,7 @@
             ${fn:escapeHtml(name)}">
         </example>
     </function>
-    
+
     <function>
         <description>Remove any character which is not part of a valid DOM identifier from a string</description>
         <name>makeDomIdentifier</name>
@@ -338,6 +338,14 @@
         <name>getLastUpdate</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>org.zfin.audit.AuditLogItem getLastUpdate(java.lang.String)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getLastUpdateDateIncludingTracking</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.util.Date getLastUpdateDateIncludingTracking(java.lang.String)</function-signature>
     </function>
 
     <function>
