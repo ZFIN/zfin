@@ -1119,13 +1119,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public TranscriptType getTranscriptTypeForName(String typeString) {
         Session session = currentSession();
-        return session.createQuery("from TranscriptType where type = :type", TranscriptType.class).setParameter("type", typeString).uniqueResult();
+        TranscriptType.Type type = TranscriptType.Type.getTranscriptType(typeString);
+        return session.createQuery("from TranscriptType where type = :type", TranscriptType.class)
+                .setParameter("type", type)
+                .uniqueResult();
     }
 
     public TranscriptStatus getTranscriptStatusForName(String statusString) {
+        TranscriptStatus.Status status = TranscriptStatus.Status.getStatus(statusString);
         Session session = currentSession();
         Query<TranscriptStatus> criteria = session.createQuery("from TranscriptStatus where status = :status", TranscriptStatus.class);
-        criteria.setParameter("status", statusString);
+        criteria.setParameter("status", status);
         return criteria.uniqueResult();
     }
 

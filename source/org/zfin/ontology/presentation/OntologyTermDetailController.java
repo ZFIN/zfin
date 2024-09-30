@@ -212,7 +212,7 @@ public class OntologyTermDetailController {
     }
 
     @RequestMapping("/term/{termID}")
-    protected String termDetailPagePrototype(@PathVariable String termID,
+    protected String termDetailPagePrototype(@PathVariable("termID") String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
                                              Model model) throws Exception {
         if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.OLD_TERM_PAGES)) {
