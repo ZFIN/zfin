@@ -27,7 +27,7 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $SOURCE_ROOT &amp;&amp; gradle importMissingFPBaseProteinsTask</command>
+            <command>cd $SOURCEROOT &amp;&amp; gradle importMissingFPBaseProteinsTask</command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
