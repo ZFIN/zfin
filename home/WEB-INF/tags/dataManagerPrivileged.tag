@@ -78,10 +78,10 @@
         <a href="/action/updates/${zdbID}">
 
             Last Update:
-            <c:set var="latestUpdate" value="${zfn:getLastUpdate(zdbID)}"/>
+            <c:set var="latestUpdate" value="${zfn:getLastUpdateDateIncludingTracking(zdbID)}"/>
             <c:choose>
                 <c:when test="${!empty latestUpdate}">
-                    <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                    <fmt:formatDate value="${latestUpdate}" type="date"/>
                 </c:when>
                 <c:otherwise>
                     Never modified
