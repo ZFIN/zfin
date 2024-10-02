@@ -8,7 +8,9 @@
         <tr>
             <th>Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
             <th>Name</th>
-            <th>Accession</th>
+            <authz:authorize access="hasRole('root')">
+                <th>Accession</th>
+            </authz:authorize>
             <th>Annotation Method</th>
             <th width="10%">Has Havana Data</th>
             <th class="text-right">Length (nt)</th>
@@ -37,9 +39,11 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td>
-                    <zfin2:externalLink id="id" href="http://www.ensembl.org/id/${transcript.marker.ensdartId}">${transcript.marker.ensdartId}</zfin2:externalLink>
-                </td>
+                <authz:authorize access="hasRole('root')">
+                    <td>
+                        <zfin2:externalLink id="id" href="http://www.ensembl.org/id/${transcript.marker.ensdartId}">${transcript.marker.ensdartId}</zfin2:externalLink>
+                    </td>
+                </authz:authorize>
                 <td>${transcript.marker.annotationMethod.name}</td>
                 <td><c:if test="${transcript.hasHavanna}"><i class="fas fa-check"></i></c:if></td>
                 <td class="text-right"><fmt:formatNumber type="number" maxFractionDigits="2" value="${transcript.marker.length}"/> nt</td>
