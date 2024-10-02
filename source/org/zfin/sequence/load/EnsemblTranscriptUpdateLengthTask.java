@@ -53,18 +53,14 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         // <ensdargID, List<RichSequence>>
         Map<String, List<RichSequence>> geneTranscriptMap = getAllGeneTranscriptsFromFile();
 
-        EnsemblLoadSummaryItemDTO dto = new EnsemblLoadSummaryItemDTO();
-        dto.getCounts().put("ensemblGeneCount", (long) geneTranscriptMap.size());
-        dto.getCounts().put("zfinEnsemblGeneCount", (long) getMarkerDbLinks().size());
-        Set<RichSequence> transcriptSet = new HashSet<>(geneTranscriptMap.values().stream().flatMap(Collection::stream).toList());
-        dto.getCounts().put("ensemblTranscriptCount", (long) transcriptSet.size());
+        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO(geneTranscriptMap);
 
         Set<LoadAction> actions = new HashSet<>();
         List<String> zfinGeneAccessionIDs = getMarkerDbLinks().stream().map(DBLink::getAccessionNumber).distinct().toList();
         List<String> ensemblGeneAccessionIDs = geneTranscriptMap.keySet().stream().map(EnsemblTranscriptBase::getUnversionedAccession).toList();
         CollectionUtils.removeAll(ensemblGeneAccessionIDs, zfinGeneAccessionIDs).forEach(missingID -> {
             LoadLink missingTranscript = new LoadLink(missingID, "https://www.ensembl.org/Danio_rerio/Gene/Summary?g=" + missingID);
-            LoadAction missingAction = new LoadAction(LoadAction.Type.INFO, ENSDARG_MISSING, missingID, "", "This ENSDARG currently is not loaded into ZFIN", 0, new TreeSet<>());
+            LoadAction missingAction = new LoadAction(LoadAction.Type.INFO, ENSDARG_MISSING, missingID, "", "This ENSDARG currently is not loaded into ZFIN", 0, new HashMap<>());
             missingAction.addLink(missingTranscript);
             actions.add(missingAction);
         });
@@ -72,7 +68,7 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         CollectionUtils.removeAll(zfinGeneAccessionIDs, ensemblGeneAccessionIDs).forEach(missingID -> {
             List<String> zdbIDs = map.get(missingID).stream().map(markerDBLink -> markerDBLink.getMarker().getZdbID()).toList();
             String idConcat = missingID + " - " + StringUtils.join(zdbIDs, ",");
-            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_OBSOLETE, missingID, idConcat, "This ENSDARG ID is not found at ENSEMBL", 0, new TreeSet<>());
+            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_OBSOLETE, missingID, idConcat, "This ENSDARG ID is not found at ENSEMBL", 0, new HashMap<>());
             zdbIDs.forEach(zdbID -> {
                 LoadLink link = new LoadLink(idConcat, "https://zfin.org/" + zdbID);
                 obsoletedAction.addLink(link);
@@ -106,7 +102,7 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         List<String> zfinEnsemblTranscriptIDs = ensemblTranscripts.stream().map(DBLink::getAccessionNumber).toList();
         CollectionUtils.removeAll(ensemblTranscriptIDs, zfinEnsemblTranscriptIDs).forEach(missingID -> {
             LoadLink missingTranscript = new LoadLink(missingID, HTTPS_WWW_ENSEMBL_ORG_DANIO_RERIO_GENE_SUMMARY_G + missingID);
-            LoadAction missingAction = new LoadAction(LoadAction.Type.INFO, ENSDART_MISSING, missingID, "", "This ENSDART currently is not loaded into ZFIN", 0, new TreeSet<>());
+            LoadAction missingAction = new LoadAction(LoadAction.Type.INFO, ENSDART_MISSING, missingID, "", "This ENSDART currently is not loaded into ZFIN", 0, new HashMap<>());
             missingAction.addLink(missingTranscript);
             actions.add(missingAction);
         });
@@ -115,7 +111,7 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         CollectionUtils.removeAll(zfinEnsemblTranscriptIDs, ensemblTranscriptIDs).forEach(missingID -> {
             List<String> zdbIDs = tmap.get(missingID).stream().map(transcriptDBLink -> transcriptDBLink.getTranscript().getZdbID()).toList();
             String idConcat = StringUtils.join(zdbIDs, ",");
-            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_TRANSCRIPT_OBSOLETE, missingID, idConcat, "This ENSDART ID is not found at ENSEMBL", 0, new TreeSet<>());
+            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_TRANSCRIPT_OBSOLETE, missingID, idConcat, "This ENSDART ID is not found at ENSEMBL", 0, new HashMap<>());
             if (zdbIDs.size() > 1) {
                 obsoletedAction.setType(LoadAction.Type.WARNING);
             }
@@ -172,38 +168,15 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
     }
 
     private static void createUpdateNullLengthActions(Set<LoadAction> actions, TranscriptDBLink link) {
-        UpdateLengthLoadAction updateAction = new UpdateLengthLoadAction(LoadAction.Type.UPDATE, UPDATE_LENGTH_NULL, new TreeSet<>(), link);
+        UpdateLengthLoadAction updateAction = new UpdateLengthLoadAction(LoadAction.Type.UPDATE, UPDATE_LENGTH_NULL, new HashMap<>(), link);
         actions.add(updateAction);
     }
 
     private static void createUpdateNotNullLengthActions(Set<LoadAction> actions, TranscriptDBLink link, int oldValue) {
-        UpdateLengthLoadAction updateAction = new UpdateLengthLoadAction(LoadAction.Type.UPDATE, UPDATE_LENGTH_NON_NULL, new TreeSet<>(), link, oldValue);
+        UpdateLengthLoadAction updateAction = new UpdateLengthLoadAction(LoadAction.Type.UPDATE, UPDATE_LENGTH_NON_NULL, new HashMap<>(), link, oldValue);
         actions.add(updateAction);
     }
 
-
-    private String actionsToJson(LoadActionsContainer actions) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actions);
-    }
-
-    private void writeOutputReportFile(Set<LoadAction> actions, EnsemblLoadSummaryItemDTO summary) {
-        String reportFile = "ensembl-transcript-load-report.html";
-
-        log.info("Creating report file: " + reportFile);
-        try {
-            LoadActionsContainer actionsContainer = LoadActionsContainer.builder()
-                .actions(actions)
-                .summary(summary)
-                .build();
-            String jsonContents = actionsToJson(actionsContainer);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + REPORT_HOME_DIRECTORY + "/ensembl-transcript-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
-        } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
-        }
-    }
 
 }
 
