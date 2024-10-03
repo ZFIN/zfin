@@ -11,7 +11,7 @@
 
 begin work;
                       
-create temp table pre_delete (dblink_loaded_zdb_id		text );
+create temp table pre_delete (dblink_loaded_zdb_id text);
 
 --!echo 'Prepare the delete list with accession records in record_attribution table attributed to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
 		
@@ -25,9 +25,7 @@ create index pd_data_id_index
 
 --update statistics high for table pre_delete;
 
-create temp table db_link_in_expression_experiment2
-      (dblink_ee_zdb_id		text
-      );
+create temp table db_link_in_expression_experiment2 (dblink_ee_zdb_id text);
 
 --!echo 'Prepare a list of db_link records also in expression_experiment2 table attributed only to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
 
@@ -120,13 +118,32 @@ select mrel_mrkr_1_zdb_id as gene
 select count(gene) as numberOfGenesWithRNAevidence from genes_supported_by_rna;
 
 --!echo 'Dump the list of genes supported by GenBank RNA sequenecs, as the start set on ZFIN end for mapping'
+create view mappings_of_genes_supported_by_rna as
+select g.gene, dblink_acc_num as acc
+from genes_supported_by_rna g
+         join db_link d
+              on d.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
+                  and d.dblink_linked_recid = g.gene
+union
+select g.gene, dblink_acc_num as acc
+from genes_supported_by_rna g
+         join db_link d
+              on d.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
+                  and d.dblink_linked_recid not like 'ZDB-GENE%'
+                  and d.dblink_linked_recid not like '%RNAG%'
+         join marker_relationship mr
+              on mr.mrel_mrkr_1_zdb_id = g.gene
+                  and mr.mrel_type = 'gene encodes small segment'
+                  and d.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id;
 
-\copy (select distinct gene from genes_supported_by_rna) to 'toMap.unl' (delimiter '|');
+
+\copy (select distinct gene, acc from mappings_of_genes_supported_by_rna) to 'toMap.unl' (delimiter '|');
 
 --!echo 'Dump the delete list'
 
 \copy (select * from pre_delete order by dblink_loaded_zdb_id) to 'toDelete.unl' (delimiter '|');
 
+drop view mappings_of_genes_supported_by_rna;
 drop view genes_supported_by_rna;
 
 --rollback work;
