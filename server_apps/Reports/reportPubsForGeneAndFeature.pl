@@ -15,6 +15,7 @@ assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
 my $dbname = $ENV{'DB_NAME'};
 my $dbhost = $ENV{'PGHOST'};
+my $instance = $ENV{'INSTANCE'};
 my $username = "";
 my $password = "";
 
@@ -256,8 +257,8 @@ $cur->finish();
 
 $dbh->disconnect(); 
 
-sendReportGenePubs("$databasename");
-sendReportFeaturePubs("$databasename");
+sendReportGenePubs("$instance");
+sendReportFeaturePubs("$instance");
 
 print "\n\nctPubsForGene = $ctPubsForGene  \nctPubsForFeature = $ctPubsForFeature\n\nDone.\n";
 

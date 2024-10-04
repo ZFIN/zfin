@@ -66,6 +66,7 @@ sub sendReport($) {
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/zfishbook/";
 
 $dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->";
 $username = "";
 $password = "";
 
@@ -371,7 +372,7 @@ print REPORT "\nThe loading is not done due to crucial error(s).\n\n" if $numOfC
 close (ZFISHBOOK);
 close (REPORT);
 
-sendReport("$dbname");
+sendReport("$instance");
 
 exit;
 

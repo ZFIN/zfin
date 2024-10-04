@@ -12,7 +12,7 @@ use ZFINPerlModules;
 ## set environment variables
 
 
-$dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->";
 
 sub reportOrthoNameChanges() {
 
@@ -437,21 +437,21 @@ close(LOG);
 ##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> updateOrthologyNames.sql >updateOrthologyNameSQLlog1 2> updateOrthologyNameSQLlog2";
 ##&doSystemCommand($cmd);
 #&doSystemCommand("/bin/cat updateOrthologyNameSQLlog2 >> updateOrthologyNameSQLlog1");
-#$subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNameSQLlog";
+#$subject = "Auto from $instance: " . "NCBIorthology.pl :: updateOrthologyNameSQLlog";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateOrthologyNameSQLlog1");
 
 
 ### These should all just be artifacts in jenkins job.  Commenting out for now.
-#$subject = "Auto from $dbname: " . "update.pl :: updateOrthologyNamePerlLog";
+#$subject = "Auto from $instance: " . "update.pl :: updateOrthologyNamePerlLog";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
 
-#$subject = "Auto from $dbname: " . "$ctUpdatedOrthNames ortholog names have been updated by the script";
+#$subject = "Auto from $instance: " . "$ctUpdatedOrthNames ortholog names have been updated by the script";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
 
-#$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";
+#$subject = "Auto from $instance: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","inconsistentZebrafishGeneNamesReport") if $ctDiffrentZFgeneNames > 0;
 
-#$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
+#$subject = "Auto from $instance: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
@@ -467,7 +467,7 @@ sub doSystemCommand {
   $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $dbname: " . "reportOrthoNameChanges.pl :: failed at: $systemCommand . $! ";
+     $subjectLine = "Auto from $instance: " . "reportOrthoNameChanges.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      &reportErrAndExit($subjectLine);
