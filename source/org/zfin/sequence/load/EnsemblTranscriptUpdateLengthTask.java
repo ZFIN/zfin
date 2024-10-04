@@ -1,21 +1,16 @@
 package org.zfin.sequence.load;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.TranscriptDBLink;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,12 +44,7 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
     }
 
     private void loadSequenceMapFromDownloadFile() {
-
-        // <ensdargID, List<RichSequence>>
-        Map<String, List<RichSequence>> geneTranscriptMap = getAllGeneTranscriptsFromFile();
-
-        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO(geneTranscriptMap);
-
+        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO();
         Set<LoadAction> actions = new HashSet<>();
         List<String> zfinGeneAccessionIDs = getMarkerDbLinks().stream().map(DBLink::getAccessionNumber).distinct().toList();
         List<String> ensemblGeneAccessionIDs = geneTranscriptMap.keySet().stream().map(EnsemblTranscriptBase::getUnversionedAccession).toList();

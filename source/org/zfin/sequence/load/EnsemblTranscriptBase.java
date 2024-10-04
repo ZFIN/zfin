@@ -40,9 +40,14 @@ abstract public class EnsemblTranscriptBase {
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
 
+    protected Map<String, List<RichSequence>> geneTranscriptMap;
+
     public void init() throws IOException {
         downloadFile(cdnaFileName, "cdna");
         downloadFile(ncrnaFileName, "ncrna");
+        // <ensdargID, List<RichSequence>>
+        geneTranscriptMap = getAllGeneTranscriptsFromFile();
+
     }
 
     protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
@@ -150,7 +155,7 @@ abstract public class EnsemblTranscriptBase {
     private record EnsemblErrorRecord(String ensdartID, String ensdartName, int ensdartLength, String zfinID, String zfinName, String zfinIDExisting, String zfinNameExisting) {
     }
 
-    protected EnsemblLoadSummaryItemDTO getEnsemblLoadSummaryItemDTO(Map<String, List<RichSequence>> geneTranscriptMap) {
+    protected EnsemblLoadSummaryItemDTO getEnsemblLoadSummaryItemDTO() {
         EnsemblLoadSummaryItemDTO dto = new EnsemblLoadSummaryItemDTO();
         dto.getCounts().put("ensemblGeneCount", (long) geneTranscriptMap.size());
         dto.getCounts().put("zfinEnsemblGeneCount", (long) getMarkerDbLinks().size());

@@ -84,7 +84,8 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         createTranscriptRecords(ensemblGenesToBeImported);
         addEnsemblRecordToTranscript();
         removeEnsemblRecordsFromTranscript();
-        EnsemblLoadSummaryItemDTO dto = new EnsemblLoadSummaryItemDTO();
+
+        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO();
         writeOutputReportFile(actions, dto);
 
         System.exit(0);
@@ -168,7 +169,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         if (!(bioType.equals("protein_coding") || bioType.equals("pseudogene") || bioType.equals("lincRNA") || bioType.equals("miRNA") || bioType.equals("antisense"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
                 || bioType.equals("unprocessed_pseudogene")) {
-                LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://schlapp:9146/action/marker/transcript/" + transcript.getZdbID());
+                LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
                 columns.put("biotype", bioType);
                 LoadAction newTranscript = new LoadAction(LoadAction.Type.WARNING, UNSUPPTORTED_BIOTYPE, transcriptRecord.ensdartID, "", "This ENSDARG is not loaded into ZFIN: biotype = " + bioType, 0, columns);
@@ -697,8 +698,6 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
     private void loadSequenceMapFromDownloadFile() {
 
-        // <ensdargID, List<RichSequence>>
-        Map<String, List<RichSequence>> geneTranscriptMap = getAllGeneTranscriptsFromFile();
         Map<String, List<RichSequence>> sortedGeneTranscriptMap = geneTranscriptMap.entrySet().stream()
             .sorted((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
