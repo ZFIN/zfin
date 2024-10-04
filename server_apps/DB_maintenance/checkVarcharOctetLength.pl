@@ -12,6 +12,7 @@ $ENV{"INFORMIXSQLHOSTS"} = "<!--|INFORMIXSQLHOSTS|-->";
 
 
 my $dbname = $ENV{"DBNAME"};
+my $instance = $ENV{"INSTANCE"};
 
 my $dbh = DBI->connect("DBI:Informix:$dbname",
 		       '', 
@@ -61,7 +62,7 @@ while (<TABLES>) {
 close(TABLES);
 close(REPORT);
 
-&sendMail("Auto from $dbname: checkVarcharOctetLength.pl : ","<!--|VALIDATION_EMAIL_DBA|-->","tables needing column length adjustment","/tmp/tablesNeedColumnLengthAdjusted.txt");
+&sendMail("Auto from $instance: checkVarcharOctetLength.pl : ","<!--|VALIDATION_EMAIL_DBA|-->","tables needing column length adjustment","/tmp/tablesNeedColumnLengthAdjusted.txt");
 
 $dbh->disconnect;
 

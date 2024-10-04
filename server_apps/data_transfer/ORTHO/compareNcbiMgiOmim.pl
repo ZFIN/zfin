@@ -322,7 +322,7 @@ sub doSystemCommand {
   $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $dbname: " . "NCBIorthology.pl :: failed at: $systemCommand . $! ";
+     $subjectLine = "Auto from $instance: " . "NCBIorthology.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      &reportErrAndExit($subjectLine);

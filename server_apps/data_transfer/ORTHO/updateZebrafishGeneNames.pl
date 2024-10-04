@@ -14,6 +14,7 @@ use Try::Tiny;
 ## set environment variables
 
 $dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->";
 
 system("/bin/rm -f geneNamesToUpdate");
 system("/bin/rm -f new_names");
@@ -179,14 +180,14 @@ if ($ctProblem == 0) {
 
     system("/bin/cat updateZebrafishGeneNameSQLlog2 >> updateZebrafishGeneNameSQLlog1");
 
-    $subject = "Auto from $dbname: " . "updateZebrafishGeneNames.pl :: updateZebrafishGeneNameSQLlog";
+    $subject = "Auto from $instance: " . "updateZebrafishGeneNames.pl :: updateZebrafishGeneNameSQLlog";
     ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","updateZebrafishGeneNameSQLlog1");
 
 
-    $subject = "Auto from $dbname: " . "List of $ctValidNewGeneNames gene names that have been updated based on inputfile by Ken according to NCBI orthology info";
+    $subject = "Auto from $instance: " . "List of $ctValidNewGeneNames gene names that have been updated based on inputfile by Ken according to NCBI orthology info";
     ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","geneNamesUpdatedReport");
 } else {
-    $subject = "Auto from $dbname: " . "List of $ctProblem problematic gene names";
+    $subject = "Auto from $instance: " . "List of $ctProblem problematic gene names";
     ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","problemNames");
 }
 

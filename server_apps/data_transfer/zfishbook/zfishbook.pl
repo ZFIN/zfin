@@ -124,7 +124,7 @@ system("rm -f report");
 system("rm -f log1");
 system("rm -f log2");
 
-$dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->";
 
 print "\nRunning zfishbook pre-process script ...\n\n";
 
@@ -164,9 +164,9 @@ if ($doTheLoad > 0) {
     }
 }
 
-#sendLoadLogs("$dbname") if $doTheLoad > 0;
+#sendLoadLogs("$instance") if $doTheLoad > 0;
 
-#sendLoadOutput("$dbname") if $doTheLoad > 0;
+#sendLoadOutput("$instance") if $doTheLoad > 0;
 
 print "\n\nLoading data done.\n\n\n" if $doTheLoad > 0;
 

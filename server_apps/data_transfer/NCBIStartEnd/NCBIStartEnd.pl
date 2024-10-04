@@ -8,6 +8,7 @@ use DBI;
 use Try::Tiny;
 
 $dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->";
 $username = "";
 $password = "";
 
@@ -170,7 +171,7 @@ sub doSystemCommand {
   $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $dbname: " . "NCBIStartEnd.pl :: failed at: $systemCommand . $! ";
+     $subjectLine = "Auto from $instance: " . "NCBIStartEnd.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      &reportErrAndExit($subjectLine);
