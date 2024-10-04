@@ -81,16 +81,16 @@ public class EfgAPIController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/fpbase/autocomplete", method = RequestMethod.GET)
     public List<LookupEntry> getFpBaseAutocomplete(@RequestParam(value = "query") String query) {
-
+        String trimmedQuery = query.trim();
         HibernateUtil.createTransaction();
-        List<FluorescentProtein> efgs = getMarkerRepository().getFluorescentProteins(query);
+        List<FluorescentProtein> efgs = getMarkerRepository().getFluorescentProteins(trimmedQuery);
 
         List<LookupEntry> list = efgs.stream()
             .map(fluorescentProtein -> {
                 LookupEntry entry = new LookupEntry();
                 entry.setId(String.valueOf(fluorescentProtein.getIdentifier()));
                 entry.setValue(fluorescentProtein.getName());
-                if (fluorescentProtein.getUuid().equalsIgnoreCase(query)) {
+                if (fluorescentProtein.getUuid().equalsIgnoreCase(trimmedQuery)) {
                     entry.setLabel(fluorescentProtein.getName() + " [ID=" + fluorescentProtein.getUuid() + "]");
                 } else {
                     entry.setLabel(fluorescentProtein.getName());
