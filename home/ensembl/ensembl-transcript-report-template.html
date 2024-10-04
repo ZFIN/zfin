@@ -191,7 +191,49 @@
                 }
             }, [items, type, subtype]);
 
+            if (subTypeItems == null || subTypeItems.length == 0) {
+                return html`
+                    <h2>${type} - ${subtype}</h2>
+                    <div>No items found.</div>
+                `;
+            }
+
+            const tableHeaders = Array.from(itemAsKeyValuePairs(subTypeItems[0]).keys());
+
             return html`
+                <h2>${type} - ${subtype}</h2>
+                <p>Click on any of the records below for more details. Count: ${subTypeItems.length}</p>
+                <table className='subtype-listing'>
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            ${tableHeaders.map(header => html`
+                                <th>${header}</th>
+                            `)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${subTypeItems.map(item => html`
+                            <tr>
+                                <td>
+                                    <a href="#" onClick=${() => onClick(item)}>
+                                        Details
+                                    </a>
+                                </td>
+                                ${tableHeaders.map(header => html`
+                                    <td>
+                                        ${itemAsKeyValuePairs(item).get(header)}
+                                    </td>
+                                `)}
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
+            `;
+        }
+/*
+
+        return html`
                 <h2>${type} - ${subtype}</h2>
                 <p>Click on any of the records below for more details.</p>
                 <ul>
@@ -203,6 +245,30 @@
                     `)}
                 </ul>
             `;
+        }
+*/
+
+        function itemAsKeyValuePairs(item) {
+            let keyValuePairs = new Map();
+
+            if (item.accession) {
+                keyValuePairs.set('accession', item.accession);
+            }
+            if (item.geneZdbID) {
+                keyValuePairs.set('geneZdbID', item.geneZdbID);
+            }
+
+            if (item.relatedEntityFields) {
+                Object.keys(item.relatedEntityFields).forEach(key => {
+                    if (key === 'markerZdbID') {
+                        //hacky way to remove duplicate information
+                        keyValuePairs.set('geneZdbID', item.relatedEntityFields[key]);
+                    } else {
+                        keyValuePairs.set(key, item.relatedEntityFields[key]);
+                    }
+                });
+            }
+            return keyValuePairs;
         }
 
         function DetailDisplay({item, prevClick, nextClick}) {

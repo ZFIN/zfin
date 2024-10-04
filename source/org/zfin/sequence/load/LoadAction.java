@@ -1,20 +1,14 @@
 package org.zfin.sequence.load;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
-import org.zfin.uniprot.UniProtLoadLink;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Getter
 @Setter
-@Builder
 public class LoadAction implements Comparable<LoadAction> {
     private Type type;
     private SubType subType;
@@ -22,22 +16,22 @@ public class LoadAction implements Comparable<LoadAction> {
     private String geneZdbID;
     private String details;
     private int length;
+    private Map<String, String> relatedEntityFields;
 
-    @Builder.Default
     private Set<LoadLink> links = new TreeSet<>();
 
     public LoadAction() {
         links = new TreeSet<>();
     }
 
-    public LoadAction(Type type, SubType subType, String accession, String geneZdbID, String details, int length, Set<LoadLink> links) {
+    public LoadAction(Type type, SubType subType, String accession, String geneZdbID, String details, int length, Map<String, String> links) {
         this.type = type;
         this.subType = subType;
         this.accession = accession;
         this.geneZdbID = geneZdbID;
         this.details = details;
         this.length = length;
-        this.links = links;
+        this.relatedEntityFields = links;
     }
 
     public void addLink(LoadLink loadLink) {
@@ -51,12 +45,18 @@ public class LoadAction implements Comparable<LoadAction> {
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
 
     public enum SubType {
-        MULTIPLE_GENES_PER_ACCESSION("Multiple Genes per Accession"),
+        MULTIPLE_GENES_PER_ACCESSION("Multiple ENSDARG IDs per ZFIN Gene"),
         MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED("Multiple Genes per Accession: Contains Approved Accession"),
         UPDATE_LENGTH_NULL("Update length info on DB_LINK for transcripts that had no value"),
         UPDATE_LENGTH_NON_NULL("Update length info on DB_LINK for transcripts that had a value"),
         ENSDART_MISSING("Transcripts (ENSDARTs) Missing in ZFIN"),
         ENSDARG_MISSING("Genes (ENSDARGs) Missing in ZFIN"),
+        ENSDART_LOADED("New Transcript (ENSDART) Records Loaded into ZFIN"),
+        ENSDART_ADDED("ENSDART added to existing Transcript in ZFIN"),
+        ENSDART_REMOVED("ENSDART record removed from Transcript in ZFIN"),
+        TRANSCRIPT_EXISTS("A Transcript of a given name already exists"),
+        NO_NAME_FOR_TRANSCRIPT_FOUND("No Name found for Transcript"),
+        UNSUPPTORTED_BIOTYPE("Unsupported Biotype"),
         ZFIN_OBSOLETE("OBSOLETED ENSDARG IDs in ZFIN"),
         ZFIN_OBSOLETE_MULTIPLE("OBSOLETED ENSDARG IDs in ZFIN on multiple ZDB IDs"),
         ZFIN_TRANSCRIPT_OBSOLETE("OBSOLETED ENSDART IDs in ZFIN"),
