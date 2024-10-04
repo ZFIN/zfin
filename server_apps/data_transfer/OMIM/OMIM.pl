@@ -205,6 +205,7 @@ print LOG "ctAllDiscontinuedMIMnums::: $ctAllDiscontinuedMIMnums\n\n\n";
 ##################################################################################################################################################################
 
 $dbname = "<!--|DB_NAME|-->";
+$instance = "<!--|INSTANCE|-->"; 
 $username = "";
 $password = "";
 
@@ -542,10 +543,10 @@ if ($ctHumanGenePhenoPossibleOrth > 0) {
    close ALREADYREPORTED;
 
    if ($ctPossibleMatchGeneWithPheno > 0) {
-       $subject = "Auto from $dbname: " . "OMIM.pl :: $ctPossibleMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, but with similar symbol";
+       $subject = "Auto from $instance: " . "OMIM.pl :: $ctPossibleMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, but with similar symbol";
        ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","human_genes_with_pheno_possible_ortho.txt");
    } else {
-       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"no new human gene with phenotype, with no match to ZF gene via OMIM, but with similar symbol","alreadyReportedHumanOrthologyCandidate");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"Auto from $instance: no new human gene with phenotype, with no match to ZF gene via OMIM, but with similar symbol","alreadyReportedHumanOrthologyCandidate");
    }
 }
 
@@ -564,10 +565,10 @@ if ($ctHumanGenePhenoNoOrth > 0) {
    close PREVIOUSLYREPORTED;
 
    if ($ctNoMatchGeneWithPheno > 0) {
-       $subject = "Auto from $dbname: " . "OMIM.pl :: $ctNoMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, and without similar symbol";
+       $subject = "Auto from $instance: " . "OMIM.pl :: $ctNoMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, and without similar symbol";
        ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","human_genes_with_pheno_but_not_ortho.txt");
    } else {
-       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"no new human gene with phenotype, with no match to ZF gene via OMIM, and without similar symbol","alreadyReportedHumanGenes");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"Auto from $instance: no new human gene with phenotype, with no match to ZF gene via OMIM, and without similar symbol","alreadyReportedHumanGenes");
    }
 }
 

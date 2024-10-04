@@ -57,6 +57,7 @@ our $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 #used in eg. initializeDatabase
 our $dbname;
 our $dbhost;
+our $instance;
 our $username;
 our $password;
 our $handle;
@@ -445,7 +446,7 @@ sub doSystemCommand {
   my $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) {
-     my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: failed at: $systemCommand . $! ";
+     my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
 
      if ($systemCommand =~ m/loadNCBIgeneAccs\.sql/) {
@@ -463,7 +464,7 @@ sub reportErrAndExit {
 }
 
 sub sendLoadLogs {
-  my $subject = "Auto from $dbname: NCBI_gene_load.pl :: loadLog1 file";
+  my $subject = "Auto from $instance: NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","loadLog1");
 }
 
@@ -484,6 +485,7 @@ sub assertExpectedFilesExist {
 sub initializeDatabase {
     $dbname = $ENV{'DB_NAME'};
     $dbhost = $ENV{'PGHOST'};
+    $instance = $ENV{'INSTANCE'};
     $username = "";
     $password = "";
     #open a handle on the db
@@ -631,7 +633,7 @@ sub downloadNCBIFilesForRelease {
     }
     catch {
         chomp $_;
-        reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: $_");
+        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: $_");
     };
 
     #-------------------------------------------------------------------------------------------------
@@ -640,7 +642,7 @@ sub downloadNCBIFilesForRelease {
     #-------------------------------------------------------------------------------------------------
 
     if (!-e "zf_gene_info.gz" || !-e "gene2accession.gz" || !-e "RefSeqCatalog.gz" || !-e "gene2vega.gz") {
-        my $subjectLine = "Auto from $dbname: NCBI_gene_load.pl :: ERROR with download";
+        my $subjectLine = "Auto from $instance: NCBI_gene_load.pl :: ERROR with download";
         print LOG "\nMissing one or more downloaded NCBI file(s)\n\n";
         reportErrAndExit($subjectLine);
     }
@@ -658,15 +660,15 @@ sub prepareNCBIgeneLoadDatabaseQuery {
         doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
     } catch {
         chomp $_;
-        reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: faile at prepareNCBIgeneLoad.sql - $_");
+        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: faile at prepareNCBIgeneLoad.sql - $_");
     } ;
 
     print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
-    my $subject = "Auto from $dbname: NCBI_gene_load.pl :: prepareLog1 file";
+    my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","prepareLog1");
 
-    $subject = "Auto from $dbname: NCBI_gene_load.pl :: prepareLog2 file";
+    $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","prepareLog2");
 }
 
@@ -693,7 +695,7 @@ sub getMetricsOfDbLinksToDelete {
     close TODELETE;
 
     if ($ctToDelete == 0) {
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: the delete list, toDelete.unl, is empty";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: the delete list, toDelete.unl, is empty";
         # print LOG "\nThe delete list, toDelete.unl is empty. Something is wrong.\n\n";
         reportErrAndExit($subjectLine);
     }
@@ -1298,7 +1300,7 @@ sub initializeSetsOfZfinRecords {
     ## if the numbers don't add up, stop the whole process
     if ($ctAccZFINSupportingOnly1 + $ctAccZFINSupportingMoreThan1 != $ctAllSupportingAccZFIN) {
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
 
@@ -1782,7 +1784,7 @@ sub initializeHashOfNCBIAccessionsSupportingMultipleGenes {
     ## if the numbers don't add up, stop the whole process
     if ($ctAccNCBISupportingOnly1 + $ctAccNCBISupportingMoreThan1 != $ctAllSupportingAccNCBI) {
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
 }
@@ -1931,7 +1933,7 @@ sub initializeMapOfZfinToNCBIgeneIds {
     ## if the numbers don't add up, stop the whole process
     if ($ct1to1ZFINtoNCBI + $ct1toNZFINtoNCBI + $ctZFINgenesWithAllAccsNotFoundAtNCBI != $ctProcessedZFINgenes) {
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
 }
@@ -2114,7 +2116,7 @@ sub oneWayMappingNCBItoZfinGenes {
     ## if the numbers don't add up, stop the whole process
     if ($ct1to1NCBItoZFIN + $ct1toNNCBItoZFIN + $ctNCBIgenesWithAllAccsNotFoundAtZFIN != $ctProcessedNCBIgenes) {
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
 
@@ -2540,7 +2542,7 @@ sub getNtoOneAndNtoNfromZFINtoNCBI {
     print STATS_PRIORITY2 "\nMapping result statistics: number of N:1 (ZFIN to NCBI) - $ctNtoOne\n\n";
     print STATS_PRIORITY2 "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
 
-    my $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to N";
+    my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of N to N";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportNtoN");
 }
 
@@ -2572,7 +2574,7 @@ sub reportOneToN {
 
     close ONETON;
 
-    my $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of 1 to N";
+    my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of 1 to N";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportOneToN");
 }
 
@@ -2602,7 +2604,7 @@ sub reportNtoOne {
 
     close NTOONE;
 
-    my $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to 1";
+    my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of N to 1";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportNtoOne");
 }
 
@@ -2792,7 +2794,7 @@ sub calculateLengthForAccessionsWithoutLength {
     if (!-e "noLength.unl") {
         print LOG "\nCannot find noLength.unl as input file for efetch.\n\n";
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: no input file for efetch.r";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: no input file for efetch.r";
         reportErrAndExit($subjectLine);
     }
 
@@ -2841,7 +2843,7 @@ sub calculateLengthForAccessionsWithoutLength {
     if (!-e "seq.fasta") {
         print LOG "\n No seq.fasta found (maybe issue with efetch): $! \n\n";
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR with efetch";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: ERROR with efetch";
         reportErrAndExit($subjectLine);
     }
 
@@ -2859,7 +2861,7 @@ sub calculateLengthForAccessionsWithoutLength {
     if (!-e "length.unl") {
         print LOG "\nError happened when execute $FASTA_LEN_COMMAND seq.fasta >length.unl: $! \n\n";
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: NCBI_gene_load.pl :: ERROR with $FASTA_LEN_COMMAND";
+        my $subjectLine = "Auto from $instance: NCBI_gene_load.pl :: ERROR with $FASTA_LEN_COMMAND";
         reportErrAndExit($subjectLine);
     }
 
@@ -3352,7 +3354,7 @@ sub executeDeleteAndLoadSQLFile {
     if (!-e "toLoad.unl" || $ctToLoad == 0) {
         print LOG "\nMissing the add list, toLoad.unl, or it is empty. Something is wrong!\n\n";
         close STATS_PRIORITY2;
-        my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: missing or empty add list, toLoad.unl";
+        my $subjectLine = "Auto from $instance: " . "NCBI_gene_load.pl :: missing or empty add list, toLoad.unl";
         reportErrAndExit($subjectLine);
     }
 
@@ -3360,7 +3362,7 @@ sub executeDeleteAndLoadSQLFile {
         doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
     } catch {
         chomp $_;
-        reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
+        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
     } ;
 
     print LOG "\nDone with the deltion and loading!\n\n";
@@ -3716,10 +3718,10 @@ sub reportAllLoadStatistics {
 }
 
 sub emailLoadReports {
-    my $subject = "Auto from $dbname: NCBI_gene_load.pl :: Statistics";
+    my $subject = "Auto from $instance: NCBI_gene_load.pl :: Statistics";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportStatistics");
 
-    $subject = "Auto from $dbname: NCBI_gene_load.pl :: log file";
+    $subject = "Auto from $instance: NCBI_gene_load.pl :: log file";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","logNCBIgeneLoad");
 }
 
