@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
 import {Cassette, ConstructComponent, normalizeConstructComponents} from './ConstructTypes';
+import {useCurateConstructEditContext} from "./CurateConstructEditContext";
 
 interface ConstructCassetteEditorProps {
     onChange: (cassette: Cassette) => void;
@@ -13,12 +14,20 @@ const ConstructCassetteEditor = ({onChange, onSave, onCancel, cassette: initialC
     const blankCassette = () => {return {promoter: [], coding: []};};
     const [cassetteForEdit, setCassetteForEdit] = useState<Cassette>(blankCassette());
     const [rerenderKey, setRerenderKey] = useState<number>(0); // Key to force rerender
+    const {state} = useCurateConstructEditContext();
 
     useEffect(() => {
         if (initialCassette) {
             setCassetteForEdit(initialCassette);
         }
     }, [initialCassette]);
+
+    useEffect(() => {
+        if (isBlankCassette(state.stagedCassette)) {
+            setCassetteForEdit(blankCassette());
+            setRerenderKey(rerenderKey + 1);
+        }
+    }, [state.stagedCassette]);
 
     const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type) => {
         //the last item should have its separator set to ''
@@ -90,4 +99,4 @@ const isBlankCassette = (cassette) => {
 }
 
 export default ConstructCassetteEditor;
-export {isValidCassette};
+export {isValidCassette, isBlankCassette};
