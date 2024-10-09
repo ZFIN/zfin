@@ -7,23 +7,19 @@ const calculatedDomain = backendBaseUrl();
 
 interface CurateConstructEditProps {
     publicationId: string;
-    createdConstructs: EditConstructFormDTO[];
 }
 
-const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstructEditProps) => {
-    const [display, setDisplay] = useState<boolean>(false);
-    const [displayEditForm, setDisplayEditForm] = useState<boolean>(false);
+type DisplayMode = 'new' | 'edit' | 'list' | 'none';
+
+const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [selectedConstruct, setSelectedConstruct] = useState<string>('');
     const [constructList, setConstructList] = useState<MarkerNameAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
 
-    useEffect(() => {
-        loadConstructList();
-    }, [createdConstructs]);
-
-    function toggleDisplay() {
-        setDisplay(!display);
+    function toggleDisplayMode(newMode: DisplayMode) {
+        setDisplayMode(newMode);
     }
 
     async function loadConstructList() {
@@ -43,7 +39,11 @@ const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstruct
         setSuccessMessage('');
         setErrorMessage('');
         try {
-            const result = await fetch(`${calculatedDomain}/action/construct/update/${selectedConstruct}`, {
+            let url = `${calculatedDomain}/action/construct/create-and-update`;
+            if (selectedConstruct) {
+                url = `${calculatedDomain}/action/construct/update/${selectedConstruct}`;
+            }
+            const result = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,11 +62,11 @@ const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstruct
         setSuccessMessage('');
         setErrorMessage('');
         setSelectedConstruct(constructId);
-        setDisplayEditForm(true);
+        toggleDisplayMode('edit');
     }
 
     function cancelEdit() {
-        toggleDisplay();
+        toggleDisplayMode('none');
         setSelectedConstruct('');
     }
 
@@ -76,9 +76,16 @@ const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstruct
 
     return <>
         <div className={`mb-3 pub-${publicationId}`}>
-            <span className='bold'>EDIT CONSTRUCT: </span>
-            <a onClick={toggleDisplay} style={{textDecoration: 'underline'}}>{display ? 'Hide' : 'Show'}</a>
-            {display && <div className='mt-2'>
+            {displayMode === 'none' && <>
+                <span className='bold'>NEW CONSTRUCT: </span>
+                <a onClick={() => toggleDisplayMode('new')} style={{textDecoration: 'underline'}}>Show</a>
+                <br/>
+                <span className='bold'>EDIT CONSTRUCT: </span>
+                <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline'}}>Show</a>
+            </>}
+
+            {displayMode === 'list' && <div className='mt-2'>
+                <span className='bold'>EDIT CONSTRUCT: </span>
                 <div>
                     <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
                         <option>Select a construct</option>
@@ -87,12 +94,31 @@ const CurateConstructEdit = ({publicationId, createdConstructs}: CurateConstruct
                         })}
                     </select>
                 </div>
+                <div>
+                    <button onClick={cancelEdit}>Cancel</button>
+                </div>
             </div>}
-            {display && displayEditForm && <div className='mt-2'>
+
+            {displayMode === 'edit' && <div className='mt-2'>
+                <span className='bold'>EDIT CONSTRUCT: </span>
                 <CurateConstructForm
                     publicationId={publicationId}
                     constructId={selectedConstruct}
                     submitButtonLabel='Update'
+                    onCancel={cancelEdit}
+                    onSubmit={submitForm}
+                />
+                <div className='mt-2'>
+                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
+                    {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
+                </div>
+            </div>}
+
+            {displayMode === 'new' && <div className='mt-2'>
+                <span className='bold'>NEW CONSTRUCT: </span>
+                <CurateConstructForm
+                    publicationId={publicationId}
+                    submitButtonLabel='Save'
                     onCancel={cancelEdit}
                     onSubmit={submitForm}
                 />
