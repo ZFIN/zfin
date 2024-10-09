@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
 import {Cassette, ConstructComponent, normalizeConstructComponents} from './ConstructTypes';
-import {useCurateConstructEditContext} from "./CurateConstructEditContext";
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructCassetteEditorProps {
     onChange: (cassette: Cassette) => void;

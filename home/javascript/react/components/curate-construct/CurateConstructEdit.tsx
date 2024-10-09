@@ -85,7 +85,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </>}
 
             {displayMode === 'list' && <div className='mt-2'>
-                <span className='bold'>EDIT CONSTRUCT: </span>
+                <span className='bold'>EDIT CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a> </span>
                 <div>
                     <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
                         <option>Select a construct</option>
@@ -100,7 +100,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </div>}
 
             {displayMode === 'edit' && <div className='mt-2'>
-                <span className='bold'>EDIT CONSTRUCT: </span>
+                <span className='bold'>EDIT CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
                 <CurateConstructForm
                     publicationId={publicationId}
                     constructId={selectedConstruct}
@@ -115,7 +115,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </div>}
 
             {displayMode === 'new' && <div className='mt-2'>
-                <span className='bold'>NEW CONSTRUCT: </span>
+                <span className='bold'>NEW CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
                 <CurateConstructForm
                     publicationId={publicationId}
                     submitButtonLabel='Save'

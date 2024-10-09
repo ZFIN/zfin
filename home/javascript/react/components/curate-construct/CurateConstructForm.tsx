@@ -143,7 +143,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
 
         if (!isStagedCassetteBlank()) {
             //if the last promoter has a separator of '-', change it to ''
-            let modifiedStagedCassette = normalizeConstructCassette(state.stagedCassette);
+            const modifiedStagedCassette = normalizeConstructCassette(state.stagedCassette);
 
             submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, modifiedStagedCassette]);
             setStateByProxy(proxy => {proxy.selectedConstruct.cassettes.push(state.stagedCassette);});
@@ -249,7 +249,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                 <td><b>Construct ID</b></td>
                                 <td>
                                     <a
-                                        href={'/' + state.selectedConstructId}
+                                        href={backendBaseUrl() + '/' + state.selectedConstructId}
                                         target='_blank'
                                         rel='noreferrer'
                                     >{state.selectedConstructId}</a>
