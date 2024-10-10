@@ -47,10 +47,6 @@ const ConstructCassetteEditor = ({onChange, onSave, onCancel, cassette: initialC
         return !isValidCassette(cassetteForEdit);
     }
 
-    const shouldDisableCencelButton = () => {
-        return isBlankCassette(cassetteForEdit);
-    }
-
     const handleAddCassette = () => {
         onSave(cassetteForEdit);
     }
@@ -76,7 +72,7 @@ const ConstructCassetteEditor = ({onChange, onSave, onCancel, cassette: initialC
             key={`coding-${rerenderKey}`}
         />
         <input style={{marginTop: '10px'}} type='button' onClick={handleAddCassette} value='Save Cassette' disabled={shouldDisableDoneButton()}/>
-        <input style={{marginTop: '10px'}} type='button' onClick={handleCancelCassette} value='Cancel' disabled={shouldDisableCencelButton()}/>
+        <input style={{marginTop: '10px'}} type='button' onClick={handleCancelCassette} value='Cancel' />
     </div>;
 }
 

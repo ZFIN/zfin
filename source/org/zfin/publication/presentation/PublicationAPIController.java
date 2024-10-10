@@ -486,6 +486,7 @@ public class PublicationAPIController {
         return getMarkerRepository().getConstructsForAttribution(publicationID).stream()
                 .filter(m -> m.getZdbID().contains("CONSTRCT"))
                 .map(DTOConversionService::convertToConstructDTO)
+                .sorted(Comparator.comparing(ConstructDTO::getName))
                 .toList();
     }
 

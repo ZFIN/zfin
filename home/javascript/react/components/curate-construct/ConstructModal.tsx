@@ -10,7 +10,8 @@ const ConstructModal = ({children}) => {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 200
     }
 
     const modalContentCss = {
@@ -20,8 +21,8 @@ const ConstructModal = ({children}) => {
     }
 
     return (
-        <div className='modal-overlay' style={modalOverlayCss}>
-            <div className='modal-content' style={modalContentCss} onClick={e => e.stopPropagation()}>
+        <div style={modalOverlayCss}>
+            <div style={modalContentCss} onClick={e => e.stopPropagation()}>
                 {children}
             </div>
         </div>
