@@ -142,6 +142,12 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+  blast:
+    build: ./blast/
+    platform: linux/amd64
+    volumes:
+      - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
   mailhog:
     build: ./mailhog/
     restart: always
