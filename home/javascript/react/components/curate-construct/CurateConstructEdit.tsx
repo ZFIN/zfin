@@ -27,8 +27,8 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         const data = await response.json();
         const constructIdNameList = data.map((row) : MarkerNameAndZdbId => {
             return {
-                zdbID: row.constructDTO.zdbID,
-                label: row.constructDTO.name
+                zdbID: row.zdbID,
+                label: row.name
             }
         });
         const uniqueConstructIdNameList = constructIdNameList.filter((v, i, a) => a.findIndex(t => (t.zdbID === v.zdbID)) === i);
