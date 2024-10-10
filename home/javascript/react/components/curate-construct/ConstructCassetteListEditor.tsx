@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import ConstructCassetteEditor, {isValidCassette} from './ConstructCassetteEditor';
+import ConstructCassetteEditor from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {Cassette} from './ConstructTypes';
 import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
+import ConstructModal from './ConstructModal';
 
 const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
@@ -20,8 +21,7 @@ const ConstructCassetteListEditor = () => {
         });
     }
 
-    const handleAddCassette = (event) => {
-        event.preventDefault();
+    const handleAddCassette = () => {
         const newCassettes = [...state.selectedConstruct.cassettes];
         if (state.selectedConstruct.addCassetteMode) {
             newCassettes.push(cassette);
@@ -90,15 +90,18 @@ const ConstructCassetteListEditor = () => {
         });
     }
 
-    const showCassetteEditor = () => {
+    const showCassetteEditorAddMode = () => {
         if (state.selectedConstruct.cassettes.length === 0) {
             return true;
         }
-        return state.selectedConstruct.addCassetteMode || state.selectedConstruct.editCassetteMode;
+        return state.selectedConstruct.addCassetteMode;
+    }
+    const showCassetteEditorEditMode = () => {
+        return state.selectedConstruct.editCassetteMode;
     }
 
-    const shouldDisableDoneButton = () => {
-        return !isValidCassette(cassette);
+    const showCassetteEditor = () => {
+        return showCassetteEditorAddMode() || showCassetteEditorEditMode();
     }
 
     useEffect(() => {
@@ -113,7 +116,7 @@ const ConstructCassetteListEditor = () => {
             <ol>
                 {state.selectedConstruct.cassettes.map((cassetteIterator, index) => <li key={index}>
                     <ConstructCassetteView cassette={cassetteIterator}/>{' '}
-                    <a href='#' onClick={() => handleRemoveCassette(index)}><i className='fa fa-trash'/></a>{' '}
+                    <a href='#' onClick={(e) => {e.preventDefault(); handleRemoveCassette(index)}}><i className='fa fa-trash'/></a>{' '}
                     <a href='#' onClick={(e) => {handleEditCassetteClick(e, index);}}><i className='fa fa-edit'/></a>{' '}
                     {index > 0 && <a href='#' onClick={(e) => {handleMoveUpClick(e, index);}}><i className='fa fa-arrow-up'/></a>}{' '}
                     {index < state.selectedConstruct.cassettes.length - 1 &&
@@ -124,10 +127,13 @@ const ConstructCassetteListEditor = () => {
             {(!showCassetteEditor() &&
                 <a onClick={(e) => {handleAddCassetteClick(e)}} title='Add' href='#'>Add cassette</a>
             )}
-            {showCassetteEditor() && <>
-                <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange}/>
-                <input style={{marginTop: '10px'}} type='button' onClick={handleAddCassette} value='Save Cassette' disabled={shouldDisableDoneButton()}/>
-                <input style={{marginTop: '10px'}} type='button' onClick={handleCancelCassette} value='Cancel'/>
+            {showCassetteEditorEditMode() && <>
+                <ConstructModal>
+                    <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange} onSave={handleAddCassette} onCancel={handleCancelCassette}/>
+                </ConstructModal>
+            </>}
+            {showCassetteEditorAddMode() && <>
+                <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange} onSave={handleAddCassette} onCancel={handleCancelCassette}/>
             </>}
         </>
     );

@@ -3,6 +3,7 @@ import ConstructCassetteListEditor, {cassetteHumanReadableList} from './Construc
 import {
     cassettesToSimplifiedCassettes,
     EditConstructFormDTO,
+    normalizeConstructCassette,
     normalizeConstructComponents,
     normalizeSimplifiedCassettes,
     simplifiedCassettesToCassettes,
@@ -141,7 +142,10 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         }
 
         if (!isStagedCassetteBlank()) {
-            submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, state.stagedCassette]);
+            //if the last promoter has a separator of '-', change it to ''
+            const modifiedStagedCassette = normalizeConstructCassette(state.stagedCassette);
+
+            submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, modifiedStagedCassette]);
             setStateByProxy(proxy => {proxy.selectedConstruct.cassettes.push(state.stagedCassette);});
             setStateByProxy(proxy => {proxy.stagedCassette = blankCassette();});
         }
@@ -245,7 +249,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                 <td><b>Construct ID</b></td>
                                 <td>
                                     <a
-                                        href={'/' + state.selectedConstructId}
+                                        href={backendBaseUrl() + '/' + state.selectedConstructId}
                                         target='_blank'
                                         rel='noreferrer'
                                     >{state.selectedConstructId}</a>

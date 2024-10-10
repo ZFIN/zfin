@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import type {Cassette, ConstructComponent} from './ConstructTypes';
+import type {ConstructComponent} from './ConstructTypes';
 import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
 import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructRegulatoryCodingUnitListProps {
     onChange?: (value: ConstructComponent[]) => void;
     type: string;
-    cassette?: Cassette;
 }
 
 
@@ -96,7 +95,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         {rcUnitItems.map((part, index) => (
             <React.Fragment key={index}>
                 <span>{part.value}</span>
-                <a href='#' onClick={() => handleItemRemoved(part)}>
+                <a href='#' onClick={(e) => {e.preventDefault(); handleItemRemoved(part)}}>
                     <i className='fa fa-trash' aria-hidden='true'/>
                     {/*&#10060;*/}
                 </a>
