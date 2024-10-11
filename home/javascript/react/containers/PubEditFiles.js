@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import PubFileRow from '../components/pub-edit/PubFileRow';
 import http from '../utils/http';
@@ -7,14 +7,27 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ProcessorApproval from './ProcessorApproval';
 import PubFileEditModal from '../components/pub-edit/PubFileEditModal';
 import useFetch from '../hooks/useFetch';
+import PubFileCheck from './PubFileCheck';
 
 const PubEditFiles = ({ pubId }) => {
+    const [editFile, setEditFile] = useState(null);
+    const [fileIDs, setFileIDs] = useState([]);
+
     const {
         pending,
         value,
         setValue,
     } = useFetch(`/action/publication/${pubId}/files`);
-    const [editFile, setEditFile] = useState(null);
+
+    useEffect(() => {
+        if (!value || !value.results) {
+            return;
+        }
+        const ids = value.results.map(file => file.id).sort();
+        if (ids.join(',') !== fileIDs.join(',')) {
+            setFileIDs(ids);
+        }
+    }, [value]);
 
     const handleDelete = async (file) => {
         await http.delete(`/action/publication/files/${file.id}`);
@@ -37,6 +50,7 @@ const PubEditFiles = ({ pubId }) => {
 
     return (
         <>
+            <PubFileCheck pubId={pubId} initialFiles={fileIDs} uniqueId={'file-editor'} />
             <table className='table table-hover'>
                 <thead>
                     <tr>
@@ -53,7 +67,7 @@ const PubEditFiles = ({ pubId }) => {
                     }
                     {value.results.map(file => (
                         <PubFileRow
-                            key={file.originalFileName}
+                            key={file.originalFileName + ' ' + file.id}
                             file={file}
                             onDelete={handleDelete}
                             onEdit={setEditFile}

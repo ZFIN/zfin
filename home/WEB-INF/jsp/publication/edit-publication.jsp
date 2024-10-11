@@ -38,9 +38,9 @@
             </li>
         </ul>
 
-        <div class="tab-content" ng-app="app">
+        <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="details">
-                <zfin2:publicationForm publicationBean="${publication}" error="${error}"/>
+                <zfin2:publicationForm publicationBean="${publication}" pubID="${pubID}" error="${error}"/>
             </div>
             <div role="tabpanel" class="tab-pane" id="files">
                 <div class="__react-root"

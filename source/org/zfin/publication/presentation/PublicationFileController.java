@@ -12,12 +12,14 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFile;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -32,7 +34,16 @@ public class PublicationFileController {
 
     private JsonResultResponse<PublicationFile> getViewForPublication(Publication publication) {
         JsonResultResponse<PublicationFile> response = new JsonResultResponse<>();
-        response.setResults(publication.getFiles());
+        response.setResults(publication.getFiles().stream().map(pf -> {
+            PublicationFile file = new PublicationFile();
+            file.setId(pf.getId());
+            file.setFileName(pf.getFileName());
+            file.setOriginalFileName(pf.getOriginalFileName());
+            file.setType(pf.getType());
+            String pathOnDisk = ZfinPropertiesEnum.LOADUP_FULL_PATH + "/" + pf.getFileName();
+            file.setSize(new File(pathOnDisk).length());
+            return file;
+        }).toList());
         response.setTotal(publication.getFiles().size());
         response.addSupplementalData("fileTypes", publicationRepository.getAllPublicationFileTypes());
         return response;
