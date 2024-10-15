@@ -9,13 +9,24 @@
 use strict;
 use Try::Tiny;
 use POSIX;
-use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'DB_NAME', 'PGBINDIR', 'PGHOST');
 
 my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
 my $GENBANK_DAILY_EMAIL = '<!--|GENBANK_DAILY_EMAIL|-->';
+if ($ENV{'$GENBANK_DAILY_EMAIL'}) {
+    $GENBANK_DAILY_EMAIL = $ENV{'GENBANK_DAILY_EMAIL'};
+    print("Using GENBANK_DAILY_EMAIL from environment variable: $GENBANK_DAILY_EMAIL\n");
+}
+
 my $MOVE_BLAST_FILES_TO_DEVELOPMENT = "<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->";
+if ($ENV{'MOVE_BLAST_FILES_TO_DEVELOPMENT'}) {
+    $MOVE_BLAST_FILES_TO_DEVELOPMENT = $ENV{'MOVE_BLAST_FILES_TO_DEVELOPMENT'};
+    print("Using MOVE_BLAST_FILES_TO_DEVELOPMENT from environment variable: $MOVE_BLAST_FILES_TO_DEVELOPMENT\n");
+}
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
@@ -27,7 +38,9 @@ $report = "acc_update.report";
 system("/bin/rm -f $report");
 system("/bin/rm -f *.unl");
 system("/bin/rm -f *.fa");
-system("/bin/rm -f *.flat");
+if (!$ENV{'KEEP_FLAT'}) {
+    system("/bin/rm -f *.flat")
+}
 
 if (@ARGV > 0) {
     $md_date = $ARGV[0];
@@ -65,6 +78,10 @@ if (!(-e "$newfile")) {
     die "failed to download genbank file" ;
 }
 
+if (-e "$unzipfile") {
+    print "File $unzipfile already exists.  Skipping decompression.\n";
+}
+
 #decompress files
 $count = 0;
 #wait until the files are decompressed
@@ -72,7 +89,7 @@ while( !(-e "$unzipfile") ) {
     $count++;
     if ($count < 10){
         print "Extracting $newfile to $unzipfile \n";
-        system("/local/bin/gunzip -c $newfile > $unzipfile") && die("gunzip failed");
+        system("gunzip -c $newfile > $unzipfile") && die("gunzip failed");
     }
 }
 
@@ -112,8 +129,7 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
     # load the updates into accesson_bank and db_link
     try {
-        ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql --echo-all -v ON_ERROR_STOP=1 $ENV{'DB_NAME'} < GenBank-Accession-Update_d.sql >> $report 2>&1");
-
+        ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} $ENV{'DB_NAME'} < GenBank-Accession-Update_d.sql >> $report 2>&1");
     } catch {
         warn "Failed at GenBank-Accession-Update_d.sql - $_";
         exit -1;
@@ -130,8 +146,8 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 #
 
 sub downloadDailyUpdateFile() {
-    print "Running: /local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
-    system("/local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
+    print "Running: wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
+    system("wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
 }
 
 sub emailError() {
