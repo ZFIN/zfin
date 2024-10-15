@@ -383,6 +383,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationFile getPublicationFile(long id);
 
+    List<PublicationFile> getAllPublicationFiles();
+
     PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name);
 
     PublicationFile getOriginalArticle(Publication publication);

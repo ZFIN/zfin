@@ -358,6 +358,15 @@ public class PublicationService {
         return pubFile;
     }
 
+    public long getPublicationFileSizeOnDisk(PublicationFile file) {
+        File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString());
+        File fileOnDisk = new File(fileRoot, file.getFileName());
+        if (!fileOnDisk.exists()) {
+            return 0;
+        }
+        return fileOnDisk.length();
+    }
+
     public boolean publicationHasFigureWithLabel(Publication publication, String label) {
         return publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
     }
