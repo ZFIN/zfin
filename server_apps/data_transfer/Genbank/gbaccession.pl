@@ -28,7 +28,12 @@ if ($ENV{'MOVE_BLAST_FILES_TO_DEVELOPMENT'}) {
     print("Using MOVE_BLAST_FILES_TO_DEVELOPMENT from environment variable: $MOVE_BLAST_FILES_TO_DEVELOPMENT\n");
 }
 
-$mailprog = '/usr/lib/sendmail -t -oi -oem';
+my $SENDMAIL_FLAGS="-t -oi -oem";
+my $SENDMAIL_COMMAND="/usr/lib/sendmail";
+if (exists($ENV{'SENDMAIL_COMMAND'})) {
+    $SENDMAIL_COMMAND = $ENV{'SENDMAIL_COMMAND'};
+}
+$SENDMAIL_COMMAND .= " " . $SENDMAIL_FLAGS;
 
 chdir "$ENV{'ROOT_PATH'}/server_apps/data_transfer/Genbank/";
 
@@ -78,32 +83,14 @@ if (!(-e "$newfile")) {
     die "failed to download genbank file" ;
 }
 
-if (-e "$unzipfile") {
-    print "File $unzipfile already exists.  Skipping decompression.\n";
-}
-
-#decompress files
-$count = 0;
-#wait until the files are decompressed
-while( !(-e "$unzipfile") ) {
-    $count++;
-    if ($count < 10){
-        print "Extracting $newfile to $unzipfile \n";
-        system("gunzip -c $newfile > $unzipfile") && die("gunzip failed");
-    }
-}
-
-if (!(-e "$unzipfile")) {
-    die "failed to extract genbank file" ;
-}
-print "File extracted to: $unzipfile\n";
-
+# filter file to relevant entries only
+print "Running filterFlatFile.pl on $newfile \n";
+system ("./filterFlatFile.pl $newfile")  &&  &writeReport("filterFlatFile.pl failed.");
 
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
-
-print "Running parseDaily.pl on $unzipfile \n";
-system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
+print "Running parseDaily.pl on $newfile \n";
+system ("./parseDaily.pl $newfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
 # only move the FASTA files and flat files to development_machine if that script
@@ -163,7 +150,7 @@ sub writeReport() {
 }
 
 sub sendReport() {
-    open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
+    open(MAIL, "| $SENDMAIL_COMMAND") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
     print MAIL "To: $GENBANK_DAILY_EMAIL";

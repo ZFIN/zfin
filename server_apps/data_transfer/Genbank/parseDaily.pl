@@ -29,8 +29,8 @@ my ($locus, $bp, $type, $division, $definition, $organism, $accession, $gi, $dbs
 
 while (my $gbfile = shift @ARGV) {
 
-    if ($gbfile !~ /\.(seq|flat)$/) {
-        print "Error: File must with extension '.seq' or '.flat'. \n";
+    if ($gbfile !~ /\.(seq|flat)\.gz$/) {
+        print "Error: File must with extension '.seq.gz' or '.flat.gz'. \n";
         exit;
     }
 
@@ -59,7 +59,7 @@ while (my $gbfile = shift @ARGV) {
 
     open ZFACC, ">$prefix" . "_zf_acc.unl" or die "Cannot open the file to write: $!.";
 
-    open IN, "<$gbfile" or die "Cannot open the $gbfile file to read: $!.";
+    open IN, "cat $gbfile | gunzip |" or die "Cannot open the $gbfile file to read: $!.";
     $/ = "//\n";
 
     while (<IN>) {
@@ -76,10 +76,6 @@ while (my $gbfile = shift @ARGV) {
         /VERSION\s+(\S+)/ or die "VERSION unmatched for $locus \n";
         $accession = $1;
         $gi = $accession;
-
-        # /VERSION\s+(\S+)\s+GI:(\d+)/ or "VERSION unmatched for $locus \n";
-        # $accession = $1;
-        # $gi = $2;
 
         /ORGANISM\s+([\w\[\]].+)\n/ or die "ORGANISM unmatched for $locus \n";
         $organism = $1;
