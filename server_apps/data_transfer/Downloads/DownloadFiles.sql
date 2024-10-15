@@ -402,7 +402,7 @@ DROP TABLE tmp_gene;
 DROP TABLE tmp_hgnc;
 DROP TABLE tmp_mgi;
 DROP TABLE tmp_flybase;
--- ==== END ORTHOLOGY QUERIES ====  
+-- ==== END ORTHOLOGY QUERIES ====
 
 -- generate a file with genes and associated expression experiment
 create temp table tmp_xpat_Fish (gene_zdb_id text,
@@ -1485,7 +1485,7 @@ select distinct fish_zdb_id, fish_full_name, fish_handle, geno_zdb_id
 drop view wildtypes_fish;
 
 \echo ''./downloadsStaging/fish_components_fish.tx''
-create view fish_components_fish as
+create temp view fish_components_fish as
 select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev as abbr2, fc_construct_zdb_id, c.mrkr_abbrev as abbr3, genoback_background_zdb_id, d.geno_handle, fc_genotype_Zdb_id, e.geno_display_name
    from fish_components
    join genotype e
@@ -1519,7 +1519,136 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
    where fc_affector_zdb_id like 'ZDB-ALT%'
 ;
 \copy (select * from fish_components_fish order by fc_fish_name) to './downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
-drop view fish_components_fish;
+
+--Create a view that simply maps fish IDs to genes (joined by '|')
+CREATE TEMP VIEW fish_components_map_to_genes AS
+SELECT
+    fc_fish_zdb_id as fish_id,
+    string_agg(fc_gene_zdb_id, '|' ORDER BY fc_gene_zdb_id) AS gene_ids,
+    string_agg(mrkr_abbrev, '|' ORDER BY fc_gene_zdb_id) AS gene_abbrevs
+FROM
+    fish_components_fish
+GROUP BY
+    fc_fish_zdb_id;
+
+--Create a view that simply maps fish IDs to constructs (joined by '|')
+CREATE TEMP VIEW fish_components_map_to_constructs AS
+SELECT
+    fc_fish_zdb_id as fish_id,
+    string_agg(fc_construct_zdb_id, '|' ORDER BY fc_construct_zdb_id) AS construct_ids,
+    string_agg(abbr3, '|' ORDER BY fc_construct_zdb_id) AS construct_abbrevs
+FROM
+    fish_components_fish
+GROUP BY
+    fc_fish_zdb_id;
+
+-- create a view that joins the phenotype fish with the zeco and chebi terms
+-- Phenotype with chemicals in the environment with mutant or wildtype fish
+-- phenotype_fish_with_chemicals_including_mutants_and_wildtype
+create temp view phenotype_fish_with_chemicals_including_mutants_and_wt_pre as
+select pf.*,
+       fe.zeco_ids,
+       fe.zeco_names,
+       fe.chebi_ids,
+       fe.chebi_names
+from phenotype_fish pf
+         left join experiment_condition_with_zeco_and_chebi fe on pf.genox_exp_zdb_id = fe.expcond_exp_zdb_id
+         left join fish on pf.fish_zdb_id = fish.fish_zdb_id
+where fe.chebi_count >= 1
+--   and fish.fish_is_wildtype = 't'
+order by fish_zdb_id, fig_source_zdb_id;
+
+create temp view phenotype_fish_with_chemicals_including_mutants_and_wt_pre2 as
+select
+    fish_zdb_id,                               -- Fish ID
+    fish_full_name,                            -- Fish Name
+    gene_ids,                                  -- Affected Genomic Region IDs
+    gene_abbrevs,                              -- Affected Genomic Region Abbreviations
+    construct_ids,                             -- Construct IDs
+    construct_abbrevs,                         -- Construct Abbreviations
+    pg_start_stg_zdb_id,                       -- Start Stage ID
+    stg_name,                                  -- Start Stage Name
+    pg_end_stg_zdb_id,                         -- End Stage ID
+    name2,                                     -- End Stage Name
+    asubterm_ont_id,                           -- Affected Structure or Process 1 Subterm ID
+    asubterm_name,                             -- Affected Structure or Process 1 Subterm Name
+    arelationship_id,                          -- Post-composed Relationship ID
+    arelationship_name,                        -- Post-composed Relationship Name
+    asuperterm_ont_id,                         -- Affected Structure or Process 1 Superterm ID
+    asuperterm_name,                           -- Affected Structure or Process 1 Superterm Name
+    quality_id,                                -- Phenotype Keyword ID
+    quality_name,                              -- Phenotype Keyword Name
+    psg_tag,                                   -- Phenotype Tag
+    bsubterm_ont_id,                           -- Affected Structure or Process 2 Subterm ID
+    bsubterm_name,                             -- Affected Structure or Process 2 Subterm Name
+    brelationship_id,                          -- Post-composed Relationship ID
+    brelationship_name,                        -- Post-composed Relationship Name
+    bsuperterm_ont_id,                         -- Affected Structure or Process 2 Superterm ID
+    bsuperterm_name,                           -- Affected Structure or Process 2 Superterm Name
+    fig_source_zdb_id,                         -- Publication ID
+    publication.accession_no as pubmed_id,     -- PubMed ID
+    genox_exp_zdb_id,                          -- Environment ID
+    zeco_ids,                                  -- ZECO IDs
+    zeco_names,                                -- ZECO Names
+    chebi_ids,                                 -- ChEBI IDs
+    chebi_names,                               -- ChEBI Names
+    'TODO:zfa_term_name' as zfa_term_name,     -- ZFA Term Name
+    'TODO:zfa_term_id' as zfa_term_id,         -- ZFA Term ID
+    'TODO:affected_struct' as affected_struct, -- Affected Structure (DO WE NEED THIS?)
+    'TODO:affected_struct_id' as affected_id,  -- Affected Structure (DO WE NEED THIS?)
+    'TODO:NCBI Taxon Name' as ncbi_taxon_name, -- NCBI Taxon Name
+    'TODO:NCBI Taxon ID' as ncbi_taxon_id      -- NCBI Taxon ID
+from phenotype_fish_with_chemicals_including_mutants_and_wt_pre
+    left join publication on fig_source_zdb_id = publication.zdb_id
+    left join fish_components_map_to_genes fcm2g on fish_zdb_id = fcm2g.fish_id
+    left join fish_components_map_to_constructs fcm2c on fish_zdb_id = fcm2c.fish_id
+order by fish_zdb_id, fig_source_zdb_id;
+
+create temp view phenotype_fish_with_chemicals_including_mutants_and_wt as
+    select
+        fish_zdb_id as "Fish ID",
+        fish_full_name as "Fish Name",
+        gene_ids as "Affected Genomic Region IDs",
+        gene_abbrevs as "Affected Genomic Region Abbreviations",
+        construct_ids as "Construct IDs",
+        construct_abbrevs as "Construct Abbreviations",
+        pg_start_stg_zdb_id as "Start Stage ID",
+        stg_name as "Start Stage Name",
+        pg_end_stg_zdb_id as "End Stage ID",
+        name2 as "End Stage Name",
+        asubterm_ont_id as "Affected Structure or Process 1 Subterm ID",
+        asubterm_name as "Affected Structure or Process 1 Subterm Name",
+        arelationship_id as "Post-composed Relationship A ID",
+        arelationship_name as "Post-composed Relationship A Name",
+        asuperterm_ont_id as "Affected Structure or Process 1 Superterm ID",
+        asuperterm_name as "Affected Structure or Process 1 Superterm Name",
+        quality_id as "Phenotype Keyword ID",
+        quality_name as "Phenotype Keyword Name",
+        psg_tag as "Phenotype Tag",
+        bsubterm_ont_id as "Affected Structure or Process 2 Subterm ID",
+        bsubterm_name as "Affected Structure or Process 2 Subterm Name",
+        brelationship_id as "Post-composed Relationship B ID",
+        brelationship_name as "Post-composed Relationship B Name",
+        bsuperterm_ont_id as "Affected Structure or Process 2 Superterm ID",
+        bsuperterm_name as "Affected Structure or Process 2 Superterm Name",
+        fig_source_zdb_id as "Publication ID",
+        pubmed_id as "PubMed ID",
+        genox_exp_zdb_id as "Environment ID",
+        zeco_ids as "ZECO IDs",
+        zeco_names as "ZECO Names",
+        chebi_ids as "ChEBI IDs",
+        chebi_names as "ChEBI Names",
+        zfa_term_name as "ZFA Term Name",
+        zfa_term_id as "ZFA Term ID",
+        affected_struct as "Affected Structure",
+        affected_id as "Affected Structure ID",
+        ncbi_taxon_name as "NCBI Taxon Name",
+        ncbi_taxon_id as "NCBI Taxon ID"
+    from phenotype_fish_with_chemicals_including_mutants_and_wt_pre2
+    order by fish_zdb_id, fig_source_zdb_id;
+
+\copy (select * from phenotype_fish_with_chemicals_including_mutants_and_wt) to './downloadsStaging/phenotype_fish_with_chemicals_including_mutants_and_wt.txt' with delimiter as E'\t' null as '';
+\copy (select * from phenotype_fish_with_chemicals_including_mutants_and_wt) to './downloadsStaging/phenotype_fish_with_chemicals_including_mutants_and_wt.tsv' with header delimiter as E'\t' null as '';
 
 -- generate a file with zdb history data
 \echo ''./downloadsStaging/zdb_history.txt' with delimiter as '	' null as '';'
