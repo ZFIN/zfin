@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="popup-header">
-    Environment Description: <zfin:name entity="${experiment}"/>
+    Conditions: <zfin:name entity="${experiment}"/>
 </div>
 <div class="popup-body">
     <c:forEach var="condition" items="${experiment.experimentConditions}" varStatus="loop">
