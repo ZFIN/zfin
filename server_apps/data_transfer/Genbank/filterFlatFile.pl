@@ -26,17 +26,18 @@ my ($organism);
 while (my $gbfile = shift @ARGV) {
 
     if ($gbfile !~ /\.flat\.gz$/) {
-        print "Error: File must with extension '.seq.gz' or '.flat.gz'. \n";
+        print "Error: File must have extension '.flat.gz'. \n";
         exit;
     }
 
     print "Processing $gbfile, filesize: " . format_number(-s $gbfile) . " bytes\n";
 
-    open(FLATFILEINPUT, "cat $gbfile | gunzip -c |") or die "Cannot open the file to read: $!.";
+    # Open the compressed input file via a pipe
+    open(FLATFILEINPUT, "gunzip -c $gbfile |") or die "Cannot open the file to read: $!.";
 
     my @file = split(/\./, $gbfile);
     my $prefix = shift(@file);
-    my $filteredFileName = $prefix . ".filtered.flat";
+    my $filteredFileName = $prefix . ".filtered.flat.gz";
 
     my $totalRecordCount = 0;
     my $totalFilteredRecordCount = 0;
@@ -45,9 +46,10 @@ while (my $gbfile = shift @ARGV) {
     my $musCount = 0;
     my $homoCount = 0;
 
-    open(FLATFILEOUTPUT, ">$filteredFileName") or die "Cannot open the file to write: $!.";
+    # Open the output file and pipe to gzip for compression
+    open(FLATFILEOUTPUT, "| gzip --fast -n > $filteredFileName") or die "Cannot open the file to write: $!.";
 
-    $/ = "//\n";
+    $/ = "//\n";  # Set record separator to GenBank format
     my $progress = 0;
     while (<FLATFILEINPUT>) {
         $totalRecordCount++;
@@ -66,7 +68,7 @@ while (my $gbfile = shift @ARGV) {
         $organism = $1;
         if ($organism eq 'Danio rerio' || $organism eq 'Mus musculus' || $organism eq 'Homo sapiens') {
             $totalFilteredRecordCount++;
-            print(FLATFILEOUTPUT $_);
+            print FLATFILEOUTPUT $_;
         }
         if ($organism eq 'Danio rerio') {
             $danioCount++;
@@ -88,23 +90,27 @@ while (my $gbfile = shift @ARGV) {
     print("\nRenaming original file to $gbfile.original\n");
     rename $gbfile, "$gbfile.original" or die "Cannot rename file: $!";
 
-    my $gbfileWithoutGz = $gbfile =~ s/\.gz$//r;
-    print("Renaming $filteredFileName to $gbfileWithoutGz before compression\n");
-    rename $filteredFileName, $gbfileWithoutGz or die "Cannot rename file: $!";
-
-    print("Compressing by running: gzip --fast -n $gbfileWithoutGz\n");
-    system("gzip --fast -n $gbfileWithoutGz") && die "Cannot compress file";
+    print("Replaced original file with compressed filtered contents. New file: $filteredFileName\n");
 
     print("Deleting original file: $gbfile.original\n");
     unlink($gbfile . ".original");
 
+    print("Renaming new file to replace original $filteredFileName -> $gbfile\n");
+    rename $filteredFileName, $gbfile or die "Cannot rename file";
+
     print("Replaced original file with filtered contents. New file size: " . format_number(-s $gbfile) . " bytes\n");
 }
 
-sub format_number() {
+sub format_number {
     my $number = shift;
     my $string = "" . $number;
     my $reversedString = reverse $string;
-    $reversedString =~ s/(\d{3})(?=\d)(?!\d*\.)/$1,/g;
-    return reverse $reversedString;
+    my $buffer = "";
+    my $count = 0;
+    for my $char (split //, $reversedString) {
+        $buffer .= "," if ($count % 3 == 0 && $count != 0);
+        $buffer .= $char;
+        $count++;
+    }
+    return reverse $buffer;
 }
