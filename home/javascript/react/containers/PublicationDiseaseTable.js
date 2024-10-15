@@ -18,7 +18,7 @@ const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
             width: '300px',
         },
         {
-            label: 'Environment',
+            label: 'Conditions',
             content: row => row.fishExperiment && (<EntityLink entity={row.fishExperiment.experiment}/>),
             width: '350px',
         },
