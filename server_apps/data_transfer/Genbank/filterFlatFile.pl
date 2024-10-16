@@ -30,7 +30,8 @@ while (my $gbfile = shift @ARGV) {
         exit;
     }
 
-    print "Processing $gbfile, filesize: " . format_number(-s $gbfile) . " bytes\n";
+    my $currentTime = strftime("%Y-%m-%d %H:%M:%S", localtime(time()));
+    print "Processing $gbfile, filesize: " . format_number(-s $gbfile) . " bytes at $currentTime\n";
 
     # Open the compressed input file via a pipe
     open(FLATFILEINPUT, "gunzip -c $gbfile |") or die "Cannot open the file to read: $!.";
@@ -99,6 +100,9 @@ while (my $gbfile = shift @ARGV) {
     rename $filteredFileName, $gbfile or die "Cannot rename file";
 
     print("Replaced original file with filtered contents. New file size: " . format_number(-s $gbfile) . " bytes\n");
+    $currentTime = strftime("%Y-%m-%d %H:%M:%S", localtime(time()));
+    print("Finished at " . $currentTime . "\n");
+
 }
 
 sub format_number {
