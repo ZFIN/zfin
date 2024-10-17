@@ -33,13 +33,6 @@ public class LineDesignationController {
         return "feature/line-designation";
     }
 
-    @RequestMapping(value = "/features-for-lab/{zdbID}")
-    public String getFeatureForLab(@PathVariable String zdbID, Model model) {
-        model.addAttribute("features", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID, 50));
-        model.addAttribute("labID", zdbID);
-        return "feature/features-for-lab";
-    }
-
     @RequestMapping(value = "/alleles/{prefix}")
     public String getAllelesForPrefix(@PathVariable String prefix, Model model) {
         AllelesForPrefixBean allelesForPrefixBean = new AllelesForPrefixBean();
