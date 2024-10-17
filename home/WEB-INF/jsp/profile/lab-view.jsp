@@ -58,6 +58,9 @@
 
         <z:section title="${GENOMIC_FEATURES}" infoPopup="/action/marker/note/citations">
             <div class="__react-root" id="FeatureLabTable" data-org-id="${formBean.zdbID}"></div>
+            <div class="mt-2">
+                <a href="/search?q=&amp;fq=category%3A%22Mutation+%2F+Tg%22&amp;fq=xref%3A%22${formBean.zdbID}%22">View all lines for this lab</a>
+            </div>
         </z:section>
 
         <z:section title="${STATEMENT}">

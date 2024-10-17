@@ -1012,9 +1012,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
             """;
         Query<Feature> query = session.createQuery(hql, Feature.class);
         query.setParameter("ID", zdbID);
-        if (pagination.getLimit() > 0) {
-            query.setMaxResults(pagination.getLimit());
-        }
 
         ScrollableResults scrollableResults = query.scroll();
         List<Feature> list = new ArrayList<>();
@@ -1025,7 +1022,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             scrollableResults.setRowNumber(pagination.getStart());
         }
 
-        while (scrollableResults.next() && ((pagination.getLimit() == 0) || (list.size() < pagination.getLimit() + 1))) {
+        while (scrollableResults.next() && ((pagination.getLimit() == 0) || (list.size() < pagination.getLimit()))) {
             list.add((Feature) scrollableResults.get()[0]);
         }
 
