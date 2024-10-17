@@ -91,18 +91,18 @@ while (my $gbfile = shift @ARGV) {
     print("\nRenaming original file to $gbfile.original\n");
     rename $gbfile, "$gbfile.original" or die "Cannot rename file: $!";
 
-    print("Replaced original file with compressed filtered contents. New file: $filteredFileName\n");
-
-    print("Deleting original file: $gbfile.original\n");
-    unlink($gbfile . ".original");
+    print("New file with compressed filtered contents: $filteredFileName\n");
 
     print("Renaming new file to replace original $filteredFileName -> $gbfile\n");
     rename $filteredFileName, $gbfile or die "Cannot rename file";
 
     print("Replaced original file with filtered contents. New file size: " . format_number(-s $gbfile) . " bytes\n");
+
+    print("Deleting original file: $gbfile.original\n");
+    unlink($gbfile . ".original");
+
     $currentTime = strftime("%Y-%m-%d %H:%M:%S", localtime(time()));
     print("Finished at " . $currentTime . "\n");
-
 }
 
 sub format_number {

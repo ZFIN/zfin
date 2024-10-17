@@ -43,9 +43,7 @@ $report = "acc_update.report";
 system("/bin/rm -f $report");
 system("/bin/rm -f *.unl");
 system("/bin/rm -f *.fa");
-if (!$ENV{'KEEP_FLAT'}) {
-    system("/bin/rm -f *.flat")
-}
+system("/bin/rm -f *.flat");
 
 if (@ARGV > 0) {
     $md_date = $ARGV[0];
