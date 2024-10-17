@@ -14,7 +14,7 @@ use lib "$FindBin::Bin/../../perl_lib/";
 use ZFINPerlModules qw(assertEnvironment);
 assertEnvironment('ROOT_PATH', 'DB_NAME', 'PGBINDIR', 'PGHOST');
 
-my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
+my ($md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
 my $GENBANK_DAILY_EMAIL = '<!--|GENBANK_DAILY_EMAIL|-->';
 if ($ENV{'$GENBANK_DAILY_EMAIL'}) {
@@ -62,19 +62,11 @@ if (-e "$newfile") {
     print "File $newfile already exists.  Skipping download.\n";
 }
 
-my $count = 0;
 my $retry = 1;
 #verify the file is downloaded
 while( !(-e "$newfile") && $retry < 5){
-
-  $count++;
-  if ($count > 10) {
-
-	  $count = 0;
-	  $retry = $retry +1;
-	  &downloadDailyUpdateFile();
-	  
-  }
+    $retry = $retry +1;
+    &downloadDailyUpdateFile();
 }
 
 if (!(-e "$newfile")) {
@@ -148,7 +140,7 @@ sub writeReport() {
 }
 
 sub sendReport() {
-    open(MAIL, "| $SENDMAIL_COMMAND") || die "cannot open mailprog $mailprog, stopped";
+    open(MAIL, "| $SENDMAIL_COMMAND") || die "cannot open mailprog $SENDMAIL_COMMAND, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
     print MAIL "To: $GENBANK_DAILY_EMAIL";

@@ -4,6 +4,7 @@
 # Danio rerio (zebrafish), Mus musculus (mouse), and Homo sapiens (human). It replaces the original file.
 
 use Getopt::Std;
+use POSIX;
 
 # Get command line options
 getopts('h');
