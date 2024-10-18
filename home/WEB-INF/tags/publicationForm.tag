@@ -2,12 +2,15 @@
 
 <%@ attribute name="publicationBean" type="org.zfin.publication.presentation.PublicationBean" required="true" %>
 <%@ attribute name="error" type="java.lang.String" %>
+<%@ attribute name="pubID" type="java.lang.String" %>
 
 <c:if test="${!empty error}">
     <div class="alert alert-danger">${error}</div>
 </c:if>
 
 <form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
+    <div class="__react-root" id="PubFileCheck" data-pub-id="${pubID}" data-unique-id="publicationFormTag"></div>
+
     <div class="form-group row">
         <label for="publication.title" class="col-md-3 col-form-label">Title</label>
         <div class="col-md-8">
@@ -146,7 +149,7 @@
     <div class="form-group row">
         <div class="offset-md-3 col-md-8">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a class="btn btn-outline-secondary" href="/${publication.zdbID}">Cancel</a>
+            <a class="btn btn-outline-secondary" href="/${pubID}">Cancel</a>
         </div>
     </div>
 </form:form>

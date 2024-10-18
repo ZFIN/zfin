@@ -4,6 +4,7 @@ import InlineEditTextarea from '../utils/inline-edit-textarea';
 import FigureUpload from '../components/figure-edit/figure-upload';
 import FigureUpdate from '../components/figure-edit/figure-update';
 import PropTypes from 'prop-types';
+import PubFileCheck from './PubFileCheck';
 
 
 function FigureEdit({ pubId }) {
@@ -109,6 +110,7 @@ function FigureEdit({ pubId }) {
 
     return (
         <div>
+            <PubFileCheck pubId={pubId} />
             <table className='table'>
                 <thead>
                     <tr>
