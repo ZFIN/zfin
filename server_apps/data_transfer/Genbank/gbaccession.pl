@@ -91,7 +91,7 @@ $dir_on_development_machine = "/research/zblastfiles/files/daily" ;
 
 if ($MOVE_BLAST_FILES_TO_DEVELOPMENT eq "true") {
     print "Moving blast files to development \n";
-    if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
+    if (! system ("/bin/mv *.fa *.flat *.flat.gz $dir_on_development_machine") ) {
 
 		&writeReport("Fasta files moved to development_machine.");
 		system ("/bin/touch $dir_on_development_machine/fileMoved.$md_date");
