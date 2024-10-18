@@ -385,8 +385,8 @@ public class FacetBuilderService {
         facet.setMaxValuesToShow(16);
         facet.setDisplayShowAllLink(true);
         facet.setShowAllFieldName(CONDITIONS.getName());
+        facet.setName(CONDITIONS.getName());
     }
-
 
     private List<FacetGroup> buildPublicationFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
