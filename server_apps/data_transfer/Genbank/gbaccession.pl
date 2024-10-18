@@ -9,15 +9,31 @@
 use strict;
 use Try::Tiny;
 use POSIX;
-use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
-use ZFINPerlModules;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'DB_NAME', 'PGBINDIR', 'PGHOST');
 
-my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
+my ($md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
 my $GENBANK_DAILY_EMAIL = '<!--|GENBANK_DAILY_EMAIL|-->';
-my $MOVE_BLAST_FILES_TO_DEVELOPMENT = "<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->";
+if ($ENV{'$GENBANK_DAILY_EMAIL'}) {
+    $GENBANK_DAILY_EMAIL = $ENV{'GENBANK_DAILY_EMAIL'};
+    print("Using GENBANK_DAILY_EMAIL from environment variable: $GENBANK_DAILY_EMAIL\n");
+}
 
-$mailprog = '/usr/lib/sendmail -t -oi -oem';
+my $MOVE_BLAST_FILES_TO_DEVELOPMENT = "<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->";
+if ($ENV{'MOVE_BLAST_FILES_TO_DEVELOPMENT'}) {
+    $MOVE_BLAST_FILES_TO_DEVELOPMENT = $ENV{'MOVE_BLAST_FILES_TO_DEVELOPMENT'};
+    print("Using MOVE_BLAST_FILES_TO_DEVELOPMENT from environment variable: $MOVE_BLAST_FILES_TO_DEVELOPMENT\n");
+}
+
+my $SENDMAIL_FLAGS="-t -oi -oem";
+my $SENDMAIL_COMMAND="/usr/lib/sendmail";
+if (exists($ENV{'SENDMAIL_COMMAND'})) {
+    $SENDMAIL_COMMAND = $ENV{'SENDMAIL_COMMAND'};
+}
+$SENDMAIL_COMMAND .= " " . $SENDMAIL_FLAGS;
 
 chdir "$ENV{'ROOT_PATH'}/server_apps/data_transfer/Genbank/";
 
@@ -46,47 +62,25 @@ if (-e "$newfile") {
     print "File $newfile already exists.  Skipping download.\n";
 }
 
-my $count = 0;
 my $retry = 1;
 #verify the file is downloaded
 while( !(-e "$newfile") && $retry < 5){
-
-  $count++;
-  if ($count > 10) {
-
-	  $count = 0;
-	  $retry = $retry +1;
-	  &downloadDailyUpdateFile();
-	  
-  }
+    $retry = $retry +1;
+    &downloadDailyUpdateFile();
 }
 
 if (!(-e "$newfile")) {
     die "failed to download genbank file" ;
 }
 
-#decompress files
-$count = 0;
-#wait until the files are decompressed
-while( !(-e "$unzipfile") ) {
-    $count++;
-    if ($count < 10){
-        print "Extracting $newfile to $unzipfile \n";
-        system("/local/bin/gunzip -c $newfile > $unzipfile") && die("gunzip failed");
-    }
-}
-
-if (!(-e "$unzipfile")) {
-    die "failed to extract genbank file" ;
-}
-print "File extracted to: $unzipfile\n";
-
+# filter file to relevant entries only
+print "Running filterFlatFile.pl on $newfile \n";
+system ("./filterFlatFile.pl $newfile")  &&  &writeReport("filterFlatFile.pl failed.");
 
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
-
-print "Running parseDaily.pl on $unzipfile \n";
-system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
+print "Running parseDaily.pl on $newfile \n";
+system ("./parseDaily.pl $newfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
 # only move the FASTA files and flat files to development_machine if that script
@@ -97,7 +91,7 @@ $dir_on_development_machine = "/research/zblastfiles/files/daily" ;
 
 if ($MOVE_BLAST_FILES_TO_DEVELOPMENT eq "true") {
     print "Moving blast files to development \n";
-    if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
+    if (! system ("/bin/mv *.fa *.flat *.flat.gz $dir_on_development_machine") ) {
 
 		&writeReport("Fasta files moved to development_machine.");
 		system ("/bin/touch $dir_on_development_machine/fileMoved.$md_date");
@@ -112,8 +106,7 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
     # load the updates into accesson_bank and db_link
     try {
-        ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql --echo-all -v ON_ERROR_STOP=1 $ENV{'DB_NAME'} < GenBank-Accession-Update_d.sql >> $report 2>&1");
-
+        ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} $ENV{'DB_NAME'} < GenBank-Accession-Update_d.sql >> $report 2>&1");
     } catch {
         warn "Failed at GenBank-Accession-Update_d.sql - $_";
         exit -1;
@@ -130,8 +123,8 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 #
 
 sub downloadDailyUpdateFile() {
-    print "Running: /local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
-    system("/local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
+    print "Running: wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
+    system("wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
 }
 
 sub emailError() {
@@ -147,7 +140,7 @@ sub writeReport() {
 }
 
 sub sendReport() {
-    open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
+    open(MAIL, "| $SENDMAIL_COMMAND") || die "cannot open mailprog $SENDMAIL_COMMAND, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
     print MAIL "To: $GENBANK_DAILY_EMAIL";
