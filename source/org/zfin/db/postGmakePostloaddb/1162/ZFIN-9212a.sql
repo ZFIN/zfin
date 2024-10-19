@@ -1,11 +1,16 @@
 --liquibase formatted sql
 --changeset cmpich:ZFIN-9212a.sql
 
+delete from ensembl_transcript_renaming;
+
 insert into ensembl_transcript_renaming
 values ('ENSDART00000183975', 'ENSDART00000183975', 'zgc:171740-202');
 
 insert into ensembl_transcript_renaming
 values ('ENSDART00000180247', 'ENSDART00000180247', 'si:dkey-237h12.3-204');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000184727', 'ENSDART00000184727', 'si:dkey-237h12.3-202');
 
 insert into ensembl_transcript_renaming
 values ('ENSDART00000179540', 'ENSDART00000179540', 'mrasb-202');
@@ -27,6 +32,7 @@ values ('ENSDART00000125345', 'ENSDART00000125345', 'si:dkey-237h12.3-206');
 
 insert into ensembl_transcript_renaming
 values ('ENSDART00000105073', 'ENSDART00000105073', 'si:dkey-28d5.14-001');
+
 
 create table ensembl_transcript_add
 (
