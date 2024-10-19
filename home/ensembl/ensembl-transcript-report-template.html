@@ -279,7 +279,7 @@
                 if (item.type == 'ERROR') {
                     return html`<div className="error"> This accession was marked as having an error so won't be loaded.</div>`;
                 } else if (item.type == 'LOAD') {
-                    return html`<div className="success"> This accession will be loaded.</div>`;
+                    return html`<div className="success"> This accession is loaded.</div>`;
                 }
             }
 
@@ -459,7 +459,6 @@
                      <div id='content'>
                         <div id="left-nav">
                             <h2>Navigation</h2>
-                            <p>These are the types of actions that will be performed by the load.</p>
                             <${ReportNavigation} reportNavigation=${reportNavigation} onNavigationClick=${handleNavigationClick}/>
                         </div>
                         <div id="right-content">
