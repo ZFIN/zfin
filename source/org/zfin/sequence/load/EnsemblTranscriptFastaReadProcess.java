@@ -88,7 +88,8 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO();
         writeOutputReportFile(actions, dto);
 
-        System.exit(0);
+        return;
+/*
 
         allEnsemblProvidedGeneMap.entrySet().removeIf(entry -> !ensdargMap.containsKey(entry.getKey()));
         System.out.println("Total Number of Ensembl Genes with transcripts in FASTA file matching a gene record in ZFIN: " + allEnsemblProvidedGeneMap.size());
@@ -100,6 +101,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
         allEnsemblProvidedGeneMap.forEach((s, richSequences) -> richSequences.forEach(richSequence -> System.out.println(ensdargMap.get(s).getMarker().getZdbID() + "," + getGeneIdFromVersionedAccession(richSequence.getAccession())))
         );
+*/
     }
 
     private List<RichSequence> sequenceListToBeGenerated = new ArrayList<>();
