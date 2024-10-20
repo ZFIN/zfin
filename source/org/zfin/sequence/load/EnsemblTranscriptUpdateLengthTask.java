@@ -31,8 +31,15 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         AbstractScriptWrapper wrapper = new AbstractScriptWrapper();
         wrapper.initAll();
 
+        System.out.println("Start Length Update...");
         EnsemblTranscriptUpdateLengthTask loader = new EnsemblTranscriptUpdateLengthTask();
         loader.init();
+        System.out.println("Finish Length Update");
+
+        System.out.println("Start Load...");
+        EnsemblTranscriptFastaReadProcess loadTranscripts = new EnsemblTranscriptFastaReadProcess();
+        loadTranscripts.init();
+        System.out.println("Finish Load");
     }
 
     Map<Marker, List<TranscriptDBLink>> geneEnsdartMap;
@@ -40,7 +47,6 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
     public void init() throws IOException {
         super.init();
         loadSequenceMapFromDownloadFile();
-        System.exit(0);
     }
 
     private void loadSequenceMapFromDownloadFile() {
@@ -154,7 +160,6 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         dto.setDescription("Loading Ensembl Transcripts into ZFIN");
         LoadActionsContainer container = new LoadActionsContainer(dto, actions);
         writeOutputReportFile(actions, dto);
-        System.exit(0);
     }
 
     private static void createUpdateNullLengthActions(Set<LoadAction> actions, TranscriptDBLink link) {
