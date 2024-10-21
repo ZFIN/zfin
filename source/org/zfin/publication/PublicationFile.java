@@ -37,6 +37,10 @@ public class PublicationFile implements Comparable<PublicationFile> {
     @JsonView(View.Default.class)
     private PublicationFileType type;
 
+    @Transient
+    @JsonView(View.Default.class)
+    private long size;
+
     @JsonView(View.Default.class)
     public String getFullPath() {
         return ZfinPropertiesEnum.PDF_LOAD + "/" + fileName;
