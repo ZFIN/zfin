@@ -1602,6 +1602,118 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="27">ChEBI ID</Column>
             <Column id="28">ChEBI Name</Column>
         </Download>
+
+        <Download orderIndex="1">
+            <Name>
+                Phenotypes with Chemicals in Environment
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>phenotype_fish_with_chemicals_including_mutants_and_wt</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1">Fish ID</Column>
+            <Column id="2">Fish Name</Column>
+            <Column id="3">Affected Genomic Region IDs</Column>
+            <Column id="4">Affected Genomic Region Abbreviations</Column>
+            <Column id="5">Construct IDs</Column>
+            <Column id="6">Construct Abbreviations</Column>
+            <Column id="7">Start Stage ID</Column>
+            <Column id="8">Start Stage Name</Column>
+            <Column id="9">End Stage ID</Column>
+            <Column id="10">End Stage Name</Column>
+            <Column id="11">Affected Structure or Process 1 Subterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 Subterm Name</Column>
+            <Column id="13">Post-composed Relationship A ID</Column>
+            <Column id="14">Post-composed Relationship A Name</Column>
+            <Column id="15">Affected Structure or Process 1 Superterm ID</Column>
+            <Column id="16">Affected Structure or Process 1 Superterm Name</Column>
+            <Column id="17">Phenotype Keyword ID</Column>
+            <Column id="18">Phenotype Keyword Name</Column>
+            <Column id="19">Phenotype Tag</Column>
+            <Column id="20">Affected Structure or Process 2 Subterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 Subterm Name</Column>
+            <Column id="22">Post-composed Relationship B ID</Column>
+            <Column id="23">Post-composed Relationship B Name</Column>
+            <Column id="24">Affected Structure or Process 2 Superterm ID</Column>
+            <Column id="25">Affected Structure or Process 2 Superterm Name</Column>
+            <Column id="26">Publication ID</Column>
+            <Column id="27">PubMed ID</Column>
+            <Column id="28">Environment ID</Column>
+            <Column id="29">ZECO ID</Column>
+            <Column id="30">ZECO Name</Column>
+            <Column id="31">ChEBI ID</Column>
+            <Column id="32">ChEBI Name</Column>
+            <Column id="33">ZFA Term ID</Column>
+            <Column id="34">ZFA Term Name</Column>
+            <Column id="35">GO-CC ID</Column>
+            <Column id="36">GO-CC Name</Column>
+            <Column id="37">NCBI Taxon ID</Column>
+            <Column id="38">NCBI Taxon Name</Column>
+        </Download>
+
+        <!-- Phenotype with chemicals in the environment with mutant or wt -->
+        <Download orderIndex="1">
+            <Name>
+                Phenotypes with Chemicals in Environment
+            </Name>
+            <Category>
+                Toxicology
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>phenotype_fish_with_chemicals_including_mutants_and_wt_2</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1">Fish ID</Column>
+            <Column id="2">Fish Name</Column>
+            <Column id="3">Affected Genomic Region IDs</Column>
+            <Column id="4">Affected Genomic Region Abbreviations</Column>
+            <Column id="5">Construct IDs</Column>
+            <Column id="6">Construct Abbreviations</Column>
+            <Column id="7">Start Stage ID</Column>
+            <Column id="8">Start Stage Name</Column>
+            <Column id="9">End Stage ID</Column>
+            <Column id="10">End Stage Name</Column>
+            <Column id="11">Affected Structure or Process 1 Subterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 Subterm Name</Column>
+            <Column id="13">Post-composed Relationship A ID</Column>
+            <Column id="14">Post-composed Relationship A Name</Column>
+            <Column id="15">Affected Structure or Process 1 Superterm ID</Column>
+            <Column id="16">Affected Structure or Process 1 Superterm Name</Column>
+            <Column id="17">Phenotype Keyword ID</Column>
+            <Column id="18">Phenotype Keyword Name</Column>
+            <Column id="19">Phenotype Tag</Column>
+            <Column id="20">Affected Structure or Process 2 Subterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 Subterm Name</Column>
+            <Column id="22">Post-composed Relationship B ID</Column>
+            <Column id="23">Post-composed Relationship B Name</Column>
+            <Column id="24">Affected Structure or Process 2 Superterm ID</Column>
+            <Column id="25">Affected Structure or Process 2 Superterm Name</Column>
+            <Column id="26">Publication ID</Column>
+            <Column id="27">PubMed ID</Column>
+            <Column id="28">Environment ID</Column>
+            <Column id="29">ZECO ID</Column>
+            <Column id="30">ZECO Name</Column>
+            <Column id="31">ChEBI ID</Column>
+            <Column id="32">ChEBI Name</Column>
+            <Column id="33">ZFA Term ID</Column>
+            <Column id="34">ZFA Term Name</Column>
+            <Column id="35">GO-CC ID</Column>
+            <Column id="36">GO-CC Name</Column>
+            <Column id="37">NCBI Taxon ID</Column>
+            <Column id="38">NCBI Taxon Name</Column>
+        </Download>
+
         <Download orderIndex="1">
             <Name>
                 Ameliorated Phenotypes
