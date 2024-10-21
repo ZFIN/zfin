@@ -2671,7 +2671,7 @@
 
             <entity name="phenotype_condition"
                     query="select
-                                nvl(zeco.term_name,'') ||
+                                nvl(zecoParent.term_name,'') ||
                                 nvl(': ' || ao.term_name,'') ||
                                 nvl(': ' || go_cc.term_name,'') ||
                                 nvl(': ' || chebi.term_name,'') ||
@@ -2680,11 +2680,14 @@
                                 from experiment_condition
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
                              join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id
+                             join all_term_contains atc on atc.alltermcon_contained_zdb_id = expcond_zeco_term_zdb_id
+                             join term zecoParent on zecoParent.term_zdb_id = atc.alltermcon_container_zdb_id
                              left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
                              left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
-                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id"
+                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
+                    "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             />
@@ -3569,7 +3572,7 @@
 
             <entity name="expression_conditions"
                     query="select
-                                nvl(zeco.term_name,'') ||
+                                nvl(zecoParent.term_name,'') ||
                                 nvl(': ' || ao.term_name,'') ||
                                 nvl(': ' || go_cc.term_name,'') ||
                                 nvl(': ' || chebi.term_name,'') ||
@@ -3579,6 +3582,8 @@
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
                              join expression_experiment2 on xpatex_genox_zdb_id = genox_zdb_id
                              join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                             join all_term_contains atc on atc.alltermcon_contained_zdb_id = expcond_zeco_term_zdb_id
+                             join term zecoParent on zecoParent.term_zdb_id = atc.alltermcon_container_zdb_id
                              left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
@@ -4768,7 +4773,7 @@
 
             <entity name="disease_condition"
                     query="select
-                                nvl(zeco.term_name,'') ||
+                                nvl(zecoParent.term_name,'') ||
                                 nvl(': ' || ao.term_name,'') ||
                                 nvl(': ' || go_cc.term_name,'') ||
                                 nvl(': ' || chebi.term_name,'') ||
@@ -4778,6 +4783,8 @@
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
                              join disease_annotation_model on damo_genox_zdb_id = genox_zdb_id
                              join disease_annotation on damo_dat_zdb_id = dat_zdb_id
+                             join all_term_contains atc on atc.alltermcon_contained_zdb_id = expcond_zeco_term_zdb_id
+                             join term zecoParent on zecoParent.term_zdb_id = atc.alltermcon_container_zdb_id
                              left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
