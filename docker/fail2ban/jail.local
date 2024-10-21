@@ -1,0 +1,22 @@
+[apache-forbidden]
+enabled = true
+port = http,https
+filter = apache-forbidden
+logpath = /var/log/httpd/zfin_access
+maxretry = 10
+
+[apache-unavailable]
+enabled = true
+port = http,https
+filter = apache-unavailable
+logpath = /var/log/httpd/zfin_access
+maxretry = 10 
+
+[zfin-search]
+enabled = true
+port = http,https
+filter = zfin-search
+logpath = /var/log/httpd/zfin_access
+maxretry = 5
+bantime = 1d
+findtime = 1d

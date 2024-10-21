@@ -175,6 +175,21 @@ services:
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+  fail2ban:
+    build: ./fail2ban/
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ}
+      VERBOSITY: -vv #optional
+    volumes:
+      - fail2ban_config:/config
+      - httpd_log:/var/log/httpd:ro #optional
+    restart: unless-stopped
   elasticsearch:
     build: 
       context: ./elasticsearch/
@@ -243,6 +258,7 @@ volumes:
   solr_data:
   downloads_data:
   jenkins_data:
+  fail2ban_config:
   elasticsearch_data:
   kibana_data:
   certbot_data:
