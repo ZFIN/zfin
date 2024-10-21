@@ -31,7 +31,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
             width: '150px',
         },
         {
-            label: 'Experiment',
+            label: 'Conditions',
             content: (row) => <span className='text-break'>
                 <a
                     className='text-break'
