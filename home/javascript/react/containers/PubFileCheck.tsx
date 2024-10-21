@@ -16,10 +16,7 @@ const PubFileCheck = ({ pubId, initialFiles}) => {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            fetchFiles();
-        });
-        // fetchFiles();
+        fetchFiles();
     }, [pubId, initialFiles]);
 
     if (files.length === 0) {
