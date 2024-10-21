@@ -155,3 +155,7 @@ task createEnsembTranscriptFastaFile(type: JavaExec) {
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReader'
 }
 
+task findEmptyPublicationFilesTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.publication.FindEmptyPublicationFilesTask'
+}
