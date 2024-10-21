@@ -3243,7 +3243,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             hql += "left join fetch marker.dbLinks ";
             hql += "left join fetch marker.aliases ";
         }
-        hql += "where marker.markerType.name in (:names) and mrkr_abbrev not like :withdrawn ";
+        hql += "where marker.markerType.name in (:names) and marker.abbreviation not like :withdrawn ";
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameterList("names", type.getTypeStrings());
         query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
