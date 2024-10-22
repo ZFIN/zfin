@@ -40,6 +40,8 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         EnsemblTranscriptFastaReadProcess loadTranscripts = new EnsemblTranscriptFastaReadProcess();
         loadTranscripts.init();
         System.out.println("Finish Load");
+        loader.actions.addAll(loadTranscripts.actions);
+        loader.writeOutputReportFile();
     }
 
     Map<Marker, List<TranscriptDBLink>> geneEnsdartMap;
@@ -50,8 +52,7 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
     }
 
     private void loadSequenceMapFromDownloadFile() {
-        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO();
-        Set<LoadAction> actions = new HashSet<>();
+        dto = getEnsemblLoadSummaryItemDTO();
         List<String> zfinGeneAccessionIDs = getMarkerDbLinks().stream().map(DBLink::getAccessionNumber).distinct().toList();
         List<String> ensemblGeneAccessionIDs = geneTranscriptMap.keySet().stream().map(EnsemblTranscriptBase::getUnversionedAccession).toList();
         CollectionUtils.removeAll(ensemblGeneAccessionIDs, zfinGeneAccessionIDs).forEach(missingID -> {
@@ -158,8 +159,6 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         }
 
         dto.setDescription("Loading Ensembl Transcripts into ZFIN");
-        LoadActionsContainer container = new LoadActionsContainer(dto, actions);
-        writeOutputReportFile(actions, dto);
     }
 
     private static void createUpdateNullLengthActions(Set<LoadAction> actions, TranscriptDBLink link) {

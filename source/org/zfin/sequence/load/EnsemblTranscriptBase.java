@@ -42,6 +42,9 @@ abstract public class EnsemblTranscriptBase {
 
     protected Map<String, List<RichSequence>> geneTranscriptMap;
 
+    Set<LoadAction> actions = new HashSet<>();
+    EnsemblLoadSummaryItemDTO dto;
+
     public void init() throws IOException {
         downloadFile(cdnaFileName, "cdna");
         downloadFile(ncrnaFileName, "ncrna");
@@ -168,14 +171,14 @@ abstract public class EnsemblTranscriptBase {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
 
-    protected void writeOutputReportFile(Set<LoadAction> actions, EnsemblLoadSummaryItemDTO summary) {
+    protected void writeOutputReportFile() {
         String reportFile = "ensembl-transcript-load-report.html";
 
         log.info("Creating report file: " + reportFile);
         try {
             LoadActionsContainer actionsContainer = LoadActionsContainer.builder()
                 .actions(actions)
-                .summary(summary)
+                .summary(dto)
                 .build();
             String jsonContents = actionsToJson(actionsContainer);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + REPORT_HOME_DIRECTORY + "/ensembl-transcript-report-template.html";
