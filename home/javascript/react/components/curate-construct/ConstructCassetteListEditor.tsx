@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import ConstructCassetteEditor from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
-import {Cassette} from './ConstructTypes';
 import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
 import ConstructModal from './ConstructModal';
 
 const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
-    const [cassette, setCassette] = useState<Cassette>(null);
 
-    const handleCassetteChange = (updatedCassette) => {
-        setCassette(updatedCassette);
+    const setCassette = (cassette) => {
+        setStateByProxy(proxy => {
+            proxy.stagedCassette = cassette;
+        });
     }
 
     const handleAddCassetteClick = (e) => {
@@ -24,9 +24,9 @@ const ConstructCassetteListEditor = () => {
     const handleAddCassette = () => {
         const newCassettes = [...state.selectedConstruct.cassettes];
         if (state.selectedConstruct.addCassetteMode) {
-            newCassettes.push(cassette);
+            newCassettes.push({...state.stagedCassette});
         } else if (state.selectedConstruct.editCassetteMode) {
-            newCassettes[state.selectedConstruct.editCassetteIndex] = cassette;
+            newCassettes[state.selectedConstruct.editCassetteIndex] = {...state.stagedCassette};
         }
         setStateByProxy(proxy => {
             proxy.selectedConstruct.cassettes = newCassettes;
@@ -129,11 +129,11 @@ const ConstructCassetteListEditor = () => {
             )}
             {showCassetteEditorEditMode() && <>
                 <ConstructModal>
-                    <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange} onSave={handleAddCassette} onCancel={handleCancelCassette}/>
+                    <ConstructCassetteEditor onSave={handleAddCassette} onCancel={handleCancelCassette}/>
                 </ConstructModal>
             </>}
             {showCassetteEditorAddMode() && <>
-                <ConstructCassetteEditor cassette={cassette} onChange={handleCassetteChange} onSave={handleAddCassette} onCancel={handleCancelCassette}/>
+                <ConstructCassetteEditor onSave={handleAddCassette} onCancel={handleCancelCassette}/>
             </>}
         </>
     );
