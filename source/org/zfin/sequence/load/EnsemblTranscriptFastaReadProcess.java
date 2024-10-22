@@ -85,8 +85,6 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         addEnsemblRecordToTranscript();
         removeEnsemblRecordsFromTranscript();
 
-        EnsemblLoadSummaryItemDTO dto = getEnsemblLoadSummaryItemDTO();
-        writeOutputReportFile(actions, dto);
 
         return;
 /*
@@ -235,7 +233,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
     }
 
     private Map<String, Object[]> ensdartDuplicationMap;
-    Set<LoadAction> actions = new HashSet<>();
+    public Set<LoadAction> actions = new HashSet<>();
 
     private void createTranscriptRecords(List<Marker> genesToAddTranscripts) {
         System.out.println("Number of Genes for which transcripts need to be added: " + genesToAddTranscripts.size());
