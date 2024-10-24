@@ -18,6 +18,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.GregorianCalendar;
@@ -151,7 +154,14 @@ public class ImageService {
             throw new RuntimeException("Environment variable CONVERT_BINARY_PATH must be set");
         }
         if (!FileUtil.checkFileExists(convertBinary)) {
-            throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
+            log.error("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
+            File convertBinaryFile = findConvertBinaryInPath();
+            if (convertBinaryFile == null) {
+                throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary + " or in PATH");
+            } else {
+                log.error("Found convert binary at: " + convertBinaryFile.getAbsolutePath());
+                convertBinary = convertBinaryFile.getAbsolutePath();
+            }
         }
         String makeThumb = convertBinary + " -thumbnail " + dimensions + " " + imageFilename + " " + thumbnailFilename;
         log.info("running makeThumb command: " + makeThumb);
@@ -164,5 +174,23 @@ public class ImageService {
     private static void createDestinationParentDirectoryIfNotExists(String publicationZdbId) throws IOException {
         File destinationDirectory = getDestinationParentDirectory(publicationZdbId, true);
         FileUtils.forceMkdir(destinationDirectory);
+    }
+
+    private static File findConvertBinaryInPath() {
+        try {
+            Process process = Runtime.getRuntime().exec("which convert");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                File file = new File(line.trim());
+                if (file.exists()) {
+                    return file;
+                }
+            }
+        } catch (IOException e) {
+            log.error("Error finding convert binary in path", e);
+        }
+        return null;
     }
 }
