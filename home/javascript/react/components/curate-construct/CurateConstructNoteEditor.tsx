@@ -28,7 +28,7 @@ export default function CurateConstructNoteEditor() {
         {state.selectedConstruct.notes && state.selectedConstruct.notes.map((note, index) => {
             return <div key={index}>
                 <span dangerouslySetInnerHTML={{__html: note.label}}/>{' '}
-                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveNote(index)}/>
+                <a className='delete fa-trash fa' href='#' onClick={(e) => {e.preventDefault(); handleRemoveNote(index)}}/>
             </div>
         })}
         <textarea
