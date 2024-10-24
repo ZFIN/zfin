@@ -10,10 +10,12 @@ const PhenotypeStatement = ({statement}) => {
                 key={statement.id}
                 href={'/action/phenotype/statement/' + statement.id}
                 dangerouslySetInnerHTML={{__html: statement.shortName}}
+                rel='nofollow'
             />
             <a
                 className='popup-link data-popup-link'
                 href={`/action/phenotype/statement-popup/${statement.id}`}
+                rel='nofollow'
             />
         </div>
     )

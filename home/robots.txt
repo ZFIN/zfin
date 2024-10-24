@@ -39,6 +39,10 @@ Disallow: /action/quicksearch
 #bots should not do updates or submit feedback
 Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
 
+#bots don't need to crawl temporary phenotype statement pages (IDs are temporary):
+Disallow: /action/phenotype/statement/
+Disallow: /action/phenotype/statement-popup/
+
 Disallow: /downloads/archive
 Disallow: /downloads/archive/*
 
