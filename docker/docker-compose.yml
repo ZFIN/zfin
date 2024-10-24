@@ -71,6 +71,8 @@ services:
   solr:
     build: ./solr/
     restart: always
+    environment:
+      SOLR_HEAP: 8g
     ports:
       - "8983-8992:8983"
     volumes:
