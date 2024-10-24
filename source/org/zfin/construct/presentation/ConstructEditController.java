@@ -58,7 +58,7 @@ public class ConstructEditController {
         ConstructUpdateBean formBean = new ConstructUpdateBean();
         if (StringUtils.isNotEmpty(pubZdbID))
             formBean.setConstructPublicationZdbID(pubZdbID);
-        List<ConstructCuration>constructsInPub=mr.getConstructsForAttribution(formBean.getConstructPublicationZdbID());
+        List<ConstructCuration>constructsInPub = mr.getConstructsForAttribution(formBean.getConstructPublicationZdbID());
         formBean.setConstructsInPub(constructsInPub);
         return formBean;
     }

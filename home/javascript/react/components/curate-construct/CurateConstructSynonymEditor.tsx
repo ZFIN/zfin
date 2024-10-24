@@ -1,5 +1,7 @@
 import React from 'react';
 import {useCurateConstructEditContext} from './CurateConstructEditContext';
+import {backendBaseUrl} from './DomainInfo';
+const calculatedDomain = backendBaseUrl();
 
 function CurateConstructSynonymEditor() {
 
@@ -11,7 +13,11 @@ function CurateConstructSynonymEditor() {
 
     function handleRemoveSynonym(index) {
         const newSynonyms = [...state.selectedConstruct.synonyms];
+        const removedSynonym = newSynonyms[index];
         newSynonyms.splice(index, 1);
+
+        const url = `${calculatedDomain}/action/construct/delete-alias/${state.selectedConstructId}/aliasID/${removedSynonym.zdbID}`;
+        fetch(url, {method: 'DELETE'});
         setStateByProxy(proxy => {proxy.selectedConstruct.synonyms = newSynonyms;});
     }
 
@@ -34,7 +40,7 @@ function CurateConstructSynonymEditor() {
         {state.selectedConstruct.synonyms && state.selectedConstruct.synonyms.map((synonym, index) => {
             return <div key={index}>
                 <span dangerouslySetInnerHTML={{__html: synonym.label}}/>{' '}
-                <a className='delete fa-trash fa' href='#' onClick={() => handleRemoveSynonym(index)}/>
+                <a className='delete fa-trash fa' href='#' onClick={(e) => {e.preventDefault(); handleRemoveSynonym(index)}}/>
             </div>
         })}
         <input
