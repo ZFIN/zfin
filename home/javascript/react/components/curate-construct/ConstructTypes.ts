@@ -157,10 +157,18 @@ function normalizeConstructComponents(constructComponents : ConstructComponent[]
     });
 }
 
+function normalizeConstructCassette(cassette: Cassette) {
+    return {
+        cassetteNumber: cassette.cassetteNumber,
+        promoter: normalizeConstructComponents(cassette.promoter),
+        coding: normalizeConstructComponents(cassette.coding)
+    };
+}
+
 
 type MarkerNameAndZdbId = {
     label: string;
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents, normalizeConstructCassette};

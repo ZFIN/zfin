@@ -143,7 +143,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
     async function fetchConstructRelationships() {
         setLoading(true); // Assuming you want to set loading to true at the beginning of the fetch
         try {
-            const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
+            const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/construct-relationships`);
             const constructsData = await response.json();
             const uniqueConstructsMap = {};
 
