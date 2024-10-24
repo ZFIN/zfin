@@ -16,6 +16,7 @@ import org.zfin.figure.presentation.PhenotypeTableRow;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.root.dto.ConstructDTO;
 import org.zfin.gwt.root.dto.ConstructRelationshipDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -451,7 +452,7 @@ public class PublicationAPIController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{publicationID}/constructs")
+    @RequestMapping(value = "/{publicationID}/construct-relationships")
     public List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(@PathVariable String publicationID) {
         List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<>();
         List<ConstructRelationship> constructMarkerRelationships = getConstructRepository().getConstructRelationshipsByPublication(publicationID);
@@ -477,6 +478,16 @@ public class PublicationAPIController {
                 .anyMatch(cmrel2 -> cmrel2.getZdbID().equals(cmrel.getZdbID())))
             .sorted(Comparator.comparing(constructRelationshipDTO -> constructRelationshipDTO.getConstructDTO().getName()))
             .toList();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{publicationID}/constructs")
+    public List<ConstructDTO> getConstructsForPub(@PathVariable String publicationID) {
+        return getMarkerRepository().getConstructsForAttribution(publicationID).stream()
+                .filter(m -> m.getZdbID().contains("CONSTRCT"))
+                .map(DTOConversionService::convertToConstructDTO)
+                .sorted(Comparator.comparing(ConstructDTO::getName))
+                .toList();
     }
 
     @Getter

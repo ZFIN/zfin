@@ -1,26 +1,30 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ConstructRegulatoryCodingUnitList from './ConstructRegulatoryCodingUnitList';
 import {Cassette, ConstructComponent, normalizeConstructComponents} from './ConstructTypes';
+import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructCassetteEditorProps {
     onChange: (cassette: Cassette) => void;
-    cassette?: Cassette;
+    onSave: (cassette: Cassette) => void;
+    onCancel: () => void;
 }
 
-const ConstructCassetteEditor = ({ onChange, cassette: initialCassette}: ConstructCassetteEditorProps) => {
-    const blankCassette = {promoter: [], coding: []};
-    const [cassetteForEdit, setCassetteForEdit] = useState<Cassette>(blankCassette);
-    useEffect(() => {
-        if (initialCassette) {
-            setCassetteForEdit(initialCassette);
-        }
-    }, [initialCassette]);
+const ConstructCassetteEditor = ({onChange, onSave, onCancel}: ConstructCassetteEditorProps) => {
+    const blankCassette = () => {return {promoter: [], coding: []};};
+    const [rerenderKey, setRerenderKey] = useState<number>(0); // Key to force rerender
+    const {state, setStateByProxy} = useCurateConstructEditContext();
+
+    const setCassetteForEdit = (cassette: Cassette) => {
+        setStateByProxy(proxy => {
+            proxy.stagedCassette = cassette;
+        });
+    }
 
     const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type) => {
         //the last item should have its separator set to ''
         const transformedConstructComponents = normalizeConstructComponents(constructComponents);
         const newState = {
-            ...cassetteForEdit,
+            ...state.stagedCassette,
             [type]: transformedConstructComponents
         }
         setCassetteForEdit(newState);
@@ -30,20 +34,36 @@ const ConstructCassetteEditor = ({ onChange, cassette: initialCassette}: Constru
         }
     }
 
+    const shouldDisableDoneButton = () => {
+        return !isValidCassette(state.stagedCassette);
+    }
+
+    const handleAddCassette = () => {
+        onSave(state.stagedCassette);
+    }
+
+    const handleCancelCassette = () => {
+        setCassetteForEdit(blankCassette());
+        setRerenderKey(rerenderKey + 1);
+        onCancel();
+    }
+
     return <div>
         <b>Promoter</b>
         <ConstructRegulatoryCodingUnitList
             onChange={(items) => handleRegulatoryCodingUnitChange(items, 'promoter') }
             type='promoter'
-            cassette={cassetteForEdit}
+            key={`promoter-${rerenderKey}`}
         />
 
         <b>Coding</b>
         <ConstructRegulatoryCodingUnitList
             onChange={(items) => handleRegulatoryCodingUnitChange(items, 'coding') }
             type='coding'
-            cassette={cassetteForEdit}
+            key={`coding-${rerenderKey}`}
         />
+        <input style={{marginTop: '10px'}} type='button' onClick={handleAddCassette} value='Save Cassette' disabled={shouldDisableDoneButton()}/>
+        <input style={{marginTop: '10px'}} type='button' onClick={handleCancelCassette} value='Cancel' />
     </div>;
 }
 
