@@ -24,48 +24,40 @@
         </hudson.triggers.TimerTrigger>
     </triggers>
     <concurrentBuild>false</concurrentBuild>
-    <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $SOURCEROOT &amp;&amp; gradle findEmptyPublicationFilesTask</command>
+            <command><![CDATA[
+export ARTIFACTS_DIR=`pwd`
+echo "ARTIFACTS_DIR: $ARTIFACTS_DIR"
+cd $SOURCEROOT && gradle findEmptyPublicationFilesTask
+            ]]></command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>empty_publication_files.csv</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
             <configuredTriggers>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+                        <subject>Found empty files</subject>
+                        <body>Empty files found from scan for publication files without any contents.</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
-                        <attachBuildLog>false</attachBuildLog>
-                        <compressBuildLog>false</compressBuildLog>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>true</attachBuildLog>
+                        <compressBuildLog>true</compressBuildLog>
                         <replyTo></replyTo>
                         <contentType>project</contentType>
                     </email>
                 </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-                    <email>
-                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
-                        <sendToDevelopers>false</sendToDevelopers>
-                        <sendToRequester>false</sendToRequester>
-                        <includeCulprits>false</includeCulprits>
-                        <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
-                        <attachBuildLog>false</attachBuildLog>
-                        <compressBuildLog>false</compressBuildLog>
-                        <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-                        <contentType>project</contentType>
-                    </email>
-                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
             </configuredTriggers>
             <contentType>default</contentType>
             <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
