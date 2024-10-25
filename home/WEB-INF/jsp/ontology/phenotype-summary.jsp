@@ -45,7 +45,7 @@
                                     <a href="/action/phenotype/statement/${phenotype.id}">
                                             ${phenotype.displayName}
                                     </a>
-                                    <a href="/action/phenotype/statement-popup/${phenotype.id}" class="popup-link data-popup-link"></a>
+                                    <a href="/action/phenotype/statement-popup/${phenotype.id}" class="popup-link data-popup-link" rel="nofollow"></a>
                                     <div></div>
                                 </c:forEach>
                             </td>
