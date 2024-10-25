@@ -10,7 +10,7 @@ import java.util.List;
 public class XmlSitemapIndexSet {
 
     @XmlElements({@XmlElement(name = "url", type = XmlSitemapIndexEntry.class)})
-    private final Collection<XmlSitemapIndexEntry> sitemaps = new ArrayList<>();
+    private final List<XmlSitemapIndexEntry> sitemaps = new ArrayList<>();
 
     public void add(String loc) {
         sitemaps.add(new XmlSitemapIndexEntry(loc));
@@ -20,5 +20,9 @@ public class XmlSitemapIndexSet {
         for (String loc : locList) {
             add(loc);
         }
+    }
+
+    public List<XmlSitemapIndexEntry> getSitemaps() {
+        return sitemaps;
     }
 }

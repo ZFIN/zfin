@@ -12,7 +12,7 @@ public class XmlUrlSet {
     private final String siteUrl;
 
     @XmlElements({@XmlElement(name = "url", type = XmlUrl.class)})
-    private final Collection<XmlUrl> xmlUrls = new ArrayList<>();
+    private final List<XmlUrl> xmlUrls = new ArrayList<>();
 
     public XmlUrlSet() {
         this.siteUrl = null;
@@ -34,5 +34,9 @@ public class XmlUrlSet {
 
     public int size() {
         return xmlUrls.size();
+    }
+
+    public List<XmlUrl> getXmlUrls() {
+        return xmlUrls;
     }
 }
