@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -420,6 +421,22 @@ public final class FileUtil {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static File gzipFile(String file, boolean removeOriginal) throws IOException {
+        try (GZIPOutputStream gzipOS = new GZIPOutputStream(new FileOutputStream(file + ".gz"))) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fis.read(buffer)) != -1) {
+                    gzipOS.write(buffer, 0, len);
+                }
+            }
+        }
+        if (removeOriginal) {
+            FileUtils.forceDelete(new File(file));
+        }
+        return new File(file + ".gz");
     }
 
 
