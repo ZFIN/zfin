@@ -92,20 +92,20 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
-                    , new URL(downloadUrl)
-                    , false);
+                , new URL(downloadUrl)
+                , false);
 
             if (organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
-                        , new URL(downloadUrl2)
-                        , false);
+                    , new URL(downloadUrl2)
+                    , false);
                 String downloadFile2Str = FileUtils.readFileToString(downloadedFile2);
                 FileUtils.write(downloadedFile, downloadFile2Str, true); // true for append
                 localDownloadFile3 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association3";
                 File downloadedFile3 = downloadService.downloadFile(new File(localDownloadFile3)
-                        , new URL(downloadUrl3)
-                        , false);
+                    , new URL(downloadUrl3)
+                    , false);
                 String downloadFile3Str = FileUtils.readFileToString(downloadedFile3);
                 FileUtils.write(downloadedFile, downloadFile3Str, true); // true for append
             }
@@ -134,12 +134,17 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService.replaceMergedZDBIds(gafEntries);
 
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
-                    .getGafOrganization(organizationEnum);
+                .getGafOrganization(organizationEnum);
             // 3. create new GAF entries based on rules
 
             gafJobData.setGafEntryCount(gafEntries.size());
 
             logger.info("Before Processing");
+            // strip off global prefix, ZFIN, on gene IDs
+            gafEntries.forEach(gafEntry -> {
+                String entryId = gafEntry.getEntryId();
+                gafEntry.setEntryId(entryId.substring(entryId.indexOf(":") + 1));
+            });
             gafService.processEntries(gafEntries, gafJobData);
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
             List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
@@ -322,27 +327,25 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
 // define a list of 3 callables each of which return a String
         List<Callable<String>> callables = Arrays.asList(
-                () -> "task1",
-                () -> "task2",
-                () -> "task3");
+            () -> "task1",
+            () -> "task2",
+            () -> "task3");
 
 // submit them all and handle each callable's Future object
         executor.invokeAll(callables)
-                .stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (Exception e) {
-                        throw new IllegalStateException(e);
-                    }
-                })
-                .forEach(System.out::println);
+            .stream()
+            .map(future -> {
+                try {
+                    return future.get();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            })
+            .forEach(System.out::println);
     }
 
     /**
-     *
-     * @param args
-     * Expecting the following positional arguments:
+     * @param args Expecting the following positional arguments:
      *             propertyFilePath
      *             baseDir
      *             jobName
