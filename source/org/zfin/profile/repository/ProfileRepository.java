@@ -157,6 +157,8 @@ public interface ProfileRepository {
      */
     CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox);
 
+    List<Organization> getAllOrganizations();
+
     Lab getLabById(String labZdbId);
 
     Lab getLabByName(String name);
@@ -230,6 +232,8 @@ public interface ProfileRepository {
     List<Person> getStudents();
 
     List<Person> getPersonByLastNameEquals(String lastName);
+
+    List<Person> getAllPeople();
 
     boolean emailExists(String email);
 
