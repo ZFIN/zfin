@@ -732,7 +732,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
     private void addLoadAction() {
         try {
-            List<EnsemblTranscript> list = parseEnsemblBioMartFile(new File("transcript-name-ensembl.txt"));
+            List<EnsemblTranscript> list = getEnsemblBioMartRecords();
             ensemblTranscriptMap = list.stream().collect(Collectors.toMap(EnsemblTranscript::id, Function.identity()));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -758,6 +758,17 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
             EnsemblTranscript tscript = new EnsemblTranscript(record.get(0), record.get(1), record.get(2));
             transcripts.add(tscript);
         }
+        System.out.println("Found " + transcripts.size() + " transcript records in BioMart export file for finding the transcript name by ensdart ID");
+        return transcripts;
+    }
+
+    // This list: ensdartID, name and type should be retrieved directly from ensembl in the future.
+    // We are using the name suggested from Ensembl unless specified in the
+    public List<EnsemblTranscript> getEnsemblBioMartRecords() {
+        List<EnsemblTranscript> transcripts;
+        String sql = "select * from transcript_ensembl_name";
+        List<Object[]> results = HibernateUtil.currentSession().createNativeQuery(sql).getResultList();
+        transcripts = results.stream().map(objects -> new EnsemblTranscript((String) objects[0], (String) objects[1], (String) objects[2])).toList();
         System.out.println("Found " + transcripts.size() + " transcript records in BioMart export file for finding the transcript name by ensdart ID");
         return transcripts;
     }
