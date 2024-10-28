@@ -6,13 +6,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -422,6 +431,22 @@ public final class FileUtil {
         }
     }
 
+    public static File gzipFile(String file, boolean removeOriginal) throws IOException {
+        try (GZIPOutputStream gzipOS = new GZIPOutputStream(new FileOutputStream(file + ".gz"))) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fis.read(buffer)) != -1) {
+                    gzipOS.write(buffer, 0, len);
+                }
+            }
+        }
+        if (removeOriginal) {
+            FileUtils.forceDelete(new File(file));
+        }
+        return new File(file + ".gz");
+    }
+
 
     /**
      * Create a zip file with the given content and encoding.
@@ -460,6 +485,36 @@ public final class FileUtil {
             stringToZipFile(file, content, encoding);
         } else {
             FileUtils.writeStringToFile(file, content, encoding);
+        }
+    }
+
+    public static void copyURLtoFileIgnoringSSLErrors(String url, File file) throws IOException {
+        try {
+            // Create a new trust manager that trusts all certificates
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            URL unsafeUrl = new URL(url);
+            URLConnection connection = unsafeUrl.openConnection();
+
+            FileUtils.copyURLToFile(connection.getURL(), file);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new IOException("Error while setting up SSL context", e);
         }
     }
 

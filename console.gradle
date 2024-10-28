@@ -159,3 +159,13 @@ task findEmptyPublicationFilesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.publication.FindEmptyPublicationFilesTask'
 }
+
+task generateSitemapTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.infrastructure.seo.GenerateSitemapTask'
+}
+
+task readAndQuerySitemapTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.infrastructure.seo.ReadAndQuerySitemapTask'
+}
