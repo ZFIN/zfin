@@ -377,6 +377,12 @@ public class HibernateProfileRepository implements ProfileRepository {
         return labs;
     }
 
+    @Override
+    public List<Organization> getAllOrganizations() {
+        Query<Organization> query = currentSession().createQuery("from Organization", Organization.class);
+        return query.getResultList();
+    }
+
 
     @Override
     public Lab getLabById(String labZdbId) {
@@ -1036,6 +1042,11 @@ public class HibernateProfileRepository implements ProfileRepository {
             .createQuery("from Person where lastName = :lastName ORDER BY fullName, firstName", Person.class);
         query.setParameter("lastName", lastName);
         return query.list();
+    }
+
+    @Override
+    public List<Person> getAllPeople() {
+        return currentSession().createQuery("from Person", Person.class).list();
     }
 
     @Override

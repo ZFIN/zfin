@@ -18,6 +18,8 @@ public interface FigureRepository {
 
     List<Image> getImages(List<String> imageIDs);
 
+    List<Figure> getAllFigures();
+
     List<Image> getAllImagesWithFigures();
 
     List<Image> getRecentlyCuratedImages();
