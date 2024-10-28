@@ -118,6 +118,12 @@ public class HibernateFigureRepository implements FigureRepository {
     }
 
     @Override
+    public List<Figure> getAllFigures() {
+        String hql = "from Figure";
+        return currentSession().createQuery(hql, Figure.class).getResultList();
+    }
+
+    @Override
     public List<Image> getAllImagesWithFigures() {
         CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
         CriteriaQuery<Image> query = criteriaBuilder.createQuery(Image.class);
