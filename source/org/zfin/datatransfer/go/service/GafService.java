@@ -505,11 +505,11 @@ public class GafService {
 
         if (!gafEntry.getQualifier().isEmpty()) {
             // they use "contributes_to" and "NOT"
-            if (gafEntry.getQualifier().contains("NOT")) {
+            if (gafEntry.getNot().equalsIgnoreCase("NOT")) {
                 return GoEvidenceQualifier.NOT;
-            } else if (gafEntry.getQualifier().equals("contributes_to")) {
+            } else if (gafEntry.getQualifier().equals("RO:0002326")) {
                 return GoEvidenceQualifier.CONTRIBUTES_TO;
-            } else if (gafEntry.getQualifier().equals("colocalizes_with")) {
+            } else if (gafEntry.getQualifier().equals("RO:0002325")) {
                 if (goTerm.getOntology() != Ontology.GO_CC) {
                     throw new GafValidationError(GoEvidenceQualifier.COLOCALIZES_WITH.toString() +
                         " may only be used with " + Ontology.GO_CC.getCommonName());
