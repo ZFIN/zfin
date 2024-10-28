@@ -10,7 +10,6 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +27,8 @@ public class GpadParser extends FpInferenceGafParser {
         List<GafEntry> gafEntries = new ArrayList<>();
         Reader in = new FileReader(downloadedFile);
         Iterable<CSVRecord> records = CSVFormat.TDF
-                .withHeader(Header.class)
-                .parse(in);
+            .withHeader(Header.class)
+            .parse(in);
         int lineNumber = 0;
         for (CSVRecord record : records) {
             lineNumber++;
@@ -57,12 +56,13 @@ public class GpadParser extends FpInferenceGafParser {
         }
     }
 
-    public GafEntry getGafEntry(int lineNumber, CSVRecord record) throws IOException {
+    public GafEntry getGafEntry(int lineNumber, CSVRecord record) {
         GafEntry gafEntry = new GafEntry();
         gafEntry.setCreatedBy(record.get(Header.ASSIGNED_BY));
         gafEntry.setEntryId(record.get(Header.ENTITY_ID));
         gafEntry.setGoTermId(record.get(Header.GO_TERM_ID));
         gafEntry.setQualifier(record.get(Header.QUALIFIER));
+        gafEntry.setNot(record.get(Header.NOT));
         gafEntry.setPubmedId(record.get(Header.REFERENCE));
         gafEntry.setCreatedDate(record.get(Header.DATE_CREATED));
         gafEntry.setAnnotExtn(record.get(Header.ANNOTATION_EXTENSION));
@@ -73,17 +73,17 @@ public class GpadParser extends FpInferenceGafParser {
         if (evidenceCode == null)
             logger.error("bad gaf file: empty evidence code in line: " + lineNumber);
         gafEntry.setInferences(record.get(Header.WITH_OR_FROM)
-                .replaceAll("EMBL:", "GenBank:")
-                .replaceAll("protein_id:", "GenPept:")
+            .replaceAll("EMBL:", "GenBank:")
+            .replaceAll("protein_id:", "GenPept:")
         );
         return gafEntry;
     }
 
-    private String parseAnnotationProperties(String properties) throws IOException {
+    private String parseAnnotationProperties(String properties) {
         return Arrays.stream(properties.split("\\|"))
-                .filter(s -> s.startsWith(AnnotationPropertiesHeader.NOCTUA_MODEL_ID.key))
-                .map(s -> (s.split("="))[1])
-                .findFirst().orElseGet(String::new);
+            .filter(s -> s.startsWith(AnnotationPropertiesHeader.NOCTUA_MODEL_ID.key))
+            .map(s -> (s.split("="))[1])
+            .findFirst().orElseGet(String::new);
     }
 
     // turn evidence EDO code into three-digit character
@@ -111,11 +111,6 @@ public class GpadParser extends FpInferenceGafParser {
                 String evCode = ecoCodeMap.getEvidenceCode();
                 gafEntry.setEvidenceCode(evCode);
             }
-
-            // fixed set of qualifiers
-            // if thw incoming one is not one of them discard the value
-           /* if (!Qualifier.exists(gafEntry.getQualifier()))
-                gafEntry.setQualifier("");*/
         });
     }
 
@@ -140,8 +135,8 @@ public class GpadParser extends FpInferenceGafParser {
     }
 
     enum Header {
-        SOURCE(1),
-        ENTITY_ID(2),
+        ENTITY_ID(1),
+        NOT(2),
         QUALIFIER(3),
         GO_TERM_ID(4),
         REFERENCE(5),
@@ -155,7 +150,7 @@ public class GpadParser extends FpInferenceGafParser {
 
         // only used to make the column comparison with the official column spec easier to compare
         // http://www.geneontology.org/page/gene-product-association-data-gpad-format
-        private int column;
+        private final int column;
 
         Header(int column) {
             this.column = column;
@@ -171,7 +166,7 @@ public class GpadParser extends FpInferenceGafParser {
         NOCTUA_MODEL_STATE("model-state"),
         NOCTUA_MODEL_ID("noctua-model-id");
 
-        private String key;
+        private final String key;
 
         AnnotationPropertiesHeader(String key) {
             this.key = key;
