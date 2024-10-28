@@ -18,6 +18,7 @@ public class GafEntry {
     ////////////////////////// // 1-based indexes
     private String entryId; // 2
     private String markerAbbrev; // 3 //Added for ZFIN-8035
+    private String not; // 4
     private String qualifier; // 4
     private String goTermId;  // 5
     private String pubmedId;  // 6
