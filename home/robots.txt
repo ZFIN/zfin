@@ -44,7 +44,6 @@ Disallow: /action/phenotype/statement/
 Disallow: /action/phenotype/statement-popup/
 
 #More popups:
-User-agent: *
 Disallow: /action/api/marker/ZDB-*/citations.tsv
 Disallow: /action/api/marker/ZDB-*/citations.tsv
 Disallow: /action/expression/experiment-popup/
