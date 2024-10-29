@@ -361,6 +361,12 @@
     </function>
 
     <function>
+        <name>getProperty</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getProperty(java.lang.String)</function-signature>
+    </function>
+
+    <function>
         <name>isFlagEnabled</name>
         <function-class>org.zfin.framework.featureflag.FeatureFlags</function-class>
         <function-signature>boolean isFlagEnabled(org.zfin.framework.featureflag.FeatureFlagEnum)</function-signature>

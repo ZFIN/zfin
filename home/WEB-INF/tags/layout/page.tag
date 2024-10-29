@@ -33,7 +33,7 @@
         <title>${title}</title>
 
     <c:if test="${not empty canonicalUrl}">
-        <link rel="canonical" href="${canonicalUrl}" />
+        <link rel="canonical" href="https://${zfn:getProperty("DOMAIN_NAME")}${canonicalUrl}" />
     </c:if>
 
         <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">

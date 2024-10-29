@@ -27,6 +27,7 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
 import org.zfin.profile.UserService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
@@ -420,7 +421,11 @@ public class ZfinJSPFunctions {
         } catch (IOException e) {
             return "";
         }
+    }
 
+    public static String getProperty(String name) {
+        ZfinPropertiesEnum property = ZfinPropertiesEnum.valueOf(name);
+        return property == null ? "" : property.toString();
     }
 
     public static String getTruncatedName(String name, Integer length) {
