@@ -15,7 +15,7 @@ import org.zfin.infrastructure.service.UpdatesService;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
