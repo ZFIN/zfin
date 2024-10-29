@@ -1,10 +1,9 @@
 package org.zfin.nomenclature.presentation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
@@ -17,19 +16,20 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerHistoryDTO;
 import org.zfin.nomenclature.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/nomenclature")
@@ -58,6 +58,7 @@ public class NomenclatureSubmissionController {
     @RequestMapping(value = "/view/{zdbID}")
     public String getView(@PathVariable("zdbID") String zdbID,
                           Model model) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
         if (zdbID == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }

@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PublicationNavigationMenu;
 import org.zfin.framework.presentation.TranscriptNavigationMenu;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
@@ -46,6 +47,8 @@ public class TranscriptViewController {
 
     @RequestMapping(value = "/transcript/view/{zdbID}")
     public String getNewTranscriptView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         HibernateUtil.createTransaction();
         zdbID = markerService.getActiveMarkerID(zdbID);
         // set base bean

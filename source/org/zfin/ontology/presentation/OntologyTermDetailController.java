@@ -18,6 +18,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
@@ -215,6 +216,8 @@ public class OntologyTermDetailController {
     protected String termDetailPagePrototype(@PathVariable String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
                                              Model model) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.OLD_TERM_PAGES)) {
             return termDetailPage(termID, form, model);
         }

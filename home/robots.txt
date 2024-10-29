@@ -43,6 +43,15 @@ Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
 Disallow: /action/phenotype/statement/
 Disallow: /action/phenotype/statement-popup/
 
+#More popups:
+User-agent: *
+Disallow: /action/api/marker/ZDB-*/citations.tsv
+Disallow: /action/api/marker/ZDB-*/citations.tsv
+Disallow: /action/expression/experiment-popup/
+Disallow: /action/fish/fish-detail-popup/
+Disallow: /action/ontology/term-detail-popup/
+Disallow: /action/marker/gene-product-description/ZDB-*
+
 Disallow: /downloads/archive
 Disallow: /downloads/archive/*
 

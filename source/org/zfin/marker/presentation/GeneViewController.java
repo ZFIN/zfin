@@ -21,6 +21,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
@@ -268,6 +269,8 @@ public class GeneViewController {
 
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         String activeMarkerID = markerService.getActiveMarkerID(zdbID);
         if (!markerService.isOfTypeGene(activeMarkerID)) {
             return "redirect:/" + activeMarkerID;
@@ -304,6 +307,7 @@ public class GeneViewController {
         //retrieveMutantData(term, form, true);
         //model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("marker", marker);
+        model.addAttribute("title", "ZFIN Phenotype Figure Summary for Marker " + marker.getAbbreviation());
         return "marker/phenotype-summary";
     }
 
@@ -317,6 +321,7 @@ public class GeneViewController {
 
         String searchLink = new ExpressionSearchService.LinkBuilder()
             .gene(marker)
+            .title("Expression for Marker " + marker.getAbbreviation())
             .build();
         return "forward:" + searchLink;
     }
@@ -332,6 +337,7 @@ public class GeneViewController {
         String searchLink = new ExpressionSearchService.LinkBuilder()
             .wildtypeOnly(true)
             .gene(marker)
+            .title("Wildtype Expression for Marker " + marker.getAbbreviation())
             .build();
         return "forward:" + searchLink;
     }

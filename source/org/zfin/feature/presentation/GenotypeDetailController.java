@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -77,6 +78,7 @@ public class GenotypeDetailController {
 
     @RequestMapping(value = "/view/{zdbID}")
     public String getGenotypePrototypeDetail(@PathVariable String zdbID, Model model) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         LOG.debug("Start Genotype Detail Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);

@@ -15,6 +15,7 @@ import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.FigureFromPublicationLink;
 import org.zfin.figure.presentation.FigureGalleryImagePresentation;
 import org.zfin.figure.presentation.FigurePhenotypeSummary;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.publication.Publication;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.ImageNavigationMenu;
@@ -50,6 +51,8 @@ public class ImageViewController {
 
     @RequestMapping(value = {"/view/{zdbID}"})
     public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);
