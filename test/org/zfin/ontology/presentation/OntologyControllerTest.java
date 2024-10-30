@@ -76,39 +76,4 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
                     assertEquals("/action/ontology/term/ZDB-TERM-100331-2208", redirectUrl);
                 });
     }
-
-//
-//    // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
-//    // in the true servlet container.
-//    @Test
-//    @Ignore("broken only within the test environment")
-//    public void retrieveTermByAnatomyName() throws Exception {
-//        request.setRequestURI("/term-detail-by-name/term?name=liver&ontologyName=zebrafish_anatomy");
-//        ModelAndView mav = handlerAdapter.handle(request, response, controller);
-//        assertNotNull(mav);
-//        // redirect to 'liver'
-//        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
-//    }
-//
-//    // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
-//    // in the true servlet container.
-//    @Test
-//    @Ignore("broken only within the test environment")
-//    public void retrievePopupById() throws Exception {
-//        request.setRequestURI("/term-detail-popup?termID=GO:0043231");
-//        ModelAndView mav = handlerAdapter.handle(request, response, controller);
-//        assertNotNull(mav);
-//        // redirect to 'liver'
-//        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
-//    }
-//
-//    @Test
-//    @Ignore("Requires to load AO ontology from serialized file.")
-//    public void retrieveTermListByWildtype() throws Exception {
-//        request.setRequestURI("/term-detail/emb*");
-//        ModelAndView mav = handlerAdapter.handle(request, response, controller);
-//        assertNotNull(mav);
-//        // redirect to 'liver'
-//        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
-//    }
 }
