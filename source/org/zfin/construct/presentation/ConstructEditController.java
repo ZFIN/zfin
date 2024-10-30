@@ -272,7 +272,7 @@ public class ConstructEditController {
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            String message = String.format("%s saved as <a target=\"_blank\" href=\"%s\">%s</a>",
+            String message = String.format("%s saved as <a target=\"_blank\" href=\"/%s\">%s</a>",
                     newMarker.getZdbID(), newMarker.getZdbID(), newMarker.getName());
             return new ConstructUpdateResult(message, true);
 
