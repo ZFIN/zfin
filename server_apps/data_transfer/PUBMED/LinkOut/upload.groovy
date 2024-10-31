@@ -39,7 +39,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 
 def client = new FTPClient()
 def db = [
-        url: "jdbc:postgresql://localhost:5432/${ZfinPropertiesEnum.DBNAME}",
+        url: "jdbc:postgresql://${ZfinPropertiesEnum.PGHOST}:5432/${ZfinPropertiesEnum.DBNAME}",
         driver: 'org.postgresql.Driver'
 ]
 
