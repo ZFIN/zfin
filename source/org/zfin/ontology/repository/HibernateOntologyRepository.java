@@ -310,14 +310,17 @@ public class HibernateOntologyRepository implements OntologyRepository {
                          termName = :termName and
                          secondary = false and
                          obsolete = false and
-                         ontology in (:ontoList)
+                         cast (ontology as string) in (:ontoList)
             """;
         org.hibernate.query.Query<GenericTerm> query = session.createQuery(hql, GenericTerm.class);
         query.setParameter("termName", termName);
-        query.setParameterList("ontoList", ontology);
+
+        //compare based on the db ontology name if it exists, otherwise use the ontology name
+        query.setParameterList("ontoList", ontology.stream().map(
+            o -> o.getDbOntologyName() != null ? o.getDbOntologyName() : o.getOntologyName()
+        ).toList());
         return query.uniqueResult();
     }
-
 
     /**
      * Retrieve Term by term zdb ID.
