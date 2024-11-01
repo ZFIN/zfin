@@ -58,11 +58,6 @@
     ProxyPass /ajax/ http://tomcat:2008/ajax/
     ProxyPassReverse /ajax/ http://tomcat:2008/ajax/ 
 
-    ProxyPass /gb2/ http://gbrowse1.zfin.org/gb2/
-    ProxyPassReverse /gb2/ http://gbrowse1.zfin.org/gb2/
-    ProxyPass /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
-    ProxyPassReverse /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
-
     ProxyPass /webapp/ http://tomcat:2008/webapp/
     ProxyPassReverse /webapp/ http://tomcat:2008/webapp/
     ProxyPass /webservice/ http://tomcat:2008/webservice/
@@ -140,11 +135,6 @@
     ProxyPassReverse /webapp/ https://tomcat:8443/webapp/
     ProxyPass /webservice/ https://tomcat:8443/webservice/
     ProxyPassReverse /webservice/ https://tomcat:8443/webservice/
-
-    ProxyPass /gb2/ http://gbrowse1.zfin.org/gb2/
-    ProxyPassReverse /gb2/ http://gbrowse1.zfin.org/gb2/
-    ProxyPass /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
-    ProxyPassReverse /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
 
     #for using the prototype search from kinetix/zfin.org
     ProxyPass /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
