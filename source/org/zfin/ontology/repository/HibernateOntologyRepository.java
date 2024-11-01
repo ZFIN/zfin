@@ -314,7 +314,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
             """;
         org.hibernate.query.Query<GenericTerm> query = session.createQuery(hql, GenericTerm.class);
         query.setParameter("termName", termName);
-        query.setParameterList("ontoList", ontology.stream().map(Ontology::getDbOntologyName).toList());
+
+        //compare based on the db ontology name if it exists, otherwise use the ontology name
+        query.setParameterList("ontoList", ontology.stream().map(
+            o -> o.getDbOntologyName() != null ? o.getDbOntologyName() : o.getOntologyName()
+        ).toList());
         return query.uniqueResult();
     }
 
