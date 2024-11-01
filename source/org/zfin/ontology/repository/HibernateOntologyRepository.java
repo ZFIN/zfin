@@ -316,18 +316,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
         query.setParameter("termName", termName);
         query.setParameterList("ontoList", ontology.stream().map(Ontology::getDbOntologyName).toList());
         return query.uniqueResult();
-//        List<GenericTerm> preliminaryResults = query.list();
-//        List<GenericTerm> results = preliminaryResults.stream().filter(
-//                term -> {
-//                    return ontology.stream().anyMatch(
-//                            ont -> term.getOntology().getDbOntologyName().equals(ont.getDbOntologyName())
-//                    );
-//                })
-//                .toList();
-//        if (results.size() > 1) {
-//            throw new RuntimeException("More than one term found for " + termName + " in " + ontology);
-//        }
-//        return CollectionUtils.isEmpty(results) ? null : results.get(0);
     }
 
     /**
