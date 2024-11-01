@@ -547,10 +547,9 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getIncreasedSizeQualityTerm() throws TermNotFoundException {
-        OntologyDTO ontologyDTO = OntologyDTO.QUALITY_QUALITIES;
         TermDTO increasedSizeTerm = new TermDTO();
         increasedSizeTerm.setName("increased size");
-        increasedSizeTerm.setOntology(ontologyDTO);
+        increasedSizeTerm.setOntology(OntologyDTO.QUALITY_QUALITIES);
         GenericTerm fetchedTerm = DTOConversionService.convertToTerm(increasedSizeTerm);
         assertNotNull(fetchedTerm);
         assertEquals("increased size", fetchedTerm.getTermName());
