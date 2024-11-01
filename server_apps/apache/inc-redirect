@@ -256,3 +256,7 @@ RewriteRule ^/action/(.*) /action/$1 [PT]
 #path so that they're still supported
 RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
 RewriteRule ^/<!--|MUTANT_NAME|-->/webdriver(.*) /cgi-bin/webdriver$1 [R=301]
+
+#Rewrite anything from /gb2/gbrowse/... to /action/gbrowse/ transparently (no redirect)
+#That page has a message about the switch from gbrowse to jbrowse
+RewriteRule ^/gb2/gbrowse/(.*) /action/gbrowse/ [PT]
