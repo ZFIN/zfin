@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.mutant.Fish;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.profile.Organization;
@@ -44,6 +45,7 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
         writeZdbIDs(getPublications(), "publications", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getFish(), "fish", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getFigures(), "figures", XmlUrl.Priority.MEDIUM);
+        writeZdbIDs(getImages(), "images", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getPeople(), "people", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getOrganizations(), "organizations", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getZfishBookPages(), "zfishbook", XmlUrl.Priority.MEDIUM);
@@ -85,6 +87,11 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
 
     private List<String> getFigures() {
         return getFigureRepository().getAllFigures().stream().map(Figure::getZdbID).toList();
+    }
+
+    private List<String> getImages() {
+        List<Image> images = getFigureRepository().getAllImagesWithFigures();
+        return images.stream().map(Image::getZdbID).toList();
     }
 
     private List<String> getPeople() {
