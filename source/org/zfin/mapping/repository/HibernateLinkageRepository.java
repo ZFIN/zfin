@@ -103,8 +103,8 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public List<MappedMarker> getMappedMarkers(ZdbID marker) {
-        Query query = HibernateUtil.currentSession().createQuery("from MappedMarker where marker = :marker");
-        query.setParameter("marker", marker);
+        Query query = HibernateUtil.currentSession().createQuery("from MappedMarker where marker.zdbID = :marker");
+        query.setParameter("marker", marker.getZdbID());
         return (List<MappedMarker>) query.list();
     }
 
