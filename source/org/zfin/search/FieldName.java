@@ -47,7 +47,7 @@ public enum FieldName {
     CODING_SEQUENCE_SORT("coding_sequence_sort"),
     CODING_SEQUENCE_SPECIES("coding_sequence_species"),
     CONDITIONS("conditions"),
-    ZECO_CONDITIONS("zeco_conditions"),
+    ZECO_CONDITIONS("zeco_conditions", "Conditions"),
     CONSEQUENCE("rna_consequence"),
     CONSTRUCT("construct"),
     CONSTRUCT_CITATION_SORT("construct_citation_sort"),
