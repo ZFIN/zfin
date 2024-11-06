@@ -490,6 +490,112 @@ public class PublicationAPIController {
                 .toList();
     }
 
+    /**
+     * Get all the combined metrics for a publication.
+     * This is the same as hitting the following API endpoints:
+     *
+     * /action/api/publication/{publicationID}/direct-attribution
+     * /action/api/publication/{publicationID}/mapping
+     * /action/api/publication/{publicationID}/orthology
+     * /action/api/publication/{publicationID}/antibodies
+     * /action/api/publication/{publicationID}/fish
+     * /action/api/publication/{publicationID}/strs
+     * /action/api/publication/{publicationID}/diseases
+     * /action/api/publication/{publicationID}/features
+     * /action/api/publication/{publicationID}/phenotype
+     * /action/api/publication/{publicationID}/efgs
+     * /action/api/publication/{publicationID}/expression
+     * /action/api/publication/{publicationID}/marker
+     *
+     * Calls to this endpoint should be made with a POST request and the body should be a list of publication IDs.
+     * Example:
+     * curl -s -k -X POST -H "Content-Type: application/json" -d '["ZDB-PUB-230601-37","ZDB-PUB-220810-2"]' 'https://zfin.org/action/api/publication/combined-metrics'  | jq .
+     *
+     * @param publicationIDs List of publication IDs
+     * @param pagination    Pagination object
+     * @return JsonResultResponse<PublicationCombinedMetrics>
+     */
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/combined-metrics")
+    public JsonResultResponse<PublicationCombinedMetrics> getCombinedMetrics(@RequestBody List<String> publicationIDs,
+                                                                             @Version Pagination pagination) {
+        pagination.setLimit(Integer.MAX_VALUE);
+        List<PublicationCombinedMetrics> metricsList = new ArrayList<>();
+        JsonResultResponse<PublicationCombinedMetrics> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+
+        for(String publicationID : publicationIDs) {
+            PublicationCombinedMetrics metrics = new PublicationCombinedMetrics();
+
+            //direct attribution
+            JsonResultResponse<String> daResults = this.getPublicationAttribution(publicationID, null, pagination);
+            metrics.setDirectAttributions(daResults.getResults());
+            metrics.setCount("direct attribution", daResults.getResults().size());
+
+            //mapping
+            JsonResultResponse<ChromosomeLinkage> mappingResults = this.getPublicationMapping(publicationID, pagination);
+            metrics.setChromosomeLinkages(mappingResults.getResults());
+            metrics.setCount("mapping", mappingResults.getResults().size());
+
+            //orthology
+            JsonResultResponse<GeneBean> orthologyResults = this.getOrthology(publicationID, pagination);
+            metrics.setOrthologs(orthologyResults.getResults());
+            metrics.setCount("orthology", orthologyResults.getResults().size());
+
+            //antibodies
+            JsonResultResponse<Antibody> antibodyResults = this.getSequenceView(publicationID, pagination);
+            metrics.setAntibodies(antibodyResults.getResults());
+            metrics.setCount("antibodies", antibodyResults.getResults().size());
+
+            //fish
+            JsonResultResponse<Fish> fishResults = this.getPublicationFeatures(publicationID, pagination);
+            metrics.setFish(fishResults.getResults());
+            metrics.setCount("fish", fishResults.getResults().size());
+
+            //strs
+            JsonResultResponse<STRTargetRow> strResults = this.showSTRList(publicationID, null, null, pagination);
+            metrics.setStrs(strResults.getResults());
+            metrics.setCount("strs", strResults.getResults().size());
+
+            //diseases
+            JsonResultResponse<DiseaseAnnotationModel> diseaseResults = this.getPublicationDisease(publicationID, pagination);
+            metrics.setDiseases(diseaseResults.getResults());
+            metrics.setCount("diseases", diseaseResults.getResults().size());
+
+            //features
+            JsonResultResponse<Feature> featureResults = this.getPublicationMutation(publicationID, pagination);
+            metrics.setFeatures(featureResults.getResults());
+            metrics.setCount("features", featureResults.getResults().size());
+
+            //phenotype
+            JsonResultResponse<PhenotypeTableRow> phenotypeResults = this.getPublicationPhenotype(publicationID, null, null, null, null, pagination);
+            metrics.setPhenotypes(phenotypeResults.getResults());
+            metrics.setCount("phenotypes", phenotypeResults.getResults().size());
+
+            //efgs
+            JsonResultResponse<Marker> efgResults = this.getPublicationEFGs(publicationID, pagination);
+            metrics.setEfgs(efgResults.getResults());
+            metrics.setCount("efgs", efgResults.getResults().size());
+
+            //expression
+            JsonResultResponse<ExpressionTableRow> expressionResults = this.getPublicationExpression(publicationID, null, null, null, null, null, null, null, pagination);
+            metrics.setExpressionRows(expressionResults.getResults());
+            metrics.setCount("expression", expressionResults.getResults().size());
+
+            //marker
+            JsonResultResponse<Marker> markerResults = this.getPublicationMarker(publicationID, pagination);
+            metrics.setMarkers(markerResults.getResults());
+            metrics.setCount("markers", markerResults.getResults().size());
+
+            metrics.setPublicationID(publicationID);
+            metricsList.add(metrics);
+        }
+
+        response.setResults(metricsList);
+        response.setTotal(metricsList.size());
+        return response;
+    }
+
     @Getter
     @Setter
     static class ChromosomeLinkage {
