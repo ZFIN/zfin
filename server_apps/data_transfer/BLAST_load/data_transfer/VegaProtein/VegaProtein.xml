@@ -1,0 +1,44 @@
+<project name="VegaProtein">
+
+<target name="deployVegaProtein" depends="processVegaProtein" description="Fully redeploys VegaProtein.">
+   <echo message="deployVegaProtein"/>
+</target>
+
+<target name="downloadVegaProtein" description="Downloads files for VegaProtein to staging area.">
+   <echo message="downloadVegaProtein"/>
+   <exec executable="${basedir}/target/VegaProtein/downloadVegaProtein.sh">
+   </exec>
+</target>
+
+<target name="assembleVegaProtein"  description="Assembles files for VegaProtein into fasta files in the staging area.">
+   <echo message="assembleVegaProtein"/>
+   <exec executable="${basedir}/target/VegaProtein/assembleVegaProtein.sh">
+   </exec>
+</target>
+
+<target name="convertVegaProtein" description="Converts FASTA files for VegaProtein into blastable files in the staging area.">
+   <echo message="convertVegaProtein"/>
+   <exec executable="${basedir}/target/VegaProtein/convertVegaProtein.sh">
+   </exec>
+</target>
+
+<target name="pushVegaProtein" description="Pushes blast files for VegaProtein to production from the staging area.">
+   <echo message="pushVegaProtein"/>
+   <exec executable="${basedir}/target/VegaProtein/pushVegaProtein.sh">
+   </exec>
+</target>
+
+<target name="revertVegaProtein" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertVegaProtein"/>
+   <exec executable="${basedir}/target/VegaProtein/revertVegaProtein.sh">
+   </exec>
+</target>
+
+<target name="processVegaProtein" depends="createTargetDir" description="deploys entire VegaProtein dbs">
+   <echo message="processVegaProtein"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/VegaProtein/processVegaProtein.sh">
+   </exec>
+</target>
+
+</project>

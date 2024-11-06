@@ -1,0 +1,45 @@
+<project name="SPTrEMBL">
+
+<target name="deploySPTrEMBL" depends="processSPTrEMBL" description="Fully redeploys SPTrEMBL.">
+   <echo message="deploySPTrEMBL"/>
+</target>
+
+<target name="downloadSPTrEMBL" description="Downloads files for SPTrEMBL to staging area.">
+   <echo message="downloadSPTrEMBL"/>
+   <exec executable="${basedir}/target/SPTrEMBL/downloadSPTrEMBL.sh">
+   </exec>
+</target>
+
+<target name="assembleSPTrEMBL"  description="Assembles files for SPTrEMBL into fasta files in the staging area.">
+   <echo message="assembleSPTrEMBL"/>
+   <exec executable="${basedir}/target/SPTrEMBL/assembleSPTrEMBL.sh">
+   </exec>
+</target>
+
+<target name="convertSPTrEMBL" description="Converts FASTA files for SPTrEMBL into blastable files in the staging area.">
+   <echo message="convertSPTrEMBL"/>
+   <exec executable="${basedir}/target/SPTrEMBL/convertSPTrEMBL.sh">
+   </exec>
+</target>
+
+<target name="pushSPTrEMBL" description="Pushes blast files for SPTrEMBL to production from the staging area.">
+   <echo message="pushSPTrEMBL"/>
+   <exec executable="${basedir}/target/SPTrEMBL/pushSPTrEMBL.sh">
+   </exec>
+</target>
+
+<target name="revertSPTrEMBL" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertSPTrEMBL"/>
+   <exec executable="${basedir}/target/SPTrEMBL/revertSPTrEMBL.sh">
+   </exec>
+</target>
+
+<target name="processSPTrEMBL" depends="createTargetDir" description="deploys entire SPTrEMBL dbs">
+   <echo message="processSPTrEMBL"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/SPTrEMBL/processSPTrEMBL.sh">
+   </exec>
+</target>
+
+</project>
+

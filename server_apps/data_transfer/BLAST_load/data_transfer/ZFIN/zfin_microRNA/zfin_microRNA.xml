@@ -1,0 +1,28 @@
+<project name="zfin_microRNA">
+
+<target name="deployzfin_microRNA" depends="processzfin_microRNA"
+description="Fully redeploys zfin_microRNA.">
+   <echo message="deployzfin_microRNA"/>
+</target>
+
+<target name="cpzfin_microRNA" description="Get zfin_microRNA db files from external repository">
+   <echo message="cpzfin_microRNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_microRNA/cpzfin_microRNA.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_microRNA" description="Replaces zfin_microRNA files from production with last load files.">
+   <echo message="revertzfin_microRNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_microRNA/revertzfin_microRNA.sh">
+   </exec>
+</target>
+
+<target name="processzfin_microRNA" depends="createTargetDir" description="deploys entire zfin_GenomicDNA blastdb">
+   <echo message="processzfin_microRNA"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_microRNA/processzfin_microRNA.sh">
+   </exec>
+</target>
+
+</project>
+

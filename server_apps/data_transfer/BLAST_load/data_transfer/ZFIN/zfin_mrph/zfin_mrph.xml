@@ -1,0 +1,40 @@
+<project name="zfin_mrph">
+
+<target name="deployzfin_mrph" depends="processzfin_mrph"
+description="Fully redeploys zfin_mrph.">
+   <echo message="deployzfin_mrph"/>
+</target>
+
+<target name="downloadzfin_mrph" description="Downloads files for zfin_mrph to staging area.">
+   <echo message="downloadzfin_mrph"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_mrph/downloadzfin_mrph.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_mrph" description="Converts FASTA files for zfin_mrph into blastable files in the staging area.">
+   <echo message="convertzfin_mrph"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_mrph/convertzfin_mrph.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_mrph" description="Pushes blast files for zfin_mrph to production from the staging area.">
+   <echo message="pushzfin_mrph"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_mrph/pushzfin_mrph.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_mrph" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_mrph"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_mrph/revertzfin_mrph.sh">
+   </exec>
+</target>
+
+<target name="processzfin_mrph" depends="createTargetDir" description="deploys entire zfin_GenomicDNA blastdb">
+   <echo message="processzfin_mrph"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_mrph/processzfin_mrph.sh">
+   </exec>
+</target>
+
+</project>
+

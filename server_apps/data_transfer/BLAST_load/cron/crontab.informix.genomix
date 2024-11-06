@@ -1,0 +1,39 @@
+# for now, email to informix
+MAILTO=informix@cs.uoregon.edu
+#
+# Daily/Weekly we transfer ZFIN related data in
+# from ZFIN ftp site for the use of Genomix BLAST.
+# And we regenerated blastdbs from external sites.
+#
+# -------------------------------------------------
+# ----        DATA TRANSFER IN         --------
+# -------------------------------------------------
+# Nights   When    Comments
+#
+#    F       7pm    Weekly blast db updates for external sites.
+00 19 * * 5 /Users/informix/BLAST_load/target/blastdbupdate.pl
+#
+# SMUWTFS   9:30am  Get ZFIN sequence dbs
+30 9 * * * /Users/informix/BLAST_load/target/ZFIN/dailyZfinSeq.sh
+#
+# Th 	8pm Get miRBASE sequences
+#
+00 20 * * * /Users/informix/BLAST_load/target/miRBASE/processmiRBASE.sh
+#
+# SMUWTFS at 1.35am at Clean out old fasta sequence for production.
+35 01 * * * /usr/bin/find -L /common/blastdb -name "*.fa" -type f -mtime +1 -exec rm -f {} \; >> /common/blastdb/fasta-clean-error.txt 
+#
+# SMUWTFS at 1.40am at Clean out old fasta sequence for almost.
+40 01 * * * /usr/bin/find -L /zdevblast/almdb -name "*.fa" -type f -mtime +1 -exec rm -f {} \; >>  /zdevblast/almdb/fasta-clean-error.txt 
+#
+# SMUWTFS at 1.45am at Clean out old fasta sequence for test.
+45 01 * * * /usr/bin/find -L /zdevblast/test -name "*.fa" -type f -mtime +1 -exec rm -f {} \; >> /zdevblast/test/fasta-clean-error.txt 
+#
+# SMUWTFS at 1.50am at Clean out old fasta sequence for default blast.
+50 01 * * * /usr/bin/find -L /zdevblast/dev_blastdb -name "*.fa" -type f -mtime +1 -exec rm -f {}  \; >> /zdevblast/dev_blastdb/fasta-clean-error.txt 
+#
+# -----------------------------------------
+# ---         Generate Statistics      ---
+# -----------------------------------------
+# SMUWTFS    10:30pm  Generate daily usage report
+#30 22 * * * /Users/informix/BLAST_load/bin/reportUsage.pl

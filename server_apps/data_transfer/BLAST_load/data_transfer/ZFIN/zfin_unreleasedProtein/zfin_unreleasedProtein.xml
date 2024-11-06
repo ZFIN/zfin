@@ -1,0 +1,29 @@
+<project name="zfin_unreleasedProtein">
+
+<target name="deployzfin_unreleasedProtein" depends="processzfin_unreleasedProtein"
+description="Fully redeploys zfin_unreleasedProtein.">
+   <echo message="deployzfin_unreleasedProtein"/>
+</target>
+
+<target name="cpzfin_unreleasedProtein" description="Downloads files for zfin_unreleasedProtein to staging area.">
+   <echo message="cpzfin_unreleasedProtein"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedProtein/cpzfin_unreleasedProtein.sh">
+   </exec>
+</target>
+
+
+<target name="revertzfin_unreleasedProtein" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_unreleasedProtein"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedProtein/revertzfin_unreleasedProtein.sh">
+   </exec>
+</target>
+
+<target name="processzfin_unreleasedProtein" depends="createTargetDir" description="deploys entire zfin_unreleasedProtein dbs">
+   <echo message="processzfin_unreleasedProtein"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedProtein/processzfin_unreleasedProtein.sh">
+   </exec>
+</target>
+
+</project>
+

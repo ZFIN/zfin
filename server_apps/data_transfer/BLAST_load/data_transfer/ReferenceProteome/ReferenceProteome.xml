@@ -1,0 +1,40 @@
+<project name="ReferenceProteome">
+
+<target name="deployReferenceProteome" depends="processReferenceProteome" description="Fully redeploys ReferenceProteome.">
+   <echo message="deployReferenceProteome"/>
+</target>
+
+<target name="downloadReferenceProteome" description="Downloads files for ReferenceProteome to staging area.">
+   <echo message="downloadReferenceProteome"/>
+   <exec executable="${basedir}/target/ReferenceProteome/downloadReferenceProteome.sh">
+   </exec>
+</target>
+
+<target name="convertReferenceProteome" description="Converts FASTA files for ReferenceProteome into blastable files in the staging area.">
+   <echo message="convertReferenceProteome"/>
+   <exec executable="${basedir}/target/ReferenceProteome/convertReferenceProteome.sh">
+   </exec>
+</target>
+
+<target name="pushReferenceProteome" description="Pushes blast files for ReferenceProteome to production from the staging area.">
+   <echo message="pushReferenceProteome"/>
+   <exec executable="${basedir}/target/ReferenceProteome/pushReferenceProteome.sh">
+   </exec>
+</target>
+
+<target name="revertReferenceProteome" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertReferenceProteome"/>
+   <exec executable="${basedir}/target/ReferenceProteome/revertReferenceProteome.sh">
+   </exec>
+</target>
+
+<target name="processReferenceProteome" depends="createTargetDir" description="deploys entire ReferenceProteome dbs">
+   <echo message="processReferenceProteome"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ReferenceProteome/processReferenceProteome.sh">
+   </exec>
+</target>
+
+
+</project>
+

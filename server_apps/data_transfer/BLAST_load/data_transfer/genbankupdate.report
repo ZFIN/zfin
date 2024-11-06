@@ -1,0 +1,3783 @@
+rm: No match.
+mv: No match.
+rm: cannot remove ‘GB/htc/htc_ms_mrna.fa’: Stale file handle
+rm: cannot remove ‘GB/sts/sts_hs_dna.fa’: Stale file handle
+rm: cannot remove ‘GB/sts/sts_ms_mrna.fa’: Stale file handle
+rm: cannot remove ‘GB/sts/sts_ms_dna.fa’: Stale file handle
+rm: cannot remove ‘GB/pri/pri_hs_dna.fa’: Stale file handle
+rm: cannot remove ‘GB/rod/rod_ms_dna.fa’: Stale file handle
+mkdir: cannot create directory ‘GB’: File exists
+==| DOWNLOAD GenBank Release |==
+download gbest*.seq.gz
+Fri Oct 30 19:00:02 PDT 2020
+Fri Oct 30 19:23:00 PDT 2020
+mv to est dir
+download gbgss*.seq.gz
+Fri Oct 30 19:23:00 PDT 2020
+Fri Oct 30 19:32:07 PDT 2020
+mv to gss dir
+download gbhtc*.seq.gz
+Fri Oct 30 19:32:07 PDT 2020
+Fri Oct 30 19:32:29 PDT 2020
+mv to htc dir
+download gbhtg*.seq.gz
+Fri Oct 30 19:32:29 PDT 2020
+Fri Oct 30 19:40:08 PDT 2020
+mv to htg dir
+download gbsts*.seq.gz
+Fri Oct 30 19:40:08 PDT 2020
+Fri Oct 30 19:40:53 PDT 2020
+mv to sts dir
+download gbpri*.seq.gz
+Fri Oct 30 19:40:53 PDT 2020
+Fri Oct 30 19:43:43 PDT 2020
+mv to pri dir
+download gbrod*.seq.gz
+Fri Oct 30 19:43:43 PDT 2020
+Fri Oct 30 19:49:19 PDT 2020
+mv to rod dir
+download gbvrt*.seq.gz
+Fri Oct 30 19:49:19 PDT 2020
+Fri Oct 30 20:09:45 PDT 2020
+mv to vrt dir
+==| rm ftp file GenBank |==
+==| done with GenBank download |==
+==| UNZIP and PROCESS files in each GenBank division |==
+in est
+==| unzip est files GenBank |==
+gbest*.seq.gz
+gzip: gbest181.seq already exists;	not overwritten
+gzip: gbest183.seq already exists;	not overwritten
+gzip: gbest186.seq already exists;	not overwritten
+gzip: gbest188.seq already exists;	not overwritten
+gzip: gbest190.seq already exists;	not overwritten
+gzip: gbest192.seq already exists;	not overwritten
+gzip: gbest194.seq.gz: No such file or directory
+gzip: gbest195.seq already exists;	not overwritten
+gzip: gbest198.seq already exists;	not overwritten
+gzip: gbest1.seq.gz: No such file or directory
+gzip: gbest201.seq already exists;	not overwritten
+gzip: gbest203.seq already exists;	not overwritten
+gzip: gbest207.seq already exists;	not overwritten
+gzip: gbest209.seq already exists;	not overwritten
+gzip: gbest211.seq.gz: No such file or directory
+gzip: gbest212.seq already exists;	not overwritten
+gzip: gbest214.seq already exists;	not overwritten
+gzip: gbest216.seq already exists;	not overwritten
+gzip: gbest218.seq already exists;	not overwritten
+gzip: gbest21.seq already exists;	not overwritten
+gzip: gbest221.seq already exists;	not overwritten
+gzip: gbest224.seq already exists;	not overwritten
+gzip: gbest227.seq.gz: No such file or directory
+gzip: gbest228.seq already exists;	not overwritten
+gzip: gbest22.seq already exists;	not overwritten
+gzip: gbest232.seq already exists;	not overwritten
+gzip: gbest234.seq.gz: No such file or directory
+gzip: gbest235.seq already exists;	not overwritten
+gzip: gbest238.seq already exists;	not overwritten
+gzip: gbest23.seq.gz: No such file or directory
+gzip: gbest240.seq already exists;	not overwritten
+gzip: gbest242.seq already exists;	not overwritten
+gzip: gbest244.seq already exists;	not overwritten
+gzip: gbest246.seq already exists;	not overwritten
+gzip: gbest249.seq already exists;	not overwritten
+gzip: gbest250.seq already exists;	not overwritten
+gzip: gbest252.seq already exists;	not overwritten
+gzip: gbest254.seq already exists;	not overwritten
+gzip: gbest257.seq already exists;	not overwritten
+gzip: gbest259.seq already exists;	not overwritten
+gzip: gbest260.seq already exists;	not overwritten
+gzip: gbest262.seq already exists;	not overwritten
+gzip: gbest264.seq already exists;	not overwritten
+gzip: gbest267.seq already exists;	not overwritten
+gzip: gbest269.seq already exists;	not overwritten
+gzip: gbest270.seq.gz: No such file or directory
+gzip: gbest271.seq already exists;	not overwritten
+gzip: gbest273.seq already exists;	not overwritten
+gzip: gbest276.seq already exists;	not overwritten
+gzip: gbest279.seq.gz: No such file or directory
+gzip: gbest27.seq already exists;	not overwritten
+gzip: gbest281.seq.gz: No such file or directory
+gzip: gbest282.seq already exists;	not overwritten
+gzip: gbest284.seq already exists;	not overwritten
+gzip: gbest286.seq already exists;	not overwritten
+gzip: gbest288.seq already exists;	not overwritten
+gzip: gbest291.seq already exists;	not overwritten
+gzip: gbest293.seq already exists;	not overwritten
+gzip: gbest296.seq already exists;	not overwritten
+gzip: gbest298.seq already exists;	not overwritten
+gzip: gbest29.seq already exists;	not overwritten
+gzip: gbest300.seq already exists;	not overwritten
+gzip: gbest302.seq.gz: No such file or directory
+gzip: gbest303.seq already exists;	not overwritten
+gzip: gbest305.seq already exists;	not overwritten
+gzip: gbest307.seq.gz: No such file or directory
+gzip: gbest308.seq already exists;	not overwritten
+gzip: gbest30.seq already exists;	not overwritten
+gzip: gbest311.seq already exists;	not overwritten
+gzip: gbest313.seq already exists;	not overwritten
+gzip: gbest315.seq already exists;	not overwritten
+gzip: gbest317.seq already exists;	not overwritten
+gzip: gbest319.seq already exists;	not overwritten
+gzip: gbest320.seq already exists;	not overwritten
+gzip: gbest322.seq already exists;	not overwritten
+gzip: gbest325.seq already exists;	not overwritten
+gzip: gbest327.seq already exists;	not overwritten
+gzip: gbest329.seq already exists;	not overwritten
+gzip: gbest331.seq already exists;	not overwritten
+gzip: gbest334.seq already exists;	not overwritten
+gzip: gbest336.seq already exists;	not overwritten
+gzip: gbest338.seq already exists;	not overwritten
+gzip: gbest33.seq already exists;	not overwritten
+gzip: gbest341.seq.gz: No such file or directory
+gzip: gbest342.seq already exists;	not overwritten
+gzip: gbest344.seq already exists;	not overwritten
+gzip: gbest346.seq.gz: No such file or directory
+gzip: gbest347.seq already exists;	not overwritten
+gzip: gbest34.seq already exists;	not overwritten
+gzip: gbest352.seq.gz: No such file or directory
+gzip: gbest353.seq already exists;	not overwritten
+gzip: gbest356.seq.gz: No such file or directory
+gzip: gbest357.seq already exists;	not overwritten
+gzip: gbest359.seq already exists;	not overwritten
+gzip: gbest361.seq.gz: No such file or directory
+gzip: gbest362.seq.gz: No such file or directory
+gzip: gbest363.seq already exists;	not overwritten
+gzip: gbest366.seq.gz: No such file or directory
+gzip: gbest367.seq.gz: No such file or directory
+gzip: gbest368.seq already exists;	not overwritten
+gzip: gbest36.seq already exists;	not overwritten
+gzip: gbest371.seq already exists;	not overwritten
+gzip: gbest374.seq already exists;	not overwritten
+gzip: gbest376.seq already exists;	not overwritten
+gzip: gbest379.seq already exists;	not overwritten
+gzip: gbest380.seq already exists;	not overwritten
+gzip: gbest382.seq already exists;	not overwritten
+gzip: gbest384.seq already exists;	not overwritten
+gzip: gbest386.seq.gz: No such file or directory
+gzip: gbest387.seq already exists;	not overwritten
+gzip: gbest389.seq already exists;	not overwritten
+gzip: gbest390.seq.gz: No such file or directory
+gzip: gbest391.seq already exists;	not overwritten
+gzip: gbest393.seq already exists;	not overwritten
+gzip: gbest395.seq already exists;	not overwritten
+gzip: gbest397.seq already exists;	not overwritten
+gzip: gbest399.seq already exists;	not overwritten
+gzip: gbest3.seq already exists;	not overwritten
+gzip: gbest402.seq already exists;	not overwritten
+gzip: gbest404.seq already exists;	not overwritten
+gzip: gbest407.seq already exists;	not overwritten
+gzip: gbest409.seq already exists;	not overwritten
+gzip: gbest410.seq.gz: No such file or directory
+gzip: gbest411.seq already exists;	not overwritten
+gzip: gbest413.seq.gz: No such file or directory
+gzip: gbest414.seq already exists;	not overwritten
+gzip: gbest417.seq already exists;	not overwritten
+gzip: gbest419.seq already exists;	not overwritten
+gzip: gbest420.seq already exists;	not overwritten
+gzip: gbest422.seq already exists;	not overwritten
+gzip: gbest424.seq already exists;	not overwritten
+gzip: gbest426.seq.gz: No such file or directory
+gzip: gbest427.seq already exists;	not overwritten
+gzip: gbest42.seq already exists;	not overwritten
+gzip: gbest431.seq already exists;	not overwritten
+gzip: gbest433.seq already exists;	not overwritten
+gzip: gbest435.seq already exists;	not overwritten
+gzip: gbest437.seq already exists;	not overwritten
+gzip: gbest43.seq already exists;	not overwritten
+gzip: gbest441.seq already exists;	not overwritten
+gzip: gbest443.seq already exists;	not overwritten
+gzip: gbest446.seq already exists;	not overwritten
+gzip: gbest449.seq already exists;	not overwritten
+==| parse est files GenBank|==
+parsing file: gbest100.seq
+gbest100
+parsing file: gbest101.seq
+gbest101
+parsing file: gbest102.seq
+gbest102
+parsing file: gbest103.seq
+gbest103
+parsing file: gbest104.seq
+gbest104
+parsing file: gbest105.seq
+gbest105
+parsing file: gbest106.seq
+gbest106
+parsing file: gbest107.seq
+gbest107
+parsing file: gbest108.seq
+gbest108
+parsing file: gbest109.seq
+gbest109
+parsing file: gbest10.seq
+gbest10
+parsing file: gbest110.seq
+gbest110
+parsing file: gbest111.seq
+gbest111
+parsing file: gbest112.seq
+gbest112
+parsing file: gbest113.seq
+gbest113
+parsing file: gbest114.seq
+gbest114
+parsing file: gbest115.seq
+gbest115
+parsing file: gbest116.seq
+gbest116
+parsing file: gbest117.seq
+gbest117
+parsing file: gbest118.seq
+gbest118
+parsing file: gbest119.seq
+gbest119
+parsing file: gbest11.seq
+gbest11
+parsing file: gbest120.seq
+gbest120
+parsing file: gbest121.seq
+gbest121
+parsing file: gbest122.seq
+gbest122
+parsing file: gbest123.seq
+gbest123
+parsing file: gbest124.seq
+gbest124
+parsing file: gbest125.seq
+gbest125
+parsing file: gbest126.seq
+gbest126
+parsing file: gbest127.seq
+gbest127
+parsing file: gbest128.seq
+gbest128
+parsing file: gbest129.seq
+gbest129
+parsing file: gbest12.seq
+gbest12
+parsing file: gbest130.seq
+gbest130
+parsing file: gbest131.seq
+gbest131
+parsing file: gbest132.seq
+gbest132
+parsing file: gbest133.seq
+gbest133
+parsing file: gbest134.seq
+gbest134
+parsing file: gbest135.seq
+gbest135
+parsing file: gbest136.seq
+gbest136
+parsing file: gbest137.seq
+gbest137
+parsing file: gbest138.seq
+gbest138
+parsing file: gbest139.seq
+gbest139
+parsing file: gbest13.seq
+gbest13
+parsing file: gbest140.seq
+gbest140
+parsing file: gbest141.seq
+gbest141
+parsing file: gbest142.seq
+gbest142
+parsing file: gbest143.seq
+gbest143
+parsing file: gbest144.seq
+gbest144
+parsing file: gbest145.seq
+gbest145
+parsing file: gbest146.seq
+gbest146
+parsing file: gbest147.seq
+gbest147
+parsing file: gbest148.seq
+gbest148
+parsing file: gbest149.seq
+gbest149
+parsing file: gbest14.seq
+gbest14
+parsing file: gbest150.seq
+gbest150
+parsing file: gbest151.seq
+gbest151
+parsing file: gbest152.seq
+gbest152
+parsing file: gbest153.seq
+gbest153
+parsing file: gbest154.seq
+gbest154
+parsing file: gbest155.seq
+gbest155
+parsing file: gbest156.seq
+gbest156
+parsing file: gbest157.seq
+gbest157
+parsing file: gbest158.seq
+gbest158
+parsing file: gbest159.seq
+gbest159
+parsing file: gbest15.seq
+gbest15
+parsing file: gbest160.seq
+gbest160
+parsing file: gbest161.seq
+gbest161
+parsing file: gbest162.seq
+gbest162
+parsing file: gbest163.seq
+gbest163
+parsing file: gbest164.seq
+gbest164
+parsing file: gbest165.seq
+gbest165
+parsing file: gbest166.seq
+gbest166
+parsing file: gbest167.seq
+gbest167
+parsing file: gbest168.seq
+gbest168
+parsing file: gbest169.seq
+gbest169
+parsing file: gbest16.seq
+gbest16
+parsing file: gbest170.seq
+gbest170
+parsing file: gbest171.seq
+gbest171
+parsing file: gbest172.seq
+gbest172
+parsing file: gbest173.seq
+gbest173
+parsing file: gbest174.seq
+gbest174
+parsing file: gbest175.seq
+gbest175
+parsing file: gbest176.seq
+gbest176
+parsing file: gbest177.seq
+gbest177
+parsing file: gbest178.seq
+gbest178
+parsing file: gbest179.seq
+gbest179
+parsing file: gbest17.seq
+gbest17
+parsing file: gbest180.seq
+gbest180
+parsing file: gbest181.seq
+gbest181
+parsing file: gbest182.seq
+gbest182
+parsing file: gbest183.seq
+gbest183
+parsing file: gbest184.seq
+gbest184
+parsing file: gbest185.seq
+gbest185
+parsing file: gbest186.seq
+gbest186
+parsing file: gbest187.seq
+gbest187
+parsing file: gbest188.seq
+gbest188
+parsing file: gbest189.seq
+gbest189
+parsing file: gbest18.seq
+gbest18
+parsing file: gbest190.seq
+gbest190
+parsing file: gbest191.seq
+gbest191
+parsing file: gbest192.seq
+gbest192
+parsing file: gbest193.seq
+gbest193
+parsing file: gbest194.seq
+gbest194
+parsing file: gbest195.seq
+gbest195
+parsing file: gbest196.seq
+gbest196
+parsing file: gbest197.seq
+gbest197
+parsing file: gbest198.seq
+gbest198
+parsing file: gbest199.seq
+gbest199
+parsing file: gbest19.seq
+gbest19
+parsing file: gbest1.seq
+gbest1
+parsing file: gbest200.seq
+gbest200
+parsing file: gbest201.seq
+gbest201
+parsing file: gbest202.seq
+gbest202
+parsing file: gbest203.seq
+gbest203
+parsing file: gbest204.seq
+gbest204
+parsing file: gbest205.seq
+gbest205
+parsing file: gbest206.seq
+gbest206
+parsing file: gbest207.seq
+gbest207
+parsing file: gbest208.seq
+gbest208
+parsing file: gbest209.seq
+gbest209
+parsing file: gbest20.seq
+gbest20
+parsing file: gbest210.seq
+gbest210
+parsing file: gbest211.seq
+gbest211
+parsing file: gbest212.seq
+gbest212
+parsing file: gbest213.seq
+gbest213
+parsing file: gbest214.seq
+gbest214
+parsing file: gbest215.seq
+gbest215
+parsing file: gbest216.seq
+gbest216
+parsing file: gbest217.seq
+gbest217
+parsing file: gbest218.seq
+gbest218
+parsing file: gbest219.seq
+gbest219
+parsing file: gbest21.seq
+gbest21
+parsing file: gbest220.seq
+gbest220
+parsing file: gbest221.seq
+gbest221
+parsing file: gbest222.seq
+gbest222
+parsing file: gbest223.seq
+gbest223
+parsing file: gbest224.seq
+gbest224
+parsing file: gbest225.seq
+gbest225
+parsing file: gbest226.seq
+gbest226
+parsing file: gbest227.seq
+gbest227
+parsing file: gbest228.seq
+gbest228
+parsing file: gbest229.seq
+gbest229
+parsing file: gbest22.seq
+gbest22
+parsing file: gbest230.seq
+gbest230
+parsing file: gbest231.seq
+gbest231
+parsing file: gbest232.seq
+gbest232
+parsing file: gbest233.seq
+gbest233
+parsing file: gbest234.seq
+gbest234
+parsing file: gbest235.seq
+gbest235
+parsing file: gbest236.seq
+gbest236
+parsing file: gbest237.seq
+gbest237
+parsing file: gbest238.seq
+gbest238
+parsing file: gbest239.seq
+gbest239
+parsing file: gbest23.seq
+gbest23
+parsing file: gbest240.seq
+gbest240
+parsing file: gbest241.seq
+gbest241
+parsing file: gbest242.seq
+gbest242
+parsing file: gbest243.seq
+gbest243
+parsing file: gbest244.seq
+gbest244
+parsing file: gbest245.seq
+gbest245
+parsing file: gbest246.seq
+gbest246
+parsing file: gbest247.seq
+gbest247
+parsing file: gbest248.seq
+gbest248
+parsing file: gbest249.seq
+gbest249
+parsing file: gbest24.seq
+gbest24
+parsing file: gbest250.seq
+gbest250
+parsing file: gbest251.seq
+gbest251
+parsing file: gbest252.seq
+gbest252
+parsing file: gbest253.seq
+gbest253
+parsing file: gbest254.seq
+gbest254
+parsing file: gbest255.seq
+gbest255
+parsing file: gbest256.seq
+gbest256
+parsing file: gbest257.seq
+gbest257
+parsing file: gbest258.seq
+gbest258
+parsing file: gbest259.seq
+gbest259
+parsing file: gbest25.seq
+gbest25
+parsing file: gbest260.seq
+gbest260
+parsing file: gbest261.seq
+gbest261
+parsing file: gbest262.seq
+gbest262
+parsing file: gbest263.seq
+gbest263
+parsing file: gbest264.seq
+gbest264
+parsing file: gbest265.seq
+gbest265
+parsing file: gbest266.seq
+gbest266
+parsing file: gbest267.seq
+gbest267
+parsing file: gbest268.seq
+gbest268
+parsing file: gbest269.seq
+gbest269
+parsing file: gbest26.seq
+gbest26
+parsing file: gbest270.seq
+gbest270
+parsing file: gbest271.seq
+gbest271
+parsing file: gbest272.seq
+gbest272
+parsing file: gbest273.seq
+gbest273
+parsing file: gbest274.seq
+gbest274
+parsing file: gbest275.seq
+gbest275
+parsing file: gbest276.seq
+gbest276
+parsing file: gbest277.seq
+gbest277
+parsing file: gbest278.seq
+gbest278
+parsing file: gbest279.seq
+gbest279
+parsing file: gbest27.seq
+gbest27
+parsing file: gbest280.seq
+gbest280
+parsing file: gbest281.seq
+gbest281
+parsing file: gbest282.seq
+gbest282
+parsing file: gbest283.seq
+gbest283
+parsing file: gbest284.seq
+gbest284
+parsing file: gbest285.seq
+gbest285
+parsing file: gbest286.seq
+gbest286
+parsing file: gbest287.seq
+gbest287
+parsing file: gbest288.seq
+gbest288
+parsing file: gbest289.seq
+gbest289
+parsing file: gbest28.seq
+gbest28
+parsing file: gbest290.seq
+gbest290
+parsing file: gbest291.seq
+gbest291
+parsing file: gbest292.seq
+gbest292
+parsing file: gbest293.seq
+gbest293
+parsing file: gbest294.seq
+gbest294
+parsing file: gbest295.seq
+gbest295
+parsing file: gbest296.seq
+gbest296
+parsing file: gbest297.seq
+gbest297
+parsing file: gbest298.seq
+gbest298
+parsing file: gbest299.seq
+gbest299
+parsing file: gbest29.seq
+gbest29
+parsing file: gbest2.seq
+gbest2
+parsing file: gbest300.seq
+gbest300
+parsing file: gbest301.seq
+gbest301
+parsing file: gbest302.seq
+gbest302
+parsing file: gbest303.seq
+gbest303
+parsing file: gbest304.seq
+gbest304
+parsing file: gbest305.seq
+gbest305
+parsing file: gbest306.seq
+gbest306
+parsing file: gbest307.seq
+gbest307
+parsing file: gbest308.seq
+gbest308
+parsing file: gbest309.seq
+gbest309
+parsing file: gbest30.seq
+gbest30
+parsing file: gbest310.seq
+gbest310
+parsing file: gbest311.seq
+gbest311
+parsing file: gbest312.seq
+gbest312
+parsing file: gbest313.seq
+gbest313
+parsing file: gbest314.seq
+gbest314
+parsing file: gbest315.seq
+gbest315
+parsing file: gbest316.seq
+gbest316
+parsing file: gbest317.seq
+gbest317
+parsing file: gbest318.seq
+gbest318
+parsing file: gbest319.seq
+gbest319
+parsing file: gbest31.seq
+gbest31
+parsing file: gbest320.seq
+gbest320
+parsing file: gbest321.seq
+gbest321
+parsing file: gbest322.seq
+gbest322
+parsing file: gbest323.seq
+gbest323
+parsing file: gbest324.seq
+gbest324
+parsing file: gbest325.seq
+gbest325
+parsing file: gbest326.seq
+gbest326
+parsing file: gbest327.seq
+gbest327
+parsing file: gbest328.seq
+gbest328
+parsing file: gbest329.seq
+gbest329
+parsing file: gbest32.seq
+gbest32
+parsing file: gbest330.seq
+gbest330
+parsing file: gbest331.seq
+gbest331
+parsing file: gbest332.seq
+gbest332
+parsing file: gbest333.seq
+gbest333
+parsing file: gbest334.seq
+gbest334
+parsing file: gbest335.seq
+gbest335
+parsing file: gbest336.seq
+gbest336
+parsing file: gbest337.seq
+gbest337
+parsing file: gbest338.seq
+gbest338
+parsing file: gbest339.seq
+gbest339
+parsing file: gbest33.seq
+gbest33
+parsing file: gbest340.seq
+gbest340
+parsing file: gbest341.seq
+gbest341
+parsing file: gbest342.seq
+gbest342
+parsing file: gbest343.seq
+gbest343
+parsing file: gbest344.seq
+gbest344
+parsing file: gbest345.seq
+gbest345
+parsing file: gbest346.seq
+gbest346
+parsing file: gbest347.seq
+gbest347
+parsing file: gbest348.seq
+gbest348
+parsing file: gbest349.seq
+gbest349
+parsing file: gbest34.seq
+gbest34
+parsing file: gbest350.seq
+gbest350
+parsing file: gbest351.seq
+gbest351
+parsing file: gbest352.seq
+gbest352
+parsing file: gbest353.seq
+gbest353
+parsing file: gbest354.seq
+gbest354
+parsing file: gbest355.seq
+gbest355
+parsing file: gbest356.seq
+gbest356
+parsing file: gbest357.seq
+Cannot open the gbest357.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest357
+parsing file: gbest358.seq
+Cannot open the gbest358.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest358
+parsing file: gbest359.seq
+Cannot open the gbest359.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest359
+parsing file: gbest35.seq
+Cannot open the gbest35.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest35
+parsing file: gbest360.seq
+Cannot open the gbest360.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest360
+parsing file: gbest361.seq
+Cannot open the gbest361.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest361
+parsing file: gbest362.seq
+Cannot open the gbest362.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest362
+parsing file: gbest363.seq
+Cannot open the gbest363.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest363
+parsing file: gbest364.seq
+Cannot open the gbest364.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest364
+parsing file: gbest365.seq
+Cannot open the gbest365.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest365
+parsing file: gbest366.seq
+Cannot open the gbest366.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest366
+parsing file: gbest367.seq
+Cannot open the gbest367.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest367
+parsing file: gbest368.seq
+Cannot open the gbest368.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest368
+parsing file: gbest369.seq
+Cannot open the gbest369.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest369
+parsing file: gbest36.seq
+Cannot open the gbest36.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest36
+parsing file: gbest370.seq
+Cannot open the gbest370.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest370
+parsing file: gbest371.seq
+Cannot open the gbest371.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest371
+parsing file: gbest372.seq
+Cannot open the gbest372.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest372
+parsing file: gbest373.seq
+Cannot open the gbest373.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest373
+parsing file: gbest374.seq
+Cannot open the gbest374.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest374
+parsing file: gbest375.seq
+Cannot open the gbest375.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest375
+parsing file: gbest376.seq
+Cannot open the gbest376.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest376
+parsing file: gbest377.seq
+Cannot open the gbest377.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest377
+parsing file: gbest378.seq
+Cannot open the gbest378.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest378
+parsing file: gbest379.seq
+Cannot open the gbest379.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest379
+parsing file: gbest37.seq
+Cannot open the gbest37.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest37
+parsing file: gbest380.seq
+Cannot open the gbest380.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest380
+parsing file: gbest381.seq
+Cannot open the gbest381.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest381
+parsing file: gbest382.seq
+Cannot open the gbest382.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest382
+parsing file: gbest383.seq
+Cannot open the gbest383.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest383
+parsing file: gbest384.seq
+Cannot open the gbest384.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest384
+parsing file: gbest385.seq
+Cannot open the gbest385.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest385
+parsing file: gbest386.seq
+Cannot open the gbest386.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest386
+parsing file: gbest387.seq
+Cannot open the gbest387.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest387
+parsing file: gbest388.seq
+Cannot open the gbest388.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest388
+parsing file: gbest389.seq
+Cannot open the gbest389.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest389
+parsing file: gbest38.seq
+Cannot open the gbest38.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest38
+parsing file: gbest390.seq
+Cannot open the gbest390.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest390
+parsing file: gbest391.seq
+Cannot open the gbest391.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest391
+parsing file: gbest392.seq
+Cannot open the gbest392.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest392
+parsing file: gbest393.seq
+Cannot open the gbest393.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest393
+parsing file: gbest394.seq
+Cannot open the gbest394.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest394
+parsing file: gbest395.seq
+Cannot open the gbest395.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest395
+parsing file: gbest396.seq
+Cannot open the gbest396.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest396
+parsing file: gbest397.seq
+Cannot open the gbest397.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest397
+parsing file: gbest398.seq
+Cannot open the gbest398.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest398
+parsing file: gbest399.seq
+Cannot open the gbest399.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest399
+parsing file: gbest39.seq
+Cannot open the gbest39.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest39
+parsing file: gbest3.seq
+Cannot open the gbest3.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest3
+parsing file: gbest400.seq
+Cannot open the gbest400.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest400
+parsing file: gbest401.seq
+Cannot open the gbest401.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest401
+parsing file: gbest402.seq
+Cannot open the gbest402.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest402
+parsing file: gbest403.seq
+Cannot open the gbest403.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest403
+parsing file: gbest404.seq
+Cannot open the gbest404.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest404
+parsing file: gbest405.seq
+Cannot open the gbest405.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest405
+parsing file: gbest406.seq
+Cannot open the gbest406.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest406
+parsing file: gbest407.seq
+Cannot open the gbest407.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest407
+parsing file: gbest408.seq
+Cannot open the gbest408.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest408
+parsing file: gbest409.seq
+Cannot open the gbest409.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest409
+parsing file: gbest40.seq
+Cannot open the gbest40.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest40
+parsing file: gbest410.seq
+Cannot open the gbest410.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest410
+parsing file: gbest411.seq
+Cannot open the gbest411.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest411
+parsing file: gbest412.seq
+Cannot open the gbest412.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest412
+parsing file: gbest413.seq
+Cannot open the gbest413.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest413
+parsing file: gbest414.seq
+Cannot open the gbest414.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest414
+parsing file: gbest415.seq
+Cannot open the gbest415.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest415
+parsing file: gbest416.seq
+Cannot open the gbest416.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest416
+parsing file: gbest417.seq
+Cannot open the gbest417.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest417
+parsing file: gbest418.seq
+Cannot open the gbest418.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest418
+parsing file: gbest419.seq
+Cannot open the gbest419.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest419
+parsing file: gbest41.seq
+Cannot open the gbest41.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest41
+parsing file: gbest420.seq
+Cannot open the gbest420.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest420
+parsing file: gbest421.seq
+Cannot open the gbest421.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest421
+parsing file: gbest422.seq
+Cannot open the gbest422.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest422
+parsing file: gbest423.seq
+Cannot open the gbest423.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest423
+parsing file: gbest424.seq
+Cannot open the gbest424.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest424
+parsing file: gbest425.seq
+Cannot open the gbest425.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest425
+parsing file: gbest426.seq
+Cannot open the gbest426.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest426
+parsing file: gbest427.seq
+Cannot open the gbest427.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest427
+parsing file: gbest428.seq
+Cannot open the gbest428.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest428
+parsing file: gbest429.seq
+Cannot open the gbest429.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest429
+parsing file: gbest42.seq
+Cannot open the gbest42.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest42
+parsing file: gbest430.seq
+Cannot open the gbest430.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest430
+parsing file: gbest431.seq
+Cannot open the gbest431.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest431
+parsing file: gbest432.seq
+Cannot open the gbest432.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest432
+parsing file: gbest433.seq
+Cannot open the gbest433.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest433
+parsing file: gbest434.seq
+Cannot open the gbest434.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest434
+parsing file: gbest435.seq
+Cannot open the gbest435.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest435
+parsing file: gbest436.seq
+Cannot open the gbest436.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest436
+parsing file: gbest437.seq
+Cannot open the gbest437.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest437
+parsing file: gbest438.seq
+Cannot open the gbest438.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest438
+parsing file: gbest439.seq
+Cannot open the gbest439.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest439
+parsing file: gbest43.seq
+Cannot open the gbest43.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest43
+parsing file: gbest440.seq
+Cannot open the gbest440.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest440
+parsing file: gbest441.seq
+Cannot open the gbest441.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest441
+parsing file: gbest442.seq
+Cannot open the gbest442.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest442
+parsing file: gbest443.seq
+Cannot open the gbest443.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest443
+parsing file: gbest444.seq
+Cannot open the gbest444.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest444
+parsing file: gbest445.seq
+Cannot open the gbest445.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest445
+parsing file: gbest446.seq
+Cannot open the gbest446.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest446
+parsing file: gbest447.seq
+Cannot open the gbest447.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest447
+parsing file: gbest448.seq
+Cannot open the gbest448.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest448
+parsing file: gbest449.seq
+Cannot open the gbest449.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest449
+parsing file: gbest44.seq
+Cannot open the gbest44.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest44
+parsing file: gbest450.seq
+Cannot open the gbest450.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest450
+parsing file: gbest451.seq
+Cannot open the gbest451.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest451
+parsing file: gbest452.seq
+Cannot open the gbest452.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest452
+parsing file: gbest453.seq
+Cannot open the gbest453.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest453
+parsing file: gbest454.seq
+Cannot open the gbest454.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest454
+parsing file: gbest455.seq
+Cannot open the gbest455.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest455
+parsing file: gbest456.seq
+Cannot open the gbest456.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest456
+parsing file: gbest457.seq
+Cannot open the gbest457.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest457
+parsing file: gbest458.seq
+Cannot open the gbest458.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest458
+parsing file: gbest459.seq
+Cannot open the gbest459.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest459
+parsing file: gbest45.seq
+Cannot open the gbest45.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest45
+parsing file: gbest460.seq
+Cannot open the gbest460.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest460
+parsing file: gbest461.seq
+Cannot open the gbest461.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest461
+parsing file: gbest462.seq
+Cannot open the gbest462.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest462
+parsing file: gbest463.seq
+Cannot open the gbest463.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest463
+parsing file: gbest464.seq
+Cannot open the gbest464.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest464
+parsing file: gbest465.seq
+Cannot open the gbest465.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest465
+parsing file: gbest466.seq
+Cannot open the gbest466.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest466
+parsing file: gbest467.seq
+Cannot open the gbest467.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest467
+parsing file: gbest468.seq
+Cannot open the gbest468.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest468
+parsing file: gbest469.seq
+Cannot open the gbest469.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest469
+parsing file: gbest46.seq
+Cannot open the gbest46.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest46
+parsing file: gbest470.seq
+Cannot open the gbest470.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest470
+parsing file: gbest471.seq
+Cannot open the gbest471.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest471
+parsing file: gbest472.seq
+Cannot open the gbest472.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest472
+parsing file: gbest473.seq
+Cannot open the gbest473.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest473
+parsing file: gbest474.seq
+Cannot open the gbest474.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest474
+parsing file: gbest475.seq
+Cannot open the gbest475.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest475
+parsing file: gbest476.seq
+Cannot open the gbest476.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest476
+parsing file: gbest477.seq
+Cannot open the gbest477.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest477
+parsing file: gbest478.seq
+Cannot open the gbest478.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest478
+parsing file: gbest479.seq
+Cannot open the gbest479.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest479
+parsing file: gbest47.seq
+Cannot open the gbest47.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest47
+parsing file: gbest480.seq
+Cannot open the gbest480.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest480
+parsing file: gbest481.seq
+Cannot open the gbest481.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest481
+parsing file: gbest482.seq
+Cannot open the gbest482.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest482
+parsing file: gbest483.seq
+Cannot open the gbest483.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest483
+parsing file: gbest484.seq
+Cannot open the gbest484.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest484
+parsing file: gbest485.seq
+Cannot open the gbest485.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest485
+parsing file: gbest486.seq
+Cannot open the gbest486.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest486
+parsing file: gbest487.seq
+Cannot open the gbest487.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest487
+parsing file: gbest488.seq
+Cannot open the gbest488.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest488
+parsing file: gbest489.seq
+Cannot open the gbest489.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest489
+parsing file: gbest48.seq
+Cannot open the gbest48.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest48
+parsing file: gbest490.seq
+Cannot open the gbest490.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest490
+parsing file: gbest491.seq
+Cannot open the gbest491.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest491
+parsing file: gbest492.seq
+Cannot open the gbest492.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest492
+parsing file: gbest493.seq
+Cannot open the gbest493.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest493
+parsing file: gbest494.seq
+Cannot open the gbest494.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest494
+parsing file: gbest495.seq
+Cannot open the gbest495.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest495
+parsing file: gbest496.seq
+Cannot open the gbest496.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest496
+parsing file: gbest497.seq
+Cannot open the gbest497.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest497
+parsing file: gbest498.seq
+Cannot open the gbest498.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest498
+parsing file: gbest499.seq
+Cannot open the gbest499.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest499
+parsing file: gbest49.seq
+Cannot open the gbest49.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest49
+parsing file: gbest4.seq
+Cannot open the gbest4.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest4
+parsing file: gbest500.seq
+Cannot open the gbest500.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest500
+parsing file: gbest501.seq
+Cannot open the gbest501.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest501
+parsing file: gbest502.seq
+Cannot open the gbest502.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest502
+parsing file: gbest503.seq
+Cannot open the gbest503.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest503
+parsing file: gbest504.seq
+Cannot open the gbest504.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest504
+parsing file: gbest505.seq
+Cannot open the gbest505.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest505
+parsing file: gbest506.seq
+Cannot open the gbest506.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest506
+parsing file: gbest507.seq
+Cannot open the gbest507.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest507
+parsing file: gbest508.seq
+Cannot open the gbest508.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest508
+parsing file: gbest509.seq
+Cannot open the gbest509.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest509
+parsing file: gbest50.seq
+Cannot open the gbest50.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest50
+parsing file: gbest510.seq
+Cannot open the gbest510.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest510
+parsing file: gbest511.seq
+Cannot open the gbest511.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest511
+parsing file: gbest512.seq
+Cannot open the gbest512.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest512
+parsing file: gbest513.seq
+Cannot open the gbest513.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest513
+parsing file: gbest514.seq
+Cannot open the gbest514.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest514
+parsing file: gbest515.seq
+Cannot open the gbest515.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest515
+parsing file: gbest516.seq
+Cannot open the gbest516.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest516
+parsing file: gbest517.seq
+Cannot open the gbest517.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest517
+parsing file: gbest518.seq
+Cannot open the gbest518.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest518
+parsing file: gbest519.seq
+Cannot open the gbest519.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest519
+parsing file: gbest51.seq
+Cannot open the gbest51.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest51
+parsing file: gbest520.seq
+Cannot open the gbest520.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest520
+parsing file: gbest521.seq
+Cannot open the gbest521.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest521
+parsing file: gbest522.seq
+Cannot open the gbest522.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest522
+parsing file: gbest523.seq
+Cannot open the gbest523.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest523
+parsing file: gbest524.seq
+Cannot open the gbest524.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest524
+parsing file: gbest525.seq
+Cannot open the gbest525.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest525
+parsing file: gbest526.seq
+Cannot open the gbest526.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest526
+parsing file: gbest527.seq
+Cannot open the gbest527.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest527
+parsing file: gbest528.seq
+Cannot open the gbest528.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest528
+parsing file: gbest529.seq
+Cannot open the gbest529.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest529
+parsing file: gbest52.seq
+Cannot open the gbest52.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest52
+parsing file: gbest530.seq
+Cannot open the gbest530.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest530
+parsing file: gbest531.seq
+Cannot open the gbest531.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest531
+parsing file: gbest532.seq
+Cannot open the gbest532.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest532
+parsing file: gbest533.seq
+Cannot open the gbest533.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest533
+parsing file: gbest534.seq
+Cannot open the gbest534.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest534
+parsing file: gbest535.seq
+Cannot open the gbest535.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest535
+parsing file: gbest536.seq
+Cannot open the gbest536.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest536
+parsing file: gbest537.seq
+Cannot open the gbest537.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest537
+parsing file: gbest538.seq
+Cannot open the gbest538.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest538
+parsing file: gbest539.seq
+Cannot open the gbest539.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest539
+parsing file: gbest53.seq
+Cannot open the gbest53.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest53
+parsing file: gbest540.seq
+Cannot open the gbest540.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest540
+parsing file: gbest541.seq
+Cannot open the gbest541.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest541
+parsing file: gbest542.seq
+Cannot open the gbest542.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest542
+parsing file: gbest543.seq
+Cannot open the gbest543.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest543
+parsing file: gbest544.seq
+Cannot open the gbest544.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest544
+parsing file: gbest545.seq
+Cannot open the gbest545.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest545
+parsing file: gbest546.seq
+Cannot open the gbest546.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest546
+parsing file: gbest547.seq
+Cannot open the gbest547.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest547
+parsing file: gbest548.seq
+Cannot open the gbest548.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest548
+parsing file: gbest549.seq
+Cannot open the gbest549.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest549
+parsing file: gbest54.seq
+Cannot open the gbest54.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest54
+parsing file: gbest550.seq
+Cannot open the gbest550.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest550
+parsing file: gbest551.seq
+Cannot open the gbest551.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest551
+parsing file: gbest552.seq
+Cannot open the gbest552.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest552
+parsing file: gbest553.seq
+Cannot open the gbest553.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest553
+parsing file: gbest554.seq
+Cannot open the gbest554.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest554
+parsing file: gbest555.seq
+Cannot open the gbest555.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest555
+parsing file: gbest556.seq
+Cannot open the gbest556.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest556
+parsing file: gbest557.seq
+Cannot open the gbest557.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest557
+parsing file: gbest558.seq
+Cannot open the gbest558.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest558
+parsing file: gbest559.seq
+Cannot open the gbest559.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest559
+parsing file: gbest55.seq
+Cannot open the gbest55.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest55
+parsing file: gbest560.seq
+Cannot open the gbest560.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest560
+parsing file: gbest561.seq
+Cannot open the gbest561.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest561
+parsing file: gbest562.seq
+Cannot open the gbest562.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest562
+parsing file: gbest563.seq
+Cannot open the gbest563.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest563
+parsing file: gbest564.seq
+Cannot open the gbest564.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest564
+parsing file: gbest565.seq
+Cannot open the gbest565.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest565
+parsing file: gbest566.seq
+Cannot open the gbest566.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest566
+parsing file: gbest567.seq
+Cannot open the gbest567.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest567
+parsing file: gbest568.seq
+Cannot open the gbest568.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest568
+parsing file: gbest569.seq
+Cannot open the gbest569.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest569
+parsing file: gbest56.seq
+Cannot open the gbest56.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest56
+parsing file: gbest570.seq
+Cannot open the gbest570.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest570
+parsing file: gbest571.seq
+Cannot open the gbest571.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest571
+parsing file: gbest572.seq
+Cannot open the gbest572.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest572
+parsing file: gbest573.seq
+Cannot open the gbest573.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest573
+parsing file: gbest574.seq
+Cannot open the gbest574.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest574
+parsing file: gbest57.seq
+Cannot open the gbest57.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest57
+parsing file: gbest58.seq
+Cannot open the gbest58.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest58
+parsing file: gbest59.seq
+Cannot open the gbest59.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest59
+parsing file: gbest5.seq
+Cannot open the gbest5.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest5
+parsing file: gbest60.seq
+Cannot open the gbest60.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest60
+parsing file: gbest61.seq
+Cannot open the gbest61.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest61
+parsing file: gbest62.seq
+Cannot open the gbest62.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest62
+parsing file: gbest63.seq
+Cannot open the gbest63.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest63
+parsing file: gbest64.seq
+Cannot open the gbest64.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest64
+parsing file: gbest65.seq
+Cannot open the gbest65.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest65
+parsing file: gbest66.seq
+Cannot open the gbest66.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest66
+parsing file: gbest67.seq
+Cannot open the gbest67.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest67
+parsing file: gbest68.seq
+Cannot open the gbest68.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest68
+parsing file: gbest69.seq
+Cannot open the gbest69.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest69
+parsing file: gbest6.seq
+Cannot open the gbest6.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest6
+parsing file: gbest70.seq
+Cannot open the gbest70.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest70
+parsing file: gbest71.seq
+Cannot open the gbest71.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest71
+parsing file: gbest72.seq
+Cannot open the gbest72.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest72
+parsing file: gbest73.seq
+Cannot open the gbest73.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest73
+parsing file: gbest74.seq
+Cannot open the gbest74.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest74
+parsing file: gbest75.seq
+Cannot open the gbest75.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest75
+parsing file: gbest76.seq
+Cannot open the gbest76.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest76
+parsing file: gbest77.seq
+Cannot open the gbest77.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest77
+parsing file: gbest78.seq
+Cannot open the gbest78.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest78
+parsing file: gbest79.seq
+Cannot open the gbest79.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest79
+parsing file: gbest7.seq
+Cannot open the gbest7.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest7
+parsing file: gbest80.seq
+Cannot open the gbest80.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest80
+parsing file: gbest81.seq
+Cannot open the gbest81.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest81
+parsing file: gbest82.seq
+Cannot open the gbest82.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest82
+parsing file: gbest83.seq
+Cannot open the gbest83.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest83
+parsing file: gbest84.seq
+Cannot open the gbest84.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest84
+parsing file: gbest85.seq
+Cannot open the gbest85.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest85
+parsing file: gbest86.seq
+Cannot open the gbest86.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest86
+parsing file: gbest87.seq
+Cannot open the gbest87.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest87
+parsing file: gbest88.seq
+Cannot open the gbest88.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest88
+parsing file: gbest89.seq
+Cannot open the gbest89.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest89
+parsing file: gbest8.seq
+Cannot open the gbest8.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest8
+parsing file: gbest90.seq
+Cannot open the gbest90.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest90
+parsing file: gbest91.seq
+Cannot open the gbest91.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest91
+parsing file: gbest92.seq
+Cannot open the gbest92.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest92
+parsing file: gbest93.seq
+Cannot open the gbest93.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest93
+parsing file: gbest94.seq
+Cannot open the gbest94.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest94
+parsing file: gbest95.seq
+Cannot open the gbest95.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest95
+parsing file: gbest96.seq
+Cannot open the gbest96.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest96
+parsing file: gbest97.seq
+Cannot open the gbest97.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest97
+parsing file: gbest98.seq
+Cannot open the gbest98.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest98
+parsing file: gbest99.seq
+Cannot open the gbest99.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest99
+parsing file: gbest9.seq
+Cannot open the gbest9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbest9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./est_zf_mrna.fa: input file is output file
+cat: ./est_zf_dna.fa: input file is output file
+cat: ./est_zf_oth_rna.fa: input file is output file
+cat: ./est_zf_acc.unl: input file is output file
+cat: ./est_hs_mrna.fa: input file is output file
+cat: ./est_hs_dna.fa: input file is output file
+cat: ./est_ms_mrna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of est files GenBank |==
+in gss
+==| unzip gss files GenBank |==
+gbgss*.seq.gz
+gzip: gbgss101.seq already exists;	not overwritten
+gzip: gbgss103.seq already exists;	not overwritten
+gzip: gbgss105.seq already exists;	not overwritten
+gzip: gbgss107.seq already exists;	not overwritten
+gzip: gbgss10.seq.gz: No such file or directory
+gzip: gbgss110.seq already exists;	not overwritten
+gzip: gbgss112.seq already exists;	not overwritten
+gzip: gbgss114.seq already exists;	not overwritten
+gzip: gbgss116.seq already exists;	not overwritten
+gzip: gbgss118.seq already exists;	not overwritten
+gzip: gbgss120.seq already exists;	not overwritten
+gzip: gbgss122.seq.gz: No such file or directory
+gzip: gbgss123.seq already exists;	not overwritten
+gzip: gbgss125.seq already exists;	not overwritten
+gzip: gbgss127.seq already exists;	not overwritten
+gzip: gbgss129.seq already exists;	not overwritten
+gzip: gbgss130.seq already exists;	not overwritten
+gzip: gbgss133.seq already exists;	not overwritten
+gzip: gbgss135.seq already exists;	not overwritten
+gzip: gbgss137.seq already exists;	not overwritten
+gzip: gbgss13.seq already exists;	not overwritten
+gzip: gbgss141.seq already exists;	not overwritten
+gzip: gbgss143.seq.gz: No such file or directory
+gzip: gbgss144.seq already exists;	not overwritten
+gzip: gbgss146.seq already exists;	not overwritten
+gzip: gbgss148.seq.gz: No such file or directory
+gzip: gbgss149.seq already exists;	not overwritten
+gzip: gbgss151.seq already exists;	not overwritten
+gzip: gbgss153.seq.gz: No such file or directory
+gzip: gbgss154.seq already exists;	not overwritten
+gzip: gbgss156.seq already exists;	not overwritten
+gzip: gbgss158.seq already exists;	not overwritten
+gzip: gbgss15.seq already exists;	not overwritten
+gzip: gbgss161.seq already exists;	not overwritten
+gzip: gbgss163.seq already exists;	not overwritten
+gzip: gbgss165.seq already exists;	not overwritten
+gzip: gbgss167.seq already exists;	not overwritten
+gzip: gbgss169.seq already exists;	not overwritten
+gzip: gbgss170.seq already exists;	not overwritten
+gzip: gbgss172.seq already exists;	not overwritten
+gzip: gbgss175.seq already exists;	not overwritten
+gzip: gbgss177.seq already exists;	not overwritten
+gzip: gbgss17.seq already exists;	not overwritten
+gzip: gbgss181.seq.gz: No such file or directory
+gzip: gbgss182.seq already exists;	not overwritten
+gzip: gbgss184.seq already exists;	not overwritten
+gzip: gbgss186.seq.gz: No such file or directory
+gzip: gbgss187.seq already exists;	not overwritten
+gzip: gbgss189.seq.gz: No such file or directory
+gzip: gbgss18.seq already exists;	not overwritten
+gzip: gbgss191.seq already exists;	not overwritten
+gzip: gbgss193.seq already exists;	not overwritten
+gzip: gbgss195.seq already exists;	not overwritten
+gzip: gbgss197.seq already exists;	not overwritten
+gzip: gbgss19.seq already exists;	not overwritten
+gzip: gbgss200.seq already exists;	not overwritten
+gzip: gbgss202.seq already exists;	not overwritten
+gzip: gbgss205.seq.gz: No such file or directory
+gzip: gbgss206.seq already exists;	not overwritten
+gzip: gbgss208.seq already exists;	not overwritten
+gzip: gbgss20.seq.gz: No such file or directory
+gzip: gbgss210.seq already exists;	not overwritten
+gzip: gbgss212.seq already exists;	not overwritten
+gzip: gbgss215.seq already exists;	not overwritten
+gzip: gbgss217.seq already exists;	not overwritten
+gzip: gbgss219.seq already exists;	not overwritten
+gzip: gbgss220.seq already exists;	not overwritten
+gzip: gbgss223.seq already exists;	not overwritten
+gzip: gbgss225.seq.gz: No such file or directory
+gzip: gbgss226.seq already exists;	not overwritten
+gzip: gbgss228.seq already exists;	not overwritten
+gzip: gbgss22.seq already exists;	not overwritten
+gzip: gbgss231.seq already exists;	not overwritten
+gzip: gbgss233.seq already exists;	not overwritten
+gzip: gbgss235.seq already exists;	not overwritten
+gzip: gbgss238.seq already exists;	not overwritten
+gzip: gbgss23.seq already exists;	not overwritten
+gzip: gbgss241.seq already exists;	not overwritten
+gzip: gbgss244.seq already exists;	not overwritten
+gzip: gbgss246.seq already exists;	not overwritten
+gzip: gbgss248.seq already exists;	not overwritten
+gzip: gbgss250.seq already exists;	not overwritten
+gzip: gbgss252.seq.gz: No such file or directory
+gzip: gbgss253.seq already exists;	not overwritten
+gzip: gbgss255.seq already exists;	not overwritten
+gzip: gbgss257.seq.gz: No such file or directory
+gzip: gbgss258.seq already exists;	not overwritten
+gzip: gbgss25.seq.gz: No such file or directory
+gzip: gbgss260.seq already exists;	not overwritten
+gzip: gbgss263.seq already exists;	not overwritten
+gzip: gbgss265.seq already exists;	not overwritten
+gzip: gbgss267.seq already exists;	not overwritten
+gzip: gbgss27.seq already exists;	not overwritten
+gzip: gbgss29.seq already exists;	not overwritten
+gzip: gbgss30.seq.gz: No such file or directory
+gzip: gbgss31.seq already exists;	not overwritten
+gzip: gbgss33.seq already exists;	not overwritten
+gzip: gbgss35.seq already exists;	not overwritten
+gzip: gbgss37.seq already exists;	not overwritten
+gzip: gbgss39.seq.gz: No such file or directory
+gzip: gbgss3.seq already exists;	not overwritten
+gzip: gbgss41.seq already exists;	not overwritten
+gzip: gbgss44.seq already exists;	not overwritten
+gzip: gbgss46.seq already exists;	not overwritten
+gzip: gbgss48.seq already exists;	not overwritten
+gzip: gbgss4.seq already exists;	not overwritten
+gzip: gbgss51.seq already exists;	not overwritten
+gzip: gbgss54.seq.gz: No such file or directory
+gzip: gbgss55.seq already exists;	not overwritten
+gzip: gbgss58.seq.gz: No such file or directory
+gzip: gbgss59.seq already exists;	not overwritten
+gzip: gbgss61.seq already exists;	not overwritten
+gzip: gbgss62.seq already exists;	not overwritten
+gzip: gbgss65.seq already exists;	not overwritten
+gzip: gbgss67.seq already exists;	not overwritten
+gzip: gbgss69.seq already exists;	not overwritten
+gzip: gbgss70.seq already exists;	not overwritten
+gzip: gbgss72.seq already exists;	not overwritten
+gzip: gbgss74.seq already exists;	not overwritten
+gzip: gbgss77.seq already exists;	not overwritten
+gzip: gbgss79.seq already exists;	not overwritten
+gzip: gbgss80.seq already exists;	not overwritten
+gzip: gbgss82.seq already exists;	not overwritten
+gzip: gbgss84.seq.gz: No such file or directory
+gzip: gbgss85.seq already exists;	not overwritten
+gzip: gbgss87.seq already exists;	not overwritten
+gzip: gbgss8.seq already exists;	not overwritten
+gzip: gbgss92.seq already exists;	not overwritten
+gzip: gbgss94.seq.gz: No such file or directory
+gzip: gbgss95.seq already exists;	not overwritten
+gzip: gbgss97.seq already exists;	not overwritten
+gzip: gbgss99.seq.gz: No such file or directory
+gzip: gbgss9.seq already exists;	not overwritten
+==| parse gss files GenBank|==
+parsing file: gbgss100.seq
+gbgss100
+parsing file: gbgss101.seq
+gbgss101
+parsing file: gbgss102.seq
+gbgss102
+parsing file: gbgss103.seq
+gbgss103
+parsing file: gbgss104.seq
+gbgss104
+parsing file: gbgss105.seq
+gbgss105
+parsing file: gbgss106.seq
+gbgss106
+parsing file: gbgss107.seq
+gbgss107
+parsing file: gbgss108.seq
+gbgss108
+parsing file: gbgss109.seq
+gbgss109
+parsing file: gbgss10.seq
+gbgss10
+parsing file: gbgss110.seq
+gbgss110
+parsing file: gbgss111.seq
+gbgss111
+parsing file: gbgss112.seq
+gbgss112
+parsing file: gbgss113.seq
+gbgss113
+parsing file: gbgss114.seq
+gbgss114
+parsing file: gbgss115.seq
+gbgss115
+parsing file: gbgss116.seq
+gbgss116
+parsing file: gbgss117.seq
+gbgss117
+parsing file: gbgss118.seq
+gbgss118
+parsing file: gbgss119.seq
+gbgss119
+parsing file: gbgss11.seq
+gbgss11
+parsing file: gbgss120.seq
+gbgss120
+parsing file: gbgss121.seq
+gbgss121
+parsing file: gbgss122.seq
+gbgss122
+parsing file: gbgss123.seq
+gbgss123
+parsing file: gbgss124.seq
+gbgss124
+parsing file: gbgss125.seq
+gbgss125
+parsing file: gbgss126.seq
+gbgss126
+parsing file: gbgss127.seq
+gbgss127
+parsing file: gbgss128.seq
+gbgss128
+parsing file: gbgss129.seq
+gbgss129
+parsing file: gbgss12.seq
+gbgss12
+parsing file: gbgss130.seq
+gbgss130
+parsing file: gbgss131.seq
+gbgss131
+parsing file: gbgss132.seq
+gbgss132
+parsing file: gbgss133.seq
+gbgss133
+parsing file: gbgss134.seq
+gbgss134
+parsing file: gbgss135.seq
+gbgss135
+parsing file: gbgss136.seq
+gbgss136
+parsing file: gbgss137.seq
+gbgss137
+parsing file: gbgss138.seq
+gbgss138
+parsing file: gbgss139.seq
+gbgss139
+parsing file: gbgss13.seq
+gbgss13
+parsing file: gbgss140.seq
+gbgss140
+parsing file: gbgss141.seq
+gbgss141
+parsing file: gbgss142.seq
+gbgss142
+parsing file: gbgss143.seq
+gbgss143
+parsing file: gbgss144.seq
+gbgss144
+parsing file: gbgss145.seq
+gbgss145
+parsing file: gbgss146.seq
+gbgss146
+parsing file: gbgss147.seq
+gbgss147
+parsing file: gbgss148.seq
+gbgss148
+parsing file: gbgss149.seq
+gbgss149
+parsing file: gbgss14.seq
+gbgss14
+parsing file: gbgss150.seq
+gbgss150
+parsing file: gbgss151.seq
+gbgss151
+parsing file: gbgss152.seq
+gbgss152
+parsing file: gbgss153.seq
+gbgss153
+parsing file: gbgss154.seq
+gbgss154
+parsing file: gbgss155.seq
+gbgss155
+parsing file: gbgss156.seq
+gbgss156
+parsing file: gbgss157.seq
+gbgss157
+parsing file: gbgss158.seq
+gbgss158
+parsing file: gbgss159.seq
+gbgss159
+parsing file: gbgss15.seq
+gbgss15
+parsing file: gbgss160.seq
+gbgss160
+parsing file: gbgss161.seq
+gbgss161
+parsing file: gbgss162.seq
+gbgss162
+parsing file: gbgss163.seq
+gbgss163
+parsing file: gbgss164.seq
+gbgss164
+parsing file: gbgss165.seq
+gbgss165
+parsing file: gbgss166.seq
+gbgss166
+parsing file: gbgss167.seq
+gbgss167
+parsing file: gbgss168.seq
+gbgss168
+parsing file: gbgss169.seq
+gbgss169
+parsing file: gbgss16.seq
+gbgss16
+parsing file: gbgss170.seq
+gbgss170
+parsing file: gbgss171.seq
+gbgss171
+parsing file: gbgss172.seq
+gbgss172
+parsing file: gbgss173.seq
+gbgss173
+parsing file: gbgss174.seq
+gbgss174
+parsing file: gbgss175.seq
+gbgss175
+parsing file: gbgss176.seq
+gbgss176
+parsing file: gbgss177.seq
+gbgss177
+parsing file: gbgss178.seq
+gbgss178
+parsing file: gbgss179.seq
+gbgss179
+parsing file: gbgss17.seq
+gbgss17
+parsing file: gbgss180.seq
+gbgss180
+parsing file: gbgss181.seq
+gbgss181
+parsing file: gbgss182.seq
+gbgss182
+parsing file: gbgss183.seq
+gbgss183
+parsing file: gbgss184.seq
+gbgss184
+parsing file: gbgss185.seq
+gbgss185
+parsing file: gbgss186.seq
+gbgss186
+parsing file: gbgss187.seq
+gbgss187
+parsing file: gbgss188.seq
+gbgss188
+parsing file: gbgss189.seq
+gbgss189
+parsing file: gbgss18.seq
+gbgss18
+parsing file: gbgss190.seq
+gbgss190
+parsing file: gbgss191.seq
+gbgss191
+parsing file: gbgss192.seq
+gbgss192
+parsing file: gbgss193.seq
+gbgss193
+parsing file: gbgss194.seq
+gbgss194
+parsing file: gbgss195.seq
+gbgss195
+parsing file: gbgss196.seq
+gbgss196
+parsing file: gbgss197.seq
+gbgss197
+parsing file: gbgss198.seq
+gbgss198
+parsing file: gbgss199.seq
+gbgss199
+parsing file: gbgss19.seq
+gbgss19
+parsing file: gbgss1.seq
+gbgss1
+parsing file: gbgss200.seq
+gbgss200
+parsing file: gbgss201.seq
+gbgss201
+parsing file: gbgss202.seq
+gbgss202
+parsing file: gbgss203.seq
+gbgss203
+parsing file: gbgss204.seq
+gbgss204
+parsing file: gbgss205.seq
+gbgss205
+parsing file: gbgss206.seq
+gbgss206
+parsing file: gbgss207.seq
+gbgss207
+parsing file: gbgss208.seq
+gbgss208
+parsing file: gbgss209.seq
+gbgss209
+parsing file: gbgss20.seq
+gbgss20
+parsing file: gbgss210.seq
+gbgss210
+parsing file: gbgss211.seq
+gbgss211
+parsing file: gbgss212.seq
+gbgss212
+parsing file: gbgss213.seq
+gbgss213
+parsing file: gbgss214.seq
+gbgss214
+parsing file: gbgss215.seq
+gbgss215
+parsing file: gbgss216.seq
+gbgss216
+parsing file: gbgss217.seq
+gbgss217
+parsing file: gbgss218.seq
+gbgss218
+parsing file: gbgss219.seq
+gbgss219
+parsing file: gbgss21.seq
+gbgss21
+parsing file: gbgss220.seq
+gbgss220
+parsing file: gbgss221.seq
+gbgss221
+parsing file: gbgss222.seq
+gbgss222
+parsing file: gbgss223.seq
+gbgss223
+parsing file: gbgss224.seq
+gbgss224
+parsing file: gbgss225.seq
+gbgss225
+parsing file: gbgss226.seq
+gbgss226
+parsing file: gbgss227.seq
+gbgss227
+parsing file: gbgss228.seq
+gbgss228
+parsing file: gbgss229.seq
+gbgss229
+parsing file: gbgss22.seq
+gbgss22
+parsing file: gbgss230.seq
+gbgss230
+parsing file: gbgss231.seq
+gbgss231
+parsing file: gbgss232.seq
+gbgss232
+parsing file: gbgss233.seq
+gbgss233
+parsing file: gbgss234.seq
+gbgss234
+parsing file: gbgss235.seq
+gbgss235
+parsing file: gbgss236.seq
+gbgss236
+parsing file: gbgss237.seq
+gbgss237
+parsing file: gbgss238.seq
+gbgss238
+parsing file: gbgss239.seq
+gbgss239
+parsing file: gbgss23.seq
+gbgss23
+parsing file: gbgss240.seq
+gbgss240
+parsing file: gbgss241.seq
+gbgss241
+parsing file: gbgss242.seq
+gbgss242
+parsing file: gbgss243.seq
+gbgss243
+parsing file: gbgss244.seq
+gbgss244
+parsing file: gbgss245.seq
+gbgss245
+parsing file: gbgss246.seq
+gbgss246
+parsing file: gbgss247.seq
+gbgss247
+parsing file: gbgss248.seq
+gbgss248
+parsing file: gbgss249.seq
+gbgss249
+parsing file: gbgss24.seq
+gbgss24
+parsing file: gbgss250.seq
+gbgss250
+parsing file: gbgss251.seq
+gbgss251
+parsing file: gbgss252.seq
+gbgss252
+parsing file: gbgss253.seq
+gbgss253
+parsing file: gbgss254.seq
+gbgss254
+parsing file: gbgss255.seq
+gbgss255
+parsing file: gbgss256.seq
+gbgss256
+parsing file: gbgss257.seq
+gbgss257
+parsing file: gbgss258.seq
+gbgss258
+parsing file: gbgss259.seq
+gbgss259
+parsing file: gbgss25.seq
+gbgss25
+parsing file: gbgss260.seq
+gbgss260
+parsing file: gbgss261.seq
+gbgss261
+parsing file: gbgss262.seq
+gbgss262
+parsing file: gbgss263.seq
+gbgss263
+parsing file: gbgss264.seq
+gbgss264
+parsing file: gbgss265.seq
+gbgss265
+parsing file: gbgss266.seq
+gbgss266
+parsing file: gbgss267.seq
+gbgss267
+parsing file: gbgss268.seq
+gbgss268
+parsing file: gbgss26.seq
+gbgss26
+parsing file: gbgss27.seq
+gbgss27
+parsing file: gbgss28.seq
+gbgss28
+parsing file: gbgss29.seq
+gbgss29
+parsing file: gbgss2.seq
+gbgss2
+parsing file: gbgss30.seq
+gbgss30
+parsing file: gbgss31.seq
+gbgss31
+parsing file: gbgss32.seq
+gbgss32
+parsing file: gbgss33.seq
+gbgss33
+parsing file: gbgss34.seq
+gbgss34
+parsing file: gbgss35.seq
+gbgss35
+parsing file: gbgss36.seq
+gbgss36
+parsing file: gbgss37.seq
+gbgss37
+parsing file: gbgss38.seq
+gbgss38
+parsing file: gbgss39.seq
+gbgss39
+parsing file: gbgss3.seq
+gbgss3
+parsing file: gbgss40.seq
+gbgss40
+parsing file: gbgss41.seq
+gbgss41
+parsing file: gbgss42.seq
+gbgss42
+parsing file: gbgss43.seq
+gbgss43
+parsing file: gbgss44.seq
+gbgss44
+parsing file: gbgss45.seq
+gbgss45
+parsing file: gbgss46.seq
+gbgss46
+parsing file: gbgss47.seq
+gbgss47
+parsing file: gbgss48.seq
+gbgss48
+parsing file: gbgss49.seq
+gbgss49
+parsing file: gbgss4.seq
+gbgss4
+parsing file: gbgss50.seq
+gbgss50
+parsing file: gbgss51.seq
+gbgss51
+parsing file: gbgss52.seq
+gbgss52
+parsing file: gbgss53.seq
+gbgss53
+parsing file: gbgss54.seq
+gbgss54
+parsing file: gbgss55.seq
+gbgss55
+parsing file: gbgss56.seq
+gbgss56
+parsing file: gbgss57.seq
+gbgss57
+parsing file: gbgss58.seq
+gbgss58
+parsing file: gbgss59.seq
+gbgss59
+parsing file: gbgss5.seq
+gbgss5
+parsing file: gbgss60.seq
+gbgss60
+parsing file: gbgss61.seq
+gbgss61
+parsing file: gbgss62.seq
+gbgss62
+parsing file: gbgss63.seq
+gbgss63
+parsing file: gbgss64.seq
+gbgss64
+parsing file: gbgss65.seq
+gbgss65
+parsing file: gbgss66.seq
+gbgss66
+parsing file: gbgss67.seq
+gbgss67
+parsing file: gbgss68.seq
+gbgss68
+parsing file: gbgss69.seq
+gbgss69
+parsing file: gbgss6.seq
+gbgss6
+parsing file: gbgss70.seq
+gbgss70
+parsing file: gbgss71.seq
+gbgss71
+parsing file: gbgss72.seq
+gbgss72
+parsing file: gbgss73.seq
+gbgss73
+parsing file: gbgss74.seq
+gbgss74
+parsing file: gbgss75.seq
+gbgss75
+parsing file: gbgss76.seq
+gbgss76
+parsing file: gbgss77.seq
+gbgss77
+parsing file: gbgss78.seq
+gbgss78
+parsing file: gbgss79.seq
+gbgss79
+parsing file: gbgss7.seq
+gbgss7
+parsing file: gbgss80.seq
+gbgss80
+parsing file: gbgss81.seq
+gbgss81
+parsing file: gbgss82.seq
+gbgss82
+parsing file: gbgss83.seq
+gbgss83
+parsing file: gbgss84.seq
+gbgss84
+parsing file: gbgss85.seq
+gbgss85
+parsing file: gbgss86.seq
+gbgss86
+parsing file: gbgss87.seq
+gbgss87
+parsing file: gbgss88.seq
+gbgss88
+parsing file: gbgss89.seq
+gbgss89
+parsing file: gbgss8.seq
+gbgss8
+parsing file: gbgss90.seq
+gbgss90
+parsing file: gbgss91.seq
+gbgss91
+parsing file: gbgss92.seq
+gbgss92
+parsing file: gbgss93.seq
+gbgss93
+parsing file: gbgss94.seq
+gbgss94
+parsing file: gbgss95.seq
+gbgss95
+parsing file: gbgss96.seq
+gbgss96
+parsing file: gbgss97.seq
+Cannot open the gbgss97.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbgss97
+parsing file: gbgss98.seq
+Cannot open the gbgss98.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbgss98
+parsing file: gbgss99.seq
+Cannot open the gbgss99.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbgss99
+parsing file: gbgss9.seq
+Cannot open the gbgss9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbgss9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./gss_zf_oth_rna.fa: input file is output file
+cat: ./gss_zf_acc.unl: input file is output file
+cat: ./gss_hs_mrna.fa: input file is output file
+cat: ./gss_hs_dna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of gss files GenBank |==
+in htc
+==| unzip htc files GenBank |==
+gbhtc*.seq.gz
+gzip: gbhtc2.seq already exists;	not overwritten
+gzip: gbhtc4.seq.gz: No such file or directory
+gzip: gbhtc5.seq already exists;	not overwritten
+gzip: gbhtc8.seq.gz: No such file or directory
+==| parse htc files GenBank|==
+parsing file: gbhtc1.seq
+gbhtc1
+parsing file: gbhtc2.seq
+gbhtc2
+parsing file: gbhtc3.seq
+gbhtc3
+parsing file: gbhtc4.seq
+gbhtc4
+parsing file: gbhtc5.seq
+gbhtc5
+parsing file: gbhtc6.seq
+gbhtc6
+parsing file: gbhtc7.seq
+gbhtc7
+parsing file: gbhtc8.seq
+gbhtc8
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./htc_zf_mrna.fa: input file is output file
+cat: ./htc_zf_dna.fa: input file is output file
+cat: ./htc_zf_oth_rna.fa: input file is output file
+cat: ./htc_zf_acc.unl: input file is output file
+cat: ./htc_hs_mrna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of htc files GenBank |==
+in htg
+==| unzip htg files GenBank |==
+gbhtg*.seq.gz
+gzip: gbhtg11.seq already exists;	not overwritten
+gzip: gbhtg13.seq already exists;	not overwritten
+gzip: gbhtg15.seq already exists;	not overwritten
+gzip: gbhtg17.seq already exists;	not overwritten
+gzip: gbhtg19.seq already exists;	not overwritten
+gzip: gbhtg20.seq already exists;	not overwritten
+gzip: gbhtg22.seq already exists;	not overwritten
+gzip: gbhtg25.seq already exists;	not overwritten
+gzip: gbhtg27.seq already exists;	not overwritten
+gzip: gbhtg29.seq.gz: No such file or directory
+gzip: gbhtg2.seq already exists;	not overwritten
+gzip: gbhtg31.seq already exists;	not overwritten
+gzip: gbhtg34.seq already exists;	not overwritten
+gzip: gbhtg37.seq already exists;	not overwritten
+gzip: gbhtg39.seq already exists;	not overwritten
+gzip: gbhtg40.seq already exists;	not overwritten
+gzip: gbhtg43.seq already exists;	not overwritten
+gzip: gbhtg45.seq already exists;	not overwritten
+gzip: gbhtg48.seq already exists;	not overwritten
+gzip: gbhtg4.seq already exists;	not overwritten
+gzip: gbhtg52.seq already exists;	not overwritten
+gzip: gbhtg55.seq already exists;	not overwritten
+gzip: gbhtg57.seq already exists;	not overwritten
+gzip: gbhtg59.seq already exists;	not overwritten
+gzip: gbhtg60.seq already exists;	not overwritten
+gzip: gbhtg62.seq already exists;	not overwritten
+gzip: gbhtg64.seq already exists;	not overwritten
+gzip: gbhtg66.seq already exists;	not overwritten
+gzip: gbhtg68.seq already exists;	not overwritten
+gzip: gbhtg6.seq.gz: No such file or directory
+gzip: gbhtg70.seq already exists;	not overwritten
+gzip: gbhtg72.seq already exists;	not overwritten
+gzip: gbhtg74.seq already exists;	not overwritten
+gzip: gbhtg77.seq already exists;	not overwritten
+gzip: gbhtg79.seq already exists;	not overwritten
+gzip: gbhtg80.seq already exists;	not overwritten
+gzip: gbhtg82.seq already exists;	not overwritten
+gzip: gbhtg9.seq already exists;	not overwritten
+==| parse htg files GenBank|==
+parsing file: gbhtg10.seq
+gbhtg10
+parsing file: gbhtg11.seq
+gbhtg11
+parsing file: gbhtg12.seq
+gbhtg12
+parsing file: gbhtg13.seq
+gbhtg13
+parsing file: gbhtg14.seq
+gbhtg14
+parsing file: gbhtg15.seq
+gbhtg15
+parsing file: gbhtg16.seq
+gbhtg16
+parsing file: gbhtg17.seq
+gbhtg17
+parsing file: gbhtg18.seq
+gbhtg18
+parsing file: gbhtg19.seq
+gbhtg19
+parsing file: gbhtg1.seq
+gbhtg1
+parsing file: gbhtg20.seq
+gbhtg20
+parsing file: gbhtg21.seq
+gbhtg21
+parsing file: gbhtg22.seq
+gbhtg22
+parsing file: gbhtg23.seq
+gbhtg23
+parsing file: gbhtg24.seq
+gbhtg24
+parsing file: gbhtg25.seq
+gbhtg25
+parsing file: gbhtg26.seq
+gbhtg26
+parsing file: gbhtg27.seq
+gbhtg27
+parsing file: gbhtg28.seq
+gbhtg28
+parsing file: gbhtg29.seq
+gbhtg29
+parsing file: gbhtg2.seq
+gbhtg2
+parsing file: gbhtg30.seq
+gbhtg30
+parsing file: gbhtg31.seq
+gbhtg31
+parsing file: gbhtg32.seq
+gbhtg32
+parsing file: gbhtg33.seq
+gbhtg33
+parsing file: gbhtg34.seq
+gbhtg34
+parsing file: gbhtg35.seq
+gbhtg35
+parsing file: gbhtg36.seq
+gbhtg36
+parsing file: gbhtg37.seq
+gbhtg37
+parsing file: gbhtg38.seq
+gbhtg38
+parsing file: gbhtg39.seq
+gbhtg39
+parsing file: gbhtg3.seq
+gbhtg3
+parsing file: gbhtg40.seq
+gbhtg40
+parsing file: gbhtg41.seq
+gbhtg41
+parsing file: gbhtg42.seq
+gbhtg42
+parsing file: gbhtg43.seq
+gbhtg43
+parsing file: gbhtg44.seq
+gbhtg44
+parsing file: gbhtg45.seq
+gbhtg45
+parsing file: gbhtg46.seq
+gbhtg46
+parsing file: gbhtg47.seq
+gbhtg47
+parsing file: gbhtg48.seq
+gbhtg48
+parsing file: gbhtg49.seq
+gbhtg49
+parsing file: gbhtg4.seq
+gbhtg4
+parsing file: gbhtg50.seq
+gbhtg50
+parsing file: gbhtg51.seq
+gbhtg51
+parsing file: gbhtg52.seq
+gbhtg52
+parsing file: gbhtg53.seq
+gbhtg53
+parsing file: gbhtg54.seq
+gbhtg54
+parsing file: gbhtg55.seq
+gbhtg55
+parsing file: gbhtg56.seq
+gbhtg56
+parsing file: gbhtg57.seq
+gbhtg57
+parsing file: gbhtg58.seq
+gbhtg58
+parsing file: gbhtg59.seq
+gbhtg59
+parsing file: gbhtg5.seq
+gbhtg5
+parsing file: gbhtg60.seq
+gbhtg60
+parsing file: gbhtg61.seq
+gbhtg61
+parsing file: gbhtg62.seq
+gbhtg62
+parsing file: gbhtg63.seq
+gbhtg63
+parsing file: gbhtg64.seq
+gbhtg64
+parsing file: gbhtg65.seq
+gbhtg65
+parsing file: gbhtg66.seq
+gbhtg66
+parsing file: gbhtg67.seq
+gbhtg67
+parsing file: gbhtg68.seq
+gbhtg68
+parsing file: gbhtg69.seq
+gbhtg69
+parsing file: gbhtg6.seq
+gbhtg6
+parsing file: gbhtg70.seq
+gbhtg70
+parsing file: gbhtg71.seq
+gbhtg71
+parsing file: gbhtg72.seq
+gbhtg72
+parsing file: gbhtg73.seq
+gbhtg73
+parsing file: gbhtg74.seq
+gbhtg74
+parsing file: gbhtg75.seq
+gbhtg75
+parsing file: gbhtg76.seq
+gbhtg76
+parsing file: gbhtg77.seq
+gbhtg77
+parsing file: gbhtg78.seq
+gbhtg78
+parsing file: gbhtg79.seq
+gbhtg79
+parsing file: gbhtg7.seq
+gbhtg7
+parsing file: gbhtg80.seq
+gbhtg80
+parsing file: gbhtg81.seq
+gbhtg81
+parsing file: gbhtg82.seq
+Cannot open the gbhtg82.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbhtg82
+parsing file: gbhtg8.seq
+Cannot open the gbhtg8.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbhtg8
+parsing file: gbhtg9.seq
+Cannot open the gbhtg9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbhtg9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./htg_zf_mrna.fa: input file is output file
+cat: ./htg_zf_dna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of htg files GenBank |==
+in pri
+==| unzip pri files GenBank |==
+gbpri*.seq.gz
+gzip: gbpri11.seq already exists;	not overwritten
+gzip: gbpri13.seq already exists;	not overwritten
+gzip: gbpri17.seq already exists;	not overwritten
+gzip: gbpri19.seq already exists;	not overwritten
+gzip: gbpri20.seq already exists;	not overwritten
+gzip: gbpri22.seq already exists;	not overwritten
+gzip: gbpri24.seq already exists;	not overwritten
+gzip: gbpri26.seq already exists;	not overwritten
+gzip: gbpri28.seq already exists;	not overwritten
+gzip: gbpri2.seq already exists;	not overwritten
+gzip: gbpri32.seq already exists;	not overwritten
+gzip: gbpri34.seq already exists;	not overwritten
+gzip: gbpri36.seq already exists;	not overwritten
+gzip: gbpri39.seq already exists;	not overwritten
+gzip: gbpri40.seq.gz: No such file or directory
+gzip: gbpri41.seq already exists;	not overwritten
+gzip: gbpri43.seq already exists;	not overwritten
+gzip: gbpri45.seq.gz: No such file or directory
+gzip: gbpri4.seq already exists;	not overwritten
+gzip: gbpri6.seq already exists;	not overwritten
+gzip: gbpri8.seq already exists;	not overwritten
+==| parse pri files GenBank|==
+parsing file: gbpri10.seq
+gbpri10
+parsing file: gbpri11.seq
+gbpri11
+parsing file: gbpri12.seq
+gbpri12
+parsing file: gbpri13.seq
+gbpri13
+parsing file: gbpri14.seq
+gbpri14
+parsing file: gbpri15.seq
+gbpri15
+parsing file: gbpri16.seq
+gbpri16
+parsing file: gbpri17.seq
+gbpri17
+parsing file: gbpri18.seq
+gbpri18
+parsing file: gbpri19.seq
+gbpri19
+parsing file: gbpri1.seq
+gbpri1
+parsing file: gbpri20.seq
+gbpri20
+parsing file: gbpri21.seq
+gbpri21
+parsing file: gbpri22.seq
+gbpri22
+parsing file: gbpri23.seq
+gbpri23
+parsing file: gbpri24.seq
+gbpri24
+parsing file: gbpri25.seq
+gbpri25
+parsing file: gbpri26.seq
+gbpri26
+parsing file: gbpri27.seq
+gbpri27
+parsing file: gbpri28.seq
+gbpri28
+parsing file: gbpri29.seq
+gbpri29
+parsing file: gbpri2.seq
+gbpri2
+parsing file: gbpri30.seq
+gbpri30
+parsing file: gbpri31.seq
+gbpri31
+parsing file: gbpri32.seq
+gbpri32
+parsing file: gbpri33.seq
+gbpri33
+parsing file: gbpri34.seq
+gbpri34
+parsing file: gbpri35.seq
+gbpri35
+parsing file: gbpri36.seq
+gbpri36
+parsing file: gbpri37.seq
+gbpri37
+parsing file: gbpri38.seq
+gbpri38
+parsing file: gbpri39.seq
+gbpri39
+parsing file: gbpri3.seq
+gbpri3
+parsing file: gbpri40.seq
+gbpri40
+parsing file: gbpri41.seq
+gbpri41
+parsing file: gbpri42.seq
+gbpri42
+parsing file: gbpri43.seq
+gbpri43
+parsing file: gbpri44.seq
+gbpri44
+parsing file: gbpri45.seq
+gbpri45
+parsing file: gbpri4.seq
+gbpri4
+parsing file: gbpri5.seq
+gbpri5
+parsing file: gbpri6.seq
+gbpri6
+parsing file: gbpri7.seq
+gbpri7
+parsing file: gbpri8.seq
+gbpri8
+parsing file: gbpri9.seq
+Cannot open the gbpri9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbpri9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./pri_zf_mrna.fa: input file is output file
+cat: ./pri_zf_dna.fa: input file is output file
+cat: ./pri_zf_oth_rna.fa: input file is output file
+cat: ./pri_zf_acc.unl: input file is output file
+cat: ./pri_hs_mrna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of pri files GenBank |==
+in rod
+==| unzip rod files GenBank |==
+gbrod*.seq.gz
+gzip: gbrod11.seq already exists;	not overwritten
+gzip: gbrod13.seq.gz: No such file or directory
+gzip: gbrod14.seq already exists;	not overwritten
+gzip: gbrod16.seq already exists;	not overwritten
+gzip: gbrod18.seq already exists;	not overwritten
+gzip: gbrod1.seq already exists;	not overwritten
+gzip: gbrod22.seq already exists;	not overwritten
+gzip: gbrod24.seq already exists;	not overwritten
+gzip: gbrod27.seq already exists;	not overwritten
+gzip: gbrod29.seq already exists;	not overwritten
+gzip: gbrod30.seq.gz: No such file or directory
+gzip: gbrod31.seq already exists;	not overwritten
+gzip: gbrod33.seq already exists;	not overwritten
+gzip: gbrod36.seq already exists;	not overwritten
+gzip: gbrod38.seq already exists;	not overwritten
+gzip: gbrod3.seq already exists;	not overwritten
+gzip: gbrod42.seq already exists;	not overwritten
+gzip: gbrod44.seq already exists;	not overwritten
+gzip: gbrod46.seq.gz: No such file or directory
+gzip: gbrod47.seq already exists;	not overwritten
+gzip: gbrod49.seq already exists;	not overwritten
+gzip: gbrod50.seq already exists;	not overwritten
+gzip: gbrod53.seq already exists;	not overwritten
+gzip: gbrod55.seq already exists;	not overwritten
+gzip: gbrod5.seq already exists;	not overwritten
+gzip: gbrod8.seq already exists;	not overwritten
+==| parse rod files GenBank|==
+parsing file: gbrod10.seq
+gbrod10
+parsing file: gbrod11.seq
+gbrod11
+parsing file: gbrod12.seq
+gbrod12
+parsing file: gbrod13.seq
+gbrod13
+parsing file: gbrod14.seq
+gbrod14
+parsing file: gbrod15.seq
+gbrod15
+parsing file: gbrod16.seq
+gbrod16
+parsing file: gbrod17.seq
+gbrod17
+parsing file: gbrod18.seq
+gbrod18
+parsing file: gbrod19.seq
+gbrod19
+parsing file: gbrod1.seq
+gbrod1
+parsing file: gbrod20.seq
+gbrod20
+parsing file: gbrod21.seq
+gbrod21
+parsing file: gbrod22.seq
+gbrod22
+parsing file: gbrod23.seq
+gbrod23
+parsing file: gbrod24.seq
+gbrod24
+parsing file: gbrod25.seq
+gbrod25
+parsing file: gbrod26.seq
+gbrod26
+parsing file: gbrod27.seq
+gbrod27
+parsing file: gbrod28.seq
+gbrod28
+parsing file: gbrod29.seq
+gbrod29
+parsing file: gbrod2.seq
+gbrod2
+parsing file: gbrod30.seq
+gbrod30
+parsing file: gbrod31.seq
+gbrod31
+parsing file: gbrod32.seq
+gbrod32
+parsing file: gbrod33.seq
+gbrod33
+parsing file: gbrod34.seq
+gbrod34
+parsing file: gbrod35.seq
+gbrod35
+parsing file: gbrod36.seq
+gbrod36
+parsing file: gbrod37.seq
+gbrod37
+parsing file: gbrod38.seq
+gbrod38
+parsing file: gbrod39.seq
+gbrod39
+parsing file: gbrod3.seq
+gbrod3
+parsing file: gbrod40.seq
+gbrod40
+parsing file: gbrod41.seq
+gbrod41
+parsing file: gbrod42.seq
+gbrod42
+parsing file: gbrod43.seq
+gbrod43
+parsing file: gbrod44.seq
+gbrod44
+parsing file: gbrod45.seq
+gbrod45
+parsing file: gbrod46.seq
+gbrod46
+parsing file: gbrod47.seq
+gbrod47
+parsing file: gbrod48.seq
+gbrod48
+parsing file: gbrod49.seq
+gbrod49
+parsing file: gbrod4.seq
+gbrod4
+parsing file: gbrod50.seq
+gbrod50
+parsing file: gbrod51.seq
+gbrod51
+parsing file: gbrod52.seq
+gbrod52
+parsing file: gbrod53.seq
+gbrod53
+parsing file: gbrod54.seq
+gbrod54
+parsing file: gbrod55.seq
+gbrod55
+parsing file: gbrod56.seq
+gbrod56
+parsing file: gbrod5.seq
+gbrod5
+parsing file: gbrod6.seq
+Cannot open the gbrod6.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbrod6
+parsing file: gbrod7.seq
+Cannot open the gbrod7.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbrod7
+parsing file: gbrod8.seq
+Cannot open the gbrod8.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbrod8
+parsing file: gbrod9.seq
+Cannot open the gbrod9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbrod9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./rod_zf_mrna.fa: input file is output file
+cat: ./rod_zf_dna.fa: input file is output file
+cat: ./rod_zf_oth_rna.fa: input file is output file
+cat: ./rod_zf_acc.unl: input file is output file
+cat: ./rod_hs_mrna.fa: input file is output file
+cat: ./rod_hs_dna.fa: input file is output file
+cat: ./rod_ms_mrna.fa: input file is output file
+cat: ./rod_ms_dna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of rod files GenBank |==
+in sts
+==| unzip sts files GenBank |==
+gbsts*.seq.gz
+gzip: gbsts11.seq already exists;	not overwritten
+gzip: gbsts2.seq already exists;	not overwritten
+gzip: gbsts5.seq already exists;	not overwritten
+gzip: gbsts7.seq already exists;	not overwritten
+gzip: gbsts9.seq.gz: No such file or directory
+==| parse sts files GenBank|==
+parsing file: gbsts10.seq
+gbsts10
+parsing file: gbsts11.seq
+gbsts11
+parsing file: gbsts1.seq
+gbsts1
+parsing file: gbsts2.seq
+gbsts2
+parsing file: gbsts3.seq
+gbsts3
+parsing file: gbsts4.seq
+gbsts4
+parsing file: gbsts5.seq
+gbsts5
+parsing file: gbsts6.seq
+gbsts6
+parsing file: gbsts7.seq
+gbsts7
+parsing file: gbsts8.seq
+gbsts8
+parsing file: gbsts9.seq
+Cannot open the gbsts9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbsts9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./sts_zf_dna.fa: input file is output file
+cat: ./sts_zf_acc.unl: input file is output file
+cat: ./sts_hs_mrna.fa: input file is output file
+cat: ./sts_hs_dna.fa: input file is output file
+cat: ./sts_ms_mrna.fa: input file is output file
+cat: ./sts_ms_dna.fa: input file is output file
+==| delete unit files which starts with gb |==
+==| delete zero length files GenBank|==
+==| end of sts files GenBank |==
+in vrt
+==| unzip vrt files GenBank |==
+gbvrt*.seq.gz
+gzip: gbvrt100.seq already exists;	not overwritten
+gzip: gbvrt102.seq already exists;	not overwritten
+gzip: gbvrt104.seq already exists;	not overwritten
+gzip: gbvrt107.seq already exists;	not overwritten
+gzip: gbvrt10.seq.gz: No such file or directory
+gzip: gbvrt110.seq already exists;	not overwritten
+gzip: gbvrt112.seq already exists;	not overwritten
+gzip: gbvrt114.seq.gz: No such file or directory
+gzip: gbvrt115.seq already exists;	not overwritten
+gzip: gbvrt118.seq.gz: No such file or directory
+gzip: gbvrt119.seq already exists;	not overwritten
+gzip: gbvrt121.seq already exists;	not overwritten
+gzip: gbvrt123.seq already exists;	not overwritten
+gzip: gbvrt126.seq already exists;	not overwritten
+gzip: gbvrt128.seq already exists;	not overwritten
+gzip: gbvrt129.seq already exists;	not overwritten
+gzip: gbvrt130.seq already exists;	not overwritten
+gzip: gbvrt132.seq already exists;	not overwritten
+gzip: gbvrt134.seq.gz: No such file or directory
+gzip: gbvrt135.seq already exists;	not overwritten
+gzip: gbvrt137.seq already exists;	not overwritten
+gzip: gbvrt13.seq.gz: No such file or directory
+gzip: gbvrt140.seq already exists;	not overwritten
+gzip: gbvrt143.seq already exists;	not overwritten
+gzip: gbvrt145.seq already exists;	not overwritten
+gzip: gbvrt147.seq already exists;	not overwritten
+gzip: gbvrt149.seq already exists;	not overwritten
+gzip: gbvrt151.seq already exists;	not overwritten
+gzip: gbvrt153.seq already exists;	not overwritten
+gzip: gbvrt155.seq already exists;	not overwritten
+gzip: gbvrt157.seq already exists;	not overwritten
+gzip: gbvrt159.seq already exists;	not overwritten
+gzip: gbvrt161.seq already exists;	not overwritten
+gzip: gbvrt163.seq already exists;	not overwritten
+gzip: gbvrt166.seq already exists;	not overwritten
+gzip: gbvrt168.seq.gz: No such file or directory
+gzip: gbvrt169.seq already exists;	not overwritten
+gzip: gbvrt171.seq already exists;	not overwritten
+gzip: gbvrt174.seq already exists;	not overwritten
+gzip: gbvrt176.seq.gz: No such file or directory
+gzip: gbvrt177.seq already exists;	not overwritten
+gzip: gbvrt179.seq already exists;	not overwritten
+gzip: gbvrt180.seq already exists;	not overwritten
+gzip: gbvrt182.seq.gz: No such file or directory
+gzip: gbvrt183.seq already exists;	not overwritten
+gzip: gbvrt185.seq already exists;	not overwritten
+gzip: gbvrt187.seq already exists;	not overwritten
+gzip: gbvrt189.seq already exists;	not overwritten
+gzip: gbvrt190.seq already exists;	not overwritten
+gzip: gbvrt192.seq.gz: No such file or directory
+gzip: gbvrt193.seq already exists;	not overwritten
+gzip: gbvrt195.seq already exists;	not overwritten
+gzip: gbvrt197.seq already exists;	not overwritten
+gzip: gbvrt199.seq already exists;	not overwritten
+gzip: gbvrt1.seq already exists;	not overwritten
+gzip: gbvrt201.seq already exists;	not overwritten
+gzip: gbvrt204.seq already exists;	not overwritten
+gzip: gbvrt206.seq already exists;	not overwritten
+gzip: gbvrt208.seq already exists;	not overwritten
+gzip: gbvrt210.seq already exists;	not overwritten
+gzip: gbvrt212.seq already exists;	not overwritten
+gzip: gbvrt214.seq already exists;	not overwritten
+gzip: gbvrt22.seq already exists;	not overwritten
+gzip: gbvrt24.seq already exists;	not overwritten
+gzip: gbvrt26.seq already exists;	not overwritten
+gzip: gbvrt30.seq.gz: No such file or directory
+gzip: gbvrt31.seq already exists;	not overwritten
+gzip: gbvrt33.seq already exists;	not overwritten
+gzip: gbvrt35.seq.gz: No such file or directory
+gzip: gbvrt36.seq already exists;	not overwritten
+gzip: gbvrt38.seq already exists;	not overwritten
+gzip: gbvrt3.seq already exists;	not overwritten
+gzip: gbvrt41.seq already exists;	not overwritten
+gzip: gbvrt44.seq already exists;	not overwritten
+gzip: gbvrt47.seq.gz: No such file or directory
+gzip: gbvrt48.seq already exists;	not overwritten
+gzip: gbvrt4.seq already exists;	not overwritten
+gzip: gbvrt51.seq already exists;	not overwritten
+gzip: gbvrt53.seq already exists;	not overwritten
+gzip: gbvrt55.seq already exists;	not overwritten
+gzip: gbvrt56.seq already exists;	not overwritten
+gzip: gbvrt58.seq already exists;	not overwritten
+gzip: gbvrt60.seq.gz: No such file or directory
+gzip: gbvrt61.seq already exists;	not overwritten
+gzip: gbvrt64.seq already exists;	not overwritten
+gzip: gbvrt66.seq already exists;	not overwritten
+gzip: gbvrt68.seq already exists;	not overwritten
+gzip: gbvrt6.seq already exists;	not overwritten
+gzip: gbvrt71.seq already exists;	not overwritten
+gzip: gbvrt74.seq already exists;	not overwritten
+gzip: gbvrt76.seq already exists;	not overwritten
+gzip: gbvrt78.seq already exists;	not overwritten
+gzip: gbvrt7.seq already exists;	not overwritten
+gzip: gbvrt82.seq.gz: No such file or directory
+gzip: gbvrt83.seq already exists;	not overwritten
+gzip: gbvrt85.seq already exists;	not overwritten
+gzip: gbvrt87.seq already exists;	not overwritten
+gzip: gbvrt89.seq already exists;	not overwritten
+gzip: gbvrt90.seq already exists;	not overwritten
+gzip: gbvrt92.seq already exists;	not overwritten
+gzip: gbvrt94.seq already exists;	not overwritten
+gzip: gbvrt97.seq already exists;	not overwritten
+gzip: gbvrt99.seq.gz: No such file or directory
+gzip: gbvrt9.seq already exists;	not overwritten
+==| parse vrt files GenBank|==
+parsing file: gbvrt100.seq
+gbvrt100
+parsing file: gbvrt101.seq
+gbvrt101
+parsing file: gbvrt102.seq
+gbvrt102
+parsing file: gbvrt103.seq
+gbvrt103
+parsing file: gbvrt104.seq
+gbvrt104
+parsing file: gbvrt105.seq
+gbvrt105
+parsing file: gbvrt106.seq
+gbvrt106
+parsing file: gbvrt107.seq
+gbvrt107
+parsing file: gbvrt108.seq
+gbvrt108
+parsing file: gbvrt109.seq
+gbvrt109
+parsing file: gbvrt10.seq
+gbvrt10
+parsing file: gbvrt110.seq
+gbvrt110
+parsing file: gbvrt111.seq
+gbvrt111
+parsing file: gbvrt112.seq
+gbvrt112
+parsing file: gbvrt113.seq
+gbvrt113
+parsing file: gbvrt114.seq
+gbvrt114
+parsing file: gbvrt115.seq
+gbvrt115
+parsing file: gbvrt116.seq
+gbvrt116
+parsing file: gbvrt117.seq
+gbvrt117
+parsing file: gbvrt118.seq
+gbvrt118
+parsing file: gbvrt119.seq
+gbvrt119
+parsing file: gbvrt11.seq
+gbvrt11
+parsing file: gbvrt120.seq
+gbvrt120
+parsing file: gbvrt121.seq
+gbvrt121
+parsing file: gbvrt122.seq
+gbvrt122
+parsing file: gbvrt123.seq
+gbvrt123
+parsing file: gbvrt124.seq
+gbvrt124
+parsing file: gbvrt125.seq
+gbvrt125
+parsing file: gbvrt126.seq
+gbvrt126
+parsing file: gbvrt127.seq
+gbvrt127
+parsing file: gbvrt128.seq
+gbvrt128
+parsing file: gbvrt129.seq
+gbvrt129
+parsing file: gbvrt12.seq
+gbvrt12
+parsing file: gbvrt130.seq
+gbvrt130
+parsing file: gbvrt131.seq
+gbvrt131
+parsing file: gbvrt132.seq
+gbvrt132
+parsing file: gbvrt133.seq
+gbvrt133
+parsing file: gbvrt134.seq
+gbvrt134
+parsing file: gbvrt135.seq
+gbvrt135
+parsing file: gbvrt136.seq
+gbvrt136
+parsing file: gbvrt137.seq
+gbvrt137
+parsing file: gbvrt138.seq
+gbvrt138
+parsing file: gbvrt139.seq
+gbvrt139
+parsing file: gbvrt13.seq
+gbvrt13
+parsing file: gbvrt140.seq
+gbvrt140
+parsing file: gbvrt141.seq
+gbvrt141
+parsing file: gbvrt142.seq
+gbvrt142
+parsing file: gbvrt143.seq
+gbvrt143
+parsing file: gbvrt144.seq
+gbvrt144
+parsing file: gbvrt145.seq
+gbvrt145
+parsing file: gbvrt146.seq
+gbvrt146
+parsing file: gbvrt147.seq
+gbvrt147
+parsing file: gbvrt148.seq
+gbvrt148
+parsing file: gbvrt149.seq
+gbvrt149
+parsing file: gbvrt14.seq
+gbvrt14
+parsing file: gbvrt150.seq
+gbvrt150
+parsing file: gbvrt151.seq
+gbvrt151
+parsing file: gbvrt152.seq
+gbvrt152
+parsing file: gbvrt153.seq
+gbvrt153
+parsing file: gbvrt154.seq
+gbvrt154
+parsing file: gbvrt155.seq
+gbvrt155
+parsing file: gbvrt156.seq
+gbvrt156
+parsing file: gbvrt157.seq
+gbvrt157
+parsing file: gbvrt158.seq
+gbvrt158
+parsing file: gbvrt159.seq
+gbvrt159
+parsing file: gbvrt15.seq
+gbvrt15
+parsing file: gbvrt160.seq
+gbvrt160
+parsing file: gbvrt161.seq
+gbvrt161
+parsing file: gbvrt162.seq
+gbvrt162
+parsing file: gbvrt163.seq
+gbvrt163
+parsing file: gbvrt164.seq
+gbvrt164
+parsing file: gbvrt165.seq
+gbvrt165
+parsing file: gbvrt166.seq
+gbvrt166
+parsing file: gbvrt167.seq
+gbvrt167
+parsing file: gbvrt168.seq
+gbvrt168
+parsing file: gbvrt169.seq
+gbvrt169
+parsing file: gbvrt16.seq
+gbvrt16
+parsing file: gbvrt170.seq
+gbvrt170
+parsing file: gbvrt171.seq
+gbvrt171
+parsing file: gbvrt172.seq
+gbvrt172
+parsing file: gbvrt173.seq
+gbvrt173
+parsing file: gbvrt174.seq
+gbvrt174
+parsing file: gbvrt175.seq
+gbvrt175
+parsing file: gbvrt176.seq
+gbvrt176
+parsing file: gbvrt177.seq
+gbvrt177
+parsing file: gbvrt178.seq
+gbvrt178
+parsing file: gbvrt179.seq
+gbvrt179
+parsing file: gbvrt17.seq
+gbvrt17
+parsing file: gbvrt180.seq
+gbvrt180
+parsing file: gbvrt181.seq
+gbvrt181
+parsing file: gbvrt182.seq
+gbvrt182
+parsing file: gbvrt183.seq
+gbvrt183
+parsing file: gbvrt184.seq
+gbvrt184
+parsing file: gbvrt185.seq
+gbvrt185
+parsing file: gbvrt186.seq
+gbvrt186
+parsing file: gbvrt187.seq
+gbvrt187
+parsing file: gbvrt188.seq
+gbvrt188
+parsing file: gbvrt189.seq
+gbvrt189
+parsing file: gbvrt18.seq
+gbvrt18
+parsing file: gbvrt190.seq
+gbvrt190
+parsing file: gbvrt191.seq
+gbvrt191
+parsing file: gbvrt192.seq
+gbvrt192
+parsing file: gbvrt193.seq
+gbvrt193
+parsing file: gbvrt194.seq
+gbvrt194
+parsing file: gbvrt195.seq
+gbvrt195
+parsing file: gbvrt196.seq
+gbvrt196
+parsing file: gbvrt197.seq
+gbvrt197
+parsing file: gbvrt198.seq
+gbvrt198
+parsing file: gbvrt199.seq
+gbvrt199
+parsing file: gbvrt19.seq
+gbvrt19
+parsing file: gbvrt1.seq
+gbvrt1
+parsing file: gbvrt200.seq
+gbvrt200
+parsing file: gbvrt201.seq
+gbvrt201
+parsing file: gbvrt202.seq
+gbvrt202
+parsing file: gbvrt203.seq
+gbvrt203
+parsing file: gbvrt204.seq
+gbvrt204
+parsing file: gbvrt205.seq
+gbvrt205
+parsing file: gbvrt206.seq
+gbvrt206
+parsing file: gbvrt207.seq
+gbvrt207
+parsing file: gbvrt208.seq
+gbvrt208
+parsing file: gbvrt209.seq
+gbvrt209
+parsing file: gbvrt20.seq
+gbvrt20
+parsing file: gbvrt210.seq
+gbvrt210
+parsing file: gbvrt211.seq
+gbvrt211
+parsing file: gbvrt212.seq
+gbvrt212
+parsing file: gbvrt213.seq
+gbvrt213
+parsing file: gbvrt214.seq
+gbvrt214
+parsing file: gbvrt21.seq
+gbvrt21
+parsing file: gbvrt22.seq
+gbvrt22
+parsing file: gbvrt23.seq
+gbvrt23
+parsing file: gbvrt24.seq
+gbvrt24
+parsing file: gbvrt25.seq
+gbvrt25
+parsing file: gbvrt26.seq
+gbvrt26
+parsing file: gbvrt27.seq
+gbvrt27
+parsing file: gbvrt28.seq
+gbvrt28
+parsing file: gbvrt29.seq
+gbvrt29
+parsing file: gbvrt2.seq
+gbvrt2
+parsing file: gbvrt30.seq
+gbvrt30
+parsing file: gbvrt31.seq
+gbvrt31
+parsing file: gbvrt32.seq
+gbvrt32
+parsing file: gbvrt33.seq
+gbvrt33
+parsing file: gbvrt34.seq
+gbvrt34
+parsing file: gbvrt35.seq
+gbvrt35
+parsing file: gbvrt36.seq
+gbvrt36
+parsing file: gbvrt37.seq
+gbvrt37
+parsing file: gbvrt38.seq
+gbvrt38
+parsing file: gbvrt39.seq
+gbvrt39
+parsing file: gbvrt3.seq
+gbvrt3
+parsing file: gbvrt40.seq
+gbvrt40
+parsing file: gbvrt41.seq
+gbvrt41
+parsing file: gbvrt42.seq
+gbvrt42
+parsing file: gbvrt43.seq
+gbvrt43
+parsing file: gbvrt44.seq
+gbvrt44
+parsing file: gbvrt45.seq
+gbvrt45
+parsing file: gbvrt46.seq
+gbvrt46
+parsing file: gbvrt47.seq
+gbvrt47
+parsing file: gbvrt48.seq
+gbvrt48
+parsing file: gbvrt49.seq
+gbvrt49
+parsing file: gbvrt4.seq
+gbvrt4
+parsing file: gbvrt50.seq
+gbvrt50
+parsing file: gbvrt51.seq
+gbvrt51
+parsing file: gbvrt52.seq
+gbvrt52
+parsing file: gbvrt53.seq
+gbvrt53
+parsing file: gbvrt54.seq
+gbvrt54
+parsing file: gbvrt55.seq
+gbvrt55
+parsing file: gbvrt56.seq
+gbvrt56
+parsing file: gbvrt57.seq
+gbvrt57
+parsing file: gbvrt58.seq
+gbvrt58
+parsing file: gbvrt59.seq
+gbvrt59
+parsing file: gbvrt5.seq
+gbvrt5
+parsing file: gbvrt60.seq
+gbvrt60
+parsing file: gbvrt61.seq
+gbvrt61
+parsing file: gbvrt62.seq
+gbvrt62
+parsing file: gbvrt63.seq
+gbvrt63
+parsing file: gbvrt64.seq
+gbvrt64
+parsing file: gbvrt65.seq
+gbvrt65
+parsing file: gbvrt66.seq
+gbvrt66
+parsing file: gbvrt67.seq
+gbvrt67
+parsing file: gbvrt68.seq
+gbvrt68
+parsing file: gbvrt69.seq
+gbvrt69
+parsing file: gbvrt6.seq
+gbvrt6
+parsing file: gbvrt70.seq
+gbvrt70
+parsing file: gbvrt71.seq
+gbvrt71
+parsing file: gbvrt72.seq
+gbvrt72
+parsing file: gbvrt73.seq
+gbvrt73
+parsing file: gbvrt74.seq
+gbvrt74
+parsing file: gbvrt75.seq
+gbvrt75
+parsing file: gbvrt76.seq
+gbvrt76
+parsing file: gbvrt77.seq
+gbvrt77
+parsing file: gbvrt78.seq
+gbvrt78
+parsing file: gbvrt79.seq
+gbvrt79
+parsing file: gbvrt7.seq
+gbvrt7
+parsing file: gbvrt80.seq
+gbvrt80
+parsing file: gbvrt81.seq
+gbvrt81
+parsing file: gbvrt82.seq
+gbvrt82
+parsing file: gbvrt83.seq
+gbvrt83
+parsing file: gbvrt84.seq
+gbvrt84
+parsing file: gbvrt85.seq
+gbvrt85
+parsing file: gbvrt86.seq
+gbvrt86
+parsing file: gbvrt87.seq
+gbvrt87
+parsing file: gbvrt88.seq
+gbvrt88
+parsing file: gbvrt89.seq
+gbvrt89
+parsing file: gbvrt8.seq
+gbvrt8
+parsing file: gbvrt90.seq
+gbvrt90
+parsing file: gbvrt91.seq
+gbvrt91
+parsing file: gbvrt92.seq
+gbvrt92
+parsing file: gbvrt93.seq
+gbvrt93
+parsing file: gbvrt94.seq
+Cannot open the gbvrt94.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt94
+parsing file: gbvrt95.seq
+Cannot open the gbvrt95.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt95
+parsing file: gbvrt96.seq
+Cannot open the gbvrt96.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt96
+parsing file: gbvrt97.seq
+Cannot open the gbvrt97.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt97
+parsing file: gbvrt98.seq
+Cannot open the gbvrt98.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt98
+parsing file: gbvrt99.seq
+Cannot open the gbvrt99.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt99
+parsing file: gbvrt9.seq
+Cannot open the gbvrt9.seq file to read: No such file or directory. at /research/zusers/blast/BLAST_load/target/GenBank/gb2fa.pl line 64.
+gbvrt9
+==|remove .seq files GenBank |==
+rm: No match.
+==| concat .fa files for each species GenBank|== 
+cat: ./vrt_zf_mrna.fa: input file is output file
+cat: ./vrt_zf_dna.fa: input file is output file
+cat: ./gbvrt200_zf_dna.fa: Stale file handle
+cat: ./gbvrt201_zf_dna.fa: No such file or directory
+cat: ./gbvrt202_zf_dna.fa: No such file or directory
+cat: ./gbvrt203_zf_dna.fa: No such file or directory
+cat: ./gbvrt204_zf_dna.fa: No such file or directory
+cat: ./gbvrt205_zf_dna.fa: No such file or directory
+cat: ./gbvrt206_zf_dna.fa: No such file or directory
+cat: ./gbvrt207_zf_dna.fa: No such file or directory
+cat: ./gbvrt208_zf_dna.fa: No such file or directory
+cat: ./gbvrt209_zf_dna.fa: No such file or directory
+cat: ./gbvrt20_zf_dna.fa: No such file or directory
+cat: ./gbvrt210_zf_dna.fa: No such file or directory
+cat: ./gbvrt211_zf_dna.fa: No such file or directory
+cat: ./gbvrt212_zf_dna.fa: No such file or directory
+cat: ./gbvrt213_zf_dna.fa: No such file or directory
+cat: ./gbvrt214_zf_dna.fa: No such file or directory
+cat: ./gbvrt21_zf_dna.fa: No such file or directory
+cat: ./gbvrt22_zf_dna.fa: No such file or directory
+cat: ./gbvrt23_zf_dna.fa: No such file or directory
+cat: ./gbvrt24_zf_dna.fa: No such file or directory
+cat: ./gbvrt25_zf_dna.fa: No such file or directory
+cat: ./gbvrt26_zf_dna.fa: No such file or directory
+cat: ./gbvrt27_zf_dna.fa: No such file or directory
+cat: ./gbvrt28_zf_dna.fa: No such file or directory
+cat: ./gbvrt29_zf_dna.fa: No such file or directory
+cat: ./gbvrt2_zf_dna.fa: No such file or directory
+cat: ./gbvrt30_zf_dna.fa: No such file or directory
+cat: ./gbvrt31_zf_dna.fa: No such file or directory
+cat: ./gbvrt32_zf_dna.fa: No such file or directory
+cat: ./gbvrt33_zf_dna.fa: No such file or directory
+cat: ./gbvrt34_zf_dna.fa: No such file or directory
+cat: ./gbvrt35_zf_dna.fa: No such file or directory
+cat: ./gbvrt36_zf_dna.fa: No such file or directory
+cat: ./gbvrt37_zf_dna.fa: No such file or directory
+cat: ./gbvrt38_zf_dna.fa: No such file or directory
+cat: ./gbvrt39_zf_dna.fa: No such file or directory
+cat: ./gbvrt3_zf_dna.fa: No such file or directory
+cat: ./gbvrt40_zf_dna.fa: No such file or directory
+cat: ./gbvrt41_zf_dna.fa: No such file or directory
+cat: ./gbvrt42_zf_dna.fa: No such file or directory
+cat: ./gbvrt43_zf_dna.fa: No such file or directory
+cat: ./gbvrt44_zf_dna.fa: No such file or directory
+cat: ./gbvrt45_zf_dna.fa: No such file or directory
+cat: ./gbvrt46_zf_dna.fa: No such file or directory
+cat: ./gbvrt47_zf_dna.fa: No such file or directory
+cat: ./gbvrt48_zf_dna.fa: No such file or directory
+cat: ./gbvrt49_zf_dna.fa: No such file or directory
+cat: ./gbvrt4_zf_dna.fa: No such file or directory
+cat: ./gbvrt50_zf_dna.fa: No such file or directory
+cat: ./gbvrt51_zf_dna.fa: No such file or directory
+cat: ./gbvrt52_zf_dna.fa: No such file or directory
+cat: ./gbvrt53_zf_dna.fa: No such file or directory
+cat: ./gbvrt54_zf_dna.fa: No such file or directory
+cat: ./gbvrt55_zf_dna.fa: No such file or directory
+cat: ./gbvrt56_zf_dna.fa: No such file or directory
+cat: ./gbvrt57_zf_dna.fa: No such file or directory
+cat: ./gbvrt58_zf_dna.fa: No such file or directory
+cat: ./gbvrt59_zf_dna.fa: No such file or directory
+cat: ./gbvrt5_zf_dna.fa: No such file or directory
+cat: ./gbvrt60_zf_dna.fa: No such file or directory
+cat: ./gbvrt61_zf_dna.fa: No such file or directory
+cat: ./gbvrt62_zf_dna.fa: No such file or directory
+cat: ./gbvrt63_zf_dna.fa: No such file or directory
+cat: ./gbvrt64_zf_dna.fa: No such file or directory
+cat: ./gbvrt65_zf_dna.fa: No such file or directory
+cat: ./gbvrt66_zf_dna.fa: No such file or directory
+cat: ./gbvrt67_zf_dna.fa: No such file or directory
+cat: ./gbvrt68_zf_dna.fa: No such file or directory
+cat: ./gbvrt69_zf_dna.fa: No such file or directory
+cat: ./gbvrt6_zf_dna.fa: No such file or directory
+cat: ./gbvrt70_zf_dna.fa: No such file or directory
+cat: ./gbvrt71_zf_dna.fa: No such file or directory
+cat: ./gbvrt72_zf_dna.fa: No such file or directory
+cat: ./gbvrt73_zf_dna.fa: No such file or directory
+cat: ./gbvrt74_zf_dna.fa: No such file or directory
+cat: ./gbvrt75_zf_dna.fa: No such file or directory
+cat: ./gbvrt76_zf_dna.fa: No such file or directory
+cat: ./gbvrt77_zf_dna.fa: No such file or directory
+cat: ./gbvrt78_zf_dna.fa: No such file or directory
+cat: ./gbvrt79_zf_dna.fa: No such file or directory
+cat: ./gbvrt7_zf_dna.fa: No such file or directory
+cat: ./gbvrt80_zf_dna.fa: No such file or directory
+cat: ./gbvrt81_zf_dna.fa: No such file or directory
+cat: ./gbvrt82_zf_dna.fa: No such file or directory
+cat: ./gbvrt83_zf_dna.fa: No such file or directory
+cat: ./gbvrt84_zf_dna.fa: No such file or directory
+cat: ./gbvrt85_zf_dna.fa: No such file or directory
+cat: ./gbvrt86_zf_dna.fa: No such file or directory
+cat: ./gbvrt87_zf_dna.fa: No such file or directory
+cat: ./gbvrt88_zf_dna.fa: No such file or directory
+cat: ./gbvrt89_zf_dna.fa: No such file or directory
+cat: ./gbvrt8_zf_dna.fa: No such file or directory
+cat: ./gbvrt90_zf_dna.fa: No such file or directory
+cat: ./gbvrt91_zf_dna.fa: No such file or directory
+cat: ./gbvrt92_zf_dna.fa: No such file or directory
+cat: ./gbvrt93_zf_dna.fa: No such file or directory
+cat: ./gbvrt94_zf_dna.fa: No such file or directory
+cat: ./gbvrt95_zf_dna.fa: No such file or directory
+cat: ./gbvrt96_zf_dna.fa: No such file or directory
+cat: ./gbvrt97_zf_dna.fa: No such file or directory
+cat: ./gbvrt98_zf_dna.fa: No such file or directory
+cat: ./gbvrt99_zf_dna.fa: No such file or directory
+cat: ./gbvrt9_zf_dna.fa: No such file or directory
+cat: ./vrt_zf_oth_rna.fa: input file is output file
+cat: ./vrt_zf_acc.unl: input file is output file
+==| delete unit files which starts with gb |==
+rm: No match.
+rm: No match.
+rm: No match.
+rm: No match.
+==| delete zero length files GenBank|==
+==| end of vrt files GenBank |==
+==| CONCAT zf_acc files GenBank|==
+concat into gbk_zf_acc.unl GenBank|==
+cat: ./gbk_zf_acc.unl: input file is output file
+==| CONCAT DNA and mRNA files for each species GenBank|==
+ zfish 
+==| concat into gbk_zf_dna.fa GenBank |==
+cat: ./gbk_zf_dna.fa: input file is output file
+==| concat into gbk_zf_mrna.fa GenBank|==
+==| concat into gbk_zf_rna.fa GenBank|==
+==| human GenBank|==
+==| concat into gbk_hs_dna.fa GenBank|==
+==| concat into gbk_hs_mra.fa GenBank|==
+==| mouse GenBank |==
+==| concat into gbk_ms_dna.fa GenBank|==
+==| concat into gbk_ms_mra.fa GenBank|==
+==| CONCAT Zfish GSS files, and HTG files GenBank|==
+==| CONCAT from pri/rod/vrt, htc, (pat) for GenBank dbs |==
+cat: vrt/vrt_zf_oth_rna.fa: No such file or directory
+==| Done with assembleGenBank |==
+==| Move assembled files to GenBank dir |==
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_ms_mrna.fa’: No such file or directory
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_ms_dna.fa’: No such file or directory
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_hs_mrna.fa’: No such file or directory
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_hs_dna.fa’: No such file or directory
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_zf_dna.fa’: No such file or directory
+cp: cannot stat ‘/research/zblastfiles/files/blastRegeneration/fasta/GB/gbk_zf_rna.fa’: No such file or directory
+Under /research/zblastfiles/files/blastRegeneration/fasta/GenBank
+== FORMAT hs_dna, ms_dna, zf_dna ==
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:20:27
+XDF Output Database:  gbk_hs_dna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_hs_dna.fa"
+ No. of sequences (letters) written:  2,370,566  (11,728,939,217)
+ Longest sequence written (in database):  233,621,477  (233,621,477)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  4,741,132  (4,741,132)
+Total cpu time:  53.46u 11.59s 65.05t   Elapsed:  00:01:25
+End:  2020-11-02T17:21:52
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:21:52
+XDF Output Database:  gbk_ms_dna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_ms_dna.fa"
+ No. of sequences (letters) written:  3,644,324  (4,932,652,465)
+ Longest sequence written (in database):  3,935,687  (3,935,687)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  7,288,648  (7,288,648)
+Total cpu time:  26.49u 5.88s 32.37t   Elapsed:  00:00:40
+End:  2020-11-02T17:22:32
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:22:32
+XDF Output Database:  gbk_zf_dna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_zf_dna.fa"
+ No. of sequences (letters) written:  201,719  (7,874,883,295)
+ Longest sequence written (in database):  74,431,497  (74,431,497)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  403,438  (403,438)
+Total cpu time:  33.33u 7.01s 40.34t   Elapsed:  00:00:50
+End:  2020-11-02T17:23:22
+== FORMAT hs_mrna, ms_mrna, zf_mrna ==
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:23:22
+XDF Output Database:  gbk_hs_mrna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_hs_mrna.fa"
+ No. of sequences (letters) written:  4,748,678  (2,758,798,303)
+ Longest sequence written (in database):  81,940  (81,940)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  9,497,356  (9,497,356)
+Total cpu time:  19.27u 4.37s 23.64t   Elapsed:  00:00:31
+End:  2020-11-02T17:23:53
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:23:53
+XDF Output Database:  gbk_ms_mrna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_ms_mrna.fa"
+ No. of sequences (letters) written:  3,457,850  (1,828,077,137)
+ Longest sequence written (in database):  23,414  (23,414)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  6,915,700  (6,915,700)
+Total cpu time:  13.43u 3.18s 16.61t   Elapsed:  00:00:22
+End:  2020-11-02T17:24:15
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:24:15
+XDF Output Database:  gbk_zf_mrna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_zf_mrna.fa"
+ No. of sequences (letters) written:  1,221,147  (791,578,186)
+ Longest sequence written (in database):  31,404  (31,404)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  2,442,294  (2,442,294)
+Total cpu time:  5.24u 1.23s 6.47t   Elapsed:  00:00:08
+End:  2020-11-02T17:24:23
+== FORMAT est_hs, est_ms, and est_zf ==
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:24:23
+XDF Output Database:  gbk_est_hs
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_est_hs.fa"
+ No. of sequences (letters) written:  4,460,116  (2,342,209,308)
+ Longest sequence written (in database):  5205  (5205)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  8,920,232  (8,920,232)
+Total cpu time:  16.86u 3.90s 20.76t   Elapsed:  00:00:28
+End:  2020-11-02T17:24:51
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:24:51
+XDF Output Database:  gbk_est_ms
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_est_ms.fa"
+ No. of sequences (letters) written:  2,938,841  (1,369,770,577)
+ Longest sequence written (in database):  3920  (3920)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  5,877,682  (5,877,682)
+Total cpu time:  10.52u 2.69s 13.21t   Elapsed:  00:00:17
+End:  2020-11-02T17:25:08
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:25:08
+XDF Output Database:  gbk_est_zf
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_est_zf.fa"
+ No. of sequences (letters) written:  1,196,628  (749,614,861)
+ Longest sequence written (in database):  3518  (3518)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  2,393,256  (2,393,256)
+Total cpu time:  5.01u 1.12s 6.13t   Elapsed:  00:00:09
+End:  2020-11-02T17:25:17
+== FORMAT gss_zf, htg_zf and zf_all (for zfin_seq retrieval) ==
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:25:17
+XDF Output Database:  gbk_gss_zf
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_gss_zf.fa"
+ No. of sequences (letters) written:  180,962  (101,993,858)
+ Longest sequence written (in database):  2496  (2496)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  361,924  (361,924)
+Total cpu time:  0.70u 0.18s 0.88t   Elapsed:  00:00:01
+End:  2020-11-02T17:25:18
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:25:18
+XDF Output Database:  gbk_htg_zf
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_htg_zf.fa"
+ No. of sequences (letters) written:  3480  (460,235,450)
+ Longest sequence written (in database):  738,100  (738,100)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  6960  (6960)
+Total cpu time:  1.93u 0.35s 2.28t   Elapsed:  00:00:03
+End:  2020-11-02T17:25:21
+XDFORMAT 3.0SE-AB [2012-12-05] [linux26-x64-I32LPF64 2012-12-06T00:06:44]
+Start:  2020-11-02T17:25:21
+XDF Output Database:  gbk_zf_rna
+ Alphabet:  NCBI2na.1
+ Identifier index cache size:  512 MiB
+Input: "/research/zblastfiles/files/blastRegeneration/fasta/GenBank/gbk_zf_rna.fa"
+ No. of sequences (letters) written:  0  (0)
+ Longest sequence written (in database):  0  (0)
+ Edit Alphabet:  WUStLna.1
+ Sequences edited for ambiguity codes:  0
+ No. of edits (total length) written:  0  (0)
+ Index entries written (in database):  0  (0)
+WARNING:  database is empty
+Total cpu time:  0.00u 0.01s 0.01t   Elapsed:  00:00:00
+End:  2020-11-02T17:25:21
+== done with wublast format GenBank ==
+==| exit GenBank convert |==
+==| New release is formatted at /research/zblastfiles/files/blastRegeneration/fasta/GenBank, running: /research/zusers/blast/BLAST_load/target/GenBank/postGbRelease.sh |== If errors encountered, move /research/zblastfiles/files/blastRegeneration/fasta/Backup/ files into /research/zblastfiles/files/blastRegeneration/fasta/Current/ and figure out what is wrong before running blastdbupdate.pl again.
+==| Copy current genbank db to backup, and switch the wu-db link |==
+cp: failed to close ‘/research/zblastfiles/zmore/blastRegeneration/Backup/gbk_est_hs.xns’: Stale file handle
+==| Update Current DIR for GenBank |==
+==| Switch wu-db link back to Current DIR for GenBank|==
+==| Drop GB DIR |==
+==| Finish GenBank postGbRelease |==
+==| Done with GenBank process |==

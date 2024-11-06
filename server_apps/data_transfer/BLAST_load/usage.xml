@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="usage" basedir=".">
+  <target name="usage">
+        <echo>
+TARGETS
+
+DEPLOYMENT of ALL blastdbs:
+deployNoGenBankDownload:    calls all processX targets except GenBank because this one takes too long to run, and instead just copies all gbk_* dbs to the BLASTSERVER_BLAST_DATABASE_PATH you've set in the env file.
+
+deployCron:  deploys cron tab on genomix if user is informix and hostname is genomix.
+runAll:      does a full load of all Dbs; will take over 24 hours to complete.
+graph:       graphs current build process
+
+INDIVIDUAL DEPLOYMENT of blastdbs:
+processGenBank :  creates all GB blastdbs
+processEnsembl :  creates Ensembl blastdbs
+processRefSeq  :  creates RefSeq blastdbs
+processSPTrEMBL : creates SP blastdbs
+processTIGR    :  creates TIGR blastdbs
+processTrace   :  creates Trace blastdbs
+processzfin_microRNA : creates Curated* and Loaded* microRNA blastdbs
+processzfin_cdna  : creates zfin_cdna blastdbs
+processzfin_genomicDNA : creates zfin_genomicDNA blastdbs
+processzfin_mrph   : creates zfin_mrph blastdbs
+processzfin_publishedProtein : creates publishedProtein blastdbs
+processzfin_publishedRNA : creates publishedRNA blastdbs
+processzfin_unreleasedRNA : creates unreleasedRNA blastdbs
+processzfin_unreleasedProtein : creates unreleaedProtein blastdbs
+processzfin_vega   : creates vega blastdbs
+processzfin_wz    : creates wgz blastdbs
+processzfin_xpat_cdna : creates ZFINGenesWithExpression blastdbs
+
+MAINTENANCE
+revertX:   using naming convention above, X = whatever db you're interested in reverting.  It moves what was in backup forward to Current.
+
+        </echo>
+  </target>
+
+</project>

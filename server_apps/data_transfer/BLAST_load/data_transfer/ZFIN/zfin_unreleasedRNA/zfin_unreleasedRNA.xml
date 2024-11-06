@@ -1,0 +1,29 @@
+<project name="zfin_unreleasedRNA">
+
+<target name="deployzfin_unreleasedRNA" depends="processzfin_unreleasedRNA"
+description="Fully redeploys zfin_unreleasedRNA.">
+   <echo message="deployzfin_unreleasedRNA"/>
+</target>
+
+<target name="cpzfin_unreleasedRNA" description="cps blastdb files for zfin_unreleasedRNA.">
+   <echo message="cpzfin_unreleasedRNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedRNA/cpzfin_unreleasedRNA.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_unreleasedRNA" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_unreleasedRNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedRNA/revertzfin_unreleasedRNA.sh">
+   </exec>
+</target>
+
+<target name="processzfin_unreleasedRNA" depends="createTargetDir" description="deploys entire zfin_unreleasedRNA dbs">
+   <echo message="processzfin_unreleasedRNA"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_unreleasedRNA/processzfin_unreleasedRNA.sh">
+   </exec>
+</target>
+
+
+</project>
+

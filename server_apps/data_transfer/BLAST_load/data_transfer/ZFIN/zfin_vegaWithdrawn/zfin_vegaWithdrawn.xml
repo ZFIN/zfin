@@ -1,0 +1,28 @@
+<project name="zfin_vegaWithdrawn">
+
+<target name="deployzfin_vegaWithdrawn" depends="processzfin_vegaWithdrawn"
+description="Fully redeploys zfin_vegaWithdrawn.">
+   <echo message="processzfin_vegaWithdrawn"/>
+</target>
+
+<target name="cpzfin_vegaWithdrawn" description="cps zfin_vegaWithdrawn files over to production area and distributes to nodes if on genomix">
+   <echo message="cpzfin_vegaWithdrawn"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_vegaWithdrawn/cpzfin_vegaWithdrawn.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_vegaWithdrawn" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_vegaWithdrawn"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_vegaWithdrawn/revertzfin_vegaWithdrawn.sh">
+   </exec>
+</target>
+
+<target name="processzfin_vegaWithdrawn" depends="createTargetDir" description="deploys entire zfin_vegaWithdrawn dbs">
+   <echo message="processzfin_vegaWithdrawn"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_vegaWithdrawn/processzfin_vegaWithdrawn.sh">
+   </exec>
+</target>
+
+</project>
+

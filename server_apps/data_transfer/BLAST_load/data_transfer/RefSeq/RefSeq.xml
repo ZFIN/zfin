@@ -1,0 +1,40 @@
+<project name="RefSeq">
+
+<target name="deployRefSeq" depends="processRefSeq" description="Fully redeploys RefSeq.">
+   <echo message="deployRefSeq"/>
+</target>
+
+<target name="downloadRefSeq" description="Downloads files for RefSeq to staging area.">
+   <echo message="downloadRefSeq"/>
+   <exec executable="${basedir}/target/RefSeq/downloadRefSeq.sh">
+   </exec>
+</target>
+
+<target name="convertRefSeq" description="Converts FASTA files for RefSeq into blastable files in the staging area.">
+   <echo message="convertRefSeq"/>
+   <exec executable="${basedir}/target/RefSeq/convertRefSeq.sh">
+   </exec>
+</target>
+
+<target name="pushRefSeq" description="Pushes blast files for RefSeq to production from the staging area.">
+   <echo message="pushRefSeq"/>
+   <exec executable="${basedir}/target/RefSeq/pushRefSeq.sh">
+   </exec>
+</target>
+
+<target name="revertRefSeq" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertRefSeq"/>
+   <exec executable="${basedir}/target/RefSeq/revertRefSeq.sh">
+   </exec>
+</target>
+
+<target name="processRefSeq" depends="createTargetDir" description="deploys entire RefSeq dbs">
+   <echo message="processRefSeq"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/RefSeq/processRefSeq.sh">
+   </exec>
+</target>
+
+
+</project>
+

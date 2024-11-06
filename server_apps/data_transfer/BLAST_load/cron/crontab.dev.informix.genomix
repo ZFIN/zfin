@@ -1,0 +1,46 @@
+# for now, email to informix
+MAILTO=informix@cs.uoregon.edu
+
+# Daily/Weekly we transfer ZFIN related data in
+# from ZFIN ftp site for the use of Genomix BLAST.
+# And we regenerated blastdbs from external sites.
+#
+# -------------------------------------------------
+# ----        DATA TRANSFER IN         --------
+# -------------------------------------------------
+
+#  Nights   When    Comments
+#
+#    F       7pm    Weekly blast db updates for external sites.
+# 00 19 * * 5 /Users/informix/BLAST_load/target/blastdbupdate.pl
+
+#  SMUWTF   11:30pm  Get ZFIN sequence dbs
+30 * * * 0-5 /Users/informix/BLAST_load/target/ZFIN/zfin_unreleasedRNA/processzfin_unreleasedRNA.sh
+
+#  SMUWTF   11:30pm  Get ZFIN sequence dbs
+33 * * * 0-5 /Users/informix/BLAST_load/target/ZFIN/zfin_unreleasedProtein/processzfin_unreleasedProtein.sh
+
+#  SMUWTF   11:30pm  Get ZFIN sequence dbs
+36 * * * 0-5 /Users/informix/BLAST_load/target/ZFIN/zfin_publishedProtein/processzfin_publishedProtein.sh
+
+#  SMUWTF   11:30pm  Get ZFIN sequence dbs
+39 * * * 0-5 /Users/informix/BLAST_load/target/ZFIN/zfin_publishedRNA/processzfin_publishedRNA.sh
+
+#  SMUWTF   11:30pm  Get ZFIN sequence dbs
+42 * * * 0-5 /Users/informix/BLAST_load/target/ZFIN/zfin_microRNA/processzfin_microRNA.sh
+
+
+#  SMUWT   11:59pm  Get microRNA sequences from miRBASE
+# 59 23 * * 0-4 /Users/informix/BLAST_load/target/miRBASE/processmiRBASE.sh
+
+#  S       11:45pm  Get all GB acc# and GB cDNA acc# from ZFIN
+# 45 23 * * 0 /Users/informix/BLAST_load/target/ZFIN/weeklyZfinSeq_cDNASeq.sh
+
+#  S       8pm  Do a blast of zfin vs. zfin.
+# 00 20 * * 0 /Users/informix/BLAST_load/bin/weeklyZvZ.sh
+
+# -----------------------------------------
+# ---         Generate Statistics      ---
+# -----------------------------------------
+# MUWTF    10:30pm  Generate daily usage report
+# 30 22 * * 1-5 /Users/informix/bin/reportUsage.pl

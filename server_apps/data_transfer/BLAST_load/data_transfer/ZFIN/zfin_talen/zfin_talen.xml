@@ -1,0 +1,34 @@
+<project name="zfin_talen">
+
+<target name="deployzfin_talen" depends="processzfin_talen"
+description="Fully redeploys zfin_talen.">
+   <echo message="deployzfin_talen"/>
+</target>
+
+<target name="downloadzfin_talen" description="Downloads files for zfin_talen to staging area.">
+   <echo message="downloadzfin_talen"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_talen/downloadzfin_talen.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_talen" description="Converts FASTA files for zfin_talen into blastable files in the staging area.">
+   <echo message="convertzfin_talen"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_talen/convertzfin_talen.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_talen" description="Pushes blast files for zfin_talen to production from the staging area.">
+   <echo message="pushzfin_talen"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_talen/pushzfin_talen.sh">
+   </exec>
+</target>
+
+<target name="processzfin_talen" depends="createTargetDir" description="deploys entire zfin_talen blastdb">
+   <echo message="processzfin_talen"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_talen/processzfin_talen.sh">
+   </exec>
+</target>
+
+</project>
+

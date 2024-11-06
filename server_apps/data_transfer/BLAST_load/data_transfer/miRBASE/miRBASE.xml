@@ -1,0 +1,24 @@
+<project name="miRBASE">
+
+<target name="deploymiRBASE" depends="processmiRBASE" description="Fully redeploys miRBASE.">
+   <echo message="deploymiRBASE"/>
+</target>
+
+<target name="processmiRBASE" depends="createTargetDir" description="run the suite of miRBASE blastdbs">
+   <echo message="processmiRBASE"/>
+   <exec executable="${basedir}/target/miRBASE/processmiRBASE.sh"/>
+</target>
+
+<target name="cpmiRBASE" description="Get miRBASE db files from external
+repository">
+   <echo message="cpmiRBASE"/>
+   <exec executable="${basedir}/target/miRBASE/cpmiRBASE.sh"/>
+</target>
+
+<target name="revertmiRBASE" description="Replaces miRBASE files from production with last load files.">
+   <echo message="revertmiRBASE"/>
+   <exec executable="${basedir}/target/miRBASE/revertmiRBASE.sh"/>
+</target>
+
+</project>
+

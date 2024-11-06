@@ -1,0 +1,33 @@
+# Daily/Weekly we transfer ZFIN related data in
+# from ZFIN ftp site for the use of Genomix BLAST.
+# And we regenerated blastdbs from external sites.
+#
+# -------------------------------------------------
+# ----        DATA TRANSFER IN         --------
+# -------------------------------------------------
+# Nights   When    Comments
+#
+#    F       7pm    Weekly blast db updates for genbank
+#00 19 * * 5 /research/zusers/blast/BLAST_load/target/blastdbupdate.pl
+#
+# SMUWTFS   9:30am  Get ZFIN sequence dbs
+#30 9 * * * /research/zusers/blast/BLAST_load/target/ZFIN/dailyZfinSeq.sh
+#
+# Th 	8pm Get miRBASE sequences
+#
+#00 20 * * * /research/zusers/blast/BLAST_load/target/miRBASE/processmiRBASE.sh
+# 
+#    9:30am  Get RefSeq sequence dbs
+#30 9 * * 1 /research/zusers/blast/BLAST_load/target/RefSeq/processRefSeq.sh
+#
+#    9:30am  Get UniProt sequence dbs
+#30 9 * * 2 /research/zusers/blast/BLAST_load/target/SPTrEMBL/processSPTrEMBL.sh
+#
+#    9:30am  Get Ensembl sequence dbs
+#30 9 * * 4 /research/zusers/blast/BLAST_load/target/Ensembl/processEnsembl.sh
+#
+#    4:30pm  Get Ensembl protein sequence dbs
+#30 16 * * 4 /research/zusers/blast/BLAST_load/target/EnsemblP/processEnsembl.sh
+#
+#    8:00am  Get Ensembl protein sequence dbs
+#30 08 * * 6 /research/zusers/blast/BLAST_load/target/checkDbContent.sh

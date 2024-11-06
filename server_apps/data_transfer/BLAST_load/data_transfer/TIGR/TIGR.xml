@@ -1,0 +1,47 @@
+<project name="TIGR">
+
+<target name="deployTIGR" depends="processTIGR" description="Fully redeploys TIGR.">
+   <echo message="deployTIGR"/>
+</target>
+
+<target name="downloadTIGR" description="Downloads files for TIGR to staging area.">
+   <echo message="downloadTIGR"/>
+   <exec executable="${basedir}/target/TIGR/downloadTIGR.sh">
+   </exec>
+</target>
+
+<target name="assembleTIGR"  description="Assembles files for TIGR into fasta files in the staging area.">
+   <echo message="assembleTIGR"/>
+   <exec executable="${basedir}/target/TIGR/assembleTIGR.sh">
+   </exec>
+</target>
+
+<target name="convertTIGR" description="Converts FASTA files for TIGR into blastable files in the staging area.">
+   <echo message="convertTIGR"/>
+   <exec executable="${basedir}/target/TIGR/convertTIGR.sh">
+   </exec>
+</target>
+
+
+<target name="pushTIGR" description="Pushes blast files for TIGR to production from the staging area.">
+   <echo message="pushTIGR"/>
+   <exec executable="${basedir}/target/TIGR/pushTIGR.sh">
+   </exec>
+</target>
+
+<target name="revertTIGR" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertTIGR"/>
+   <exec executable="${basedir}/target/TIGR/revertTIGR.sh">
+   </exec>
+</target>
+
+<target name="processTIGR" depends="createTargetDir" description="deploys entire TIGR dbs">
+   <echo message="processTIGR"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/TIGR/processTIGR.sh">
+   </exec>
+</target>
+
+
+
+</project>

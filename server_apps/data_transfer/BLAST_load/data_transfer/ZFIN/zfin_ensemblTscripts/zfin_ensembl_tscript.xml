@@ -1,0 +1,35 @@
+<project name="zfin_ensembl_tscript">
+
+<target name="deployzfin_ensembl_tscript" depends="processzfin_ensembl_tscript"
+description="Fully redeploys zfin_ensembl_tscript.">
+   <echo message="processzfin_ensembl_tscript"/>
+</target>
+
+<target name="cpzfin_ensembl_tscript" description="Downloads files for zfin_ensembl_tscript to staging area.">
+   <echo message="cpzfin_ensembl_tscript"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_ensembl_tscript/cpzfin_ensembl_tscripts.sh">
+   </exec>
+</target>
+
+<target name="downloadzfin_ensembl_tscript" description="Downloads files for zfin_ensembl_tscript to staging area.">
+   <echo message="downloadzfin_ensembl_tscript"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_ensembl_tscript/downloadzfin_ensembl_tscripts.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_ensembl_tscript" description="Pushes blast files for zfin_ensembl_tscript to production from the staging area.">
+   <echo message="pushzfin_ensembl_tscript"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_ensembl_tscript/pushzfin_ensembl_tscripts.sh">
+   </exec>
+</target>
+
+<target name="processzfin_ensembl_tscript" depends="createTargetDir" description="deploys entire zfin_ensembl_tscript dbs">
+   <echo message="processzfin_ensembl_tscript"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_ensembl_tscript/processzfin_ensembl_tscripts.sh">
+   </exec>
+</target>
+
+
+</project>
+

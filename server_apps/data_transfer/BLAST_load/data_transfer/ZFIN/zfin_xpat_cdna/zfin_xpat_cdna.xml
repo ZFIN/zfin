@@ -1,0 +1,41 @@
+<project name="zfin_xpat_cdna">
+
+<target name="deployzfin_xpat_cdna" depends="processzfin_xpat_cdna"
+description="Fully redeploys zfin_xpat_cdna.">
+   <echo message="processzfin_xpat_cdna"/>
+</target>
+
+<target name="cpzfin_xpat_cdna" description="Downloads files for zfin_xpat_cdna to staging area.">
+   <echo message="cpzfin_xpat_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_xpat_cdna/cpzfin_xpat_cdna.sh">
+   </exec>
+</target>
+
+<target name="downloadzfin_xpat_cdna" description="Downloads files for zfin_xpat_cdna to staging area.">
+   <echo message="downloadzfin_xpat_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_xpat_cdna/downloadzfin_xpat_cdna.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_xpat_cdna" description="Pushes blast files for zfin_xpat_cdna to production from the staging area.">
+   <echo message="pushzfin_xpat_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_xpat_cdna/pushzfin_xpat_cdna.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_xpat_cdna" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_xpat_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_xpat_cdna/revertzfin_xpat_cdna.sh">
+   </exec>
+</target>
+
+<target name="processzfin_xpat_cdna" depends="createTargetDir" description="deploys entire zfin_xpat_cdna dbs">
+   <echo message="processzfin_xpat_cdna"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_xpat_cdna/processzfin_xpat_cdna.sh">
+   </exec>
+</target>
+
+
+</project>
+

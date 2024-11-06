@@ -1,0 +1,44 @@
+<project name="GenomicDNA">
+
+<target name="deployGenomicDNA" depends="processzfin_genomicDNA"
+description="Fully redeploys GenomicDNA.">
+   <echo message="deployGenomicDNA"/>
+</target>
+
+<target name="downloadzfin_genomicDNA" description="Cps files for GenomicDNA to staging area.">
+   <echo message="downloadzfin_genomicDNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_genomicDNA/downloadzfin_genomicDNA.sh">
+   </exec>
+</target>
+
+<target name="assemblezfin_genomicDNA"  description="Assembles files for GenomicDNA into fasta files in the staging area.">
+   <echo message="assemblezfin_genomicDNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_genomicDNA/assemblezfin_genomicDNA.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_genomicDNA" description="Converts FASTA files for GenomicDNA into blastable files in the staging area.">
+   <echo message="convertzfin_genomicDNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_genomicDNA/convertzfin_genomicDNA.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_genomicDNA" description="Pushes blast files for GenomicDNA to production from the staging area.">
+   <echo message="pushzfin_genomicDNA"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_genomicDNA/pushzfin_genomicDNA.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_genomicDNA" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_genomicDNA"/>
+</target>
+
+<target name="processzfin_genomicDNA" depends="createTargetDir" description="deploys entire zfin_GenomicDNA blastdb">
+   <echo message="processzfin_genomicDNA"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_genomicDNA/processzfin_genomicDNA.sh">
+   </exec>
+</target>
+
+</project>
+

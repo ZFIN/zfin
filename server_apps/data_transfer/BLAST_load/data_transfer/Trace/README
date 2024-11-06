@@ -1,0 +1,69 @@
+Progression of files:
+--------------------------------------------------
+All files downloaded to: 
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/Trace/
+
+Blastdbs and log files generated in:
+/tmp  and (depending on mode)
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/Trace
+
+Blastdbs moved to:
+@BLASTSERVER_BLAST_DATABASE_PATH@/Current
+
+--------------------------------------------------
+Usage:
+--------------------------------------------------
+./processTrace.sh : runs throu all targets in the proper order.  Downloads
+files, processes them, converts them to blast db files and pushes the 
+blast files to the production area of blast files.
+
+./revertTrace.sh : pulls the Backup version of the fasta file that was 
+archived last time and the blastdb files that were archived last time
+and puts them in the production area.  Revert only works after a complete 
+load.  Reverting after a simple ./downloadTrace.sh will result in an
+unworkable system because ./dowloadTrace.sh removes its trace.ftp file
+in favor of a more up to date one.
+
+./downloadTrace.sh : downloads the file from the Trace site in two modes: 0 
+for a complete re-do of the blastdb, 1 for the incremental update mode.
+blastdbupdate.pl (one dir up from this) controls this for the production
+system.  To run this independently, you must provide a 0 or 1 as input to 
+the ./downloadTrace.sh call.  Be carefule which you use.  If it is an
+update, then the script uses nrdb to weed out all dups in the current
+blastdb and then gets the new update.
+
+./convertTrace.sh : uses @BLASTSERVER_FASTA_FILE_PATH@/fasta/Trace/trace_zf.sh to build
+blastdb files.
+
+./pushTrace.sh : pushes blastdb files from building dir to 
+$BLASTSERVER_BLAST_DATABASE_PATH/Current/
+
+------------------------------------------------------------
+Download info: 
+------------------------------------------------------------
+
+	 time: approximately 20 minutes.
+	 content: one file whose name changes on each release.
+	 	  This script finds the most recent version and then
+		  increments a counter inside itself to find the next version.
+		  Version information as well as path information is stored
+		  in the trace.ftp file in this directory.
+		  
+------------------------------------------------------------
+Remaining Higgly-Piggly-ness:
+------------------------------------------------------------
+The Trace site will update fasta files for download in place (without
+changing the file version or name). So, this set of scripts has a "mode."  
+Mode must be set by developer (0 or 1 depending on action required).  
+Sometimes in development, if you pick the wrong mode, it won't build a 
+fasta file called trace_zf.fa, then convert won't work.  Pick the right mode.
+
+The downloadTrace.sh script replaces its trace.ftp file, and secondaly
+it has a trace.ftp file in the first place, and this file can not be checked
+into SVN...AND, if it is gone, we don't have any idea of how to recreate
+without going to the doc and finding the trace site and finding the most
+recent file.  Here is the last ftp file content, in case: 
+
+data_transfer/Trace% less trace.ftp 
+ftp.ncbi.nih.gov|pub/TraceDB/danio_rerio|fasta.danio_rerio.090.gz|
+

@@ -1,0 +1,45 @@
+<project name="zfin_cdna">
+
+<target name="deployzfin_cdna" depends="processzfin_cdna" description="Fully redeploys zfin_cdna.">
+   <echo message="deployzfin_cdna"/>
+</target>
+
+<target name="downloadzfin_cdna" description="Downloads files for zfin_cdna to staging area.">
+   <echo message="downloadzfin_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/downloadzfin_cdna.sh">
+   </exec>
+</target>
+
+<target name="assemblezfin_cdna"  description="Assembles files for zfin_cdna into fasta files in the staging area.">
+   <echo message="assemblezfin_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/assemblezfin_cdna.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_cdna" description="Converts FASTA files for zfin_cdna into blastable files in the staging area.">
+   <echo message="convertzfin_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/convertzfin_cdna.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_cdna" description="Pushes blast files for zfin_cdna to production from the staging area.">
+   <echo message="pushzfin_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/pushzfin_cdna.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_cdna" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_cdna"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/revertzfin_cdna.sh">
+   </exec>
+</target>
+
+<target name="processzfin_cdna" depends="createTargetDir" description="deploys entire zfin_cdna blastdb">
+   <echo message="processzfin_cdna"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_cdna/processzfin_cdna.sh">
+   </exec>
+</target>
+
+</project>
+

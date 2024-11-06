@@ -1,0 +1,34 @@
+<project name="zfin_wz">
+
+<target name="deployzfin_wz" depends="processzfin_wz"
+description="Fully redeploys zfin_wz.">
+   <echo message="deployzfin_wz"/>
+</target>
+
+<target name="cpzfin_wz" description="Downloads files for zfin_wz.">
+   <echo message="cpzfin_wz"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_wz/cpzfin_wz.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_wz" description="Pushes blast files for zfin_wz to production from the staging area.">
+   <echo message="pushzfin_wz"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_wz/pushzfin_wz.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_wz" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_wz"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_wz/revertzfin_wz.sh">
+   </exec>
+</target>
+
+<target name="processzfin_wz" depends="createTargetDir" description="deploys entire zfin_wz blastdb">
+   <echo message="processzfin_wz"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_wz/processzfin_wz.sh">
+   </exec>
+</target>
+
+</project>
+

@@ -1,0 +1,40 @@
+<project name="Trace">
+
+<target name="deployTrace" depends="processTrace"
+description="Fully redeploys Trace.">
+   <echo message="deployTrace"/>
+</target>
+
+<target name="downloadTrace" description="Downloads files for Trace to BLASTSERVER_FASTA_FILE_PATH/TRACE.">
+   <echo message="downloadTrace"/>
+   <exec executable="${basedir}/target/Trace/downloadTrace.sh">
+   </exec>
+</target>
+
+<target name="convertTrace" description="Converts FASTA files for Trace into blastable files in /tmp or in BLASTSERVER_FASTA_FILE_PATH/Trace depending on mode.">
+   <echo message="convertTrace"/>
+   <exec executable="${basedir}/target/Trace/convertTrace.sh">
+   </exec>
+</target>
+
+<target name="pushTrace" description="Pushes blast files for Trace to production from BLASTSERVER_FASTA_FILE_PATH.">
+   <echo message="pushTrace"/>
+   <exec executable="${basedir}/target/Trace/pushTrace.sh">
+   </exec>
+</target>
+
+<target name="revertTrace" description="Pulls archived blast files from production to the $BLASTSERVER_FASTA_FILE_PATH and from the BLASTSERVER_BLAST_DATABASE_PATH/Backup to BLASTSERVER_BLAST_DATABASE_PATH/Current.">
+   <echo message="revertTrace"/>
+   <exec executable="${basedir}/target/Trace/revertTrace.sh">
+   </exec>
+</target>
+
+<target name="processTrace" depends="createTargetDir" description="deploys entire Trace dbs">
+   <echo message="processTrace"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/Trace/processTrace.sh">
+   </exec>
+</target>
+
+</project>
+

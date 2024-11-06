@@ -1,0 +1,23 @@
+<project>
+
+	<import file="${buildfiles.dir}/Ensembl/Ensembl.xml"/>
+	<import file="${buildfiles.dir}/GenBank/GenBank.xml"/>
+	<import file="${buildfiles.dir}/RefSeq/RefSeq.xml"/>
+	<import file="${buildfiles.dir}/SPTrEMBL/SPTrEMBL.xml"/>
+	<import file="${buildfiles.dir}/TIGR/TIGR.xml"/>
+	<import file="${buildfiles.dir}/Trace/Trace.xml"/>
+	<import file="${buildfiles.dir}/miRBASE/miRBASE.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_genomicDNA/zfin_genomicDNA.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_publishedProtein/zfin_publishedProtein.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_unreleasedRNA/zfin_unreleasedRNA.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_publishedRNA/zfin_publishedRNA.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_vega/zfin_vega.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_cdna/zfin_cdna.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_mrph/zfin_mrph.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_microRNA/zfin_microRNA.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_xpat_cdna/zfin_xpat_cdna.xml"/>
+	<import file="${buildfiles.dir}/ZFIN/zfin_wz/zfin_wz.xml"/>
+	<import file="${buildfiles.dir}/VegaProtein/VegaProtein.xml"/>
+	<import file="${buildfiles.dir}/ReferenceProteome/ReferenceProteome.xml"/>
+
+</project>

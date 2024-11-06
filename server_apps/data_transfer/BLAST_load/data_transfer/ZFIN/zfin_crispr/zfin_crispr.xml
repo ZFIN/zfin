@@ -1,0 +1,34 @@
+<project name="zfin_crispr">
+
+<target name="deployzfin_crispr" depends="processzfin_crispr"
+description="Fully redeploys zfin_crispr.">
+   <echo message="deployzfin_crispr"/>
+</target>
+
+<target name="downloadzfin_crispr" description="Downloads files for zfin_crispr to staging area.">
+   <echo message="downloadzfin_crispr"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_crispr/downloadzfin_crispr.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_crispr" description="Converts FASTA files for zfin_crispr into blastable files in the staging area.">
+   <echo message="convertzfin_crispr"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_crispr/convertzfin_crispr.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_crispr" description="Pushes blast files for zfin_crispr to production from the staging area.">
+   <echo message="pushzfin_crispr"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_crispr/pushzfin_crispr.sh">
+   </exec>
+</target>
+
+<target name="processzfin_crispr" depends="createTargetDir" description="deploys entire zfin_GenomicDNA blastdb">
+   <echo message="processzfin_crispr"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_crispr/processzfin_crispr.sh">
+   </exec>
+</target>
+
+</project>
+

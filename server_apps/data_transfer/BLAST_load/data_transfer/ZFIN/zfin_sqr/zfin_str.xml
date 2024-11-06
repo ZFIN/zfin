@@ -1,0 +1,40 @@
+<project name="zfin_str">
+
+<target name="deployzfin_str" depends="processzfin_str"
+description="Fully redeploys zfin_str.">
+   <echo message="deployzfin_str"/>
+</target>
+
+<target name="downloadzfin_str" description="Downloads files for zfin_str to staging area.">
+   <echo message="downloadzfin_str"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_str/downloadzfin_str.sh">
+   </exec>
+</target>
+
+<target name="convertzfin_str" description="Converts FASTA files for zfin_str into blastable files in the staging area.">
+   <echo message="convertzfin_str"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_str/convertzfin_str.sh">
+   </exec>
+</target>
+
+<target name="pushzfin_str" description="Pushes blast files for zfin_str to production from the staging area.">
+   <echo message="pushzfin_str"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_str/pushzfin_str.sh">
+   </exec>
+</target>
+
+<target name="revertzfin_str" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertzfin_str"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_str/revertzfin_str.sh">
+   </exec>
+</target>
+
+<target name="processzfin_str" depends="createTargetDir" description="deploys entire zfin_GenomicDNA blastdb">
+   <echo message="processzfin_str"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/ZFIN/zfin_str/processzfin_str.sh">
+   </exec>
+</target>
+
+</project>
+
