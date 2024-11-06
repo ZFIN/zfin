@@ -426,6 +426,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                 duplicatedTranscriptNameMap.put(transcriptName, ensdartIDs);
             }
         });
+        transcriptNameMap.forEach((transcriptName, ids) -> {
+
+            LoadLink loadLink = new LoadLink(transcriptName, "");
+            LoadAction loadAction = new LoadAction(LoadAction.Type.WARNING, ENSEMBL_TRANSCRIPTS_DUPLICATE_PER_NAME, transcriptName, String.join(",", ids), "", 0, new HashMap<>());
+            loadAction.addLink(loadLink);
+            loadAction.addLink(loadLink);
+            if (ids.size() > 1) {
+                actions.add(loadAction);
+            }
+        });
 
         BufferedWriter writer = null;
         try {

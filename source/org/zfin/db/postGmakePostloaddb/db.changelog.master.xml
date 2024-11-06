@@ -102,5 +102,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1160/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1161/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1162/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1163/db.changelog.master.xml"/>
 <!-- starting fresh with migration to postgres -->
 </databaseChangeLog>

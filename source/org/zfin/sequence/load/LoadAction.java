@@ -57,6 +57,7 @@ public class LoadAction implements Comparable<LoadAction> {
         TRANSCRIPT_EXISTS("A Transcript of a given name already exists"),
         NO_NAME_FOR_TRANSCRIPT_FOUND("No Name found for Transcript"),
         UNSUPPTORTED_BIOTYPE("Unsupported Biotype"),
+        ENSEMBL_TRANSCRIPTS_DUPLICATE_PER_NAME("Multiple Transcripts in Ensembl have the same name in ENSEMBL"),
         ZFIN_OBSOLETE("OBSOLETED ENSDARG IDs in ZFIN"),
         ZFIN_OBSOLETE_MULTIPLE("OBSOLETED ENSDARG IDs in ZFIN on multiple ZDB IDs"),
         ZFIN_TRANSCRIPT_OBSOLETE("OBSOLETED ENSDART IDs in ZFIN"),
