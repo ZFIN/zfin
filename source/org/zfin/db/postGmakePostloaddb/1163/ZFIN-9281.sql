@@ -73,3 +73,50 @@ insert into ensembl_transcript_renaming
 values ('ENSDART00000132945', 'ENSDART00000132945', 'si:ch211-226o13.2-202');
 
 
+-- ZFIN-9436
+insert into ensembl_transcript_renaming
+values ('ENSDART00000187088', 'ENSDART00000187088', 'si:ch211-266c8.2-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000122700', 'ENSDART00000122700', 'tenm3-202 ');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000184727', 'ENSDART00000184727', 'si:dkey-237h12.3-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000188386', 'ENSDART00000188386', 'si:ch1073-440p11.2-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000104648', 'ENSDART00000104648', 'zgc:165582-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000189926', 'ENSDART00000189926', 'si:cabz01076231.1-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000177174', 'ENSDART00000177174', 'cabp4-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000193316', 'ENSDART00000193316', 'si:dkey-5g14.1-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000181928', 'ENSDART00000181928', 'slc46a3-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000089126', 'ENSDART00000089126', 'trhde.1-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000112301', 'ENSDART00000112301', 'trhde.2-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000181489', 'ENSDART00000181489', 'kcnt1a-203');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000189898', 'ENSDART00000189898', 'kcnt1b-203');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000042002', 'ENSDART00000042002', 'slc4a5a-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000160976', 'ENSDART00000160976', 'slc4a5b-202');
+
+
