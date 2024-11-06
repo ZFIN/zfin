@@ -16,10 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
@@ -41,7 +38,8 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                 List<PhenotypeStatementWarehouse> phenotypeStatements = (new ArrayList<>(phenotypeStatementWarehouses).stream().sorted()).toList();
                 display.setPhenotypeStatements(phenotypeStatements);
                 display.setExperiment(experiment);
-                if (experiment.getExperimentConditions().stream().filter(experimentCondition -> experimentCondition.getChebiTerm() != null).collect(toSet()).size() > 1) {
+                if (experiment.getExperimentConditions().size() > 1 &&
+                        experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
                     display.setMultiChebiCondition(true);
                 }
                 Set<String> phenotypeTags = phenotypeStatements.stream()
@@ -70,8 +68,8 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                 display.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
                 display.setConditionSearch(experiment.getDisplayAllConditions());
                 display.setExpConditionChebiSearch(experiment.getExperimentConditions().stream()
-                    .filter(experimentCondition -> experimentCondition.getChebiTerm() != null)
                     .map(ExperimentCondition::getChebiTerm)
+                    .filter(Objects::nonNull)
                     .map(GenericTerm::getTermName)
                     .collect(Collectors.joining("|")));
                 resultList.add(display);
