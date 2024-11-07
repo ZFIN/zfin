@@ -444,6 +444,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         String hql = """ 
                 select ev from MarkerGoTermEvidence ev
                 where ev.evidenceCode.code = :code
+                order by ev.zdbID
                 """;
         MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery(hql)
                 .setString("code", GoEvidenceCodeEnum.ND.name())
@@ -463,6 +464,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         evidence.setModifiedWhen(existingEvidence.getModifiedWhen());
         evidence.setOrganizationCreatedBy(existingEvidence.getOrganizationCreatedBy());
         evidence.setExternalLoadDate(existingEvidence.getExternalLoadDate());
+        evidence.setGoTermAnnotationExtnGroup(existingEvidence.getGoTermAnnotationExtnGroup());
 
 
         GafJobData gafJobData = new GafJobData();
