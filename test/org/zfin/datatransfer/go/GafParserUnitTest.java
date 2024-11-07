@@ -220,7 +220,7 @@ public class GafParserUnitTest extends AbstractDatabaseTest {
         GafEntry gafEntry = gafEntries.get(0);
 
         //ZFIN	ZDB-GENE-041111-162	involved_in	GO:0000122	PMID:29719254	ECO:0000315	ZFIN:ZDB-MRPHLNO-180830-6		20190207	ZFIN	has_input(ZFIN:ZDB-GENE-980526-90)	contributor=https://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:5c4605cc00000549|model-state=production
-        assertEquals("ZDB-GENE-041111-162", gafEntry.getEntryId());
+        assertEquals("ZFIN:ZDB-GENE-041111-162", gafEntry.getEntryId());
         assertEquals("GO:0000122", gafEntry.getGoTermId());
         assertEquals("PMID:29719254", gafEntry.getPubmedId());
         assertEquals("ECO:0000315", gafEntry.getEvidenceCode());
