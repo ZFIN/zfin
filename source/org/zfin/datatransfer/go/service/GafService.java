@@ -59,6 +59,7 @@ public class GafService {
     protected OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     protected MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     protected ReferenceDatabase uniprot;
+    protected ReferenceDatabase genpept;
     protected GafOrganization.OrganizationEnum organizationEnum;
 
 
@@ -194,16 +195,19 @@ public class GafService {
         gafJobData.markStopTime();
     }
 
-    protected ReferenceDatabase getUniprot() {
+    protected ReferenceDatabase[] getUniprotRelatedDatabases() {
         if (uniprot == null) {
             // get uniprot ReferenceDatabase
             uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
                 ForeignDB.AvailableName.UNIPROTKB
                 , ForeignDBDataType.DataType.POLYPEPTIDE
             );
+
+            genpept = sequenceRepository.getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName.GENPEPT,
+                    ForeignDBDataType.DataType.POLYPEPTIDE);
         }
 
-        return uniprot;
+        return new ReferenceDatabase[]{uniprot, genpept};
     }
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
@@ -215,7 +219,7 @@ public class GafService {
             }
             returnGenes.add(gene);
         } else {
-            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprot());
+            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprotRelatedDatabases());
             for (MarkerDBLink markerDBLink : markerDBLinks) {
                 Marker gene = markerDBLink.getMarker();
                 if (gene.getZdbID().startsWith("ZDB-GENE-") || entryId.contains("RNAG")) {
@@ -505,11 +509,11 @@ public class GafService {
 
         if (!gafEntry.getQualifier().isEmpty()) {
             // they use "contributes_to" and "NOT"
-            if (gafEntry.getNot().equalsIgnoreCase("NOT")) {
+            if ("NOT".equalsIgnoreCase(gafEntry.getNot())) {
                 return GoEvidenceQualifier.NOT;
-            } else if (gafEntry.getQualifier().equals("RO:0002326")) {
+            } else if ("RO:0002326".equals(gafEntry.getQualifier())) {
                 return GoEvidenceQualifier.CONTRIBUTES_TO;
-            } else if (gafEntry.getQualifier().equals("RO:0002325")) {
+            } else if ("RO:0002325".equals(gafEntry.getQualifier())) {
                 if (goTerm.getOntology() != Ontology.GO_CC) {
                     throw new GafValidationError(GoEvidenceQualifier.COLOCALIZES_WITH.toString() +
                         " may only be used with " + Ontology.GO_CC.getCommonName());

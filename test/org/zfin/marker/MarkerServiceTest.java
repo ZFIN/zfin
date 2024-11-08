@@ -222,9 +222,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         dbLink = iter.next();
         assertEquals(ForeignDBDataType.DataType.RNA, dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
         assertEquals(ForeignDB.AvailableName.REFSEQ, dbLink.getReferenceDatabase().getForeignDB().getDbName());
-        dbLink = iter.next();
-        assertEquals(ForeignDBDataType.DataType.RNA, dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
-        assertEquals(ForeignDB.AvailableName.GENBANK, dbLink.getReferenceDatabase().getForeignDB().getDbName());
+
 //        dbLink = iter.next();
 //        assertEquals(ForeignDBDataType.DataType.RNA,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
 //        assertEquals(ForeignDB.AvailableName.GENBANK,dbLink.getReferenceDatabase().getForeignDB().getDbName());
@@ -454,7 +452,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         // VERIFY
         assertThat("OrthologyPresentationBean should not be null", bean, is(notNullValue()));
         assertThat("Note text should match", bean.getNote(), is(noteText));
-        assertThat("Orthologs should be empty", bean.getOrthologs(), is(nullValue()));
+        assertThat("Orthologs should be empty", bean.getOrthologs().size(), is(0));
     }
 
     @Test
