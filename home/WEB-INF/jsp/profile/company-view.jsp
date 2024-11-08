@@ -39,11 +39,11 @@
             </nav>
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
-                        <c:if test="${isOwner}">
-                            <nav class="navbar navbar-light admin text-center border-bottom">
-                                <a class="col-sm" href="/action/profile/person/edit/${person.zdbID}">Edit</a>
-                            </nav>
-                        </c:if>
+          <c:if test="${isOwner}">
+              <nav class="navbar navbar-light admin text-center border-bottom">
+                  <a class="col-sm" href="/action/profile/company/edit/${company.zdbID}">Edit</a>
+              </nav>
+          </c:if>
        </authz:authorize>
     </jsp:attribute>
 
