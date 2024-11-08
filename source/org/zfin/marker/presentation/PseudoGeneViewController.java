@@ -51,7 +51,11 @@ public class PseudoGeneViewController {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
-        zdbID = markerService.getActiveMarkerID(zdbID);
+        String activeZdbID = markerService.getActiveMarkerID(zdbID);
+        if (!zdbID.equals(activeZdbID)) {
+            return "redirect:/" + activeZdbID;
+        }
+
         logger.info("zdbID: " + zdbID);
         Marker gene = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + gene);

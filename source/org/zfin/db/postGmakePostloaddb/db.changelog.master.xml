@@ -103,5 +103,43 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1161/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1162/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1163/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1164/db.changelog.master.xml"/>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1165/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1166/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1167/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1168/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1169/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1170/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1171/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1172/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1173/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1174/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1175/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1176/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1177/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1178/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1179/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1180/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1181/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1182/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1183/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1184/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1185/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1186/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1187/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1188/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1189/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1190/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1191/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1192/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1193/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1194/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1195/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1196/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1197/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1198/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1199/db.changelog.master.xml"/>
+
 <!-- starting fresh with migration to postgres -->
 </databaseChangeLog>
