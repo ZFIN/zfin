@@ -462,8 +462,8 @@ public class MutantRepositoryTest {
 
     @Test
     public void getInferredFromCountByGenotype() {
-        String genoID = "ZDB-GENO-000412-4";
-        String publicationID = "ZDB-PUB-040617-4";
+        String genoID = "ZDB-GENO-070608-1";
+        String publicationID = "ZDB-PUB-120807-39";
         long count = getMutantRepository().getInferredFromCountByGenotype(genoID, publicationID);
         assertThat(count, greaterThan(0L));
     }
