@@ -131,7 +131,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
     public void getEvidencesForGafOrganization() {
         //ignore this test until 12/1/24
         //depends on NOCTUA GPAD LOAD being fixed
-        Assume.assumeTrue( new Date().after( new GregorianCalendar(2024,Calendar.DECEMBER, 1).getTime() ) );
+        Assume.assumeTrue( new Date().after( new GregorianCalendar(2025,Calendar.FEBRUARY, 1).getTime() ) );
 
 
         GafOrganization gafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.NOCTUA);

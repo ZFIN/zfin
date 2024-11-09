@@ -238,51 +238,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
     }
 
-    //UPDATE on 11/9/2023: I'm getting 4 entries in the "new" assert that according to the test should be 2
-    //                     as far as I can tell, this is due to changes to the data in the DB. I don't think
-    //                     the logic has changed.
-    // valid additions, but duplicate within the gaf file
-    //
-//    @Test
-//    public void knowDupesWithAnAdd() throws Exception {
-//        //pause test until 4/1/23
-//        Assume.assumeTrue( new Date().after( new GregorianCalendar(2023,Calendar.APRIL, 1).getTime() ) );
-//
-//        File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_duplicateentries");
-//        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-//        assertThat("gaf entries loaded", gafEntries, hasSize(15));
-//        makeTestPub(gafEntries);
-//
-//        GafJobData gafReport1 = new GafJobData();
-//
-//        gafService.processEntries(gafEntries, gafReport1);
-//        logger.debug("summary: " + gafReport1.toString());
-//        logger.debug("entries: " + gafReport1.getNewEntries());
-//        logger.debug("existing: " + gafReport1.getExistingEntries());
-//        logger.debug("errors: " + gafReport1.getErrors());
-//
-//        for (MarkerGoTermEvidence markerGoTermEvidence : gafReport1.getNewEntries()) {
-//            logger.debug(markerGoTermEvidence.hashCode()
-//                    + " - "
-//                    + " " + markerGoTermEvidence.getZdbID()
-//                    + " " + markerGoTermEvidence.getMarker().getZdbID()
-//                    + " " + markerGoTermEvidence.getEvidenceCode().getCode()
-//                    + " " + markerGoTermEvidence.getFlag()
-//                    + " " + markerGoTermEvidence.getSource().getZdbID()
-//                    + " " + markerGoTermEvidence.getGoTerm().getOboID()
-//                    + " " + markerGoTermEvidence.getInferencesAsString().iterator().next()
-//            );
-//        }
-//
-//        assertThat("new", gafReport1.getNewEntries(), hasSize(2));
-//        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
-//        assertThat("errors", gafReport1.getErrors(), hasSize(13));
-//        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
-//        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
-//
-//    }
-
-
     // tests null inferences and redundant entries
     @Test
     public void dontAddDupes() throws Exception {
@@ -397,8 +352,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     //
     @Test
     public void multipleAddExists() throws Exception {
-        //pause test until 4/1/23
-        Assume.assumeTrue( new Date().after( new GregorianCalendar(2023,Calendar.APRIL, 1).getTime() ) );
 
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_otherexists");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
