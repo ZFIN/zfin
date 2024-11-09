@@ -59,7 +59,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testExistingDBLinksPassValidationRules() {
-        //ignore this test until 12/1/24
+        //ignore this test until 2/1/25
         //depends on NOCTUA GPAD LOAD being fixed
         Assume.assumeTrue( new Date().after( new GregorianCalendar(2025,Calendar.FEBRUARY, 1).getTime() ) );
 
