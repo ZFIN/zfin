@@ -213,10 +213,19 @@ public class CurationDTOConversionService {
 
     public void setRelatedLinks(DashboardPublicationList result) {
         List<String> ids = result.getPublications().stream().map(DashboardPublicationBean::getZdbId).toList();
-        Map<String, List<String>> relatedLinks = relatedDataService.getRelatedLinksForPubIDs(ids);
+        Map<String, List<String>> relatedLinks = getRelatedDataService().getRelatedLinksForPubIDs(ids);
 
         for (DashboardPublicationBean bean : result.getPublications()) {
             bean.setRelatedLinks(relatedLinks.get(bean.getZdbId()));
         }
+    }
+
+    private RelatedDataService getRelatedDataService() {
+        //TODO: This method shouldn't be necessary, but for some reason
+        //      tests like PublicationRepositoryTest don't autowire multiple levels
+        if (relatedDataService == null) {
+            relatedDataService = new RelatedDataService();
+        }
+        return relatedDataService;
     }
 }

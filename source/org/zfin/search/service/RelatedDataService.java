@@ -428,7 +428,7 @@ public class RelatedDataService {
 
     public List<String> getXrefsLinks(String id, String category, String type) {
         List<String> links = new ArrayList<>();
-        QueryResponse response = solrService.getRelatedDataResponse(id);
+        QueryResponse response = getSolrService().getRelatedDataResponse(id);
 
         FacetField facetField = response.getFacetField("category");
 
@@ -601,6 +601,15 @@ public class RelatedDataService {
             }
             return relatedCategory;
         }
+    }
+
+    private SolrService getSolrService() {
+        //TODO: This method shouldn't be necessary, but for some reason
+        //      tests like PublicationRepositoryTest don't autowire multiple levels
+        if (solrService == null) {
+            solrService = new SolrService();
+        }
+        return solrService;
     }
 
 }
