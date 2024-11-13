@@ -119,4 +119,60 @@ values ('ENSDART00000042002', 'ENSDART00000042002', 'slc4a5a-202');
 insert into ensembl_transcript_renaming
 values ('ENSDART00000160976', 'ENSDART00000160976', 'slc4a5b-202');
 
+insert into ensembl_transcript_renaming
+values ('ENSDART00000123648', 'ENSDART00000123648', 'pcdh1a6-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000078403', 'ENSDART00000078403', 'brd8a-203');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000187440', 'ENSDART00000187440', 'zgc:136929-202');
+
+delete from ensembl_transcript_delete;
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000114516', 'ZDB-TSCRIPT-141209-2561');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000169094', 'ZDB-TSCRIPT-141209-1128');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000174150', 'ZDB-TSCRIPT-090929-17774');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000141094', 'ZDB-TSCRIPT-090929-17777');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000174015', 'ZDB-TSCRIPT-160919-376');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000147574', 'ZDB-TSCRIPT-090929-12239');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000134229', 'ZDB-TSCRIPT-090929-12239');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000134229', 'ZDB-TSCRIPT-090929-12237');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000098052', 'ZDB-TSCRIPT-141209-296');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000133799', 'ZDB-TSCRIPT-090929-12245');
+
+
+delete from ensembl_transcript_add;
+
+insert into ensembl_transcript_add
+values ('ENSDART00000148454', 'ZDB-TSCRIPT-110325-1216');
+
+insert into ensembl_transcript_add
+values ('ENSDART00000142854', 'ZDB-TSCRIPT-141209-296');
+
+update transcript set tscript_status_id = 1 where tscript_mrkr_zdb_id in ('ZDB-TSCRIPT-110325-1216', 'ZDB-TSCRIPT-090929-12239','ZDB-TSCRIPT-090929-12237', 'ZDB-TSCRIPT-090929-17774', 'ZDB-TSCRIPT-090929-17777');
+
+update marker set mrkr_abbrev = 'ottdart00000029880', mrkr_name = 'ottdart00000029880' where mrkr_zdb_id = 'ZDB-TSCRIPT-090929-12239';
+
+update marker set mrkr_abbrev = 'ottdart00000029878', mrkr_name = 'ottdart00000029878' where mrkr_zdb_id = 'ZDB-TSCRIPT-090929-12237 ';
+
 
