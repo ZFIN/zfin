@@ -130,7 +130,10 @@ values ('ENSDART00000187440', 'ENSDART00000187440', 'zgc:136929-202');
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 3c98329f6a (ZFIN-9267 more adjustments)
 insert into ensembl_transcript_renaming
 values ('ENSDART00000190841', 'ENSDART00000190841', 'si:ch73-256j6.4-202');
 
@@ -141,9 +144,12 @@ insert into ensembl_transcript_renaming
 values ('ENSDART00000188969','ENSDART00000188969','si:ch211-204c21.1-203');
 
 
+<<<<<<< HEAD
 >>>>>>> ZFIN-9267
 =======
 >>>>>>> 75da9c4436 (ZFIN-9267 load transcripts)
+=======
+>>>>>>> 3c98329f6a (ZFIN-9267 more adjustments)
 delete from ensembl_transcript_delete;
 
 insert into ensembl_transcript_delete
