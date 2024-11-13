@@ -80,7 +80,9 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
         Transcript t = RepositoryFactory.getMarkerRepository().getTranscriptByName("pax6a-205");
         assertNotNull(t);
         List<TranscriptDBLink> dblinks = RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(t, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
-        assertEquals(1, dblinks.size());
+        assertEquals("pax6a-205 should return 2 results, but got: " + dblinks.size(), 2, dblinks.size());
+        assertTrue("OTTDART should be in results", dblinks.stream().anyMatch(dbl -> dbl.getAccessionNumber().contains("OTTDART")));
+        assertTrue("ENSDART should be in results", dblinks.stream().anyMatch(dbl -> dbl.getAccessionNumber().contains("ENSDART")));
     }
 
     @Test
