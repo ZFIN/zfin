@@ -19,7 +19,6 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
@@ -32,6 +31,7 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Controller
 @RequestMapping("/feature")
