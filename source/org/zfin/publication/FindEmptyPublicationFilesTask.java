@@ -25,7 +25,10 @@ public class FindEmptyPublicationFilesTask extends AbstractScriptWrapper {
         initAll();
         PublicationService pubService = new PublicationService();
         List<PublicationFile> files = getPublicationRepository().getAllPublicationFiles();
-        List<PublicationFile> emptyFiles = files.stream().filter(file -> pubService.getPublicationFileSizeOnDisk(file) == 0).toList();
+        List<PublicationFile> emptyFiles = files.stream()
+                .filter(file -> pubService.getPublicationFileSizeOnDisk(file) == 0)
+                .sorted((file1, file2) -> file1.getPublication().getZdbID().compareTo(file2.getPublication().getZdbID()))
+                .toList();        
         String outputDir = ".";
         if (System.getenv("ARTIFACTS_DIR") != null) {
             outputDir = System.getenv("ARTIFACTS_DIR");
