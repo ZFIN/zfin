@@ -1,9 +1,11 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.io.stream.JSONTupleStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.zfin.sequence.service.SequenceService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -52,7 +55,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
         var response = sequenceService.getMarkerDBLinkJsonResultResponse(markerZdbId, pagination, false, false);
         var results = response.getResults();
 
-        assertEquals(12, results.size());
+        assertEquals("ZDB-GENE-041014-357 should have 20 sequences, but has " + results.size(), 20, results.size());
     }
 
     @Test
