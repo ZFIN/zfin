@@ -1,14 +1,14 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
@@ -19,7 +19,6 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
@@ -71,7 +70,6 @@ public class SequenceTargetingReagentViewController {
 
     @RequestMapping(value = "/str/view/{zdbID}")
     public String getNewView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-
         // set base bean
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
 

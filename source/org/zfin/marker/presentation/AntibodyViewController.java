@@ -13,7 +13,6 @@ import org.zfin.antibody.AntibodyService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -38,8 +37,6 @@ public class AntibodyViewController {
 
     @RequestMapping(value = "/view/{zdbID}")
     public String getNewAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
-
         // set base bean
         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
 

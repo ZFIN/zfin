@@ -18,11 +18,8 @@ import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.api.Pagination;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
@@ -59,7 +56,6 @@ import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
 import static org.zfin.util.ZfinStringUtils.objectToJson;
-import static org.zfin.util.servlet.ServletService.isAuthenticated;
 
 @Controller
 @RequestMapping("/publication")

@@ -10,7 +10,6 @@ import org.zfin.expression.FigureService;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.mutant.PhenotypeWarehouse;
@@ -37,7 +36,6 @@ public class FigureViewController {
     // get together all of the data that you need later in the JSP it returns
     @RequestMapping("/view/{zdbID}")
     public String getFigureViewPrototype(Model model, @PathVariable("zdbID") String zdbID) {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         Figure figure = figureRepository.getFigure(zdbID);
 

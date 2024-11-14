@@ -55,8 +55,6 @@ public class FeatureDetailController {
 
     @RequestMapping(value = "view/{zdbID}")
     protected String getFeatureDetail(@PathVariable String zdbID, Model model) {
-//        CanonicalLinkConfig.addCanonicalIfFound(model);
-
         LOG.info("Start Feature Detail Controller");
         Feature feature = featureRepository.getFeatureByID(zdbID);
         if (feature == null) {

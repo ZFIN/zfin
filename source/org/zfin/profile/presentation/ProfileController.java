@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 
 /**
  */
@@ -26,7 +25,6 @@ public class ProfileController {
 
     @RequestMapping(value = "/view/{zdbID}", method = RequestMethod.GET)
     public String viewProfile(@PathVariable String zdbID, Model model) {
-
         model.addAttribute("deleteURL", "/action/infrastructure/deleteRecord/" + zdbID);
         if (zdbID.startsWith("ZDB-LAB")) {
             return labController.viewLab(zdbID, model);
