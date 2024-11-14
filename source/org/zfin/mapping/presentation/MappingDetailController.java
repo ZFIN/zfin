@@ -43,7 +43,6 @@ public class MappingDetailController {
     @RequestMapping("/panel-detail/{panelID}")
     protected String showPanelDetail(@PathVariable String panelID,
                                      Model model) throws Exception {
-
         Panel panel = getLinkageRepository().getPanel(panelID);
         model.addAttribute("panel", panel);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mapping Panel: " + panel.getName());
