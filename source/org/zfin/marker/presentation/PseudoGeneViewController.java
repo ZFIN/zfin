@@ -49,7 +49,6 @@ public class PseudoGeneViewController {
 
     @RequestMapping(value = "/pseudogene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         // set base bean
         GeneBean geneBean = new GeneBean();

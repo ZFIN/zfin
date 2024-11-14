@@ -94,8 +94,6 @@ PublicationViewController {
 
     @RequestMapping("/{zdbID}")
     public String viewPublication(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
-
         Publication publication = getPublication(zdbID);
 
         if (publication == null) {
@@ -433,8 +431,6 @@ PublicationViewController {
 
     @RequestMapping("/journal/{zdbID}")
     public String viewJournal(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
-
         Journal journal = publicationRepository.getJournalByID(zdbID);
         //try zdb_replaced data if necessary
         if (journal == null) {

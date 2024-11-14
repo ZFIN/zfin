@@ -26,7 +26,6 @@ public class ProfileController {
 
     @RequestMapping(value = "/view/{zdbID}", method = RequestMethod.GET)
     public String viewProfile(@PathVariable String zdbID, Model model) {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         model.addAttribute("deleteURL", "/action/infrastructure/deleteRecord/" + zdbID);
         if (zdbID.startsWith("ZDB-LAB")) {

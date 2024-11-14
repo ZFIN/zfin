@@ -216,7 +216,6 @@ public class OntologyTermDetailController {
     protected String termDetailPagePrototype(@PathVariable String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
                                              Model model) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.OLD_TERM_PAGES)) {
             return termDetailPage(termID, form, model);

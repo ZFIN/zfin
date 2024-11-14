@@ -51,7 +51,6 @@ public class ImageViewController {
 
     @RequestMapping(value = {"/view/{zdbID}"})
     public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {

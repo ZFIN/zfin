@@ -47,7 +47,6 @@ public class TranscriptViewController {
 
     @RequestMapping(value = "/transcript/view/{zdbID}")
     public String getNewTranscriptView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         HibernateUtil.createTransaction();
         zdbID = markerService.getActiveMarkerID(zdbID);

@@ -82,8 +82,6 @@ public class NTRViewController {
     public String getNontranscribedRegionViewNew(Model model,
                                                  @PathVariable("zdbID") String zdbID
     ) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
-
         setBaseBean(model, zdbID);
         return "marker/region/region-view";
     }

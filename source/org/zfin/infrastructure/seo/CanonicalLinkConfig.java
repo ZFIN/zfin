@@ -81,4 +81,12 @@ public class CanonicalLinkConfig {
             model.addAttribute("canonicalUrl", canonicalUrl);
         }
     }
+
+    public static String getCanonicalIfFound(String url) {
+        String canonicalUrl = match(url);
+        if (canonicalUrl != null) {
+            return canonicalUrl;
+        }
+        return "";
+    }
 }

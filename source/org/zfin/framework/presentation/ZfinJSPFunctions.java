@@ -27,6 +27,7 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
 import org.zfin.profile.UserService;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
@@ -39,6 +40,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
+
+import static org.zfin.infrastructure.seo.CanonicalLinkConfig.getCanonicalIfFound;
+import static org.zfin.infrastructure.service.RequestService.getRequestedForwardedUrl;
+import static org.zfin.infrastructure.service.RequestService.getRequestedUrlPath;
 
 /**
  * Class that is called from JSP through a function call.
@@ -426,6 +431,18 @@ public class ZfinJSPFunctions {
     public static String getProperty(String name) {
         ZfinPropertiesEnum property = ZfinPropertiesEnum.valueOf(name);
         return property == null ? "" : property.toString();
+    }
+
+    public static String getCanonical() {
+        String canonical = getCanonicalIfFound(getRequestedForwardedUrl());
+        if (StringUtils.isEmpty(canonical)) {
+            return "";
+        }
+        return """
+                <link rel="canonical" href="https://%s" />
+                """
+                .formatted(ZfinPropertiesEnum.DOMAIN_NAME + canonical )
+                .trim();
     }
 
     public static String getTruncatedName(String name, Integer length) {

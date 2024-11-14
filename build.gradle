@@ -1042,6 +1042,8 @@ test {
     }
     filter {
         includeTestsMatching "org.zfin.UnitTests"
+        includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
+        includeTestsMatching "org.zfin.publication.PublicationServiceTest"
         //spock tests
 
         includeTestsMatching "org.zfin.publication.MeshHeadingSpec"

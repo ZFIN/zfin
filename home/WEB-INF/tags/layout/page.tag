@@ -32,10 +32,7 @@
 
         <title>${title}</title>
 
-    <c:if test="${not empty canonicalUrl}">
-        <link rel="canonical" href="https://${zfn:getProperty("DOMAIN_NAME")}${canonicalUrl}" />
-    </c:if>
-
+        ${zfn:getCanonical()}
         <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
 
         <!-- jquery is loaded via CDN here instead being part of the webpack bundle so that

@@ -71,7 +71,6 @@ public class SequenceTargetingReagentViewController {
 
     @RequestMapping(value = "/str/view/{zdbID}")
     public String getNewView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         // set base bean
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();

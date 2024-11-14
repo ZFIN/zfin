@@ -41,7 +41,6 @@ public class SnpViewController {
 
     @RequestMapping(value = "/snp/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.debug("zdbID: " + zdbID);
