@@ -1,3 +1,6 @@
+[DEFAULT]
+ignorecommand = /usr/local/bin/ignore_ip_check.sh <ip>
+
 [apache-forbidden]
 enabled = true
 port = http,https
