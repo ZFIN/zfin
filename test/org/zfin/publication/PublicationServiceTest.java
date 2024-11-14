@@ -7,6 +7,7 @@ import org.zfin.publication.presentation.PublicationService;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
@@ -36,6 +37,9 @@ public class PublicationServiceTest extends AbstractDatabaseTest {
             assertTrue(authorList.contains(author));
         }
 
+        authorList = publicationService.getAuthorSuggestions("Ozhan, Gunes");
+        assertNotNull(authorList);
+        assertEquals(1, authorList.size());
     }
 }
 
