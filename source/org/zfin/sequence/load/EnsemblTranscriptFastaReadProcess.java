@@ -166,9 +166,14 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         transcript.setMarkerType(transcriptMarkerType);
         // if biotype = protein_coding => mRNA
         // otherwise exception
-        if (!(bioType.equals("protein_coding") || bioType.equals("pseudogene") || bioType.equals("lincRNA") || bioType.equals("miRNA") || bioType.equals("antisense"))) {
+        if (!(bioType.equals("protein_coding")
+              || bioType.equals("pseudogene")
+              || bioType.equals("lincRNA")
+              || bioType.equals("miRNA")
+              || bioType.equals("misc_RNA")
+              || bioType.equals("antisense"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
-                || bioType.equals("unprocessed_pseudogene")) {
+                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
                 columns.put("biotype", bioType);

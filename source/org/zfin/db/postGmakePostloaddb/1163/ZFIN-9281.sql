@@ -128,6 +128,19 @@ values ('ENSDART00000078403', 'ENSDART00000078403', 'brd8a-203');
 insert into ensembl_transcript_renaming
 values ('ENSDART00000187440', 'ENSDART00000187440', 'zgc:136929-202');
 
+<<<<<<< HEAD
+=======
+insert into ensembl_transcript_renaming
+values ('ENSDART00000190841', 'ENSDART00000190841', 'si:ch73-256j6.4-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000180517','ENSDART00000180517','si:ch211-204c21.1-204');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000188969','ENSDART00000188969','si:ch211-204c21.1-203');
+
+
+>>>>>>> ZFIN-9267
 delete from ensembl_transcript_delete;
 
 insert into ensembl_transcript_delete
@@ -160,11 +173,11 @@ values ('ENSDART00000098052', 'ZDB-TSCRIPT-141209-296');
 insert into ensembl_transcript_delete
 values ('ENSDART00000133799', 'ZDB-TSCRIPT-090929-12245');
 
+insert into ensembl_transcript_delete
+values ('ENSDART00000148454', 'ZDB-TSCRIPT-110325-1216');
+
 
 delete from ensembl_transcript_add;
-
-insert into ensembl_transcript_add
-values ('ENSDART00000148454', 'ZDB-TSCRIPT-110325-1216');
 
 insert into ensembl_transcript_add
 values ('ENSDART00000142854', 'ZDB-TSCRIPT-141209-296');
