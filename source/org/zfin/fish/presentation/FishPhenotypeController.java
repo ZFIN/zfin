@@ -50,7 +50,7 @@ public class FishPhenotypeController {
         model.addAttribute("phenotypeSummaryCriteria", summaryCriteria);
         Fish fish = getMutantRepository().getFish(fishID);
         model.addAttribute("fish", fish);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary: " + fish.getName());
         return "fish/fish-phenotype-figure-summary";
     }
 }

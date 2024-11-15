@@ -304,6 +304,7 @@ public class GeneViewController {
         //retrieveMutantData(term, form, true);
         //model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("marker", marker);
+        model.addAttribute("title", "ZFIN Phenotype Figure Summary for Marker " + marker.getAbbreviation());
         return "marker/phenotype-summary";
     }
 
@@ -317,6 +318,7 @@ public class GeneViewController {
 
         String searchLink = new ExpressionSearchService.LinkBuilder()
             .gene(marker)
+            .title("Expression for Marker " + marker.getAbbreviation())
             .build();
         return "forward:" + searchLink;
     }
@@ -332,6 +334,7 @@ public class GeneViewController {
         String searchLink = new ExpressionSearchService.LinkBuilder()
             .wildtypeOnly(true)
             .gene(marker)
+            .title("Wildtype Expression for Marker " + marker.getAbbreviation())
             .build();
         return "forward:" + searchLink;
     }
