@@ -485,7 +485,7 @@ public interface MarkerRepository {
      * @param feature
      * @return
      */
-    Marker getMarkerByFeature(Feature feature);
+    Optional<Marker> getMarkerByFeature(Feature feature);
 
     /**
      * Retrieve accession number for a given marker and database.
