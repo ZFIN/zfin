@@ -105,7 +105,13 @@ public class ExpressionSearchController {
         }
 
         model.addAttribute("criteria", criteria);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search Results");
+
+        if (criteria.getTitle() != null) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, criteria.getTitle());
+        } else {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search Results");
+        }
+
         return "expression/results";
     }
 
