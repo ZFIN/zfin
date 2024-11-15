@@ -1234,9 +1234,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @Override
     public List<MarkerDBLink> getAllEnsemblGenes(ForeignDB.AvailableName foreignDB) {
-        if (CollectionUtils.isNotEmpty(cachedMarkerDbLinks)) {
-            return cachedMarkerDbLinks;
-        }
         String hql = """ 
                   from MarkerDBLink
                   where referenceDatabase.foreignDB.dbName = (:dbName)
