@@ -326,7 +326,7 @@ public class HibernateProfileRepository implements ProfileRepository {
      * */
     public List<Person> getPeopleByFullName(String fullName) {
         Session session = currentSession();
-        Query<Person> query = session.createQuery("from Person where fullName = :fullName", Person.class);
+        Query<Person> query = session.createQuery("from Person where unaccent(fullName) = unaccent(:fullName)", Person.class);
         query.setParameter("fullName", fullName);
         return query.list();
     }
@@ -874,7 +874,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             return currentSession().createQuery(hql, Person.class)
                 .list();
         }
-        String hql = "from Person where lastName like :lastName order by lastName, firstName";
+        String hql = "from Person where unaccent(lastName) like unaccent(:lastName) order by lastName, firstName";
         return currentSession().createQuery(hql, Person.class)
             .setParameter("lastName", lastNameStartsWith + "%")
             .list();
@@ -884,13 +884,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith, String firstNameStartsWith) {
         String hql = """
             from Person
-            where lower(lastName) like :lastName
-            AND   lower(firstName) like :firstName
+            where lower(unaccent(lastName)) like lower(unaccent(:lastName))
+            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
             ORDER BY lastName, firstName
             """;
         Query<Person> query = currentSession().createQuery(hql, Person.class);
-        query.setParameter("lastName", lastNameStartsWith.toLowerCase() + "%");
-        query.setParameter("firstName", firstNameStartsWith.toLowerCase() + "%");
+        query.setParameter("lastName", lastNameStartsWith + "%");
+        query.setParameter("firstName", firstNameStartsWith + "%");
         return query.getResultList();
     }
 
@@ -898,13 +898,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName, String firstNameStartsWith) {
         String hql = """
             from Person
-            where lower(lastName) = :lastName
-            AND   lower(firstName) like :firstName
+            where lower(unaccent(lastName)) = lower(unaccent(:lastName))
+            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
             ORDER BY lastName, firstName
             """;
         Query<Person> query = currentSession().createQuery(hql, Person.class);
-        query.setParameter("lastName", lastName.toLowerCase());
-        query.setParameter("firstName", firstNameStartsWith.toLowerCase() + "%");
+        query.setParameter("lastName", lastName);
+        query.setParameter("firstName", firstNameStartsWith + "%");
         return query.getResultList();
     }
 
@@ -1039,7 +1039,12 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public List<Person> getPersonByLastNameEquals(String lastName) {
         Query<Person> query = currentSession()
-            .createQuery("from Person where lastName = :lastName ORDER BY fullName, firstName", Person.class);
+            .createQuery("""
+                    from Person
+                     where unaccent(lastName) = unaccent(:lastName)
+                     ORDER BY fullName, firstName
+                    """,
+                    Person.class);
         query.setParameter("lastName", lastName);
         return query.list();
     }

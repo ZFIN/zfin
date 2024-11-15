@@ -16,6 +16,7 @@ class PublicationServiceSpec  extends AbstractZfinIntegrationSpec{
     public static String ZON = "ZDB-PERS-960805-635"
     public static String KHOWE = "ZDB-PERS-001130-2"
     public static String CKIM = "ZDB-PERS-970429-23"
+    public static String OZHAN = "ZDB-PERS-100120-1"
 
     public def setupSpec() {
         publicationService = new PublicationService();
@@ -69,6 +70,7 @@ class PublicationServiceSpec  extends AbstractZfinIntegrationSpec{
         "Zon, L."         | ZON
         "Howe, K."        | KHOWE
         "Kim, C.H."       | CKIM
+        "Ozhan, Gunes"    | OZHAN
 
     }
 

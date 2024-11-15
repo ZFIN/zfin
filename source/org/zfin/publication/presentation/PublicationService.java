@@ -277,7 +277,7 @@ public class PublicationService {
     }
 
     public List<Person> getAuthorSuggestions(String authorString) {
-        List<Person> suggestions = new ArrayList<>();
+        Set<Person> suggestions = new LinkedHashSet<>();
 
         ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
@@ -290,34 +290,17 @@ public class PublicationService {
             lastName = authorString.split(",")[0];
             firstInitial = authorString.split(",")[1].substring(1, 2);
 
-            for (Person person : profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
-                if (!suggestions.contains(person)) {
-                    suggestions.add(person);
-                }
-            }
+            suggestions.addAll(profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName.trim(), firstInitial));
+            suggestions.addAll(profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(), firstInitial));
 
-            for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
-                if (!suggestions.contains(person)) {
-                    suggestions.add(person);
-                }
-            }
         } else {
             lastName = authorString;
         }
 
-        for (Person person : profileRepository.getPersonByLastNameEquals(lastName.trim())) {
-            if (!suggestions.contains(person)) {
-                suggestions.add(person);
-            }
-        }
+        suggestions.addAll(profileRepository.getPersonByLastNameEquals(lastName.trim()));
+        suggestions.addAll(profileRepository.getPersonByLastNameStartsWith(lastName.trim()));
 
-        for (Person person : profileRepository.getPersonByLastNameStartsWith(lastName.trim())) {
-            if (!suggestions.contains(person)) {
-                suggestions.add(person);
-            }
-        }
-
-        return suggestions;
+        return suggestions.stream().toList();
     }
 
     public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
