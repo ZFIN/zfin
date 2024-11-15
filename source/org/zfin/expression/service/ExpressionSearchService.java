@@ -555,6 +555,7 @@ public class ExpressionSearchService {
         private ExpressionSearchCriteria.JournalTypeOption journalType = ExpressionSearchCriteria.JournalTypeOption.ALL;
         private boolean onlyFiguresWithImages;
         private boolean onlyReporter;
+        private String title;
 
         public LinkBuilder gene(Marker gene) {
             this.gene = gene;
@@ -645,6 +646,11 @@ public class ExpressionSearchService {
             return this;
         }
 
+        public LinkBuilder title(String title) {
+            this.title = title;
+            return this;
+        }
+
         public String build() {
             URLCreator url = new URLCreator("/action/expression/results");
             addIfNotNull(url, "geneField", geneField);
@@ -674,6 +680,7 @@ public class ExpressionSearchService {
             addIfTrue(url, "onlyWildtype", wildtypeOnly);
             addIfTrue(url, "onlyReporter", onlyReporter);
             addIfTrue(url, "onlyFiguresWithImages", onlyFiguresWithImages);
+            addIfNotNull(url, "title", title);
             return url.getURL();
         }
 
