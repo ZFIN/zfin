@@ -1,6 +1,5 @@
 package org.zfin.marker.presentation;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;

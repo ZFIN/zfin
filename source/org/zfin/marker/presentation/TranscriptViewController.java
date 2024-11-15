@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PublicationNavigationMenu;
 import org.zfin.framework.presentation.TranscriptNavigationMenu;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Genotype;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.zfin.profile.UserService.isRootUser;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
 @RequestMapping("/marker")

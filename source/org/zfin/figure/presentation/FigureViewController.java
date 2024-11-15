@@ -1,12 +1,10 @@
 package org.zfin.figure.presentation;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureService;
 import org.zfin.figure.repository.FigureRepository;
@@ -15,14 +13,10 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.mutant.PhenotypeWarehouse;
-import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
