@@ -34,5 +34,10 @@ insert into blastdb_order (bdborder_parent_blastdb_zdb_id, bdborder_child_blastd
 select 'ZDB-BLASTDB-090929-27', id, 120
 from id;
 
-delete from blastdb_order where bdborder_parent_blastdb_zdb_id = 'ZDB-BLASTDB-090929-27' AND
-                                bdborder_child_blastdb_zdb_id = 'ZDB-BLASTDB-071128-2';
+delete
+from blastdb_order
+where bdborder_parent_blastdb_zdb_id = 'ZDB-BLASTDB-090929-27'
+  AND bdborder_child_blastdb_zdb_id = 'ZDB-BLASTDB-071128-2';
+
+insert into int_fdbcont_analysis_tool (ifat_fdbcont_zdb_id, ifat_blastdb_zdb_id)
+VALUES ('ZDB-FDBCONT-110301-1','ZDB-BLASTDB-090929-27');
