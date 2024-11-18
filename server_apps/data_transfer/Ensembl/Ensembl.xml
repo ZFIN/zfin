@@ -1,0 +1,44 @@
+<project name="Ensembl">
+
+<target name="deployEnsembl" depends="processEnsembl" description="Fully redeploys Ensembl.">
+   <echo message="deployEnsembl"/>
+</target>
+
+<target name="downloadEnsembl" description="Downloads files for Ensembl to staging area.">
+   <echo message="downloadEnsembl"/>
+   <exec executable="./downloadEnsembl.sh">
+   </exec>
+</target>
+
+<target name="assembleEnsembl"  description="Assembles files for Ensembl into fasta files in the staging area.">
+   <echo message="assembleEnsembl"/>
+   <exec executable="${basedir}/target/Ensembl/assembleEnsembl.sh">
+   </exec>
+</target>
+
+<target name="convertEnsembl" description="Converts FASTA files for Ensembl into blastable files in the staging area.">
+   <echo message="convertEnsembl"/>
+   <exec executable="${basedir}/target/Ensembl/convertEnsembl.sh">
+   </exec>
+</target>
+
+<target name="pushEnsembl" description="Pushes blast files for Ensembl to production from the staging area.">
+   <echo message="pushEnsembl"/>
+   <exec executable="${basedir}/target/Ensembl/pushEnsembl.sh">
+   </exec>
+</target>
+
+<target name="revertEnsembl" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertEnsembl"/>
+   <exec executable="${basedir}/target/Ensembl/revertEnsembl.sh">
+   </exec>
+</target>
+
+<target name="processEnsembl"  description="deploys entire Ensembl dbs">
+   <echo message="processEnsembl"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/Ensembl/processEnsembl.sh">
+   </exec>
+</target>
+
+</project>

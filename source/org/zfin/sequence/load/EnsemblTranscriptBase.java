@@ -50,7 +50,18 @@ abstract public class EnsemblTranscriptBase {
         downloadFile(ncrnaFileName, "ncrna");
         // <ensdargID, List<RichSequence>>
         geneTranscriptMap = getAllGeneTranscriptsFromFile();
+    }
 
+    public void initCondensed(File file) throws IOException {
+        // <ensdargID, List<RichSequence>>
+        geneTranscriptMap = getAllGeneTranscriptsFromFile(file);
+    }
+
+    private Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile(File file) {
+        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(file.getAbsolutePath());
+        System.out.println("Total Number of Ensembl Transcripts: " + geneTranscriptMap.size());
+
+        return geneTranscriptMap;
     }
 
     protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
@@ -123,6 +134,7 @@ abstract public class EnsemblTranscriptBase {
 
 
     private static List<RichSequence> getFastaIterator(String fileName) throws FileNotFoundException {
+        System.out.println(fileName);
         FileReader fileReader = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fileReader);
         RichSequenceIterator iterator;
