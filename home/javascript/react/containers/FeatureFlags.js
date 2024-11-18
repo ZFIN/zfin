@@ -32,7 +32,7 @@ const FeatureFlags = ({
                 <tr key={flag.name}>
                     <td>{flag.name}</td>
                     <td><FeatureFlag name={flag.name} enabled={flag.enabledForGlobalScope} url={url + '?scope=global'}/></td>
-                    <td><FeatureFlag name={flag.name} enabled={flag.enabledForSessionScope} url={url + '?scope=session'}/></td>
+                    <td><FeatureFlag name={flag.name} enabled={flag.enabledForPersonScope} url={url + '?scope=person'}/></td>
                 </tr>
             )}
         </tbody>

@@ -10,6 +10,7 @@ import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.featureflag.FeatureFlag;
+import org.zfin.framework.featureflag.PersonalFeatureFlag;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -18,6 +19,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
 import org.zfin.uniprot.persistence.UniProtRelease;
@@ -150,6 +152,10 @@ public interface InfrastructureRepository {
     ZdbFlag getUpdatesFlag();
 
     FeatureFlag getFeatureFlag(String name);
+
+    PersonalFeatureFlag getPersonalFeatureFlag(Person person, String flagName);
+
+    void setPersonalFeatureFlag(Person person, String flagName, boolean enabled);
 
     void setFeatureFlag(String name, boolean enabled);
 
