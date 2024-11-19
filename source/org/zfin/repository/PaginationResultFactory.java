@@ -25,7 +25,7 @@ public class PaginationResultFactory {
         PaginationResult<T> returnResult = new PaginationResult<T>();
         List<T> list = new ArrayList<T>();
         while (scrollableResults.next() && scrollableResults.getRowNumber() < maxRecords) {
-            list.add((T) scrollableResults.get()); //TODO (ZFIN-9354): hibernate migration double check this contains expected results
+            list.add((T) scrollableResults.get());
         }
 
         scrollableResults.last();
