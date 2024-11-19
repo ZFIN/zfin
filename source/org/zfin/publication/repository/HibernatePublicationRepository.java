@@ -91,7 +91,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
-    //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
 
         String hql = """
@@ -110,7 +109,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         List<Tuple> list = new ArrayList<>();
         while (results.next() && results.getRowNumber() < maxRow) {
-            list.add((Tuple) results.get()); //TODO (ZFIN-9354): hibernate migration double check logic
+            list.add((Tuple) results.get());
         }
 
         int totalCount = 0;
@@ -206,7 +205,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         ScrollableResults results = query.scroll();
 
-        //TODO (ZFIN-9354): hibernate migration double check logic
         List<Tuple> list = new ArrayList<>();
         results.beforeFirst();
         if (firstRow > 0) {
