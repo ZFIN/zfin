@@ -44,11 +44,12 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
     }
 
     public void init() throws IOException {
-        List<RichSequence> allFastaRecords = loadSequenceMapFromDownloadFile();
-
+        List<RichSequence> allFastaRecords = geneTranscriptMap.values().stream().flatMap(Collection::stream).toList();
         List<String> allTranscriptIDsInZfin = getAllTranscriptIdsInZFIN();
 
-        List<RichSequence> filteredFastaRecords = allFastaRecords.stream().filter(richSequence -> allTranscriptIDsInZfin.contains(getUnversionedAccession(getGeneId(richSequence)))).toList();
+        List<RichSequence> filteredFastaRecords = allFastaRecords.stream()
+            .filter(richSequence -> allTranscriptIDsInZfin.contains(getUnversionedAccession(getGeneIdFromZfinDefline(richSequence))))
+            .toList();
         System.out.println("Total Number of Ensembl Transcripts In ZFIN FASTA file: " + filteredFastaRecords.size());
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(fastaDirectory + "/" + ENSEMBL_ZF_ONLY_FA, false));
@@ -64,14 +65,8 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
     }
 
     private List<String> getAllTranscriptIdsInZFIN() {
-        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
-        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
-        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
-        List<String> ensdargIDs = new ArrayList<>();
-        ensdargIDs.addAll(ensdargList.stream().map(DBLink::getAccessionNumber).toList());
-        ensdargIDs.addAll(vegaList.stream().map(LinkDisplay::getAccession).toList());
-        ensdargIDs.addAll(genbankList.stream().map(DBLink::getAccessionNumber).toList());
-        return ensdargIDs;
+        List<DBLink> transcripts = getSequenceRepository().getAllEnsemblTranscripts();
+        return transcripts.stream().map(DBLink::getAccessionNumber).toList();
     }
 
     private List<RichSequence> loadSequenceMapFromDownloadFile() {
