@@ -454,12 +454,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<PhenotypeExperiment> getLatestPhenotypeExperiments(int days) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct experiment from PhenotypeExperiment experiment where " +
-                     "          experiment.dateCreated > :days ";
+        String hql = """
+                    SELECT DISTINCT experiment FROM PhenotypeExperiment experiment
+                    WHERE experiment.dateCreated > :startDate
+                    """;
         Query query = session.createQuery(hql);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -days);
-        query.setParameter("days", cal.getTime(), TemporalType.DATE); //TODO (ZFIN-9354): hibernate migration double check logic
+        query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
         return (List<PhenotypeExperiment>) query.list();
     }
 
@@ -474,12 +474,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days) {
         Session session = HibernateUtil.currentSession();
         String hql = """
-        SELECT DISTINCT statement FROM PhenotypeStatement statement
-        WHERE
-            statement.dateCreated > :startDate
-        AND (:experimentID = 0 OR statement.phenotypeExperiment.id = :experimentID)
-        ORDER BY statement.dateCreated DESC
-        """;
+                    SELECT DISTINCT statement FROM PhenotypeStatement statement
+                    WHERE statement.dateCreated > :startDate
+                    AND (:experimentID = 0 OR statement.phenotypeExperiment.id = :experimentID)
+                    ORDER BY statement.dateCreated DESC
+                    """;
         Query query = session.createQuery(hql);
         query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
         query.setParameter("experimentID", experimentID);
