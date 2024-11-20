@@ -35,7 +35,6 @@ abstract public class EnsemblTranscriptBase {
 
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
-    protected List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
@@ -52,16 +51,10 @@ abstract public class EnsemblTranscriptBase {
         geneTranscriptMap = getAllGeneTranscriptsFromFile();
     }
 
-    public void initCondensed(File file) throws IOException {
+    public void initCondensed(File file) {
         // <ensdargID, List<RichSequence>>
-        geneTranscriptMap = getAllGeneTranscriptsFromFile(file);
-    }
-
-    private Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile(File file) {
-        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(file.getAbsolutePath());
+        geneTranscriptMap = getGeneTranscriptMap(file.getAbsolutePath());
         System.out.println("Total Number of Ensembl Transcripts: " + geneTranscriptMap.size());
-
-        return geneTranscriptMap;
     }
 
     protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
@@ -130,6 +123,13 @@ abstract public class EnsemblTranscriptBase {
             return m.group(3);
         }
         return "";
+    }
+
+    public static String getGeneIdFromZfinDefline(RichSequence sequence) {
+
+        String line = sequence.getAccession();
+        String[] token = line.split("\\|");
+        return token[1];
     }
 
 
