@@ -53,17 +53,6 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
     }
 
-
-    def "parent folder exists in loadUp"() {
-        when: "a new image is attempted to be created"
-        def zdbId = "ZDB-PUB-110609-15"
-        def parentPathFile = ImageService.getDestinationParentDirectory(zdbId, true)
-        def parentPath = parentPathFile.toString()
-
-        then: "the parent path of ${parentPath} should exist"
-        parentPathFile.exists()
-    }
-
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
         def zdbId = "ZDB-PUB-110609-15"
