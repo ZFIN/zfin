@@ -46,8 +46,6 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable, E
     protected String aliasLowerCase;
     @ManyToMany
     @JoinTable(name = "record_attribution",
-            // TODO (ZFIN-9354): hibernate migration change, confirm logic still valid
-            // Fixes this error: org.hibernate.AnnotationException: Join column '...' on collection property 'org.zfin...' must be defined with the same insertable and updatable attributes
             joinColumns = {@JoinColumn(name = "recattrib_data_zdb_id", nullable = false, updatable = false, insertable = false)},
             inverseJoinColumns = {@JoinColumn(name = "recattrib_source_zdb_id", nullable = false, updatable = false, insertable = false)})
     protected Set<ActiveSource> sources;
