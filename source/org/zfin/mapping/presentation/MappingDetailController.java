@@ -100,17 +100,34 @@ public class MappingDetailController {
     protected String showMappingSummary(@PathVariable String markerID,
                                         Model model) throws Exception {
 
-        markerID = getMarkerIDFromID(markerID);
+        String resolvedMarkerID = getMarkerIDFromID(markerID);
+        Feature feature = null;
 
         // if feature then find associated marker
-        if (ActiveData.validateID(markerID).equals(ActiveData.Type.ALT)) {
-            Feature feature = getFeatureRepository().getFeatureByID(markerID);
-            Marker marker = getMarkerRepository().getMarkerByFeature(feature);
-            markerID = marker.getZdbID();
-        }
+        if (resolvedMarkerID == null) {
+            if (ActiveData.validateID(markerID).equals(ActiveData.Type.ALT)) {
+                feature = getFeatureRepository().getFeatureByID(markerID);
+                model.addAttribute("marker", feature);
+            }
+            if (feature == null) {
+                model.addAttribute(LookupStrings.ZDB_ID, "No marker found for " + markerID);
+                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            }
+        } else {
+            if (ActiveData.validateID(resolvedMarkerID).equals(ActiveData.Type.ALT)) {
+                feature = getFeatureRepository().getFeatureByID(resolvedMarkerID);
+                Optional<Marker> marker = getMarkerRepository().getMarkerByFeature(feature);
 
-        Marker marker = markerRepository.getMarkerByID(markerID);
-        model.addAttribute("marker", marker);
+                if (marker.isPresent()) {
+                    resolvedMarkerID = marker.get().getZdbID();
+                } else {
+                    model.addAttribute(LookupStrings.ZDB_ID, "No marker found for feature " + resolvedMarkerID);
+                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                }
+            }
+            Marker marker = markerRepository.getMarkerByID(resolvedMarkerID);
+            model.addAttribute("marker", marker);
+        }
 
         return "mapping/mapping-summary";
     }
@@ -192,15 +209,15 @@ public class MappingDetailController {
             }
 
             isOtherMappingDetail = isOtherMappingDetail || setOtherMappingInfoForFeature(model, feature);
-            Marker marker = getMarkerRepository().getMarkerByFeature(feature);
-            if (marker == null) {
+            Optional<Marker> marker = getMarkerRepository().getMarkerByFeature(feature);
+            if (marker.isEmpty()) {
                 model.addAttribute("pureFeature", true);
                 model.addAttribute("otherMappingDetail", isOtherMappingDetail);
                 model.addAttribute("gbrowseImage", FeatureService.getGbrowseImage(feature));
                 model.addAttribute("locations", MappingService.getGenomeBrowserLocations(feature));
                 return "mapping/mapping-detail-pure-feature";
             }
-            markerID = marker.getZdbID();
+            markerID = marker.map(Marker::getZdbID).orElse(null);
         }
 
         if (markerID == null || markerID.isEmpty() || !markerRepository.markerExistsForZdbID(markerID)) {
