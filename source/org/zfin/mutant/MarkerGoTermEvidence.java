@@ -1,5 +1,7 @@
 package org.zfin.mutant;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.datatransfer.go.GafOrganization;
@@ -14,9 +16,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- */
+@Getter
+@Setter
 public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private String zdbID;
     private Marker marker;
@@ -24,14 +25,6 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     // this may need to be moved to its own
     private GoEvidenceCode evidenceCode;
     private GoEvidenceQualifier flag;
-
-    public GenericTerm getQualifierRelation() {
-        return qualifierRelation;
-    }
-
-    public void setQualifierRelation(GenericTerm qualifierRelation) {
-        this.qualifierRelation = qualifierRelation;
-    }
 
     private Publication source;
     private GenericTerm goTerm;
@@ -49,18 +42,10 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
      */
     private Person createdBy;
 
-    public void setGeneProductAccession(String geneProductAccession) {
-        this.geneProductAccession = geneProductAccession;
-    }
-
     /**
      * Date record originally curated. For imported annotations this can be a date earlier than the external load date.
      */
     private Date createdWhen;
-
-    public String getGeneProductAccession() {
-        return geneProductAccession;
-    }
 
     /**
      * Curator who modified annotation during curation.  May be null if never modified.
@@ -86,148 +71,10 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private GafOrganization gafOrganization;
 
 
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-    public GoEvidenceCode getEvidenceCode() {
-        return evidenceCode;
-    }
-
-    public void setEvidenceCode(GoEvidenceCode evidenceCode) {
-        this.evidenceCode = evidenceCode;
-    }
-
-    public GoEvidenceQualifier getFlag() {
-        return flag;
-    }
-
-    public void setFlag(GoEvidenceQualifier flag) {
-        this.flag = flag;
-    }
-
-    public Publication getSource() {
-        return source;
-    }
-
-    public void setSource(Publication source) {
-        this.source = source;
-    }
-
-    public GenericTerm getGoTerm() {
-        return goTerm;
-    }
-
-    public void setGoTerm(GenericTerm goTerm) {
-        this.goTerm = goTerm;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Person getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Person createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Person getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(Person modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public Date getCreatedWhen() {
-        return createdWhen;
-    }
-
-    public void setCreatedWhen(Date createdWhen) {
-        this.createdWhen = createdWhen;
-    }
-
-
-    public Date getModifiedWhen() {
-        return modifiedWhen;
-    }
-
-    public void setModifiedWhen(Date modifiedWhen) {
-        this.modifiedWhen = modifiedWhen;
-    }
-
-    public Date getExternalLoadDate() {
-        return externalLoadDate;
-    }
-
-    public void setExternalLoadDate(Date externalLoadDate) {
-        this.externalLoadDate = externalLoadDate;
-    }
-
-    public String getOrganizationCreatedBy() {
-        return organizationCreatedBy;
-    }
-
-    public void setOrganizationCreatedBy(String organizationCreatedBy) {
-        this.organizationCreatedBy = organizationCreatedBy;
-    }
-
-    public GafOrganization getGafOrganization() {
-        return gafOrganization;
-    }
-
-    public void setGafOrganization(GafOrganization gafOrganization) {
-        this.gafOrganization = gafOrganization;
-    }
-
-    public Set<InferenceGroupMember> getInferredFrom() {
-        return inferredFrom;
-    }
-
-    public void setInferredFrom(Set<InferenceGroupMember> inferredFrom) {
-        this.inferredFrom = inferredFrom;
-    }
-
-
-    public Set<MarkerGoTermAnnotationExtnGroup> getGoTermAnnotationExtnGroup() {
-        return goTermAnnotationExtnGroup;
-    }
-
-    public void setGoTermAnnotationExtnGroup(Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup) {
-        this.goTermAnnotationExtnGroup = goTermAnnotationExtnGroup;
-    }
-
     public void addGoTermAnnotationExtnGroup(MarkerGoTermAnnotationExtnGroup goTermAnnotationExtnGroup) {
         if (this.goTermAnnotationExtnGroup == null)
             this.goTermAnnotationExtnGroup = new HashSet<>();
         this.goTermAnnotationExtnGroup.add(goTermAnnotationExtnGroup);
-    }
-
-    public Set<NoctuaModel> getNoctuaModels() {
-        return noctuaModels;
-    }
-
-    public void setNoctuaModels(Set<NoctuaModel> noctuaModels) {
-        this.noctuaModels = noctuaModels;
     }
 
     public String getNoctuaModelId() {
