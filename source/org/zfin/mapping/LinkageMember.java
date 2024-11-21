@@ -108,7 +108,16 @@ abstract public class LinkageMember implements Cloneable, Comparable<LinkageMemb
         int chromosomeComparison = linkage.getChromosome().compareTo(o.getLinkage().getChromosome());
         if (chromosomeComparison != 0)
             return chromosomeComparison;
-        if (!entityOne.getEntityType().equals(o.entityOne.getEntityType())) {
+
+        if (entityOne == null && o.entityOne != null) {
+            return 1;
+        } else if (entityOne != null && o.entityOne == null) {
+            return -1;
+        }
+
+        if (entityOne == null && o.entityOne == null) {
+            // if both are null, then defer to the comparison below
+        } else if (!entityOne.getEntityType().equals(o.entityOne.getEntityType())) {
             if (entityOne.getEntityType().equals(Feature.MUTANT))
                 return 1;
             else if (o.entityOne.getEntityType().equals(Feature.MUTANT))
