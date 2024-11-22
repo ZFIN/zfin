@@ -9,6 +9,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
 import org.apache.commons.collections4.CollectionUtils;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -69,6 +70,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
                 dto.setDataProviderDto(dataProvider);
                 dto.setTaxonCurie(ZfinDTO.taxonId);
                 dto.setModEntityId("ZFIN:" + marker.getZdbID());
+                dto.setGeneTypeCurie(marker.getSoTerm().getOboID());
                 GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
                 dto.setDateCreated(format(date));
 
@@ -162,13 +164,14 @@ public class GeneLinkMLInfo extends LinkMLInfo {
         if (CollectionUtils.isEmpty(aliasSet))
             return null;
         List<NameSlotAnnotationDTO> aliases = new ArrayList<>();
-        aliasSet.forEach(markerAlias -> {
-            NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
-            slotAnnotation.setDisplayText(markerAlias.getAlias());
-            slotAnnotation.setFormatText(markerAlias.getAlias());
-            slotAnnotation.setNameTypeName("unspecified");
-            aliases.add(slotAnnotation);
-        });
+        aliasSet.stream()
+            .filter(markerAlias -> StringUtils.isNotEmpty(markerAlias.getAlias())).forEach(markerAlias -> {
+                NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
+                slotAnnotation.setDisplayText(markerAlias.getAlias());
+                slotAnnotation.setFormatText(markerAlias.getAlias());
+                slotAnnotation.setNameTypeName("unspecified");
+                aliases.add(slotAnnotation);
+            });
         return aliases;
     }
 
