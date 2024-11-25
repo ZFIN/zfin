@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/tcsh
 #
 # Downloads sequence files from Ensembl
 #
@@ -56,6 +56,10 @@ cp downloaded_ncrna ensembl_ncrna.fa
 
 ./deflineSwitch.pl ensembl_ncrna.fa > ensembl_ncrna_zf.fa
 cat ensembl_ncrna_zf.fa >> ensembl_zf.fa
+
+rm downloaded_ncrna;
+rm ensembl_ncrna.fa;
+rm ensembl_ncrna_zf.fa;
 
 echo "==| create BLAST database with transcripts that exist in ZFIN (subset of the overall file) |=="
 
