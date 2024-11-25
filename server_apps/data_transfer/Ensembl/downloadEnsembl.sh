@@ -20,8 +20,11 @@
 #      BLASTSERVER_FASTA_FILE_PATH/ensembl.ftp get time stamped
 #
 
-#echo "==| at /research/zblastfiles/files/blastRegeneration/fasta/EnsemblProt |=="
-
+rm -f ensembl_zf.x* ;
+rm -f ensembl_zf_only.x* ;
+rm -f downloaded;
+rm -f ensembl_zf.x* ;
+rm -f ensembl_zf_only.x* ;
 
 wget -Nq "ftp://ftp.ensembl.org/pub/current_fasta/danio_rerio/cdna/*.cdna.all.fa.gz"
 
@@ -42,8 +45,6 @@ cp downloaded ensembl.fa ;
 
 echo "==| Go over fasta file for defline adjustment |=="
 
-echo "==| Go over fasta file for defline adjustment |=="
-
 ./deflineSwitch.pl ensembl.fa > ensembl_zf.fa
 
 # add non-coding RNA file to cdna file
@@ -61,11 +62,7 @@ rm downloaded_ncrna;
 rm ensembl_ncrna.fa;
 rm ensembl_ncrna_zf.fa;
 
-
-rm downloaded;
-rm ensembl.fa;
-
-echo "==| create BLAST database with transcripts that exist in ZFIN (subset of the overall file( |=="
+echo "==| create BLAST database with transcripts that exist in ZFIN (subset of the overall file) |=="
 
 cd $SOURCEROOT
 gradle createEnsembTranscriptFastaFile
