@@ -2,10 +2,10 @@
 #
 # Convert Ensembl fa files to Ensembl abblast files
 #
-# Input: 
+# Input:
 #      -v            verbose
 #      fasta file
- 
+
 echo "==| at Ensembl |=="
 
 rm xdformat_ensembl_zf.log
