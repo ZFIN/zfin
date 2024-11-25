@@ -3,14 +3,15 @@
 # Push Ensembl blastdbs to their production location.
 #
 
-rm -f /research/zblastfiles/zmore/blastRegeneration/Backup/ensembl_zf.x*
-rm -f /research/zblastfiles/zmore/blastRegeneration/Backup/ensembl_zf_only.x*
-mv /research/zblastfiles/zmore/blastRegeneration/Current/ensembl_zf.x* /research/zblastfiles/zmore/blastRegeneration/Backup
-mv /research/zblastfiles/zmore/blastRegeneration/Current/ensembl_zf_only.x* /research/zblastfiles/zmore/blastRegeneration/Backup
-cp ensembl_zf_only.x* /research/zblastfiles/zmore/blastRegeneration/Current/
+rm -f /opt/zfin/blastdb/Backup/ensembl_zf.x*
+rm -f /opt/zfin/blastdb/Backup/ensembl_zf_only.x*
 
-rm -rf *.fa;
-rm -rf downloaded*;
+mv /opt/zfin/blastdb/Current/ensembl_zf.x* /opt/zfin/blastdb/Backup/.
+mv /opt/zfin/blastdb/Current/ensembl_zf_only.x* /opt/zfin/blastdb/Backup/.
+
+cp ensembl_zf.x* /opt/zfin/blastdb/Current/.
+cp ensembl_zf_only.x* /opt/zfin/blastdb/Current/.
+
 
 if ("/research/zfin.org/blastdb" == "/research/zfin.org/blastdb") then
 
@@ -39,9 +40,5 @@ if ("/research/zfin.org/blastdb" == "/research/zfin.org/blastdb") then
 
 endif
 
-rm -f ensembl_zf.x* ;
-rm -f ensembl_zf_only.x* ;
-
 echo "== Finish Push =="
-
 exit
