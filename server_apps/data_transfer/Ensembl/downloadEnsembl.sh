@@ -23,7 +23,8 @@
 rm -f ensembl_zf.x* ;
 rm -f ensembl_zf_only.x* ;
 rm -f downloaded;
-rm ensprot.fa;
+rm -f ensembl_zf.x* ;
+rm -f ensembl_zf_only.x* ;
 
 wget -Nq "ftp://ftp.ensembl.org/pub/current_fasta/danio_rerio/cdna/*.cdna.all.fa.gz"
 
