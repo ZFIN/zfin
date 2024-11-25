@@ -81,7 +81,7 @@ public class ConstructEditController {
         return mr.getConstructComponents(constructID);
     }
 
-    @RequestMapping(value = "/construct-add-alias", method = RequestMethod.POST)
+    @RequestMapping(value = {"/construct-add-alias", "/construct-add-alias/"}, method = RequestMethod.POST) //Spring v6 is stricter about trailing slashes
     public
     @ResponseBody
 
@@ -96,7 +96,7 @@ public class ConstructEditController {
         // ir.insertUpdatesTable(mr.getMarkerByID(constructID),"alias","added data alias");
         HibernateUtil.flushAndCommitCurrentSession();
     }
-    @RequestMapping(value = "/construct-add-sequence", method = RequestMethod.POST)
+    @RequestMapping(value = {"/construct-add-sequence", "/construct-add-sequence/"}, method = RequestMethod.POST) //Spring v6 is stricter about trailing slashes
     public
     @ResponseBody
 
