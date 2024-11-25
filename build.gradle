@@ -362,6 +362,14 @@ task printProp() {
     }
 }
 
+project(':home') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from file('robots.txt')
+        from file('favicon.ico')
+        into targetroot + pName
+    }
+}
+
 project(':home:zf_info') {
     task "deployGenericFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
@@ -654,6 +662,7 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
+             ':home:deployFiles',
              ':home:zf_info:deployFiles',
              ':home:ZFIN:deployFiles',
              ':server_apps:apache:deployFiles',
