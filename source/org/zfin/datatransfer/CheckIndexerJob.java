@@ -50,8 +50,6 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
             if (!status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
                 log.info("Total Time: " + status.getStatusMessages().getTimeTaken());
                 System.exit(0);
-            } else {
-                log.info("Unexpected behavior: " + status.getStatus());
             }
 
             Thread.sleep(LOOP_TIME_IN_MILLISECONDS);
