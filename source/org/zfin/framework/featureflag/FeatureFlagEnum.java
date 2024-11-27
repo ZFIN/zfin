@@ -10,7 +10,6 @@ public enum FeatureFlagEnum {
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
     USE_UNIVERSAL_ANALYTICS("Use Universal Analytics", true),
     USE_GA4_ANALYTICS("Use GA4 Analytics", false),
-    OLD_TERM_PAGES("Use old Term Pages", false),
     USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false);
 
 
