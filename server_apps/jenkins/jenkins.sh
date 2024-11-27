@@ -6,7 +6,7 @@ DESC="Jenkins CI Server"
 PID_FILE=$JENKINS_HOME/jenkins.pid
 COMMAND="java -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --prefix=/jobs"
 
-export JAVA_HOME="/usr/lib/jvm/java-11"
+export JAVA_HOME="/usr/lib/jvm/java-17"
 
 echo SOURCEROOT    $SOURCEROOT
 echo JENKINS_HOME  $JENKINS_HOME
@@ -16,7 +16,7 @@ echo JAVA_HOME $JAVA_HOME
 
 start_jenkins() {
 echo 'Starting Jenkins...'
-    nohup $JAVA_HOME/bin/java -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
+    nohup $JAVA_HOME/bin/java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
     echo pid: $(cat $PID_FILE)
 #	start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec $COMMAND
 }
