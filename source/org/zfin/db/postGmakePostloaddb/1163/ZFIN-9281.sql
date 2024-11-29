@@ -27,6 +27,12 @@ values ('ENSDART00000132824', 'ZDB-TSCRIPT-090929-15969');
 insert into ensembl_transcript_delete
 values ('ENSDART00000038301', 'ZDB-TSCRIPT-091110-789');
 
+insert into ensembl_transcript_delete
+values ('ENSDART00000151278', 'ZDB-TSCRIPT-120213-738');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000099074', 'ZDB-TSCRIPT-131113-1301');
+
 
 delete from ensembl_transcript_renaming;
 
@@ -71,6 +77,12 @@ values ('ENSDART00000188162', 'ENSDART00000188162', 'cpne8-202');
 
 insert into ensembl_transcript_renaming
 values ('ENSDART00000132945', 'ENSDART00000132945', 'si:ch211-226o13.2-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000060330', 'ENSDART00000060330', 'si:dkey-88n24.9-201');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000158253', 'ENSDART00000158253', 'chst12b.5-202');
 
 
 -- ZFIN-9436
