@@ -1170,17 +1170,18 @@ public class HibernateSequenceRepository implements SequenceRepository {
                                                          List<ForeignDBDataType.DataType> dataTypes,
                                                          ForeignDBDataType.SuperType superType,
                                                          Species.Type species) {
-        String hql = " from ReferenceDatabase referenceDatabase " +
-                     " where referenceDatabase.foreignDB.dbName in (:dbNames) " +
-                     " and referenceDatabase.foreignDBDataType.dataType in  (:types)" +
-                     " and referenceDatabase.foreignDBDataType.superType = :superType" +
-                     " and referenceDatabase.organism  = :organism" +
-                     " ";
+        String hql = """
+                      from ReferenceDatabase referenceDatabase 
+                      where referenceDatabase.foreignDB.dbName in (:dbNames) 
+                      and referenceDatabase.foreignDBDataType.dataType in  (:types)
+                      and referenceDatabase.foreignDBDataType.superType = :superType
+                      and referenceDatabase.organism  = :organism
+                     """;
         Query<ReferenceDatabase> query = HibernateUtil.currentSession().createQuery(hql, ReferenceDatabase.class);
         query.setParameterList("dbNames", availableNames);
         query.setParameterList("types", dataTypes);
         query.setParameter("superType", superType);
-        query.setParameter("organism", species);
+        query.setParameter("organism", species.toString());
         return query.list();
     }
 

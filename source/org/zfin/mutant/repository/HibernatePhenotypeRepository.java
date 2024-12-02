@@ -2,6 +2,7 @@ package org.zfin.mutant.repository;
 
 import jakarta.persistence.TemporalType;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -453,12 +454,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<PhenotypeExperiment> getLatestPhenotypeExperiments(int days) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct experiment from PhenotypeExperiment experiment where " +
-                     "          experiment.dateCreated > :days ";
+        String hql = """
+                    SELECT DISTINCT experiment FROM PhenotypeExperiment experiment
+                    WHERE experiment.dateCreated > :startDate
+                    """;
         Query query = session.createQuery(hql);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -days);
-        query.setParameter("days", cal.getTime(), TemporalType.DATE); //TODO (ZFIN-9354): hibernate migration double check logic
+        query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
         return (List<PhenotypeExperiment>) query.list();
     }
 
@@ -472,17 +473,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct statement from PhenotypeStatement statement where " +
-                     "          statement.dateCreated > :days ";
-        if (experimentID > 0)
-            hql += "AND statement.phenotypeExperiment.id =  :experimentID order by statement.dateCreated desc";
-        hql += " order by statement.dateCreated desc";
+        String hql = """
+                    SELECT DISTINCT statement FROM PhenotypeStatement statement
+                    WHERE statement.dateCreated > :startDate
+                    AND (:experimentID = 0 OR statement.phenotypeExperiment.id = :experimentID)
+                    ORDER BY statement.dateCreated DESC
+                    """;
         Query query = session.createQuery(hql);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -days);
-        query.setParameter("days", cal.getTime(), TemporalType.DATE); //TODO (ZFIN-9354): hibernate migration double check logic
-        if (experimentID > 0)
-            query.setParameter("experimentID", experimentID);
+        query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
+        query.setParameter("experimentID", experimentID);
         return (List<PhenotypeStatement>) query.list();
     }
 

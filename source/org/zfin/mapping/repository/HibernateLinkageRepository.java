@@ -490,17 +490,19 @@ public class HibernateLinkageRepository implements LinkageRepository {
     @Override
     public List<PanelCount> getPanelCount(Panel panel) {
         if (panel.getAbbreviation().equals("ZMAP")) {
-            String sql = "SELECT name," +
-                         "                panel_date," +
-                         "                ptype," +
-                         "                mtype," +
-                         "                target_abbrev," +
-                         "                zmap_chromosome," +
-                         "                count(*)" +
-                         "        FROM  panels a,zmap_pub_pan_mark b" +
-                         "  WHERE a.abbrev = b.target_abbrev" +
-                         "  AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'" +
-                         "        GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
+            String sql = """
+                          SELECT name,
+                                         panel_date,
+                                         ptype,
+                                         mtype,
+                                         target_abbrev,
+                                         zmap_chromosome,
+                                         count(*)
+                                 FROM  panels a,zmap_pub_pan_mark b
+                           WHERE a.abbrev = b.target_abbrev
+                           AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'
+                                 GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome
+                         """;
             List<Object[]> list = HibernateUtil.currentSession().createNativeQuery(sql).list();
             List<PanelCount> panelCountList = new ArrayList<>(list.size());
             for (Object[] row : list) {
@@ -508,7 +510,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 panelCount.setPanel(panel);
                 panelCount.setLg((String) row[5]);
                 panelCount.setMarkerType((String) row[3]);
-                panelCount.setCount(((BigInteger) row[6]).longValue());
+                panelCount.setCount((long)row[6]);
                 panelCountList.add(panelCount);
             }
             return panelCountList;
