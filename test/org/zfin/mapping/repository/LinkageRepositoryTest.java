@@ -171,7 +171,6 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getLinkedMarkersFromSSLP() {
-        
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("z1059");
         List<LinkageMember> linkageSet = getLinkageRepository().getLinkageMemberForMarker(marker);
         Collections.sort(linkageSet);
@@ -223,7 +222,6 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMappedMarkersFromFeature() {
-
         Feature feature = getFeatureRepository().getFeatureByAbbreviation("ty118b");
         List<MappedMarker> markerList = getLinkageRepository().getMappedMarkers(feature);
         assertNotNull(markerList);
