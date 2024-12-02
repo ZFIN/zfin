@@ -3040,10 +3040,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
         }
         // second related elements
-        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
-                     "where rel.firstMarker = :firstMarker " +
-                     "and rel.type in (:typeList) " +
-                     "order by rel.secondMarker.abbreviationOrder";
+        String hql = """
+                     select rel.secondMarker from MarkerRelationship as rel
+                     where rel.firstMarker = :firstMarker
+                     and rel.type in (:typeList)
+                     order by rel.secondMarker.abbreviationOrder
+                     """;
 
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("firstMarker", marker);
@@ -3052,10 +3054,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
         PaginationResult<Marker> markerPaginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean.getMaxDisplayRecordsInteger(), query.scroll());
 
         // second related elements
-        hql = "select rel.firstMarker from MarkerRelationship as rel  " +
-              "where rel.secondMarker = :secondMarker " +
-              "and rel.type in (:typeList) " +
-              "order by rel.firstMarker.abbreviationOrder";
+        hql = """
+              select rel.firstMarker from MarkerRelationship as rel
+              where rel.secondMarker = :secondMarker
+              and rel.type in (:typeList)
+              order by rel.firstMarker.abbreviationOrder
+              """;
 
         Query<Marker> query2 = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query2.setParameter("secondMarker", marker);

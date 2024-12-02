@@ -507,6 +507,13 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         PaginationResult<Feature> result = getFeatureRepository().getFeaturesForLab("ZDB-LAB-970408-1", pagination);
         assertNotNull(result);
         assertTrue(result.getPopulatedResults().size() > 45);
+        for(Feature feature : result.getPopulatedResults()) {
+            assertNotNull(feature);
+            Set<FeatureAlias> aliases = feature.getAliases();
+            for(FeatureAlias alias : aliases) {
+                assertNotNull(alias);
+            }
+        }
     }
 
 }

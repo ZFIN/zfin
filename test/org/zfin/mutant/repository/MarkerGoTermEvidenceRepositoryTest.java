@@ -154,7 +154,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
     public void addEvidenceWithInference() {
         MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) currentSession()
                 .createQuery("from MarkerGoTermEvidence where zdbID = :mrkrID")
-                .setParameter("mrkrID", "ZDB-MRKRGOEV-211013-579")
+                .setParameter("mrkrID", "ZDB-MRKRGOEV-211013-1353")
                 .uniqueResult();
         MarkerGoTermEvidence evidence = new MarkerGoTermEvidence();
         evidence.setMarker(existingEvidence.getMarker());
@@ -212,6 +212,9 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         MarkerGoEvidenceRPCServiceImpl service = new MarkerGoEvidenceRPCServiceImpl();
         List<GoEvidenceDTO> list = service.getMarkerGoTermEvidencesForPub("ZDB-PUB-160828-8");
         assertNotNull(list);
+
+        list = service.getMarkerGoTermEvidencesForPub("ZDB-PUB-170525-1");
+        assertTrue(list.size() > 0);
     }
 
     @Test
