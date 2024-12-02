@@ -983,6 +983,13 @@ public class SolrService {
         return highlights;
     }
 
+    /**
+     * Transforms a solr csv to a zfin csv based on the filterQuery. This involves adding more fields that are not available through solr
+     *
+     * @param filterQuery the filter query that was used to get the solr csv
+     * @param inputStream the solr csv input stream
+     * @return the transformed csv input stream
+     */
     public InputStream transformSolrCsvToZfinCsv(String[] filterQuery, InputStream inputStream) {
         Map<String, List<String>> filterQueryMap = getFilterQueryMap(filterQuery);
 
@@ -1012,35 +1019,28 @@ public class SolrService {
      */
     private InputStream transformSolrCsvForGenestoZfinCsv(InputStream inputStream) {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
         try {
-            boolean headerRow = true;
             StringBuilder out = new StringBuilder();
             CSVPrinter csvPrinter = new CSVPrinter(out, CSVFormat.DEFAULT);
-            while ((line = in.readLine()) != null) {
-                String[] fields = line.split(",");
-                if (headerRow) {
-                    out.append("ZFIN ID,Symbol,Aliases,Name,Location,Type\n");
-                    headerRow = false;
-                    continue;
-                }
-                if (fields.length > 1) {
-                    String zdbID = fields[0];
-                    String symbol = fields[1];
 
-                    Marker marker = getMarkerRepository().getMarkerByID(zdbID);
-                    if (marker == null) {
-                        csvPrinter.printRecord(zdbID, symbol, "", "", "", "");
-                        continue;
-                    }
-                    String aliases = marker.getAliases() == null ? "" : marker.getAliases().stream().map(alias -> alias.getAlias()).collect(Collectors.joining("; "));
-                    String name = (marker.getName());
-                    String location = marker.getChromosomeLocations().stream().collect(Collectors.joining("; "));
-                    String markerType = marker.getMarkerType().getDisplayName();
+            List<String> ids = in.lines()
+                .skip(1) // Skip the header row
+                .map(l -> l.split(",")[0])
+                .toList();
 
-                    csvPrinter.printRecord(zdbID, symbol, aliases, name, location, markerType);
-                }
+            List<Marker> markers = getMarkerRepository().getMarkersByZdbIDsJoiningAliases(ids);
+
+            csvPrinter.printRecord("ZFIN ID", "Symbol", "Aliases", "Name", "Location", "Type");
+            for(Marker marker : markers) {
+                String zdbID = marker.getZdbID();
+                String symbol = marker.getAbbreviation();
+                String aliases = marker.getAliases() == null ? "" : marker.getAliases().stream().map(alias -> alias.getAlias()).collect(Collectors.joining("; "));
+                String name = marker.getName();
+                String location = marker.getChromosomeLocations().stream().collect(Collectors.joining("; "));
+                String markerType = marker.getMarkerType().getDisplayName();
+                csvPrinter.printRecord(zdbID, symbol, aliases, name, location, markerType);
             }
+
             return new ByteArrayInputStream(out.toString().getBytes());
         } catch (IOException e) {
             logger.error(e);

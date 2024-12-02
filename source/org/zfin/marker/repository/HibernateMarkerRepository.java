@@ -109,6 +109,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+    @Override
+    public List<Marker> getMarkersByZdbIDsJoiningAliases(List<String> zdbIDs) {
+        String hql = "select m from Marker m join fetch m.aliases where m.zdbID in (:IDs) ";
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+        query.setParameterList("IDs", zdbIDs);
+        return query.list();
+    }
+
     public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
         return session.get(SNP.class, zdbID);
