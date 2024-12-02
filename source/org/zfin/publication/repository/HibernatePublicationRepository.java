@@ -91,7 +91,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
-    //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
 
         String hql = """
@@ -108,9 +107,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         ScrollableResults results = query.scroll();
 
 
-        List<Tuple> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
         while (results.next() && results.getRowNumber() < maxRow) {
-            list.add((Tuple) results.get()); //TODO (ZFIN-9354): hibernate migration double check logic
+            list.add((Object[]) results.get());
         }
 
         int totalCount = 0;
@@ -206,7 +205,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         ScrollableResults results = query.scroll();
 
-        //TODO (ZFIN-9354): hibernate migration double check logic
         List<Tuple> list = new ArrayList<>();
         results.beforeFirst();
         if (firstRow > 0) {
@@ -2151,7 +2149,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
     }
 
-    //TODO (ZFIN-9354): hibernate migration double check logic
     private List<MarkerStatistic> createMarkerStatistics(List<Tuple> list, GenericTerm anatomyTerm) {
         if (list == null) {
             return null;
@@ -2169,13 +2166,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return markers;
     }
 
-    //TODO (ZFIN-9354): hibernate migration double check logic
-    private List<HighQualityProbe> createHighQualityProbeObjects(List<Tuple> list, Term aoTerm) {
-        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
+    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
+        List<HighQualityProbe> probes = new ArrayList<>();
         if (list != null) {
-            for (Tuple tuple : list) {
-                Marker subGene = (Marker) tuple.get(0);
-                Marker gene = (Marker) tuple.get(1);
+            for (Object[] row : list) {
+                Marker subGene = (Marker) row[0];
+                Marker gene = (Marker) row[1];
                 HighQualityProbe probe = new HighQualityProbe(subGene, aoTerm);
                 probe.addGene(gene);
                 probes.add(probe);

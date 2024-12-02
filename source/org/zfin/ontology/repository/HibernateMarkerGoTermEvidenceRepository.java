@@ -55,9 +55,10 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                         select distinct ev
                         from MarkerGoTermEvidence ev
                         left join fetch ev.inferredFrom 
-                        join fetch ev.marker 
+                        join fetch ev.marker
+                        join fetch ev.goTerm
                         where ev.source.zdbID = :pubZdbID 
-                        order by ev.marker.abbreviation , ev.goTerm.termName 
+                        order by ev.marker.abbreviation, ev.goTerm.termName 
                         """, MarkerGoTermEvidence.class)
                 .setParameter("pubZdbID", publicationID)
                 .list();
