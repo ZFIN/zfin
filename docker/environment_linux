@@ -1,5 +1,6 @@
 DOCKER_SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 DOCKER_SSH_USER=ryanm
+DOCKER_SSH_HOST=crick.zfin.org
 DOCKER_DB_UNLOADS_PATH=/research/zunloads/databases/zfindb
 DOCKER_SOLR_UNLOADS_PATH=/research/zunloads/solr/zfindb
 DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=/research/zblastfiles/zmore/dev_blastdb
