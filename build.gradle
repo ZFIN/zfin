@@ -700,12 +700,12 @@ task createEmptyDirsIfNotExists() {
 task getLatestSolrUnload() {
     doLast {
         if (solrunloadspath != '/research/zunloads/solr/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
             def filepath = command.execute().text
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, solrunloadspath
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":" + filepath, solrunloadspath
             }
         } else {
             println 'SOLR_UNLOADS_PATH is set to ' + solrunloadspath + '. Please change before attempting to copy.'
@@ -717,7 +717,7 @@ task getLatestSolrIndexFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/trunkdb/current current.solr.dump"
+            commandLine "bash", "-c", "scp -r " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/solr/trunkdb/current current.solr.dump"
         }
     }
 }
@@ -725,12 +725,12 @@ task getLatestSolrIndexFilesTrunk() {
 task getLatestDatabaseUnload() {
     doLast {
         if (dbunloadspath != '/research/zunloads/databases/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
             def filepath = command.execute().text
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, dbunloadspath
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":"  + filepath, dbunloadspath
             }
         } else {
             println 'DB_UNLOADS_PATH is set to ' + dbunloadspath + '. Please change before attempting to copy.'
@@ -742,7 +742,7 @@ task getLatestPostgresFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/trunkdb/current current.postgres.dump"
+            commandLine "bash", "-c", "scp " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/databases/trunkdb/current current.postgres.dump"
         }
     }
 }
@@ -784,7 +784,7 @@ task getBlastAllDatabases() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
         }
     }
 }
@@ -793,7 +793,7 @@ task getBlastSmallDatabases() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
         }
     }
 }
@@ -802,7 +802,7 @@ task getBlastBinaries() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/opt/ab-blast", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/opt/ab-blast", "/opt/zfin/blastdb/"
         }
     }
 }
