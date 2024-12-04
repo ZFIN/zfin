@@ -254,47 +254,49 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<BasicExpressionDTO> getBasicExpressionDTOObjects() {
 
-        final String expressionQueryString = "select distinct xpatres_zdb_id," +
-                                             "       xpatex_source_zdb_id, " +
-                                             "       accession_no," +
-                                             "       xpatex_gene_zdb_id, " +
-                                             "       container.stg_obo_id, " +
-                                             "       xpatassay_mmo_id, " +
-                                             "       superterm.term_ont_id as superterm_id," +
-                                             "       subterm.term_ont_id as subterm_id, " +
-                                             "       xpatres_fig_zdb_id, " +
-                                             "       superterm.term_name as superterm_name, " +
-                                             "       subterm.term_name as subterm_name," +
-                                             "       case when container.stg_hours_end <= 48.00 then 'UBERON:0000068' " +
-                                             "            when container.stg_name_long like 'Hatching%' then 'post embryonic, pre-adult' " +
-                                             "            when container.stg_name_long like 'Larval%' then 'post embryonic, pre-adult' " +
-                                             "            when container.stg_name_long like 'Juvenile%' then 'post embryonic, pre-adult' " +
-                                             "            when container.stg_name = 'Adult' then 'UBERON:0000113' " +
-                                             "       else null end as uberon_stage,   " +
-                                             "       container.stg_name as stage_name" +
-                                             "  from expression_experiment" +
-                                             "  join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id" +
-                                             "  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id" +
-                                             "  join fish on genox_fish_zdb_id = fish_zdb_id" +
-                                             "  join publication on xpatex_source_zdb_id = zdb_id" +
-                                             "  join term as superterm on superterm.term_zdb_id = xpatres_superterm_zdb_id" +
-                                             "  join stage as starts on starts.stg_zdb_id = xpatres_start_stg_zdb_id" +
-                                             "  join stage as ends on ends.stg_zdb_id = xpatres_end_stg_zdb_id" +
-                                             "  join stage as container on container.stg_hours_start >= starts.stg_hours_start " +
-                                             "       and container.stg_hours_end <= ends.stg_hours_end" +
-                                             "  join expression_pattern_assay on xpatassay_name = xpatex_assay_name " +
-                                             "  left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id " +
-                                             "  left outer join all_term_contains as super_parents on superterm.term_zdb_id = super_parents.alltermcon_contained_zdb_id " +
-                                             "  left outer join zfa_uberon_mapping as super_uberon on super_parents.alltermcon_container_zdb_id = super_uberon.zum_zfa_term_zdb_id " +
-                                             "  left outer join all_term_contains as sub_parents on subterm.term_zdb_id = sub_parents.alltermcon_contained_zdb_id " +
-                                             "  left outer join zfa_uberon_mapping as sub_uberon on sub_parents.alltermcon_container_zdb_id = sub_uberon.zum_zfa_term_zdb_id " +
-                                             "  where fish_is_wildtype = 't'" +
-                                             "  and genox_is_std_or_generic_control = 't' " +
-                                             "  and xpatres_expression_found = 't' " +
-                                             "  and xpatex_gene_zdb_id is not null" +
-                                             "  and container.stg_zdb_id != 'ZDB-STAGE-050211-1' " +
-                                             "  and xpatres_start_stg_zdb_id != 'ZDB-STAGE-050211-1' " +
-                                             "  and xpatres_end_stg_zdb_id != 'ZDB-STAGE-050211-1' ";
+        final String expressionQueryString = """
+            select distinct xpatres_zdb_id,
+                   xpatex_source_zdb_id,
+                   accession_no,
+                   xpatex_gene_zdb_id,
+                   container.stg_obo_id,
+                   xpatassay_mmo_id,
+                   superterm.term_ont_id as superterm_id,
+                   subterm.term_ont_id as subterm_id,
+                   xpatres_fig_zdb_id,
+                   superterm.term_name as superterm_name,
+                   subterm.term_name as subterm_name,
+                   case when container.stg_hours_end <= 48.00 then 'UBERON:0000068'
+                        when container.stg_name_long like 'Hatching%' then 'post embryonic, pre-adult'
+                        when container.stg_name_long like 'Larval%' then 'post embryonic, pre-adult'
+                        when container.stg_name_long like 'Juvenile%' then 'post embryonic, pre-adult'
+                        when container.stg_name = 'Adult' then 'UBERON:0000113'
+                   else null end as uberon_stage, 
+                   container.stg_name as stage_name
+              from expression_experiment
+              join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
+              join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
+              join fish on genox_fish_zdb_id = fish_zdb_id
+              join publication on xpatex_source_zdb_id = zdb_id
+              join term as superterm on superterm.term_zdb_id = xpatres_superterm_zdb_id
+              join stage as starts on starts.stg_zdb_id = xpatres_start_stg_zdb_id
+              join stage as ends on ends.stg_zdb_id = xpatres_end_stg_zdb_id
+              join stage as container on container.stg_hours_start >= starts.stg_hours_start
+                   and container.stg_hours_end <= ends.stg_hours_end
+              join expression_pattern_assay on xpatassay_name = xpatex_assay_name
+              left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id
+              left outer join all_term_contains as super_parents on superterm.term_zdb_id = super_parents.alltermcon_contained_zdb_id
+              left outer join zfa_uberon_mapping as super_uberon on super_parents.alltermcon_container_zdb_id = super_uberon.zum_zfa_term_zdb_id
+              left outer join all_term_contains as sub_parents on subterm.term_zdb_id = sub_parents.alltermcon_contained_zdb_id
+              left outer join zfa_uberon_mapping as sub_uberon on sub_parents.alltermcon_container_zdb_id = sub_uberon.zum_zfa_term_zdb_id
+              where fish_is_wildtype = 't'
+              and genox_is_std_or_generic_control = 't'
+              and xpatres_expression_found = 't'
+              and xpatex_gene_zdb_id is not null
+              and container.stg_zdb_id != 'ZDB-STAGE-050211-1'
+              and xpatres_start_stg_zdb_id != 'ZDB-STAGE-050211-1'
+              and xpatres_end_stg_zdb_id != 'ZDB-STAGE-050211-1' 
+              """;
 
         final Query expressionQuery = HibernateUtil.currentSession().createSQLQuery(expressionQueryString);
 
