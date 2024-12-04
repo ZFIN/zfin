@@ -2837,31 +2837,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
-    //    changed this code
     public List<ConstructComponentPresentation> getConstructComponents(String zdbID) {
         String sqlCount = " SELECT MAX(cc_cassette_number) FROM construct_component WHERE cc_construct_zdb_id=:zdbID ";
         Query query = currentSession().createNativeQuery(sqlCount);
         query.setParameter("zdbID", zdbID);
 
         String sql = " SELECT a.construct_name,a.construct_comments,a.construct_zdb_id FROM construct a  WHERE a.construct_zdb_id =:zdbID ";
-        return HibernateUtil.currentSession().createNativeQuery(sql).setParameter("zdbID", zdbID).setResultTransformer(
 
-                                                                (Object[] tuple, String[] aliases) -> {
-                ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
+        return currentSession()
+                .createNativeQuery(sql, Tuple.class)
+                .setParameter("zdbID", zdbID)
+                .list()
+                .stream()
+                .map(row -> {
+                    ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
+                    if (row.get(1) != null) {
+                        constructComponentPresentation.setConstructComments(row.get(1).toString());
+                    }
+                    constructComponentPresentation.setConstructZdbID(row.get(2).toString());
+                    constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(row.get(2).toString())));
+                    constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(row.get(2).toString())));
+                    constructComponentPresentation.setConstructSequences(DTOMarkerService.getSupportingSequenceDTOs(getMarkerByID(row.get(2).toString())));
 
-                if (tuple[1] != null) {
-                    constructComponentPresentation.setConstructComments(tuple[1].toString());
+                    return constructComponentPresentation;
                 }
-
-                constructComponentPresentation.setConstructZdbID(tuple[2].toString());
-
-                constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(tuple[2].toString())));
-                constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(tuple[2].toString())));
-                constructComponentPresentation.setConstructSequences(DTOMarkerService.getSupportingSequenceDTOs(getMarkerByID(tuple[2].toString())));
-
-                return constructComponentPresentation;
-        }).list();
-
+        ).toList();
     }
 
     @Override
