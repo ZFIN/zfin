@@ -27,6 +27,12 @@ values ('ENSDART00000132824', 'ZDB-TSCRIPT-090929-15969');
 insert into ensembl_transcript_delete
 values ('ENSDART00000038301', 'ZDB-TSCRIPT-091110-789');
 
+insert into ensembl_transcript_delete
+values ('ENSDART00000151278', 'ZDB-TSCRIPT-120213-738');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000099074', 'ZDB-TSCRIPT-131113-1301');
+
 
 delete from ensembl_transcript_renaming;
 
@@ -71,6 +77,12 @@ values ('ENSDART00000188162', 'ENSDART00000188162', 'cpne8-202');
 
 insert into ensembl_transcript_renaming
 values ('ENSDART00000132945', 'ENSDART00000132945', 'si:ch211-226o13.2-202');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000060330', 'ENSDART00000060330', 'si:dkey-88n24.9-201');
+
+insert into ensembl_transcript_renaming
+values ('ENSDART00000158253', 'ENSDART00000158253', 'chst12b.5-202');
 
 
 -- ZFIN-9436
@@ -173,6 +185,39 @@ values ('ENSDART00000133799', 'ZDB-TSCRIPT-090929-12245');
 insert into ensembl_transcript_delete
 values ('ENSDART00000148454', 'ZDB-TSCRIPT-110325-1216');
 
+insert into ensembl_transcript_delete
+values ('ENSDART00000099074', 'ZDB-TSCRIPT-131113-1301');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000174367', 'ZDB-TSCRIPT-160919-420');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000056441', 'ZDB-TSCRIPT-090929-14210');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000133042', 'ZDB-TSCRIPT-090929-12887');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000152062', 'ZDB-TSCRIPT-091110-537');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000174326', 'ZDB-TSCRIPT-160919-160');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000157802', 'ZDB-TSCRIPT-090929-16061');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000142512', 'ZDB-TSCRIPT-090929-9061');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000132824', 'ZDB-TSCRIPT-090929-15969');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000038301', 'ZDB-TSCRIPT-091110-789');
+
+insert into ensembl_transcript_delete
+values ('ENSDART00000174367', 'ZDB-TSCRIPT-160919-420');
+
 delete from ensembl_transcript_add;
 
 insert into ensembl_transcript_add
@@ -185,4 +230,4 @@ update marker set mrkr_abbrev = 'ottdart00000029880', mrkr_name = 'ottdart000000
 
 update marker set mrkr_abbrev = 'ottdart00000029878', mrkr_name = 'ottdart00000029878' where mrkr_zdb_id = 'ZDB-TSCRIPT-090929-12237 ';
 
-
+delete from zdb_active_data where zactvd_zdb_id = 'ZDB-TSCRIPT-241112-182';
