@@ -12,6 +12,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.MarkerRelationship;
@@ -45,6 +46,7 @@ public class EfgViewController {
 
     @RequestMapping(value = "/efg/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 

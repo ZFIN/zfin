@@ -12,6 +12,7 @@ import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mutant.Fish;
 import org.zfin.repository.RepositoryFactory;
 
@@ -31,6 +32,7 @@ public class FishDetailController {
 
     @RequestMapping(value = "/{zdbID}")
     protected String showFish(@PathVariable String zdbID, Model model) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
         if (fish == null) {

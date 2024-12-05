@@ -58,6 +58,8 @@ public class NomenclatureSubmissionController {
     @RequestMapping(value = "/view/{zdbID}")
     public String getView(@PathVariable("zdbID") String zdbID,
                           Model model) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         if (zdbID == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }

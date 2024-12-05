@@ -19,6 +19,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
@@ -70,6 +71,8 @@ public class SequenceTargetingReagentViewController {
 
     @RequestMapping(value = "/str/view/{zdbID}")
     public String getNewView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         // set base bean
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
 

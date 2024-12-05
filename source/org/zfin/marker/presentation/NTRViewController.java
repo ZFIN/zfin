@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerNotFoundException;
@@ -81,6 +82,8 @@ public class NTRViewController {
     public String getNontranscribedRegionViewNew(Model model,
                                                  @PathVariable("zdbID") String zdbID
     ) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         setBaseBean(model, zdbID);
         return "marker/region/region-view";
     }
