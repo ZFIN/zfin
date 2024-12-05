@@ -2468,7 +2468,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             JOIN marker_relationship mr ON mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
             LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
             WHERE mr.mrel_type='gene produces transcript'
-            AND fdb.fdb_db_name='VEGA'
+            AND upper(fdb.fdb_db_name) in ('VEGA','VEGA_TRANS')
             """;
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql).setResultTransformer(markerDBLinkTransformer);
