@@ -45,7 +45,7 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
                 stat.setPublication(pubs.iterator().next());
             }
             stat.setFishSearch(fish.getName().replaceAll("<[^>]*>", ""));
-            stat.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
+            stat.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getShortName).collect(Collectors.joining("|")));
             stat.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
             resultList.add(stat);
         }));
