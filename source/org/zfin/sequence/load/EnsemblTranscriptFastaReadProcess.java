@@ -679,7 +679,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         List<String> ensdargGeneList = ensdargList.stream().map(markerDBLink -> markerDBLink.getMarker().getZdbID()).toList();
 
         //getEnsemblOnlyGenes(vegaGeneList, genbankGeneList, ensdargGeneList, ensdargList);
-        getNcbiOnlyGenes(vegaGeneList, genbankGeneList, ensdargGeneList, genbankList);
+        //getNcbiOnlyGenes(vegaGeneList, genbankGeneList, ensdargGeneList, genbankList);
         //getVegaOnlyGenes(vegaList, vegaGeneList, genbankGeneList, ensdargGeneList);
         ensdargList.removeIf(markerDBLink -> !vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
         System.out.println("Number of Ensembl Genes that also have a Vega Gene: " + ensdargList.size());
