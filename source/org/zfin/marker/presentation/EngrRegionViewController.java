@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -34,6 +35,7 @@ public class EngrRegionViewController {
 
     @RequestMapping(value = "/eregion/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
