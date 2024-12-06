@@ -363,10 +363,22 @@ task printProp() {
 }
 
 project(':home') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from file('robots.txt')
-        from file('favicon.ico')
-        into targetroot + pName
+    task deployFiles {
+        doLast {
+            def sourceFiles = [file('robots.txt'), file('favicon.ico')]
+            def targetDir = file("${targetroot}/home")
+
+            if (!targetDir.exists()) {
+                targetDir.mkdirs()
+            }
+
+            sourceFiles.each { sourceFile ->
+                def targetFile = new File(targetDir, sourceFile.name)
+                targetFile.text = sourceFile.text
+            }
+
+            println "Copied ${sourceFiles.size()} files to ${targetDir}"
+        }
     }
 }
 
