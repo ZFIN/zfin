@@ -4,9 +4,9 @@ import lombok.extern.log4j.Log4j2;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.util.FileUtil;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
