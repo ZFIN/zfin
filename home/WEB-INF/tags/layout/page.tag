@@ -32,7 +32,6 @@
 
         <title>${title}</title>
 
-        ${zfn:getCanonical()}
         <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
 <%--
         jquery is loaded via CDN here instead being part of the webpack bundle so that
