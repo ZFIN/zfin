@@ -1,6 +1,9 @@
 --liquibase formatted sql
 --changeset rtaylor:ZFIN-9451.sql
 
+-- Remove based on curation review:
+delete from db_link where dblink_acc_num like 'C173-A2' and dblink_zdb_id = 'ZDB-DBLINK-120828-1' and dblink_linked_recid = 'ZDB-TGCONSTRCT-111118-4' and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36';
+
 -- These are duplicates of existing dblinks that have the same acc_num but without the version on the end
 delete from db_link where dblink_linked_recid = 'ZDB-GENE-110208-1' and dblink_acc_num = 'JQ340773.1' and dblink_info = 'David Fashena 02/28/2012' and dblink_acc_num_display = 'JQ340773.1' and dblink_length IS NULL and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' AND dblink_zdb_id = 'ZDB-DBLINK-120228-22';
 delete from db_link where dblink_linked_recid = 'ZDB-GENE-050208-317' and dblink_acc_num = 'JN106182.1' and dblink_info = 'David Fashena 05/29/2012' and dblink_acc_num_display = 'JN106182.1' and dblink_length IS NULL and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' AND dblink_zdb_id = 'ZDB-DBLINK-120529-30';
