@@ -16,8 +16,11 @@ delete from db_link where dblink_linked_recid = 'ZDB-GENE-081113-2' and dblink_a
 delete from db_link where dblink_linked_recid = 'ZDB-GENE-140820-7' and dblink_acc_num = 'EH440805.1' and dblink_info = 'Amy Singer 08/20/2014' and dblink_acc_num_display = 'EH440805.1' and dblink_length IS NULL and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' AND dblink_zdb_id = 'ZDB-DBLINK-140820-6';
 delete from db_link where dblink_linked_recid = 'ZDB-GENE-200107-1' and dblink_acc_num = 'BX248331.13' and dblink_info IS NULL and dblink_acc_num_display = 'BX248331.13' and dblink_length IS NULL and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' AND dblink_zdb_id = 'ZDB-DBLINK-200107-14';
 delete from db_link where dblink_linked_recid = 'ZDB-GENE-090303-5' and dblink_acc_num = 'BX323596.2' and dblink_info IS NULL and dblink_acc_num_display = 'BX323596.2' and dblink_length IS NULL and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' AND dblink_zdb_id = 'ZDB-DBLINK-200107-17';
+delete from db_link WHERE dblink_zdb_id = 'ZDB-DBLINK-200107-14';
 
 -- These need to be updated to remove the version number from the acc_num
+
+UPDATE db_link SET dblink_acc_num = 'LO017791' WHERE dblink_zdb_id = 'ZDB-DBLINK-220914-7';
 update db_link set dblink_acc_num = 'AL928727' where dblink_zdb_id = 'ZDB-DBLINK-210122-21' and dblink_acc_num = 'AL928727.8';
 update db_link set dblink_acc_num = 'AL935186' where dblink_zdb_id = 'ZDB-DBLINK-180607-2' and dblink_acc_num = 'AL935186.22';
 update db_link set dblink_acc_num = 'AL935186' where dblink_zdb_id = 'ZDB-DBLINK-180607-4' and dblink_acc_num = 'AL935186.22';
