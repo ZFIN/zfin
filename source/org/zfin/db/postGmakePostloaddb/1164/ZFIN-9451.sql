@@ -63,3 +63,15 @@ UPDATE db_link set dblink_acc_num = 'CU855920' where dblink_linked_recid = 'ZDB-
 -- DN90345
 -- GDQH0102311
 -- MG9579
+
+-- enforce rule that versions should not be included
+ALTER TABLE db_link
+ADD CONSTRAINT check_dblink_conditions
+CHECK (
+    NOT (
+        dblink_fdbcont_zdb_id IN ('ZDB-FDBCONT-040412-37', 'ZDB-FDBCONT-040412-36', 'ZDB-FDBCONT-040412-47', 'ZDB-FDBCONT-040412-42')
+        AND
+        dblink_acc_num LIKE '%.%'
+    )
+);
+	
