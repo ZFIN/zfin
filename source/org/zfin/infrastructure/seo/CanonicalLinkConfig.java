@@ -1,6 +1,7 @@
 package org.zfin.infrastructure.seo;
 
 import org.springframework.ui.Model;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,8 @@ public class CanonicalLinkConfig {
         Map<Pattern, String> urlPatterns = urlPatterns();
         for (Map.Entry<Pattern, String> entry : urlPatterns.entrySet()) {
             if (entry.getKey().matcher(url).matches()) {
-                return entry.getKey().matcher(url).replaceAll(entry.getValue());
+                String path = entry.getKey().matcher(url).replaceAll(entry.getValue());
+                return "https://" + ZfinPropertiesEnum.DOMAIN_NAME + path;
             }
         }
         return null;

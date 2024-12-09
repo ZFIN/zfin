@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -25,6 +26,7 @@ public class GenericMarkerViewController {
 
     @RequestMapping("/generic/view/{zdbID}")
     public String getGenericMarkerView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker marker = markerRepository.getMarkerByID(zdbID);

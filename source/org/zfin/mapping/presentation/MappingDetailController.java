@@ -19,6 +19,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -43,6 +44,8 @@ public class MappingDetailController {
     @RequestMapping("/panel-detail/{panelID}")
     protected String showPanelDetail(@PathVariable String panelID,
                                      Model model) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         Panel panel = getLinkageRepository().getPanel(panelID);
         model.addAttribute("panel", panel);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mapping Panel: " + panel.getName());
@@ -140,6 +143,7 @@ public class MappingDetailController {
     @RequestMapping("/linkage/{linkageID}")
     protected String showLinkageInfo(@PathVariable String linkageID,
                                      Model model) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         if (linkageID == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No linkageID found");

@@ -21,6 +21,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
@@ -67,7 +68,6 @@ public class GeneViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
-
 
     @Autowired
     private FeatureRepository featureRepository;
@@ -268,6 +268,8 @@ public class GeneViewController {
 
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         String activeMarkerID = markerService.getActiveMarkerID(zdbID);
         if (!markerService.isOfTypeGene(activeMarkerID)) {
             return "redirect:/" + activeMarkerID;

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.SNP;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -40,6 +41,8 @@ public class SnpViewController {
 
     @RequestMapping(value = "/snp/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.debug("zdbID: " + zdbID);
         SNP marker = markerRepository.getSNPByID(zdbID);
