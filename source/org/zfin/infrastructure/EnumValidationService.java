@@ -29,6 +29,7 @@ import org.zfin.sequence.reno.Run;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -169,7 +170,9 @@ public class EnumValidationService {
     public void validateCurationLocation() throws EnumValidationException {
         String hql = "select distinct ptl_location_display from pub_tracking_location";
         List locationList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        checkEnumVersusDatabaseCollection(locationList, PublicationTrackingLocation.Name.values());
+        PublicationTrackingLocation.Name[] values = PublicationTrackingLocation.Name.values();
+        List<PublicationTrackingLocation.Name> cleaned = Arrays.stream(values).filter(name -> !name.equals(PublicationTrackingLocation.Name.INDEXER_UNPRIORITIZED)).toList();
+        checkEnumVersusDatabaseCollection(locationList, cleaned.toArray(new PublicationTrackingLocation.Name[0]));
     }
 
     /**

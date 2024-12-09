@@ -439,9 +439,9 @@ public class ZfinJSPFunctions {
             return "";
         }
         return """
-                <link rel="canonical" href="https://%s" />
+                <link rel="canonical" href="%s" />
                 """
-                .formatted(ZfinPropertiesEnum.DOMAIN_NAME + canonical )
+                .formatted(canonical )
                 .trim();
     }
 

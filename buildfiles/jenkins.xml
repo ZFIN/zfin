@@ -445,7 +445,7 @@
             <arg value="${jenkins}/jenkins.war"/>
         </exec>
         <symlink link="${jenkins}/jenkins.war" action="single" overwrite="true" failonerror="fail"
-                 resource="${jenkins}/jenkins-2.452.2.war"/>
+                 resource="${jenkins}/jenkins-2.479.1.war"/>
     </target>
 
     <target name="start-jenkins" depends="create-jenkins-symlink" description="Start up Jenkins ">

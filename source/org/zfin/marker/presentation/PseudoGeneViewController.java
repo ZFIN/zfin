@@ -10,6 +10,7 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerNotFoundException;
@@ -48,6 +49,8 @@ public class PseudoGeneViewController {
 
     @RequestMapping(value = "/pseudogene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         // set base bean
         GeneBean geneBean = new GeneBean();
 

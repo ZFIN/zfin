@@ -25,7 +25,7 @@ public class FeatureFlag {
     private Date lastModified;
 
     @Transient
-    private boolean enabledForSessionScope;
+    private boolean enabledForPersonScope;
 
     @Transient
     private boolean enabled;
@@ -34,8 +34,8 @@ public class FeatureFlag {
         return FeatureFlags.isFlagEnabled(this);
     }
 
-    public boolean isEnabledForSessionScope() {
-        return FeatureFlags.isFlagEnabledForSessionScope(this).equals(FeatureFlags.SessionState.ENABLED);
+    public boolean isEnabledForPersonScope() {
+        return FeatureFlags.isFlagEnabledForPersonScope(this).equals(FeatureFlags.FlagState.ENABLED);
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @XmlRootElement(name = "sitemapindex")
 public class XmlSitemapIndexSet {
 
-    @XmlElements({@XmlElement(name = "url", type = XmlSitemapIndexEntry.class)})
+    @XmlElements({@XmlElement(name = "sitemap", type = XmlSitemapIndexEntry.class)})
     private final List<XmlSitemapIndexEntry> sitemaps = new ArrayList<>();
 
     public void add(String loc) {

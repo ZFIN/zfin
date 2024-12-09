@@ -2468,7 +2468,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             JOIN marker_relationship mr ON mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
             LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
             WHERE mr.mrel_type='gene produces transcript'
-            AND fdb.fdb_db_name='VEGA'
+            AND upper(fdb.fdb_db_name) in ('VEGA','VEGA_TRANS')
             """;
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql).setResultTransformer(markerDBLinkTransformer);
@@ -2704,16 +2704,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
     @Override
-    public Marker getMarkerByFeature(Feature feature) {
-        String hql = "select fmr.marker from FeatureMarkerRelationship as fmr " +
-                     "where " +
-                     " fmr.feature = :feature " +
-                     " and fmr.type in (:types)";
+    public Optional<Marker> getMarkerByFeature(Feature feature) {
+        String hql = """
+                     select fmr.marker from FeatureMarkerRelationship as fmr
+                     where
+                     fmr.feature = :feature
+                     and fmr.type in (:types)
+                     """;
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("feature", feature);
         query.setParameterList("types", (new FeatureMarkerRelationshipTypeEnum[]{FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF}));
         List<Marker> list = query.list();
-        return list.get(0);
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
     @Override

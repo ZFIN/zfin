@@ -134,6 +134,7 @@ public class Database {
         ZFINENSEMBLTSCRIPT("zfinEnsemblTscript"),
         ENSEMBL_P("Ensembl_P"),
         ENSEMBL_ZF("ensembl_zf"),
+        ENSEMBL_ZF_ONLY("ensembl_zf_only"),
         GBK_EST_HS("gbk_est_hs"),
         GBK_EST_MS("gbk_est_ms"),
         GBK_EST_ZF("gbk_est_zf"),

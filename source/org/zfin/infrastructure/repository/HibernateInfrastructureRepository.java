@@ -19,6 +19,7 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.featureflag.FeatureFlag;
+import org.zfin.framework.featureflag.PersonalFeatureFlag;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -613,6 +614,40 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query<FeatureFlag> query = session.createQuery("from FeatureFlag WHERE name = :name", FeatureFlag.class);
         query.setParameter("name", name);
         return query.getSingleResult();
+    }
+
+    @Override
+    public PersonalFeatureFlag getPersonalFeatureFlag(Person person, String flagName) {
+        Session session = HibernateUtil.currentSession();
+        Query<PersonalFeatureFlag> query = session.createQuery(
+                "from PersonalFeatureFlag WHERE flagName = :flagName AND person = :person", PersonalFeatureFlag.class);
+        query.setParameter("flagName", flagName);
+        query.setParameter("person", person);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public void setPersonalFeatureFlag(Person person, String flagName, boolean enabled) {
+        Session session = HibernateUtil.currentSession();
+
+        try {
+            getFeatureFlag(flagName);
+        } catch (NoResultException e) {
+            //create entry if none found (default is not enabled)
+            setFeatureFlag(flagName, false);
+        }
+
+        PersonalFeatureFlag flag = null;
+        try {
+            flag = getPersonalFeatureFlag(person, flagName);
+        } catch (NoResultException e) {
+            //create entry if none found (default is not enabled)
+            flag = new PersonalFeatureFlag();
+            flag.setPerson(person);
+            flag.setFlagName(flagName);
+        }
+        flag.setEnabled(enabled);
+        session.save(flag);
     }
 
     public void setFeatureFlag(String name, boolean enabled) {

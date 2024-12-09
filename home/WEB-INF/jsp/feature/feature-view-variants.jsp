@@ -19,7 +19,7 @@
             </c:when>
             <c:otherwise>
                 <zfin2:displayLocation entity="${formBean.feature}"
-                                       hideLink="${empty formBean.feature.affectedGenes}"/>
+                                       hideLink="${empty formBean.feature.affectedGenes || isDeficiency}"/>
             </c:otherwise>
         </c:choose>
 

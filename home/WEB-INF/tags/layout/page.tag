@@ -32,13 +32,16 @@
 
         <title>${title}</title>
 
-        ${zfn:getCanonical()}
-        <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
+        <c:if test="${not empty canonicalUrl}">
+            <link rel="canonical" href="${canonicalUrl}" />
+        </c:if>
 
-        <!-- jquery is loaded via CDN here instead being part of the webpack bundle so that
-         --- bootstrap 4 plays nicely with inline script tags. not sure if this is the best
-         --- solution, but it's at least pretty noninvasive !-->
-        <!-- jsdelivr is used as the cdn because it works in china !-->
+        <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
+<%--
+        jquery is loaded via CDN here instead being part of the webpack bundle so that
+        bootstrap 4 plays nicely with inline script tags. not sure if this is the best
+        solution, but it's at least pretty noninvasive
+        jsdelivr is used as the cdn because it works in china --%>
         <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
         <script src="${zfn:getAssetPath("vendor-common.js")}"></script>
         <script src="${zfn:getAssetPath("zfin-common.js")}"></script>

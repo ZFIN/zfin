@@ -40,15 +40,15 @@ public class FeatureFlagsController {
                                      HttpServletRequest request) {
         String name = nameValuePair.getName();
         String value = nameValuePair.getValue();
-
         String scope = request.getParameter("scope");
+
+        HibernateUtil.createTransaction();
         if ("global".equals(scope)) {
-            HibernateUtil.createTransaction();
             FeatureFlags.setFeatureFlagForGlobalScope(name, "true".equals(value));
-            HibernateUtil.flushAndCommitCurrentSession();
-        } else if ("session".equals(scope)) {
-            FeatureFlags.setFeatureFlagForSessionScope(name, "true".equals(value));
+        } else if ("person".equals(scope)) {
+            FeatureFlags.setFeatureFlagForPersonScope(name, "true".equals(value));
         }
+        HibernateUtil.flushAndCommitCurrentSession();
 
         return nameValuePair;
     }

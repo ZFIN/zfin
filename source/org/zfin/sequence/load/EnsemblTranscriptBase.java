@@ -35,7 +35,6 @@ abstract public class EnsemblTranscriptBase {
 
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
-    protected List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
@@ -50,7 +49,12 @@ abstract public class EnsemblTranscriptBase {
         downloadFile(ncrnaFileName, "ncrna");
         // <ensdargID, List<RichSequence>>
         geneTranscriptMap = getAllGeneTranscriptsFromFile();
+    }
 
+    public void initCondensed(File file) {
+        // <ensdargID, List<RichSequence>>
+        geneTranscriptMap = getGeneTranscriptMap(file.getAbsolutePath());
+        System.out.println("Total Number of Ensembl Transcripts: " + geneTranscriptMap.size());
     }
 
     protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
@@ -121,8 +125,16 @@ abstract public class EnsemblTranscriptBase {
         return "";
     }
 
+    public static String getGeneIdFromZfinDefline(RichSequence sequence) {
+
+        String line = sequence.getAccession();
+        String[] token = line.split("\\|");
+        return token[1];
+    }
+
 
     private static List<RichSequence> getFastaIterator(String fileName) throws FileNotFoundException {
+        System.out.println(fileName);
         FileReader fileReader = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fileReader);
         RichSequenceIterator iterator;

@@ -91,6 +91,11 @@
         ProxyPass         http://kibana:5601/logs
         ProxyPassReverse  http://kibana:5601/logs
     </Location>
+    <Location /jbrowse>
+        ProxyPreserveHost Off
+        ProxyPass http://jbrowse_zfin_prod.alliancegenome.org/jbrowse/
+        ProxyPassReverse http://jbrowse_zfin_prod.alliancegenome.org/jbrowse/
+    </Location>
 </VirtualHost>
 
 <VirtualHost *:443>
@@ -191,6 +196,11 @@
         Require env ZfinRestrictedHosts
         ProxyPass          http://kibana:5601/logs
         ProxyPassReverse   http://kibana:5601/logs
+    </Location>
+    <Location /jbrowse>
+        ProxyPreserveHost Off
+        ProxyPass http://jbrowse_zfin_prod.alliancegenome.org/jbrowse/
+        ProxyPassReverse http://jbrowse_zfin_prod.alliancegenome.org/jbrowse/
     </Location>
             
     Include /srv/www/zfin.org/server_apps/apache/inc-redirect

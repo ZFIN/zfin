@@ -362,6 +362,26 @@ task printProp() {
     }
 }
 
+project(':home') {
+    task deployFiles {
+        doLast {
+            def sourceFiles = [file('robots.txt'), file('favicon.ico')]
+            def targetDir = file("${targetroot}/home")
+
+            if (!targetDir.exists()) {
+                targetDir.mkdirs()
+            }
+
+            sourceFiles.each { sourceFile ->
+                def targetFile = new File(targetDir, sourceFile.name)
+                targetFile.text = sourceFile.text
+            }
+
+            println "Copied ${sourceFiles.size()} files to ${targetDir}"
+        }
+    }
+}
+
 project(':home:zf_info') {
     task "deployGenericFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
@@ -654,6 +674,7 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
+             ':home:deployFiles',
              ':home:zf_info:deployFiles',
              ':home:ZFIN:deployFiles',
              ':server_apps:apache:deployFiles',
@@ -691,12 +712,12 @@ task createEmptyDirsIfNotExists() {
 task getLatestSolrUnload() {
     doLast {
         if (solrunloadspath != '/research/zunloads/solr/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
             def filepath = command.execute().text
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, solrunloadspath
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":" + filepath, solrunloadspath
             }
         } else {
             println 'SOLR_UNLOADS_PATH is set to ' + solrunloadspath + '. Please change before attempting to copy.'
@@ -708,7 +729,7 @@ task getLatestSolrIndexFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/trunkdb/current current.solr.dump"
+            commandLine "bash", "-c", "scp -r " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/solr/trunkdb/current current.solr.dump"
         }
     }
 }
@@ -716,12 +737,12 @@ task getLatestSolrIndexFilesTrunk() {
 task getLatestDatabaseUnload() {
     doLast {
         if (dbunloadspath != '/research/zunloads/databases/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
             def filepath = command.execute().text
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, dbunloadspath
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":"  + filepath, dbunloadspath
             }
         } else {
             println 'DB_UNLOADS_PATH is set to ' + dbunloadspath + '. Please change before attempting to copy.'
@@ -733,7 +754,7 @@ task getLatestPostgresFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/trunkdb/current current.postgres.dump"
+            commandLine "bash", "-c", "scp " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/databases/trunkdb/current current.postgres.dump"
         }
     }
 }
@@ -775,7 +796,7 @@ task getBlastAllDatabases() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
         }
     }
 }
@@ -784,7 +805,7 @@ task getBlastSmallDatabases() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
         }
     }
 }
@@ -793,7 +814,7 @@ task getBlastBinaries() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/opt/ab-blast", "/opt/zfin/blastdb/"
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/opt/ab-blast", "/opt/zfin/blastdb/"
         }
     }
 }
@@ -909,7 +930,7 @@ dependencies {
     implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
     implementation group: 'taglibs', name: 'standard', version: '1.1.2'
 
-    implementation files('home/WEB-INF/lib/agr_curation_api-v0.33.0-rc1.jar')
+    implementation files('home/WEB-INF/lib/agr_curation_api-v0.35.0.jar')
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/confluence-soap-v2.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')

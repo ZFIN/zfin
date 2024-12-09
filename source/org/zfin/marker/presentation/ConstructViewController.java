@@ -11,6 +11,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
@@ -43,6 +44,7 @@ public class ConstructViewController {
 
     @RequestMapping(value = "/construct/view/{zdbID}")
     public String getNewGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
         // set base bean
         ConstructBean markerBean = new ConstructBean();
 

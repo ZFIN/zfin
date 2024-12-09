@@ -18,6 +18,7 @@ import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.ImageNavigationMenu;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Clone;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -50,6 +51,8 @@ public class ImageViewController {
 
     @RequestMapping(value = {"/view/{zdbID}"})
     public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
+
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);

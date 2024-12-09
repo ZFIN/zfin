@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -675,6 +676,11 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
         // genbank gene list
         List<String> genbankGeneList = genbankList.stream().map(markerDBLink1 -> markerDBLink1.getMarker().getZdbID()).toList();
+        List<String> ensdargGeneList = ensdargList.stream().map(markerDBLink -> markerDBLink.getMarker().getZdbID()).toList();
+
+        //getEnsemblOnlyGenes(vegaGeneList, genbankGeneList, ensdargGeneList, ensdargList);
+        //getNcbiOnlyGenes(vegaGeneList, genbankGeneList, ensdargGeneList, genbankList);
+        //getVegaOnlyGenes(vegaList, vegaGeneList, genbankGeneList, ensdargGeneList);
         ensdargList.removeIf(markerDBLink -> !vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
         System.out.println("Number of Ensembl Genes that also have a Vega Gene: " + ensdargList.size());
         ensdargList.removeIf(markerDBLink -> genbankGeneList.contains(markerDBLink.getMarker().getZdbID()));
@@ -686,6 +692,86 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void getVegaOnlyGenes(List<LinkDisplay> vegaList, List<String> vegaGeneList, List<String> genbankGeneList, List<String> ensdargGeneList) {
+        List<String> vegaOnly = new ArrayList<>();
+        vegaGeneList.forEach(vegaID -> {
+            if (!genbankGeneList.contains(vegaID) && !ensdargGeneList.contains(vegaID)) {
+                vegaOnly.add(vegaID);
+            }
+        });
+
+
+        Map<Marker, List<TranscriptDBLink>> geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
+
+        vegaOnly.forEach(s -> {
+            Marker gene = getMarkerRepository().getMarkerByID(s);
+            List<TranscriptDBLink> transcriptList = new ArrayList<>();
+            geneEnsdartMap.entrySet().stream().filter(markerListEntry -> markerListEntry.getKey().getZdbID().equals(gene.getZdbID()))
+                .forEach(markerListEntry -> {
+                    transcriptList.addAll(markerListEntry.getValue());
+                    Set<Genotype> genoList = new HashSet<>();
+                    transcriptList.forEach(transcriptDBLink -> {
+                        genoList.add(transcriptDBLink.getTranscript().getStrain());
+                    });
+                    if (CollectionUtils.isNotEmpty(genoList) && genoList.size() > 1) {
+                        System.out.println("More than one type of strain in the set of transcripts per gene: " + gene.getZdbID());
+                    }
+                    if (CollectionUtils.isNotEmpty(genoList) && genoList.size() == 1) {
+                        AtomicReference<String> vega = new AtomicReference<>();
+                            vegaList.forEach(linkDisplay -> {
+                            if(linkDisplay.getAssociatedGeneID().equals(gene.getZdbID()) && linkDisplay.getAccession().startsWith("OTTDARG")){
+                                vega.set(linkDisplay.getAccession());
+                            }
+                        });
+                        Genotype next = genoList.iterator().next();
+                        if (next != null && next.getHandle().equals("TU")) {
+                            System.out.println(s + "\t" + gene.getAbbreviation()+"\t"+vega.get());
+                        }
+                    }
+                });
+        });
+    }
+
+    private static List<String> getEnsemblOnlyGenes(List<String> vegaGeneList, List<String> genbankGeneList, List<String> ensdargGeneList, List<MarkerDBLink> ensdargList) {
+        List<String> ensdargOnly = new ArrayList<>();
+        ensdargGeneList.forEach(ensdarg -> {
+            if (!genbankGeneList.contains(ensdarg) && !vegaGeneList.contains(ensdarg)) {
+                ensdargOnly.add(ensdarg);
+            }
+        });
+        ensdargOnly.forEach(id ->{
+            Marker gene = getMarkerRepository().getMarkerByID(id);
+            AtomicReference<String> ensdarg = new AtomicReference<>();
+            ensdargList.forEach(linkDisplay -> {
+                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                    ensdarg.set(linkDisplay.getAccessionNumber());
+                }
+            });
+            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
+        } );
+        return ensdargOnly;
+    }
+
+    private static List<String> getNcbiOnlyGenes(List<String> vegaGeneList, List<String> genbankGeneList, List<String> ensdargGeneList, List<MarkerDBLink> ncbiList) {
+        List<String> ncbiOnly = new ArrayList<>();
+        genbankGeneList.forEach(ncbiID -> {
+            if (!ensdargGeneList.contains(ncbiID) && !vegaGeneList.contains(ncbiID)) {
+                ncbiOnly.add(ncbiID);
+            }
+        });
+        ncbiOnly.forEach(id ->{
+            Marker gene = getMarkerRepository().getMarkerByID(id);
+            AtomicReference<String> ensdarg = new AtomicReference<>();
+            ncbiList.forEach(linkDisplay -> {
+                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                    ensdarg.set(linkDisplay.getAccessionNumber());
+                }
+            });
+            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
+        } );
+        return ncbiOnly;
     }
 
     private Map<String, MarkerDBLink> getMarkerDBLinksWithGenbankEnsemblOnlyAccessions() {

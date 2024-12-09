@@ -25,14 +25,6 @@
                             >
                                 InterPro
                             </zfin2:externalLink>
-                            <c:if test="${category.PDB}">
-                                <zfin2:externalLink
-                                        className="dropdown-item"
-                                        href="https://www.rcsb.org/pdb/protein/${category.proDBLink.accessionNumber}"
-                                >
-                                    PDB
-                                </zfin2:externalLink>
-                            </c:if>
                         </z:otherPagesDropdown>
                     </td>
                     <td class="text-right">${category.proDBLink.length}</td>

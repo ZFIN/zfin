@@ -18,6 +18,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
@@ -126,98 +127,11 @@ public class OntologyTermDetailController {
         return histogram;
     }
 
-    //TODO: remove this method when we are ready to get rid of the old term pages
-    @RequestMapping("/term-detail/{termID}")
-    protected String termDetailPage(@PathVariable String termID,
-                                    @ModelAttribute("formBean") OntologyBean form,
-                                    Model model) throws Exception {
-
-        if (termID == null) {
-            return getErrorPage(model);
-        }
-        if (termID.contains("*"))
-            return termDetailPageByName(termID, null, form, model);
-
-        // if ZDB-ANAT id obtain ZDB-TERM ID and re-direct
-        if (ActiveData.isValidActiveData(termID, ActiveData.Type.ANAT)) {
-            String newTermID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
-            if (newTermID == null) {
-                model.addAttribute(LookupStrings.ZDB_ID, "No replacement term ID found for " + termID);
-                return LookupStrings.RECORD_NOT_FOUND_PAGE;
-            }
-            return "redirect:/action/ontology/term-detail/" + newTermID;
-        }
-
-        GenericTerm term = null;
-        // check if TERM id
-        if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
-            term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
-            if (term == null) {
-                String replacedId = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
-                if (replacedId != null) {
-                    term = RepositoryFactory.getOntologyRepository().getTermByZdbID(replacedId);
-                }
-            }
-        } else {
-            // check if it is an OBO ID
-            if (Ontology.isOboID(termID))
-                term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
-        }
-        if (term == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
-
-        SectionVisibility sectionVisibility = form.getSectionVisibility();
-        if (sectionVisibility.isVisible(OntologySection.EXPRESSION)) {
-            sectionVisibility.setSectionData(OntologySection.EXPRESSION, true);
-        } else {
-            // check if there are any data in this section.
-            if (term.getOntology().isExpressionData()) {
-                sectionVisibility.setSectionData(OntologySection.EXPRESSION, hasExpressionData(term));
-            }
-        }
-        if (sectionVisibility.isVisible(OntologySection.PHENOTYPE)) {
-            sectionVisibility.setSectionData(OntologySection.PHENOTYPE, true);
-        } else {
-            if (term.getOntology().isPhenotypeData()) {
-                sectionVisibility.setSectionData(OntologySection.PHENOTYPE, hasPhenotypeData(term));
-            }
-        }
-
-
-        form.setTermRelationships(termRelationships);
-        form.setTerm(term);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
-        model.addAttribute("jspFunctions", new ZfinJSPFunctions());
-        int number = getInfrastructureRepository().getTermReferences(term, null).size();
-
-        model.addAttribute("numberOfCitations", number);
-        boolean isDiseaseTerm = term.getOntology().equals(Ontology.DISEASE_ONTOLOGY);
-        if (isDiseaseTerm) {
-            int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
-            model.addAttribute("diseaseGenes", numberOfGenes);
-            form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
-            form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
-            List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
-            model.addAttribute("fishModels", diseaseModelsWithFishModel);
-        }
-        model.addAttribute("isDiseaseTerm", isDiseaseTerm);
-        model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
-        return "ontology/ontology-term";
-
-    }
-
     @RequestMapping("/term/{termID}")
     protected String termDetailPagePrototype(@PathVariable String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
-                                             Model model) throws Exception {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.OLD_TERM_PAGES)) {
-            return termDetailPage(termID, form, model);
-        }
+                                             Model model) {
+        CanonicalLinkConfig.addCanonicalIfFound(model);
 
         if (termID == null) {
             return getErrorPage(model);
