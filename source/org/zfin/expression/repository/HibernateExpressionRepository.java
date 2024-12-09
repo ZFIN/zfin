@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.util.ZfinPropertyUtils.getStringOrNull;
 
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
@@ -940,10 +941,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             query.setParameter("fishID", fishID);
 
         List<ExpressionExperiment2> orderedList = query.list().stream().sorted(
-                Comparator.comparing((ExpressionExperiment2 experiment) -> experiment.getGene().getAbbreviationOrder())
-                        .thenComparing(experiment -> experiment.getFishExperiment().getFish().getName())
-                        .thenComparing(experiment -> experiment.getFishExperiment().getExperiment().getName())
-                        .thenComparing(experiment -> experiment.getAssay().getDisplayOrder())
+                Comparator.comparing((ExpressionExperiment2 xp) -> getStringOrNull(xp, "gene.abbreviationOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                        .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.fish.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                        .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.experiment.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                        .thenComparing(xp -> getStringOrNull(xp, "assay.displayOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
         ).toList();
 
         // Use LinkedHashSet to distinctify and preserve order
@@ -1024,11 +1025,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 //            efs.startStage.abbreviation
         return query.list().stream()
                 .sorted(
-                        Comparator.comparing((ExpressionFigureStage efs) -> efs.getFigure().getOrderingLabel())
-                                .thenComparing(efs -> efs.getExpressionExperiment().getGene().getAbbreviationOrder())
-                                .thenComparing(efs -> efs.getExpressionExperiment().getFishExperiment().getFish().getName())
-                                .thenComparing(efs -> efs.getExpressionExperiment().getAssay().getDisplayOrder())
-                                .thenComparing(efs -> efs.getStartStage().getAbbreviation())
+                        Comparator.comparing((ExpressionFigureStage efs) -> getStringOrNull(efs, "figure.orderingLabel"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(efs -> getStringOrNull(efs, "expressionExperiment.gene.abbreviationOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(efs -> getStringOrNull(efs, "expressionExperiment.fishExperiment.fish.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(efs -> getStringOrNull(efs, "expressionExperiment.assay.displayOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(efs -> getStringOrNull(efs, "startStage.abbreviation"), Comparator.nullsFirst(Comparator.naturalOrder()))
                 )
                 .toList();
     }
@@ -1062,10 +1063,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         //                            experiment.assay.displayOrder
         List<ExpressionExperiment2> orderedList = query.list().stream()
                 .sorted(
-                        Comparator.comparing((ExpressionExperiment2 experiment) -> experiment.getGene().getAbbreviationOrder())
-                                .thenComparing(experiment -> experiment.getFishExperiment().getFish().getName())
-                                .thenComparing(experiment -> experiment.getFishExperiment().getExperiment().getName())
-                                .thenComparing(experiment -> experiment.getAssay().getDisplayOrder())
+                        Comparator.comparing((ExpressionExperiment2 xp) -> getStringOrNull(xp, "gene.abbreviationOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.fish.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.experiment.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
+                                .thenComparing(xp -> getStringOrNull(xp, "assay.displayOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
                 )
                 .toList();
 
@@ -1790,24 +1791,22 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     public List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID) {
-        String hql = """
-                     SELECT distinct ai
-                     FROM
-                     ExpressionResult2 er, GenericTerm ai
-                      join er.expressionFigureStage efs
-                      join efs.expressionExperiment ee
-                      join ee.fishExperiment ge
-                      join ge.fish fish
-                      join fish.genotype g
-                      WHERE
-                     ee.gene.zdbID = :zdbID
-                     AND er.superTerm.oboID = ai.oboID
-                     AND er.expressionFound = true
-                     AND ge.standard = true
-                     AND g.wildtype= true
+            String hql = """
+                     SELECT distinct ai 
+                     FROM 
+                     ExpressionResult er, GenericTerm ai 
+                      join er.expressionExperiment ee 
+                      join ee.fishExperiment ge 
+                      join ge.fish fish 
+                      join fish.genotype g 
+                      WHERE 
+                     ee.gene.zdbID = :zdbID 
+                     AND er.entity.superterm.oboID = ai.oboID 
+                     AND er.expressionFound = true 
+                     AND ge.standard = true 
+                     AND g.wildtype= true 
                      ORDER BY ai.termName asc
-                     """;
-        return currentSession().createQuery(hql, GenericTerm.class)
+                     """;        return currentSession().createQuery(hql, GenericTerm.class)
             .setParameter("zdbID", zdbID)
             .list();
     }
@@ -2053,9 +2052,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select count(*) from ExpressionExperiment2 " +
-                     "      where  publication.zdbID = :publicationID" +
-                     "        and fishExperiment.fish = :fish ";
+        String hql = """
+                     select count(*) from ExpressionExperiment 
+                           where  publication.zdbID = :publicationID
+                             and fishExperiment.fish = :fish 
+                     """;
 
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
