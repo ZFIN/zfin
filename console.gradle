@@ -170,3 +170,8 @@ task readAndQuerySitemapTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.infrastructure.seo.ReadAndQuerySitemapTask'
 }
+
+task checkSequenceValidationRulesTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.CheckSequenceValidationRulesTask'
+}
