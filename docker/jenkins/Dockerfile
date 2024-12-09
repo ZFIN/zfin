@@ -97,6 +97,6 @@ RUN cat /tmp/bash_profile >> /home/gradle/.profile
 #CMD ["/usr/bin/tcsh"]
 #CMD ["/bin/bash","-l"]
 CMD ["/bin/bash","-l","-c", \
- "/opt/java/openjdk/bin/java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED -Dinstance=docker -jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.479.1.war --httpPort=9499 --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs"]
+ "/opt/java/openjdk/bin/java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED -Dinstance=docker -jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.479.2.war --httpPort=9499 --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs"]
 
  #"/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Dinstance=docker -jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.249.2.war --httpPort=9499 --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs"]
