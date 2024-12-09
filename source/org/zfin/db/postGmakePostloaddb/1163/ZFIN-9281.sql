@@ -200,6 +200,9 @@ delete from ensembl_transcript_add;
 insert into ensembl_transcript_add
 values ('ENSDART00000142854', 'ZDB-TSCRIPT-141209-296');
 
+insert into ensembl_transcript_add
+values ('ENSDART00000135016', 'ZDB-TSCRIPT-090929-12887');
+
 update transcript set tscript_status_id = 1 where tscript_mrkr_zdb_id in ('ZDB-TSCRIPT-110325-1216', 'ZDB-TSCRIPT-090929-12239','ZDB-TSCRIPT-090929-12237', 'ZDB-TSCRIPT-090929-17774', 'ZDB-TSCRIPT-090929-17777');
 
 update marker set mrkr_abbrev = 'ottdart00000029880', mrkr_name = 'ottdart00000029880' where mrkr_zdb_id = 'ZDB-TSCRIPT-090929-12239';
