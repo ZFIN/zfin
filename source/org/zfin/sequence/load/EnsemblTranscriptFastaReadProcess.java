@@ -356,7 +356,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
             if (ensdartExists(ensdartID)) {
                 return;
             }
-
+            transcript.setEnsdartId(ensdartID);
             List<RichSequence> ensemblTranscripts = allEnsemblProvidedGeneMap.values().stream().flatMap(Collection::stream).toList().stream().filter(richSequence -> getString(richSequence).equals(ensdartID)).toList();
             if (CollectionUtils.isEmpty(ensemblTranscripts)) {
                 return;
