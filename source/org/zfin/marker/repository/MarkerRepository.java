@@ -39,6 +39,8 @@ public interface MarkerRepository {
 
     List<Marker> getMarkersByZdbIDs(List<String> zdbIDs);
 
+    List<Marker> getMarkersByZdbIDsJoiningAliases(List<String> zdbIDs);
+
     SNP getSNPByID(String zdbID);
 
     ConstructCuration getConstructByID(String zdbID);

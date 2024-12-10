@@ -34,8 +34,11 @@ import org.zfin.util.URLCreator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
 @RequestMapping("/quicksearch")
@@ -641,17 +644,18 @@ public class SearchPrototypeController {
         }
 
         //set rows to...lots
-        query.setRows(9999999);
+        query.setRows(Integer.MAX_VALUE);
 
         handleRootOnlyResults(query);
 
         try {
 
-            URLConnection connection = SolrService.getUrlForQuery(query).openConnection();
+            URL urlForQuery = SolrService.getUrlForQuery(query);
+            URLConnection connection = urlForQuery.openConnection();
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
-                            connection.getInputStream()));
+                            solrService.transformSolrCsvToZfinCsv(filterQuery, connection.getInputStream())));
 
             OutputStreamWriter out = new OutputStreamWriter(
                     new BufferedOutputStream(
@@ -705,7 +709,7 @@ public class SearchPrototypeController {
 
     @RequestMapping(value = "/gene-expression/{geneZdbID}")
     public String geneExpressionModal(Model model, @PathVariable String geneZdbID) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
+        Marker gene = getMarkerRepository().getMarkerByID(geneZdbID);
         List<GenericTerm> terms = RepositoryFactory.getExpressionRepository().getWildTypeAnatomyExpressionForMarker(geneZdbID);
         Collections.sort(terms);
 
@@ -730,7 +734,7 @@ public class SearchPrototypeController {
 
     @RequestMapping(value = "/phenotype/{geneZdbID}")
     public String phenotypeModal(Model model, @PathVariable String geneZdbID) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
+        Marker gene = getMarkerRepository().getMarkerByID(geneZdbID);
         // graceful return.
         if (gene == null)
             return "No gene found by ID: " + geneZdbID;

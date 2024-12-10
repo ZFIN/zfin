@@ -1,9 +1,12 @@
 package org.zfin.search.service;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
@@ -20,14 +23,14 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
+import org.zfin.marker.Marker;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
 import org.zfin.search.presentation.FacetValue;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -35,8 +38,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 /**
@@ -977,5 +983,69 @@ public class SolrService {
         return highlights;
     }
 
+    /**
+     * Transforms a solr csv to a zfin csv based on the filterQuery. This involves adding more fields that are not available through solr
+     *
+     * @param filterQuery the filter query that was used to get the solr csv
+     * @param inputStream the solr csv input stream
+     * @return the transformed csv input stream
+     */
+    public InputStream transformSolrCsvToZfinCsv(String[] filterQuery, InputStream inputStream) {
+        Map<String, List<String>> filterQueryMap = getFilterQueryMap(filterQuery);
+
+        //categoryTypePairs is a list of pairs of category and type that we want to transform
+        //if there is a match in the filterQueryMap, we will transform the csv, otherwise we will return the original csv
+        Map<Pair<String, String>, Function<InputStream, InputStream>> categoryTypePairs = Map.of(
+            Pair.of("Gene / Transcript", "Gene"), in -> transformSolrCsvForGenestoZfinCsv(in)
+            //add more rows for other category/type pairs to transform...
+        );
+
+        //category and type_0 are the keys in the filterQueryMap that we want to check for. The value has quotes around it, so we remove them
+        String category = filterQueryMap.get("category").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
+        String type = filterQueryMap.get("type_0").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
+
+        //get the transformer for the category and type pair, or return the original inputStream if there is no transformer
+        Function<InputStream, InputStream> transformer = categoryTypePairs.get(Pair.of(category, type));
+        return transformer == null ? inputStream : transformer.apply(inputStream);
+    }
+
+    /**
+     * Transforms the solr csv to a zfin csv for genes
+     *
+     * Includes the following fields: ZFIN ID, Symbol, Aliases, Name, Location, Type
+     *
+     * @param inputStream the solr csv input stream for the original csv
+     * @return the transformed csv input stream
+     */
+    private InputStream transformSolrCsvForGenestoZfinCsv(InputStream inputStream) {
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+        try {
+            StringBuilder out = new StringBuilder();
+            CSVPrinter csvPrinter = new CSVPrinter(out, CSVFormat.DEFAULT);
+
+            List<String> ids = in.lines()
+                .skip(1) // Skip the header row
+                .map(l -> l.split(",")[0])
+                .toList();
+
+            List<Marker> markers = getMarkerRepository().getMarkersByZdbIDsJoiningAliases(ids);
+
+            csvPrinter.printRecord("ZFIN ID", "Symbol", "Aliases", "Name", "Location", "Type");
+            for(Marker marker : markers) {
+                String zdbID = marker.getZdbID();
+                String symbol = marker.getAbbreviation();
+                String aliases = marker.getAliases() == null ? "" : marker.getAliases().stream().map(alias -> alias.getAlias()).collect(Collectors.joining("; "));
+                String name = marker.getName();
+                String location = marker.getChromosomeLocations().stream().collect(Collectors.joining("; "));
+                String markerType = marker.getMarkerType().getDisplayName();
+                csvPrinter.printRecord(zdbID, symbol, aliases, name, location, markerType);
+            }
+
+            return new ByteArrayInputStream(out.toString().getBytes());
+        } catch (IOException e) {
+            logger.error(e);
+            return inputStream;
+        }
+    }
 }
 
