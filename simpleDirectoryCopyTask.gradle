@@ -1,0 +1,101 @@
+class SimpleDirectoryCopyTask extends DefaultTask {
+
+    @Input
+    String sourcePath
+
+    @Input
+    List<String> includes = []  // List of file extensions to include (e.g., 'sh', 'sql')
+
+    @Input
+    List<String> excludes = []  // List of filenames to exclude (e.g., 'Makefile', 'build.gradle')
+
+    @Input
+    List<String> excludeDirs = []  // List of directories to exclude (relative to sourcePath)
+
+    // Access global properties from the project.ext
+    @Internal
+    def targetroot = project.ext.targetroot
+
+    @Internal
+    def ttNameMap = project.ext.ttNameMap
+
+    @Internal
+    def whitelistTemplateFiles = project.ext.whitelistTemplateFiles
+
+    @TaskAction
+    void copyFiles() {
+        println "Starting copy task for sourcePath: $sourcePath"
+
+        def targetDir = new File("$targetroot/$sourcePath")
+        def sourceDir = new File(sourcePath)
+
+        if (!sourceDir.exists()) {
+            println "Source directory does not exist: $sourceDir"
+            return
+        }
+
+        println "Scanning source directory: $sourceDir"
+
+        // Collect all files in the source directory recursively
+        def sourceFiles = []
+        sourceDir.eachFileRecurse { file ->
+            if (file.isFile()) {
+                def relativePath = sourceDir.toURI().relativize(file.toURI()).path
+                println "Found file: $relativePath"
+
+                // Check if the file is in an excluded directory
+                def isInExcludedDir = excludeDirs.any { excludedDir ->
+                    new File(sourceDir, excludedDir).toURI().relativize(file.toURI()).path.startsWith('..')
+                }
+
+                if (isInExcludedDir) {
+                    println "Skipping file (excluded directory): $relativePath"
+                    return
+                }
+
+                // Filter files based on includes and excludes
+                def extension = file.name.tokenize('.').last()
+                def filename = file.name
+                if ((includes.isEmpty() || includes.contains(extension)) &&
+                        !excludes.contains(filename)) {
+                    println "Adding file to copy list: $relativePath"
+                    sourceFiles << [file: file, relativePath: relativePath]
+                } else {
+                    println "Skipping file (excluded by filters): $relativePath"
+                }
+            }
+        }
+
+        println "Total files to copy: ${sourceFiles.size()}"
+
+        // Copy files while maintaining relative paths
+        sourceFiles.each { fileInfo ->
+            def sourceFile = fileInfo.file
+            def relativePath = fileInfo.relativePath
+            def destinationFile = new File(targetDir, relativePath)
+
+            // Ensure subdirectories exist
+            if (!destinationFile.parentFile.exists()) {
+                println "Creating directory: ${destinationFile.parentFile}"
+                destinationFile.parentFile.mkdirs()
+            }
+
+            if (whitelistTemplateFiles.contains(relativePath)) {
+                println "Processing template file: $relativePath"
+
+                // Perform search-and-replace for whitelisted files
+                def processedContent = sourceFile.text
+                ttNameMap.each { name, value ->
+                    println "Replacing <!--|$name|--> with $value"
+                    processedContent = processedContent.replaceAll("<!--\\|${name}\\|-->", value)
+                }
+                destinationFile.text = processedContent
+            } else {
+                println "Copying file without modification: $relativePath"
+                destinationFile.text = sourceFile.text
+            }
+        }
+
+        println "Copied ${sourceFiles.size()} files to ${targetDir}"
+    }
+}
