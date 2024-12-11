@@ -383,7 +383,6 @@ project(':home') {
     }
 }
 
-//project(':home:zf_info') {task "deployFiles"(type: ZfinTargetCopy) {
 task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'home/zf_info'
     includes = [] // No includes (ie. copy all files)
@@ -391,7 +390,6 @@ task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':home:ZFIN') {task "deployFiles"(type: ZfinTargetCopy) {
 task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'home/ZFIN'
     includes = [] // No includes (ie. copy all files)
@@ -399,17 +397,6 @@ task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':server_apps:sysexecs') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            ttNameMap.each { name, value ->
-//                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-//            }
-//            exclude '**/Makefile', '**/build.gradle'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/sysexecs'
     includes = [] // No includes (ie. copy all files)
@@ -417,17 +404,6 @@ task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':server_apps:apache') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            ttNameMap.each { name, value ->
-//                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-//            }
-//            exclude '**/Makefile', '**/build.gradle'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
     includes = [] // No includes (ie. copy all files)
@@ -435,17 +411,6 @@ task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':server_apps:Reports') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            ttNameMap.each { name, value ->
-//                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-//            }
-//            exclude '**/Makefile', '**/build.gradle'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/Reports'
     includes = [] // No includes (ie. copy all files)
@@ -453,17 +418,6 @@ task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':server_apps:DB_maintenance') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            ttNameMap.each { name, value ->
-//                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-//            }
-//            exclude '**/Makefile', '**/build.gradle', '**/postgres/liquibase/*'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/DB_maintenance'
     includes = [] // No includes (ie. copy all files)
@@ -471,17 +425,6 @@ task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':cgi-bin') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            ttNameMap.each { name, value ->
-//                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-//            }
-//            exclude '**/Makefile', '**/build.gradle'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'cgi-bin'
     includes = [] // No includes (ie. copy all files)
@@ -489,12 +432,6 @@ task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = [] // No directories to exclude
 }
 
-//project(':server_apps:perl_lib') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from project.projectDir
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/perl_lib'
     includes = [] // No includes (ie. copy all files)
@@ -517,150 +454,82 @@ task deployGitInfoFile() {
     }
 }
 
-//project(':server_apps:data_transfer') {
-//    task "deployFiles"(type: ZfinTargetCopy) {
-//        from(project.projectDir) {
-//            // Apply the search and replace logic only for files that need it
-//            filesMatching(whitelistTemplateFiles) { fileCopyDetails ->
-////                println("Processing template rules for file: " + fileCopyDetails.file)
-//                ttNameMap.each { name, value ->
-//                    fileCopyDetails.filter { String line -> line.replaceAll("<!--\\|${name}\\|-->", value) }
-//                }
-//            }
-//            exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*', '**/Ensembl'
-//        }
-//        into targetroot + pName
-//    }
-//}
 task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer'
     includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = ['SangerMutants', 'Ensembl'] // No directories to exclude
+    excludeDirs = ['SangerMutants', 'Ensembl']
 }
 
-project(':server_apps:data_transfer:Ensembl') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/Ensembl'
+    includes = ['sh', 'sql', 'groovy']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:PUBMED') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;PUBMED;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/PUBMED'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:GPAD') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;GPAD;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/GPAD'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:GPI') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;GPI;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/GPI'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-
-project(':server_apps:data_transfer:ExpressionAtlas') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;ExpressionAtlas;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/ExpressionAtlas'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:RNASeqCuration') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;RNASeqCuration;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/RNASeqCuration'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:ResourceCenters') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;ResourceCenters;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/ResourceCenters'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-
-project(':server_apps:data_transfer:GO') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;GO;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/GO'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:ORTHO') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;ORTHO;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/ORTHO'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
 
-project(':server_apps:data_transfer:eco_go_mapping') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;eco_go_mapping;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/eco_go_mapping'
+    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
-
 
 project(':server_apps:data_transfer:Downloads') {
     task "createSymlink"() {
@@ -680,41 +549,35 @@ project(':server_apps:data_transfer:Downloads') {
     }
 }
 
-project(':server_apps:data_transfer:Downloads:GFF3') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.xml'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;Downloads;GFF3;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/Downloads/GFF3'
+    includes = ['sh', 'sql', 'groovy', 'xml']
+    excludes = [] // No excludes
+    excludeDirs = [] // No directories to exclude
 }
-
 
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
-             ':home:deployFiles',
-             ':home:zf_info:deployFiles',
-             ':home:ZFIN:deployFiles',
-             ':server_apps:apache:deployFiles',
-             ':server_apps:sysexecs:deployFiles',
-             ':server_apps:DB_maintenance:deployFiles',
-             ':server_apps:data_transfer:deployFiles',
+             'home:deployFiles',
+             'home;zf_info;deployFiles',
+             'home;ZFIN;deployFiles',
+             'server_apps;apache;deployFiles',
+             'server_apps;sysexecs;deployFiles',
+             'server_apps;DB_maintenance;deployFiles',
+             'server_apps;data_transfer;deployFiles',
              ':server_apps:data_transfer:Downloads:createSymlink',
-             ':server_apps:data_transfer:Ensembl:deployFiles',
-             ':server_apps:data_transfer:PUBMED:deployFiles',
-             ':server_apps:data_transfer:ResourceCenters:deployFiles',
-             ':server_apps:data_transfer:GO:deployFiles',
-             ':server_apps:data_transfer:ORTHO:deployFiles',
-             ':server_apps:data_transfer:eco_go_mapping:deployFiles',
-             ':server_apps:Reports:deployFiles',
+             'server_apps;data_transfer;Ensembl;deployFiles',
+             'server_apps;data_transfer;PUBMED;deployFiles',
+             'server_apps;data_transfer;ResourceCenters;deployFiles',
+             'server_apps;data_transfer;GO;deployFiles',
+             'server_apps;data_transfer;ORTHO;deployFiles',
+             'server_apps;data_transfer;eco_go_mapping;deployFiles',
+             'server_apps;Reports;deployFiles',
              'deployGitInfoFile',
-             ':cgi-bin:deployFiles',
-             ':server_apps:perl_lib:deployFiles',
+             'cgi-bin;deployFiles',
+             'server_apps;perl_lib;deployFiles',
     ]
 }
 
@@ -1192,24 +1055,6 @@ task showDirs {
     }
 }
 
-class ZfinTargetCopy extends Copy {
-
-    @Input
-    String projectName
-    @Input
-    String pName
-
-    ZfinTargetCopy() {
-        projectName = project.path
-        pName = projectName.replace(":", "/")
-        description 'Deploy ' + pName + ' to TARGETROOT'
-        group 'ZFIN Deployment'
-    }
-
-    @TaskAction
-    void executeTask() {
-    }
-}
 
 class SimpleDirectoryCopyTask extends DefaultTask {
 
@@ -1237,6 +1082,7 @@ class SimpleDirectoryCopyTask extends DefaultTask {
 
     @TaskAction
     void copyFiles() {
+        def debugMode = false
         println "Starting copy task for sourcePath: $sourcePath"
 
         def targetDir = new File("$targetroot/$sourcePath")
@@ -1248,71 +1094,80 @@ class SimpleDirectoryCopyTask extends DefaultTask {
         }
 
         println "Scanning source directory: $sourceDir"
-
         println "Exclude dirs: $excludeDirs"
+        println "Includes: $includes"
+        println "Excludes: $excludes"
+        println "--------------------------------------------------"
 
-        // Collect all files in the source directory recursively
-        def sourceFiles = []
+        def copySingleFile = { source, destination ->
+            //are the files the same?
+            if (destination.exists()) {
+                def diffProc = ["diff", source, destination].execute()
+                diffProc.waitForOrKill(3600)
+                if (diffProc.exitValue() == 0) {
+                    if (debugMode) {
+                        println "    Skipped: $destination (Identical file)"
+                    }
+                    return
+                }
+            }
+
+            //if not, copy the file
+            def sout = new StringBuilder(), serr = new StringBuilder()
+            def proc = ["cp", source, destination].execute()
+            proc.consumeProcessOutput(sout, serr)
+            proc.waitForOrKill(3600)
+            if (proc.exitValue() != 0) {
+                println "Error"
+                println "$serr"
+                throw new GradleException("Failed to copy file: $source")
+            }
+            println "     Copied: $destination"
+//            println "out> $sout\nerr> $serr"
+        }
+
+        // Process each file as we encounter it (avoids storing all in memory)
         sourceDir.eachFileRecurse { file ->
             if (file.isFile()) {
                 def relativePath = sourceDir.toURI().relativize(file.toURI()).path
-                println "Found file: $relativePath"
+                def pathRelativeToThisBuildFile = sourcePath + '/' + relativePath
+                def containsSubDir = relativePath.contains('/')
+                def relativePathWithoutFileName = containsSubDir ? relativePath.substring(0, relativePath.lastIndexOf('/')) : relativePath
 
-                // Check if the file is in an excluded directory
-                def isInExcludedDir = excludeDirs.any { excludedDir ->
-                    def relativePathWithoutFileName = relativePath.lastIndexOf('/') == -1 ? relativePath : relativePath.substring(0, relativePath.lastIndexOf('/'))
-//                    println "Checking if $relativePathWithoutFileName equals $excludedDir"
-                    relativePathWithoutFileName.equals(excludedDir)
-                }
-
-                if (isInExcludedDir) {
-                    println "Skipping file (excluded directory): $relativePath"
+                // Skip files in excluded directories
+                if (excludeDirs.contains(relativePathWithoutFileName)) {
+                    if (debugMode) {
+                        println "    Skipped: $relativePath (Excluded directory)"
+                    }
                     return
                 }
 
                 // Filter files based on includes and excludes
                 def extension = file.name.tokenize('.').last()
                 def filename = file.name
-                if ((includes.isEmpty() || includes.contains(extension)) &&
-                        !excludes.contains(filename)) {
-                    println "Adding file to copy list: $relativePath"
-                    sourceFiles << [file: file, relativePath: relativePath]
+                if ((includes.isEmpty() || includes.contains(extension)) && !excludes.contains(filename)) {
+                    def destinationFile = new File(targetDir, relativePath)
+                    destinationFile.parentFile.mkdirs()
+
+                    if (whitelistTemplateFiles.contains(pathRelativeToThisBuildFile)) {
+                        println "Transformed: $relativePath"
+
+                        // Perform search-and-replace for whitelisted files
+                        def processedContent = file.text
+                        ttNameMap.each { name, value ->
+                            processedContent = processedContent.replaceAll("<!--\\|${name}\\|-->", value)
+                        }
+                        destinationFile.text = processedContent
+                    } else {
+                        copySingleFile(file, destinationFile)
+                    }
                 } else {
-                    println "Skipping file (excluded by filters): $relativePath"
+                    if (debugMode) {
+                        println "    Skipped: $relativePath (Skipped by includes/excludes)"
+                    }
                 }
             }
         }
-
-        println "Total files to copy: ${sourceFiles.size()}"
-
-        // Copy files while maintaining relative paths
-        sourceFiles.each { fileInfo ->
-            def sourceFile = fileInfo.file
-            def relativePath = fileInfo.relativePath
-            def destinationFile = new File(targetDir, relativePath)
-
-            // Ensure subdirectories exist
-            if (!destinationFile.parentFile.exists()) {
-                println "Creating directory: ${destinationFile.parentFile}"
-                destinationFile.parentFile.mkdirs()
-            }
-
-            if (whitelistTemplateFiles.contains(relativePath)) {
-                println "Processing template file: $relativePath"
-
-                // Perform search-and-replace for whitelisted files
-                def processedContent = sourceFile.text
-                ttNameMap.each { name, value ->
-                    println "Replacing <!--|$name|--> with $value"
-                    processedContent = processedContent.replaceAll("<!--\\|${name}\\|-->", value)
-                }
-                destinationFile.text = processedContent
-            } else {
-                println "Copying file without modification: $relativePath"
-                destinationFile.text = sourceFile.text
-            }
-        }
-
-        println "Copied ${sourceFiles.size()} files to ${targetDir}"
     }
+
 }
