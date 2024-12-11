@@ -383,26 +383,11 @@ project(':home') {
 }
 
 project(':home:zf_info') {
-    task "deployGenericFiles"(type: ZfinTargetCopy) {
+    task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.html'
-        }
-        into targetroot + pName
-    }
-
-    task "deployStaticFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            exclude '**/*.html'
             exclude '**/Makefile'
         }
         into targetroot + pName
-    }
-
-    task "deployFiles"(type: GradleBuild) {
-        tasks = ['deployGenericFiles', 'deployStaticFiles']
     }
 }
 
