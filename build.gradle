@@ -1074,14 +1074,19 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                     destinationFile.parentFile.mkdirs()
 
                     if (whitelistTemplateFiles.contains(pathRelativeToThisBuildFile)) {
-                        println "Transformed: $relativePath"
-
                         // Perform search-and-replace for whitelisted files
                         def processedContent = file.text
                         ttNameMap.each { name, value ->
                             processedContent = processedContent.replaceAll("<!--\\|${name}\\|-->", value)
                         }
-                        destinationFile.text = processedContent
+                        if (destinationFile.text != processedContent) {
+                            destinationFile.text = processedContent
+                            println "Transformed: $relativePath"
+                        } else {
+                            if (debugMode) {
+                                println "    Skipped: $relativePath (Identical file after transform)"
+                            }
+                        }
                     } else {
                         copySingleFile(file, destinationFile)
                     }
