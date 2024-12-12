@@ -75,7 +75,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
 //            println "out> $sout\nerr> $serr"
         }
 
-        // Process each file as we encounter it (avoids storing all in memory)
         sourceDir.eachFileRecurse { file ->
             if (file.isFile()) {
                 def relativePath = sourceDir.toURI().relativize(file.toURI()).path
