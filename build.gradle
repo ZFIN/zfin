@@ -385,58 +385,42 @@ project(':home') {
 
 task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'home/zf_info'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'home/ZFIN'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/sysexecs'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/Reports'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/DB_maintenance'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = ['postgres/liquibase'] // No directories to exclude
+    excludeDirs = ['postgres/liquibase']
 }
 
 task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'cgi-bin'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
-    excludeDirs = [] // No directories to exclude
 }
 
 task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/perl_lib'
-    includes = [] // No includes (ie. copy all files)
-    excludes = []
-    excludeDirs = [] // No directories to exclude
 }
 
 task deployGitInfoFile() {
