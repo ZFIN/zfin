@@ -362,7 +362,6 @@ task printProp() {
     }
 }
 
-//TODO: does this use the home/ subdirectory for source files?
 project(':home') {
     task deployFiles {
         doLast {
@@ -468,69 +467,6 @@ task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyT
     excludeDirs = [] // No directories to exclude
 }
 
-task "server_apps;data_transfer;PUBMED;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/PUBMED'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;GPAD;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/GPAD'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;GPI;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/GPI'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;ExpressionAtlas;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/ExpressionAtlas'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;RNASeqCuration;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/RNASeqCuration'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;ResourceCenters;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/ResourceCenters'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;GO;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/GO'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;ORTHO;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/ORTHO'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
-task "server_apps;data_transfer;eco_go_mapping;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/eco_go_mapping'
-    includes = ['sh', 'sql', 'groovy', 'pl', 'xml', 'txt']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
 project(':server_apps:data_transfer:Downloads') {
     task "createSymlink"() {
         doLast {
@@ -549,13 +485,6 @@ project(':server_apps:data_transfer:Downloads') {
     }
 }
 
-task "server_apps;data_transfer;Downloads;GFF3;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/data_transfer/Downloads/GFF3'
-    includes = ['sh', 'sql', 'groovy', 'xml']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
-}
-
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
@@ -569,11 +498,6 @@ task make(type: GradleBuild) {
              'server_apps;data_transfer;deployFiles',
              ':server_apps:data_transfer:Downloads:createSymlink',
              'server_apps;data_transfer;Ensembl;deployFiles',
-             'server_apps;data_transfer;PUBMED;deployFiles',
-             'server_apps;data_transfer;ResourceCenters;deployFiles',
-             'server_apps;data_transfer;GO;deployFiles',
-             'server_apps;data_transfer;ORTHO;deployFiles',
-             'server_apps;data_transfer;eco_go_mapping;deployFiles',
              'server_apps;Reports;deployFiles',
              'deployGitInfoFile',
              'cgi-bin;deployFiles',
