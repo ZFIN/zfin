@@ -440,7 +440,6 @@ task deployGitInfoFile() {
 
 task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer'
-    includes = [] // No includes (ie. copy all files)
     excludes = ['Makefile', 'build.gradle']
     excludeDirs = ['SangerMutants', 'Ensembl']
 }
@@ -448,8 +447,6 @@ task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
 task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer/Ensembl'
     includes = ['sh', 'sql', 'groovy']
-    excludes = [] // No excludes
-    excludeDirs = [] // No directories to exclude
 }
 
 project(':server_apps:data_transfer:Downloads') {
