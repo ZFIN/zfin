@@ -1024,13 +1024,15 @@ class SimpleDirectoryCopyTask extends DefaultTask {
         println "--------------------------------------------------"
 
         def copySingleFile = { source, destination ->
+            def relativeDestination = sourceDir.toURI().relativize(source.toURI()).path
+
             //are the files the same?
             if (destination.exists()) {
                 def diffProc = ["diff", source, destination].execute()
                 diffProc.waitForOrKill(3600)
                 if (diffProc.exitValue() == 0) {
                     if (debugMode) {
-                        println "    Skipped: $destination (Identical file)"
+                        println "    Skipped: $relativeDestination (Identical file)"
                     }
                     return
                 }
@@ -1046,7 +1048,7 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                 println "$serr"
                 throw new GradleException("Failed to copy file: $source")
             }
-            println "     Copied: $destination"
+            println "     Copied: $relativeDestination"
 //            println "out> $sout\nerr> $serr"
         }
 
