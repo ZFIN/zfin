@@ -1017,10 +1017,9 @@ class SimpleDirectoryCopyTask extends DefaultTask {
             return
         }
 
-        println "Scanning source directory: $sourceDir"
-        println "Exclude dirs: $excludeDirs"
-        println "Includes: $includes"
-        println "Excludes: $excludes"
+        println "Exclude dirs: " + excludeDirs.isEmpty() ? "None" : excludeDirs
+        println "Include extensions: " + includes.isEmpty() ? "All" : includes
+        println "Exclude extensions: " + excludes.isEmpty() ? "None" : excludes
         println "--------------------------------------------------"
 
         def copySingleFile = { source, destination ->
