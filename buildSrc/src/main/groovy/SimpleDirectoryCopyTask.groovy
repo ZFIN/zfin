@@ -76,16 +76,13 @@ class SimpleDirectoryCopyTask extends DefaultTask {
         }
 
         sourceDir.eachFileRecurse { file ->
-            if (file.isFile()) {
                 def relativePath = sourceDir.toURI().relativize(file.toURI()).path
                 def pathRelativeToThisBuildFile = sourcePath + '/' + relativePath
-                def containsSubDir = relativePath.contains('/')
-                def relativePathWithoutFileName = containsSubDir ? relativePath.substring(0, relativePath.lastIndexOf('/')) : relativePath
 
-                // Skip files in excluded directories
-                if (excludeDirs.contains(relativePathWithoutFileName)) {
+                // Skip files in excluded directories (or if any of the excluded directories is a parent/grandparent/etc. directory)
+                if (excludeDirs.any { excludedDir -> relativePath.startsWith("${excludedDir}/") || relativePath == excludedDir }) {
                     if (debugMode) {
-                        println "    Skipped: $relativePath (Excluded directory)"
+                        println "    Skipped: $relativePath (Excluded directory or subdirectory)"
                     }
                     return
                 }
@@ -97,7 +94,12 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                     def destinationFile = new File(targetDir, relativePath)
                     destinationFile.parentFile.mkdirs()
 
-                    if (whitelistTemplateFiles.contains(pathRelativeToThisBuildFile)) {
+                    if (file.isDirectory()) {
+                        if (!destinationFile.exists()) {
+                            destinationFile.mkdirs()
+                            println "  Directory: $relativePath"
+                        }
+                    } else if (whitelistTemplateFiles.contains(pathRelativeToThisBuildFile)) {
                         // Perform search-and-replace for whitelisted files
                         def processedContent = file.text
                         ttNameMap.each { name, value ->
@@ -119,7 +121,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                         println "    Skipped: $relativePath (Skipped by includes/excludes)"
                     }
                 }
-            }
         }
     }
 }

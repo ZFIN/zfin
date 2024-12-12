@@ -440,7 +440,7 @@ task deployGitInfoFile() {
 
 task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer'
-    excludes = ['Makefile', 'build.gradle']
+    excludes = ['Makefile', 'build.gradle', '.gitignore', '.DS_Store']
     excludeDirs = ['SangerMutants', 'Ensembl']
 }
 
