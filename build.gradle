@@ -1079,7 +1079,7 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                         ttNameMap.each { name, value ->
                             processedContent = processedContent.replaceAll("<!--\\|${name}\\|-->", value)
                         }
-                        if (destinationFile.text != processedContent) {
+                        if (!destinationFile.exists() || destinationFile.text != processedContent) {
                             destinationFile.text = processedContent
                             println "Transformed: $relativePath"
                         } else {
