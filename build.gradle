@@ -420,8 +420,8 @@ task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/DB_maintenance'
     includes = [] // No includes (ie. copy all files)
-    excludes = ['Makefile', 'build.gradle', 'postgres/liquibase/*']
-    excludeDirs = [] // No directories to exclude
+    excludes = ['Makefile', 'build.gradle']
+    excludeDirs = ['postgres/liquibase'] // No directories to exclude
 }
 
 task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
