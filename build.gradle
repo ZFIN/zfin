@@ -224,6 +224,8 @@ def translateVariableSet = [
 //Other
 
 def whitelistTemplateFiles = [
+    'cgi-bin/send_request.perl',
+    'cgi-bin/merge_markers.pl',
     'server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh',
     'server_apps/DB_maintenance/checkVarcharOctetLength.pl',
     'server_apps/DB_maintenance/check_undefined_environment.pl',
