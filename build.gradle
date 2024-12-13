@@ -13,6 +13,7 @@ apply plugin: 'groovy'
 apply from: 'agr.gradle'
 apply from: 'console.gradle'
 
+
 //apply from: file('setupTestsReports.gradle')
 
 sourceCompatibility = 17
@@ -51,6 +52,7 @@ project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
 project.ext.set("pgdata", pgdata)
 project.ext.set("pgbindir", pgbindir)
+project.ext.set("targetroot", targetroot)
 
 task loadDatabase() {
     doLast {
@@ -222,115 +224,116 @@ def translateVariableSet = [
 //Other
 
 def whitelistTemplateFiles = [
-        '**/CreateMarkerSearchPage.sql',                            //server_apps/data_transfer/ExternalSearch
-        '**/CreateMarkerSearchPage.pl',
-        '**/OMIM.pl',                                               //server_apps/data_transfer/OMIM
-        '**/loadOMIM.sql',
-        '**/NCBIStartEnd.pl',                                       //server_apps/data_transfer/NCBIStartEnd
-        '**/gpad.pl',                                               //server_apps/data_transfer/GO
-        '**/gofile2_all.sql',
-        '**/gofile.sql',
-        '**/gofile2.sql',
-        '**/gpad2.0.sql',
-        '**/go.pl',
-        '**/gp2protein.pl',
-        '**/validateUniprotIDsZFIN.pl',
-        '**/checkRNAConsequenceTerm.groovy',                        //server_apps/data_transfer/maintainTermDisplay
-        '**/insert_eco_go_map.sql',                                 //server_apps/data_transfer/eco_go_mapping
-        '**/zfishbook.pl',                                          //server_apps/data_transfer/zfishbook
-        '**/preprocess_zfishbook.pl',
-        '**/zfishbook.sh',
-        '**/sp_load.sql',                                           //server_apps/data_transfer/SWISS-PROT
-        '**/load_protein_domain_info.sql',
-        '**/sp_load_ec2gopart.sql',
-        '**/referenceProteome.sql',
-        '**/sp_delete_ec2gopart.sql',
-        '**/loadTranscriptSequences.sql',                           //server_apps/data_transfer/RNACentral
-        '**/runTscriptSequenceLoad.pl',
-        '**/loadTscriptSeq.pl',
-        '**/preLoadTranscriptSequence.sql',
-        '**/blast_withdrawn.pl',                                    //server_apps/data_transfer/Load
-        '**/generate_special_Sanger_uniprot_nomenclature_run.sh',   //server_apps/data_transfer/Load/ReNo/Nomenclature
-        '**/load_run_report_hit.sh',                                //server_apps/data_transfer/Load/ReNo
-        '**/fetch_ensembl_agp.sh',                                  //server_apps/data_transfer/Ensembl
-        '**/notifyStaleIds.sh',
-        '**/fetch_ensdarT_dbacc.sh',
-        '**/fetch_sangerMutantInfo.sh',
-        '**/reportEnsembleStatistics.sh',
-        '**/pullFromBioMart.pl',
-        '**/fetch_ensdarg.sh',
-        '**/fetch_ensdargOttdargTable.sh',
-        '**/loadNewSNPs.sql',                                       //server_apps/data_transfer/SNP
-        '**/loadNewSNPAttrs.sql',
-        '**/addNewClonesJSmith.pl',
-        '**/addTalbotSNPAttr.sql',
-        '**/dbSNP.pl',
-        '**/parseObo.pl',                                           //server_apps/data_transfer/LoadOntology
-        '**/parseHeader.pl',
-        '**/meow.pl',                                               //server_apps/data_transfer/MEOW
-        '**/insertJournalAlias.sql',                                //server_apps/data_transfer/PUBMED/Journal
-        '**/checkAndUpdateJournals.sql',
-        '**/load_complete_author_names.sql',                        //server_apps/data_transfer/PUBMED
-        '**/loadNewPubs.sql',
-        '**/updatePublicationDate.groovy',
-        '**/pubActivation.groovy',
-        '**/addMeshTermsToAllPubs.groovy',
-        '**/addPMCidsToAllPubs.groovy',
-        '**/gbaccession.pl',                                        //server_apps/data_transfer/Genbank
-        '**/loadHumanSynonyms.sql',                                 //server_apps/data_transfer/ORTHO
-        '**/updateZebrafishGeneNames.sql',
-        '**/runOrthology.pl',
-        '**/emailOrthologyReports.pl',
-        '**/reportOrthoNameChanges.pl',
-        '**/parseOrthoFile.pl',
-        '**/downloadFiles.pl',
-        '**/parseHumanData.pl',
-        '**/updateZebrafishGeneNames.pl',
-        '**/loadAndUpdateNCBIOrthologs.sql',
-        '**/E_unload_ensembl_contig.sql',                           //server_apps/data_transfer/Downloads/GFF3
-        '**/pullFromEZRC.pl',                                       //server_apps/data_transfer/ResourceCenters
-        '**/pushToZirc.sql',
-        '**/pullFromZIRC.pl',
-        '**/pushToZirc.pl',
-        '**/fx_permission_check.pl',                                //server_apps/DB_maintenance
-        '**/loadExternalNotes.pl',
-        '**/checkVarcharOctetLength.pl',
-        '**/loadExternalNotes.sql',
-        '**/disable_updates.pl',
-        '**/set_unload_timestamp.sql',
-        '**/rotateInformixLog.sh',
-        '**/check_undefined_environment.pl',
-        '**/pushDataToPublic.sh',
-        '**/backupBlastDbsAndRsyncAlmostBlastDbs.sh',
-        '**/compareTables.groovy',                                  //server_apps/DB_maintenance/postgres
-        '**/dailyExtentCheck.sh',                                   //server_apps/DB_maintenance/extentMonitoring
-        '**/dailyQueryCostCheck.sh',                                //server_apps/DB_maintenance/queryMonitoring
-        '**/regenExpressionMart.sh',                                //server_apps/DB_maintenance/warehouse
-        '**/who_is.sh',
-        '**/regenPhenotypeMart.sh',
-        '**/regenChromosomeMart.sh',
-        '**/who_is_not.sh',
-        '**/switch.sh',
-        '**/runPhenotypeMart.sh',                                   //server_apps/DB_maintenance/warehouse/phenotypeMart
-        '**/runExpressionMart.sh',                                  //server_apps/DB_maintenance/warehouse/expressionMart
-        '**/runChromosomeMart.sh',                                  //server_apps/DB_maintenance/warehouse/chromosomeMartPostgres
-        '**/rsync.pl',                                              //server_apps/DB_maintenance/loadUp
-        '**/README_loadUp',
-        '**/signsoflife.sh',                                        //server_apps/WebSiteTools
-        '**/gen-meetings-rss.r',
-        '**/gen-jobs-rss.r',
-        '**/gen-news-rss.r',
-        '**/inc-redirect',                                          //server_apps/apache
-        '**/crontab.production',                                    //server_apps/cron
-        '**/elsevier_report.pl',                                    //server_apps/Reports
-        '**/reportPubsForGeneAndFeature.pl',
-        '**/runStats.sh',                                           //server_apps/Reports/AnnualStats
-        '**/betterFish.sql',                                        //server_apps/Reports/BetterFish
-        '**/runAverageTimeInBinsCumulative.sh',                     //server_apps/Reports/PubTracking
-        '**/runLongestBinResidents.sh',
-        '**/runPaperlessPubTrackingDailyIndexedMetrics.sh',
-        '**/runMonthlyBinLengthReport.sh',
+    'cgi-bin/send_request.perl',
+    'cgi-bin/merge_markers.pl',
+    'server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh',
+    'server_apps/DB_maintenance/checkVarcharOctetLength.pl',
+    'server_apps/DB_maintenance/check_undefined_environment.pl',
+    'server_apps/DB_maintenance/disable_updates.pl',
+    'server_apps/DB_maintenance/extentMonitoring/dailyExtentCheck.sh',
+    'server_apps/DB_maintenance/fx_permission_check.pl',
+    'server_apps/DB_maintenance/loadExternalNotes.pl',
+    'server_apps/DB_maintenance/loadExternalNotes.sql',
+    'server_apps/DB_maintenance/loadUp/README_loadUp',
+    'server_apps/DB_maintenance/loadUp/rsync.pl',
+    'server_apps/DB_maintenance/orphanChecks.pl',
+    'server_apps/DB_maintenance/postgres/compareTables.groovy',
+    'server_apps/DB_maintenance/pushDataToPublic.sh',
+    'server_apps/DB_maintenance/queryMonitoring/dailyQueryCostCheck.sh',
+    'server_apps/DB_maintenance/rotateInformixLog.sh',
+    'server_apps/DB_maintenance/set_unload_timestamp.sql',
+    'server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMart.sh',
+    'server_apps/DB_maintenance/warehouse/expressionMart/runExpressionMart.sh',
+    'server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh',
+    'server_apps/DB_maintenance/warehouse/regenChromosomeMart.sh',
+    'server_apps/DB_maintenance/warehouse/regenExpressionMart.sh',
+    'server_apps/DB_maintenance/warehouse/regenPhenotypeMart.sh',
+    'server_apps/DB_maintenance/warehouse/switch.sh',
+    'server_apps/DB_maintenance/warehouse/who_is.sh',
+    'server_apps/DB_maintenance/warehouse/who_is_not.sh',
+    'server_apps/Reports/AnnualStats/runStats.sh',
+    'server_apps/Reports/BetterFish/betterFish.sql',
+    'server_apps/Reports/PubTracking/runAverageTimeInBinsCumulative.sh',
+    'server_apps/Reports/PubTracking/runLongestBinResidents.sh',
+    'server_apps/Reports/PubTracking/runMonthlyBinLengthReport.sh',
+    'server_apps/Reports/PubTracking/runPaperlessPubTrackingDailyIndexedMetrics.sh',
+    'server_apps/Reports/elsevier_report.pl',
+    'server_apps/Reports/reportPubsForGeneAndFeature.pl',
+    'server_apps/WebSiteTools/gen-jobs-rss.r',
+    'server_apps/WebSiteTools/gen-meetings-rss.r',
+    'server_apps/WebSiteTools/gen-news-rss.r',
+    'server_apps/WebSiteTools/signsoflife.sh',
+    'server_apps/apache/inc-redirect',
+    'server_apps/cron/crontab.production',
+    'server_apps/data_transfer/Downloads/GFF3/E_unload_ensembl_contig.sql',
+    'server_apps/data_transfer/Downloads/generateStagedAnatomy.pl',
+    'server_apps/data_transfer/Ensembl/fetch_ensdarT_dbacc.sh',
+    'server_apps/data_transfer/Ensembl/fetch_ensdarg.sh',
+    'server_apps/data_transfer/Ensembl/fetch_ensdargOttdargTable.sh',
+    'server_apps/data_transfer/Ensembl/fetch_ensembl_agp.sh',
+    'server_apps/data_transfer/Ensembl/fetch_sangerMutantInfo.sh',
+    'server_apps/data_transfer/Ensembl/notifyStaleIds.sh',
+    'server_apps/data_transfer/Ensembl/pullFromBioMart.pl',
+    'server_apps/data_transfer/Ensembl/reportEnsembleStatistics.sh',
+    'server_apps/data_transfer/ExternalSearch/CreateMarkerSearchPage.pl',
+    'server_apps/data_transfer/ExternalSearch/CreateMarkerSearchPage.sql',
+    'server_apps/data_transfer/GO/go.pl',
+    'server_apps/data_transfer/GO/gofile.sql',
+    'server_apps/data_transfer/GO/gofile2.sql',
+    'server_apps/data_transfer/GO/gofile2_all.sql',
+    'server_apps/data_transfer/GO/gp2protein.pl',
+    'server_apps/data_transfer/GO/gpad.pl',
+    'server_apps/data_transfer/GO/gpad2.0.sql',
+    'server_apps/data_transfer/GO/validateUniprotIDsZFIN.pl',
+    'server_apps/data_transfer/Genbank/gbaccession.pl',
+    'server_apps/data_transfer/Load/ReNo/Nomenclature/generate_special_Sanger_uniprot_nomenclature_run.sh',
+    'server_apps/data_transfer/Load/ReNo/load_run_report_hit.sh',
+    'server_apps/data_transfer/Load/blast_withdrawn.pl',
+    'server_apps/data_transfer/LoadOntology/parseHeader.pl',
+    'server_apps/data_transfer/LoadOntology/parseObo.pl',
+    'server_apps/data_transfer/MEOW/meow.pl',
+    'server_apps/data_transfer/NCBIStartEnd/NCBIStartEnd.pl',
+    'server_apps/data_transfer/OMIM/OMIM.pl',
+    'server_apps/data_transfer/OMIM/loadOMIM.sql',
+    'server_apps/data_transfer/ORTHO/downloadFiles.pl',
+    'server_apps/data_transfer/ORTHO/emailOrthologyReports.pl',
+    'server_apps/data_transfer/ORTHO/loadAndUpdateNCBIOrthologs.sql',
+    'server_apps/data_transfer/ORTHO/loadHumanSynonyms.sql',
+    'server_apps/data_transfer/ORTHO/parseHumanData.pl',
+    'server_apps/data_transfer/ORTHO/parseOrthoFile.pl',
+    'server_apps/data_transfer/ORTHO/reportOrthoNameChanges.pl',
+    'server_apps/data_transfer/ORTHO/runOrthology.pl',
+    'server_apps/data_transfer/ORTHO/updateZebrafishGeneNames.pl',
+    'server_apps/data_transfer/ORTHO/updateZebrafishGeneNames.sql',
+    'server_apps/data_transfer/PUBMED/Journal/checkAndUpdateJournals.sql',
+    'server_apps/data_transfer/PUBMED/Journal/insertJournalAlias.sql',
+    'server_apps/data_transfer/PUBMED/addMeshTermsToAllPubs.groovy',
+    'server_apps/data_transfer/PUBMED/addPMCidsToAllPubs.groovy',
+    'server_apps/data_transfer/PUBMED/loadNewPubs.sql',
+    'server_apps/data_transfer/PUBMED/load_complete_author_names.sql',
+    'server_apps/data_transfer/PUBMED/pubActivation.groovy',
+    'server_apps/data_transfer/PUBMED/updatePublicationDate.groovy',
+    'server_apps/data_transfer/RNACentral/loadTranscriptSequences.sql',
+    'server_apps/data_transfer/RNACentral/loadTscriptSeq.pl',
+    'server_apps/data_transfer/RNACentral/preLoadTranscriptSequence.sql',
+    'server_apps/data_transfer/RNACentral/runTscriptSequenceLoad.pl',
+    'server_apps/data_transfer/ResourceCenters/pullFromEZRC.pl',
+    'server_apps/data_transfer/ResourceCenters/pullFromZIRC.pl',
+    'server_apps/data_transfer/ResourceCenters/pushToZirc.pl',
+    'server_apps/data_transfer/ResourceCenters/pushToZirc.sql',
+    'server_apps/data_transfer/SNP/addNewClonesJSmith.pl',
+    'server_apps/data_transfer/SNP/addTalbotSNPAttr.sql',
+    'server_apps/data_transfer/SNP/dbSNP.pl',
+    'server_apps/data_transfer/SNP/loadNewSNPAttrs.sql',
+    'server_apps/data_transfer/SNP/loadNewSNPs.sql',
+    'server_apps/data_transfer/eco_go_mapping/insert_eco_go_map.sql',
+    'server_apps/data_transfer/maintainTermDisplay/checkRNAConsequenceTerm.groovy',
+    'server_apps/data_transfer/zfishbook/preprocess_zfishbook.pl',
+    'server_apps/data_transfer/zfishbook/zfishbook.pl',
+    'server_apps/data_transfer/zfishbook/zfishbook.sh',
 ]
+
+project.ext.set("whitelistTemplateFiles", whitelistTemplateFiles)
 
 // load properties into gradle
 task setup {
@@ -382,107 +385,44 @@ project(':home') {
     }
 }
 
-project(':home:zf_info') {
-    task "deployGenericFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.html'
-        }
-        into targetroot + pName
-    }
-
-    task "deployStaticFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            exclude '**/*.html'
-            exclude '**/Makefile'
-        }
-        into targetroot + pName
-    }
-
-    task "deployFiles"(type: GradleBuild) {
-        tasks = ['deployGenericFiles', 'deployStaticFiles']
-    }
+task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'home/zf_info'
+    excludes = ['Makefile']
 }
 
-project(':home:ZFIN') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile'
-        }
-        into targetroot + pName
-    }
+task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'home/ZFIN'
+    excludes = ['Makefile']
 }
 
-project(':server_apps:sysexecs') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile', '**/build.gradle'
-        }
-        into targetroot + pName
-    }
+task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/sysexecs'
+    excludes = ['Makefile', 'build.gradle']
 }
 
-project(':server_apps:apache') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile', '**/build.gradle'
-        }
-        into targetroot + pName
-    }
+task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/apache'
+    excludes = ['Makefile', 'build.gradle']
 }
 
-project(':server_apps:Reports') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile', '**/build.gradle'
-        }
-        into targetroot + pName
-    }
+task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/Reports'
+    excludes = ['Makefile', 'build.gradle']
 }
 
-project(':server_apps:DB_maintenance') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile', '**/build.gradle', '**/postgres/liquibase/*'
-        }
-        into targetroot + pName
-    }
+task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/DB_maintenance'
+    excludes = ['Makefile', 'build.gradle']
+    excludeDirs = ['postgres/liquibase']
 }
 
-project(':cgi-bin') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            exclude '**/Makefile', '**/build.gradle'
-        }
-        into targetroot + pName
-    }
+task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'cgi-bin'
+    excludes = ['Makefile', 'build.gradle']
 }
 
-project(':server_apps:perl_lib') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from project.projectDir
-        into targetroot + pName
-    }
+task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/perl_lib'
 }
 
 task deployGitInfoFile() {
@@ -500,144 +440,16 @@ task deployGitInfoFile() {
     }
 }
 
-project(':server_apps:data_transfer') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            // Apply the search and replace logic only for files that need it
-            filesMatching(whitelistTemplateFiles) { fileCopyDetails ->
-//                println("Processing template rules for file: " + fileCopyDetails.file)
-                ttNameMap.each { name, value ->
-                    fileCopyDetails.filter { String line -> line.replaceAll("<!--\\|${name}\\|-->", value) }
-                }
-            }
-            exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*', '**/Ensembl'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer'
+    excludes = ['Makefile', 'build.gradle', '.gitignore', '.DS_Store']
+    excludeDirs = ['SangerMutants', 'Ensembl']
 }
 
-project(':server_apps:data_transfer:Ensembl') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy'
-        }
-        into targetroot + pName
-    }
+task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/Ensembl'
+    includes = ['sh', 'sql', 'groovy']
 }
-
-project(':server_apps:data_transfer:PUBMED') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:GPAD') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:GPI') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-
-project(':server_apps:data_transfer:ExpressionAtlas') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:RNASeqCuration') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:ResourceCenters') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-
-project(':server_apps:data_transfer:GO') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:ORTHO') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
-project(':server_apps:data_transfer:eco_go_mapping') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
-        }
-        into targetroot + pName
-    }
-}
-
 
 project(':server_apps:data_transfer:Downloads') {
     task "createSymlink"() {
@@ -657,41 +469,23 @@ project(':server_apps:data_transfer:Downloads') {
     }
 }
 
-project(':server_apps:data_transfer:Downloads:GFF3') {
-    task "deployFiles"(type: ZfinTargetCopy) {
-        from(project.projectDir) {
-            ttNameMap.each { name, value ->
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
-            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.xml'
-        }
-        into targetroot + pName
-    }
-}
-
-
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
-             ':home:deployFiles',
-             ':home:zf_info:deployFiles',
-             ':home:ZFIN:deployFiles',
-             ':server_apps:apache:deployFiles',
-             ':server_apps:sysexecs:deployFiles',
-             ':server_apps:DB_maintenance:deployFiles',
-             ':server_apps:data_transfer:deployFiles',
+             'home:deployFiles',
+             'home;zf_info;deployFiles',
+             'home;ZFIN;deployFiles',
+             'server_apps;apache;deployFiles',
+             'server_apps;sysexecs;deployFiles',
+             'server_apps;DB_maintenance;deployFiles',
+             'server_apps;data_transfer;deployFiles',
              ':server_apps:data_transfer:Downloads:createSymlink',
-             ':server_apps:data_transfer:Ensembl:deployFiles',
-             ':server_apps:data_transfer:PUBMED:deployFiles',
-             ':server_apps:data_transfer:ResourceCenters:deployFiles',
-             ':server_apps:data_transfer:GO:deployFiles',
-             ':server_apps:data_transfer:ORTHO:deployFiles',
-             ':server_apps:data_transfer:eco_go_mapping:deployFiles',
-             ':server_apps:Reports:deployFiles',
+             'server_apps;data_transfer;Ensembl;deployFiles',
+             'server_apps;Reports;deployFiles',
              'deployGitInfoFile',
-             ':cgi-bin:deployFiles',
-             ':server_apps:perl_lib:deployFiles',
+             'cgi-bin;deployFiles',
+             'server_apps;perl_lib;deployFiles',
     ]
 }
 
@@ -1166,25 +960,6 @@ task showDirs {
     doLast {
         logger.quiet(rootDir.toPath().relativize(project.reportsDir.toPath()).toString())
         logger.quiet(rootDir.toPath().relativize(project.testResultsDir.toPath()).toString())
-    }
-}
-
-class ZfinTargetCopy extends Copy {
-
-    @Input
-    String projectName
-    @Input
-    String pName
-
-    ZfinTargetCopy() {
-        projectName = project.path
-        pName = projectName.replace(":", "/")
-        description 'Deploy ' + pName + ' to TARGETROOT'
-        group 'ZFIN Deployment'
-    }
-
-    @TaskAction
-    void executeTask() {
     }
 }
 
