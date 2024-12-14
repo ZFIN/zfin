@@ -28,7 +28,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT  &amp;&amp; gradle runMeshChebiGenerator</command>
+      <command>cd $SOURCEROOT  &amp;&amp; gradle runMeshChebiGenerator -PJobName=Load-Meesh-Chebi-Mapping</command>
     </hudson.tasks.Shell>
   </builders>
   <buildWrappers>
