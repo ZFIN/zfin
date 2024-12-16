@@ -23,7 +23,7 @@
     </hudson.tasks.Ant>  </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/Signafish/*.html</artifacts>
+      <artifacts>server_apps/DB_maintenance/report_data/Load-Signafish_w/*.html</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -34,7 +34,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Signafish/signafish-report.html&quot;}
+            <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_maintenance/report_data/Load-Signafish_w/signafish-report.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
