@@ -2,9 +2,9 @@
 <project>
   <actions/>
   <description>
-    This job loads the UniProt data into the database.
-    It will only load the data if there is a new release (as captured by UniProt-Release-Check_d).
-
+    This job compares 2 different uniprot releases and reports the differences that are relevant to us.
+    You can run the job with empty parameters for DB_RELEASE_1 and DB_RELEASE_2 and look at the output
+    to see what releases are available to compare.
   </description>
   <keepDependencies>false</keepDependencies>
 
@@ -48,7 +48,7 @@ echo "DB_RELEASE_2=$DB_RELEASE_2"
 cd $SOURCEROOT
 export KEEP_TEMP_FILES_IN=__DELETE__
 export OUTPUT_FILE=$WORKSPACE/uniprot_diff_report.json
-rm $WORKSPACE/uniprot_diff*
+rm -f $WORKSPACE/uniprot_diff*
 gradle uniprotReleaseDiffTask
         ]]>
       </command>
