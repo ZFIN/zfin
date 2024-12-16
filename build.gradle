@@ -724,6 +724,67 @@ dependencies {
     implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
     implementation group: 'taglibs', name: 'standard', version: '1.1.2'
 
+    //analytics libraries:
+    //Analytics client requires the following jars
+//    animal-sniffer-annotations-1.24.jar
+//    annotations-4.1.1.4.jar
+//    api-common-2.37.1.jar
+//    auto-value-annotations-1.11.0.jar
+//    checker-qual-3.47.0.jar
+//    commons-codec-1.17.1.jar
+//    commons-csv-1.9.0.jar
+//    conscrypt-openjdk-uber-2.5.2.jar
+//    error_prone_annotations-2.32.0.jar
+//    failureaccess-1.0.2.jar
+//    gax-2.54.1.jar
+//    gax-grpc-2.54.1.jar
+//    gax-httpjson-2.54.1.jar
+//    google-analytics-data-0.62.0.jar
+//    google-api-client-1.25.0.jar
+//    google-api-client-gson-1.35.2.jar
+//    google-api-services-analyticsreporting-v4-rev174-1.25.0.jar
+//    google-auth-library-credentials-1.27.0.jar
+//    google-auth-library-oauth2-http-1.27.0.jar
+//    google-http-client-1.42.0.jar
+//    google-http-client-gson-1.42.0.jar
+//    google-http-client-jackson2-1.25.0.jar
+//    google-oauth-client-1.25.0.jar
+//    grpc-alts-1.68.0.jar
+//    grpc-api-1.68.0.jar
+//    grpc-auth-1.68.0.jar
+//    grpc-context-1.68.0.jar
+//    grpc-core-1.68.0.jar
+//    grpc-googleapis-1.68.0.jar
+//    grpc-grpclb-1.68.0.jar
+//    grpc-inprocess-1.68.0.jar
+//    grpc-netty-shaded-1.68.0.jar
+//    grpc-protobuf-1.68.0.jar
+//    grpc-protobuf-lite-1.68.0.jar
+//    grpc-services-1.68.0.jar
+//    grpc-stub-1.68.0.jar
+//    grpc-util-1.68.0.jar
+//    grpc-xds-1.68.0.jar
+//    gson-2.11.0.jar
+//    guava-33.3.0-jre.jar
+//    httpclient-4.5.14.jar
+//    httpcore-4.4.16.jar
+//    j2objc-annotations-3.0.0.jar
+//    jackson-core-2.9.6.jar
+//    javax.annotation-api-1.3.2.jar
+//    jsr305-3.0.2.jar
+//    listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
+//    opencensus-api-0.31.1.jar
+//    opencensus-contrib-http-util-0.31.1.jar
+//    perfmark-api-0.27.0.jar
+//    proto-google-analytics-data-v1alpha-0.62.0.jar
+//    proto-google-analytics-data-v1beta-0.62.0.jar
+//    proto-google-common-protos-2.45.1.jar
+//    protobuf-java-3.25.5.jar
+//    protobuf-java-util-3.25.5.jar
+//    re2j-1.7.jar
+//    threetenbp-1.7.0.jar
+    // ^^^ analytics libraries
+
     implementation files('home/WEB-INF/lib/agr_curation_api-v0.35.0.jar')
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/confluence-soap-v2.jar')
