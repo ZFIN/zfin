@@ -128,7 +128,6 @@ services:
     build: ./tomcat/
     profiles: 
       - debug
-    restart: always
     environment:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
