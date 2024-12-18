@@ -177,6 +177,7 @@ public class Database {
         ZFIN_MICRORNA("zfin_microRNA"),
         ZFIN_MIRNA_STEMLOOP("zfin_miRNA_stemloop"),
         ZFIN_MIRNA_MATURE("zfin_miRNA_mature"),
+        WZ_EST("wz_est"),
         ZFIN_MRPH("zfin_mrph"),
         ZFIN_TALEN("zfin_talen"),
         ZFIN_CRISPR("zfin_crispr"),
