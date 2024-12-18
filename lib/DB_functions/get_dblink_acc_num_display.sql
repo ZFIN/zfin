@@ -32,25 +32,7 @@ CREATE OR REPLACE FUNCTION "public"."get_dblink_acc_num_display"("dblinkfdbconti
         and fdb_db_pk_id = fdbcont_fdb_db_id;
   
 
-  if (dblinkDbName = 'WashUZ') then
-    -- we need to prepend 'wz' to the acc_num
-    dblinkAccNumDisplay := 'wz' || dblinkAccNum;
-
-  --replace the miranda acc num with one that looks more like the 
-  --way curators want to display miRNA names at ZFIN.
-  --ZDB-FDBCONT-090529-1, dre-let-7g
-  --execute function
-  --get_dblink_acc_num_display('ZDB-FDBCONT-090529-1','dre-let-7g')
- 
-  else
-
-    -- we need to prepend 'wz' to the acc_num
-
-    -- spew out exactly what came in
-    dblinkAccNumDisplay = dblinkAccNum;
-
-  end if;
-
+  dblinkAccNumDisplay = dblinkAccNum;
   return dblinkAccNumDisplay;
  end
 

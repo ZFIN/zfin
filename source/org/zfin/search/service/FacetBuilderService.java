@@ -404,7 +404,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Gene", "gene", true));
         facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true));
         facetGroups.add(buildSingleFacetGroup("Human Disease", "disease", true));
-        facetGroups.add(buildSingleFacetGroup("Has CTD", "has_ctd", true));
+        facetGroups.add(buildSingleFacetGroup("Has CTD Links", "has_ctd", true));
         facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true));
         facetGroups.add(buildSingleFacetGroup("Journal", "journal", false));
         facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false));
