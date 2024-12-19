@@ -203,7 +203,7 @@
             `;
         }
 
-        function DetailDisplay({item, prevClick, nextClick}) {
+        function DetailDisplay({item, prevClick, nextClick, uniprotDatFile}) {
             function detailSummary(item) {
                 if (!item) {
                     return '';
@@ -215,6 +215,11 @@
                 }
             }
 
+            let uniprotRecord = uniprotDatFile[item.accession];
+            if (!uniprotRecord) {
+                uniprotRecord = '';
+            }
+
             return html`
                 <div>
                     <h2>Details for Accession</h2>
@@ -223,6 +228,7 @@
                     <p>${detailSummary(item)}</p>
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
+                    <pre>${uniprotRecord}</pre>
                     <h4>Links</h4>
                     <ul>
                         ${item.links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
@@ -363,7 +369,6 @@
 
             function previousDetail() {
                 const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
-                console.log("found index", index);
                 if (index > 0) {
 
                     //find the previous item that matches subtype
@@ -378,7 +383,6 @@
 
             function nextDetail() {
                 const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
-                console.log("found n index", index);
 
                 if (index === -1) {
                     return;
@@ -420,7 +424,7 @@
                                 <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
                             `}
                             ${activeTab == 'details' && html`
-                                <${DetailDisplay} item="${activeDetails}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                                <${DetailDisplay} item="${activeDetails}" uniprotDatFile="${reportData.uniprotDatFile}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
                             `}
                             ${activeTab == '' && html`
                                 <${ReportSummary} reportSummary="${reportSummary}" />

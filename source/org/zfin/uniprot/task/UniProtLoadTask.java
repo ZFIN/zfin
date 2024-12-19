@@ -109,7 +109,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             Set<UniProtLoadAction> actions = executePipeline(entries);
             loadChangesIfNotDryRun(actions);
             UniProtLoadSummaryItemDTO summary = calculateSummary(actions);
-            writeOutputReportFile(actions, summary);
+            writeOutputReportFile(actions, summary, entries);
         }
     }
 
@@ -167,6 +167,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             log.info("No input file specified, using latest unprocessed UniProt release: " + latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath() + ".");
             inputFileName = latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath();
             release = latestUnprocessedUniProtRelease.get();
+            if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
+                throw new RuntimeException("No such file (or empty): " + inputFileName);
+            }
         } else if (inputFileName.isEmpty()) {
             throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
@@ -194,7 +197,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return pipeline.execute();
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryItemDTO summary) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryItemDTO summary, Map<String, RichSequenceAdapter> uniprotRecords) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 
@@ -203,6 +206,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             UniProtLoadActionsContainer actionsContainer = UniProtLoadActionsContainer.builder()
                     .actions(actions)
                     .summary(summary)
+                    .uniprotDatFile(buildDatFileMap(actions, uniprotRecords))
                     .build();
             String jsonContents = actionsToJson(actionsContainer);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
@@ -219,7 +223,6 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private String actionsToJson(UniProtLoadActionsContainer actions) throws JsonProcessingException {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
-
 
     private void calculateContext() {
         if (contextInputFile != null && !contextInputFile.isEmpty() && new File(contextInputFile).exists()) {
@@ -239,5 +242,18 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(startTime);
         return String.format(UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE, timestamp, extension);
     }
+
+    private Map<String, String> buildDatFileMap(Set<UniProtLoadAction> actions, Map<String, RichSequenceAdapter> uniprotRecords) {
+        //only include the entries from the dat file that are actually being acted upon
+        Map<String, String> datFileMap = new HashMap<>();
+        actions.stream().map(UniProtLoadAction::getAccession).forEach(accession -> {
+            RichSequenceAdapter adapter = uniprotRecords.get(accession);
+            if (adapter != null) {
+                datFileMap.put(accession, adapter.toUniProtFormat());
+            }
+        });
+        return datFileMap;
+    }
+
 
 }

@@ -26,7 +26,7 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         links = new TreeSet<>();
     }
 
-    public UniProtLoadAction(Type type, SubType subType, String accession, String geneZdbID, String details, int length,Set<UniProtLoadLink> links) {
+    public UniProtLoadAction(Type type, SubType subType, String accession, String geneZdbID, String details, int length, Set<UniProtLoadLink> links) {
         this.type = type;
         this.subType = subType;
         this.accession = accession;
