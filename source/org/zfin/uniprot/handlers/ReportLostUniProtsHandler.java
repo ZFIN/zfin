@@ -111,7 +111,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
 
         if (richSequence != null) {
-            List<String> refSeqIDs = richSequence.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.REFSEQ);
+            Set<String> refSeqIDs = richSequence.getRefSeqs();
             refSeqIDs.forEach(refSeqID -> {
                 action.addLink(UniProtLoadLink.create(REFSEQ, refSeqID));
             });
@@ -170,7 +170,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
         if (richSequence != null) {
             //Add refseqs
-            List<String> refSeqIDs = richSequence.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.REFSEQ);
+            Set<String> refSeqIDs = richSequence.getRefSeqs();
             refSeqIDs.forEach(refSeqID -> {
                 action.addLink(UniProtLoadLink.create(REFSEQ, refSeqID));
             });
