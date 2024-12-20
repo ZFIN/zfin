@@ -206,7 +206,7 @@
                         select
                             term_ont_id as xref, term_name as anatomy_direct,
                              ee.xpatex_gene_zdb_id as gene_zdb_id
-                        from expression_result er
+                        from expression_result2 er
                             join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                             join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                             join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
@@ -220,7 +220,7 @@
                         select
                            term_ont_id as xref, term_name as anatomy_direct,
                                  ee.xpatex_gene_zdb_id as gene_zdb_id
-                            from expression_result er
+                            from expression_result2 er
                                 join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                 join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                 join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
@@ -238,7 +238,7 @@
                     query="select
                                term_ont_id as xref, term_name as anatomy_parent,
                                ee.xpatex_gene_zdb_id as gene_zdb_id
-                           from expression_result er
+                           from expression_result2 er
                                 join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                 join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
@@ -253,7 +253,7 @@
                            select
                                term_ont_id as xref, term_name as anatomy_parent,
                                ee.xpatex_gene_zdb_id as gene_zdb_id
-                           from expression_result er
+                           from expression_result2 er
                                join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
@@ -273,7 +273,7 @@
                     query="select
                                     term_ont_id as xref, term_name as anatomy_direct,
                                      ee.xpatex_gene_zdb_id as gene_zdb_id
-                                from expression_result er
+                                from expression_result2 er
                                     join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                     join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                     join term on er.xpatres_superterm_zdb_id=term_zdb_id
@@ -287,7 +287,7 @@
                                 select
                                    term_ont_id as xref, term_name as anatomy_direct,
                                          ee.xpatex_gene_zdb_id as gene_zdb_id
-                                    from expression_result er
+                                    from expression_result2 er
                                         join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                         join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                         join term  on er.xpatres_subterm_zdb_id=term_zdb_id
@@ -305,7 +305,7 @@
                     query="select
                                     term_ont_id as xref, term_name as anatomy_direct,
                                      ee.xpatex_gene_zdb_id as gene_zdb_id
-                                from expression_result er
+                                from expression_result2 er
                                     join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                     join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                     join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_superterm_zdb_id
@@ -320,7 +320,7 @@
                                 select
                                    term_ont_id as xref, term_name as anatomy_direct,
                                          ee.xpatex_gene_zdb_id as gene_zdb_id
-                                    from expression_result er
+                                    from expression_result2 er
                                         join expression_figure_stage efs on er.xpatres_efs_id = efs.efs_pk_id
                                         join expression_experiment2 ee on ee.xpatex_zdb_id=efs.efs_xpatex_zdb_id
                                         join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_subterm_zdb_id
@@ -5504,10 +5504,10 @@ and child.term_ontology = 'disease_ontology';
             />
 
             <entity name="figure_expression_xref"
-                    query="select xpatres_xpatex_zdb_id as xref,
-                                 xpatfig_fig_zdb_id as fig_zdb_id
-                           from expression_result
-                                join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id;"
+                    query="select efs_xpatex_zdb_id as xref,
+                                 efs_fig_zdb_id as fig_zdb_id
+                           from expression_result2
+                             join expression_figure_stage on xpatres_efs_id = efs_pk_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
@@ -5577,44 +5577,44 @@ and child.term_ontology = 'disease_ontology';
             <entity name="figure_expression_anatomy_direct"
                     query="select
                                      term_ont_id as xref, term_name as expression_anatomy_direct,
-                                     xpatfig_fig_zdb_id as fig_zdb_id
-                              from expression_result,
-                                   expression_pattern_figure,
-                                   term
-                              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                                and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
+                                     efs_fig_zdb_id as fig_zdb_id
+                                from term,
+                                     expression_result2,
+                                     expression_figure_stage
+                                where efs_pk_id = xpatres_efs_id
+                                  and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
                            union
                            select
                                      term_ont_id as xref, term_name as expression_anatomy_direct,
-                                     xpatfig_fig_zdb_id as fig_zdb_id
-                              from expression_result,
-                                   expression_pattern_figure,
-                                   term
-                              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                                and xpatres_subterm_zdb_id = term_zdb_id"
+                                     efs_fig_zdb_id as fig_zdb_id
+                            from term,
+                                 expression_result2,
+                                 expression_figure_stage
+                            where efs_pk_id = xpatres_efs_id
+                              and xpatres_subterm_zdb_id = term_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
 
             <entity name="figure_expression_anatomy_parent"
                     query="select term_ont_id as xref, term_name as expression_anatomy_parent,
-                                    xpatfig_fig_zdb_id as fig_zdb_id
-                             from expression_result,
-                                  expression_pattern_figure,
+                                    efs_fig_zdb_id as fig_zdb_id
+                             from expression_result2,
+                                  expression_figure_stage,
                                   term,
                                   all_term_contains
-                             where xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                             where efs_pk_id = xpatres_efs_id
                                and xpatres_superterm_zdb_id = alltermcon_contained_zdb_id
                                and alltermcon_container_zdb_id = term_zdb_id
                           union
                           select
                                     term_ont_id as xref, term_name as expression_anatomy_parent,
-                                    xpatfig_fig_zdb_id as fig_zdb_id
-                             from expression_result,
-                                  expression_pattern_figure,
+                                    efs_fig_zdb_id as fig_zdb_id
+                             from expression_result2,
+                                  expression_figure_stage,
                                   term,
                                   all_term_contains
-                             where xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                             where efs_pk_id = xpatres_efs_id
                                and xpatres_subterm_zdb_id = alltermcon_contained_zdb_id
                                and alltermcon_container_zdb_id = term_zdb_id"
                     cacheImpl="SortedMapBackedCache"
