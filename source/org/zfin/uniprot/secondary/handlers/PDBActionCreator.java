@@ -35,10 +35,9 @@ public class PDBActionCreator implements ActionCreator {
 
         for(String uniprotKey : uniProtRecords.getAccessions()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
-            Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
-            if (zfinCrossRefs.isEmpty()) {
-                continue;
-            }
+
+            if (isUniprotRecordLinkedToZFINGene(richSequenceAdapter)) continue;
+
             List<String> pdbs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.PDB)
                     .stream()
                     .map(ref -> ref.getAccession()).toList();
@@ -59,6 +58,14 @@ public class PDBActionCreator implements ActionCreator {
         }
 
         return newActions;
+    }
+
+    private static boolean isUniprotRecordLinkedToZFINGene(RichSequenceAdapter richSequenceAdapter) {
+        Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
+        if (zfinCrossRefs.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     private SecondaryTermLoadAction createLoadAction(PdbDTO newRecord, RichSequenceAdapter richSequenceAdapter) {
