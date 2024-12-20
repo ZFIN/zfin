@@ -1,15 +1,14 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.dto.PdbDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class PDBActionCreator implements ActionCreator {
         for(String uniprotKey : uniProtRecords.getAccessions()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
 
-            if (!isUniprotRecordLinkedToZFINGene(richSequenceAdapter)) continue;
+            if (!isUniprotRecordLinkedToZFINGene(context, uniprotKey)) continue;
 
             List<String> pdbs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.PDB)
                     .stream()
@@ -60,12 +59,9 @@ public class PDBActionCreator implements ActionCreator {
         return newActions;
     }
 
-    private static boolean isUniprotRecordLinkedToZFINGene(RichSequenceAdapter richSequenceAdapter) {
-        Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
-        if (zfinCrossRefs.isEmpty()) {
-            return false;
-        }
-        return true;
+    private static boolean isUniprotRecordLinkedToZFINGene(SecondaryLoadContext context, String uniprotKey) {
+        List<DBLinkSlimDTO> linkedGenes = context.getGenesByUniprot(uniprotKey);
+        return !linkedGenes.isEmpty();
     }
 
     private SecondaryTermLoadAction createLoadAction(PdbDTO newRecord, RichSequenceAdapter richSequenceAdapter) {
