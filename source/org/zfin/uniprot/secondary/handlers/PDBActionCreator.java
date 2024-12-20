@@ -11,6 +11,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Creates actions for adding and deleting PDB information (replaces part of protein_domain_info_load.pl)
@@ -65,7 +66,7 @@ public class PDBActionCreator implements ActionCreator {
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.PDB)
                 .relatedEntityFields(newRecord.toMap())
-                .details(richSequenceAdapter.toUniProtFormat())
+                .uniprotAccessions(Set.of(richSequenceAdapter.getAccession()))
                 .build();
     }
 

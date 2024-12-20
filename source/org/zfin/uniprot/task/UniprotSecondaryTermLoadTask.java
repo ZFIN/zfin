@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.zfin.datatransfer.service.DownloadService.downloadFileViaWget;
@@ -207,8 +208,34 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 summary = UniProtLoadSummaryService.getAfterSummary(beforeSummary);
             }
             container.setSummary(summary);
+            container.setUniprotDatFile(buildDatFileMap(pipeline));
             writeOutputReportFile(container);
         }
+    }
+
+    /**
+     * Create a subset of the uniprot records in the pipeline to be written to the dat file map.
+     *
+     * @param pipeline
+     * @return
+     */
+    private Map<String, String> buildDatFileMap(SecondaryTermLoadPipeline pipeline) {
+        Map<String, String> datFileMap = new java.util.HashMap<>();
+        UniprotReleaseRecords uniprotRecords = pipeline.getUniprotRecords();
+
+        for(SecondaryTermLoadAction action : pipeline.getActions()) {
+            SecondaryTermLoadAction termAction = action;
+            if (termAction.getUniprotAccessions() == null) {
+                continue;
+            }
+            for(String accession : termAction.getUniprotAccessions()) {
+                if (uniprotRecords.getByAccession(accession) != null) {
+                    datFileMap.put(accession, uniprotRecords.getByAccession(accession).toUniProtFormat());
+                }
+            }
+        }
+
+        return datFileMap;
     }
 
     public void initialize() {

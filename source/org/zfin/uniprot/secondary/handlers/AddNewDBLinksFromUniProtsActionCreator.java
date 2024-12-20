@@ -11,6 +11,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
@@ -86,7 +87,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
                                 .accession(ipAccession)
                                 .dbName(dbName)
                                 .geneZdbID(geneID)
-                                .details(uniprot.toUniProtFormat())
+                                .uniprotAccessions(Set.of(uniprotAccession))
                                 .build());
                         newlyAddedCount++;
                     } else {
