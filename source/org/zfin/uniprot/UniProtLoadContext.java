@@ -25,8 +25,14 @@ import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABA
 @Setter
 public class UniProtLoadContext {
 
+    //indexed by uniprot accession
     private Map<String, List<DBLinkSlimDTO>> uniprotDbLinks;
+
+    //indexed by refseq accession
     private Map<String, List<DBLinkSlimDTO>> refseqDbLinks;
+
+    //indexed by gene zdb id
+    private Map<String, List<DBLinkSlimDTO>> uniprotDbLinksByGeneID;
 
     public static UniProtLoadContext createFromDBConnection() {
         UniProtLoadContext uniprotLoadContext = new UniProtLoadContext();
@@ -40,6 +46,7 @@ public class UniProtLoadContext {
         Map<String, Collection<MarkerDBLink>> markerDBLinks = getSequenceRepository().getMarkerDBLinks(refseqRNARefDB, refseqRefDB);
         uniprotLoadContext.setRefseqDbLinks( convertToDTO(markerDBLinks));
 
+        uniprotLoadContext.setUniprotDbLinksByGeneID( uniprotLoadContext.getInitialMapOfUniprotDbLinksByGeneID() );
         return uniprotLoadContext;
     }
 
@@ -100,5 +107,18 @@ public class UniProtLoadContext {
             }
         }
         return false;
+    }
+
+    private Map<String, List<DBLinkSlimDTO>> getInitialMapOfUniprotDbLinksByGeneID() {
+        Map<String, List<DBLinkSlimDTO>> allGenesWithDBLinks = new HashMap<>();
+        for (List<DBLinkSlimDTO> dblinks : this.getUniprotDbLinks().values()) {
+            for (DBLinkSlimDTO dbl : dblinks) {
+                if (!allGenesWithDBLinks.containsKey(dbl.getDataZdbID())) {
+                    allGenesWithDBLinks.put(dbl.getDataZdbID(), new ArrayList<>());
+                }
+                allGenesWithDBLinks.get(dbl.getDataZdbID()).add(dbl);
+            }
+        }
+        return allGenesWithDBLinks;
     }
 }

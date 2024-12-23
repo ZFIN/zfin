@@ -67,12 +67,15 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         for(DBLinkSlimDTO sequenceDTO : sequencesForGenesWithExistingUniprotAssociations) {
             if (!genesWithMatchesInLoad.contains(sequenceDTO.getDataZdbID())) {
 
-                //no duplicates
+                /*
+                //no duplicate genes
                 if (alreadyEncounteredThisGeneID.contains(sequenceDTO.getDataZdbID())) {
                     continue;
                 }
-                genesThatLostUniProts.add(sequenceDTO);
                 alreadyEncounteredThisGeneID.add(sequenceDTO.getDataZdbID());
+                */
+
+                genesThatLostUniProts.add(sequenceDTO);
             }
         }
 

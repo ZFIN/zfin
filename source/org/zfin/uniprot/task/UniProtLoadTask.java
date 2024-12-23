@@ -108,18 +108,25 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
             loadChangesIfNotDryRun(actions);
-            UniProtLoadSummaryItemDTO summary = calculateSummary(actions);
+            List<UniProtLoadSummaryItemDTO> summary = calculateSummary(actions);
             writeOutputReportFile(actions, summary, entries);
         }
     }
 
-    private UniProtLoadSummaryItemDTO calculateSummary(Set<UniProtLoadAction> actions) {
+    private List<UniProtLoadSummaryItemDTO> calculateSummary(Set<UniProtLoadAction> actions) {
         int preExistingUniprotLinksCount = context.getUniprotDbLinks().size();
         int newUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.LOAD)).toList().size();
         int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
         int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
         int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
-        return new UniProtLoadSummaryItemDTO("db_link records", Long.valueOf(preExistingUniprotLinksCount), Long.valueOf(postExistingUniprotLinks));
+        UniProtLoadSummaryItemDTO row1 = new UniProtLoadSummaryItemDTO("db_link records", Long.valueOf(preExistingUniprotLinksCount), Long.valueOf(postExistingUniprotLinks));
+
+        int preGenesWithDBLinksCount = context.getUniprotDbLinksByGeneID().size();
+        int genesLosingAllUniprotAccessions = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.INFO) && a.getSubType().equals(UniProtLoadAction.SubType.GENE_LOST_ALL_UNIPROTS)).toList().size();
+        int genesGainFirstUniprotAccession = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.INFO) && a.getSubType().equals(UniProtLoadAction.SubType.GENE_GAINS_FIRST_UNIPROT)).toList().size();
+        int postGenesWithDBLinksCount = preGenesWithDBLinksCount - genesLosingAllUniprotAccessions + genesGainFirstUniprotAccession;
+        UniProtLoadSummaryItemDTO row2 = new UniProtLoadSummaryItemDTO("genes with uniprot links (see INFO for details)", Long.valueOf(preGenesWithDBLinksCount), Long.valueOf(postGenesWithDBLinksCount));
+        return List.of(row1, row2);
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -197,7 +204,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return pipeline.execute();
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryItemDTO summary, Map<String, RichSequenceAdapter> uniprotRecords) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, List<UniProtLoadSummaryItemDTO> summary, Map<String, RichSequenceAdapter> uniprotRecords) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 

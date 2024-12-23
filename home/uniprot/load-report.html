@@ -189,13 +189,18 @@
                 }
             }, [items, type, subtype]);
 
+            const itemDisplay = (item) => {
+                //returns "accession - geneZdbID" if both are present, otherwise just the one that is present
+                return [item.accession, item.geneZdbID].filter(Boolean).join(' - ');
+            }
+
             return html`
                 <h2>${type} - ${subtype}</h2>
                 <p>Click on any of the records below for more details.</p>
                 <ul>
                     ${subTypeItems.map(item => html`
                         <li><a href="#" onClick=${() => onClick(item)}>
-                            ${item.accession} ${item.geneZdbID && ' - ' + item.geneZdbID}
+                            ${itemDisplay(item)}
                             </a>
                         </li>
                     `)}
@@ -238,23 +243,30 @@
         }
 
         function ReportSummary({reportSummary}) {
-            const beforeCount = reportSummary.beforeLoadCount;
-            const afterCount = reportSummary.afterLoadCount;
-            const changeCount = afterCount - beforeCount;
-            const percentChange = (changeCount / beforeCount) * 100;
+            const rows = reportSummary.map(item => {
+                const beforeCount = item.beforeLoadCount;
+                const afterCount = item.afterLoadCount;
+                const changeCount = afterCount - beforeCount;
+                const percentChange = (changeCount / beforeCount) * 100;
 
-            //human readable
-            const before = beforeCount.toLocaleString('en-US');
-            const after = afterCount.toLocaleString('en-US');
-            const change = changeCount.toLocaleString('en-US');
-            const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+                //human readable
+                const before = beforeCount.toLocaleString('en-US');
+                const after = afterCount.toLocaleString('en-US');
+                const change = changeCount.toLocaleString('en-US');
+                const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+                return html`
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${before}</td>
+                        <td>${after}</td>
+                        <td>${change}</td>
+                        <td>${percent}%</td>
+                    </tr>
+                `;
+            })
 
             return html`
                     <h2>Summary</h2>
-                    Before the load, there were ${before} uniprot accessions in the database.
-                    After the load, there are ${after} uniprot accessions in the database.
-                    The total change is ${change} uniprot accessions
-                    (${percent}% change).
 
                     <h3>Table</h3>
                     <table class="summary">
@@ -268,13 +280,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Uniprot</td>
-                                <td>${before}</td>
-                                <td>${after}</td>
-                                <td>${change}</td>
-                                <td>${percent}%</td>
-                            </tr>
+                            ${rows}
                         </tbody>
                     </table>
             `;

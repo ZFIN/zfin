@@ -57,7 +57,9 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         LEGACY_PROBLEM_FILE_LOAD("Legacy Problem File - Load"),
         LEGACY_PROBLEM_FILE_DELETE("Legacy Problem File - Delete"),
         REMOVE_ATTRIBUTION("Remove Attribution"),
-        ADD_ATTRIBUTION("Add Attribution");
+        ADD_ATTRIBUTION("Add Attribution"),
+        GENE_LOST_ALL_UNIPROTS("ZFIN Gene Lost All UniProt Accessions"),
+        GENE_GAINS_FIRST_UNIPROT("ZFIN Gene Gains First UniProt Accession");
 
         private final String value;
 
