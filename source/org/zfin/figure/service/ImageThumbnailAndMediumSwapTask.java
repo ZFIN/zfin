@@ -13,11 +13,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
     private boolean dryRun = true;
+    private List<String> restrictedPublications;
 
     public static void main(String[] args) throws IOException {
         ImageThumbnailAndMediumSwapTask task = new ImageThumbnailAndMediumSwapTask();
@@ -27,7 +29,29 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
 
     public void runTask() throws IOException {
         initAll();
-        initDryRun();
+        initConfig();
+
+
+        FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
+        List<Image> images = figureRepository.getAllImagesWithFigures();
+        LOG.info("Found " + images.size() + " images with figures.");
+        if (!restrictedPublications.isEmpty()) {
+            images.removeIf(image -> !restrictedPublications.contains(image.getFigure() == null ? "" : image.getFigure().getPublication().getZdbID()));
+            LOG.info("Found " + images.size() + " images after filtering by publication ID.");
+        }
+
+        runFixesForThumbnailsAndMediums(images);
+    }
+
+    private void initConfig() {
+        boolean runFixes = System.getenv().getOrDefault("RUN_IMAGE_FIXES", "false").equalsIgnoreCase("true");
+        dryRun = !runFixes;
+        String restrictedPublicationsString = System.getenv("FIX_PUB_IDS");
+        if (StringUtils.isNotEmpty(restrictedPublicationsString)) {
+            restrictedPublications = List.of(restrictedPublicationsString.split(","));
+        } else {
+            restrictedPublications = Collections.emptyList();
+        }
 
         if (dryRun) {
             System.out.println("Dry run.  No changes will be made. Set RUN_IMAGE_FIXES environment variable, or runImageFixes property to run.");
@@ -35,21 +59,10 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
             System.out.println("Executing changes with imagemagick.");
         }
 
-        FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
-        List<Image> images = figureRepository.getAllImagesWithFigures();
-
-        LOG.info("Found " + images.size() + " images with figures.");
-        runFixesForThumbnailsAndMediums(images);
-
-    }
-
-    private void initDryRun() {
-        String RUN_IMAGE_FIXES = System.getenv("RUN_IMAGE_FIXES");
-        if (StringUtils.isNotEmpty(RUN_IMAGE_FIXES)) {
-            dryRun = false;
-        }
-        if (StringUtils.isNotEmpty(System.getProperty("runImageFixes"))) {
-            dryRun = false;
+        if (!restrictedPublications.isEmpty()) {
+            System.out.println("Only fixing images for publications: " + restrictedPublications);
+        } else {
+            System.out.println("Fixing images for all publications. To restrict, set FIX_PUB_IDS environment variable to comma separated list of IDs.");
         }
     }
 
@@ -82,21 +95,25 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
 
     private void checkAnomalies(File thumbnailFile, File mediumFile) {
         String fileStem = thumbnailFile.getAbsolutePath().substring(0, thumbnailFile.getAbsolutePath().lastIndexOf('.'));
-        if (fileStem.endsWith("_thumb")) {
-            throw new RuntimeException("Thumbnail file should not end with _thumb");
+        if (!fileStem.endsWith("_thumb")) {
+            throw new RuntimeException("Thumbnail file should end with _thumb");
         }
         fileStem = mediumFile.getAbsolutePath().substring(0, mediumFile.getAbsolutePath().lastIndexOf('.'));
-        if (fileStem.endsWith("_medium")) {
-            throw new RuntimeException("Medium file should not end with _medium");
+        if (!fileStem.endsWith("_medium")) {
+            throw new RuntimeException("Medium file should end with _medium");
         }
 
         String extension = thumbnailFile.getAbsolutePath().substring(thumbnailFile.getAbsolutePath().lastIndexOf('.'));
 
         if (thumbnailFile.length() > mediumFile.length()) {
-            System.out.println("Anomaly detected: " + mediumFile + " has fewer pixels than " + thumbnailFile);
-            printFilePixelDimensions(mediumFile);
-            printFilePixelDimensions(thumbnailFile);
-            swapFiles(thumbnailFile, mediumFile);
+            if (getFilePixelCount(thumbnailFile) > getFilePixelCount(mediumFile)) {
+                System.out.println("Anomaly detected: " + mediumFile + " has fewer pixels than " + thumbnailFile +
+                        " (" + getFilePixelDimensions(mediumFile) + " vs " + getFilePixelDimensions(thumbnailFile) + " : " +
+                        (getFilePixelCount(mediumFile) - getFilePixelCount(thumbnailFile)) + " )");
+                swapFiles(thumbnailFile, mediumFile);
+            } else {
+                LOG.info("Weird that file size of thumbnail is larger than medium: " + thumbnailFile + " " + mediumFile + ", but the pixel counts are correct.");
+            }
         }
 
     }
@@ -131,16 +148,31 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
         return sb.toString();
     }
 
-    private void printFilePixelDimensions(File imageFile) {
+    private String getFilePixelDimensions(File imageFile) {
         try {
             BufferedImage bimg = ImageIO.read(imageFile);
             int width = bimg.getWidth();
             int height = bimg.getHeight();
-            System.out.println(imageFile + ": " + width + "x" + height);
+            return "" + width + "x" + height;
         } catch (IOException e) {
             System.out.println(imageFile + ": error reading dimensions");
+            return "";
         }
     }
+
+    private long getFilePixelCount(File imageFile) {
+        try {
+            BufferedImage bimg = ImageIO.read(imageFile);
+            int width = bimg.getWidth();
+            int height = bimg.getHeight();
+            return width * height;
+        } catch (IOException e) {
+            System.out.println(imageFile + ": error reading dimensions");
+            return -1;
+        }
+    }
+
+
 
 }
 
