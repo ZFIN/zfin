@@ -445,10 +445,13 @@ public class LookupComposite extends Composite implements Revertible {
         noteString = note;
         errorString = "";
         noteLabel.setHTML(noteString);
-        if (StringUtils.isNotEmptyTrim(note))
-            noteLabel.setVisible(true);
-        else
-            noteLabel.setVisible(false);
+        if (StringUtils.isNotEmptyTrim(note)) {
+            noteLabel.setStyleName("gwt-lookup-note visible");
+            noteLabel.getElement().removeAttribute("aria-hidden");
+        } else {
+            noteLabel.setStyleName("gwt-lookup-note invisible");
+            noteLabel.getElement().setAttribute("aria-hidden", "true");
+        }
     }
 
     public String getNoteString() {
