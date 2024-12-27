@@ -1102,9 +1102,9 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Query>
                 <![CDATA[
                     select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
-                     from expression_experiment, expression_result,expression_pattern_figure
-                     where xpatex_zdb_id=xpatres_xpatex_zdb_id
-                       and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+                     from expression_experiment2, expression_result2,expression_figure_stage
+                     where xpatex_zdb_id = efs_xpatex_zdb_id
+                       and efs_pk_id = xpatres_efs_id
                      order by xpatex_zdb_id
                 ]]>
             </Query>
@@ -1134,18 +1134,18 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                       superterm.term_ont_id,
                       subterm.term_ont_id AS id2,
                       xpatres_expression_found
-                    FROM expression_result
+                    FROM expression_result2
                       JOIN term superterm ON superterm.term_zdb_id = xpatres_superterm_zdb_id
-                      JOIN expression_Experiment ON xpatex_zdb_id = xpatres_xpatex_zdb_id
+                     join expression_figure_stage efs on efs_pk_id = xpatres_efs_id
+                      JOIN expression_Experiment2 ON efs_xpatex_zdb_id = xpatex_zdb_id
                       LEFT OUTER JOIN term subterm ON subterm.term_zdb_id = xpatres_subterm_zdb_id
                       LEFT OUTER JOIN clone ON clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
                     WHERE NOT exists(SELECT 'x'
-                                     FROM expression_experiment, marker
-                                     WHERE xpatex_zdb_id = xpatres_xpatex_zdb_id
+                                     FROM expression_experiment2, marker
+                                     WHERE xpatex_zdb_id = efs_xpatex_zdb_id
                                            AND xpatex_gene_zdb_id IS NOT NULL
                                            AND xpatex_gene_zdb_id = mrkr_zdb_id
-                                           AND mrkr_abbrev LIKE 'WITHDRAWN%')
-                    ORDER BY xpatres_xpatex_zdb_id;
+                                           AND mrkr_abbrev LIKE 'WITHDRAWN%');
                 ]]>
             </Query>
             <Column id="1" unique="true">Expression Result ID</Column>
