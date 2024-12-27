@@ -1,12 +1,9 @@
 package org.zfin.figure.service;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.expression.Image;
-import org.zfin.figure.repository.FigureRepository;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,6 +14,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+
+/**
+ * This script will check for anomalies in the image files, and swap the thumbnail and medium files if necessary.
+ * The anomoly in question is when the thumbnail file is larger than the medium file. This may indicate a case
+ * where the files were swapped by mistake.
+ *
+ * This script can be run with the RUN_IMAGE_FIXES environment variable set to true to actually make the changes.
+ * Otherwise, it will be a dry-run and just print out the anomalies it finds.
+ *
+ * To restrict the publications that are checked, set the FIX_PUB_IDS environment variable to a comma separated list of publication IDs.
+ */
 public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
     private boolean dryRun = true;
     private List<String> restrictedPublications;
@@ -31,9 +40,7 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
         initAll();
         initConfig();
 
-
-        FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
-        List<Image> images = figureRepository.getAllImagesWithFigures();
+        List<Image> images = getFigureRepository().getAllImagesWithFigures();
         LOG.info("Found " + images.size() + " images with figures.");
         if (!restrictedPublications.isEmpty()) {
             images.removeIf(image -> !restrictedPublications.contains(image.getFigure() == null ? "" : image.getFigure().getPublication().getZdbID()));
@@ -47,22 +54,22 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
         boolean runFixes = System.getenv().getOrDefault("RUN_IMAGE_FIXES", "false").equalsIgnoreCase("true");
         dryRun = !runFixes;
         String restrictedPublicationsString = System.getenv("FIX_PUB_IDS");
-        if (StringUtils.isNotEmpty(restrictedPublicationsString)) {
-            restrictedPublications = List.of(restrictedPublicationsString.split(","));
-        } else {
+        if (StringUtils.isEmpty(restrictedPublicationsString)) {
             restrictedPublications = Collections.emptyList();
+        } else {
+            restrictedPublications = List.of(restrictedPublicationsString.split(","));
         }
 
         if (dryRun) {
-            System.out.println("Dry run.  No changes will be made. Set RUN_IMAGE_FIXES environment variable, or runImageFixes property to run.");
+            System.out.println("Dry run.  No changes will be made. Set RUN_IMAGE_FIXES=true environment variable, or runImageFixes property to run.");
         } else {
             System.out.println("Executing changes with imagemagick.");
         }
 
-        if (!restrictedPublications.isEmpty()) {
-            System.out.println("Only fixing images for publications: " + restrictedPublications);
-        } else {
+        if (restrictedPublications.isEmpty()) {
             System.out.println("Fixing images for all publications. To restrict, set FIX_PUB_IDS environment variable to comma separated list of IDs.");
+        } else {
+            System.out.println("Only fixing images for publications: " + restrictedPublications);
         }
     }
 
@@ -74,12 +81,7 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
             File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH + File.separator + thumbnail);
             File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH + File.separator + medium);
 
-            if (!thumbnailFile.exists()) {
-//                System.out.println("Thumbnail file does not exist: " + thumbnailFile);
-                continue;
-            }
-            if (!mediumFile.exists()) {
-//                System.out.println("Medium file does not exist: " + mediumFile);
+            if (!thumbnailFile.exists() || !mediumFile.exists()) {
                 continue;
             }
 
@@ -89,7 +91,6 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
                 System.out.println(" error: " + thumbnailFile + " " + mediumFile);
                 System.out.println(" error: " + e.getMessage());
             }
-
         }
     }
 
@@ -103,8 +104,6 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
             throw new RuntimeException("Medium file should end with _medium");
         }
 
-        String extension = thumbnailFile.getAbsolutePath().substring(thumbnailFile.getAbsolutePath().lastIndexOf('.'));
-
         if (thumbnailFile.length() > mediumFile.length()) {
             if (getFilePixelCount(thumbnailFile) > getFilePixelCount(mediumFile)) {
                 System.out.println("Anomaly detected: " + mediumFile + " has fewer pixels than " + thumbnailFile +
@@ -115,12 +114,10 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
                 LOG.info("Weird that file size of thumbnail is larger than medium: " + thumbnailFile + " " + mediumFile + ", but the pixel counts are correct.");
             }
         }
-
     }
 
     private void swapFiles(File filename, File mediumFile) {
         if (!dryRun) {
-            String extension = filename.getAbsolutePath().substring(filename.getAbsolutePath().lastIndexOf('.'));
             try {
                 String randomString = System.currentTimeMillis() + "-" + generateRandomString(6);
                 File tmpFile = new File(filename + "." + randomString + ".tmp");
@@ -171,8 +168,4 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
             return -1;
         }
     }
-
-
-
 }
-
