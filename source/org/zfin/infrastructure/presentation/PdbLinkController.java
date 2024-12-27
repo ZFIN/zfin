@@ -5,23 +5,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.Species;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ProteinToPDB;
+import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 @Controller
 @RequestMapping("/infrastructure")
 @Log4j2
 public class PdbLinkController {
 
-    public static final String PDB_URL = "https://rcsb.org/structure/";
-
     @RequestMapping(value = "pdb-link-list/{uniprotID}")
     public String getCitationList(Model model, @PathVariable String uniprotID) {
+        String PDB_URL = getSequenceRepository().getForeignDBByName(ForeignDB.AvailableName.PDB).getDbUrlPrefix();
+
         List<ProteinToPDB> pdbs = getMarkerRepository().getPDB(uniprotID);
         if (pdbs == null || pdbs.isEmpty()) {
             //404
@@ -38,5 +43,3 @@ public class PdbLinkController {
         return "infrastructure/pdb-link-list";
     }
 }
-
-
