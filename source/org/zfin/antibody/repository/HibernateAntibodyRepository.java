@@ -185,44 +185,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    public PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
-        Session session = HibernateUtil.currentSession();
-        String hql = """
-            select distinct antibody from Antibody antibody, ExpressionExperiment expExp,
-                   ExpressionResult res, FishExperiment fishox,
-                   Experiment exp
-            where
-                   expExp.antibody = antibody
-                   and res.expressionExperiment = expExp
-                   and fishox = expExp.fishExperiment
-                   and fishox.fish.wildtype = :wildType
-                """;
-        if (includeSubstructures) {
-            hql += """
-                and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm
-                                                      OR exists ( select 1 from TransitiveClosure child
-                      where res.entity.superterm = child.child AND child.root = :aoTerm )
-                                                      OR exists ( select 1 from TransitiveClosure child
-                      where res.entity.subterm = child.child AND child.root = :aoTerm )
-                      )
-                    """;
-        } else {
-            hql += "       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ";
-        }
-        hql += """
-            and res.expressionFound = :expressionFound
-            and fishox.standardOrGenericControl = :standardOrGeneric
-            order by antibody.abbreviationOrder
-                """;
-        Query<Antibody> query = session.createQuery(hql, Antibody.class);
-        query.setParameter("wildType", true);
-        query.setParameter("aoTerm", aoTerm);
-        query.setParameter("expressionFound", true);
-        query.setParameter("standardOrGeneric", true);
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
-    }
-
-
     public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = """

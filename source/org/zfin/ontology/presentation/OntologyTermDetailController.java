@@ -329,33 +329,6 @@ public class OntologyTermDetailController {
         return "ontology/term-view-disease-model-publication-popup";
     }
 
-    private boolean hasExpressionData(Term anatomyTerm) {
-        //  AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
-        GenericTerm anatTerm = getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
-     /*   if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
-            return true;*/
-        Pagination paginationBean = new Pagination();
-        paginationBean.setLimit(AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
-
-        // check for antibody records including substructures
-        PaginationResult<MarkerStatistic> emr =
-            getPublicationRepository().getAllExpressedMarkers(anatTerm, paginationBean);
-        if (emr != null && emr.getTotalCount() > 0)
-            return true;
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(1);
-        int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true, new Pagination());
-        if (numOfAntibodies > 0)
-            return true;
-
-        // check for in situ-probes
-        PaginationResult<HighQualityProbe> hqp = getPublicationRepository().getHighQualityProbeNames(anatomyTerm, 1);
-        if (hqp != null && hqp.getTotalCount() > 0)
-            return true;
-
-        return false;
-    }
-
     private boolean hasPhenotypeData(Term anatomyTerm) {
         GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
         return getMutantRepository().hasPhenotype(term);

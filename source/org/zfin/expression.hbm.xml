@@ -344,23 +344,6 @@
     <!--<many-to-one name="endStage" column="wee_end_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
     <!--</class>-->
 
-    <query name="stageanatomyfigure"><![CDATA[
-        select stage, xpatres.entity.superterm, xpatres.figures
-        from org.zfin.anatomy.DevelopmentStage stage,
-             org.zfin.expression.ExpressionResult xpatres,
-             org.zfin.expression.ExpressionExperiment xpatex
-        where xpatex.gene.zdbID = :geneZdbID
-          and xpatres member of xpatex.expressionResults
-          and xpatex.fishExperiment.standardOrGenericControl = 't'
-          and xpatex.fishExperiment.fish.genotype.wildtype = true
-          and xpatres.entity.superterm.termName <> :unspecified
-          and xpatres.startStage.name <> :unknown
-          and stage.hoursStart >= xpatres.startStage.hoursStart
-          and stage.hoursEnd <= xpatres.endStage.hoursEnd
-        order by stage.hoursStart, xpatres.entity.superterm.termName
-       ]]>
-    </query>
-
     <sql-query name="antibodyAOFastSearchUpdate" callable="true">
         {call add_ab_ao_fast_search(:expressionZdbID)}
     </sql-query>

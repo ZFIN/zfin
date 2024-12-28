@@ -5,9 +5,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
-import org.zfin.expression.service.ExpressionService;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -17,12 +15,9 @@ import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.DateUtil;
-import org.zfin.util.TermFigureStageRange;
-import org.zfin.util.TermStageSplitStatement;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -102,15 +97,15 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
             startMessage.append("Start Time: " + new Date() + "\n");
             // find expression-result objects
             for (ExpressionResultUpdateRecord record : expressionUpdateRecords) {
-                ExpressionResult expressionResult = getExpressionRepository().getExpressionResult(record.getExpressionResultID());
+                ExpressionResult2 expressionResult = getExpressionRepository().getExpressionResult(record.getExpressionResultID());
                 // no expression_result record found
                 if (expressionResult == null) {
                     LOG.info("No record found: " + record.getExpressionResultID());
                     continue;
                 }
                 // if xpatID, startID,endID is the same then update term
-                if (expressionResult.getStartStage().getZdbID().equals(record.getStartStageID()) &&
-                    expressionResult.getEndStage().getZdbID().equals(record.getEndStageID())) {
+                if (expressionResult.getExpressionFigureStage().getStartStage().getZdbID().equals(record.getStartStageID()) &&
+                    expressionResult.getExpressionFigureStage().getEndStage().getZdbID().equals(record.getEndStageID())) {
                     // different super term: update to new one.
                     GenericTerm superTerm = expressionResult.getEntity().getSuperterm();
                     if (record.getSuperTermOboID().equalsIgnoreCase("delete")) {

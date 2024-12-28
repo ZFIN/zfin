@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.presentation.ProteinExpressionDisplay;
 import org.zfin.expression.service.ExpressionService;
