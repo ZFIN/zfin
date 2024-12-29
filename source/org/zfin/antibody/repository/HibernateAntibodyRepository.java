@@ -305,13 +305,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(", MarkerSupplier markerSupplier ");
         }
         if (searchCriteria.isAssaySearch() || searchCriteria.isAnatomyDefined()) {
-            hql.append(", ExpressionExperiment experiment ");
+            hql.append(", ExpressionExperiment2 experiment ");
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             hql.append(",  AbstractMarkerRelationshipInterface rel   ");
         }
         if (searchCriteria.isAnatomyDefined()) {
-            hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult expressionResult ");
+            hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult2 expressionResult ");
         }
 
         if (StringUtils.isNotEmpty(searchCriteria.getName())) {
@@ -375,10 +375,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 hql.append(" AND ");
             }
             hasOneWhereClause = true;
-            hql.append("  exists ( select result from ExpressionResult result " +
-                       "                  where result.startStage.hoursStart >= :hoursStart " +
-                       "                    AND result.endStage.hoursStart <= :hoursEnd " +
-                       "                    AND result.expressionExperiment.antibody = antibody ) ");
+            hql.append("  exists ( select result from ExpressionResult2 result " +
+                       "                  where result.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                       "                    AND result.expressionFigureStage.endStage.hoursStart <= :hoursEnd " +
+                       "                    AND result.expressionFigureStage.expressionExperiment.antibody = antibody ) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             if (hasOneWhereClause) {
@@ -391,10 +391,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append("     expressionTerm.term.zdbID = :aoTermID_0 " +
                        "                     AND experiment.antibody = antibody " +
                        "                     AND expressionTerm.expressionResult = expressionResult" +
-                       "                     AND expressionResult.expressionExperiment = experiment ");
+                       "                     AND expressionResult.expressionFigureStage.expressionExperiment = experiment ");
             if (searchCriteria.isStageDefined()) {
-                hql.append("                  AND expressionResult.startStage.hoursStart >= :hoursStart " +
-                           "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
+                hql.append("                  AND expressionResult.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                           "                     AND expressionResult.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
             }
             if (!searchCriteria.isIncludeSubstructures()) {
                 hql.append("    AND expressionTerm.originalAnnotation = 't' ");
@@ -408,15 +408,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                         hql.append(" OR ");
                     }
                     hql.append(" exists (select expressionTerm from ExpressionTermFastSearch expressionTerm, " +
-                               "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
+                               "ExpressionResult2 expressionResult2, ExpressionExperiment2 experiment2 " +
                                "   where " +
                                "       expressionTerm.term.zdbID = :aoTermID_" + i +
-                               "                     AND expressionResult2.expressionExperiment = experiment2 " +
+                               "                     AND expressionResult2.expressionFigureStage.expressionExperiment = experiment2 " +
                                "                     AND experiment2.antibody = antibody " +
                                "                     AND expressionTerm.expressionResult = expressionResult2 ");
                     if (searchCriteria.isStageDefined()) {
-                        hql.append("                  AND expressionResult2.startStage.hoursStart >= :hoursStart " +
-                                   "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
+                        hql.append("                  AND expressionResult2.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                                   "                     AND expressionResult2.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
                     }
                     if (!searchCriteria.isIncludeSubstructures()) {
                         hql.append("    AND expressionTerm.originalAnnotation = 't' ");
