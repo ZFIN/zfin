@@ -13,7 +13,7 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Disease',
-            content: ({object}) => <a href={'/' + object.id}>{object.name}</a>,
+            content: ({object}) => <a href={'/' + object.curie}>{object.name}</a>,
             filterName: 'disease',
             width: '120px',
         },
