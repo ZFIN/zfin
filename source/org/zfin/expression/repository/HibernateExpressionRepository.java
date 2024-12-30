@@ -271,7 +271,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                         when container.stg_name_long like 'Larval%' then 'post embryonic, pre-adult'
                         when container.stg_name_long like 'Juvenile%' then 'post embryonic, pre-adult'
                         when container.stg_name = 'Adult' then 'UBERON:0000113'
-                   else null end as uberon_stage, 
+                   end as uberon_stage,
                    container.stg_name as stage_name
               from expression_experiment
               join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
