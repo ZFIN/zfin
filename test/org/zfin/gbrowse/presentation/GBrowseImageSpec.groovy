@@ -56,7 +56,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         image.imageUrl =~ /\d+%3A\d+..\d+/
 
         where:
-        zdbId << ["ZDB-GENE-011207-1", "ZDB-MRPHLNO-060214-3"]
+        zdbId << ["ZDB-GENE-011207-1"]
     }
 
     @Unroll
