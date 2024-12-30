@@ -236,14 +236,6 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getSummaryMarkerDBLinksForMarker() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        List<DBLink> dbLinkList = sequenceRepository.getSummaryMarkerDBLinksForMarker(m);
-        assertThat(dbLinkList.size(), greaterThan(1));
-
-    }
-
-    @Test
     public void getDBLinksForMarkerAndDisplayGroup() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarkerAndDisplayGroup(m

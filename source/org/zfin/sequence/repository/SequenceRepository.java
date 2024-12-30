@@ -74,8 +74,6 @@ public interface SequenceRepository {
 
     MarkerDBLinkList getNonSequenceMarkerDBLinksForMarker(Marker marker);
 
-    List<DBLink> getSummaryMarkerDBLinksForMarker(Marker marker);
-
     DBLink getDBLinkByReferenceDatabaseID(String markerZdbID, String accession, String referenceDatabaseID);
 
     List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName);
