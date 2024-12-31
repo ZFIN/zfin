@@ -176,6 +176,11 @@ task checkSequenceValidationRulesTask(type: JavaExec) {
     main = 'org.zfin.sequence.CheckSequenceValidationRulesTask'
 }
 
+task addCountryTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.task.AddCountryTask'
+}
+
 task imageThumbnailAndMediumSwapTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.figure.service.ImageThumbnailAndMediumSwapTask'
