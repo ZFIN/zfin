@@ -25,6 +25,14 @@
                             >
                                 InterPro
                             </zfin2:externalLink>
+                            <c:if test="${category.PDB}">
+                                <zfin2:externalLink
+                                        className="dropdown-item"
+                                        href="/action/infrastructure/pdb-link-list/${category.proDBLink.accessionNumber}"
+                                >
+                                    PDB
+                                </zfin2:externalLink>
+                            </c:if>
                         </z:otherPagesDropdown>
                     </td>
                     <td class="text-right">${category.proDBLink.length}</td>
