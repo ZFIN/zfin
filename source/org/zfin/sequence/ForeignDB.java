@@ -125,7 +125,6 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
         MGI("MGI"),
         MGI_ANATOMY("MGI-Anatomy"),
         MICROCOSM("MicroCosm"),
-        MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
         NTR_REGION("NTR-Region"),
         NOCTUA("Noctua"),
@@ -176,7 +175,9 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
         AGR_GENE("Alliance"),
         AGR_DISEASE("Alliance"),
         CZRC("CZRC"),
-        PDB("PDB"), RNA_CENTRAL("RNACentral"), ZIRC_PROTOCOL("ZIRCProtocol");
+        PDB("PDB"),
+        RNA_CENTRAL("RNACentral"),
+        ZIRC_PROTOCOL("ZIRCProtocol");
 
 
         private final String value;
