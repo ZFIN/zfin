@@ -163,12 +163,12 @@ public class ImageService {
                 convertBinary = convertBinaryFile.getAbsolutePath();
             }
         }
-        String makeThumb = convertBinary + " -thumbnail " + dimensions + " " + imageFilename + " " + thumbnailFilename;
-        log.info("running makeThumb command: " + makeThumb);
+        String[] makeThumbCommand = {convertBinary, "-thumbnail", dimensions, imageFilename, thumbnailFilename};
+        log.info("running makeThumb command: " + makeThumbCommand);
         if (!previewCommandOnly) {
-            Runtime.getRuntime().exec(makeThumb);
+            Runtime.getRuntime().exec(makeThumbCommand);
         }
-        return makeThumb;
+        return String.join(" ", makeThumbCommand);
     }
 
     private static void createDestinationParentDirectoryIfNotExists(String publicationZdbId) throws IOException {

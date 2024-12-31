@@ -175,3 +175,8 @@ task checkSequenceValidationRulesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.CheckSequenceValidationRulesTask'
 }
+
+task imageThumbnailAndMediumSwapTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.figure.service.ImageThumbnailAndMediumSwapTask'
+}
