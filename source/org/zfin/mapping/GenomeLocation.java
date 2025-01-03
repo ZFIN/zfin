@@ -214,7 +214,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         VEGA("VegaStartEndLoader", true, "Vega", "http://vega.sanger.ac.uk/Danio_rerio/Location/View?db=core;g="),
         //NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
         NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
-        UCSC("UCSCStartEndLoader", true, "UCSC", "http://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer7&position="),
+        UCSC("UCSCStartEndLoader", true, "UCSC", "http://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer11&position="),
         GENERAL_LOAD("General Load", false, "General Load", null),
         OTHER_MAPPING("other map location", false, "Other Mapping", null);
 
