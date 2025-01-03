@@ -185,44 +185,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
 
-    public PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
-        Session session = HibernateUtil.currentSession();
-        String hql = """
-            select distinct antibody from Antibody antibody, ExpressionExperiment expExp,
-                   ExpressionResult res, FishExperiment fishox,
-                   Experiment exp
-            where
-                   expExp.antibody = antibody
-                   and res.expressionExperiment = expExp
-                   and fishox = expExp.fishExperiment
-                   and fishox.fish.wildtype = :wildType
-                """;
-        if (includeSubstructures) {
-            hql += """
-                and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm
-                                                      OR exists ( select 1 from TransitiveClosure child
-                      where res.entity.superterm = child.child AND child.root = :aoTerm )
-                                                      OR exists ( select 1 from TransitiveClosure child
-                      where res.entity.subterm = child.child AND child.root = :aoTerm )
-                      )
-                    """;
-        } else {
-            hql += "       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ";
-        }
-        hql += """
-            and res.expressionFound = :expressionFound
-            and fishox.standardOrGenericControl = :standardOrGeneric
-            order by antibody.abbreviationOrder
-                """;
-        Query<Antibody> query = session.createQuery(hql, Antibody.class);
-        query.setParameter("wildType", true);
-        query.setParameter("aoTerm", aoTerm);
-        query.setParameter("expressionFound", true);
-        query.setParameter("standardOrGeneric", true);
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
-    }
-
-
     public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = """
@@ -343,13 +305,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(", MarkerSupplier markerSupplier ");
         }
         if (searchCriteria.isAssaySearch() || searchCriteria.isAnatomyDefined()) {
-            hql.append(", ExpressionExperiment experiment ");
+            hql.append(", ExpressionExperiment2 experiment ");
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             hql.append(",  AbstractMarkerRelationshipInterface rel   ");
         }
         if (searchCriteria.isAnatomyDefined()) {
-            hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult expressionResult ");
+            hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult2 expressionResult ");
         }
 
         if (StringUtils.isNotEmpty(searchCriteria.getName())) {
@@ -413,10 +375,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 hql.append(" AND ");
             }
             hasOneWhereClause = true;
-            hql.append("  exists ( select result from ExpressionResult result " +
-                       "                  where result.startStage.hoursStart >= :hoursStart " +
-                       "                    AND result.endStage.hoursStart <= :hoursEnd " +
-                       "                    AND result.expressionExperiment.antibody = antibody ) ");
+            hql.append("  exists ( select result from ExpressionResult2 result " +
+                       "                  where result.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                       "                    AND result.expressionFigureStage.endStage.hoursStart <= :hoursEnd " +
+                       "                    AND result.expressionFigureStage.expressionExperiment.antibody = antibody ) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             if (hasOneWhereClause) {
@@ -429,10 +391,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append("     expressionTerm.term.zdbID = :aoTermID_0 " +
                        "                     AND experiment.antibody = antibody " +
                        "                     AND expressionTerm.expressionResult = expressionResult" +
-                       "                     AND expressionResult.expressionExperiment = experiment ");
+                       "                     AND expressionResult.expressionFigureStage.expressionExperiment = experiment ");
             if (searchCriteria.isStageDefined()) {
-                hql.append("                  AND expressionResult.startStage.hoursStart >= :hoursStart " +
-                           "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
+                hql.append("                  AND expressionResult.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                           "                     AND expressionResult.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
             }
             if (!searchCriteria.isIncludeSubstructures()) {
                 hql.append("    AND expressionTerm.originalAnnotation = 't' ");
@@ -446,15 +408,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                         hql.append(" OR ");
                     }
                     hql.append(" exists (select expressionTerm from ExpressionTermFastSearch expressionTerm, " +
-                               "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
+                               "ExpressionResult2 expressionResult2, ExpressionExperiment2 experiment2 " +
                                "   where " +
                                "       expressionTerm.term.zdbID = :aoTermID_" + i +
-                               "                     AND expressionResult2.expressionExperiment = experiment2 " +
+                               "                     AND expressionResult2.expressionFigureStage.expressionExperiment = experiment2 " +
                                "                     AND experiment2.antibody = antibody " +
                                "                     AND expressionTerm.expressionResult = expressionResult2 ");
                     if (searchCriteria.isStageDefined()) {
-                        hql.append("                  AND expressionResult2.startStage.hoursStart >= :hoursStart " +
-                                   "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
+                        hql.append("                  AND expressionResult2.expressionFigureStage.startStage.hoursStart >= :hoursStart " +
+                                   "                     AND expressionResult2.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
                     }
                     if (!searchCriteria.isIncludeSubstructures()) {
                         hql.append("    AND expressionTerm.originalAnnotation = 't' ");

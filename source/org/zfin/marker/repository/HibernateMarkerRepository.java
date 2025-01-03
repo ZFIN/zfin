@@ -1149,9 +1149,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public boolean getGeneHasExpressionImages(Marker gene) {
         String hql = """
-            select count( figs ) from ExpressionExperiment ee join ee.expressionResults er
-            join er.figures figs
-            join figs.images ims
+            select count( fig ) from ExpressionExperiment2 ee
+            join ee.figureStageSet er
+            join er.figure fig
+            join fig.images ims
             where ee.gene.zdbID = :geneZdbID
             """;
         Query<Number> query = currentSession().createQuery(hql, Number.class);
@@ -1161,9 +1162,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public boolean getGeneHasExpression(Marker gene) {
         String hql = """
-            select count( er) from ExpressionExperiment ee
-            join ee.expressionResults er
-            join er.figures figs
+            select count( er) from ExpressionExperiment2 ee
+            join ee.figureStageSet er
+            join er.figure fig
             where ee.gene.zdbID = :geneZdbID
             """;
         Query<Number> query = currentSession().createQuery(hql, Number.class);

@@ -3,7 +3,8 @@ package org.zfin.fish.repository;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.Group;
@@ -11,7 +12,6 @@ import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
@@ -131,9 +131,9 @@ public class FishService {
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
                 query.addFilterQuery(FieldName.AFFECTED_ANATOMY.getName() + ":\"" + term + "\""
-                                + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
-                                + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
-                                + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
+                                     + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
+                                     + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
+                                     + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
                 );
             }
 
@@ -475,9 +475,9 @@ public class FishService {
 
             String termQuery = Joiner.on(" OR ").join(terms);
             query.addFilterQuery(FieldName.ANATOMY.getName() + ":(" + termQuery + ")"
-                            + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
-                            + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
-                            + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
+                                 + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
+                                 + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
+                                 + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
             );
 
         }

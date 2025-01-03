@@ -263,16 +263,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getGenoxAttributions() {
-        String genoxID = "ZDB-GENOX-091027-5";
-        List<String> genoxIds = new ArrayList<>(1);
-        genoxIds.add(genoxID);
-        Set<String> attributions = mutantRepository.getGenoxAttributions(genoxIds);
-        assertThat(attributions, notNullValue());
-        assertThat(attributions, hasSize(greaterThan(1)));
-    }
-
-    @Test
     public void getFishCitations() {
         Fish fish = new Fish();
         fish.setZdbID("ZDB-FISH-150901-1187");

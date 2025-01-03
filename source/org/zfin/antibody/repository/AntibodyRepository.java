@@ -73,19 +73,6 @@ public interface AntibodyRepository {
 	List<Species> getImmunogenSpeciesList();
 
 	/**
-	 * Retrieve antibodies for a given ao term.
-	 * Only wild-type fish are cared for.
-	 * <p/>
-	 * If no pagination info is provided then return the complete list.
-	 *
-	 * @param aoTerm               Term
-	 * @param paginationBean       Pagination Bean
-	 * @param includeSubstructures boolean
-	 * @return number of antibodies
-	 */
-	PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
-
-	/**
 	 * Retrieve distinct publications for given antibody and ao term that have
 	 * figures associated.
 	 *

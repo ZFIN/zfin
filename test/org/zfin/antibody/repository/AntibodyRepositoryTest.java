@@ -643,40 +643,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getAllAntibodiesByAOTerm() {
-        String aoTermName = "forerunner cell group";
-        GenericTerm term = new GenericTerm();
-        term.setZdbID("ZDB-TERM-100331-22");
-        term.setTermName(aoTermName);
-
-        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setTerm(term);
-
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(5);
-
-        PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
-        assertNotNull(abs);
-    }
-
-    @Test
-    public void getAllAntibodiesByAOTermSecondaryMotorNeuron() {
-        //  secondary motor neuron
-        String aoTermZdbID = "ZDB-TERM-100331-2304";
-        GenericTerm term = new GenericTerm();
-        term.setZdbID(aoTermZdbID);
-
-        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setTerm(term);
-
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(5);
-
-        PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodiesByAOTerm(term, pagination, false);
-        assertNotNull(abs);
-    }
-
-    @Test
     public void getPublicationsPerAntibodyAndAOTerm() {
         String abName = "Ab2-dag1";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(abName);

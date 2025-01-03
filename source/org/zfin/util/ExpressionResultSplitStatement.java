@@ -1,6 +1,5 @@
 package org.zfin.util;
 
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 
 import java.util.ArrayList;
@@ -31,10 +30,9 @@ public class ExpressionResultSplitStatement {
     }
 
 
-
     @Override
     public String toString() {
         return "Original: " + originalExpressionResult
-                + "lines = " + expressionResultList;
+               + "lines = " + expressionResultList;
     }
 }

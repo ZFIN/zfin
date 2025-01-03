@@ -94,40 +94,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
-    public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
-
-        String hql = """
-            select distinct exp.probe, marker
-            FROM ExpressionExperiment exp, ExpressionResult res, Marker marker
-            WHERE  res.entity.superterm = :term
-            AND res.expressionExperiment = exp
-            AND exp.probe.rating = 4
-            AND exp.gene = marker
-            ORDER by marker.abbreviationOrder""";
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery(hql);
-        query.setParameter("term", term);
-        ScrollableResults results = query.scroll();
-
-
-        List<Object[]> list = new ArrayList<>();
-        while (results.next() && results.getRowNumber() < maxRow) {
-            list.add(results.get());
-        }
-
-        int totalCount = 0;
-        if (results.last()) {
-            totalCount = results.getRowNumber() + 1;
-        }
-
-        results.close();
-
-        List<HighQualityProbe> probes = createHighQualityProbeObjects(list, term);
-        return new PaginationResult<>(totalCount, probes);
-
-    }
-
-    //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
 
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
@@ -351,15 +317,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = """
-            select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp,
-            FishExperiment fishox, ExpressionResultFigure xpatfig
+            select distinct efs.figure from ExpressionResult2 res, ExpressionExperiment2 exp,
+            FishExperiment fishox, ExpressionFigureStage efs
             where
-               marker = :marker AND
-               exp.gene = marker AND
-               res.expressionExperiment = exp AND
-               (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) AND
-               xpatfig.expressionResult = res AND
-               xpatfig.figure = fig AND
+               exp.gene = :marker AND
+               res.expressionFigureStage = efs AND
+               (res.superTerm = :aoTerm OR res.subTerm = :aoTerm) AND
+               efs.expressionExperiment = exp AND
                res.expressionFound = :expressionFound AND
                exp.fishExperiment = fishox AND
                fishox.standardOrGenericControl = :condition AND

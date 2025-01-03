@@ -45,17 +45,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getSNPPublicationIDs(Marker marker);
 
     /**
-     * Retrieve the genes and CDNA/EST for the high-quality probes with
-     * rating of 4 (which equals 5 stars) associate to an anatomical structure.
-     * Only return n records.
-     *
-     * @param term   anatomy term
-     * @param maxRow max number of records
-     * @return list of HighqQualityProbes
-     */
-    PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow);
-
-    /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
      * @param anatomyTerm term

@@ -167,21 +167,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(genotypeResult.getTotalCount() > 0);
     }
 
-    @Test
-    public void getNumOfPublicationsPerAOAndGli1Mutant() {
-        // lateral floor plate
-        String aoZdbID = "ZDB-TERM-100331-1214";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        // Genotype: gli1^te370a/+
-        String genotypeZdbID = "ZDB-GENO-070307-4";
-        Genotype genotype = new Genotype();
-        genotype.setZdbID(genotypeZdbID);
-        int number = mutantRepository.getNumberOfPublicationsPerAnatomyAndMutantWithFigures(item, genotype);
-//        assertEquals("1 publication",1, number);
-        assertTrue(number > 0);
-    }
-
     /**
      * anterior lateral line ganglia is expressed in a double mutant: fgf3t24149/+;fgf8ti282a/+
      */

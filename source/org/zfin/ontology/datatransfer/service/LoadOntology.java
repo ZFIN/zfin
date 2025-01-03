@@ -17,7 +17,6 @@ import org.obo.datamodel.*;
 import org.obo.history.SessionHistoryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.database.DbSystemUtil;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
@@ -243,7 +242,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             rg.setReportTitle("Report for " + jobName);
             rg.includeTimestamp();
             rg.addIntroParagraph("No update found for " + ontology.getOntologyName() + " load. Current version saved " +
-                    "by " + oboMetadata.getSavedBy() + " on " + oboMetadata.getDate() + ".");
+                                 "by " + oboMetadata.getSavedBy() + " on " + oboMetadata.getDate() + ".");
             rg.writeFiles(new File(loadDirectory, jobName), "statistics");
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
@@ -667,7 +666,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             report.addMessageToSection(message, termType + " replaced by merged term:");
             report.setRows(data);
             report.appendToSubject(expressionPhenotype + ": Replaced " + data.size() + " records " +
-                    " for " + ontology.getOntologyName());
+                                   " for " + ontology.getOntologyName());
             report.setDataSectionTitle(message);
             cronJobUtil.emailReport("ontology-loader-report-replaced-terms.ftl", report);
         }
@@ -1086,7 +1085,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             throw new InvalidOBOFileException("Term with id [" + term.getID() + "] has no name attribute");
         }
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),
-                term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
+            term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
         if (term.getDefDbxrefs() != null) {
             for (Dbxref xref : term.getDefDbxrefs()) {
                 // remove non-printable characters
@@ -1152,8 +1151,8 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             LOG.info("Current Version: " + dbMetadata.toString());
         }
         appendFormattedRecord(UnloadFile.ONTOLOGY_HEADER, oboMetadata.getOboVersion(), oboMetadata.getDataVersion(),
-                oboMetadata.getDate(), oboMetadata.getSavedBy(), oboMetadata.getGeneratedBy(),
-                oboMetadata.getDefaultNamespace(), oboMetadata.getRemark());
+            oboMetadata.getDate(), oboMetadata.getSavedBy(), oboMetadata.getGeneratedBy(),
+            oboMetadata.getDefaultNamespace(), oboMetadata.getRemark());
         return !sameVersion;
     }
 

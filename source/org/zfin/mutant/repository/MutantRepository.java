@@ -64,18 +64,6 @@ public interface MutantRepository {
     PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, boolean excludeFishWithSTR, Pagination pagination);
 
     /**
-     * Retrieve the number of images associated to a mutant marker and a given
-     * anatomy structure.
-     *
-     * @param item     Anatomy Term
-     * @param genotype Genotype
-     * @return number
-     */
-    int getNumberOfImagesPerAnatomyAndMutant(GenericTerm item, Genotype genotype);
-
-    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype);
-
-    /**
      * Retrieve a genotype,feature and marker object by PK.
      *
      * @param genotypeZbID pk
@@ -254,14 +242,6 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish);
-
-    /**
-     * Retrieve citation list of pub ids
-     *
-     * @param genotypeExperimentIDs
-     * @return
-     */
-    Set<String> getGenoxAttributions(List<String> genotypeExperimentIDs);
 
     /**
      * Retrieve citation list of pubs for fish annotations.

@@ -302,20 +302,6 @@ public interface ExpressionRepository {
     void createPileStructure(ExpressionStructure structure);
 
     /**
-     * Retrieve Expressions for a given term.
-     * @param term term
-     * @return list of expressions
-     */
-    List<ExpressionResult> getExpressionsWithEntity(GenericTerm term);
-
-    /**
-     * Retrieve Expressions for a given list of terms.
-     * @param terms term
-     * @return list of expressions
-     */
-    List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms);
-
-    /**
      * Retrieve all expression results for a given fish
      *
      * @param fish Fish
@@ -404,7 +390,7 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult2> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 
-    ExpressionResult getExpressionResult(Long expressionResultID);
+    ExpressionResult2 getExpressionResult(Long expressionResultID);
 
     /**
      * Deletes a given ExpressionResult record and its associations to all figures.

@@ -335,47 +335,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), query.scroll());
     }
 
-    public int getNumberOfImagesPerAnatomyAndMutant(GenericTerm term, Genotype genotype) {
-        Session session = currentSession();
-
-        String hql = """
-             select count(distinct image) from Image image, Figure fig, ExpressionResult res, 
-                                              ExpressionExperiment exp 
-            where 
-            res member of exp.expressionResults AND 
-            res.entity.superterm = :term AND 
-            fig member of res.figures AND 
-            image member of fig.images AND 
-            res.expressionFound = true AND 
-            exp.fishExperiment.fish.genotype.zdbID = :genoZdbID 
-            """;
-        Query<Number> query = session.createQuery(hql, Number.class);
-        query.setParameter("term", term);
-        query.setParameter("genoZdbID", genotype.getZdbID());
-
-        return query.uniqueResult().intValue();
-    }
-
-    public int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype) {
-        Session session = currentSession();
-
-        String hql = """
-            select count(distinct figure.publication) from Figure figure, ExpressionResult res, 
-                                                           ExpressionExperiment exp 
-            where 
-            res member of exp.expressionResults AND 
-            res.entity.superterm = :term AND 
-            figure member of res.figures AND 
-            res.expressionFound = true AND 
-            exp.fishExperiment.fish.genotype.zdbID = :genoZdbID 
-            """;
-        Query<Number> query = session.createQuery(hql, Number.class);
-        query.setParameter("term", item);
-        query.setParameter("genoZdbID", genotype.getZdbID());
-
-        return query.uniqueResult().intValue();
-    }
-
     @SuppressWarnings("unchecked")
     /**
      * @param name go term name
@@ -1380,32 +1339,6 @@ public class HibernateMutantRepository implements MutantRepository {
         Query<PhenotypeStatementWarehouse> query = currentSession().createQuery(hql, PhenotypeStatementWarehouse.class);
         query.setParameter("fishZdbId", fish.getZdbID());
         return query.list();
-    }
-
-    public Set<String> getGenoxAttributions(List<String> fishExperimentIDs) {
-        String hql = "select distinct publication.zdbID from ExpressionExperiment where fishExperiment.zdbID in (:fishoxIds)";
-
-        Query<String> query = currentSession().createQuery(hql, String.class);
-        query.setParameterList("fishoxIds", fishExperimentIDs);
-        List<String> pubIds = query.list();
-        Set<String> distinctPubs = new HashSet<String>(pubIds.size());
-        distinctPubs.addAll(pubIds);
-
-        // phenotype experiments
-        hql = "select distinct figure.publication.zdbID from PhenotypeExperiment where fishExperiment.zdbID in (:fishoxIds)";
-        query = currentSession().createQuery(hql, String.class);
-        query.setParameterList("fishoxIds", fishExperimentIDs);
-        pubIds = query.list();
-        distinctPubs.addAll(pubIds);
-
-        // experiments
-        hql = "select distinct experiment.publication.zdbID from FishExperiment where zdbID in (:fishoxIds)";
-        query = currentSession().createQuery(hql, String.class);
-        query.setParameterList("fishoxIds", fishExperimentIDs);
-        pubIds = query.list();
-        distinctPubs.addAll(pubIds);
-
-        return distinctPubs;
     }
 
     /**
