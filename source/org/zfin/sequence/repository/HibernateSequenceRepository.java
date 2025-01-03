@@ -623,27 +623,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return dbLinks;
     }
 
-    public List<DBLink> getSummaryMarkerDBLinksForMarker(Marker marker) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select dbl from MarkerDBLink dbl" +
-                     " where dbl.marker.zdbID = :markerZdbID " +
-                     "   and dbl.referenceDatabase.foreignDBDataType.superType = :superType" +
-                     "   and dbl.referenceDatabase.foreignDB.dbName <> :geo" +
-                     "   and dbl.referenceDatabase.foreignDB.dbName <> :zfespresso";
-        Query query = session.createQuery(hql);
-        query.setParameter("markerZdbID", marker.getZdbID());
-        query.setParameter("superType", ForeignDBDataType.SuperType.SUMMARY_PAGE);
-
-        query.setParameter("geo", ForeignDB.AvailableName.GEO);
-        query.setParameter("zfespresso", ForeignDB.AvailableName.ZF_ESPRESSO);
-
-        //the app page code also excludes ArrayExpress, but that doesn't seem to be
-        //in the database anymore, and it's commented out of the enum, so I'lll leave
-        //it out.
-
-        return query.list();
-    }
-
     @Override
     public DBLink getDBLink(String markerZdbID, String accession, String referenceDBName) {
         Session session = HibernateUtil.currentSession();

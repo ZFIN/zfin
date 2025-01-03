@@ -1379,42 +1379,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         session.save(structure);
     }
 
-    /**
-     * Retrieve Expressions for a given term.
-     *
-     * @param term term
-     * @return list of expressions
-     */
-    @Override
-    public List<ExpressionResult> getExpressionsWithEntity(GenericTerm term) {
-        String hql ="""
-                      select distinct expression from ExpressionResult expression where 
-                     (entity.superterm = :term OR entity.subterm = :term) 
-                      AND expressionFound = true 
-                     """;
-        Query<ExpressionResult> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult.class);
-        query.setParameter("term", term);
-        return query.list();
-    }
-
-    /**
-     * Retrieve Expressions for a given list of terms.
-     *
-     * @param terms term
-     * @return list of expressions
-     */
-    @Override
-    public List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms) {
-        List<ExpressionResult> allExpressions = new ArrayList<>(50);
-        for (GenericTerm term : terms) {
-            List<ExpressionResult> phenotypes = getExpressionsWithEntity(term);
-            allExpressions.addAll(phenotypes);
-        }
-        List<ExpressionResult> nonDuplicateExpressions = removeDuplicateExpressions(allExpressions);
-        Collections.sort(nonDuplicateExpressions);
-        return nonDuplicateExpressions;
-    }
-
     private List<ExpressionResult> removeDuplicateExpressions(List<ExpressionResult> allExpressions) {
         Set<ExpressionResult> results = new HashSet<>();
         results.addAll(allExpressions);
@@ -1422,7 +1386,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         expressionResults.addAll(results);
         return expressionResults;
     }
-
 
     private void validateFigureAnnotationKey(String experimentZdbID, String figureID, String startStageID, String endStageID) {
         ActiveData data = new ActiveData();
@@ -1781,8 +1744,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public ExpressionResult getExpressionResult(Long expressionResultID) {
-        return HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
+    public ExpressionResult2 getExpressionResult(Long expressionResultID) {
+        return HibernateUtil.currentSession().get(ExpressionResult2.class, expressionResultID);
     }
 
     @Override
