@@ -11,6 +11,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,6 +93,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
 
+
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
      * the record number. Hibernate starts with the first row numbered '0'.
@@ -156,10 +158,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 """;
 
         NativeQuery query = session.createNativeQuery(sql);
-        query.addScalar("geneID", StringType.INSTANCE);
-        query.addScalar("geneSymbol", StringType.INSTANCE);
-        query.addScalar("numOfFig", IntegerType.INSTANCE);
-        query.addScalar("numOfImg", IntegerType.INSTANCE);
+        query.addScalar("geneID", StandardBasicTypes.STRING);
+        query.addScalar("geneSymbol", StandardBasicTypes.STRING);
+        query.addScalar("numOfFig", StandardBasicTypes.INTEGER);
+        query.addScalar("numOfImg", StandardBasicTypes.INTEGER);
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setParameter("withdrawn", Marker.WITHDRAWN);
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
@@ -171,14 +173,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         ScrollableResults results = query.scroll();
 
-        List<Object[]> list = new ArrayList<>();
+        //TODO: hibernate migration double check logic
+        List<Tuple> list = new ArrayList<>();
         results.beforeFirst();
         if (firstRow > 0) {
             results.setRowNumber(firstRow - 1);
         }
         while (results.next() && results.getRowNumber() < firstRow + numberOfRecords) {
             if (results.getRowNumber() >= firstRow) {
-                list.add(results.get());
+                list.add((Tuple)results.get());
             }
         }
 
@@ -2040,29 +2043,31 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
     }
 
-    private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
+    //TODO: hibernate migration double check logic
+    private List<MarkerStatistic> createMarkerStatistics(List<Tuple> list, GenericTerm anatomyTerm) {
         if (list == null) {
             return null;
         }
 
         List<MarkerStatistic> markers = new ArrayList<>();
-        for (Object[] stats : list) {
-            String markerZdbID = (String) stats[0];
+        for (Tuple stats : list) {
+            String markerZdbID = (String) stats.get(0);
             Marker marker = markerRepository.getMarkerByID(markerZdbID);
             MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
-            statistic.setNumberOfFigures((Integer) stats[2]);
-            statistic.setHasImages(((Integer) stats[3]) > 0);
+            statistic.setNumberOfFigures((Integer) stats.get(2));
+            statistic.setHasImages(((Integer) stats.get(3)) > 0);
             markers.add(statistic);
         }
         return markers;
     }
 
-    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
+    //TODO: hibernate migration double check logic
+    private List<HighQualityProbe> createHighQualityProbeObjects(List<Tuple> list, Term aoTerm) {
         List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
         if (list != null) {
-            for (Object[] array : list) {
-                Marker subGene = (Marker) array[0];
-                Marker gene = (Marker) array[1];
+            for (Tuple tuple : list) {
+                Marker subGene = (Marker) tuple.get(0);
+                Marker gene = (Marker) tuple.get(1);
                 HighQualityProbe probe = new HighQualityProbe(subGene, aoTerm);
                 probe.addGene(gene);
                 probes.add(probe);

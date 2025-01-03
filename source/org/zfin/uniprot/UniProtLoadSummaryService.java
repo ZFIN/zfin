@@ -45,7 +45,7 @@ public class UniProtLoadSummaryService {
     public static UniProtLoadSummaryListDTO getBeforeSummary() {
         Session session = HibernateUtil.currentSession();
         String sql = getSummarySql();
-        NativeQuery query = session.createSQLQuery(sql);
+        NativeQuery query = session.createNativeQuery(sql);
         List results = query.list();
         UniProtLoadSummaryListDTO summaryList = new UniProtLoadSummaryListDTO();
         for (Object result : results) {
@@ -67,7 +67,7 @@ public class UniProtLoadSummaryService {
     public static UniProtLoadSummaryListDTO getAfterSummary(UniProtLoadSummaryListDTO beforeSummary) {
         Session session = HibernateUtil.currentSession();
         String sql = getSummarySql();
-        NativeQuery query = session.createSQLQuery(sql);
+        NativeQuery query = session.createNativeQuery(sql);
         List results = query.list();
         for (Object result : results) {
             Object[] row = (Object[]) result;

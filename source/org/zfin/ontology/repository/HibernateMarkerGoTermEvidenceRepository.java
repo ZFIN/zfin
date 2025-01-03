@@ -285,7 +285,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                      "          from marker_go_term_evidence " +
                      "         where mrkrgoev_mrkr_zdb_id = :markerZdbId   ";
         return Integer.parseInt(HibernateUtil.currentSession()
-            .createSQLQuery(sql)
+            .createNativeQuery(sql)
             .setParameter("markerZdbId", m.getZdbID())
             .uniqueResult().toString());
     }

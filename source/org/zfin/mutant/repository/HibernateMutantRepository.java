@@ -319,7 +319,7 @@ public class HibernateMutantRepository implements MutantRepository {
                       fish_name_order asc;
                     """;
 
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("feature_id", featureId);
 
         setTupleResultTransformer(query, (Object[] tuples, String[] aliases) -> {
@@ -605,7 +605,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
-        return Integer.valueOf(currentSession().createSQLQuery("""
+        return Integer.valueOf(currentSession().createNativeQuery("""
                  SELECT count(*) FROM marker_go_term_evidence  ev  
                  JOIN  inference_group_member inf ON ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id 
                  WHERE 
@@ -739,9 +739,9 @@ public class HibernateMutantRepository implements MutantRepository {
             """;
 
 
-        final Query alleleQuery = currentSession().createSQLQuery(alleleQueryString);
-        final Query geneQuery = currentSession().createSQLQuery(geneQueryString);
-        final Query fishQuery = currentSession().createSQLQuery(fishQueryString);
+        final Query alleleQuery = currentSession().createNativeQuery(alleleQueryString);
+        final Query geneQuery = currentSession().createNativeQuery(geneQueryString);
+        final Query fishQuery = currentSession().createNativeQuery(fishQueryString);
 
         List<Object[]> alleles = alleleQuery.list();
         List<Object[]> genes = geneQuery.list();
@@ -1463,7 +1463,7 @@ public class HibernateMutantRepository implements MutantRepository {
             AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)
             """;
 
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("genotypeID", genotypeID);
         query.setParameterList("fishOxList", fishOxList);
 
@@ -2114,7 +2114,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
-        currentSession().createSQLQuery(
+        currentSession().createNativeQuery(
                 "UPDATE genotype " +
                     "SET geno_nickname = geno_handle " +
                     "WHERE EXISTS ( " +
@@ -2128,7 +2128,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void updateFishAffectedGeneCount(Fish fish) {
-        currentSession().createSQLQuery(
+        currentSession().createNativeQuery(
                 "UPDATE fish " +
                     "SET fish_name = fish_name " +
                     "WHERE fish_Zdb_id=:fishID ;")

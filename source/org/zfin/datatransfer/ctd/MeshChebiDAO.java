@@ -37,7 +37,7 @@ public class MeshChebiDAO {
 
     public boolean dropAll() {
         String tableName = MeshChebiMapping.class.getAnnotation(Table.class).name();
-        int numberOfDeletedRecords = entityManager.createSQLQuery("delete from " + tableName).executeUpdate();
+        int numberOfDeletedRecords = entityManager.createNativeQuery("delete from " + tableName).executeUpdate();
         return numberOfDeletedRecords > 0;
     }
 

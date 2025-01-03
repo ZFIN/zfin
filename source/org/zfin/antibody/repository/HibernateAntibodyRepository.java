@@ -862,7 +862,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql = "select pubAttribute, antibody from Antibody as antibody, PublicationAttribution pubAttribute " +
                      "     where pubAttribute.dataZdbID = antibody.zdbID ";
         Query query = session.createQuery(hql);
-        //query.setString("antibodytype", "ZDB-" + Marker.Type.ATB.name() + "%");
+
         List<Object[]> list = query.list();
         Map<Publication, List<Antibody>> antibodyMap = new HashMap<>();
 

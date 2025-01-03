@@ -92,14 +92,14 @@ public class HibernateBlastRepository implements BlastRepository {
                       " from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd " +
                       " where bd.zdbID = :databaseZdbID";
         Query query1 = HibernateUtil.currentSession().createQuery(hql1);
-        query1.setString("databaseZdbID", database.getZdbID());
+        query1.setParameter("databaseZdbID", database.getZdbID());
         returnAccessions.addAll(query1.list());
 
         String hql2 = "select acc.number" +
                       " from Accession  acc join acc.referenceDatabase rd join rd.primaryBlastDatabase bd " +
                       " where bd.zdbID = :databaseZdbID";
         Query query2 = HibernateUtil.currentSession().createQuery(hql2);
-        query2.setString("databaseZdbID", database.getZdbID());
+        query2.setParameter("databaseZdbID", database.getZdbID());
         List accessionBankList = query2.list();
         Set<String> onlyAccessionBankList = new HashSet<>();
         onlyAccessionBankList.addAll((accessionBankList));
@@ -138,7 +138,7 @@ public class HibernateBlastRepository implements BlastRepository {
                      "  group by bdb.blastdb_abbrev ";
 
         Query query = HibernateUtil.currentSession()
-            .createSQLQuery(sql)
+            .createNativeQuery(sql)
             .addScalar("abbrev", StandardBasicTypes.STRING)
             .addScalar("num", StandardBasicTypes.LONG);
         query.setParameter("originationType", Origination.Type.EXTERNAL.toString());
@@ -166,7 +166,7 @@ public class HibernateBlastRepository implements BlastRepository {
                 " join blast_database bdb " +
                 "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
                 "  group by bdb.blastdb_abbrev ";
-        query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query = HibernateUtil.currentSession().createNativeQuery(sql);
         blastDatabaseCounts = query.list();
 
         if (blastDatabaseCounts == null)
@@ -209,8 +209,8 @@ public class HibernateBlastRepository implements BlastRepository {
                      " join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                      " join blast_database bdb on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
                      " where bdb.blastdb_zdb_id = :databaseZdbID ";
-        Query query2 = HibernateUtil.currentSession().createSQLQuery(sql);
-        query2.setString("databaseZdbID", database.getZdbID());
+        Query query2 = HibernateUtil.currentSession().createNativeQuery(sql);
+        query2.setParameter("databaseZdbID", database.getZdbID());
         ScrollableResults results = query2.scroll();
 
 
@@ -225,7 +225,7 @@ public class HibernateBlastRepository implements BlastRepository {
         Session session = HibernateUtil.currentSession();
         String hql = " update Database d set d.locked = :locked ";
         Query query = session.createQuery(hql);
-        query.setBoolean("locked", isLocked);
+        query.setParameter("locked", isLocked);
         return query.executeUpdate();
     }
 

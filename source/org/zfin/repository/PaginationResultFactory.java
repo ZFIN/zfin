@@ -25,7 +25,7 @@ public class PaginationResultFactory {
         PaginationResult<T> returnResult = new PaginationResult<T>();
         List<T> list = new ArrayList<T>();
         while (scrollableResults.next() && scrollableResults.getRowNumber() < maxRecords) {
-            list.add((T) scrollableResults.get(0));
+            list.add((T) scrollableResults.get()); //TODO: hibernate migration double check this contains expected results
         }
 
         scrollableResults.last();
@@ -60,13 +60,7 @@ public class PaginationResultFactory {
         boolean foundAtLeastOneRecord = false;
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                Object objects = scrollableResults.get(0);
-                list.add((T) objects);
-            } else {
-                Object[] objects = scrollableResults.get();
-                list.add((T) objects[0]);
-            }
+            list.add((T) scrollableResults.get()); //TODO: hibernate migrations double check this works correctly
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.
@@ -108,19 +102,13 @@ public class PaginationResultFactory {
         }
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                if (!list.contains((T) scrollableResults.get(0))) {
-                    list.add((T) scrollableResults.get(0));
-                } else {
-                    numberOfDuplicates++;
-                }
-            } else {
+
+                //TODO: hibernate migration double check logic
                 if (!list.contains((T) scrollableResults.get())) {
                     list.add((T) scrollableResults.get());
                 } else {
                     numberOfDuplicates++;
                 }
-            }
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.
@@ -201,13 +189,10 @@ public class PaginationResultFactory {
         boolean foundAtLeastOneRecord = false;
         while (scrollableResults.next()) {
             foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                Object objects = scrollableResults.get(0);
-                list.add((T) objects);
-            } else {
-                Object[] objects = scrollableResults.get();
-                list.add((T) objects[0]);
-            }
+
+                //TODO: hibernate migration double check logic
+                Object objects = scrollableResults.get();
+                list.add((T)objects);
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.

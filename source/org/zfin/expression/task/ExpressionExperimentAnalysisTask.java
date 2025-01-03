@@ -130,7 +130,7 @@ public class ExpressionExperimentAnalysisTask extends AbstractScriptWrapper {
         for(ExpressionExperiment2 experiment : experimentsToDelete) {
             createTransaction();
             System.out.println("  Deleting: " + experiment.getZdbID());
-            currentSession().createSQLQuery("DELETE FROM expression_experiment2 WHERE xpatex_zdb_id = :zdbID")
+            currentSession().createNativeQuery("DELETE FROM expression_experiment2 WHERE xpatex_zdb_id = :zdbID")
                     .setParameter("zdbID", experiment.getZdbID())
                     .executeUpdate();
             flushAndCommitCurrentSession();
@@ -222,7 +222,7 @@ public class ExpressionExperimentAnalysisTask extends AbstractScriptWrapper {
                         ids DESC
 --                        LIMIT 50 --TODO: remove this
                 """;
-        List results = currentSession().createSQLQuery(sql).list();
+        List results = currentSession().createNativeQuery(sql).list();
         return results.stream().map(row -> ExpressionExperimentDuplicate.fromTupleArray((Object[])row)).toList();
     }
 
@@ -236,7 +236,7 @@ public class ExpressionExperimentAnalysisTask extends AbstractScriptWrapper {
                     ADD CONSTRAINT unique_expression_experiment2
                     UNIQUE (xpatex_assay_name, xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatex_atb_zdb_id, xpatex_source_zdb_id)
                     """;
-            currentSession().createSQLQuery(sql).executeUpdate();
+            currentSession().createNativeQuery(sql).executeUpdate();
             flushAndCommitCurrentSession();
         } catch (Exception e) {
             System.out.println("Error while creating constraint: " + e.getMessage());

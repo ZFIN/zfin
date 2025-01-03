@@ -57,7 +57,7 @@ public class HibernateFigureRepository implements FigureRepository {
             sql += "  and xpatex_probe_feature_zdb_id = :probeZdbID ";
         }
 
-        Query query = session.createSQLQuery(sql);
+        Query query = session.createNativeQuery(sql);
         query.setParameter("pubZdbID", publication.getZdbID());
         if (probeZdbID != null) {
             query.setParameter("probeZdbID", probeZdbID);

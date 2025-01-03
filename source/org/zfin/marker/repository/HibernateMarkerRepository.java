@@ -1330,22 +1330,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // the worst case scenario list (assuming there is only one record per probe) and then
         // loop over the results and check if the probe is in the list of probes from above
         while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecordsInteger() + 1) {
-            Object[] record = scrollableResults.get();
+            Tuple record = (Tuple) scrollableResults.get();
             HighQualityProbeAOStatistics highQualityProbeStats = new HighQualityProbeAOStatistics();
             Marker probe = new Marker();
-            probe.setZdbID((String) record[0]);
-            probe.setAbbreviation((String) record[1]);
-            probe.setName((String) record[12]);
-            probe.setMarkerType(getProbeType((String) record[7]));
+            probe.setZdbID((String) record.get(0));
+            probe.setAbbreviation((String) record.get(1));
+            probe.setName((String) record.get(12));
+            probe.setMarkerType(getProbeType((String) record.get(7)));
             highQualityProbeStats.setProbe(probe);
             Marker gene = new Marker();
-            gene.setZdbID((String) record[2]);
-            gene.setAbbreviation((String) record[3]);
-            gene.setName((String) record[11]);
+            gene.setZdbID((String) record.get(2));
+            gene.setAbbreviation((String) record.get(3));
+            gene.setName((String) record.get(11));
             gene.setMarkerType(getGenedomType());
             highQualityProbeStats.setGene(gene);
-            String figID = (String) record[4];
-            String label = (String) record[5];
+            String figID = (String) record.get(4);
+            String label = (String) record.get(5);
             Figure figure;
             if (label != null && label.equals(FigureType.TOD.toString())) {
                 figure = new TextOnlyFigure();
@@ -1357,12 +1357,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             figure.setLabel(label);
             highQualityProbeStats.setFigure(figure);
             Publication pub = new Publication();
-            pub.setZdbID((String) record[9]);
-            pub.setShortAuthorList((String) record[10]);
+            pub.setZdbID((String) record.get(9));
+            pub.setShortAuthorList((String) record.get(10));
             highQualityProbeStats.setPublication(pub);
-            if (record[13] != null) {
+            if (record.get(13) != null) {
                 Image image = new Image();
-                image.setZdbID((String) record[13]);
+                image.setZdbID((String) record.get(13));
                 highQualityProbeStats.setImage(image);
             }
             if (hqpRecords.contains(highQualityProbeStats.getProbe())) {

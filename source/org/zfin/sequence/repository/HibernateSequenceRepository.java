@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
+import org.zfin.database.HibernateUpgradeHelper;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -53,10 +54,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " and referenceDatabase.organism  = :organism" +
                      " ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("dbName", foreignDBName.toString());
-        query.setString("type", type.toString());
-        query.setString("superType", superType.toString());
-        query.setString("organism", organism.toString());
+        query.setParameter("dbName", foreignDBName.toString());
+        query.setParameter("type", type.toString());
+        query.setParameter("superType", superType.toString());
+        query.setParameter("organism", organism.toString());
 
         return (ReferenceDatabase) query.uniqueResult();
     }
@@ -71,7 +72,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " join fetch referenceDatabase.foreignDB " +
                      " where referenceDatabase.foreignDB.dbName = :dbName ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("dbName", dbName.toString());
+        query.setParameter("dbName", dbName.toString());
         return query.list();
     }
 
@@ -491,7 +492,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         String hql = "" +
                      "delete from Accession a where a.number = :accessionNumber ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("accessionNumber", accessionNumber);
+        query.setParameter("accessionNumber", accessionNumber);
         return query.executeUpdate();
     }
 
@@ -517,9 +518,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " order by dbl.referenceDatabase.foreignDB.dbName , dbl.accessionNumber ";
 
         Query query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        query.setString("superType", "sequence");
-        query.setString("type", referenceDatabaseType.toString());
+        query.setParameter("markerZdbID", marker.getZdbID());
+        query.setParameter("superType", "sequence");
+        query.setParameter("type", referenceDatabaseType.toString());
         dbLinks.addAll(query.list());
 
 
@@ -531,12 +532,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
         // todo: and marker_relation type = .....
 //        " and mr.type = :markerRelationshipType " ;
         query = session.createQuery(hql1);
-        query.setString("markerZdbID", marker.getZdbID());
-        query.setString("superType", "sequence");
-        query.setString("type", referenceDatabaseType.name());
-        query.setString("markerType", Marker.Type.GENE.name()); //if using setParameter, change hql to use "...markerType.name = :markerType..."
+        query.setParameter("markerZdbID", marker.getZdbID());
+        query.setParameter("superType", "sequence");
+        query.setParameter("type", referenceDatabaseType.name());
+        query.setParameter("markerType", Marker.Type.GENE.name()); //if using setParameter, change hql to use "...markerType.name = :markerType..."
         // todo: and marker_relation type = .....
-//        query.setString("markerRelationshipType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.name()) ;
+//        query.setParameter("markerRelationshipType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.name()) ;
         dbLinks.addAll(query.list());
 
 
@@ -549,10 +550,10 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //        " and mr.type = :markerRelationshipType " ;
         // todo: and marker_relation type = .....
         query = session.createQuery(hql2);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
         query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE);
         query.setParameter("type", referenceDatabaseType);
-//        query.setString("markerTypeGroup",Marker.TypeGroup.CLONE.name()) ;
+//        query.setParameter("markerTypeGroup",Marker.TypeGroup.CLONE.name()) ;
         dbLinks.addAll(query.list());
 
         return dbLinks;
@@ -569,8 +570,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //                " where dbl.marker.zdbID = :markerZdbID and dbl.referenceDatabase.superType = :superType ";
 //
 //        Query query = session.createQuery(hql) ;
-//        query.setString("markerZdbID",marker.getZdbID()) ;
-//        query.setString("superType","sequence") ;
+//        query.setParameter("markerZdbID",marker.getZdbID()) ;
+//        query.setParameter("superType","sequence") ;
 //        for (Object o : query.list() ) {
 //            MarkerDBLink dblink = (MarkerDBLink)o;
 //            //todo: evenentually there should be a display group for marker linked sequences..?
@@ -592,8 +593,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //                " where dbl.transcript.zdbID = :transcriptZdbID and dbl.referenceDatabase.superType = :superType ";
 //
 //        Query query = session.createQuery(hql) ;
-//        query.setString("transcriptZdbID",transcript.getZdbID()) ;
-//        query.setString("superType","sequence") ;
+//        query.setParameter("transcriptZdbID",transcript.getZdbID()) ;
+//        query.setParameter("superType","sequence") ;
 //        for (Object o : query.list() ) {
 //            TranscriptDBLink dblink = (TranscriptDBLink)o;
 //            //todo: evenentually there should be a display group for marker linked sequences..?
@@ -611,14 +612,35 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      "from MarkerDBLink dbl " +
                      " where dbl.marker.zdbID = :markerZdbID and dbl.referenceDatabase.foreignDBDataType.superType <> :superType";
         Query query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-        query.setString("superType", ForeignDBDataType.SuperType.SEQUENCE.toString());
+        query.setParameter("markerZdbID", marker.getZdbID());
+        query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE.toString());
 
 
         MarkerDBLinkList dbLinks = new MarkerDBLinkList();
         dbLinks.addAll(query.list());
 
         return dbLinks;
+    }
+
+    public List<DBLink> getSummaryMarkerDBLinksForMarker(Marker marker) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select dbl from MarkerDBLink dbl" +
+                     " where dbl.marker.zdbID = :markerZdbID " +
+                     "   and dbl.referenceDatabase.foreignDBDataType.superType = :superType" +
+                     "   and dbl.referenceDatabase.foreignDB.dbName <> :geo" +
+                     "   and dbl.referenceDatabase.foreignDB.dbName <> :zfespresso";
+        Query query = session.createQuery(hql);
+        query.setParameter("markerZdbID", marker.getZdbID());
+        query.setParameter("superType", ForeignDBDataType.SuperType.SUMMARY_PAGE.toString());
+
+        query.setParameter("geo", ForeignDB.AvailableName.GEO.toString());
+        query.setParameter("zfespresso", ForeignDB.AvailableName.ZF_ESPRESSO.toString());
+
+        //the app page code also excludes ArrayExpress, but that doesn't seem to be
+        //in the database anymore, and it's commented out of the enum, so I'lll leave
+        //it out.
+
+        return query.list();
     }
 
     @Override
@@ -628,9 +650,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " and mdbl.dataZdbID = :markerZdbID " +
                      " and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
         Query query = session.createQuery(hql);
-        query.setString("accession", accession);
-        query.setString("markerZdbID", markerZdbID);
-        query.setString("referenceDBName", referenceDBName);
+        query.setParameter("accession", accession);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("referenceDBName", referenceDBName);
         return (DBLink) query.uniqueResult();
     }
 
@@ -643,9 +665,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
              and mdbl.referenceDatabase.zdbID = :referenceDatabaseID
             """;
         Query query = session.createQuery(hql);
-        query.setString("accession", accession);
-        query.setString("markerZdbID", markerZdbID);
-        query.setString("referenceDatabaseID", referenceDatabaseID);
+        query.setParameter("accession", accession);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("referenceDatabaseID", referenceDatabaseID);
         return (DBLink) query.uniqueResult();
     }
 
@@ -654,8 +676,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
         String hql = "select mdbl from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
                      "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("referenceDBName", referenceDBName);
-        query.setString("markerZdbID", markerZdbID);
+        query.setParameter("referenceDBName", referenceDBName);
+        query.setParameter("markerZdbID", markerZdbID);
         return query.list();
     }
 
@@ -666,8 +688,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      " and mdbl.dataZdbID = :markerZdbID ";
 
         Query query = session.createQuery(hql);
-        query.setString("accession", accession);
-        query.setString("markerZdbID", featureZDbID);
+        query.setParameter("accession", accession);
+        query.setParameter("markerZdbID", featureZDbID);
 
         return (DBLink) query.uniqueResult();
     }
@@ -728,7 +750,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE);
-        query.setString("transcript", "ZDB-TSCRIPT%");
+        query.setParameter("transcript", "ZDB-TSCRIPT%");
         if (firstNIds > 0)
             query.setMaxResults(firstNIds);
 
@@ -772,7 +794,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Query query = session.createQuery(hql);
         query.setParameter("superType", superType);
         query.setParameter("groupName", DisplayGroup.GroupName.HIDDEN_DBLINKS);
-        query.setString("markerZdbId", zdbID);
+        query.setParameter("markerZdbId", zdbID);
         return query.list();
     }
 
@@ -821,7 +843,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      "    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list') " +
                      "    ) as query ";
         return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(sql)
-            .setString("markerZdbId", marker.getZdbID())
+            .setParameter("markerZdbId", marker.getZdbID())
             .uniqueResult().toString());
     }
 
@@ -906,8 +928,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql)
             .setParameter("markerZdbId", marker.getZdbID())
             .setParameter("displayGroup", groupName.toString())
-            .setParameterList("types", types)
-            .setResultTransformer(new RelatedMarkerDBLinkTransformer(true));
+            .setParameterList("types", types);
+        HibernateUpgradeHelper.setTupleResultTransformer(query,(new RelatedMarkerDBLinkTransformer(true))::transformTuple);
         return query.list();
     }
 
@@ -939,8 +961,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql)
             .setParameter("markerZdbId", marker.getZdbID())
             .setParameter("displayGroup", groupName.toString())
-            .setParameterList("types", types)
-            .setResultTransformer(new RelatedMarkerDBLinkTransformer(false));
+            .setParameterList("types", types);
+        HibernateUpgradeHelper.setTupleResultTransformer(query,(new RelatedMarkerDBLinkTransformer(false))::transformTuple);
         return query.list();
     }
 
@@ -951,8 +973,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      "  and dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
                      " ";
         return HibernateUtil.currentSession().createQuery(hql)
-            .setString("markerZdbID", marker.getZdbID())
-            .setString("dataType", dataType.toString())
+            .setParameter("markerZdbID", marker.getZdbID())
+            .setParameter("dataType", dataType.toString())
             .list();
     }
 
@@ -965,9 +987,9 @@ public class HibernateSequenceRepository implements SequenceRepository {
                      "  and dbl.referenceDatabase.foreignDBDataType.dataType = :dataType " +
                      " ";
         return HibernateUtil.currentSession().createQuery(hql)
-            .setString("markerZdbID", marker.getZdbID())
-            .setString("dataType", dataType.toString())
-            .setString("markerType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString())
+            .setParameter("markerZdbID", marker.getZdbID())
+            .setParameter("dataType", dataType.toString())
+            .setParameter("markerType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString())
             .list();
     }
 
