@@ -29,8 +29,9 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 abstract public class EnsemblTranscriptBase {
 
     protected static final String baseUrl = "https://rest.ensembl.org";
-    protected String cdnaFileName = "Danio_rerio.GRCz11.cdna.all.fa";
-    protected String ncrnaFileName = "Danio_rerio.GRCz11.ncrna.fa";
+    public static final String CDNA_FILE_NAME = "Danio_rerio.GRCz11.cdna.all.fa";
+    public static final String NCRNA_FILE_NAME = "Danio_rerio.GRCz11.ncrna.fa";
+    public static final String ALL_FILE_NAME = "Danio_rerio.GRCz11.all.fa";
 
 
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
@@ -45,8 +46,8 @@ abstract public class EnsemblTranscriptBase {
     EnsemblLoadSummaryItemDTO dto;
 
     public void init() throws IOException {
-        downloadFile(cdnaFileName, "cdna");
-        downloadFile(ncrnaFileName, "ncrna");
+        downloadFile(CDNA_FILE_NAME, "cdna");
+        downloadFile(NCRNA_FILE_NAME, "ncrna");
         // <ensdargID, List<RichSequence>>
         geneTranscriptMap = getAllGeneTranscriptsFromFile();
     }
@@ -58,15 +59,15 @@ abstract public class EnsemblTranscriptBase {
     }
 
     protected Map<String, List<RichSequence>> getAllGeneTranscriptsFromFile() {
-        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(cdnaFileName);
-        Map<String, List<RichSequence>> geneNcRNATranscriptMap = getGeneTranscriptMap(ncrnaFileName);
+        Map<String, List<RichSequence>> geneTranscriptMap = getGeneTranscriptMap(CDNA_FILE_NAME);
+        Map<String, List<RichSequence>> geneNcRNATranscriptMap = getGeneTranscriptMap(NCRNA_FILE_NAME);
         geneTranscriptMap.putAll(geneNcRNATranscriptMap);
         return geneTranscriptMap;
     }
 
     protected List<RichSequence> getAllFastaRecordsFromFile() {
-        List<RichSequence> cdnaRecords = getAllFastaRecords(cdnaFileName);
-        List<RichSequence> ncRnaRecords = getAllFastaRecords(ncrnaFileName);
+        List<RichSequence> cdnaRecords = getAllFastaRecords(CDNA_FILE_NAME);
+        List<RichSequence> ncRnaRecords = getAllFastaRecords(NCRNA_FILE_NAME);
         cdnaRecords.addAll(ncRnaRecords);
         return cdnaRecords;
     }
@@ -126,7 +127,6 @@ abstract public class EnsemblTranscriptBase {
     }
 
     public static String getGeneIdFromZfinDefline(RichSequence sequence) {
-
         String line = sequence.getAccession();
         String[] token = line.split("\\|");
         return token[1];
@@ -200,6 +200,37 @@ abstract public class EnsemblTranscriptBase {
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }
+    }
+
+    protected static File getCombinedFastaFile() {
+        File allFile = new File(ALL_FILE_NAME);
+        if (allFile.exists()) {
+            return allFile;
+        }
+        downloadFile(CDNA_FILE_NAME, "cdna");
+        downloadFile(NCRNA_FILE_NAME, "ncrna");
+        try {
+            PrintWriter pw = new PrintWriter(ALL_FILE_NAME);
+            BufferedReader br = new BufferedReader(new FileReader(CDNA_FILE_NAME));
+            String line = br.readLine();
+            while (line != null) {
+                pw.println(line);
+                line = br.readLine();
+            }
+            br = new BufferedReader(new FileReader(NCRNA_FILE_NAME));
+            line = br.readLine();
+            while (line != null) {
+                pw.println(line);
+                line = br.readLine();
+            }
+            pw.flush();
+            br.close();
+            pw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        allFile = new File(ALL_FILE_NAME);
+        return allFile;
     }
 
 
