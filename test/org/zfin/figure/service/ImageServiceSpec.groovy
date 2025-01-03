@@ -62,6 +62,10 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         File mediumFile = new File(imageLoadUp, image.medium)
         waitFor(thumbnailFile::exists, 5000) && waitFor(mediumFile::exists, 5000) //wait maximum of 5 seconds for files to exist
 
+        thumbnailFile.deleteOnExit()
+        mediumFile.deleteOnExit()
+        imageFile.deleteOnExit()        
+
         then: "${imageFile} and associated files should exist"
         imageFile.exists() && thumbnailFile.exists() && mediumFile.exists() //example thumbnailFile path: /opt/zfin/loadUp/pubs/2011/ZDB-PUB-110609-15/ZDB-IMAGE-211115-1_thumb.jpg
     }
