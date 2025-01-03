@@ -4,10 +4,7 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.sequence.DBLink;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
@@ -36,7 +33,7 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
     public void init(File file) throws IOException {
         List<String> allTranscriptIDsInZfin = getAllTranscriptIdsInZFIN();
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String line = "";
+        String line;
         Map<String, List<String>> blastEntryMap = new LinkedHashMap<>();
         String protId = null;
         while ((line = br.readLine()) != null) {
@@ -65,7 +62,19 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
             }
         }
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(new File(fastaDirectory, ENSEMBL_ZF_FA)));
+        writeFastaFile(blastEntryMap, new File(fastaDirectory, ENSEMBL_ZF_FA));
+        Map<String, List<String>> zfinOnlyBlastMap = new HashMap<>();
+        blastEntryMap.forEach((ensdart, blastLines) -> {
+            if (allTranscriptIDsInZfin.contains(getUnversionedAccession(ensdart))) {
+                zfinOnlyBlastMap.put(ensdart, blastLines);
+            }
+        });
+        writeFastaFile(zfinOnlyBlastMap, new File(fastaDirectory, ENSEMBL_ZF_ONLY_FA));
+        System.exit(0);
+    }
+
+    private static void writeFastaFile(Map<String, List<String>> blastEntryMap, File file) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         blastEntryMap.forEach((ensdart, blastLines) -> {
             AtomicInteger index = new AtomicInteger(0);
             blastLines.forEach(blastLine -> {
@@ -80,24 +89,6 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
             });
         });
         writer.close();
-        BufferedWriter writer1 = new BufferedWriter(new FileWriter(new File(fastaDirectory, ENSEMBL_ZF_ONLY_FA)));
-        blastEntryMap.forEach((ensdart, blastLines) -> {
-            if (allTranscriptIDsInZfin.contains(getUnversionedAccession(ensdart))) {
-                AtomicInteger index = new AtomicInteger(0);
-                blastLines.forEach(blastLine -> {
-                    try {
-                        writer1.write(blastLine);
-                        if (index.incrementAndGet() < blastLines.size() - 1) {
-                            writer1.newLine();
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-        });
-        writer1.close();
-        System.exit(0);
     }
 
     private List<String> getAllTranscriptIdsInZFIN() {
