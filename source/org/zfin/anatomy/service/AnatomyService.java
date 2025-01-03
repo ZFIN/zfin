@@ -3,7 +3,6 @@ package org.zfin.anatomy.service;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.StagePresentation;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -12,7 +11,6 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

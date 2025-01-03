@@ -90,7 +90,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
     @Override
     public PaginationResult<Clone> getProbes(Publication publication, Pagination pagination) {
         String hql = """
-            select distinct exp.probe from ExpressionExperiment as exp
+            select distinct exp.probe from ExpressionExperiment2 as exp
             """;
         if (publication != null) {
             hql += " where exp.publication = :publication ";
@@ -130,7 +130,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
     @Override
     public List<String> getProbeTypes(Publication publication, Pagination pagination) {
         String hql = """
-            select distinct exp.probe.markerType from ExpressionExperiment as exp
+            select distinct exp.probe.markerType from ExpressionExperiment2 as exp
             where exp.publication = :publication
             """;
         Query<MarkerType> query = HibernateUtil.currentSession().createQuery(hql, MarkerType.class);
@@ -153,7 +153,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
     @Override
     public Map<Publication, List<Clone>> getAllProbes(Pagination pagination) {
         String hql = """
-            select exp.probe, exp.publication from ExpressionExperiment as exp
+            select exp.probe, exp.publication from ExpressionExperiment2 as exp
             """;
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {

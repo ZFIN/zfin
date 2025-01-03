@@ -1,10 +1,9 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.zfin.expression.ExpressionResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionResult2;
-import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;

@@ -4,7 +4,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.expression.presentation.ExperimentPresentation;
@@ -13,15 +12,13 @@ import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.Fish;
-
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.presentation.ExpressionResultPresentation;
 import org.zfin.ontology.presentation.PhenotypePresentation;
 import org.zfin.ontology.presentation.PhenotypeStatementWarehousePresentation;
 import org.zfin.ontology.presentation.TermPresentation;
@@ -48,15 +45,13 @@ public class CreateNameTag extends TagSupport {
         if (o instanceof Marker)
             link = MarkerPresentation.getName((Marker) o);
         else if (o instanceof Genotype)
-            link = GenotypePresentation.getName((Genotype) o);            
+            link = GenotypePresentation.getName((Genotype) o);
         else if (o instanceof PhenotypeStatement)
             link = PhenotypePresentation.getName((PhenotypeStatement) o);
         else if (o instanceof PhenotypeStatementWarehouse)
             link = PhenotypeStatementWarehousePresentation.getName((PhenotypeStatementWarehouse) o);
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getName((RunCandidate) o);
-        else if (o instanceof ExpressionResult)
-            link = ExpressionResultPresentation.getName((ExpressionResult) o);
         else if (o instanceof ExpressionStatement)
             link = ExpressionStatementPresentation.getName((ExpressionStatement) o);
         else if (o instanceof Experiment)
@@ -101,5 +96,5 @@ public class CreateNameTag extends TagSupport {
     public void setLongVersion(boolean longVersion) {
         this.longVersion = longVersion;
     }
-    
+
 }

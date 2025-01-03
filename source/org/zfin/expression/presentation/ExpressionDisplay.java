@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
@@ -34,57 +33,56 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     private SortedMap<Publication, SortedSet<Figure>> figuresPerPub;
 
     public ExpressionDisplay(Marker expressedGene) {
-        this .expressedGene = expressedGene;
+        this.expressedGene = expressedGene;
     }
 
     public int compareTo(ExpressionDisplay anotherExpressionDisplay) {
-        if (expressedGene == null){
+        if (expressedGene == null) {
             return -1;
-        }
-        else if (expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene()) == 0)
+        } else if (expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene()) == 0)
             return experiment.compareTo(anotherExpressionDisplay.getExperiment());
         return expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene());
     }
 
     @JsonView(View.API.class)
     public int getNumberOfFigures() {
-		if (figures == null) {
-			return 0;
-		} else {
-			return figures.size();
-		}
+        if (figures == null) {
+            return 0;
+        } else {
+            return figures.size();
+        }
     }
 
     public Figure getSingleFigure() {
-		if (figures == null || figures.size() != 1)
-		   return null;
+        if (figures == null || figures.size() != 1)
+            return null;
 
         Figure singleFigure = null;
-		for (Figure fig : figures) {
-		   singleFigure = fig;
-           break;
-		}
+        for (Figure fig : figures) {
+            singleFigure = fig;
+            break;
+        }
         return singleFigure;
     }
 
     public Publication getSinglePublication() {
-		if (publications == null || publications.size() != 1)
-		   return null;
+        if (publications == null || publications.size() != 1)
+            return null;
 
-		Publication singlePub = new Publication();
-		for (Publication pub : publications) {
-			singlePub = pub;
-		}
+        Publication singlePub = new Publication();
+        for (Publication pub : publications) {
+            singlePub = pub;
+        }
         return singlePub;
     }
 
     @JsonView(View.API.class)
     public int getNumberOfPublications() {
-		if (publications == null) {
-			return 0;
-		} else {
-			return publications.size();
-		}
+        if (publications == null) {
+            return 0;
+        } else {
+            return publications.size();
+        }
     }
 
     public Marker getExpressedGene() {
@@ -96,7 +94,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     }
 
     public boolean isImgInFigure() {
-        if (noFigureOrFigureWithNoLabel())   {
+        if (noFigureOrFigureWithNoLabel()) {
             return false;
         }
         boolean thereIsImg = false;
@@ -110,7 +108,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     }
 
     public boolean noFigureOrFigureWithNoLabel() {
-        if (figures == null || figures.isEmpty())   {
+        if (figures == null || figures.isEmpty()) {
             return true;
         }
         boolean noFigureLabel = false;
@@ -124,12 +122,12 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
     }
 
     @JsonView(View.API.class)
-    public Publication getFirstPublication(){
+    public Publication getFirstPublication() {
         return publications.iterator().next();
     }
 
     @JsonView(View.API.class)
-    public Figure getFirstFigure(){
+    public Figure getFirstFigure() {
         return figures.iterator().next();
     }
 

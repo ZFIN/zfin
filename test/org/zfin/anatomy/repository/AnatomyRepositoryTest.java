@@ -126,21 +126,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 	}
 
 	@Test
-	public void getSubstructureAntibodies() {
-		String aoTermName = "cranium";
-		GenericTerm term = new GenericTerm();
-		term.setZdbID("ZDB-TERM-100331-706");
-		term.setTermName(aoTermName);
-		assertNotNull(term);
-
-		// only primary ao term
-		getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), false);
-
-		// include annotation to substructures
-		getAntibodyRepository().getAntibodiesByAOTerm(term, new PaginationBean(), true);
-	}
-
-	@Test
 	public void getAnatomyItemStatisticsByStage() {
 		// zygote
 		String stageID = "ZDB-STAGE-010723-4";

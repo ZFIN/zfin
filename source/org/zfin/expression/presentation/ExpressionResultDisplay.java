@@ -1,7 +1,6 @@
 package org.zfin.expression.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
@@ -56,10 +55,10 @@ public class ExpressionResultDisplay {
     }
 
     public String getUniqueKey() {
-        return superterm.getOboID()+"|"+start.getOboID()+"|"+end.getOboID();
+        return superterm.getOboID() + "|" + start.getOboID() + "|" + end.getOboID();
     }
 
-    public Set<Publication> getDistinctPublications(){
+    public Set<Publication> getDistinctPublications() {
         Set<Publication> publicationSet = new TreeSet<Publication>();
         for (ExpressionResult2 result : expressionResultList)
             publicationSet.add(result.getExpressionFigureStage().getExpressionExperiment().getPublication());

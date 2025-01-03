@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.presentation.ExpressionResultDisplay;
 import org.zfin.expression.presentation.ExpressionResultFormBean;
@@ -16,7 +15,6 @@ import org.zfin.ontology.GenericTerm;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class ApplicationContextController {
     @RequestMapping("/application-context")
     protected String showApplicationContext(@ModelAttribute("formBean") ApplicationContextBean form,
                                             Model model)
-            throws Exception {
+        throws Exception {
 
         WebApplicationContext context = RequestContextUtils.getWebApplicationContext(request);
         form.setApplicationContext(context);
@@ -49,7 +47,7 @@ public class ApplicationContextController {
     @RequestMapping("/fx-stage-range-violations")
     protected String showStageRangeViolations(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                               Model model)
-            throws Exception {
+        throws Exception {
         List<ExpressionResult2> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
         Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
         for (ExpressionResult2 result : expressionResultsViolateStageRanges) {
@@ -77,7 +75,7 @@ public class ApplicationContextController {
     @RequestMapping("/merged-terms-used-in-relationships")
     protected String showMergedTermsInRelationship(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                                    Model model)
-            throws Exception {
+        throws Exception {
         List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getMergedTermsInTermRelationships();
         model.addAttribute("mergeTerms", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -87,7 +85,7 @@ public class ApplicationContextController {
     @RequestMapping("/terms-without-relationships")
     protected String showTermsWithoutRelationships(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                                    Model model)
-            throws Exception {
+        throws Exception {
         List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getActiveTermsWithoutRelationships();
         model.addAttribute("activeTerms", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -98,7 +96,7 @@ public class ApplicationContextController {
     @RequestMapping("/fx-stage-range-update")
     protected String editStageRangeViolations(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                               Model model)
-            throws Exception {
+        throws Exception {
         List<ExpressionResult2> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
         Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
         for (ExpressionResult2 result : expressionResultsViolateStageRanges) {

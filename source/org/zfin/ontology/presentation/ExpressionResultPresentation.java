@@ -1,12 +1,10 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.zfin.expression.ExpressionResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
-import org.zfin.gwt.curation.ui.CurationModuleType;
-import org.zfin.publication.CurationPresentation;
 
 /**
  * Display the full list of post composed terms and their hyperlink.
@@ -31,17 +29,5 @@ public class ExpressionResultPresentation extends ExpressionStatementPresentatio
 
         return getLink(expressionStatement, suppressPopupLink);
     }
-
-    public static String getName(ExpressionResult expressionResult) {
-        if (expressionResult == null)
-            return null;
-
-        ExpressionStatement expressionStatement = new ExpressionStatement();
-        expressionStatement.setEntity(expressionResult.getEntity());
-        expressionStatement.setExpressionFound(expressionResult.isExpressionFound());
-
-        return getName(expressionStatement);
-    }
-
 
 }

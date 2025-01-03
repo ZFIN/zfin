@@ -33,8 +33,6 @@ public class ExpressionExperiment2 {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "xpatex_source_zdb_id")
     private Publication publication;
-    @Transient
-    private Set<ExpressionResult> expressionResults;
     @ManyToOne()
     @JoinColumn(name = "xpatex_genox_zdb_id")
     private FishExperiment fishExperiment;

@@ -59,17 +59,19 @@ Create or replace function regen_expression_term_fast_search()
       delete from xpatfs_working;
 
       insert into xpatfs_working (etfs_xpatres_pk_id, etfs_term_zdb_id)
-		SELECT xpatres_zdb_id,
+		SELECT xpatres_pk_id,
 					 alltermcon_container_zdb_id
-		FROM   expression_result,
+		FROM   expression_result2,
 					 all_term_contains,
-					 expression_experiment,
+					 expression_experiment2,
+					 expression_figure_stage,
 					 fish,
 					 fish_experiment,
 					 genotype
 		WHERE  xpatres_expression_found = 't'
 					 AND alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
-					 AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+					 AND xpatex_zdb_id = efs_xpatex_zdb_id
+					 AND xpatres_efs_id = efs_pk_id
 					 AND xpatex_atb_zdb_id IS NOT NULL
 					 AND genox_zdb_id = xpatex_genox_zdb_id
 					 AND genox_is_std_or_generic_control = 't'
@@ -80,17 +82,19 @@ Create or replace function regen_expression_term_fast_search()
 
 
         insert into xpatfs_working (etfs_xpatres_pk_id, etfs_term_zdb_id)
-					SELECT xpatres_zdb_id,
+					SELECT xpatres_pk_id,
 								 alltermcon_container_zdb_id
-					FROM   expression_result,
+					FROM   expression_result2,
 								 all_term_contains,
-								 expression_experiment,
+								 expression_experiment2,
+                                 expression_figure_Stage,
 								 fish,
 								 fish_experiment,
 								 genotype
 					WHERE  xpatres_expression_found = 't'
 								 AND alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
-								 AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+                                  AND xpatex_zdb_id = efs_xpatex_zdb_id
+                                  AND xpatres_efs_id = efs_pk_id
 								 AND xpatex_atb_zdb_id IS NOT NULL
 								 AND genox_zdb_id = xpatex_genox_zdb_id
 								 AND genox_is_std_or_generic_control = 't'
@@ -101,13 +105,13 @@ Create or replace function regen_expression_term_fast_search()
 
     	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result where xpatres_superterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_pk_id =  xpatres_zdb_id);
+ 	       where exists (select 'x' from expression_result2 where xpatres_superterm_zdb_id = etfs_term_zdb_id
+	       	     	     and  etfs_xpatres_pk_id =  xpatres_pk_id);
 
 	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
- 	       where exists (select 'x' from expression_result where xpatres_subterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_pk_id =  xpatres_zdb_id);
+ 	       where exists (select 'x' from expression_result2 where xpatres_subterm_zdb_id = etfs_term_zdb_id
+	       	     	     and  etfs_xpatres_pk_id =  xpatres_pk_id);
       
 
 	 alter table expression_term_fast_search rename to xpatfs_old;
