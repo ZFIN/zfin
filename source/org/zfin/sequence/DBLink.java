@@ -2,10 +2,12 @@ package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.DiscriminatorFormula;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.EntityZdbID;
@@ -22,43 +24,68 @@ import java.util.Set;
 
 @Setter
 @Getter
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(dblink_linked_recid) WHEN 'ORTHO' THEN 'ORTH' WHEN 'TERM' THEN 'TERM' " +
+                "WHEN 'TSCRIPT' THEN 'TSCR' WHEN 'ALT' THEN 'ALT' ELSE 'MARK' END"
+)
+@Table(name = "db_link")
 public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     private final static Logger logger = LogManager.getLogger(DBLink.class);
 
     @JsonView(View.SequenceAPI.class)
+    @Id
+    @Column(name = "dblink_zdb_id", nullable = false)
+    @GeneratedValue(generator = "zdbIdGenerator")
+    @org.hibernate.annotations.GenericGenerator(
+            name = "zdbIdGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "DBLINK"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            }
+    )
     private String zdbID;
+
     @JsonView(View.API.class)
+    @Column(name = "dblink_acc_num", nullable = false)
     private String accessionNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "dblink_acc_num", insertable = false, updatable = false)
+    private Accession accession;
+
     @JsonView(View.API.class)
+    @Column(name = "dblink_length")
     private Integer length;
+
     @JsonView({View.MarkerRelationshipAPI.class, View.SequenceDetailAPI.class})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dblink_fdbcont_zdb_id", nullable = false)
     private ReferenceDatabase referenceDatabase;
+
+    @OneToMany(mappedBy = "dataZdbID", fetch = FetchType.LAZY)
     private Set<PublicationAttribution> publications;
+
+    @Column(name = "dblink_linked_recid", nullable = false, insertable = false, updatable = false)
     private String dataZdbID;
+
+    @Transient
     private Integer version;
+
     @JsonView(View.MarkerRelationshipAPI.class)
+    @Column(name = "dblink_acc_num_display")
     private String accessionNumberDisplay;
+
     @JsonView(View.SequenceDetailAPI.class)
+    @Column(name = "dblink_info")
     private String linkInfo;
+
     @JsonView(View.SequenceAPI.class)
+    @Transient
     private Sequence sequence;
-
-    public String getLinkInfo() {
-        return linkInfo;
-    }
-
-    public void setLinkInfo(String linkInfo) {
-        this.linkInfo = linkInfo;
-    }
-
-    public String getAccessionNumberDisplay() {
-        return accessionNumberDisplay;
-    }
-
-    public void setAccessionNumberDisplay(String accessionNumberDisplay) {
-        this.accessionNumberDisplay = accessionNumberDisplay;
-    }
 
     @JsonView(View.SequenceAPI.class)
     @JsonProperty("type")
@@ -171,46 +198,6 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     }
 
 
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Integer getLength() {
-        return length;
-    }
-
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
-    public ReferenceDatabase getReferenceDatabase() {
-        return referenceDatabase;
-    }
-
-    public void setReferenceDatabase(ReferenceDatabase referenceDatabase) {
-        this.referenceDatabase = referenceDatabase;
-    }
-
-    public String getAccessionNumber() {
-        return accessionNumber;
-    }
-
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
-
-    public Set<PublicationAttribution> getPublications() {
-        return publications;
-    }
-
-    public void setPublications(Set<PublicationAttribution> publications) {
-        this.publications = publications;
-    }
-
     @JsonView(View.SequenceAPI.class)
     public String getPublicationIds() {
         return String.join(",", getPublicationIdsAsList());
@@ -244,22 +231,6 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 //    public void setRelatedEntities(Set<RecordAttribution> attributions) {
 //        this.attributions = attributions;
 //    }
-
-    public String getDataZdbID() {
-        return dataZdbID;
-    }
-
-    public void setDataZdbID(String dataZdbID) {
-        this.dataZdbID = dataZdbID;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 
     public boolean equals(Object o) {
         if (o instanceof DBLink dbLink) {
@@ -295,7 +266,6 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         result += (getReferenceDatabase() != null ? getReferenceDatabase().hashCode() : 0) * 17;
         return result;
     }
-
 
     public String toString() {
         String returnString = "";
@@ -349,5 +319,3 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         return getReferenceDatabase().isValidAccessionFormat(this.getAccessionNumber());
     }
 }
-
-

@@ -3,8 +3,12 @@
  */
 package org.zfin.sequence;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.JoinFormula;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
@@ -17,70 +21,50 @@ import java.util.Set;
 /**
  * A wrapper around the accession_bank table.
  */
+@Setter
+@Getter
+
+@Entity
+@Table(name = "accession_bank")
 public class Accession implements Comparable, Serializable {
 
-    private Logger logger = LogManager.getLogger(Accession.class);
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "accbk_pk_id", nullable = false)
     private Long ID;
+
+    @Column(name = "accbk_acc_num")
     private String number;
+
+    @Column(name = "accbk_defline")
     private String defline;
+
+    @Column(name = "accbk_length")
     private Integer length;
+
+    @Column(name = "accbk_abbreviation")
     private String abbreviation;
+
+    @Transient
     private Set<LinkageGroup> linkageGroups;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accbk_fdbcont_zdb_id", nullable = false)
     private ReferenceDatabase referenceDatabase;
+
+    @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<EntrezProtRelation> relatedEntrezAccessions;
 //    private Set<Accession> relatedAccessions;
+
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinFormula("(select dblink_acc_num from db_link where dblink_acc_num = accbk_acc_num)")
+    @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DBLink> dbLinks;
+
+    @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<MarkerDBLink> blastableMarkerDBLinks;
 
-
-    public Long getID() {
-        return ID;
-    }
-
-    public void setID(Long ID) {
-        this.ID = ID;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getDefline() {
-        return defline;
-    }
-
-    public void setDefline(String defline) {
-        this.defline = defline;
-    }
-
-    public Integer getLength() {
-        return length;
-    }
-
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
-    public ReferenceDatabase getReferenceDatabase() {
-        return referenceDatabase;
-    }
-
-    public void setReferenceDatabase(ReferenceDatabase referenceDatabase) {
-        this.referenceDatabase = referenceDatabase;
-    }
-
-    public Set<LinkageGroup> getLinkageGroups() {
-        return linkageGroups;
-    }
-
-    public void setLinkageGroups(Set<LinkageGroup> linkageGroups) {
-        this.linkageGroups = linkageGroups;
-    }
 
     public String getURL() {
         return referenceDatabase.getBaseURL();
@@ -93,23 +77,6 @@ public class Accession implements Comparable, Serializable {
 //        }
 //        return null;
 //    }
-
-
-    public Set<EntrezProtRelation> getRelatedEntrezAccessions() {
-        return relatedEntrezAccessions;
-    }
-
-    public void setRelatedEntrezAccessions(Set<EntrezProtRelation> relatedEntrezAccessions) {
-        this.relatedEntrezAccessions = relatedEntrezAccessions;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
 
 
     //    todo: update to use get/setMarkerDBLinks
@@ -143,32 +110,6 @@ public class Accession implements Comparable, Serializable {
         }
     }
 
-    public Set<DBLink> getDbLinks() {
-
-        if (this.dbLinks == null) {
-            HibernateUtil.currentSession().flush();
-            HibernateUtil.currentSession().refresh(this);
-        }
-        return this.dbLinks;
-    }
-
-    public void setDbLinks(Set<DBLink> dbLinks) {
-        this.dbLinks = dbLinks;
-    }
-
-
-    public Set<MarkerDBLink> getBlastableMarkerDBLinks() {
-        if (this.blastableMarkerDBLinks == null) {
-            HibernateUtil.currentSession().flush();
-
-            HibernateUtil.currentSession().refresh(this);
-        }
-        return this.blastableMarkerDBLinks;
-    }
-
-    public void setBlastableMarkerDBLinks(Set<MarkerDBLink> blastableMarkerDBLinks) {
-        this.blastableMarkerDBLinks = blastableMarkerDBLinks;
-    }
 
     public Species.Type getOrganism() {
         if (CollectionUtils.isEmpty(relatedEntrezAccessions)) {
