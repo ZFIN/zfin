@@ -979,42 +979,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
     }
 
-    public List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
-
-        String hql = """
-                 SELECT DISTINCT
-                     experiment
-                 FROM
-                     ExpressionExperiment2 experiment
-                     LEFT JOIN experiment.gene AS gene
-                     LEFT JOIN experiment.fishExperiment AS fishox
-                 WHERE
-                     experiment.publication.zdbID = :pubID
-                     AND (:geneID IS NULL OR gene.zdbID = :geneID)
-                     AND (:fishID IS NULL OR fishox.fish.zdbID = :fishID)
-            """;
-        Query<ExpressionExperiment2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionExperiment2.class);
-        query.setParameter("pubID", publicationID);
-        query.setParameter("geneID", geneZdbID);
-        query.setParameter("fishID", fishID);
-
-        //                   order by gene.abbreviationOrder,
-        //                            fishox.fish.name,
-        //                            fishox.experiment.name,
-        //                            experiment.assay.displayOrder
-        List<ExpressionExperiment2> orderedList = query.list().stream()
-            .sorted(
-                Comparator.comparing((ExpressionExperiment2 xp) -> getStringOrNull(xp, "gene.abbreviationOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
-                    .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.fish.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
-                    .thenComparing(xp -> getStringOrNull(xp, "fishExperiment.experiment.name"), Comparator.nullsFirst(Comparator.naturalOrder()))
-                    .thenComparing(xp -> getStringOrNull(xp, "assay.displayOrder"), Comparator.nullsFirst(Comparator.naturalOrder()))
-            )
-            .toList();
-
-        // Use LinkedHashSet to distinctify and preserve order
-        return new ArrayList<>(new LinkedHashSet<>(orderedList));
-    }
-
     private ExpressionResult2 getUnspecifiedExpressResult(ExpressionResult2 result) {
         GenericTerm unspecified = ontologyRepository.getTermByNameActive(Term.UNSPECIFIED, Ontology.ANATOMY);
         Session session = HibernateUtil.currentSession();
