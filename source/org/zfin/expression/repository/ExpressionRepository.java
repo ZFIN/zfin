@@ -170,19 +170,6 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID);
 
     /**
-     * Retrieves experiment that pertain to a given
-     * publication
-     * gene
-     * fish
-     *
-     * @param publicationID publication
-     * @param geneZdbID     gene ID
-     * @param fishID        genotype ID
-     * @return list of expression experiment
-     */
-    List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID);
-
-    /**
      * Retrieve an experiment figure stage for given pub, gene and fish.
      *
      * @param publicationID Publication

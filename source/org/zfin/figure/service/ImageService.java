@@ -43,14 +43,6 @@ public class ImageService {
         return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream(), publicationZdbId);
     }
 
-    public static Image processImage(Figure figure, String filePath, Boolean isVideoStill, String direction, String publicationZdbId) throws IOException {
-        // This method was made for the original Dorsky load, so it has a hard-coded owner
-        Person owner = (Person) HibernateUtil.currentSession().createQuery("from Person where zdbID = :zdbID", Person.class)
-            .setParameter("zdbID", "ZDB-PERS-030520-2")  //Yvonne
-            .uniqueResult();
-        return processImage(figure, owner, isVideoStill, filePath, new FileInputStream(filePath), publicationZdbId);
-    }
-
     private static Image createPlaceholderImage(Figure figure, Person owner, Boolean isVideoStill) {
         Image image = new Image();
         image.setFigure(figure);

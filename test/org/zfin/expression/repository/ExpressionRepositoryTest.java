@@ -215,26 +215,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getExpressionExperiments() {
-        String zdbID = "ZDB-PUB-990507-16";
-
-        List<ExpressionExperiment2> experiments = expRep.getExperiments(zdbID);
-        assertNotNull(experiments);
-        // alcam
-        String geneID = "ZDB-GENE-990415-30";
-        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
-        assertNotNull(experiments);
-
-        // alcam and WT
-//        String fishName = "WT";
-//        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
-//        assertTrue(experiments != null);
-        String fishZdbID = "ZDB-GENO-030619-2";
-        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
-        assertNotNull(experiments);
-    }
-
-    @Test
     public void getExpressionExperimentsNew() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -262,16 +242,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionExperiment2> experiments = expRep.getExperiments(zdbID);
         assertThat(experiments.size(), greaterThan(3));
-
-        // alcam
-        String geneID = "ZDB-GENE-990415-30";
-        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
-        assertThat(experiments.size(), greaterThan(2));
-
-        // alcam and WT
-        String fishZdbID = "ZDB-FISH-150901-29105";
-        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
-        assertThat(experiments.size(), greaterThan(2));
     }
 
 
