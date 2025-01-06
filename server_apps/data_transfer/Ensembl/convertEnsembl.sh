@@ -6,7 +6,7 @@
 #      -v            verbose
 #      fasta file
 
-echo "==| at Ensembl |=="
+echo "==| start convertEnsembl.sh |=="
 
 rm xdformat_ensembl_zf.log
 rm xdformat_ensembl_zf_only.log
