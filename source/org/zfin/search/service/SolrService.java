@@ -1001,9 +1001,15 @@ public class SolrService {
         );
 
         //category and type_0 are the keys in the filterQueryMap that we want to check for. The value has quotes around it, so we remove them
-        String category = filterQueryMap.get("category").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
-        String type = filterQueryMap.get("type_0").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
-
+        String category = "";
+        String type = "";
+        try {
+            category = filterQueryMap.get("category").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
+            type = filterQueryMap.get("type_0").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
+        } catch (Exception e) {
+            //default to "" and "" for category and type if there is an exception
+        }
+        
         //get the transformer for the category and type pair, or return the original inputStream if there is no transformer
         Function<InputStream, InputStream> transformer = categoryTypePairs.get(Pair.of(category, type));
         return transformer == null ? inputStream : transformer.apply(inputStream);
