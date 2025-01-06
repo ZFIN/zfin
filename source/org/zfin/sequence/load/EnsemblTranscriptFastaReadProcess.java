@@ -216,7 +216,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         transcriptDBLink.setLength(ensemblSequence.length());
         database.getDisplayGroups().add(nucleotideSequ);
         transcriptDBLink.setReferenceDatabase(database);
-        Locale locale = new Locale("fr", "FR");
+        Locale locale = new Locale("en", "US");
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
         String date = dateFormat.format(new Date());
         transcriptDBLink.setLinkInfo("Ensembl Load from " + date);
