@@ -2,6 +2,7 @@ package org.zfin.marker.repository;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.ScrollableResults;
@@ -76,6 +77,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
     private final static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private final static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
+    //postgresql can only bind a maximum of 32767 parameters (65535 if we upgrade postgresql driver to 42.4.0)
+    //https://stackoverflow.com/questions/49274390/postgresql-and-hibernate-java-io-ioexception-tried-to-send-an-out-of-range-inte
+    private final static int MAX_PARAMETER_SIZE = Short.MAX_VALUE;
+
     // utilities
     private final MarkerDBLinksTransformer markerDBLinkTransformer = new MarkerDBLinksTransformer();
 
@@ -104,17 +109,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<Marker> getMarkersByZdbIDs(List<String> zdbIDs) {
         String hql = "select m from Marker m where m.zdbID in (:IDs) ";
-        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
-        query.setParameterList("IDs", zdbIDs);
-        return query.list();
+
+        List<Marker> results = new ArrayList<>();
+        ListUtils.partition(zdbIDs, MAX_PARAMETER_SIZE).forEach(batch -> {
+            Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+            query.setParameterList("IDs", batch);
+            results.addAll(query.list());
+        });
+
+        return results;
     }
 
     @Override
     public List<Marker> getMarkersByZdbIDsJoiningAliases(List<String> zdbIDs) {
         String hql = "select m from Marker m join fetch m.aliases where m.zdbID in (:IDs) ";
-        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
-        query.setParameterList("IDs", zdbIDs);
-        return query.list();
+
+        List<Marker> results = new ArrayList<>();
+        ListUtils.partition(zdbIDs, MAX_PARAMETER_SIZE).forEach(batch -> {
+            Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+            query.setParameterList("IDs", batch);
+            results.addAll(query.list());
+        });
+
+        return results;
     }
 
     public SNP getSNPByID(String zdbID) {
