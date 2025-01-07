@@ -923,7 +923,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID) {
         String hql = """
-                    SELECT DISTINCT
+                    SELECT
                         experiment
                     FROM
                         ExpressionExperiment2 experiment
@@ -993,7 +993,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         Session session = HibernateUtil.currentSession();
         String hql = """
-                    SELECT DISTINCT efs FROM ExpressionFigureStage AS efs
+                    SELECT efs FROM ExpressionFigureStage AS efs
                     LEFT JOIN efs.expressionExperiment.gene AS gene
                     LEFT JOIN FETCH efs.startStage
                     LEFT JOIN FETCH efs.endStage
@@ -1026,7 +1026,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionExperiment2> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
 
         String hql = """
-                    SELECT DISTINCT
+                    SELECT
                         experiment
                     FROM
                         ExpressionExperiment2 experiment
