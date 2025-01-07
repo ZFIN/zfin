@@ -11,7 +11,6 @@ import java.util.List;
 public class AnalyticsReportDefinition {
     public String applicationName;
     public String propertyId;
-    public String viewId;
     public String reportName;
     public List<String> dimensions;
     public List<String> metrics;
@@ -19,5 +18,19 @@ public class AnalyticsReportDefinition {
     public String endDate;
     public Integer limit;
     public List<String> sort;
-    public String nextPageToken;
+
+    public Config convertToAnalyticsReportRunnerConfig() {
+        Config config = new Config();
+        config.applicationName = applicationName;
+        config.propertyId = propertyId;
+        config.reportName = reportName;
+        config.dimensions = dimensions;
+        config.metrics = metrics;
+        config.startDate = startDate;
+        config.endDate = endDate;
+        config.limit = limit;
+        config.sort = sort;
+
+        return config;
+    }
 }
