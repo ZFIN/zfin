@@ -5,7 +5,6 @@ import org.zfin.sequence.DBLink;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
@@ -52,7 +51,6 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
                     newDefline += defline[6] + " ";
                 }
                 newDefline += defline[1] + " " + defline[2];
-                newDefline += "\n";
                 List<String> blastLines = new ArrayList<>();
                 blastLines.add(newDefline);
                 blastEntryMap.put(protId, blastLines);
@@ -76,13 +74,10 @@ public class EnsemblTranscriptFastaReader extends EnsemblTranscriptBase {
     private static void writeFastaFile(Map<String, List<String>> blastEntryMap, File file) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         blastEntryMap.forEach((ensdart, blastLines) -> {
-            AtomicInteger index = new AtomicInteger(0);
             blastLines.forEach(blastLine -> {
                 try {
                     writer.write(blastLine);
-                    if (index.incrementAndGet() < blastLines.size() - 1) {
-                        writer.newLine();
-                    }
+                    writer.newLine();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
