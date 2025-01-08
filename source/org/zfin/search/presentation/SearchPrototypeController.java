@@ -655,7 +655,7 @@ public class SearchPrototypeController {
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
-                            solrService.transformSolrCsvToZfinCsv(filterQuery, connection.getInputStream())));
+                            solrService.transformSolrCsvToZfinCsv(query.getFilterQueries(), connection.getInputStream())));
 
             OutputStreamWriter out = new OutputStreamWriter(
                     new BufferedOutputStream(
