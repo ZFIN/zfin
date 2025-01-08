@@ -27,7 +27,7 @@ public class AnalyticsReportDefinitionList {
                 .startDate("2023-03-01")
                 .endDate("2023-03-02")
                 .limit(100000)
-                .sort(List.of("year", "month"))
+                .sort(List.of("totalUsers"))
                 .build(),
             AnalyticsReportDefinition.builder()
                 .applicationName("Hello Analytics Reporting")
