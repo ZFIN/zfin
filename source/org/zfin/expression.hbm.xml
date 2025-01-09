@@ -201,33 +201,6 @@
     <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given
          but probe = null is set then a trigger would fail.
          -->
-    <class name="org.zfin.expression.ExpressionExperiment" table="expression_experiment" dynamic-update="true"
-           dynamic-insert="true">
-        <id name="zdbID" type="string">
-            <column name="xpatex_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">XPAT</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-
-        <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id"/>
-        <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
-        <many-to-one name="fishExperiment" column="xpatex_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
-
-        <many-to-one name="gene" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
-        <many-to-one name="probe" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id"/>
-        <many-to-one name="antibody" column="xpatex_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
-        <many-to-one name="markerDBLink" column="xpatex_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
-
-        <set name="expressionResults" lazy="true" inverse="true">
-            <key column="xpatres_xpatex_zdb_id"/>
-            <one-to-many class="org.zfin.expression.ExpressionResult"/>
-        </set>
-
-
-    </class>
-
     <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
         <id name="id" type="long" column="cefs_pk_id"/>
 
@@ -238,47 +211,6 @@
 
     </class>
 
-
-    <class name="org.zfin.expression.ExpressionResult" table="expression_result">
-        <!--<id name="zdbID" type="string">
-            <column name="xpatres_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">XPATRES</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>-->
-        <id name="xpatresID" type="long">
-            <column name="xpatres_zdb_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-
-        <property name="expressionFound" column="xpatres_expression_found"/>
-        <property name="comment" column="xpatres_comments"/>
-
-        <many-to-one name="expressionExperiment" class="org.zfin.expression.ExpressionExperiment"
-                     column="xpatres_xpatex_zdb_id" not-null="true"/>
-
-        <component name="entity">
-            <many-to-one name="subterm" column="xpatres_subterm_zdb_id"/>
-            <many-to-one name="superterm" column="xpatres_superterm_zdb_id"/>
-        </component>
-
-        <many-to-one name="startStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_start_stg_zdb_id"/>
-        <many-to-one name="endStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_end_stg_zdb_id"/>
-
-        <set name="figures" table="expression_pattern_figure">
-            <key column="xpatfig_xpatres_zdb_id"/>
-            <many-to-many class="org.zfin.expression.Figure" column="xpatfig_fig_zdb_id"/>
-        </set>
-
-    </class>
-
-    <class name="org.zfin.expression.ExpressionResultFigure" table="expression_pattern_figure">
-        <composite-id>
-            <key-many-to-one name="figure" class="Figure" column="xpatfig_fig_zdb_id"/>
-            <key-many-to-one name="expressionResult" class="ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
-        </composite-id>
-    </class>
 
     <!-- This object should exist in the database -->
     <!--
@@ -336,7 +268,6 @@
     <!--<class name="org.zfin.expression.WildtypeExpressionExperiment" table="wildtype_expression_experiment" mutable="false">-->
     <!--<id name="id" column="id" type="java.lang.Long"/>-->
 
-    <!--<many-to-one name="expressionExperiment" column="wee_ee_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>-->
     <!--<many-to-one name="gene" column="wee_marker_zdb_id" class="org.zfin.marker.Marker"/>-->
     <!--<many-to-one name="superTerm" column="wee_super_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
     <!--<many-to-one name="subTerm" column="wee_sub_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
