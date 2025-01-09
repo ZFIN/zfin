@@ -32,7 +32,7 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
             content: (row) => <CommaSeparatedList>
                 {row.references.map(reference => {
                     return <a
-                        href={reference.curie}
+                        href={'/' + reference.pubModID}
                         dangerouslySetInnerHTML={{__html: reference.shortCitation}}
                         key={reference.curie}
                     />
