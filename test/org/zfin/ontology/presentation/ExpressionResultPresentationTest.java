@@ -1,7 +1,6 @@
 package org.zfin.ontology.presentation;
 
 import org.junit.Test;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;

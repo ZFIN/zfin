@@ -1,7 +1,6 @@
 package org.zfin.marker;
 
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,8 +8,6 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.profile.Person;
