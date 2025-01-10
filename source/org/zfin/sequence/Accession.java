@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.zfin.util.ZfinPropertyUtils.getPropertyOrNull;
+
 /**
  * A wrapper around the accession_bank table.
  */
@@ -94,11 +96,16 @@ public class Accession implements Comparable, Serializable {
      */
     public Set<MarkerDBLink> getBlastableMarkerDBLinks() {
         return getMarkerDBLinks().stream()
-                .filter(link -> {
-            ForeignDBDataType fdbdt = link.getReferenceDatabase().getForeignDBDataType();
-            return fdbdt.getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE)
-                    && (fdbdt.getDataType().equals(ForeignDBDataType.DataType.RNA) || fdbdt.getDataType().equals(ForeignDBDataType.DataType.POLYPEPTIDE));
-        }).collect(Collectors.toSet());
+                // filter out the ones that are not of super type sequence
+                .filter(l -> ForeignDBDataType.SuperType.SEQUENCE.equals(
+                        getPropertyOrNull(l, "referenceDatabase.foreignDBDataType.superType")))
+                // filter out the ones that are not of type RNA or Polypeptide
+                .filter(l -> Set.of(
+                                ForeignDBDataType.DataType.RNA,
+                                ForeignDBDataType.DataType.POLYPEPTIDE)
+                        .contains(getPropertyOrNull(
+                                l, "referenceDatabase.foreignDBDataType.dataType")))
+                .collect(Collectors.toSet());
     }
 
     public int compareTo(Object o) {

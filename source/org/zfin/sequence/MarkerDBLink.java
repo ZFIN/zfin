@@ -33,7 +33,7 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
         int result = 1;
         result += (getMarker() != null ? getMarker().hashCode() : 0) * 13;
         result += (getAccessionNumber() != null ? getAccessionNumber().hashCode() : 0) * 19;
-        result += (getReferenceDatabase() != null
+        result += (getReferenceDatabase() != null && getReferenceDatabase().getZdbID() != null
                         ? getReferenceDatabase().getZdbID().hashCode()
                         : 0)
                 * 17;
@@ -42,12 +42,12 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
 
     public String toString() {
         String returnString = "";
-        returnString += getZdbID() + "\n";
-        returnString += getAccessionNumber() + "\n";
-        returnString += getLength() + "\n";
-        returnString += getReferenceDatabase().getZdbID() + "\n";
-        returnString += getMarker().getZdbID() + "\n";
-        returnString += getMarker().getName() + "\n";
+        returnString += "zdbID: " + getZdbID() + "\n";
+        returnString += "accNum: " + getAccessionNumber() + "\n";
+        returnString += "length: " + getLength() + "\n";
+        returnString += "refDB: " + (getReferenceDatabase() == null ? "null" : getReferenceDatabase().getZdbID()) + "\n";
+        returnString += "marker zdbID: " + getMarker().getZdbID() + "\n";
+        returnString += "marker name: " + getMarker().getName() + "\n";
         return returnString;
     }
 
