@@ -878,37 +878,38 @@ public class HibernateProfileRepository implements ProfileRepository {
             return currentSession().createQuery(hql, Person.class)
                 .list();
         }
-        String hql = "from Person where unaccent(lastName) like unaccent(:lastName) order by lastName, firstName";
-        return currentSession().createQuery(hql, Person.class)
-            .setParameter("lastName", lastNameStartsWith + "%")
+
+        String sql = "select * from person where unaccent(last_name) like (unaccent(:lastName) || '%') order by last_name, first_name";
+        return currentSession().createNativeQuery(sql, Person.class)
+            .setParameter("lastName", lastNameStartsWith)
             .list();
     }
 
     @Override
     public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith, String firstNameStartsWith) {
-        String hql = """
-            from Person
-            where lower(unaccent(lastName)) like lower(unaccent(:lastName))
-            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
-            ORDER BY lastName, firstName
+        String sql = """
+            select * from person
+            where lower(unaccent(last_name))  like lower(unaccent(:lastName))  || '%'
+            AND   lower(unaccent(first_name)) like lower(unaccent(:firstName)) || '%'
+            ORDER BY last_name, first_name
             """;
-        Query<Person> query = currentSession().createQuery(hql, Person.class);
-        query.setParameter("lastName", lastNameStartsWith + "%");
-        query.setParameter("firstName", firstNameStartsWith + "%");
+        Query<Person> query = currentSession().createNativeQuery(sql, Person.class);
+        query.setParameter("lastName", lastNameStartsWith);
+        query.setParameter("firstName", firstNameStartsWith);
         return query.getResultList();
     }
 
     @Override
     public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName, String firstNameStartsWith) {
-        String hql = """
-            from Person
-            where lower(unaccent(lastName)) = lower(unaccent(:lastName))
-            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
-            ORDER BY lastName, firstName
+        String sql = """
+            select * from person
+            where lower(unaccent(last_name)) = lower(unaccent(:lastName))
+            AND   lower(unaccent(first_name)) like lower(unaccent(:firstName)) || '%'
+            ORDER BY last_name, first_name
             """;
-        Query<Person> query = currentSession().createQuery(hql, Person.class);
+        Query<Person> query = currentSession().createNativeQuery(sql, Person.class);
         query.setParameter("lastName", lastName);
-        query.setParameter("firstName", firstNameStartsWith + "%");
+        query.setParameter("firstName", firstNameStartsWith);
         return query.getResultList();
     }
 
@@ -1032,7 +1033,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Query<Person> query = currentSession()
             .createQuery("""
             select distinct p from Person p
-            join p.accountInfoList a
+            join p.accountInfo a
             where a.curator = true
             order by p.fullName
                 """, Person.class);
@@ -1043,7 +1044,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Query<Person> query = currentSession()
             .createQuery("""
                     select distinct p from Person p
-                    join p.accountInfoList a
+                    join p.accountInfo a
                     where a.student = true
                     order by p.fullName
                 """, Person.class);

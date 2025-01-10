@@ -136,9 +136,8 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     //    private String ownerID;
 
-    //TODO: Add translation for <key column="zdb_id"/>?
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AccountInfo> accountInfoList;
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private AccountInfo accountInfo;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -163,7 +162,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             joinColumns = @JoinColumn(name = "source_id"),
             inverseJoinColumns = @JoinColumn(name = "target_id")
     )
-    @OrderBy("pub_date desc")
+    @OrderBy("publicationDate desc")
     private Set<Publication> publications = new HashSet<>();
 
     
@@ -235,15 +234,11 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
     }
 
-    public AccountInfo getAccountInfo() {
-        return CollectionUtils.isEmpty(accountInfoList) ? null : accountInfoList.iterator().next();
-    }
-
     public void setAccountInfo(AccountInfo accountInfo) {
-        if(CollectionUtils.isEmpty(accountInfoList)){
-            accountInfoList = new HashSet<>();
+        this.accountInfo = accountInfo;
+        if (accountInfo != null) {
+            accountInfo.setPerson(this);
         }
-        accountInfoList.add(accountInfo);
     }
 
     public int hashCode() {
