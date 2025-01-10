@@ -201,6 +201,13 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/analytics/report/new">Analytics</a>
+                            </td>
+                        </tr>
+                        <tr>
                             <th>
                                 <b>Database Configuration</b>
                             </td>

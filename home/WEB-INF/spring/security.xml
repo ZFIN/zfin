@@ -223,6 +223,7 @@
         <security:intercept-url pattern="/ajax/curation*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/ajax/curation/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/curation/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/analytics/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
 
     </security:http>
 
