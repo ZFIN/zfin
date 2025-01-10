@@ -611,7 +611,10 @@ public class MarkerService {
                                 && dblink.getMarker().equals(gene)) {
                             logger.info("deleting " + dblink.getZdbID()
                                     + " because a marker relationship made the db_link unnecessary");
-                            infrastructureRepository.deleteActiveDataByZdbID(dblink.getZdbID());
+                            String zdbID = dblink.getZdbID();
+                            acc.getDbLinks().remove(dblink);
+                            HibernateUtil.currentSession().delete(dblink);
+                            infrastructureRepository.deleteActiveDataByZdbID(zdbID);
                         }
                     }
 

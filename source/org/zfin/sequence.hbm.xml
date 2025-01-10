@@ -78,50 +78,6 @@
         <many-to-one name="referenceDatabase" class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id" not-null="true" />
     </class>
 
-    <class name="org.zfin.sequence.Entrez" table="entrez_gene">
-        <id name="entrezAccNum" type="string">
-            <column name="eg_acc_num" not-null="true"/>
-            <generator class="native"/>
-        </id>
-        <!--Perhaps the class column should change; species is really common name, we don't want to display "Homo Sapiens", human rather-->
-        <property name="abbreviation" column="eg_symbol" type="string"/>
-        <property name="name" column="eg_name" type="string"/>
-        <set name="relatedProteinAccessions" table="entrez_to_protein" lazy="true">
-            <key column="ep_entrez_acc_num"/>
-            <one-to-many class="EntrezProtRelation"/>
-        </set>
-        <set name="relatedOMIMAccessions" table="entrez_to_xref" lazy="true">
-            <key column="ex_entrez_acc_num"/>
-            <one-to-many class="EntrezOMIM"/>
-        </set>
-        <set name="relatedMGIAccessions" table="entrez_to_xref" lazy="true">
-            <key column="ex_entrez_acc_num"/>
-            <one-to-many class="EntrezMGI"/>
-        </set>
-    </class>
-
-    <class name="org.zfin.sequence.EntrezOMIM" table="entrez_to_xref">
-
-        <composite-id>
-            <key-property name="entrezAccessionNum" column="ex_entrez_acc_num" type="string"/>
-            <key-property name="omimAccession" column="ex_xref" type="string"/>
-        </composite-id>
-        <many-to-one name="entrezAccession" class="org.zfin.sequence.Entrez"
-                     column="ex_entrez_acc_num" lazy="no-proxy" not-null="true" insert="false" update="false"/>
-
-    </class>
-
-    <class name="org.zfin.sequence.EntrezMGI" table="entrez_to_xref">
-
-        <composite-id>
-            <key-property name="entrezAccessionNum" column="ex_entrez_acc_num" type="string"/>
-            <key-property name="mgiAccession" column="ex_xref" type="string"/>
-        </composite-id>
-        <many-to-one name="entrezAccession" class="org.zfin.sequence.Entrez"
-                     column="ex_entrez_acc_num" lazy="no-proxy" not-null="true" insert="false" update="false"/>
-
-    </class>
-
     <class name="org.zfin.sequence.ReplacedAccessionNumber" table="replaced_accession_number">
         <composite-id>
             <key-property name="oldAccessionNumber" column="ran_old_acc_num" type="string"/>

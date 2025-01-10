@@ -54,7 +54,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     private String accessionNumber;
 
     @ManyToOne
-    @JoinColumn(name = "dblink_acc_num", insertable = false, updatable = false)
+    @JoinColumn(name = "dblink_acc_num", referencedColumnName = "accbk_acc_num", insertable = false, updatable = false)
     private Accession accession;
 
     @JsonView(View.API.class)

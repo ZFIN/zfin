@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
@@ -323,6 +324,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
     }
 
+    @Test
+    public void fetchAccessionAndNestedAttributes() {
+        String accessionNumber = "BC154170";
+        List<Accession> accessionList = getSequenceRepository().getAccessionsByNumber(accessionNumber);
+        assertNotNull(accessionList);
+        assertTrue(accessionList.size() > 0);
+        Accession accession = accessionList.get(0);
+        assertNotNull(accession.getReferenceDatabase());
+        assertNotNull(accession.getReferenceDatabase().getForeignDB());
+        assertNotNull(accession.getBlastableMarkers());
+        assertNotNull(accession.getBlastableMarkerDBLinks());
+
+        Set<MarkerDBLink> blastableMarkers = accession.getBlastableMarkerDBLinks();
+        assertTrue("At least one blastable marker", blastableMarkers.size() > 1);
+    }
 
     @Test
     public void testRemoveRedundantDBLinks() {
@@ -384,18 +400,20 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String curationPubZdbID = "ZDB-PUB-020723-3";
         String journalPubZdbID = "ZDB-PUB-041006-7";
 
-        //this case will get a deletion
+        //this case will get a deletion because the same pub is used for both
         markerRepository.addDBLink(gene, acc1.getNumber(), refDb, curationPubZdbID);
         markerRepository.addDBLink(segment, acc1.getNumber(), refDb, curationPubZdbID);
         markerRepository.addSmallSegmentToGene(gene, segment, curationPubZdbID);
 
-        //this case won't have the dblink deleted
+        //this case won't have the dblink deleted because the pubs are different
         markerRepository.addDBLink(gene2, acc2.getNumber(), refDb, journalPubZdbID);
         markerRepository.addDBLink(segment2, acc2.getNumber(), refDb, curationPubZdbID);
         markerRepository.addSmallSegmentToGene(gene2, segment2, curationPubZdbID);
 
         //make sure it's all in the database before testing
         session.flush();
+        session.refresh(acc1);
+        session.refresh(acc2);
 
         //try the cleanup function
         Set<Accession> accessions = new HashSet<>();
@@ -410,8 +428,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.refresh(acc1);
         session.refresh(acc2);
 
-        assertEquals("test accession acc1 should have one marker", acc1.getMarkers().size(), 1);
-        assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
+        assertEquals("test accession acc1 should have one marker",1, acc1.getMarkers().size());
+        assertEquals("test accession acc2 should have two markers",2, acc2.getMarkers().size());
     }
 
 

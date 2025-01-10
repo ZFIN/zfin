@@ -1,63 +1,35 @@
 package org.zfin.sequence;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Set;
 
-
+@Entity
+@Table(name = "entrez_gene")
+@Setter
+@Getter
 public class Entrez {
 
+    @Id
+    @Column(name = "eg_acc_num", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String entrezAccNum;
+
+    @Column(name = "eg_symbol")
     private String abbreviation;
+
+    @Column(name = "eg_name")
     private String name;
+
+    @OneToMany(mappedBy = "entrezAccession", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EntrezOMIM> relatedOMIMAccessions;
 
-    public String getEntrezAccNum() {
-        return entrezAccNum;
-    }
-
-    public void setEntrezAccNum(String entrezAccNum) {
-        this.entrezAccNum = entrezAccNum;
-    }
-
-    public Set<EntrezProtRelation> getRelatedProteinAccessions() {
-        return relatedProteinAccessions;
-    }
-
-    public void setRelatedProteinAccessions(Set<EntrezProtRelation> relatedProteinAccessions) {
-        this.relatedProteinAccessions = relatedProteinAccessions;
-    }
-
+    @OneToMany(mappedBy = "entrezAccession", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EntrezMGI> relatedMGIAccessions;
+
+    @OneToMany(mappedBy = "entrezAccession", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EntrezProtRelation> relatedProteinAccessions;
 
-    public Set<EntrezOMIM> getRelatedOMIMAccessions() {
-        return relatedOMIMAccessions;
-    }
-
-    public void setRelatedOMIMAccessions(Set<EntrezOMIM> relatedOMIMAccessions) {
-        this.relatedOMIMAccessions = relatedOMIMAccessions;
-    }
-
-    public Set<EntrezMGI> getRelatedMGIAccessions() {
-        return relatedMGIAccessions;
-    }
-
-    public void setRelatedMGIAccessions(Set<EntrezMGI> relatedMGIAccessions) {
-        this.relatedMGIAccessions = relatedMGIAccessions;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

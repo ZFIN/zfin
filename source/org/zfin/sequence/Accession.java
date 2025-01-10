@@ -7,27 +7,23 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.annotations.JoinFormula;
 import org.zfin.Species;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A wrapper around the accession_bank table.
  */
 @Setter
 @Getter
-
 @Entity
 @Table(name = "accession_bank")
 public class Accession implements Comparable, Serializable {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,34 +58,23 @@ public class Accession implements Comparable, Serializable {
     @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DBLink> dbLinks;
 
-    @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<MarkerDBLink> blastableMarkerDBLinks;
-
-
     public String getURL() {
         return referenceDatabase.getBaseURL();
     }
 
-//    public Accession getEntrezGeneAccession () {
-//        for (Accession rc : relatedAccessions){
-//            if (rc.getReferenceDatabase().getNumber().equals("Entrez"))
-//                return rc;
-//        }
-//        return null;
-//    }
-
-
     //    todo: update to use get/setMarkerDBLinks
-
     public List<Marker> getMarkers() {
-        List<Marker> markers = new ArrayList<Marker>();
-        for (DBLink link : getDbLinks()) {
-            // for some reason this doesn't seem to always work here, so use a try catch block, as well
-            if (link instanceof MarkerDBLink markerLink) {
-                markers.add(markerLink.getMarker());
-            }
+        return getMarkerDBLinks().stream().map(MarkerDBLink::getMarker).collect(Collectors.toList());
+    }
+
+    public Set<MarkerDBLink> getMarkerDBLinks() {
+        if (getDbLinks() == null) {
+            return Set.of();
         }
-        return markers;
+        return getDbLinks().stream()
+                .filter(link -> link instanceof MarkerDBLink)
+                .map(link -> (MarkerDBLink) link)
+                .collect(Collectors.toSet());
     }
 
     public List<Marker> getBlastableMarkers() {
@@ -102,6 +87,20 @@ public class Accession implements Comparable, Serializable {
         return markers;
     }
 
+    /**
+     * Get all the blastable marker db links.
+     * This is a subset of DBLinks that are of type MarkerDBLink and have a reference database that is of type sequence and either RNA or Polypeptide.
+     * @return
+     */
+    public Set<MarkerDBLink> getBlastableMarkerDBLinks() {
+        return getMarkerDBLinks().stream()
+                .filter(link -> {
+            ForeignDBDataType fdbdt = link.getReferenceDatabase().getForeignDBDataType();
+            return fdbdt.getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE)
+                    && (fdbdt.getDataType().equals(ForeignDBDataType.DataType.RNA) || fdbdt.getDataType().equals(ForeignDBDataType.DataType.POLYPEPTIDE));
+        }).collect(Collectors.toSet());
+    }
+
     public int compareTo(Object o) {
         if (o instanceof Accession a) {
             return a.getNumber().compareTo(getNumber());
@@ -109,7 +108,6 @@ public class Accession implements Comparable, Serializable {
             return 0;
         }
     }
-
 
     public Species.Type getOrganism() {
         if (CollectionUtils.isEmpty(relatedEntrezAccessions)) {
@@ -155,5 +153,3 @@ public class Accession implements Comparable, Serializable {
         return false;
     }
 }
-
-
