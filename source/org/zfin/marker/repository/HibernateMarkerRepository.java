@@ -971,10 +971,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<MarkerFamilyName> getMarkerFamilyNamesBySubstring(String substring) {
 
-        List<MarkerFamilyName> families = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like :name || '%' order by 1 asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
+        List<MarkerFamilyName> families = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like :name || '%' order by markerFamilyName asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
 
-
-        List<MarkerFamilyName> familiesContains = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like  '%' || :name || '%' order by 1 asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
+        List<MarkerFamilyName> familiesContains = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like  '%' || :name || '%' order by markerFamilyName asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
         familiesContains.forEach(familyName -> {
             if (!families.contains(familyName)) families.add(familyName);
         });
@@ -1317,7 +1316,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         sqlQueryAllStr += "order by gene.mrkr_abbrev_order ";
 
-        NativeQuery sqlAllQquery = session.createNativeQuery(sqlQueryAllStr);
+        NativeQuery<Tuple> sqlAllQquery = session.createNativeQuery(sqlQueryAllStr, Tuple.class);
         sqlAllQquery.setParameter("aoterm", aoTerm.getZdbID());
         sqlAllQquery.setParameter("type", "High-Quality-Probe");
         ScrollableResults scrollableResults = sqlAllQquery.scroll();

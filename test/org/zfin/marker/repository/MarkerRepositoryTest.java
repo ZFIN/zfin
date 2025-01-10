@@ -608,7 +608,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
-        NativeQuery query = session.createNativeQuery(hql);
+        NativeQuery query = session.createNativeQuery(hql, Tuple.class);
         // organism subdivision
         query.setParameter("aoterm", "ZDB-TERM-100331-1266");
         query.setParameter("type", "High-Quality-Probe");
