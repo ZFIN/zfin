@@ -125,7 +125,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int deleteRecordAttribution(String dataZdbID, String sourceZdbId) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("delete from RecordAttribution ra where ra.dataZdbID=:dataZdbID and ra.sourceZdbID = :sourceZdbID");
+        Query query = session.createNativeQuery("delete from record_attribution ra where ra.recattrib_data_zdb_id=:dataZdbID and ra.recattrib_source_zdb_id = :sourceZdbID");
         query.setParameter("dataZdbID", dataZdbID);
         query.setParameter("sourceZdbID", sourceZdbId);
         return query.executeUpdate();

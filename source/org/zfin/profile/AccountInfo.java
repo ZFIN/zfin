@@ -52,7 +52,7 @@ public class AccountInfo implements Serializable {
     private Date loginDate;
     @Column(name = "previous_login")
     private Date previousLoginDate;
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
     @Column(name = "cookie")
