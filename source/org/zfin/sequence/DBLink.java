@@ -27,8 +27,13 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorFormula(
-        "CASE get_obj_type(dblink_linked_recid) WHEN 'ORTHO' THEN 'ORTH' WHEN 'TERM' THEN 'TERM' " +
-                "WHEN 'TSCRIPT' THEN 'TSCR' WHEN 'ALT' THEN 'ALT' ELSE 'MARK' END"
+        "CASE get_obj_type(dblink_linked_recid) " + 
+        " WHEN 'ORTHO' THEN 'ORTH' " + 
+        " WHEN 'TERM' THEN 'TERM' " +
+        " WHEN 'TSCRIPT' THEN 'TSCR' " + 
+        " WHEN 'ALT' THEN 'ALT' " + 
+        " ELSE 'MARK' " + 
+        " END"
 )
 @Table(name = "db_link")
 public abstract class DBLink implements EntityAttribution, EntityZdbID {
