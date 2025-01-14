@@ -18,9 +18,7 @@ import org.zfin.sequence.reno.Candidate;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.service.RenoService;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -151,12 +149,12 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
 
         Accession geneAccession = new Accession();
         geneAccession.setNumber("ACC:GENE1");
-        geneAccession.setBlastableMarkerDBLinks(gene1DBLinks);
+        geneAccession.setDbLinks(new HashSet<>(gene1DBLinks));
 
         hit2Accession.setNumber("ACC:EST2");
         hit2Accession.setDbLinks( est2DBLinks);
 
-        hit2Accession.setBlastableMarkerDBLinks(est2MarkerDBLinks  );
+        hit2Accession.setDbLinks(new HashSet<>(est2MarkerDBLinks));
         hit2.setTargetAccession(hit2Accession);
         hit2.setQuery(query);
 
@@ -165,7 +163,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
         hit1Accession.setNumber("ACC:EST1");
         hit1Accession.setDbLinks( est1DBLinks);
 
-        hit1Accession.setBlastableMarkerDBLinks(  est1MarkerDBLinks);
+        hit1Accession.setDbLinks(new HashSet<>(est1MarkerDBLinks));
         hit1.setQuery(query);
         hit1.setTargetAccession(hit1Accession);
         blastHits.add(hit1) ;

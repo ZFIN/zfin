@@ -28,8 +28,8 @@ public class AccountInfo implements Serializable {
     @Column(name = "login", nullable = false)
     private String login;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zdb_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zdb_id", referencedColumnName = "zdb_id")
     private Person person;
 
     @Id
@@ -38,7 +38,7 @@ public class AccountInfo implements Serializable {
     @GenericGenerator(name = "foreignGenerator", strategy = "foreign",
             parameters = @org.hibernate.annotations.Parameter(name = "property", value = "person"))
     private String zdbID;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     private transient String pass1;
@@ -52,7 +52,7 @@ public class AccountInfo implements Serializable {
     private Date loginDate;
     @Column(name = "previous_login")
     private Date previousLoginDate;
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
     @Column(name = "cookie")
