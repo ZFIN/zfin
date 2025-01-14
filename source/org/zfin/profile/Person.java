@@ -234,13 +234,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
     }
 
-    public void setAccountInfo(AccountInfo accountInfo) {
-        this.accountInfo = accountInfo;
-        if (accountInfo != null) {
-            accountInfo.setPerson(this);
-        }
-    }
-
     public int hashCode() {
         if (zdbID == null) {
             return getZdbID().hashCode();

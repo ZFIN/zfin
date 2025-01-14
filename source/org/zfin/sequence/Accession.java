@@ -53,10 +53,7 @@ public class Accession implements Comparable, Serializable {
 
     @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<EntrezProtRelation> relatedEntrezAccessions;
-//    private Set<Accession> relatedAccessions;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinFormula("(select dblink_acc_num from db_link where dblink_acc_num = accbk_acc_num)")
     @OneToMany(mappedBy = "accession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DBLink> dbLinks;
 
