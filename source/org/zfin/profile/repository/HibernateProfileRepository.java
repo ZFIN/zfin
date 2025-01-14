@@ -879,6 +879,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .list();
         }
 
+        //TODO: unaccent and like don't work in hql so we need to use sql. However, we can extend hql like so: https://stackoverflow.com/a/77703596
         String sql = "select * from person where unaccent(last_name) like (unaccent(:lastName) || '%') order by last_name, first_name";
         return currentSession().createNativeQuery(sql, Person.class)
             .setParameter("lastName", lastNameStartsWith)
