@@ -45,6 +45,39 @@ public class NCBIEfetch {
         return getSequenceForAccession(accession, Type.POLYPEPTIDE);
     }
 
+    /**
+     * Search NCBI API by accessions (comma separated)
+     * @param accession
+     * @param type
+     * @param retmax
+     * @return
+     * @throws ServiceConnectionException
+     */
+    public static String searchSequenceJsonForAccession(String accession, Type type, Integer retmax) throws ServiceConnectionException {
+        return new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                .with("db", type.getVal())
+                .with("term", accession)
+                .with("retmode", "json")
+                .with("retmax", retmax)
+                .fetchRawText();
+    }
+
+    /**
+     * Get summary info for Type by list of IDs (comma separated)
+     * @param ids
+     * @param type
+     * @param retmax
+     * @return
+     * @throws ServiceConnectionException
+     */
+    public static String getSequenceSummaryJsonByID(String ids, Type type, Integer retmax) throws ServiceConnectionException {
+        return new NCBIRequest(NCBIRequest.Eutil.SUMMARY)
+                .with("db", type.getVal())
+                .with("id", ids)
+                .with("retmode", "json")
+                .with("retmax", retmax)
+                .fetchRawText();
+    }
 
     public static List<Sequence> getSequenceForAccession(String accession, Type type) {
 

@@ -200,6 +200,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new RemoveIgnoreActionsHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
         pipeline.addHandler(new FlagPotentialIssuesHandler());
+        pipeline.addHandler(new CheckLostUniprotsForObsoletesHandler());
 
         return pipeline.execute();
     }

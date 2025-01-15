@@ -49,7 +49,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         }
     }
 
-    private List<RichSequenceAdapter> getFilteredRichSequences() throws IOException, BioException {
+    public List<RichSequenceAdapter> getFilteredRichSequences() throws IOException, BioException {
         initIO();
         initAll();
 

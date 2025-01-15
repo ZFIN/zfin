@@ -51,12 +51,14 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED("Multiple Genes per Accession: Contains Approved Accession"),
         MATCH_BY_REFSEQ("Matched via RefSeq: Single Gene per Accession"),
         LOST_UNIPROT("ZFIN Gene Losing UniProt Accession"),
+        LOST_UNIPROT_DUE_TO_OBSOLETE("ZFIN Gene Losing UniProt Due to Obsolete"),
         LOST_UNIPROT_PREV_MATCH_BY_GB("Previously Matched by GenBank: No RefSeq Match"),
         LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match"),
         LEGACY_PROBLEM_FILE("Legacy Problem File"),
         LEGACY_PROBLEM_FILE_LOAD("Legacy Problem File - Load"),
         LEGACY_PROBLEM_FILE_DELETE("Legacy Problem File - Delete"),
         REMOVE_ATTRIBUTION("Remove Attribution"),
+        REMOVE_ATTRIBUTION_DUE_TO_OBSOLETE("Remove Attribution Due to Obsolete"),
         ADD_ATTRIBUTION("Add Attribution"),
         GENE_LOST_ALL_UNIPROTS("ZFIN Gene Lost All UniProt Accessions"),
         GENE_GAINS_FIRST_UNIPROT("ZFIN Gene Gains First UniProt Accession");
@@ -101,6 +103,17 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
                 .thenComparing(obj -> obj.details, ObjectUtils::compare)
                 ;
         return comparator.compare(this, o);
+    }
+
+    public void resetSubTypeByObsoletion(String d) {
+        if (subType.equals(SubType.LOST_UNIPROT)) {
+            setSubType(SubType.LOST_UNIPROT_DUE_TO_OBSOLETE);
+        } else if (subType.equals(SubType.REMOVE_ATTRIBUTION)) {
+            setSubType(SubType.REMOVE_ATTRIBUTION_DUE_TO_OBSOLETE);
+        }
+        String newDetails = (details == null ? "" : details);
+        newDetails += "\n\n" + d;
+        setDetails(newDetails.trim());
     }
 
 }
