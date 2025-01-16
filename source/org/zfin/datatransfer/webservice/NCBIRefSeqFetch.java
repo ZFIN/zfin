@@ -5,11 +5,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
 
 import java.io.*;
 import java.util.*;
 
+@Log4j2
 public class NCBIRefSeqFetch {
 
     public static final int MAX_RESULTS = 200;
@@ -118,8 +120,9 @@ public class NCBIRefSeqFetch {
 
     private static Set<String> getNcbiIDsByAccessions(List<String> ids, NCBIEfetch.Type sequenceType) {
         String commaSeparatedAccessions = String.join(",", ids);
+        String resultsJson = "";
         try {
-            String resultsJson = NCBIEfetch.searchSequenceJsonForAccession(commaSeparatedAccessions, sequenceType, MAX_RESULTS);
+            resultsJson = NCBIEfetch.searchSequenceJsonForAccession(commaSeparatedAccessions, sequenceType, MAX_RESULTS);
             Map map = (Map) ((new ObjectMapper()).readValue(resultsJson, Object.class));
 
             //esearchresult.idList
@@ -127,6 +130,8 @@ public class NCBIRefSeqFetch {
             List<String> idlist = (List) searchResults.get("idlist");
             return new HashSet<>(idlist);
         } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error("Results json:\n\n" + resultsJson);
             throw new RuntimeException(e);
         }
     }
