@@ -1,5 +1,5 @@
 /docker/tomcat/postgresql-42.2.18.jar filter=lfs diff=lfs merge=lfs -text
-/home/WEB-INF/lib/AnalyticsReportingApp-1.0.0.jar filter=lfs diff=lfs merge=lfs -text
+/home/WEB-INF/lib/AnalyticsReportingApp-1.0.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/FastInfoset-1.2.15.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/XmlSchema-1.4.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/activation-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
