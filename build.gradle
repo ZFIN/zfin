@@ -608,7 +608,7 @@ dependencies {
     implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
     implementation group: 'taglibs', name: 'standard', version: '1.1.2'
 
-    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.0.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
+    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.1.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
     implementation files('home/WEB-INF/lib/agr_curation_api-v0.36.0-rc1.jar')
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/confluence-soap-v2.jar')
