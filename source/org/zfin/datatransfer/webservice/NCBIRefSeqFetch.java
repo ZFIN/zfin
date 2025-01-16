@@ -1,18 +1,19 @@
 package org.zfin.datatransfer.webservice;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections4.ListUtils;
-import org.zfin.uniprot.task.UniProtLoadTempTask;
 
 import java.io.*;
 import java.util.*;
 
 public class NCBIRefSeqFetch {
+
+    public static final int MAX_RESULTS = 200;
+
     public record NCBIRefSeqData(String uid, String caption, String comment, String status, String replacedby) {
     }
 
@@ -69,9 +70,8 @@ public class NCBIRefSeqFetch {
                 throw new IllegalArgumentException("Invalid refseq (Expecting string starting with NM, XM, XP, or NP: " + refseq);
             }
         }
-
-        List<List<String>> proteinBatches = ListUtils.partition(proteinRefseqs, UniProtLoadTempTask.MAX_RESULTS);
-        List<List<String>> nucleotideBatches = ListUtils.partition(nucleotideRefseqs, UniProtLoadTempTask.MAX_RESULTS);
+        List<List<String>> proteinBatches = ListUtils.partition(proteinRefseqs, MAX_RESULTS);
+        List<List<String>> nucleotideBatches = ListUtils.partition(nucleotideRefseqs, MAX_RESULTS);
 
         Map<String, NCBIRefSeqData> dataByRefseq = new HashMap<>();
         for (List<String> batch : proteinBatches) {
@@ -99,7 +99,7 @@ public class NCBIRefSeqFetch {
     private static Map<String, NCBIRefSeqData> getNcbiSequenceDetailsByIDs(Set<String> ids, NCBIEfetch.Type type) {
         Map<String, NCBIRefSeqData> returnData = new HashMap<>();
         try {
-            String results = NCBIEfetch.getSequenceSummaryJsonByID(String.join(",", ids), type, UniProtLoadTempTask.MAX_RESULTS);
+            String results = NCBIEfetch.getSequenceSummaryJsonByID(String.join(",", ids), type, MAX_RESULTS);
             Map map = (Map) ((new ObjectMapper()).readValue(results, Object.class));
             Map result = (Map) map.get("result");
             Set<String> keys = (Set) result.keySet();
@@ -119,7 +119,7 @@ public class NCBIRefSeqFetch {
     private static Set<String> getNcbiIDsByAccessions(List<String> ids, NCBIEfetch.Type sequenceType) {
         String commaSeparatedAccessions = String.join(",", ids);
         try {
-            String resultsJson = NCBIEfetch.searchSequenceJsonForAccession(commaSeparatedAccessions, sequenceType, UniProtLoadTempTask.MAX_RESULTS);
+            String resultsJson = NCBIEfetch.searchSequenceJsonForAccession(commaSeparatedAccessions, sequenceType, MAX_RESULTS);
             Map map = (Map) ((new ObjectMapper()).readValue(resultsJson, Object.class));
 
             //esearchresult.idList
