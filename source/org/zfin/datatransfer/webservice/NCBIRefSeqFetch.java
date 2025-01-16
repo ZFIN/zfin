@@ -15,6 +15,7 @@ import java.util.*;
 public class NCBIRefSeqFetch {
 
     public static final int MAX_RESULTS = 200;
+    public static final int WAIT_TIME = 2000; //wait 2 seconds between api requests to avoid throttling issues
 
     public record NCBIRefSeqData(String uid, String caption, String comment, String status, String replacedby) {
     }
@@ -78,15 +79,28 @@ public class NCBIRefSeqFetch {
         Map<String, NCBIRefSeqData> dataByRefseq = new HashMap<>();
         for (List<String> batch : proteinBatches) {
             Set<String> tempIDs = getNcbiIDsByAccessions(batch, NCBIEfetch.Type.POLYPEPTIDE);
+            sleepBetweenRequests();
             dataByRefseq.putAll(getNcbiSequenceDetailsByIDs(tempIDs, NCBIEfetch.Type.POLYPEPTIDE));
+            sleepBetweenRequests();
         }
 
         for (List<String> batch : nucleotideBatches) {
             Set<String> tempIDs = getNcbiIDsByAccessions(batch, NCBIEfetch.Type.NUCLEOTIDE);
+            sleepBetweenRequests();
             dataByRefseq.putAll(getNcbiSequenceDetailsByIDs(tempIDs, NCBIEfetch.Type.NUCLEOTIDE));
+            sleepBetweenRequests();
         }
 
         return dataByRefseq;
+    }
+
+    private void sleepBetweenRequests() {
+        try {
+            Thread.sleep(WAIT_TIME);
+        } catch (InterruptedException e) {
+            log.error("Thread interrupted while sleeping");
+            log.error(e);
+        }
     }
 
     public static void writeCache(File outputFile, Map<String, NCBIRefSeqData> contents) throws JsonProcessingException, FileNotFoundException {
