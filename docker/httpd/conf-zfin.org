@@ -5,10 +5,8 @@
     ServerAlias     crick.zfin.org
     ServerAlias     stage.zfin.org
     DocumentRoot	/srv/www/zfin.org/home
-    #RemoteIPHeader X-Real-IP
-    #RemoteIPInternalProxy 172.16.0.0/12
-    #LogFormat "%a %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
-    LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
+    LogFormat "%{X-Real-IP}i %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
+    #LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
     LogFormat "{ \"@timestamp\": \"%{%Y-%m-%dT%H:%M:%S%z}t\", \"@fields\": { \"client\": \"%a\", \"duration_usec\": %D, \"status\": %s, \"request\": \"%U%q\", \"method\": \"%m\", \"referrer\": \"%{Referer}i\", \"zfin_login\": \"%{zfin_login}C\"} }" logstash_json
     CustomLog	/var/log/httpd/zfin_access timing_with_cookie
     ErrorLog	/var/log/httpd/zfin_errors
@@ -110,10 +108,8 @@
     SSLProxyEngine on
     DocumentRoot	/srv/www/zfin.org/home
     ScriptAlias	/cgi-bin /srv/www/zfin.org/cgi-bin
-    #RemoteIPHeader X-Real-IP
-    #RemoteIPInternalProxy 172.16.0.0/12
-    #LogFormat "%a %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
-    LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
+    LogFormat "%{X-Real-IP}i %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
+    #LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
     LogFormat "{ \"@timestamp\": \"%{%Y-%m-%dT%H:%M:%S%z}t\", \"@fields\": { \"client\": \"%a\", \"duration_usec\": %D, \"status\": %s, \"request\": \"%U%q\", \"method\": \"%m\", \"referrer\": \"%{Referer}i\", \"zfin_login\": \"%{zfin_login}C\"} }" logstash_json
     CustomLog	/var/log/httpd/zfin_access timing_with_cookie
     CustomLog   /var/log/httpd/zfin_access.json logstash_json
