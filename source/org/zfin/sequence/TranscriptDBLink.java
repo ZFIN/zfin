@@ -1,15 +1,16 @@
 package org.zfin.sequence;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import jakarta.persistence.*;
 import org.zfin.marker.Transcript;
 
 import java.io.Serializable;
 
+@Entity
+@DiscriminatorValue("TSCR")
 public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBLink>, Serializable {
 
-
-    Logger logger = LogManager.getLogger(TranscriptDBLink.class);
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dblink_linked_recid", nullable = false)
     private Transcript transcript;
 
     public Transcript getTranscript() {
@@ -22,32 +23,22 @@ public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBL
 
     public boolean equals(Object o) {
         if (o instanceof TranscriptDBLink dbLink) {
-            //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
-//                return true ;
-//            }
-
             if (dbLink.getTranscript().getZdbID().equals(dbLink.getTranscript().getZdbID())
-                    &&
-                    dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
-                    &&
-                    dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
-                    ) {
+                    && dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
+                    && dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())) {
                 return true;
             }
         }
         return false;
     }
 
-
     public int hashCode() {
         int result = 1;
-//        result += (getZdbID() != null ? getZdbID().hashCode() : 0) * 29;
         result += (getTranscript() != null ? getTranscript().hashCode() : 0) * 13;
         result += (getAccessionNumber() != null ? getAccessionNumber().hashCode() : 0) * 19;
         result += (getReferenceDatabase() != null ? getReferenceDatabase().hashCode() : 0) * 17;
         return result;
     }
-
 
     public String toString() {
         String returnString = "";
@@ -68,7 +59,9 @@ public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBL
      */
     public int compareTo(TranscriptDBLink transcriptDBLink) {
 
-        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(transcriptDBLink.getReferenceDatabase().getZdbID());
+        int refDBCompare = getReferenceDatabase()
+                .getZdbID()
+                .compareTo(transcriptDBLink.getReferenceDatabase().getZdbID());
         if (refDBCompare != 0) {
             return refDBCompare;
         }
@@ -76,25 +69,15 @@ public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBL
         int accCompare = getAccessionNumber().compareTo(transcriptDBLink.getAccessionNumber());
         if (accCompare != 0) {
             return accCompare;
-       }
+        }
 
-        int markerCompare = getTranscript().getZdbID().compareTo(transcriptDBLink.getTranscript().getZdbID());
+        int markerCompare = getTranscript()
+                .getZdbID()
+                .compareTo(transcriptDBLink.getTranscript().getZdbID());
         if (markerCompare != 0) {
             return markerCompare;
         }
 
         return 0;
     }
-
-//    public List<Sequence> getViewableNucleotideSequences() {
-//        List<Sequence> sequences = RepositoryFactory.getSequenceRepository().getNucleotideSequences(this);
-//        List<Sequence> returnSequences = new ArrayList<Sequence>();
-//        for(Sequence sequence: sequences){
-//            if(sequence.getDbLink().getZdbID().equals(getZdbID())){
-//                returnSequences.add(sequence);
-//            }
-//        }
-//        return returnSequences ;
-//    }
-
 }
