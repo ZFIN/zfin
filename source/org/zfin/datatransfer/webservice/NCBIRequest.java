@@ -122,8 +122,7 @@ public class NCBIRequest {
             nvps.add(new BasicNameValuePair(param.getKey(), param.getValue()));
         }
         post.setEntity(new UrlEncodedFormEntity(nvps));
-        log.debug("POST URI: " + post.getURI());
-        System.out.println("POST URI: " + post.getURI());
+        log.info("Posting to URI: " + post.getURI());
 
         HttpResponse response = client.execute(post);
         InputStream responseContent = response.getEntity().getContent();
