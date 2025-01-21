@@ -99,7 +99,6 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
         CREZOO("CreZoo"),
         CURATED_MIRNA_MATURE("Curated miRNA Mature"),
         CURATED_MIRNA_STEM_LOOP("Curated miRNA Stem Loop"),
-        DBSNP("dbSNP"),
         EBI_CELL("EBI-Cell"),
         EC("EC"),
         ENSEMBL("Ensembl"),
