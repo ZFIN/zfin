@@ -106,7 +106,6 @@ import org.zfin.util.*;
         PatoPileStructureValidatorTest.class,
         PhenotypeServiceTest.class,
         PhenotypeStatementTest.class,
-        PhenotypeStatementTest.class,
         PhenotypeStructureTest.class,
         ProfileUnitTests.class,
         PublicationTest.class,
