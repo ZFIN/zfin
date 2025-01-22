@@ -85,6 +85,16 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
                 String details = sb.toString();
                 action.addTag(UniProtLoadAction.CategoryTag.REPLACED_REFSEQ);
                 action.addDetails(details);
+
+                //default behavior is to not delete a uniprot/gene dblink if the refseq mismatch is due to the refseq getting a replacement
+                //we expect the difference to reconcile itself over time
+                if ("true".equals(System.getenv("UNIPROT_DELETE_REPLACED_REFSEQ_FLAG"))) {
+                    log.info("Deleting UniProt accession despite replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession() + "/" + refseq);
+                } else {
+                    log.info("Changing action type from DELETE to WARNING due to replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession());
+                    action.setType(UniProtLoadAction.Type.WARNING);
+                }
+
                 log.debug(details);
             }
             if ("suppressed".equals(ncbiData.status())) {
@@ -96,7 +106,7 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
 
     private void initializeNcbiRefseqData(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> deletes) {
         //let's get the list of all lost uniprot accessions that exist in the dat file
-        List<String> losingAccessions = deletes.stream().map(d -> d.getAccession()).toList();
+        List<String> losingAccessions = deletes.stream().map(UniProtLoadAction::getAccession).toList();
         Set<String> accessionsExistingInUniprotFile = uniProtRecords.keySet();
         Collection<String> overlap = CollectionUtils.intersection(losingAccessions, accessionsExistingInUniprotFile);
 
@@ -104,7 +114,7 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
                 .entrySet()
                 .stream()
                 .filter(e -> overlap.contains(e.getKey()))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getRefSeqsWithoutVersion()));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getRefSeqsWithoutVersion()));
 
         List<String> refseqs = refseqsInUniprotByAccession.values().stream().flatMap(Collection::stream).toList();
 
