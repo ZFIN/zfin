@@ -45,6 +45,40 @@ public class FlagPotentialIssuesHandler implements UniProtLoadHandler {
                 });
         createInfoActionForGenesLosingAllAccessions(actions, context);
         createInfoActionForGenesGainingFirstAccessions(actions, context);
+        tagActionsForGenesLosingAllAccessions(actions, context);
+        tagActionsForNewGenes(actions, context);
+    }
+
+    /**
+     * If a gene is gaining its first uniprot accession, tag the relevant actions with that info
+     * @param actions (all actions)
+     * @param context (existing context of DB)
+     */
+    private void tagActionsForNewGenes(Set<UniProtLoadAction> actions, UniProtLoadContext context) {
+        List<String> genesThatLostAllUniprots = actions.stream().filter(action -> action.getType().equals(UniProtLoadAction.Type.INFO))
+                .filter(action -> action.getSubType().equals(UniProtLoadAction.SubType.GENE_GAINS_FIRST_UNIPROT))
+                .map(a -> a.getGeneZdbID())
+                .toList();
+
+        actions.stream().filter(action -> action.getType().equals(UniProtLoadAction.Type.DELETE))
+                .filter(action -> genesThatLostAllUniprots.contains(action.getGeneZdbID()))
+                .forEach(action -> action.addTag(UniProtLoadAction.CategoryTag.NEW_GENE));
+    }
+
+    /**
+     * If a gene is losing all of its uniprot accessions, tag the relevant actions with that info
+     * @param actions (all actions)
+     * @param context (existing context of DB)
+     */
+    private void tagActionsForGenesLosingAllAccessions(Set<UniProtLoadAction> actions, UniProtLoadContext context) {
+        List<String> genesThatLostAllUniprots = actions.stream().filter(action -> action.getType().equals(UniProtLoadAction.Type.INFO))
+                .filter(action -> action.getSubType().equals(UniProtLoadAction.SubType.GENE_LOST_ALL_UNIPROTS))
+                .map(a -> a.getGeneZdbID())
+                .toList();
+
+        actions.stream().filter(action -> action.getType().equals(UniProtLoadAction.Type.DELETE))
+                .filter(action -> genesThatLostAllUniprots.contains(action.getGeneZdbID()))
+                .forEach(action -> action.addTag(UniProtLoadAction.CategoryTag.LOST_ALL_UNIPROTS));
     }
 
     /**

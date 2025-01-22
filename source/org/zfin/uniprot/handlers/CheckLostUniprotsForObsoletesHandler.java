@@ -59,7 +59,7 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
     private void checkAndUpdateAction(UniProtLoadAction action, Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context) {
         RichSequenceAdapter uniprotData = uniProtRecords.get(action.getAccession());
         if (uniprotData == null) {
-            log.debug("No uniprot record for accession %s\n", action.getAccession());
+            log.debug("No uniprot record for accession " + action.getAccession());
             return;
         }
         Set<String> refseqs = uniprotData.getRefSeqsWithoutVersion();
@@ -83,11 +83,13 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
                     sb.append("The old refseq exists in ZFIN: " + refseq + " -> " + foundOldRefSeqInZfin.stream().map(DBLinkSlimDTO::getDataZdbID).collect(Collectors.joining(", ")));
                 }
                 String details = sb.toString();
-                action.resetSubTypeByObsoletion(details);
+                action.addTag(UniProtLoadAction.CategoryTag.REPLACED_REFSEQ);
+                action.addDetails(details);
                 log.debug(details);
             }
             if ("suppressed".equals(ncbiData.status())) {
-                action.resetSubTypeByObsoletion("RefSeq suppressed: " + refseq);
+                log.debug("suppressed refseq: " + refseq);
+                action.addTag(UniProtLoadAction.CategoryTag.SUPPRESSED_REFSEQ);
             }
         }
     }

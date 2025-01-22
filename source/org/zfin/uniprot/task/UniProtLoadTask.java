@@ -74,6 +74,8 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
      */
     public static void main(String[] args) throws Exception {
 
+        log.info("UniProtLoadTask starting...");
+
         Date startTime = new Date();
         String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
         String commitChanges = getArgOrEnvironmentVar(args, 1, "UNIPROT_COMMIT_CHANGES", "false");
@@ -242,7 +244,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
                 log.error("Error reading context file " + contextInputFile + ": " + e.getMessage(), e);
             }
         } else {
+            log.debug("Creating context from DB connection.");
             context = UniProtLoadContext.createFromDBConnection();
+            log.debug("Context initialized");
         }
     }
 
