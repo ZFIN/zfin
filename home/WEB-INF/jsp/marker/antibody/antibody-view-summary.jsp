@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:attributeList>
-    <z:attributeListItem label="Antibody ID">
+    <z:attributeListItem label="Antibody ID" copyable="true">
         <span id="marker-id">${formBean.marker.zdbID}</span>
     </z:attributeListItem>
 
