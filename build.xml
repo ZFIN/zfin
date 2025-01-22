@@ -792,16 +792,6 @@
         </exec>
     </target>
 
-    <target name="generateWSClient">
-        <exec executable="wsimport">
-            <arg value="-p"/>
-            <arg value="org.zfin.webservice.client"/>
-            <arg value="http://${DOMAIN_NAME}/webservice/definitions/zfin.wsdl"/>
-        </exec>
-        <jar destfile="lib/Java/zfin-soap-client.jar" basedir="." includes="org/**"></jar>
-        <delete dir="org"/>
-    </target>
-
     <target name="npmInstall">
         <exec executable="npm" failonerror="true">
             <arg value="install"/>
