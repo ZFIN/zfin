@@ -4,6 +4,10 @@
     <tr>
         <td>
             <z:attributeList>
+                <z:attributeListItem dtColSize="3" label="Company ID" copyable="true">
+                    <span id="marker-id">${company.zdbID}</span>
+                </z:attributeListItem>
+
                 <z:attributeListItem dtColSize="3" label="Contact Person">
                     <c:choose>
                         <c:when test="${empty company.contactPerson}">

@@ -4,7 +4,7 @@
     <tr>
         <td>
             <z:attributeList>
-                <z:attributeListItem label="Person ID">
+                <z:attributeListItem label="Person ID" copyable="true">
                     <span id="marker-id">${person.zdbID}</span>
                 </z:attributeListItem>
 
@@ -65,7 +65,9 @@
                 </z:attributeListItem>
 
                 <z:attributeListItem label="ORCID ID">
+                    <c:if test="${!empty person.orcidID}">
                     <a href="http://orcid.org/${person.orcidID}">${person.orcidID}</a>
+                    </c:if>
                 </z:attributeListItem>
 
             </z:attributeList>
