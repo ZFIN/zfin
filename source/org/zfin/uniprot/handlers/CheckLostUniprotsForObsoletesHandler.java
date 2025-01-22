@@ -93,6 +93,7 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
                 } else {
                     log.info("Changing action type from DELETE to WARNING due to replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession());
                     action.setType(UniProtLoadAction.Type.WARNING);
+                    action.addDetails("\nTo DELETE this uniprot accession, re-run uniprot load with flag 'UNIPROT_DELETE_REPLACED_REFSEQ_FLAG' set to 'true'.");
                 }
 
                 log.debug(details);
