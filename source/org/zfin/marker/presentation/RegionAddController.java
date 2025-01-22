@@ -23,7 +23,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
 

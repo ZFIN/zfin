@@ -14,6 +14,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -194,6 +195,11 @@ public class MutantRepositoryTest {
 
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
+
+        for(var ontology : Ontology.values()) {
+            List<PhenotypeStatement> results = mutantRepository.getPhenotypesOnObsoletedTerms(ontology);
+            assertThat(results, notNullValue());
+        }
     }
 
     @Test
@@ -218,7 +224,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void getAllelesForMarker() {
-        List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1", "is allele of");
+        List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         assertThat(features, hasSize(both(greaterThan(4)).and(lessThan(20))));
     }
 

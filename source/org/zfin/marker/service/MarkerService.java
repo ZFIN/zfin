@@ -11,6 +11,7 @@ import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.AttributionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -610,7 +611,10 @@ public class MarkerService {
                                 && dblink.getMarker().equals(gene)) {
                             logger.info("deleting " + dblink.getZdbID()
                                     + " because a marker relationship made the db_link unnecessary");
-                            infrastructureRepository.deleteActiveDataByZdbID(dblink.getZdbID());
+                            String zdbID = dblink.getZdbID();
+                            acc.getDbLinks().remove(dblink);
+                            HibernateUtil.currentSession().delete(dblink);
+                            infrastructureRepository.deleteActiveDataByZdbID(zdbID);
                         }
                     }
 
@@ -900,7 +904,7 @@ public class MarkerService {
     public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
         mutantOnMarkerBean.setGenotypeList(markerRepository.getMutantsAndTgsByGene(gene.getZdbID()));
-        mutantOnMarkerBean.setFeatures(getMutantRepository().getAllelesForMarker(gene.getZdbID(), "is allele of"));
+        mutantOnMarkerBean.setFeatures(getMutantRepository().getAllelesForMarker(gene.getZdbID(), FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF));
         MarkerRelationship.Type relationshipType = gene.isNontranscribed() ?
                 MarkerRelationship.Type.CRISPR_TARGETS_REGION :
                 MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE;

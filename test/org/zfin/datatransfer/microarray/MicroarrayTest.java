@@ -1,9 +1,12 @@
 package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.*;
-import org.hibernate.criterion.Restrictions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,7 +20,6 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -143,12 +145,13 @@ public class MicroarrayTest {
 
             driver.processNewLinks(newMicroArrayAccessions,genBankLinks,   geoDatabase);
 
-            Criteria criteria = session.createCriteria(MarkerDBLink.class) ;
-            criteria.add(Restrictions.eq("accessionNumber",ACCESSION_NUM1)) ;
-            criteria.add(Restrictions.eq("referenceDatabase",geoDatabase)) ;
-            
             // should have added a DBLink for GEO for this accession # and marker
-            MarkerDBLink link = (MarkerDBLink) criteria.uniqueResult() ;
+            String hql = "from MarkerDBLink link where link.accessionNumber = :accessionNumber and link.referenceDatabase = :referenceDatabase";
+            Query query = session.createQuery(hql);
+            query.setParameter("accessionNumber", ACCESSION_NUM1);
+            query.setParameter("referenceDatabase", geoDatabase);
+            MarkerDBLink link = (MarkerDBLink) query.uniqueResult();
+
             assertNotNull("should have a valid link",link) ;
             assertEquals("reference DB should be GEO",ForeignDB.AvailableName.GEO.toString(),link.getReferenceDatabase().getForeignDB().getDbName()) ;
             assertEquals("accession is "+ACCESSION_NUM1,link.getAccessionNumber(),ACCESSION_NUM1) ;
@@ -202,11 +205,13 @@ public class MicroarrayTest {
             driver.removeMicroarrayAccessions( accessionsToRemove, new MicroarrayBean(),currentMicroarrayLinks);
             session.flush() ; 
 
-            Criteria criteria = session.createCriteria(MarkerDBLink.class) ;
-            criteria.add(Restrictions.eq("accessionNumber",ACCESSION_NUM1)) ;
-            criteria.add(Restrictions.eq("referenceDatabase",geoDatabase)) ;
-            // should have added a DBLink for GEO for this accession # and marker
-            MarkerDBLink link = (MarkerDBLink) criteria.uniqueResult() ;
+            //convert to hql
+            String hql = "from MarkerDBLink link where link.accessionNumber = :accessionNumber and link.referenceDatabase = :referenceDatabase";
+            Query query = session.createQuery(hql);
+            query.setParameter("accessionNumber", ACCESSION_NUM1);
+            query.setParameter("referenceDatabase", geoDatabase);
+            MarkerDBLink link = (MarkerDBLink) query.uniqueResult();
+
             logger.info("link: " + link) ; 
 
             assertNull("should not exist",link) ;
@@ -248,11 +253,12 @@ public class MicroarrayTest {
             insertGeneMarker() ; 
             insertReferencedMarkers() ;
 
-            Criteria criteria = session.createCriteria(MarkerDBLink.class) ;
-            criteria.add(Restrictions.eq("referenceDatabase",geoDatabase)) ;
-//            criteria.add(Restrictions.eq("marker",geneDBLink.getMarker())) ;
-            // should have added a DBLink for GEO for this accession # and marker
-            List<MarkerDBLink> links = criteria.list() ;
+            //rewrite above as hql:
+            String hql = "from MarkerDBLink link where link.referenceDatabase = :referenceDatabase";
+            Query query = session.createQuery(hql);
+            query.setParameter("referenceDatabase", geoDatabase);
+            List links = query.list();
+
             assertEquals(0,links.size()) ; 
 
             Set<String> newAccessions = new HashSet<String>() ;
@@ -264,9 +270,7 @@ public class MicroarrayTest {
             driver.processNewLinks(newAccessions,genBankLinks,geoDatabase) ;
             session.flush() ; 
 
-            links = criteria.list() ;
-
-            assertEquals(5,links.size()) ; 
+            assertEquals(5,links.size()) ;
         }
         catch (Exception e) {
             java.lang.StackTraceElement[] elements = e.getStackTrace();

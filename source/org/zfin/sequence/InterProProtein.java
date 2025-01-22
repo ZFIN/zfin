@@ -4,7 +4,7 @@ package org.zfin.sequence;
 
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
+import jakarta.persistence.*;
 @Setter
 @Getter
 

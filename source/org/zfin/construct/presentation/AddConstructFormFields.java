@@ -3,7 +3,7 @@ package org.zfin.construct.presentation;
 import lombok.Data;
 import org.zfin.construct.name.ConstructName;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Data
 public class AddConstructFormFields {

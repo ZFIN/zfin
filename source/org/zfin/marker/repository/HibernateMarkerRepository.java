@@ -9,9 +9,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
@@ -57,14 +55,13 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
 import org.zfin.util.NumberAwareStringComparator;
 
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.marker.MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -369,7 +366,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             """;
 
 
-        List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql).setParameter("pubZdbID", publicationZdbID)
+        List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createNativeQuery(sql).setParameter("pubZdbID", publicationZdbID)
 
             .list();
         List<Marker> markers = new ArrayList<>();
@@ -522,21 +519,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         currentSession().save(mrel);
         currentSession().flush();
-        currentSession().refresh(mrel);
-
-        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation()
-                               + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
-                               + " " + mrel.getSecondMarker().getAbbreviation()
-                               + "\" with Attribution: " + sourceZdbID;
-        log.debug(updateComment);
-        InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
-        InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
 
         //now deal with attribution
         if (sourceZdbID != null && sourceZdbID.length() > 0) {
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
             addMarkerRelationshipAttribution(mrel, publication);
         }
+
+        currentSession().refresh(mrel);
+
+        String updateComment = "Creating relationship \"" + mrel.getFirstMarker().getAbbreviation()
+                + " " + mrel.getMarkerRelationshipType().getFirstToSecondLabel()
+                + " " + mrel.getSecondMarker().getAbbreviation()
+                + "\" with Attribution: " + sourceZdbID;
+        log.debug(updateComment);
+        InfrastructureService.insertUpdate(mrel.getFirstMarker(), updateComment);
+        InfrastructureService.insertUpdate(mrel.getSecondMarker(), updateComment);
 
         return mrel;
     }
@@ -990,10 +988,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<MarkerFamilyName> getMarkerFamilyNamesBySubstring(String substring) {
 
-        List<MarkerFamilyName> families = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like :name || '%' order by 1 asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
+        List<MarkerFamilyName> families = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like :name || '%' order by markerFamilyName asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
 
-
-        List<MarkerFamilyName> familiesContains = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like  '%' || :name || '%' order by 1 asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
+        List<MarkerFamilyName> familiesContains = currentSession().createQuery("from MarkerFamilyName where upper(markerFamilyName) like  '%' || :name || '%' order by markerFamilyName asc ", MarkerFamilyName.class).setParameter("name", substring.toUpperCase()).list();
         familiesContains.forEach(familyName -> {
             if (!families.contains(familyName)) families.add(familyName);
         });
@@ -1146,13 +1143,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public TranscriptType getTranscriptTypeForName(String typeString) {
         Session session = currentSession();
-        return session.createQuery("from TranscriptType where type = :type", TranscriptType.class).setParameter("type", typeString).uniqueResult();
+        TranscriptType.Type type = TranscriptType.Type.getTranscriptType(typeString);
+        return session.createQuery("from TranscriptType where type = :type", TranscriptType.class)
+                .setParameter("type", type)
+                .uniqueResult();
     }
 
     public TranscriptStatus getTranscriptStatusForName(String statusString) {
+        TranscriptStatus.Status status = TranscriptStatus.Status.getStatus(statusString);
         Session session = currentSession();
         Query<TranscriptStatus> criteria = session.createQuery("from TranscriptStatus where status = :status", TranscriptStatus.class);
-        criteria.setParameter("status", statusString);
+        criteria.setParameter("status", status);
         return criteria.uniqueResult();
     }
 
@@ -1194,7 +1195,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                      "FROM mutant_fast_search, phenotype_experiment " +
                      "WHERE mfs_data_zdb_id = :geneZdbID " +
                      "AND mfs_genox_zdb_id = phenox_genox_zdb_id ";
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("geneZdbID", gene.getZdbID());
 
         return (((Number) query.uniqueResult()).longValue() > 0);
@@ -1208,7 +1209,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             AND mfs_genox_zdb_id = phenox_genox_zdb_id
             AND phenox_fig_zdb_id = img_fig_zdb_id
             """;
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("geneZdbID", gene.getZdbID());
         return (query.list().size() > 0);
     }
@@ -1332,7 +1333,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         sqlQueryAllStr += "order by gene.mrkr_abbrev_order ";
 
-        NativeQuery sqlAllQquery = session.createNativeQuery(sqlQueryAllStr);
+        NativeQuery<Tuple> sqlAllQquery = session.createNativeQuery(sqlQueryAllStr, Tuple.class);
         sqlAllQquery.setParameter("aoterm", aoTerm.getZdbID());
         sqlAllQquery.setParameter("type", "High-Quality-Probe");
         ScrollableResults scrollableResults = sqlAllQquery.scroll();
@@ -1350,22 +1351,22 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // the worst case scenario list (assuming there is only one record per probe) and then
         // loop over the results and check if the probe is in the list of probes from above
         while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecordsInteger() + 1) {
-            Object[] record = scrollableResults.get();
+            Tuple record = (Tuple) scrollableResults.get();
             HighQualityProbeAOStatistics highQualityProbeStats = new HighQualityProbeAOStatistics();
             Marker probe = new Marker();
-            probe.setZdbID((String) record[0]);
-            probe.setAbbreviation((String) record[1]);
-            probe.setName((String) record[12]);
-            probe.setMarkerType(getProbeType((String) record[7]));
+            probe.setZdbID((String) record.get(0));
+            probe.setAbbreviation((String) record.get(1));
+            probe.setName((String) record.get(12));
+            probe.setMarkerType(getProbeType((String) record.get(7)));
             highQualityProbeStats.setProbe(probe);
             Marker gene = new Marker();
-            gene.setZdbID((String) record[2]);
-            gene.setAbbreviation((String) record[3]);
-            gene.setName((String) record[11]);
+            gene.setZdbID((String) record.get(2));
+            gene.setAbbreviation((String) record.get(3));
+            gene.setName((String) record.get(11));
             gene.setMarkerType(getGenedomType());
             highQualityProbeStats.setGene(gene);
-            String figID = (String) record[4];
-            String label = (String) record[5];
+            String figID = (String) record.get(4);
+            String label = (String) record.get(5);
             Figure figure;
             if (label != null && label.equals(FigureType.TOD.toString())) {
                 figure = new TextOnlyFigure();
@@ -1377,12 +1378,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             figure.setLabel(label);
             highQualityProbeStats.setFigure(figure);
             Publication pub = new Publication();
-            pub.setZdbID((String) record[9]);
-            pub.setShortAuthorList((String) record[10]);
+            pub.setZdbID((String) record.get(9));
+            pub.setShortAuthorList((String) record.get(10));
             highQualityProbeStats.setPublication(pub);
-            if (record[13] != null) {
+            if (record.get(13) != null) {
                 Image image = new Image();
-                image.setZdbID((String) record[13]);
+                image.setZdbID((String) record.get(13));
                 highQualityProbeStats.setImage(image);
             }
             if (hqpRecords.contains(highQualityProbeStats.getProbe())) {
@@ -1442,7 +1443,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             """;
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("pubZdbID", publication.getZdbID());
-        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
         // yes, this is a hack, should use typeGroup, I guess
         query.setParameterList("types", types);
         return query.list();
@@ -1459,7 +1460,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by m.abbreviationOrder
             """;
 
-        return currentSession().createQuery(hql, Marker.class).setParameter("pubZdbID", publicationZdbID).setParameter("standard", RecordAttribution.SourceType.STANDARD.toString()).list();
+        return currentSession().createQuery(hql, Marker.class)
+                .setParameter("pubZdbID", publicationZdbID)
+                .setParameter("standard", RecordAttribution.SourceType.STANDARD)
+                .list();
     }
 
 
@@ -1468,7 +1472,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String hql = "select distinct m from ConstructCuration m , RecordAttribution ra " +
                      "where ra.dataZdbID=m.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID";
 
-        return currentSession().createQuery(hql, ConstructCuration.class).setParameter("pubZdbID", publicationZdbID).setParameter("standard", RecordAttribution.SourceType.STANDARD.toString()).list();
+        return currentSession().createQuery(hql, ConstructCuration.class)
+                .setParameter("pubZdbID", publicationZdbID)
+                .setParameter("standard", RecordAttribution.SourceType.STANDARD)
+                .list();
     }
 
     public List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm) {
@@ -1746,9 +1753,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 AND aliasgrp_pk_id = dalias_group_id
                 AND aliasgrp_name = 'alias'
             """;
-        NativeQuery query = currentSession().createSQLQuery(sql);
+        NativeQuery query = currentSession().createNativeQuery(sql);
         query.setParameter("markerZdbID", gene.getZdbID());
-        HibernateUpgradeHelper.setTupleResultAndListTransformer(query, (Object[] tuple, String[] aliases) -> {
+        return HibernateUpgradeHelper.setTupleResultAndListTransformer(query, (Object[] tuple, String[] aliases) -> {
             String pureAliasName = (String) tuple[0];
             String publicationZdbID = (String) tuple[1];
             String aliasZdbID = (String) tuple[2];
@@ -1764,7 +1771,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             }
 
             return previousNameLight;
-        }, (List list) -> {
+        }, (List<PreviousNameLight> list) -> {
             Map<String, PreviousNameLight> map = new HashMap<>();
             for (Object o : list) {
                 PreviousNameLight previousName = (PreviousNameLight) o;
@@ -1779,13 +1786,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 }
             }
 
-            list = new ArrayList(map.values());
+            list = new ArrayList<PreviousNameLight>(map.values());
 
             Collections.sort(list);
 
             return list;
         });
-        return query.list();
     }
 
     @Override
@@ -1836,7 +1842,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         ResultTransformer resultTransformer = new MarkerRelationshipSupplierPresentationTransformer(is1to2);
         String sql = (is1to2 ? sql1To2 : sql2To1);
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", marker.getZdbID()).setResultTransformer(resultTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql).setParameter("markerZdbId", marker.getZdbID()).setResultTransformer(resultTransformer);
         if (typesNotIn.length > 0) {
             List<String> types = new ArrayList<>();
             for (MarkerRelationship.Type type : typesNotIn) {
@@ -2024,7 +2030,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             WHERE dbl.dblink_zdb_id = :dbLinkId
             """;
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("dbLinkId", dbLinkId).setResultTransformer(markerDBLinkTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql).setParameter("dbLinkId", dbLinkId).setResultTransformer(markerDBLinkTransformer);
 
         return markerDBLinkTransformer.transformList(query.list());
     }
@@ -2057,7 +2063,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (marker.getZdbID().startsWith("ZDB-GENE")) {
             sql += " and dbl.dblink_acc_num not like  'ENSDARP%' ";
         }
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", marker.getZdbID()).setParameter("displayGroup", groupName.toString()).setResultTransformer(markerDBLinkTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
+                .setParameter("markerZdbId", marker.getZdbID())
+                .setParameter("displayGroup", groupName.toString()) //NativeQuery so displayGroup is a String
+                .setResultTransformer(markerDBLinkTransformer);
 
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(query.list());
         linkDisplay.sort((linkA, linkB) -> {
@@ -2128,7 +2137,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         ResultTransformer resultTransformer = new MarkerRelationshipPresentationTransformer(is1to2);
         String sql = (is1to2 ? sql1To2 : sql2To1);
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", marker.getZdbID()).setResultTransformer(resultTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql).setParameter("markerZdbId", marker.getZdbID()).setResultTransformer(resultTransformer);
         if (types.length > 0) {
             Set<String> typeStrings = new HashSet<>();
             for (MarkerRelationship.Type type : types) {
@@ -2230,7 +2239,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
             WHERE mrel_mrkr_1_zdb_id = :markerZdbID
             AND clone_problem_type = 'Chimeric'
             """;
-        long result = (Long) HibernateUtil.currentSession().createSQLQuery(sql).addScalar("count", LongType.INSTANCE).setParameter("markerZdbID", zdbID).uniqueResult();
+
+        long result = currentSession().createNativeQuery(sql, Long.class)
+                .setParameter("markerZdbID", zdbID)
+                .uniqueResult();
+
         return result > 0;
     }
 
@@ -2243,7 +2256,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             AND snpd_pk_id=snpdattr_snpd_pk_id
             ORDER BY snpdattr_pub_zdb_id
             """;
-        Object result = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbID", clone.getZdbID()).setMaxResults(1).uniqueResult();
+        Object result = HibernateUtil.currentSession().createNativeQuery(sql).setParameter("markerZdbID", clone.getZdbID()).setMaxResults(1).uniqueResult();
         return result != null;
     }
 
@@ -2388,7 +2401,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by get_date_from_id(seq_mrkr_zdb_id, 'YYYY-MM-DD')  desc
             limit :limit
         """;
-        List<String> markerIDs = session.createSQLQuery(sql).setParameter("limit", limit).list();
+        List<String> markerIDs = session.createNativeQuery(sql).setParameter("limit", limit).list();
         List<SequenceTargetingReagent> markers = getSequenceTargetingReagents(markerIDs);
 
         //map the markers to the order of the markerIDs
@@ -2417,7 +2430,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             hql += "and ( (str.sequence.sequence = :sequence1 and str.sequence.secondSequence = :sequence2) or (str.sequence.sequence = :sequence2 and str.sequence.secondSequence = :sequence1) )";
         }
 
-        Query<SequenceTargetingReagent> query = HibernateUtil.currentSession().createQuery(hql, SequenceTargetingReagent.class).setParameter("type", type.toString()).setParameter("sequence1", sequence1);
+        Query<SequenceTargetingReagent> query = currentSession()
+                .createQuery(hql, SequenceTargetingReagent.class)
+                .setParameter("type", type.toString()) //SequenceTargetingReagent.markerType.name is a String
+                .setParameter("sequence1", sequence1);
         if (sequence2 != null) {
             query.setParameter("sequence2", sequence2);
         }
@@ -2475,7 +2491,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             AND fdb.fdb_db_name='VEGA'
             """;
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", gene.getZdbID()).setResultTransformer(markerDBLinkTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql).setParameter("markerZdbId", gene.getZdbID()).setResultTransformer(markerDBLinkTransformer);
 
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(query.list());
         return linkDisplay;
@@ -2497,7 +2513,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             AND upper(fdb.fdb_db_name) in ('VEGA','VEGA_TRANS')
             """;
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql).setResultTransformer(markerDBLinkTransformer);
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql).setResultTransformer(markerDBLinkTransformer);
 
         List list = query.list();
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(list);
@@ -2511,7 +2527,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         String hql = "from Marker m where m.markerType.name = :name order by m.abbreviationOrder";
         Query<Marker> query = session.createQuery(hql, Marker.class);
-        query.setParameter("name", Marker.Type.EREGION.toString());
+        query.setParameter("name", Marker.Type.EREGION.toString()); //MarkerType.name is a String
         return query.list();
     }
 
@@ -2536,7 +2552,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             ORDER BY m.mrkr_type ASC , m.mrkr_abbrev_order ASC
             """;
 
-        return HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", zdbID).setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true)).list();
+        return HibernateUtil.currentSession().createNativeQuery(sql).setParameter("markerZdbId", zdbID).setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true)).list();
     }
 
     @Override
@@ -2566,7 +2582,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             ORDER BY m.mrkr_type ASC , m.mrkr_abbrev_order ASC
             """;
 
-        List<MarkerRelationshipPresentation> markers = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", zdbID).setParameter("markerRelationshipType1", type1.toString()).setParameter("markerRelationshipType2", type2.toString()).setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true)).list();
+        List<MarkerRelationshipPresentation> markers = currentSession()
+                .createNativeQuery(sql)
+                .setParameter("markerZdbId", zdbID)
+                .setParameter("markerRelationshipType1", type1.toString()) //NativeQuery so markerRelationshipType1 is a String
+                .setParameter("markerRelationshipType2", type2.toString()) //NativeQuery so markerRelationshipType2 is a String
+                .setResultTransformer(new MarkerRelationshipSupplierPresentationTransformer(true)).list();
 
         if (resultType != null) {
             for (MarkerRelationshipPresentation markerRelationshipPresentation : markers) {
@@ -2592,7 +2613,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             where fmRel.marker.zdbID = :geneID
             and fmRel.feature = genoFtr.feature
             and genoFtr.genotype = mutant
-            and mutant.wildtype = 'f'
+            and mutant.wildtype = false
             order by mutant.nameOrder
             """;
 
@@ -2670,7 +2691,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             """;
 
 
-        List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sqlQuery).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameter("pubZdbID", zdbId).setParameter("standard", RecordAttribution.SourceType.STANDARD.toString()).list();
+        List<Object[]> results = currentSession()
+                .createNativeQuery(sqlQuery)
+                .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setParameter("pubZdbID", zdbId)
+                .setParameter("standard", RecordAttribution.SourceType.STANDARD.toString()) //NativeQuery so "standard" is a String
+                .list();
 
         List<LookupEntry> targetGeneSuggestionList = new ArrayList<>();
         for (Object[] objects : results) {
@@ -2680,8 +2706,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             targetGeneSuggestionList.add(probe);
         }
         return targetGeneSuggestionList;
-
-
     }
 
 
@@ -2829,32 +2853,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
-    //    changed this code
     public List<ConstructComponentPresentation> getConstructComponents(String zdbID) {
         String sqlCount = " SELECT MAX(cc_cassette_number) FROM construct_component WHERE cc_construct_zdb_id=:zdbID ";
-        Query query = currentSession().createSQLQuery(sqlCount);
+        Query query = currentSession().createNativeQuery(sqlCount);
         query.setParameter("zdbID", zdbID);
 
         String sql = " SELECT a.construct_name,a.construct_comments,a.construct_zdb_id FROM construct a  WHERE a.construct_zdb_id =:zdbID ";
-        return HibernateUtil.currentSession().createSQLQuery(sql).setParameter("zdbID", zdbID).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public ConstructComponentPresentation transformTuple(Object[] tuple, String[] aliases) {
-                ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
 
-                if (tuple[1] != null) {
-                    constructComponentPresentation.setConstructComments(tuple[1].toString());
+        return currentSession()
+                .createNativeQuery(sql, Tuple.class)
+                .setParameter("zdbID", zdbID)
+                .list()
+                .stream()
+                .map(row -> {
+                    ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
+                    if (row.get(1) != null) {
+                        constructComponentPresentation.setConstructComments(row.get(1).toString());
+                    }
+                    constructComponentPresentation.setConstructZdbID(row.get(2).toString());
+                    constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(row.get(2).toString())));
+                    constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(row.get(2).toString())));
+                    constructComponentPresentation.setConstructSequences(DTOMarkerService.getSupportingSequenceDTOs(getMarkerByID(row.get(2).toString())));
+
+                    return constructComponentPresentation;
                 }
-
-                constructComponentPresentation.setConstructZdbID(tuple[2].toString());
-
-                constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(tuple[2].toString())));
-                constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(tuple[2].toString())));
-                constructComponentPresentation.setConstructSequences(DTOMarkerService.getSupportingSequenceDTOs(getMarkerByID(tuple[2].toString())));
-
-                return constructComponentPresentation;
-            }
-        }).list();
-
+        ).toList();
     }
 
     @Override
@@ -2870,16 +2893,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         hql += "order by marker.abbreviation  ";
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("lookupString", "%" + lookupString.toLowerCase() + "%").setParameterList("markerType", markerTypes).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setParameterList("markerType", markerTypes).setResultTransformer(
+
+            (Object[] tuple, String[] targetGeneAbrevs) -> {
                 Marker targetGene = (Marker) tuple[0];
                 LookupEntry targetGeneSuggestionList = new LookupEntry();
                 targetGeneSuggestionList.setId(targetGene.getZdbID());
                 targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
                 targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
                 return targetGeneSuggestionList;
-            }
         }).list();
     }
 
@@ -2898,15 +2922,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by markerRelationship.secondMarker.abbreviationOrder
             """;
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("type", GENE_PRODUCES_TRANSCRIPT).setParameter("geneID", geneZdbId).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public TranscriptPresentation transformTuple(Object[] tuple, String[] aliases) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", GENE_PRODUCES_TRANSCRIPT)
+                .setParameter("geneID", geneZdbId).setResultTransformer(
+
+            (Object[] tuple, String[] aliases) -> {
                 TranscriptPresentation transcriptPresentation = new TranscriptPresentation();
                 transcriptPresentation.setZdbID(tuple[0].toString());
                 transcriptPresentation.setName(tuple[1].toString());
                 return transcriptPresentation;
-            }
-
         }).list();
     }
 
@@ -2920,16 +2944,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] sequenceTargetingReagents) -> {
                     Marker str = (Marker) tuple[0];
                     SequenceTargetingReagentLookupEntry strSuggestionList = new SequenceTargetingReagentLookupEntry();
                     strSuggestionList.setId(str.getZdbID());
                     strSuggestionList.setLabel(str.getAbbreviation());
                     strSuggestionList.setValue(str.getAbbreviation());
                     return strSuggestionList;
-                }
             })
             .list()
             ;
@@ -2948,14 +2971,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
             order by markerRelationship.secondMarker.abbreviationOrder
             """;
 
-        return HibernateUtil.currentSession().createQuery(hql).setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE).setParameter("sequenceTargetingReagentID", sequenceTargetingReagent.getZdbID()).setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public TargetGenePresentation transformTuple(Object[] tuple, String[] aliases) {
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
+                .setParameter("sequenceTargetingReagentID", sequenceTargetingReagent.getZdbID())
+                .setResultTransformer(
+
+            (Object[] tuple, String[] aliases) -> {
                 TargetGenePresentation targetGenePresentation = new TargetGenePresentation();
                 targetGenePresentation.setZdbID(tuple[0].toString());
                 targetGenePresentation.setSymbol(tuple[1].toString());
                 return targetGenePresentation;
-            }
 
         }).list();
     }
@@ -3031,10 +3056,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
         }
         // second related elements
-        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
-                     "where rel.firstMarker = :firstMarker " +
-                     "and rel.type in (:typeList) " +
-                     "order by rel.secondMarker.abbreviationOrder";
+        String hql = """
+                     select rel.secondMarker from MarkerRelationship as rel
+                     where rel.firstMarker = :firstMarker
+                     and rel.type in (:typeList)
+                     order by rel.secondMarker.abbreviationOrder
+                     """;
 
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("firstMarker", marker);
@@ -3043,10 +3070,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
         PaginationResult<Marker> markerPaginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean.getMaxDisplayRecordsInteger(), query.scroll());
 
         // second related elements
-        hql = "select rel.firstMarker from MarkerRelationship as rel  " +
-              "where rel.secondMarker = :secondMarker " +
-              "and rel.type in (:typeList) " +
-              "order by rel.firstMarker.abbreviationOrder";
+        hql = """
+              select rel.firstMarker from MarkerRelationship as rel
+              where rel.secondMarker = :secondMarker
+              and rel.type in (:typeList)
+              order by rel.firstMarker.abbreviationOrder
+              """;
 
         Query<Marker> query2 = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query2.setParameter("secondMarker", marker);
@@ -3066,7 +3095,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Query<OmimPhenotype> query = session.createQuery(sql, OmimPhenotype.class);
         query.setParameter("gene", marker);
-        query.setParameter("organism", Species.Type.HUMAN.toString());
+        query.setParameter("organism", Species.Type.HUMAN.toString()); //OmimPhenotype.ortholog.ncbiOtherSpeciesGene.organism.commonName is a String
         return query.list();
     }
 
@@ -3086,7 +3115,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             """;
 
         Query<Ortholog> query = session.createQuery(sql, Ortholog.class);
-        query.setParameter("organism", Species.Type.HUMAN.toString());
+        query.setParameter("organism", Species.Type.HUMAN.toString()); //...organism.commonName is a String
         List<Ortholog> list = query.list();
 
         zfinOrthologMap = list.stream().collect(groupingBy(ortholog -> ortholog.getNcbiOtherSpeciesGene().getAbbreviation(), Collectors.mapping(Ortholog::getZebrafishGene, toList())));
@@ -3226,7 +3255,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
         MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
-        String hql = "select marker from Marker as marker ";
+        String hql = "select distinct marker from Marker as marker ";
         // only do the eager join when retrieving all records otherwise the
         // number of records setting won't work, i.e. Hibernate would not set the
         // max number of records.
@@ -3234,7 +3263,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             hql += "left join fetch marker.dbLinks ";
             hql += "left join fetch marker.aliases ";
         }
-        hql += "where marker.markerType.name in (:names) and mrkr_abbrev not like :withdrawn ";
+        hql += "where marker.markerType.name in (:names) and marker.abbreviation not like :withdrawn ";
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameterList("names", type.getTypeStrings());
         query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
@@ -3242,7 +3271,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
             query.setFirstResult(0);
             query.setMaxResults(number);
         }
-        return query.setResultTransformer(DISTINCT_ROOT_ENTITY).list();
+        // Use LinkedHashSet to distinctify and preserve order
+        return new ArrayList<>(new LinkedHashSet<>(query.list()));
     }
 
     @Override
@@ -3269,7 +3299,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2) {
         String seq1 = str1.getSequence().getSequence();
-        HibernateUtil.currentSession().createSQLQuery(
+        HibernateUtil.currentSession().createNativeQuery(
                 "UPDATE marker_sequence " +
                 "SET seq_sequence = :seq_sequence " +
                 "WHERE seq_mrkr_zdb_id = :zdbID ")
@@ -3279,7 +3309,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String seq2;
         if (str1.getSequence().getSecondSequence() != null) {
             seq2 = str1.getSequence().getSecondSequence();
-            HibernateUtil.currentSession().createSQLQuery(
+            HibernateUtil.currentSession().createNativeQuery(
                     "UPDATE marker_sequence " +
                     "SET seq_sequence_2 = :seq_sequence_2 " +
                     "WHERE seq_mrkr_zdb_id = :zdbID ")
@@ -3299,16 +3329,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] regions) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] regions) -> {
                     Marker reg = (Marker) tuple[0];
                     LookupEntry regionSuggestionList = new LookupEntry();
                     regionSuggestionList.setId(reg.getZdbID());
                     regionSuggestionList.setLabel(reg.getAbbreviation());
                     regionSuggestionList.setValue(reg.getAbbreviation());
                     return regionSuggestionList;
-                }
             })
             .list()
             ;
@@ -3346,16 +3375,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createQuery(hql)
             .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
             .setParameter("type", type)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+            .setResultTransformer(
+
+                (Object[] tuple, String[] sequenceTargetingReagents) -> {
                     Marker antibody = (Marker) tuple[0];
                     AntibodyLookupEntry abSuggestionList = new AntibodyLookupEntry();
                     abSuggestionList.setId(antibody.getZdbID());
                     abSuggestionList.setLabel(antibody.getAbbreviation());
                     abSuggestionList.setValue(antibody.getAbbreviation());
                     return abSuggestionList;
-                }
             })
             .list()
             ;
@@ -3396,7 +3424,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "select efl from FluorescentMarker efl  where efl.efg.markerType.name = :type order by efl.efg.abbreviation";
         Query<FluorescentMarker> query = session.createQuery(hql, FluorescentMarker.class);
-        query.setParameter("type", Marker.Type.EFG.toString());
+        query.setParameter("type", Marker.Type.EFG.toString()); //...markerType.name is a String
         return query.getResultList();
     }
 
@@ -3478,7 +3506,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         Query<Tuple> query = HibernateUtil.currentSession().createQuery(hql, Tuple.class);
-        query.setParameter("type", GENE_PRODUCES_TRANSCRIPT.toString());
+        query.setParameter("type", GENE_PRODUCES_TRANSCRIPT);
         List<Tuple> response = query.getResultList();
         response.forEach(tuple -> {
             List<Transcript> list = markerTranscriptMap.computeIfAbsent(tuple.get(0, MarkerRelationship.class).getFirstMarker(), marker -> new ArrayList<>());

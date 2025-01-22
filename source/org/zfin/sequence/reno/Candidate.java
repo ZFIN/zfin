@@ -2,8 +2,8 @@ package org.zfin.sequence.reno;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.annotation.Generated;
-import javax.persistence.*;
+import jakarta.annotation.Generated;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

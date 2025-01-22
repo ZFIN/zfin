@@ -2,7 +2,7 @@ package org.zfin.feature;
 
 import org.zfin.marker.MarkerTypeGroup;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Entity

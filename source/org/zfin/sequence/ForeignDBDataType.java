@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Setter
 @Getter
@@ -96,12 +98,12 @@ public class ForeignDBDataType {
 
     @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdbdt_data_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$DataType")})
+    @Type(value = StringEnumValueUserType.class,
+        parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$DataType")})
     private DataType dataType;
     @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdbdt_super_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$SuperType")})
     private SuperType superType;
     @Column(name = "fdbdt_display_order")

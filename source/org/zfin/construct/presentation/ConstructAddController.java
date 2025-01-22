@@ -19,8 +19,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.repository.MarkerRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.createNewConstructFromSubmittedForm;
@@ -54,7 +54,7 @@ public class ConstructAddController {
     }
 
     //TODO: deprecate and replace with the below method
-    @RequestMapping(value = "/construct-add-component", method = RequestMethod.POST)
+    @RequestMapping(value = {"/construct-add-component", "/construct-add-component/"}, method = RequestMethod.POST) //Spring v6 is stricter about trailing slashes
     public
     @ResponseBody
     String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {

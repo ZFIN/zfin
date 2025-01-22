@@ -15,7 +15,7 @@
 
   <script src="${zfn:getAssetPath("curation.js")}"></script>
 
-  <form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
+  <form:form modelAttribute="formBean" id="constructadd" style="background-color:#EEEEEE;">
 
 
 

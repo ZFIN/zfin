@@ -8,7 +8,7 @@
 
 <h1>Describe new Engineered Region</h1>
 
-<form:form action="region-do-submit" commandName="formBean" method="post">
+<form:form action="region-do-submit" modelAttribute="formBean" method="post">
     <div>
        <form:label path="${EngineeredRegionAddBean.NEW_REGION_NAME}" class="curation-form-label">Engineered Region name:</form:label>
        <form:input path="${EngineeredRegionAddBean.NEW_REGION_NAME}" size="80"

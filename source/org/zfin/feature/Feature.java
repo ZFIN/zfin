@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
+import jakarta.persistence.Entity;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -22,7 +24,7 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,7 @@ import java.util.stream.Collectors;
 @Table(name = "feature")
 //@Audited
 // Only update attributes that have changed.
-@org.hibernate.annotations.Entity(dynamicUpdate = true)
+@DynamicUpdate
 public class Feature implements EntityNotes, EntityZdbID {
 
     // TODO: can this be managed by spring?
@@ -103,7 +105,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @SortNatural
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
     @Column(name = "feature_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.FeatureTypeEnum")})
     @JsonView(View.FeatureAPI.class)
     private FeatureTypeEnum type;
@@ -112,7 +114,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSource> sources;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
-    @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
+    @OrderBy(value = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
     @JsonView(View.FeatureAPI.class)

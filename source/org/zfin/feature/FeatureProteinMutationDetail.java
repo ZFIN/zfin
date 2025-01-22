@@ -3,7 +3,7 @@ package org.zfin.feature;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.sequence.ReferenceDatabase;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "feature_protein_mutation_detail")

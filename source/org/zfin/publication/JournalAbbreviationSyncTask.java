@@ -1,22 +1,16 @@
 package org.zfin.publication;
 
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.nomenclature.repair.NamingIssuesReportRow;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -211,7 +205,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         transaction.begin();
         for(String fix : fixes) {
             LOG.info("Executing: " + fix);
-            session.createSQLQuery(fix).executeUpdate();
+            session.createNativeQuery(fix).executeUpdate();
         }
         transaction.commit();
     }

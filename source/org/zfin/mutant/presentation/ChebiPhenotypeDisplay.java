@@ -13,7 +13,7 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -47,10 +47,9 @@ public class ChebiPhenotypeDisplay {
     private Publication publication;
     @JsonView(View.API.class)
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "UI.CHEBI_PHENOTYPE_WAREHOUSE_ASSOCIATION", joinColumns = {
-        @JoinColumn(name = "cpwa_phenotype_id", nullable = false, updatable = false)},
-        inverseJoinColumns = {@JoinColumn(name = "cpwa_phenotype_warehouse_id",
-            nullable = false, updatable = false)})
+    @JoinTable(name = "UI.CHEBI_PHENOTYPE_WAREHOUSE_ASSOCIATION",
+        joinColumns = {@JoinColumn(name = "cpwa_phenotype_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "cpwa_phenotype_warehouse_id", nullable = false, updatable = false, insertable = false)})
     private List<PhenotypeStatementWarehouse> phenotypeStatements;
     @JsonView(View.API.class)
     @ManyToOne(fetch = FetchType.EAGER)

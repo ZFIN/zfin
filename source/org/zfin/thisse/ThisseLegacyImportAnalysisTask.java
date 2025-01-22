@@ -405,7 +405,7 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
         CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
                 .withHeader(fieldNames()));
 
-        List results = HibernateUtil.currentSession().createSQLQuery("select * from thisse.temp_thisse_report order by zgene_zdb_id desc, zclone_zdb_id desc").list();
+        List results = HibernateUtil.currentSession().createNativeQuery("select * from thisse.temp_thisse_report order by zgene_zdb_id desc, zclone_zdb_id desc").list();
 
         for(Object result : results) {
             writeCsvLine(result, csvPrinter);

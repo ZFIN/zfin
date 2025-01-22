@@ -3,8 +3,8 @@ package org.zfin.util.servlet;
 import org.zfin.database.TableLock;
 import org.zfin.profile.Person;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**

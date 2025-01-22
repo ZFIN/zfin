@@ -1,7 +1,7 @@
 package org.zfin.zebrashare.repository;
 
-import org.hibernate.Query;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -12,6 +12,7 @@ import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -111,6 +112,9 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
 
     @Override
     public List<Publication> getZebraSharePublicationsForPerson(Person person) {
+        if (person == null || person.getZdbID() == null) {
+            return Collections.emptyList();
+        }
         String hql = "" +
                      "select editor.publication " +
                      "from ZebrashareEditor editor " +

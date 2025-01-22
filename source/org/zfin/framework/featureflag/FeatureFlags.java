@@ -2,14 +2,14 @@ package org.zfin.framework.featureflag;
 
 import lombok.extern.log4j.Log4j2;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.zfin.profile.Person;
 
-import static org.zfin.profile.service.ProfileService.getCurrentSecurityUser;
+import static org.zfin.profile.service.ProfileService.getCurrentSecurityUserNoGuest;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Log4j2
@@ -75,7 +75,12 @@ public class FeatureFlags {
 
     private static FlagState isFlagEnabledForPersonScope(String flagName) {
         try {
-            PersonalFeatureFlag personalFeatureFlag = getInfrastructureRepository().getPersonalFeatureFlag(getCurrentSecurityUser(), flagName);
+            Person person = getCurrentSecurityUserNoGuest();
+            if (person == null) {
+                return FlagState.UNSET;
+            }
+
+            PersonalFeatureFlag personalFeatureFlag = getInfrastructureRepository().getPersonalFeatureFlag(person, flagName);
             if (personalFeatureFlag.isEnabled()) {
                 return FlagState.ENABLED;
             } else {
@@ -87,8 +92,10 @@ public class FeatureFlags {
     }
 
     public static void setFeatureFlagForPersonScope(String name, boolean value) {
-        Person currentUser = getCurrentSecurityUser();
-        getInfrastructureRepository().setPersonalFeatureFlag(currentUser, name, value);
+        Person currentUser = getCurrentSecurityUserNoGuest();
+        if (currentUser != null) {
+            getInfrastructureRepository().setPersonalFeatureFlag(currentUser, name, value);
+        }
     }
 
 

@@ -1,8 +1,13 @@
 package org.zfin.marker;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 public class TranscriptType implements Comparable<TranscriptType> {
 
     private Long id;
@@ -12,54 +17,6 @@ public class TranscriptType implements Comparable<TranscriptType> {
     private String definition;
     private boolean isIndented;
     private String soID;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getSoID() {
-        return soID;
-    }
-
-    public void setSoID(String soID) {
-        this.soID = soID;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public String getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(String display) {
-        this.display = display;
-    }
-
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
 
     public boolean isIndented() {
         return isIndented;

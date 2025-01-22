@@ -2,7 +2,7 @@ package org.zfin.infrastructure;
 
 import org.hibernate.annotations.DiscriminatorFormula;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 
@@ -34,7 +34,7 @@ public class RecordAttribution implements Serializable {
     @Column(name = "recattrib_source_zdb_id")
     private String sourceZdbID;
     @Column(name = "recattrib_source_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.infrastructure.RecordAttribution$SourceType")})
     private SourceType sourceType;
 

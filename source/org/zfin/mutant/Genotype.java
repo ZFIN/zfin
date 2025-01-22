@@ -12,7 +12,7 @@ import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 
 /**
@@ -57,10 +57,9 @@ public class Genotype implements Comparable, EntityZdbID {
     // This attribute is used only for storage purposes.
     // as the background is stored as a many-to-many relationship.
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "genotype_background", joinColumns = {
-            @JoinColumn(name = "genoback_geno_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "genoback_background_zdb_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "genotype_background",
+            joinColumns = {@JoinColumn(name = "genoback_geno_zdb_id", nullable = false, updatable = false, insertable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "genoback_background_zdb_id", nullable = false, updatable = false, insertable = false)})
     private Set<Genotype> associatedGenotypes;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "genotype")
     private Set<GenotypeFeature> genotypeFeatures;

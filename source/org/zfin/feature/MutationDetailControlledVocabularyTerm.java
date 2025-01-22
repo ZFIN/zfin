@@ -3,7 +3,7 @@ package org.zfin.feature;
 import org.apache.commons.lang3.ObjectUtils;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

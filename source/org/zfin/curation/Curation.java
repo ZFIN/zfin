@@ -4,7 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -28,7 +28,7 @@ public class Curation {
     @JoinColumn(name = "cur_curator_zdb_id")
     private Person curator;
     @Column(name = "cur_topic")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.curation.Curation$Topic")})
     private Topic topic;
     @Column(name = "cur_data_found")

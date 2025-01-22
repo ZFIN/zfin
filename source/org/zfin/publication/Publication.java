@@ -14,7 +14,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zebrashare.ZebrashareEditor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -54,7 +54,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @Column(name = "pub_pages")
     private String pages;
     @Column(name = "jtype")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
         parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
     private PublicationType type;
     @Column(name = "accession_no")
@@ -65,7 +65,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @Column(name = "pub_acknowledgment")
     private String acknowledgment;
     @Column(name = "status")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
         parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.Publication$Status")})
     private Status status;
     @Column(name = "keywords")
@@ -92,16 +92,19 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonView(View.PubTrackerAPI.class)
     @JsonProperty("registeredAuthors")
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "int_person_pub", joinColumns = {
-        @JoinColumn(name = "target_id", nullable = false, updatable = false)},
-        inverseJoinColumns = {@JoinColumn(name = "source_id",
-            nullable = false, updatable = false)})
+    @JoinTable(name = "int_person_pub",
+            joinColumns = {
+                    @JoinColumn(name = "target_id", nullable = false, updatable = false, insertable = false)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "source_id", nullable = false, updatable = false, insertable = false)
+            }
+    )
     @OrderBy(value = "full_name asc")
     private Set<Person> people;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "mh_pub_zdb_id")
-    @OrderBy()
-    private SortedSet<MeshHeading> meshHeadings;
+    private Set<MeshHeading> meshHeadings;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pnote_pub_zdb_id")
     @OrderBy("date desc")
@@ -109,10 +112,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pdx_pub_zdb_id")
     private Set<PublicationDbXref> dbXrefs;
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pf_pub_zdb_id")
     @OrderBy("originalFileName")
-    private SortedSet<PublicationFile> files;
+    private Set<PublicationFile> files;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pth_pub_zdb_id")
     private Set<PublicationTrackingHistory> statusHistory;

@@ -1,11 +1,12 @@
 package org.zfin.mutant.repository;
 
+import jakarta.persistence.TemporalType;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.zfin.database.InformixUtil;
@@ -27,10 +28,10 @@ import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.database.HibernateUpgradeHelper.setTupleResultTransformer;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
@@ -51,7 +52,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String hql = "select count(structure) from PhenotypeStructure structure " +
                      " where structure.publication.zdbID = :pubID ";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
         Long count = (Long) query.uniqueResult();
         return count > 0;
     }
@@ -66,7 +67,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                      " where structure.publication.zdbID = :pubID " +
                      "       order by structure.entity.superterm.termName";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
         return (List<PhenotypeStructure>) query.list();
     }
 
@@ -210,7 +211,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String hql = "select count(phenox) from PhenotypeExperiment phenox";
         hql += "     where phenox.figure.publication.zdbID = :pubID ";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
 
         Long count = (Long) query.uniqueResult();
         return count > 0;
@@ -254,13 +255,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                "             phenox.fishExperiment.fish.handle, " +
                "             phenox.startStage.abbreviation ";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
         if (fishID != null)
-            query.setString("fishID", fishID);
+            query.setParameter("fishID", fishID);
         if (figureID != null)
-            query.setString("figureID", figureID);
+            query.setParameter("figureID", figureID);
         if (featureID != null)
-            query.setString("featureID", featureID);
+            query.setParameter("featureID", featureID);
 
         List<Object[]> list = query.list();
         Set<PhenotypeExperiment> phenoSet = new LinkedHashSet<>();
@@ -290,11 +291,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         hql += "           and phenoExperiment.startStage.zdbID= :startID ";
         hql += "           and phenoExperiment.endStage.zdbID= :endID ";
         Query query = session.createQuery(hql);
-        query.setString("fishID", phenotypeExperimentFilter.getFishExperiment().getFish().getZdbID());
-        query.setString("environmentID", phenotypeExperimentFilter.getFishExperiment().getExperiment().getZdbID());
-        query.setString("figureID", phenotypeExperimentFilter.getFigure().getZdbID());
-        query.setString("startID", phenotypeExperimentFilter.getStartStage().getZdbID());
-        query.setString("endID", phenotypeExperimentFilter.getEndStage().getZdbID());
+        query.setParameter("fishID", phenotypeExperimentFilter.getFishExperiment().getFish().getZdbID());
+        query.setParameter("environmentID", phenotypeExperimentFilter.getFishExperiment().getExperiment().getZdbID());
+        query.setParameter("figureID", phenotypeExperimentFilter.getFigure().getZdbID());
+        query.setParameter("startID", phenotypeExperimentFilter.getStartStage().getZdbID());
+        query.setParameter("endID", phenotypeExperimentFilter.getEndStage().getZdbID());
         List<PhenotypeExperiment> phenoExperiments = (List<PhenotypeExperiment>) query.list();
 
         if (phenoExperiments == null || phenoExperiments.size() == 0)
@@ -453,12 +454,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<PhenotypeExperiment> getLatestPhenotypeExperiments(int days) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct experiment from PhenotypeExperiment experiment where " +
-                     "          experiment.dateCreated > :days ";
+        String hql = """
+                    SELECT DISTINCT experiment FROM PhenotypeExperiment experiment
+                    WHERE experiment.dateCreated > :startDate
+                    """;
         Query query = session.createQuery(hql);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -days);
-        query.setDate("days", cal.getTime());
+        query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
         return (List<PhenotypeExperiment>) query.list();
     }
 
@@ -472,17 +473,15 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<PhenotypeStatement> getLatestPhenotypeStatements(int experimentID, int days) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct statement from PhenotypeStatement statement where " +
-                     "          statement.dateCreated > :days ";
-        if (experimentID > 0)
-            hql += "AND statement.phenotypeExperiment.id =  :experimentID order by statement.dateCreated desc";
-        hql += " order by statement.dateCreated desc";
+        String hql = """
+                    SELECT DISTINCT statement FROM PhenotypeStatement statement
+                    WHERE statement.dateCreated > :startDate
+                    AND (:experimentID = 0 OR statement.phenotypeExperiment.id = :experimentID)
+                    ORDER BY statement.dateCreated DESC
+                    """;
         Query query = session.createQuery(hql);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.DATE, -days);
-        query.setDate("days", cal.getTime());
-        if (experimentID > 0)
-            query.setInteger("experimentID", experimentID);
+        query.setParameter("startDate", DateUtils.addDays(new Date(), -days), TemporalType.DATE);
+        query.setParameter("experimentID", experimentID);
         return (List<PhenotypeStatement>) query.list();
     }
 
@@ -511,34 +510,34 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                      "                      and NOTnormal.psg_tag != 'normal') " +
                      " ) countingTable" +
                      " ";
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("markerZdbId", gene.getZdbID())
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(sql)
+            .setParameter("markerZdbId", gene.getZdbID())
             .uniqueResult().toString());
     }
 
     @Override
     public FigureLink getPhenotypeFirstFigure(Marker gene) {
-        String sql = "  " +
-                     "     select " +
-                     "pg_fig_zdb_id, f.fig_label " +
-                     "from phenotype_source_generated, mutant_fast_search, figure f " +
-                     "where mfs_data_zdb_id = :markerZdbId " +
-                     "and f.fig_zdb_id= pg_fig_zdb_id " +
-                     "and pg_genox_zdb_id = mfs_genox_zdb_id " +
-                     "and exists " +
-                     "( " +
-                     "   select " +
-                     "   NOTnormal.psg_id " +
-                     "   from phenotype_observation_generated NOTnormal " +
-                     "   where NOTnormal.psg_pg_id = pg_id " +
-                     "   and NOTnormal.psg_tag != 'normal' " +
-                     ") ";
-        return (FigureLink) HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("markerZdbId", gene.getZdbID())
-            .setMaxResults(1)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+        String sql = """  
+                         select 
+                    pg_fig_zdb_id, f.fig_label 
+                    from phenotype_source_generated, mutant_fast_search, figure f 
+                    where mfs_data_zdb_id = :markerZdbId 
+                    and f.fig_zdb_id= pg_fig_zdb_id 
+                    and pg_genox_zdb_id = mfs_genox_zdb_id 
+                    and exists 
+                    ( 
+                       select 
+                       NOTnormal.psg_id 
+                       from phenotype_observation_generated NOTnormal 
+                       where NOTnormal.psg_pg_id = pg_id 
+                       and NOTnormal.psg_tag != 'normal' 
+                    )
+                    """;
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
+                .setParameter("markerZdbId", gene.getZdbID())
+                .setMaxResults(1);
+
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> {
                     FigureLink figureLink = new FigureLink();
                     figureLink.setFigureZdbId(tuple[0].toString());
                     if (tuple[1] == null) {
@@ -551,9 +550,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                     );
 
                     return figureLink;
-                }
-            })
-            .uniqueResult();
+                });
+        return (FigureLink) query.uniqueResult();
     }
 
 
@@ -604,57 +602,53 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      */
     @Override
     public PublicationLink getPhenotypeFirstPublication(Marker gene) {
-        String sql = " " +
-                     "   select p.zdb_id , p.pub_mini_ref " +
-                     "        from phenotype_source_generated, figure, publication p, mutant_fast_search  " +
-                     "       where mfs_data_zdb_id = :markerZdbId  " +
-                     "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
-                     "         and pg_fig_zdb_id = fig_zdb_id  " +
-                     "         and fig_source_zdb_id = zdb_id  " +
-                     "         and exists (select NOTnormal.psg_id  " +
-                     "                     from phenotype_observation_generated NOTnormal  " +
-                     "                    where NOTnormal.psg_pg_id = pg_id  " +
-                     "                      and NOTnormal.psg_tag != 'normal')     " +
-                     "        order by p.pub_date asc " +
-                     "  " +
-                     " ";
-        return (PublicationLink) HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("markerZdbId", gene.getZdbID())
-            .setMaxResults(1)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+        String sql ="""
+                        select p.zdb_id , p.pub_mini_ref 
+                             from phenotype_source_generated, figure, publication p, mutant_fast_search  
+                            where mfs_data_zdb_id = :markerZdbId  
+                              and mfs_genox_zdb_id = pg_genox_zdb_id  
+                              and pg_fig_zdb_id = fig_zdb_id  
+                              and fig_source_zdb_id = zdb_id  
+                              and exists (select NOTnormal.psg_id  
+                                          from phenotype_observation_generated NOTnormal  
+                                         where NOTnormal.psg_pg_id = pg_id  
+                                           and NOTnormal.psg_tag != 'normal')     
+                             order by p.pub_date asc 
+                     """;
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql)
+                .setParameter("markerZdbId", gene.getZdbID())
+                .setMaxResults(1);
+        return (PublicationLink) setTupleResultTransformer(query,
+                (Object[] tuple, String[] aliases) -> {
                     PublicationLink publicationLink = new PublicationLink();
                     publicationLink.setPublicationZdbId(tuple[0].toString());
                     publicationLink.setLinkContent(tuple[1].toString());
                     return publicationLink;
-                }
-            })
-            .uniqueResult();
+                }).uniqueResult();
     }
 
     @Override
     public int getNumPhenotypePublications(Marker gene) {
-        String sql = " select count(*) from ( " +
-                     "   select distinct pub_mini_ref, zdb_id  " +
-                     "        from phenotype_source_generated, figure, publication, mutant_fast_search  " +
-                     "       where mfs_data_zdb_id = :markerZdbId  " +
-                     "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
-                     "         and pg_fig_zdb_id = fig_zdb_id  " +
-                     "         and fig_source_zdb_id = zdb_id  " +
-                     "         and exists (select NOTnormal.psg_id  " +
-                     "                     from phenotype_observation_generated NOTnormal  " +
-                     "                    where NOTnormal.psg_pg_id = pg_id  " +
-                     "                      and NOTnormal.psg_tag != 'normal')     " +
-                     " ) countingTable" +
-                     " ";
-        return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("markerZdbId", gene.getZdbID())
+        String sql = """
+                      select count(*) from ( 
+                        select distinct pub_mini_ref, zdb_id  
+                             from phenotype_source_generated, figure, publication, mutant_fast_search  
+                            where mfs_data_zdb_id = :markerZdbId  
+                              and mfs_genox_zdb_id = pg_genox_zdb_id  
+                              and pg_fig_zdb_id = fig_zdb_id  
+                              and fig_source_zdb_id = zdb_id  
+                              and exists (select NOTnormal.psg_id  
+                                          from phenotype_observation_generated NOTnormal  
+                                         where NOTnormal.psg_pg_id = pg_id  
+                                           and NOTnormal.psg_tag != 'normal')     
+                      ) countingTable
+                     """;
+        return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery(sql)
+            .setParameter("markerZdbId", gene.getZdbID())
             .uniqueResult().toString());
     }
 
-    private class PostComposedResultTransformer extends BasicTransformerAdapter {
-        @Override
+    private class PostComposedResultTransformer  {
         public Object transformTuple(Object[] tuple, String[] aliases) {
             PostComposedPresentationBean bean = new PostComposedPresentationBean();
             bean.setSuperTermZdbId(tuple[0].toString());
@@ -667,7 +661,6 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             bean.setSuperTermName(tuple[4].toString());
             return bean;
         }
-
     }
 
     @Override
@@ -682,11 +675,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select pgcm.phenoWarehouse from PhenotypeCurationSearch pgcm" +
-                     " where pgcm.phenoOrExpID=:psgID  " +
-                     "                  and pgcm.phenoWarehouse.figure.zdbID=:figureZdbID " +
-                     "                  and pgcm.phenoWarehouse.start.zdbID=:startStageZdbID" +
-                     "                  and pgcm.phenoWarehouse.end.zdbID=:endStageZdbID";
+        String hql = """
+                     select pgcm.phenoWarehouse from PhenotypeCurationSearch pgcm
+                      where pgcm.phenoOrExpID=:psgID  
+                                       and pgcm.phenoWarehouse.figure.zdbID=:figureZdbID 
+                                       and pgcm.phenoWarehouse.start.zdbID=:startStageZdbID
+                                       and pgcm.phenoWarehouse.end.zdbID=:endStageZdbID
+                     """;
 
         Query<PhenotypeWarehouse> query = session.createQuery(hql, PhenotypeWarehouse.class);
         query.setParameter("psgID", id);
@@ -705,51 +700,52 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Set<PostComposedPresentationBean> phenotypes = new TreeSet<PostComposedPresentationBean>();
 
         // NOTE: need to use the "AS" notation, otherwise it assumes that both are the same
-        String sql1 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
-                      " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
-                      " super.term_name as super_name , sub.term_name as sub_name " +
-                      "               from phenotype_observation_generated pog  " +
-                      " join term super on pog.psg_e1a_zdb_id = super.term_zdb_id   " +
-                      " left OUTER join term sub on pog.psg_e1b_zdb_id = sub.term_zdb_id " +
-                      "	  where pog.psg_tag != 'normal' " +
-                      "     and pog.psg_pg_id in ( " +
-                      "           select psg.pg_id " +
-                      "             from " +
-                      "                mutant_fast_search mfs , " +
-                      "                phenotype_source_generated psg               " +
-                      "            where " +
-                      "                mfs.mfs_data_Zdb_id = :markerZdbId               " +
-                      "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id     " +
-                      "     ) " +
-                      " ";
-        phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql1)
-            .setString("markerZdbId", gene.getZdbID())
-            .setResultTransformer(postComposedResultTransformer)
-            .list());
+        String sql1 = """
+                        select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid,
+                        sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid,
+                        super.term_name as super_name , sub.term_name as sub_name
+                                     from phenotype_observation_generated pog 
+                        join term super on pog.psg_e1a_zdb_id = super.term_zdb_id  
+                        left OUTER join term sub on pog.psg_e1b_zdb_id = sub.term_zdb_id
+                          where pog.psg_tag != 'normal'
+                           and pog.psg_pg_id in (
+                                 select psg.pg_id
+                                   from
+                                      mutant_fast_search mfs ,
+                                      phenotype_source_generated psg              
+                                  where
+                                      mfs.mfs_data_Zdb_id = :markerZdbId              
+                                      and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id    
+                           )
+                """;
+        Query query = HibernateUtil.currentSession().createNativeQuery(sql1)
+                .setParameter("markerZdbId", gene.getZdbID());
+        setTupleResultTransformer(query, postComposedResultTransformer::transformTuple);
+        phenotypes.addAll(query.list());
 
 
-        String sql2 = " select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid, " +
-                      " sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid, " +
-                      " super.term_name as super_name , sub.term_name as sub_name " +
-                      "               from  phenotype_observation_generated pog   " +
-                      "              join term super on pog.psg_e2a_zdb_id = super.term_zdb_id " +
-                      "              left OUTER join term sub  on pog.psg_e2b_zdb_id = sub.term_zdb_id " +
-                      "     where pog.psg_tag != 'normal'   " +
-                      "     and pog.psg_pg_id in ( " +
-                      "           select psg.pg_id " +
-                      "             from " +
-                      "                mutant_fast_search mfs , " +
-                      "                phenotype_source_generated psg               " +
-                      "            where " +
-                      "                mfs.mfs_data_Zdb_id = :markerZdbId               " +
-                      "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id    " +
-                      "     ) " +
-                      " ";
-
-        phenotypes.addAll(HibernateUtil.currentSession().createSQLQuery(sql2)
-            .setString("markerZdbId", gene.getZdbID())
-            .setResultTransformer(postComposedResultTransformer)
-            .list());
+        String sql2 = """ 
+                       select distinct super.term_zdb_id as sup_zdbid, super.term_ont_id as sup_ontid,
+                       sub.term_zdb_id as sub_zdbid, sub.term_ont_id as sub_ontid,
+                       super.term_name as super_name , sub.term_name as sub_name
+                                     from  phenotype_observation_generated pog  
+                                    join term super on pog.psg_e2a_zdb_id = super.term_zdb_id
+                                    left OUTER join term sub  on pog.psg_e2b_zdb_id = sub.term_zdb_id
+                           where pog.psg_tag != 'normal'  
+                           and pog.psg_pg_id in (
+                                 select psg.pg_id
+                                   from
+                                      mutant_fast_search mfs ,
+                                      phenotype_source_generated psg              
+                                  where
+                                      mfs.mfs_data_Zdb_id = :markerZdbId              
+                                      and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id   
+                           )
+                      """;
+        Query query2 = HibernateUtil.currentSession().createNativeQuery(sql2)
+                .setParameter("markerZdbId", gene.getZdbID());
+        setTupleResultTransformer(query2, postComposedResultTransformer::transformTuple);
+        phenotypes.addAll(query2.list());
 
         return new ArrayList<PostComposedPresentationBean>(phenotypes);
     }
@@ -764,7 +760,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                      "        and genoFig.figure = fig";
 
         Query query = session.createQuery(hql);
-        query.setString("genoID", genotypeID);
+        query.setParameter("genoID", genotypeID);
         return (List<Figure>) query.list();
     }
 
@@ -825,8 +821,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<Figure> getPhenotypeFiguresForFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct genofig.figure from GenotypeFigure genofig " +
-                     "where genofig.fish = :fish";
+        String hql = "select distinct genofig.figure from GenotypeFigure genofig where genofig.fish = :fish";
 
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
@@ -844,10 +839,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GenotypeFigure genoFig  " +
-                     "      where genoFig.phenotypeWarehouse = pheno.phenotypeWarehouse " +
-                     "        and genoFig.genotype = :genotype " +
-                     "        and genoFig.figure = :figure";
+        String hql ="""
+                      select distinct pheno from PhenotypeStatementWarehouse pheno, GenotypeFigure genoFig  
+                           where genoFig.phenotypeWarehouse = pheno.phenotypeWarehouse 
+                             and genoFig.genotype = :genotype 
+                             and genoFig.figure = :figure
+                     """;
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
@@ -858,11 +855,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<PhenotypeStatement> getPhenotypeStatementsForFigureAndFish(Figure figure, Fish fish) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, GenotypeFigure genoFig  " +
-                     "      where pheno.phenotypeExperiment = phenoExp " +
-                     "        and genoFig.phenotypeExperiment = phenoExp " +
-                     "        and genoFig.fish = :fish" +
-                     "        and genoFig.figure = :figure";
+        String hql = """
+                     select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, GenotypeFigure genoFig  
+                           where pheno.phenotypeExperiment = phenoExp 
+                             and genoFig.phenotypeExperiment = phenoExp 
+                             and genoFig.fish = :fish
+                             and genoFig.figure = :figure
+                     """;
 
         Query<PhenotypeStatement> query = session.createQuery(hql, PhenotypeStatement.class);
         query.setParameter("figure", figure);
@@ -873,9 +872,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<GenericTerm> getHumanDiseases(String publicationID) {
 
-        String hql = "select term from TermAttribution as termAtt where " +
-                     "       termAtt.publication.zdbID = :publicationID " +
-                     "     order by termAtt.term.termName";
+        String hql = """
+                     select term from TermAttribution as termAtt where 
+                            termAtt.publication.zdbID = :publicationID 
+                          order by termAtt.term.termName
+                     """;
         Query<GenericTerm> query = HibernateUtil.currentSession().createQuery(hql, GenericTerm.class);
         query.setParameter("publicationID", publicationID);
 
@@ -884,9 +885,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     @Override
     public List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID) {
-        String hql = "from DiseaseAnnotation as disease where" +
-                     " disease.publication.zdbID = :publicationID " +
-                     "order by disease.disease.termName";
+        String hql = """
+                     from DiseaseAnnotation as disease where
+                      disease.publication.zdbID = :publicationID 
+                     order by disease.disease.termName
+                     """;
         Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
         query.setParameter("publicationID", publicationID);
         return query.list();
@@ -1082,7 +1085,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
-        query.setString("createdBy", "created by");
+        query.setParameter("createdBy", "created by");
 
         List<PhenotypeStatementWarehouse> strPhenotypeStatementsCreatedBy = (List<PhenotypeStatementWarehouse>) query.list();
 
@@ -1134,23 +1137,22 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene) {
-        String sql = "select distinct damo_pk_id " +
-                     "  from disease_annotation_model, mutant_fast_search " +
-                     " where mfs_genox_zdb_id = damo_genox_zdb_id " +
-                     "   and mfs_data_zdb_id = :geneZdbID ";
+        String sql = """
+                     select distinct damo_pk_id 
+                       from disease_annotation_model, mutant_fast_search 
+                      where mfs_genox_zdb_id = damo_genox_zdb_id 
+                        and mfs_data_zdb_id = :geneZdbID 
+                     """;
 
-        List<BigInteger> modelZdbIds = (List<BigInteger>) HibernateUtil.currentSession().createSQLQuery(sql)
-            .setString("geneZdbID", gene.getZdbID())
+        List<Long> modelZdbIds = HibernateUtil.currentSession().createNativeQuery(sql, Long.class)
+            .setParameter("geneZdbID", gene.getZdbID())
             .list();
 
-        List<DiseaseAnnotationModel> diseaseAnnotationModels = new ArrayList<>();
-        for (BigInteger id : modelZdbIds) {
-            long zdbId = id.longValue();
-            DiseaseAnnotationModel model = (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, zdbId);
-            diseaseAnnotationModels.add(model);
-        }
+        String hql = "from DiseaseAnnotationModel where ID in (:modelZdbIds)";
 
-        return diseaseAnnotationModels;
+        return HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotationModel.class)
+                .setParameterList("modelZdbIds", modelZdbIds)
+                .list();
     }
 
     @Override
@@ -1167,7 +1169,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                  where phenox.figure.publication.zdbID = :pubID
                  """;
         Query<PhenotypeExperiment> query = session.createQuery(hql, PhenotypeExperiment.class);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
 
         List<PhenotypeExperiment> structures = query.list();
         return structures.stream().anyMatch(PhenotypeExperiment::hasObsoletePhenotype);

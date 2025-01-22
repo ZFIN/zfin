@@ -16,7 +16,7 @@ import org.zfin.stats.StatisticPublicationService;
 import org.zfin.stats.StatisticRow;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/publication/stats")

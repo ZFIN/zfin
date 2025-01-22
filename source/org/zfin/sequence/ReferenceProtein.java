@@ -3,7 +3,7 @@ package org.zfin.sequence;
 import lombok.Data;
 import org.zfin.marker.Marker;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "REFERENCE_PROTEIN")

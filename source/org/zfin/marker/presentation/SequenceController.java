@@ -22,7 +22,7 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;

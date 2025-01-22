@@ -350,7 +350,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         return dto;
     }
 
-
     @Override
     protected Ontology[] getOntologiesToLoad() {
         Ontology[] ontologies = new Ontology[3];

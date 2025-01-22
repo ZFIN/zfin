@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
@@ -23,8 +22,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -127,7 +127,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         Query<CuratorSession> query = session.createQuery(hql, CuratorSession.class);
         query.setParameter("curatorID", curator.getZdbID());
         query.setParameter("pubID", pubID);
-        query.setParameter("field", field.toString());
+        query.setParameter("field", field.toString()); //CuratorSession.field is a String
         return query.uniqueResult();
     }
 
@@ -334,9 +334,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public List<Person> getRootUsers() {
         Session session = currentSession();
-        Query<Person> query = session.createQuery("from Person where accountInfo.role = :role", Person.class);
+        Query<AccountInfo> query = session.createQuery("from AccountInfo where role = :role", AccountInfo.class);
         query.setParameter("role", "root");
-        return query.list();
+        List<Person> rootUsers = new ArrayList<>();
+        rootUsers.addAll(
+                query.list().stream().map(AccountInfo::getPerson).collect(Collectors.toSet())
+        );
+        return rootUsers;
     }
 
     /**
@@ -415,11 +419,11 @@ public class HibernateProfileRepository implements ProfileRepository {
             			WHERE  id.idsup_data_zdb_id =  :OID
             """;
 
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("OID", zdbID)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+            .setTupleTransformer(
+
+                                            (Object[] tuple, String[] aliases) -> {
                     OrganizationLink organinzationLink = new OrganizationLink();
                     organinzationLink.setSupplierZdbId(tuple[0].toString());
                     if (tuple[1] != null) {
@@ -439,7 +443,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                     }
 
                     return organinzationLink;
-                }
+
             })
             .list()
             ;
@@ -620,7 +624,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             logger.error("Not a valid organization to remove member from: " + organizationZdbID);
             return 0;
         }
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID.toUpperCase())
             .setParameter("organizationZdbID", organizationZdbID.toUpperCase())
             .executeUpdate();
@@ -655,7 +659,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("personZdbID: " + personZdbID);
         logger.debug("organizationZdbID: " + organizationZdbID);
         logger.debug("positionID: " + position);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("companyZdbID", organizationZdbID)
             .setParameter("positionID", position)
@@ -669,7 +673,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("lab: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("labZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -683,7 +687,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("lab: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("labZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -733,7 +737,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         logger.debug("person: " + personZdbID);
         logger.debug("company: " + organizationZdbID);
         logger.debug("positionID: " + positionID);
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("companyZdbID", organizationZdbID)
             .setParameter("positionID", positionID)
@@ -743,7 +747,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public int removeLabMember(String personZdbID, String organizationZdbID) {
         String sql = "delete from int_person_lab where source_id = :personZdbID and target_id = :organizationID ";
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("organizationID", organizationZdbID)
             .executeUpdate();
@@ -752,7 +756,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public int removeCompanyMember(String personZdbID, String organizationZdbID) {
         String sql = "delete from int_person_company where source_id = :personZdbID and target_id = :organizationID ";
-        return currentSession().createSQLQuery(sql)
+        return currentSession().createNativeQuery(sql)
             .setParameter("personZdbID", personZdbID)
             .setParameter("organizationID", organizationZdbID)
             .executeUpdate();
@@ -874,37 +878,39 @@ public class HibernateProfileRepository implements ProfileRepository {
             return currentSession().createQuery(hql, Person.class)
                 .list();
         }
-        String hql = "from Person where unaccent(lastName) like unaccent(:lastName) order by lastName, firstName";
-        return currentSession().createQuery(hql, Person.class)
-            .setParameter("lastName", lastNameStartsWith + "%")
+
+        //TODO: unaccent and like don't work in hql so we need to use sql. However, we can extend hql like so: https://stackoverflow.com/a/77703596
+        String sql = "select * from person where unaccent(last_name) like (unaccent(:lastName) || '%') order by last_name, first_name";
+        return currentSession().createNativeQuery(sql, Person.class)
+            .setParameter("lastName", lastNameStartsWith)
             .list();
     }
 
     @Override
     public List<Person> getPersonByLastNameStartsWithAndFirstNameStartsWith(String lastNameStartsWith, String firstNameStartsWith) {
-        String hql = """
-            from Person
-            where lower(unaccent(lastName)) like lower(unaccent(:lastName))
-            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
-            ORDER BY lastName, firstName
+        String sql = """
+            select * from person
+            where lower(unaccent(last_name))  like lower(unaccent(:lastName))  || '%'
+            AND   lower(unaccent(first_name)) like lower(unaccent(:firstName)) || '%'
+            ORDER BY last_name, first_name
             """;
-        Query<Person> query = currentSession().createQuery(hql, Person.class);
-        query.setParameter("lastName", lastNameStartsWith + "%");
-        query.setParameter("firstName", firstNameStartsWith + "%");
+        Query<Person> query = currentSession().createNativeQuery(sql, Person.class);
+        query.setParameter("lastName", lastNameStartsWith);
+        query.setParameter("firstName", firstNameStartsWith);
         return query.getResultList();
     }
 
     @Override
     public List<Person> getPersonByLastNameEqualsAndFirstNameStartsWith(String lastName, String firstNameStartsWith) {
-        String hql = """
-            from Person
-            where lower(unaccent(lastName)) = lower(unaccent(:lastName))
-            AND   lower(unaccent(firstName)) like lower(unaccent(:firstName))
-            ORDER BY lastName, firstName
+        String sql = """
+            select * from person
+            where lower(unaccent(last_name)) = lower(unaccent(:lastName))
+            AND   lower(unaccent(first_name)) like lower(unaccent(:firstName)) || '%'
+            ORDER BY last_name, first_name
             """;
-        Query<Person> query = currentSession().createQuery(hql, Person.class);
+        Query<Person> query = currentSession().createNativeQuery(sql, Person.class);
         query.setParameter("lastName", lastName);
-        query.setParameter("firstName", firstNameStartsWith + "%");
+        query.setParameter("firstName", firstNameStartsWith);
         return query.getResultList();
     }
 
@@ -990,7 +996,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<String> getDistributionList() {
         String hql = """
             select distinct email from person
-            				where on_dist_list='t'
+            				where on_dist_list = true
             				and email is not null
             				and email != ''
             """;
@@ -1006,7 +1012,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             				and labpos_position in ('PI/Director', 'Co-PI/Senior Scientist')
             				and email is not null
             				and email != ''
-            				and on_dist_list='t'
+            				and on_dist_list = true
             							""";
         List<Tuple> resultList = currentSession().createNativeQuery(hql, Tuple.class).getResultList();
         return resultList.stream().map(o -> (String) o.get(0)).collect(toList());
@@ -1015,7 +1021,7 @@ public class HibernateProfileRepository implements ProfileRepository {
     public List<String> getUsaDistributionList() {
         String hql = """
             select distinct email from person
-            				where on_dist_list='t'
+            				where on_dist_list = true
             				and upper(address) like '%USA%'
             				and email is not null
             				and email != ''
@@ -1026,13 +1032,23 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public List<Person> getCurators() {
         Query<Person> query = currentSession()
-            .createQuery("from Person where accountInfo.curator = true ORDER BY fullName", Person.class);
+            .createQuery("""
+            select distinct p from Person p
+            join p.accountInfo a
+            where a.curator = true
+            order by p.fullName
+                """, Person.class);
         return query.list();
     }
 
     public List<Person> getStudents() {
         Query<Person> query = currentSession()
-            .createQuery("from Person where accountInfo.student = true ORDER BY fullName", Person.class);
+            .createQuery("""
+                    select distinct p from Person p
+                    join p.accountInfo a
+                    where a.student = true
+                    order by p.fullName
+                """, Person.class);
         return query.list();
     }
 

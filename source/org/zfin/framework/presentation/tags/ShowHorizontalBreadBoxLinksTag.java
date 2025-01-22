@@ -13,9 +13,9 @@ import org.zfin.search.service.SolrService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.util.URLCreator;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.Map;
 
