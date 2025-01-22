@@ -8,10 +8,7 @@ import org.zfin.uniprot.dto.ProteinDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -89,7 +86,7 @@ public class InterproProteinActionCreator implements ActionCreator {
                     .subType(SecondaryTermLoadAction.SubType.PROTEIN)
                     .accession(accession)
                     .length(length)
-                    .details(uniprotRecord.toUniProtFormat())
+                    .uniprotAccessions(Set.of(uniprotRecord.getAccession()))
                     .build());
         } else {
             log.info("No auto-curated gene association found for UniProt accession: " + accession);

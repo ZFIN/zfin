@@ -173,7 +173,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public Map<String, Collection<MarkerDBLink>> getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
 
-        Query<MarkerDBLink> query = session.createQuery("from MarkerDBLink where referenceDatabase in (:referenceDatabase) order by accessionNumber", MarkerDBLink.class);
+        Query<MarkerDBLink> query = session.createQuery("select mdl from MarkerDBLink mdl join fetch mdl.marker join fetch mdl.publications where mdl.referenceDatabase in (:referenceDatabase) order by mdl.accessionNumber", MarkerDBLink.class);
         query.setParameterList("referenceDatabase", referenceDatabases);
         List<MarkerDBLink> dbLinks = query.list();
 
