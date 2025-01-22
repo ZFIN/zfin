@@ -5,16 +5,13 @@ import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.datfiles.DatFileWriter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
-import static org.zfin.sequence.ForeignDB.AvailableName.ZFIN;
+import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GB;
-import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GP;
 
 /**
  * This handler creates DELETE actions that let curators know about any genes that currently have uniprot associations,
@@ -70,12 +67,15 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         for(DBLinkSlimDTO sequenceDTO : sequencesForGenesWithExistingUniprotAssociations) {
             if (!genesWithMatchesInLoad.contains(sequenceDTO.getDataZdbID())) {
 
-                //no duplicates
+                /*
+                //no duplicate genes
                 if (alreadyEncounteredThisGeneID.contains(sequenceDTO.getDataZdbID())) {
                     continue;
                 }
-                genesThatLostUniProts.add(sequenceDTO);
                 alreadyEncounteredThisGeneID.add(sequenceDTO.getDataZdbID());
+                */
+
+                genesThatLostUniProts.add(sequenceDTO);
             }
         }
 
@@ -111,11 +111,13 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         UniProtLoadAction action = new UniProtLoadAction();
 
         String sequenceDetails = "";
-        String sequenceDatFileDetails = "Sequence details: \n=================\n";
         RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
 
         if (richSequence != null) {
-            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
+            Set<String> refSeqIDs = richSequence.getRefSeqs();
+            refSeqIDs.forEach(refSeqID -> {
+                action.addLink(UniProtLoadLink.create(REFSEQ, refSeqID));
+            });
 
             //gene1
             Set<String> affectedGenes = new HashSet<>();
@@ -137,8 +139,6 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
             if (affectedGenes.size() > 1) {
                     sequenceDetails += "These genes currently have links to " + lostUniProt.getAccession() + " : " + String.join(", ", affectedGenes) + "\n";
             }
-            sequenceDetails += "\n";
-            sequenceDetails += sequenceDatFileDetails;
 
         } else {
             sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
@@ -169,14 +169,14 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         UniProtLoadAction action = new UniProtLoadAction();
 
         String sequenceDetails = "";
-        String sequenceDatFileDetails = "Sequence details: \n=================\n";
         RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
 
         if (richSequence != null) {
-            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
-            sequenceDetails += "\n";
-            sequenceDetails += sequenceDatFileDetails;
-
+            //Add refseqs
+            Set<String> refSeqIDs = richSequence.getRefSeqs();
+            refSeqIDs.forEach(refSeqID -> {
+                action.addLink(UniProtLoadLink.create(REFSEQ, refSeqID));
+            });
         } else {
             sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
         }

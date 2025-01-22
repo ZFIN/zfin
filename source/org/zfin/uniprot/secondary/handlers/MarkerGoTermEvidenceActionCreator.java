@@ -203,9 +203,11 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                                 .type(SecondaryTermLoadAction.Type.LOAD)
                                                 .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
-                                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
-                                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
-                                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
+                                                .details("Uniprot release file record(s) for related gene")
+                                                .uniprotAccessions(uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID())
+                                                        .stream()
+                                                        .map(RichSequenceAdapter::getAccession)
+                                                        .collect(Collectors.toSet()))
                                                 .build();
                             }
                         }
@@ -222,9 +224,11 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                 .type(SecondaryTermLoadAction.Type.DELETE)
                                 .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
-                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
-                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
-                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
+                                .details("Uniprot release file record(s) for related gene")
+                                .uniprotAccessions(uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID())
+                                        .stream()
+                                        .map(RichSequenceAdapter::getAccession)
+                                        .collect(Collectors.toSet()))
                                 .build()
                 )
                 .toList();

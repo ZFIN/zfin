@@ -78,6 +78,15 @@ public class RichSequenceAdapter {
         return this.wo().getName();
     }
 
+    public Set<String> getRefSeqsWithoutVersion() {
+        return getRefSeqs().stream().map(r -> {
+            if (r.contains(".")) {
+                return r.substring(0, r.indexOf("."));
+            }
+            return r;
+        }).collect(Collectors.toSet());
+    }
+
     public Set<String> getRefSeqs() {
         RichSequence richSequence = wo();
 
