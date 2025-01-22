@@ -9,7 +9,7 @@ import org.zfin.framework.api.View;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 /**

@@ -14,8 +14,8 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;

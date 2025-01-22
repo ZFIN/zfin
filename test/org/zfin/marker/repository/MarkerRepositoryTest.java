@@ -10,8 +10,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
@@ -29,7 +27,6 @@ import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -44,6 +41,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
+import jakarta.persistence.Tuple;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,6 +49,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
@@ -325,6 +324,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
     }
 
+    @Test
+    public void fetchAccessionAndNestedAttributes() {
+        String accessionNumber = "BC154170";
+        List<Accession> accessionList = getSequenceRepository().getAccessionsByNumber(accessionNumber);
+        assertNotNull(accessionList);
+        assertTrue(accessionList.size() > 0);
+        Accession accession = accessionList.get(0);
+        assertNotNull(accession.getReferenceDatabase());
+        assertNotNull(accession.getReferenceDatabase().getForeignDB());
+        assertNotNull(accession.getBlastableMarkers());
+        assertNotNull(accession.getBlastableMarkerDBLinks());
+
+        Set<MarkerDBLink> blastableMarkers = accession.getBlastableMarkerDBLinks();
+        assertTrue("At least one blastable marker", blastableMarkers.size() > 1);
+    }
 
     @Test
     public void testRemoveRedundantDBLinks() {
@@ -386,18 +400,20 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String curationPubZdbID = "ZDB-PUB-020723-3";
         String journalPubZdbID = "ZDB-PUB-041006-7";
 
-        //this case will get a deletion
+        //this case will get a deletion because the same pub is used for both
         markerRepository.addDBLink(gene, acc1.getNumber(), refDb, curationPubZdbID);
         markerRepository.addDBLink(segment, acc1.getNumber(), refDb, curationPubZdbID);
         markerRepository.addSmallSegmentToGene(gene, segment, curationPubZdbID);
 
-        //this case won't have the dblink deleted
+        //this case won't have the dblink deleted because the pubs are different
         markerRepository.addDBLink(gene2, acc2.getNumber(), refDb, journalPubZdbID);
         markerRepository.addDBLink(segment2, acc2.getNumber(), refDb, curationPubZdbID);
         markerRepository.addSmallSegmentToGene(gene2, segment2, curationPubZdbID);
 
         //make sure it's all in the database before testing
         session.flush();
+        session.refresh(acc1);
+        session.refresh(acc2);
 
         //try the cleanup function
         Set<Accession> accessions = new HashSet<>();
@@ -412,8 +428,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.refresh(acc1);
         session.refresh(acc2);
 
-        assertEquals("test accession acc1 should have one marker", acc1.getMarkers().size(), 1);
-        assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
+        assertEquals("test accession acc1 should have one marker",1, acc1.getMarkers().size());
+        assertEquals("test accession acc2 should have two markers",2, acc2.getMarkers().size());
     }
 
 
@@ -592,7 +608,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
-        NativeQuery query = session.createNativeQuery(hql);
+        NativeQuery query = session.createNativeQuery(hql, Tuple.class);
         // organism subdivision
         query.setParameter("aoterm", "ZDB-TERM-100331-1266");
         query.setParameter("type", "High-Quality-Probe");
@@ -602,12 +618,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         List<HighQualityProbe> probes = new ArrayList<>();
         while (results.next()) {
             Marker probe = new Marker();
-            Object[] objects = results.get();
-            probe.setZdbID((String) objects[0]);
-            probe.setAbbreviation((String) objects[1]);
+            Tuple objects = (Tuple)results.get();
+            probe.setZdbID((String) objects.get(0));
+            probe.setAbbreviation((String) objects.get(1));
             Marker gene = new Marker();
-            gene.setZdbID((String) objects[2]);
-            gene.setAbbreviation((String) objects[3]);
+            gene.setZdbID((String) objects.get(2));
+            gene.setAbbreviation((String) objects.get(3));
             HighQualityProbe hqp = new HighQualityProbe(probe, aoTerm);
             hqp.addGene(gene);
             probes.add(hqp);
@@ -621,7 +637,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "           and fstat_type = :type" +
                 "     order by mrkr_abbrev_order ";
 
-        query = session.createSQLQuery(hql);
+        query = session.createNativeQuery(hql);
         query.setParameter("aoterm", "ZDB-ANAT-010921-587");
         query.setParameter("type", "High-Quality-Probe");
         results = query.scroll();

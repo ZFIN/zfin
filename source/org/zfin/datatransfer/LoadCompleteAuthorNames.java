@@ -9,7 +9,7 @@ import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.publication.PubmedPublicationAuthor;
 import org.zfin.util.ReportGenerator;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.*;
 
 import static org.zfin.datatransfer.webservice.NCBIEfetch.retrieveAuthorInfo;

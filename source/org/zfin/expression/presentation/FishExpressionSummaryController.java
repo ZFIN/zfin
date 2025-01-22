@@ -92,66 +92,8 @@ public class FishExpressionSummaryController {
 
     }
 
-    @RequestMapping("/fish-expression-figure-summary-envgroup")
-    protected String getFishExpressionFigureSummaryEnvGroup(@RequestParam String fishZdbID,
-                                                                @RequestParam String geneZdbID,
-                                                                @RequestParam boolean imagesOnly,
-                                                                @RequestParam String envGroup,
-                                                                Model model) {
-        Fish fish = getMutantRepository().getFish(fishZdbID);
 
-        if (fish == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
-
-        if (gene == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaEnvironmentGroup(fish, gene, imagesOnly, envGroup);
-        model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
-        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary";
-
-    }
-
-    @RequestMapping(value = {"/sequence-targeting-reagent-expression-figure-summary"})
-    protected String getSequenceTargetingReagentExpressionFigureSummary(@RequestParam String strZdbID,
-                                                                        @RequestParam String geneZdbID,
-                                                                        @RequestParam boolean imagesOnly,
-                                                                        Model model) {
-
-
-        SequenceTargetingReagent sequenceTargetingReagent = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(strZdbID);
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
-
-        if (sequenceTargetingReagent == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, strZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        if (gene == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaSTR(sequenceTargetingReagent, gene, imagesOnly);
-        model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
-        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary";
-
-    }
-
+    //Example: /action/expression/fish-expression-figure-summary?fishID=ZDB-FISH-171026-19&imagesOnly=false
     @RequestMapping(value = {"/fish-expression-figure-summary"})
     protected String getExpressionFigureSummaryForFish(@RequestParam String fishID,
                                                        @RequestParam boolean imagesOnly,
@@ -177,6 +119,5 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureExpressionSummaryDisplayList);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
         return "expression/fish-expression-figure-summary";
-
     }
 }

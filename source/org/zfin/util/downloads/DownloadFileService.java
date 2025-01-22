@@ -13,9 +13,9 @@ import org.zfin.util.downloads.jaxb.DownloadFileEntry;
 import org.zfin.util.downloads.jaxb.DownloadFileRegistry;
 import org.zfin.util.downloads.presentation.DownloadFileInfo;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

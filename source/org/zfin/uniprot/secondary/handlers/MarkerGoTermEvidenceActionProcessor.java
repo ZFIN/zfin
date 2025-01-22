@@ -134,7 +134,7 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
                 AND mrkrgoev_source_zdb_id = :mrkrgoev_source_zdb_id
                 """;
 
-        currentSession().createSQLQuery(sql)
+        currentSession().createNativeQuery(sql)
                 .setParameter("inferred_from", dto.getInferredFrom())
                 .setParameter("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID())
                 .setParameter("mrkrgoev_term_zdb_id", dto.getGoTermZdbID())

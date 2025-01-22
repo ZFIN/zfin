@@ -1,6 +1,6 @@
 package org.zfin.marker;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("Marker")

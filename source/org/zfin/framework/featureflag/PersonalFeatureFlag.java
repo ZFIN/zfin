@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "zdb_personal_feature_flag")

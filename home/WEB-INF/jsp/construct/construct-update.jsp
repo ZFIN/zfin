@@ -8,7 +8,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructUpdateBean" scope="request"/>
 
-<form:form commandName="formBean" id="thisform" style="background-color:#EEEEEE;">
+<form:form modelAttribute="formBean" id="thisform" style="background-color:#EEEEEE;">
 
 
 <table>

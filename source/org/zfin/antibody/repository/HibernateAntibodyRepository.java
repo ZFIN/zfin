@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
-import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 
 
 /**
@@ -234,8 +233,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         query.setParameter("probe", probe);
         query.setParameter("term", aoTerm);
 
-        query.setResultTransformer(DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<>(query.list());
+        List<Publication> resultList = query.list();
+
+        //Use Set for Distinct entities, Use LinkedHashSet to preserve order
+        Set<Publication> distinctPublications = new LinkedHashSet<>(resultList);
+        return new PaginationResult<>(new ArrayList<>(distinctPublications));
     }
 
     public List<Antibody> getAntibodiesByPublication(Publication publication) {
@@ -397,7 +399,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                            "                     AND expressionResult.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
             }
             if (!searchCriteria.isIncludeSubstructures()) {
-                hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                hql.append("    AND expressionTerm.originalAnnotation = true ");
             }
 
             if (numberOfTerms > 1) {
@@ -419,7 +421,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                                    "                     AND expressionResult2.expressionFigureStage.endStage.hoursEnd <= :hoursEnd ");
                     }
                     if (!searchCriteria.isIncludeSubstructures()) {
-                        hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                        hql.append("    AND expressionTerm.originalAnnotation = true ");
                     }
                     hql.append(" ) ");
                 }
@@ -860,7 +862,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql = "select pubAttribute, antibody from Antibody as antibody, PublicationAttribution pubAttribute " +
                      "     where pubAttribute.dataZdbID = antibody.zdbID ";
         Query query = session.createQuery(hql);
-        //query.setString("antibodytype", "ZDB-" + Marker.Type.ATB.name() + "%");
+
         List<Object[]> list = query.list();
         Map<Publication, List<Antibody>> antibodyMap = new HashMap<>();
 
@@ -874,7 +876,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql = " select rel from MarkerRelationship rel where " +
               "rel.markerRelationshipType.name = :type ";
         query = session.createQuery(hql);
-        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString());
+        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString()); //markerRelationshipType.name is a String
         List<MarkerRelationship> rels = query.list();
         antibodyMap.values().stream().flatMap(Collection::stream).forEach(antibody -> {
             List<Marker> marker = rels.stream().filter(relationship -> relationship.getSecondMarker().getZdbID().equals(antibody.getZdbID()))

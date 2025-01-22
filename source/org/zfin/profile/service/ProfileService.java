@@ -25,12 +25,14 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+import static org.zfin.repository.RepositoryFactory.getUserRepository;
 
 /**
  *
@@ -70,23 +72,45 @@ public class ProfileService {
 
     /**
      * This returns a Person object of the current security person.
-     * If no authorized Person is found return null.
+     * If no authorized Person is found return guest user.
      *
      * @return Person object
      */
     public static Person getCurrentSecurityUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context == null) {
-            return null;
-        }
-        Authentication authentication = context.getAuthentication();
-        if (authentication == null) {
+        return getCurrentSecurityUserWithCustomGuest(() -> {
             Person person = new Person();
             person.setShortName("Guest");
             person.setFullName("Guest");
             person.setLastName("User");
             person.setFirstName("Guest");
             return person;
+        });
+    }
+
+    /**
+     * Same as getCurrentSecurityUser but returns null if no authorized Person
+     * @return
+     */
+    public static Person getCurrentSecurityUserNoGuest() {
+        return getCurrentSecurityUserWithCustomGuest(null);
+    }
+
+    /**
+     * This returns a Person object of the current security person.
+     * If no authorized Person is found return guest user.
+     * The guest user is created by the authenticationNullHandler.
+     *
+     * @param authenticationNullHandler Supplier to create a guest user if no authorized Person is found
+     * @return Person the current security person
+     */
+    private static Person getCurrentSecurityUserWithCustomGuest(Supplier<Person> authenticationNullHandler) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null) {
+            return null;
+        }
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null) {
+            return authenticationNullHandler != null ? authenticationNullHandler.get() : null;
         }
         Object principal = authentication.getPrincipal();
         // ToDo: Annonymous user should also be a Person object opposed to a String object
@@ -100,7 +124,6 @@ public class ProfileService {
             person.setShortName(user.getUsername());
             return person;
         }
-        // make sure this object
         return (Person) principal;
     }
 
@@ -524,7 +547,6 @@ public class ProfileService {
         accountInfo.setZdbID(person.getZdbID());
         HibernateUtil.currentSession().update(accountInfo);
 
-
         return person;
     }
 
@@ -716,7 +738,7 @@ public class ProfileService {
     }
 
     public static boolean isRootUser() {
-        if (getCurrentSecurityUser() == null) {
+        if (getCurrentSecurityUser() == null || getCurrentSecurityUser().getAccountInfo() == null) {
             return false;
         }
         return getCurrentSecurityUser().getAccountInfo().getRoot();
@@ -741,7 +763,7 @@ public class ProfileService {
     public static Person getPersonByEmailOrLogin(String emailOrLogin) {
         Person person = getProfileRepository().getPersonByEmail(emailOrLogin);
         if (person == null) {
-            person = getProfileRepository().getPersonByName(emailOrLogin);
+            person = getUserRepository().getPersonByLoginName(emailOrLogin);
         }
         return person;
     }

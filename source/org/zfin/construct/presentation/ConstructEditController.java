@@ -22,8 +22,8 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.zfin.construct.presentation.ConstructComponentService.createNewConstructFromSubmittedForm;
@@ -81,7 +81,7 @@ public class ConstructEditController {
         return mr.getConstructComponents(constructID);
     }
 
-    @RequestMapping(value = "/construct-add-alias", method = RequestMethod.POST)
+    @RequestMapping(value = {"/construct-add-alias", "/construct-add-alias/"}, method = RequestMethod.POST) //Spring v6 is stricter about trailing slashes
     public
     @ResponseBody
 
@@ -96,7 +96,7 @@ public class ConstructEditController {
         // ir.insertUpdatesTable(mr.getMarkerByID(constructID),"alias","added data alias");
         HibernateUtil.flushAndCommitCurrentSession();
     }
-    @RequestMapping(value = "/construct-add-sequence", method = RequestMethod.POST)
+    @RequestMapping(value = {"/construct-add-sequence", "/construct-add-sequence/"}, method = RequestMethod.POST) //Spring v6 is stricter about trailing slashes
     public
     @ResponseBody
 
@@ -272,7 +272,7 @@ public class ConstructEditController {
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            String message = String.format("%s saved as <a target=\"_blank\" href=\"%s\">%s</a>",
+            String message = String.format("%s saved as <a target=\"_blank\" href=\"/%s\">%s</a>",
                     newMarker.getZdbID(), newMarker.getZdbID(), newMarker.getName());
             return new ConstructUpdateResult(message, true);
 

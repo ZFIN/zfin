@@ -9,7 +9,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

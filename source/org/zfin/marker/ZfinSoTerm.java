@@ -3,7 +3,7 @@ package org.zfin.marker;
 
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "so_zfin_mapping")

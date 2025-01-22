@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.GregorianCalendar;
 
 @Entity

@@ -12,7 +12,7 @@ import org.zfin.mutant.GenotypeService;
 import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

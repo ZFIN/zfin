@@ -2,7 +2,7 @@ package org.zfin.datatransfer.ctd;
 
 import org.hibernate.Session;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class MeshChebiDAO {
 
     public boolean dropAll() {
         String tableName = MeshChebiMapping.class.getAnnotation(Table.class).name();
-        int numberOfDeletedRecords = entityManager.createSQLQuery("delete from " + tableName).executeUpdate();
+        int numberOfDeletedRecords = entityManager.createNativeQuery("delete from " + tableName).executeUpdate();
         return numberOfDeletedRecords > 0;
     }
 

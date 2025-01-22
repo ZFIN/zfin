@@ -1,9 +1,12 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -14,31 +17,57 @@ import java.util.Date;
  * It contains all the credential-related info, including
  * role and cookie.
  */
+@Entity
 @Setter
 @Getter
+@Table(name = "zdb_submitters")
 @JsonIgnoreProperties({"accountCreationDate", "cookie", "pass1", "pass2", "password", "previousLoginDate"})
 public class AccountInfo implements Serializable {
 
+    @NotNull
+    @Column(name = "login", nullable = false)
     private String login;
-    private transient String password;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zdb_id", referencedColumnName = "zdb_id")
+    private Person person;
+
+    @Id
+    @Column(name = "zdb_id", insertable=false, updatable=false)
+    @GeneratedValue(generator = "foreignGenerator")
+    @GenericGenerator(name = "foreignGenerator", strategy = "foreign",
+            parameters = @org.hibernate.annotations.Parameter(name = "property", value = "person"))
+    private String zdbID;
+    @Column(name = "password")
+    private String password;
 
     private transient String pass1;
     private transient String pass2;
 
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "access", nullable = false)
     private String role;
+    @Column(name = "issue_time")
     private Date loginDate;
+    @Column(name = "previous_login")
     private Date previousLoginDate;
+    @Column(name = "create_date")
     private Date accountCreationDate;
     // ToDo: Only needed as webdatablade integration is needed.
+    @Column(name = "cookie")
     private String cookie;
     // Hibernate uses field access to set this variable
-    private String zdbID;
+    @Column(name = "is_curator")
     private boolean curator;
+    @Column(name = "is_student")
     private boolean student;
 
+    @Column(name = "password_reset_key")
     private String passwordResetKey;
+    @Column(name = "password_reset_date")
     private Date passwordResetDate;
+    @Column(name = "password_last_updated")
     private Date passwordLastUpdated;
 
     public boolean getRoot() {

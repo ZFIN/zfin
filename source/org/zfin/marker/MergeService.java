@@ -227,6 +227,7 @@ public class MergeService {
         return expressionResultRemoveSet;
     }
 
+
     private static void mergePublicNote(Marker markerToDelete, Marker markerToMergeInto) {
         // transfer public note
         if (StringUtils.isNotEmpty(markerToDelete.getPublicComments())) {
@@ -238,13 +239,13 @@ public class MergeService {
 
     private static void mergeReplacedData(Marker markerToDelete, Marker markerToMergeInto) {
         // add data replacement
-        HibernateUtil.currentSession().createSQLQuery("update zdb_replaced_data \n" +
+        HibernateUtil.currentSession().createNativeQuery("update zdb_replaced_data \n" +
                                                       "                    set zrepld_new_zdb_id = :markerToMergeIntoZdbID \n" +
                                                       "                    , zrepld_old_name = :oldName \n" +
                                                       "                  where zrepld_new_zdb_id = :markerToDeleteZdbID ;")
-            .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-            .setString("oldName", markerToDelete.getAbbreviation())
-            .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
+            .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+            .setParameter("oldName", markerToDelete.getAbbreviation())
+            .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
             .executeUpdate();
 
         ReplacementZdbID replacementZdbID = new ReplacementZdbID();
@@ -302,13 +303,13 @@ public class MergeService {
      */
     private static void mergeMarkerGoTermEvidence(Marker markerToDelete, Marker markerToMergeInto) {
         // marker go term evidence
-        HibernateUtil.currentSession().createSQLQuery("update marker_go_term_evidence \n" +
-                                                      "                    set mrkrgoev_mrkr_zdb_id = :markerToMergeIntoZdbID \n" +
-                                                      "                  where mrkrgoev_mrkr_zdb_id = :markerToDeleteZdbID ;")
-            .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-            .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-            .executeUpdate();
 
+        HibernateUtil.currentSession().createNativeQuery("update marker_go_term_evidence \n" +
+                "                    set mrkrgoev_mrkr_zdb_id = :markerToMergeIntoZdbID \n" +
+                "                  where mrkrgoev_mrkr_zdb_id = :markerToDeleteZdbID ;")
+                .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                .executeUpdate();
     }
 
     private static void mergeDataNotes(Marker markerToDelete, Marker markerToMergeInto) {
@@ -325,25 +326,25 @@ public class MergeService {
             for (MappedMarkerImpl mappedMarker : markerToDelete.getDirectPanelMappings())
                 mappedMarker.setMarker(markerToMergeInto);
 
-        HibernateUtil.currentSession().createSQLQuery("update linkage_membership \n" +
-                                                      "                    set lnkgm_member_1_zdb_id = :markerToMergeIntoZdbID \n" +
-                                                      "                  where lnkgm_member_1_zdb_id = :markerToDeleteZdbID ;")
-            .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-            .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-            .executeUpdate();
-        HibernateUtil.currentSession().createSQLQuery("update linkage_membership \n" +
-                                                      "                    set lnkgm_member_2_zdb_id = :markerToMergeIntoZdbID \n" +
-                                                      "                  where lnkgm_member_2_zdb_id = :markerToDeleteZdbID ;")
-            .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-            .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-            .executeUpdate();
+        HibernateUtil.currentSession().createNativeQuery("update linkage_membership \n" +
+                "                    set lnkgm_member_1_zdb_id = :markerToMergeIntoZdbID \n" +
+                "                  where lnkgm_member_1_zdb_id = :markerToDeleteZdbID ;")
+                .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                .executeUpdate();
+        HibernateUtil.currentSession().createNativeQuery("update linkage_membership \n" +
+                "                    set lnkgm_member_2_zdb_id = :markerToMergeIntoZdbID \n" +
+                "                  where lnkgm_member_2_zdb_id = :markerToDeleteZdbID ;")
+                .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                .executeUpdate();
 
-        HibernateUtil.currentSession().createSQLQuery("update primer_set \n" +
-                                                      "                    set marker_id = :markerToMergeIntoZdbID \n" +
-                                                      "                  where marker_id = :markerToDeleteZdbID ;")
-            .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-            .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-            .executeUpdate();
+        HibernateUtil.currentSession().createNativeQuery("update primer_set \n" +
+                "                    set marker_id = :markerToMergeIntoZdbID \n" +
+                "                  where marker_id = :markerToDeleteZdbID ;")
+                .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                .executeUpdate();
     }
 
     private static void mergeDirectAttributions(Marker markerToDelete, Marker markerToMergeInto) {
@@ -351,15 +352,15 @@ public class MergeService {
         if (CollectionUtils.isNotEmpty(markerToDelete.getPublications()))
             for (PublicationAttribution publicationAttribution : markerToDelete.getPublications()) {
                 if (false == markerToMergeInto.hasPublicationAttribution(publicationAttribution)) {
-                    HibernateUtil.currentSession().createSQLQuery("update record_attribution \n" +
-                                                                  "                    set recattrib_data_zdb_id = :markerToMergeIntoZdbID \n" +
-                                                                  "                  where recattrib_data_zdb_id = :markerToDeleteZdbID " +
-                                                                  "                  and recattrib_source_zdb_id = :pubZdbID " +
-                                                                  ";")
-                        .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-                        .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-                        .setString("pubZdbID", publicationAttribution.getPublication().getZdbID())
-                        .executeUpdate();
+                    HibernateUtil.currentSession().createNativeQuery("update record_attribution \n" +
+                            "                    set recattrib_data_zdb_id = :markerToMergeIntoZdbID \n" +
+                            "                  where recattrib_data_zdb_id = :markerToDeleteZdbID " +
+                            "                  and recattrib_source_zdb_id = :pubZdbID " +
+                            ";")
+                            .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                            .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                            .setParameter("pubZdbID", publicationAttribution.getPublication().getZdbID())
+                            .executeUpdate();
                 } else {
                     // if there exists already a pub record then delete it from the old marker
                     HibernateUtil.currentSession().delete(publicationAttribution);
@@ -373,14 +374,14 @@ public class MergeService {
             for (MarkerSupplier markerSupplier : markerToDelete.getSuppliers()) {
                 if (false == markerToMergeInto.hasSupplier(markerSupplier)) {
                     HibernateUtil.currentSession().createQuery(" update MarkerSupplier ms " +
-                                                               " set ms.dataZdbID = :markerToMergeIntoZdbID " +
-                                                               " where ms.dataZdbID = :markerToDeleteZdbID " +
-                                                               " and ms.organization.zdbID = :organizationZdBID " +
-                                                               "")
-                        .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-                        .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-                        .setString("organizationZdBID", markerSupplier.getOrganization().getZdbID())
-                        .executeUpdate();
+                            " set ms.dataZdbID = :markerToMergeIntoZdbID " +
+                            " where ms.dataZdbID = :markerToDeleteZdbID " +
+                            " and ms.organization.zdbID = :organizationZdBID " +
+                            "")
+                            .setParameter("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                            .setParameter("markerToDeleteZdbID", markerToDelete.getZdbID())
+                            .setParameter("organizationZdBID", markerSupplier.getOrganization().getZdbID())
+                            .executeUpdate();
                 }
             }
     }

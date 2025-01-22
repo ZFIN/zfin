@@ -145,7 +145,7 @@
         </set>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
-        <many-to-one name="qualifierRelation" column="mrkrgoev_relation_term_zdb_id" not-null="true"/>
+        <many-to-one name="qualifierRelation" column="mrkrgoev_relation_term_zdb_id"/>
         <property name="geneProductAccession" column="mrkrgoev_protein_accession"/> <!-- was mrkrgoev_protein_dblink_zdb_id -->
 
         <set name="inferredFrom" lazy="false" inverse="true">
@@ -217,49 +217,6 @@
         <many-to-one name="momZygosity" class="org.zfin.mutant.Zygosity" column="genofeat_mom_zygocity"/>
         <many-to-one name="genotype" class="org.zfin.mutant.Genotype" column="genofeat_geno_zdb_id"/>
         <many-to-one name="feature" class="org.zfin.feature.Feature" column="genofeat_feature_zdb_id"/>
-    </class>
-
-    <class name="org.zfin.mutant.FishExperiment" table="fish_experiment">
-        <id name="zdbID">
-            <column name="genox_zdb_id"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">GENOX</param>
-                <param name="insertActiveData">true</param>
-            </generator>
-        </id>
-
-        <property name="standard" column="genox_is_standard" not-null="true" type="java.lang.Boolean"/>
-        <property name="standardOrGenericControl" column="genox_is_std_or_generic_control" not-null="true"
-                  type="java.lang.Boolean"/>
-
-        <many-to-one name="experiment" class="org.zfin.expression.Experiment">
-            <column name="genox_exp_zdb_id"/>
-        </many-to-one>
-
-        <many-to-one name="fish">
-            <column name="genox_fish_zdb_id"/>
-        </many-to-one>
-
-        <set name="phenotypeExperiments" lazy="true" inverse="true">
-            <key column="phenox_genox_zdb_id"/>
-            <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>
-        </set>
-
-        <set name="expressionExperiments" lazy="true">
-            <key column="xpatex_genox_zdb_id"/>
-            <one-to-many class="org.zfin.expression.ExpressionExperiment2"/>
-        </set>
-
-        <set name="geneGenotypeExperiments" lazy="true">
-            <key column="mfs_genox_zdb_id"/>
-            <one-to-many class="GeneGenotypeExperiment"/>
-        </set>
-
-        <set name="diseaseAnnotationModels" lazy="true">
-            <key column="damo_genox_zdb_id"/>
-            <one-to-many class="DiseaseAnnotationModel"/>
-        </set>
-
     </class>
 
     <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
@@ -384,13 +341,6 @@
         </component>
         <many-to-one name="qualityTerm" column="api_quality_zdb_id"/>
 
-    </class>
-
-    <class name="org.zfin.mutant.GeneGenotypeExperiment" table="mutant_fast_Search">
-        <composite-id>
-            <key-many-to-one name="gene" column="mfs_data_zdb_id"/>
-            <key-many-to-one name="fishExperiment" column="mfs_genox_zdb_id"/>
-        </composite-id>
     </class>
 
 </hibernate-mapping>

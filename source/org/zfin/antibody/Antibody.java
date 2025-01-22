@@ -8,7 +8,7 @@ import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

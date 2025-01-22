@@ -6,7 +6,7 @@ import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 /**

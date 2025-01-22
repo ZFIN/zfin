@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+import static org.zfin.util.ZfinStringUtils.randomString;
 
 /**
  * This script will check for anomalies in the image files, and swap the thumbnail and medium files if necessary.
@@ -119,7 +119,7 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
     private void swapFiles(File filename, File mediumFile) {
         if (!dryRun) {
             try {
-                String randomString = System.currentTimeMillis() + "-" + generateRandomString(6);
+                String randomString = System.currentTimeMillis() + "-" + randomString(6);
                 File tmpFile = new File(filename + "." + randomString + ".tmp");
                 System.out.println("Swapping " + filename + " and " + mediumFile + " via " + tmpFile);
                 Files.move(filename.toPath(), tmpFile.toPath());
@@ -129,20 +129,6 @@ public class ImageThumbnailAndMediumSwapTask extends AbstractScriptWrapper {
                 System.out.println("Error copying file: " + e.getMessage());
             }
         }
-    }
-
-    private static String generateRandomString(int length) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < length; i++) {
-            int randomIndex = random.nextInt(characters.length());
-            char randomChar = characters.charAt(randomIndex);
-            sb.append(randomChar);
-        }
-
-        return sb.toString();
     }
 
     private String getFilePixelDimensions(File imageFile) {

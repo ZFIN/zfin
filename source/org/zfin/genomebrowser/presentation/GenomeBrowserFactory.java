@@ -11,7 +11,7 @@ import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.gbrowse.presentation.GBrowseImageBuilder;
 import org.zfin.jbrowse.presentation.JBrowseImageBuilder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Setter
 @Log4j2

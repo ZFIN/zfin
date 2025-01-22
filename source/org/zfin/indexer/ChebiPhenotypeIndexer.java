@@ -14,8 +14,9 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

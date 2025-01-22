@@ -1,9 +1,10 @@
 package org.zfin.orthology.repository;
 
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
+import org.zfin.database.HibernateUpgradeHelper;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
@@ -84,27 +85,26 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     }
 
     public List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId) {
-        String sql = "select organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id from ortholog, organism, ortholog_evidence " +
-                     "      where ortho_zebrafish_gene_zdb_id = :geneID  " +
-                     "        and organism_taxid = ortho_other_species_taxid  " +
-                     "        and  ortho_zdb_id = oev_ortho_zdb_id  " +
-                     "   order by organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id ";
+        String sql = """
+        select organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id from ortholog, organism, ortholog_evidence 
+              where ortho_zebrafish_gene_zdb_id = :geneID  
+                and organism_taxid = ortho_other_species_taxid  
+                and  ortho_zdb_id = oev_ortho_zdb_id  
+           order by organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id
+        """;
 
-        return HibernateUtil.currentSession().createNativeQuery(sql)
-            .setParameter("geneID", geneId)
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public OrthologySlimPresentation transformTuple(Object[] tuple, String[] aliases) {
-                    OrthologySlimPresentation orthoSlim = new OrthologySlimPresentation();
-                    orthoSlim.setOrganism(tuple[0].toString());
-                    orthoSlim.setOrthologySymbol(tuple[1].toString());
-                    orthoSlim.setEvidenceCode(tuple[2].toString());
-                    orthoSlim.setPublication(tuple[3].toString());
-                    return orthoSlim;
-                }
+        NativeQuery query = currentSession().createNativeQuery(sql)
+                .setParameter("geneID", geneId);
 
-            })
-            .list();
+        HibernateUpgradeHelper.setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> {
+            OrthologySlimPresentation orthoSlim = new OrthologySlimPresentation();
+            orthoSlim.setOrganism(tuple[0].toString());
+            orthoSlim.setOrthologySymbol(tuple[1].toString());
+            orthoSlim.setEvidenceCode(tuple[2].toString());
+            orthoSlim.setPublication(tuple[3].toString());
+            return orthoSlim;
+        });
+        return query.list();
     }
 
     @Override

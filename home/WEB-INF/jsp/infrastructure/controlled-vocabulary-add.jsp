@@ -11,7 +11,7 @@
         <form:form id="cv-form"
                    cssClass="form-horizontal"
                    action="controlled-vocabulary-add"
-                   commandName="formBean"
+                   modelAttribute="formBean"
                    method="post">
             <div class="form-group row">
                 <form:label path="termName" class="col-md-2 col-form-label">Term Name</form:label>

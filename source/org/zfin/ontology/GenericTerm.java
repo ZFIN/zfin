@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
+import org.zfin.framework.OntologyEnumType;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.util.NumberAwareStringComparator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 
 /**
@@ -46,8 +49,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected String oboID;
 
     @Column(name = "term_ontology")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.ontology.Ontology")})
+    @Convert(converter = OntologyEnumType.class)
     protected Ontology ontology;
     @Column(name = "term_is_obsolete")
     protected boolean obsolete;
@@ -63,22 +65,19 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     @Column(name = "term_definition")
     protected String definition;
     @ManyToMany
-    @JoinTable(name = "int_image_term", joinColumns = {
-            @JoinColumn(name = "iit_term_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "int_image_term",
+            joinColumns = {@JoinColumn(name = "iit_term_zdb_id", nullable = false, updatable = false, insertable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id", nullable = false, updatable = false, insertable = false)})
     protected Set<Image> images;
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "zdb_replaced_data", joinColumns = {
-            @JoinColumn(name = "zrepld_old_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "zrepld_new_zdb_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "zdb_replaced_data",
+        joinColumns = {@JoinColumn(name = "zrepld_old_zdb_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "zrepld_new_zdb_id", nullable = false, updatable = false, insertable = false)})
     protected Set<GenericTerm> secondaryMergeTerms;
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "term_subset", joinColumns = {
-            @JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "term_subset",
+        joinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false, insertable = false)})
     private Set<Subset> subsets;
 
     @Transient

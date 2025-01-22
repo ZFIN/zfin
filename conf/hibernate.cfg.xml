@@ -9,7 +9,7 @@
         <!--        <property name="connection.isolation">1</property>-->
 
         <property name="hibernate.query.substitutions">true 't', false 'f'</property>
-        <property name="dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
+        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.generate_statistics">true</property>
@@ -60,6 +60,7 @@
         <mapping class="org.zfin.anatomy.DevelopmentStage"/>
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
         <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
+        <mapping class="org.zfin.profile.Person"/>
         <mapping class="org.zfin.audit.AuditLogItem"/>
         <mapping class="org.zfin.curation.Curation"/>
         <mapping class="org.zfin.curation.PublicationNote"/>
@@ -169,6 +170,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
+        <mapping class="org.zfin.profile.AccountInfo"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceNeed"/>
         <mapping class="org.zfin.publication.CorrespondenceNeedReason"/>
@@ -210,6 +212,8 @@
         <mapping class="org.zfin.mapping.Location"/>
         <mapping class="org.zfin.mapping.FeatureLocation"/>
         <mapping class="org.zfin.mapping.MarkerLocation"/>
+        <mapping class="org.zfin.mutant.FishExperiment"/>
+        <mapping class="org.zfin.mutant.GeneGenotypeExperiment"/>
 
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
 

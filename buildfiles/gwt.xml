@@ -88,7 +88,17 @@
         <attribute name="module"/>
         <attribute name="target"/>
         <sequential>
+            <echo message="Deleting: @{target}/@{module}"/>
             <delete dir="@{target}/@{module}"/>
+
+            <echo>
+                <![CDATA[
+Compiling GWT module @{module} to @{target}, equivalent to command:
+    java -cp $(cat /tmp/extended.classpath.txt) com.google.gwt.dev.Compiler [-logLevel DEBUG] -war @{target} -style DETAILED @{module}
+    where extended.classpath.txt can be generated with `ant writeClassPath`
+                ]]>
+            </echo>
+
             <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
                 <classpath>
                     <dirset dir="${source.dir}" defaultexcludes="true">
@@ -96,6 +106,9 @@
                         <exclude name="**/.svn"/>
                     </dirset>
                 </classpath>
+<!--                UNCOMMENT FOR DEBUGGING -->
+<!--                <arg value="-logLevel"/>-->
+<!--                <arg value="DEBUG"/>-->
                 <arg value="-war"/>
                 <arg value="@{target}"/>
                 <arg value="-style"/>

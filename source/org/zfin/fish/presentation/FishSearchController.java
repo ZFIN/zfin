@@ -21,8 +21,8 @@ import org.zfin.framework.presentation.MatchingText;
 import org.zfin.mutant.Fish;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Set;
 
 /**

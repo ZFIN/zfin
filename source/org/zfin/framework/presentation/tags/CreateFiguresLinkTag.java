@@ -4,9 +4,9 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.text.ChoiceFormat;
 

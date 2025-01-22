@@ -18,7 +18,7 @@ import org.zfin.marker.service.ConstructService;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Collection;
 
 import static org.zfin.repository.RepositoryFactory.getConstructRepository;

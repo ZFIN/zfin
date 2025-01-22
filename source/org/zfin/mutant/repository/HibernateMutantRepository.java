@@ -1,5 +1,10 @@
 package org.zfin.mutant.repository;
 
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -7,13 +12,17 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-import org.zfin.expression.*;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
+import org.zfin.expression.ExpressionFigureStage;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.util.StringUtils;
@@ -31,11 +40,6 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.STRMarkerSequence;
 
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -140,7 +144,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 """;
 
         if (!wildtype) {
-            hql += " AND fishox.fish.genotype.wildtype = 'f' ";
+            hql += " AND fishox.fish.genotype.wildtype = false ";
         }
         hql += " ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
@@ -319,7 +323,7 @@ public class HibernateMutantRepository implements MutantRepository {
                       fish_name_order asc;
                     """;
 
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("feature_id", featureId);
 
         setTupleResultTransformer(query, (Object[] tuples, String[] aliases) -> {
@@ -396,7 +400,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<String> query = session.createQuery(hql, String.class);
         query.setParameter("ftr", feat.getName());
-        query.setParameter("type", Marker.Type.GENE.toString());
+        query.setParameter("type", Marker.Type.GENE.toString()); //...markerType.name is a String
         return (List<String>) query.list();
     }
 
@@ -500,7 +504,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query<Genotype> query = currentSession().createQuery(hql, Genotype.class);
         query.setParameter("pubZdbID", publication.getZdbID());
-        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD);
         return query.list();
     }
 
@@ -528,7 +532,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("pubZdbID", publication.getZdbID());
         query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
         query.setParameter("markerZdbID", marker.getZdbID());
-        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
+        query.setParameter("sourceType", PublicationAttribution.SourceType.STANDARD);
         return query.list();
     }
 
@@ -578,7 +582,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return currentSession().createQuery(hql, Genotype.class)
             .setParameter("pubZdbID", publicationZdbID)
-            .setParameter("standard", RecordAttribution.SourceType.STANDARD.toString())
+            .setParameter("standard", RecordAttribution.SourceType.STANDARD)
             .list();
     }
 
@@ -605,7 +609,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
-        return Integer.valueOf(currentSession().createSQLQuery("""
+        return Integer.valueOf(currentSession().createNativeQuery("""
                  SELECT count(*) FROM marker_go_term_evidence  ev  
                  JOIN  inference_group_member inf ON ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id 
                  WHERE 
@@ -739,9 +743,9 @@ public class HibernateMutantRepository implements MutantRepository {
             """;
 
 
-        final Query alleleQuery = currentSession().createSQLQuery(alleleQueryString);
-        final Query geneQuery = currentSession().createSQLQuery(geneQueryString);
-        final Query fishQuery = currentSession().createSQLQuery(fishQueryString);
+        final Query alleleQuery = currentSession().createNativeQuery(alleleQueryString);
+        final Query geneQuery = currentSession().createNativeQuery(geneQueryString);
+        final Query fishQuery = currentSession().createNativeQuery(fishQueryString);
 
         List<Object[]> alleles = alleleQuery.list();
         List<Object[]> genes = geneQuery.list();
@@ -974,7 +978,7 @@ public class HibernateMutantRepository implements MutantRepository {
             AND tag = :tag""";
         Query<PhenotypeStatementWarehouse> query = currentSession().createQuery(hql, PhenotypeStatementWarehouse.class);
         query.setParameter("term", term);
-        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString()); //PhenotypeStatementWarehouse.tag is a String
         return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
@@ -985,7 +989,7 @@ public class HibernateMutantRepository implements MutantRepository {
             "AND tag = :tag";
         Query<Number> query = currentSession().createQuery(hql, Number.class);
         query.setParameter("term", term);
-        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
+        query.setParameter("tag", PhenotypeStatement.Tag.ABNORMAL.toString()); //PhenotypeStatementWarehouse.tag is a String
         return query.uniqueResult().longValue() > 0;
     }
 
@@ -1264,7 +1268,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<Feature> getAllelesForMarker(String zdbID, String type) {
+    public List<Feature> getAllelesForMarker(String zdbID, FeatureMarkerRelationshipTypeEnum type) {
         String hql = """
                 select distinct 
                 feat from FeatureMarkerRelationship fmrel, Feature feat 
@@ -1291,7 +1295,7 @@ public class HibernateMutantRepository implements MutantRepository {
             """;
         return currentSession().createQuery(hql, Marker.class)
             .setParameter("markerZdbId", gene.getZdbID())
-            .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
+            .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString()) //markerRelationshipType.name is a String
             .list();
     }
 
@@ -1449,7 +1453,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID)) {
             return false;
         }
-        List fishOxList = new ArrayList(fishOx);
+        List<String> fishOxList = fishOx.stream().map(FishExperiment::getZdbID).toList();
 
         String sql = """
             SELECT count(*) FROM figure, expression_experiment2, expression_result2, expression_figure_stage, fish_experiment,fish
@@ -1463,7 +1467,7 @@ public class HibernateMutantRepository implements MutantRepository {
             AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)
             """;
 
-        Query query = currentSession().createSQLQuery(sql);
+        Query query = currentSession().createNativeQuery(sql);
         query.setParameter("genotypeID", genotypeID);
         query.setParameterList("fishOxList", fishOxList);
 
@@ -1562,7 +1566,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (numfOfRecords > 0)
             query.setMaxResults(numfOfRecords);
 
-        query.setParameter("genedom", Marker.Type.GENE.toString());
+        query.setParameter("genedom", Marker.Type.GENE.toString()); //...markerType.name is a String
         return query.list();
     }
 
@@ -1581,7 +1585,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (numfOfRecords > 0)
             query.setMaxResults(numfOfRecords);
 
-        query.setParameter("genedom", Marker.Type.GENE.toString());
+        query.setParameter("genedom", Marker.Type.GENE.toString()); //...markerType.name is a String
         return query.list();
     }
 
@@ -1614,15 +1618,15 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     @Override
-    public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
+    public List<OmimPhenotype> getDiseaseModelsFromGenes(int numberOfRecords) {
         String hql = """
-                from OmimPhenotype model where model.externalReferences is not empty 
+                from OmimPhenotype model where model.externalReferences is not empty
                 order by model.ortholog.zebrafishGene.abbreviationOrder
             """;
 
         Query<OmimPhenotype> query = currentSession().createQuery(hql, OmimPhenotype.class);
-        if (numfOfRecords > 0)
-            query.setMaxResults(numfOfRecords);
+        if (numberOfRecords > 0)
+            query.setMaxResults(numberOfRecords);
         return query.list();
     }
 
@@ -1663,68 +1667,45 @@ public class HibernateMutantRepository implements MutantRepository {
             }
         }
 
-        List<String> ontologyList = null;
+        Collection<Ontology> ontologyList = null;
         if (individualOnly) {
-            ontologyList = ontology.getIndividualOntologies().stream().map(Ontology::getDbOntologyName).collect(Collectors.toList());
+            ontologyList = ontology.getIndividualOntologies();
         }
+
+        allPhenotypes.addAll(getCombinedPhenotypesSuperTermsAndSubTermsForObsoletedTerms(ontologyList));
+        return allPhenotypes;
+    }
+
+    private static List<PhenotypeStatement> getCombinedPhenotypesSuperTermsAndSubTermsForObsoletedTerms(Collection<Ontology> ontologyList) {
+        boolean individualOnly = ontologyList != null;
+        ontologyList = ontologyList == null ? Collections.emptyList() : ontologyList;
 
         String hql = """
-                select phenotype from PhenotypeStatement phenotype      
-                where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = true 
-            """;
-        if (individualOnly) {
-            hql += " AND phenotype.entity.superterm.ontology in (:ontologyList)";
-        }
-        Query<PhenotypeStatement> queryEntitySuper = session.createQuery(hql, PhenotypeStatement.class);
-        if (individualOnly) {
-            queryEntitySuper.setParameterList("ontologyList", ontologyList);
-        }
-
-        allPhenotypes.addAll(queryEntitySuper.list());
-
-        hql = """
-            select phenotype from PhenotypeStatement phenotype
-            where phenotype.entity.subterm is not null 
-            AND phenotype.entity.subterm.obsolete = true
-            """;
-        if (individualOnly) {
-            hql += " AND phenotype.entity.subterm.ontology in (:ontologyList)";
-        }
-        Query<PhenotypeStatement> queryEntitySub = session.createQuery(hql, PhenotypeStatement.class);
-        if (individualOnly) {
-            queryEntitySub.setParameterList("ontologyList", ontologyList);
-        }
-        allPhenotypes.addAll(queryEntitySub.list());
-
-        hql = """
-                select phenotype from PhenotypeStatement phenotype 
-                where phenotype.relatedEntity.superterm is not null 
+                select phenotype from PhenotypeStatement phenotype
+                where phenotype.entity.superterm is not null 
+                AND phenotype.entity.superterm.obsolete = true
+                AND (:individualOnly = false OR (phenotype.entity.superterm.ontology in (:ontologyList)))
+            UNION 
+                select phenotype from PhenotypeStatement phenotype
+                where phenotype.entity.subterm is not null
+                AND phenotype.entity.subterm.obsolete = true
+                AND (:individualOnly = false OR (phenotype.entity.subterm.ontology in (:ontologyList)))
+            UNION
+                select phenotype from PhenotypeStatement phenotype
+                where phenotype.relatedEntity.superterm is not null
                 AND phenotype.relatedEntity.superterm.obsolete = true
-            """;
-        if (individualOnly) {
-            hql += " AND phenotype.relatedEntity.superterm.ontology in (:ontologyList)";
-        }
-        Query<PhenotypeStatement> queryRelatedEntitySuper = session.createQuery(hql, PhenotypeStatement.class);
-        if (individualOnly) {
-            queryRelatedEntitySuper.setParameterList("ontologyList", ontologyList);
-        }
-        allPhenotypes.addAll(queryRelatedEntitySuper.list());
-
-        hql = """
-                select phenotype from PhenotypeStatement phenotype  
-                where phenotype.relatedEntity.subterm is not null 
+                AND (:individualOnly = false OR (phenotype.relatedEntity.superterm.ontology in (:ontologyList)))
+            UNION
+                select phenotype from PhenotypeStatement phenotype
+                where phenotype.relatedEntity.subterm is not null
                 AND phenotype.relatedEntity.subterm.obsolete = true
+                AND (:individualOnly = false OR (phenotype.relatedEntity.subterm.ontology in (:ontologyList)))
             """;
-        if (individualOnly) {
-            hql += "      AND phenotype.relatedEntity.subterm.ontology in (:ontologyList)";
-        }
-        Query<PhenotypeStatement> queryRelatedEntitySub = session.createQuery(hql, PhenotypeStatement.class);
-        if (individualOnly) {
-            queryRelatedEntitySub.setParameterList("ontologyList", ontologyList);
-        }
-        allPhenotypes.addAll(queryRelatedEntitySub.list());
+        Query<PhenotypeStatement> queryEntitySuper = currentSession().createQuery(hql, PhenotypeStatement.class);
+        queryEntitySuper.setParameter("individualOnly", individualOnly);
+        queryEntitySuper.setParameterList("ontologyList", ontologyList);
 
-        return allPhenotypes;
+        return queryEntitySuper.list();
     }
 
 
@@ -2114,7 +2095,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
-        currentSession().createSQLQuery(
+        currentSession().createNativeQuery(
                 "UPDATE genotype " +
                     "SET geno_nickname = geno_handle " +
                     "WHERE EXISTS ( " +
@@ -2128,7 +2109,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void updateFishAffectedGeneCount(Fish fish) {
-        currentSession().createSQLQuery(
+        currentSession().createNativeQuery(
                 "UPDATE fish " +
                     "SET fish_name = fish_name " +
                     "WHERE fish_Zdb_id=:fishID ;")

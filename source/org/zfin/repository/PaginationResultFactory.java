@@ -25,55 +25,11 @@ public class PaginationResultFactory {
         PaginationResult<T> returnResult = new PaginationResult<T>();
         List<T> list = new ArrayList<T>();
         while (scrollableResults.next() && scrollableResults.getRowNumber() < maxRecords) {
-            list.add((T) scrollableResults.get(0));
+            list.add((T) scrollableResults.get());
         }
 
         scrollableResults.last();
         returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
-        returnResult.setPopulatedResults(list);
-        scrollableResults.close();
-        return returnResult;
-    }
-
-    /**
-     * Return a generic PaginationResult object from a scrollableResult object
-     * in which the first component contains the interested generic object while all other
-     * components are disregarded (for sorting purposes only).
-     * Note: In order to sort a list of objects by an attribute of another object you
-     * have to include that other object in the select statement. However, it is not
-     * needed as a return object and thus can be discarded from the result.
-     *
-     * @param startRecord       This is inclusive.
-     * @param stopRecord        This is exclusive.
-     * @param scrollableResults Scrollable Object
-     * @return pagination result
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> PaginationResult<T> createResultFromScrollableAndArray(int startRecord, int stopRecord, ScrollableResults scrollableResults) {
-        PaginationResult<T> returnResult = new PaginationResult<T>();
-        List<T> list = new ArrayList<T>();
-        if (startRecord == 0) {
-            scrollableResults.beforeFirst();
-        } else {
-            scrollableResults.setRowNumber(startRecord - 1);
-        }
-        boolean foundAtLeastOneRecord = false;
-        while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
-            foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                Object objects = scrollableResults.get(0);
-                list.add((T) objects);
-            } else {
-                Object[] objects = scrollableResults.get();
-                list.add((T) objects[0]);
-            }
-        }
-        scrollableResults.last();
-        // first row is '0' in Hibernate.
-        if (foundAtLeastOneRecord)
-            returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
-        else
-            returnResult.setTotalCount(scrollableResults.getRowNumber());
         returnResult.setPopulatedResults(list);
         scrollableResults.close();
         return returnResult;
@@ -108,18 +64,11 @@ public class PaginationResultFactory {
         }
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                if (!list.contains((T) scrollableResults.get(0))) {
-                    list.add((T) scrollableResults.get(0));
-                } else {
-                    numberOfDuplicates++;
-                }
+
+            if (!list.contains((T) scrollableResults.get())) {
+                list.add((T) scrollableResults.get());
             } else {
-                if (!list.contains((T) scrollableResults.get())) {
-                    list.add((T) scrollableResults.get());
-                } else {
-                    numberOfDuplicates++;
-                }
+                numberOfDuplicates++;
             }
         }
         scrollableResults.last();
@@ -153,18 +102,6 @@ public class PaginationResultFactory {
     }
 
     /**
-     * @param bean              PaginationBean
-     * @param scrollableResults Scrollable Object
-     * @return pagination result
-     */
-    public static <T> PaginationResult<T> createPaginationResultFromScrollableAndArray(PaginationBean bean, ScrollableResults scrollableResults) {
-        if (bean == null) {
-            return createAllRecordsFromScrollable(scrollableResults);
-        }
-        return createResultFromScrollableAndArray(bean.getFirstRecord() - 1, bean.getLastRecord(), scrollableResults);
-    }
-
-    /**
      * Return a paginated subset of the list provided based on the pagination object provided
      * It will use the parameters of pagination (size, page number, etc.) to figure out the subset
      * @param list
@@ -194,29 +131,4 @@ public class PaginationResultFactory {
         return returnResult;
     }
 
-    private static <T> PaginationResult<T> createAllRecordsFromScrollable(ScrollableResults scrollableResults) {
-        PaginationResult<T> returnResult = new PaginationResult<T>();
-        List<T> list = new ArrayList<T>();
-        scrollableResults.beforeFirst();
-        boolean foundAtLeastOneRecord = false;
-        while (scrollableResults.next()) {
-            foundAtLeastOneRecord = true;
-            if (scrollableResults.get().length == 1) {
-                Object objects = scrollableResults.get(0);
-                list.add((T) objects);
-            } else {
-                Object[] objects = scrollableResults.get();
-                list.add((T) objects[0]);
-            }
-        }
-        scrollableResults.last();
-        // first row is '0' in Hibernate.
-        if (foundAtLeastOneRecord)
-            returnResult.setTotalCount(scrollableResults.getRowNumber() + 1);
-        else
-            returnResult.setTotalCount(scrollableResults.getRowNumber());
-        returnResult.setPopulatedResults(list);
-        scrollableResults.close();
-        return returnResult;
-    }
 }

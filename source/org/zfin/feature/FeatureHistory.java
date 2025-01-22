@@ -3,7 +3,7 @@ package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -24,7 +24,7 @@ public class FeatureHistory {
     @JoinColumn(name = "fhist_ftr_zdb_id")
     private Feature feature;
     @Column(name = "fhist_reason")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.feature.FeatureHistory$Reason")})
     private Reason reason;
     @Column(name = "fhist_event")

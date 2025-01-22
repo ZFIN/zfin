@@ -2,7 +2,7 @@ package org.zfin.feature;
 
 import org.zfin.ExternalNote;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;

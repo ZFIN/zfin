@@ -1,5 +1,7 @@
 package org.zfin.infrastructure.delete;
 
+import org.zfin.profile.Company;
+import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
 import org.zfin.publication.Publication;
 
@@ -22,8 +24,14 @@ public class DeleteCompanyRule extends AbstractDeleteEntityRule implements Delet
         addToValidationReport("Company as Supplier: List of Features", company.getFeatureSupplierList());
         addToValidationReport("Company as Source: List of Genotypes", company.getGenotypeSourceList());
         addToValidationReport("Company as Supplier: List of Genotypes", company.getGenotypeSupplierList());
+
         // member list
-        addToValidationReport(company.getName() + " has the following lab members:", company.getMemberList());
+        if (company instanceof Lab lab) {
+            addToValidationReport(lab.getName() + " has the following lab members:", lab.getMemberList());
+        }
+        else if (company instanceof Company company2) {
+            addToValidationReport(company2.getName() + " has the following lab members:", company2.getMemberList());
+        }
 
         entity = company;
         return validationReportList;

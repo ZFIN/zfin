@@ -20,8 +20,8 @@ import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.*;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -647,8 +647,8 @@ public class ExecuteBlastTest {
                 "select l.accessionNumber from DBLink  l " +
                 "where l.referenceDatabase.zdbID = :referenceDatabaseZdbID " +
                 "";
-        org.hibernate.Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("referenceDatabaseZdbID", referenceDatabase.getZdbID());
+        org.hibernate.query.Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("referenceDatabaseZdbID", referenceDatabase.getZdbID());
         query.setMaxResults(1);
         String accession = query.list().get(0).toString();
 

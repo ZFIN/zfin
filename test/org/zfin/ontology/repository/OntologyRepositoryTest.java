@@ -11,7 +11,10 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult2;
+import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
@@ -542,6 +545,16 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         reader.close();
     }
 
+    @Test
+    public void getIncreasedSizeQualityTerm() throws TermNotFoundException {
+        TermDTO increasedSizeTerm = new TermDTO();
+        increasedSizeTerm.setName("increased size");
+        increasedSizeTerm.setOntology(OntologyDTO.QUALITY_QUALITIES);
+        GenericTerm fetchedTerm = DTOConversionService.convertToTerm(increasedSizeTerm);
+        assertNotNull(fetchedTerm);
+        assertEquals("increased size", fetchedTerm.getTermName());
+        assertEquals("quality", fetchedTerm.getOntology().getDbOntologyName());
+    }
 
 }
 

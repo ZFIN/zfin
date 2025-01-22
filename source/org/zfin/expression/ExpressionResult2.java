@@ -4,7 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

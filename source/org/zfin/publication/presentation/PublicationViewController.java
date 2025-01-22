@@ -45,8 +45,8 @@ import org.zfin.util.ZfinStringUtils;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
