@@ -17,8 +17,6 @@ import org.zfin.marker.MarkerStrSmokeTest;
 import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
-import org.zfin.webservice.MarkerSoapClientSmokeTest;
-import org.zfin.webservice.MarkerSoapSmokeTest;
 
 /**
  * Smoke tests: Integration tests.
@@ -38,8 +36,6 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
     GenotypeDetailSmokeTest.class,
     LookupSmokeTest.class,
     MappingDetailSmokeTest.class,
-    MarkerSoapSmokeTest.class,
-    MarkerSoapClientSmokeTest.class,
     MarkerStrSmokeTest.class,
     MarkerViewSmokeTest.class,
     MarkerRestSmokeTest.class,

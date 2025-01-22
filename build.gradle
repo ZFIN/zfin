@@ -699,7 +699,6 @@ dependencies {
     // not working: odd
     //testCompile group: 'org.jenkins-ci.plugins', name: 'testInProgress-client', version: '1.1'
     implementation files('lib/Java/testInProgress-client-1.1.jar')
-    implementation files('lib/Java/zfin-soap-client.jar')
     implementation files('lib/Java/selenium-api-2.35.0.jar')
     implementation files('lib/Java/selenium-htmlunit-driver-2.35.0.jar')
     implementation files('lib/Java/selenium-remote-driver-2.35.0.jar')
