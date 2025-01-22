@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.sequence.ForeignDB;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -41,10 +41,9 @@ public class TermExternalReference implements Comparable, Serializable {
     private String accessionNumber;
 
     @ManyToMany()
-    @JoinTable(name = "omimp_termxref_mapping", joinColumns = {
-            @JoinColumn(name = "otm_tx_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "otm_omimp_id",
-                    nullable = false, updatable = false)})
+    @JoinTable(name = "omimp_termxref_mapping",
+        joinColumns = {@JoinColumn(name = "otm_tx_id", nullable = false, updatable = false, insertable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "otm_omimp_id", nullable = false, updatable = false, insertable = false)})
     private Set<OmimPhenotype> omimPhenotypes;
 
     public String getXrefUrl() {

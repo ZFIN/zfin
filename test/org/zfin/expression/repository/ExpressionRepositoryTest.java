@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -13,7 +14,6 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
-import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -29,10 +29,10 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
-import org.junit.Ignore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -212,6 +212,39 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-MIRNAG-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
         assertThat(experiments.size(), equalTo(0));
 
+        //get a publication many experiments to test sorting
+        pubID = "ZDB-PUB-040907-1";
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
+        assertThat(experiments.size(), greaterThan(1000));
+
+        /*
+        These are the fields that are used for sorting:
+          figure.orderingLabel,
+          expressionExperiment.gene.abbreviationOrder,
+          expressionExperiment.fishExperiment.fish.name,
+          expressionExperiment.assay.displayOrder
+          startStage.abbreviation
+
+        This type of assertion would be nice, but instead we'll just check a few samples
+        assertOrderByFields(experiments, "figure.orderingLabel", "expressionExperiment.gene.abbreviationOrder", "expressionExperiment.fishExperiment.fish.name", "expressionExperiment.assay.displayOrder", "startStage.abbreviation");
+         */
+
+        //check that the first experiment has a lower orderingLabel than the last experiment
+        assertThat(experiments.get(0).getFigure().getOrderingLabel(), lessThanOrEqualTo(experiments.get(experiments.size() - 1).getFigure().getOrderingLabel()));
+
+        //group experiments by figure.orderingLabel and assert that within each of those groups, the gene abbreviation order is increasing
+        Map<String, List<ExpressionFigureStage>> experimentsByFigure = experiments.stream().collect(Collectors.groupingBy(e -> e.getFigure().getOrderingLabel()));
+        experimentsByFigure.entrySet().stream().forEach(entry -> {
+            List<ExpressionFigureStage> figureExperiments = entry.getValue();
+            assertThat(figureExperiments.get(0).getExpressionExperiment().getGene().getAbbreviationOrder(), lessThanOrEqualTo(figureExperiments.get(figureExperiments.size() - 1).getExpressionExperiment().getGene().getAbbreviationOrder()));
+
+            //subgroup by gene abbreviation order and assert that within each of those groups, the fish name is increasing
+            Map<String, List<ExpressionFigureStage>> experimentsByGene = figureExperiments.stream().collect(Collectors.groupingBy(e -> e.getExpressionExperiment().getGene().getAbbreviationOrder()));
+            experimentsByGene.entrySet().stream().forEach(geneEntry -> {
+                List<ExpressionFigureStage> geneExperiments = geneEntry.getValue();
+                assertThat(geneExperiments.get(0).getExpressionExperiment().getFishExperiment().getFish().getName(), lessThanOrEqualTo(geneExperiments.get(geneExperiments.size() - 1).getExpressionExperiment().getFishExperiment().getFish().getName()));
+            });
+        });
     }
 
     @Test
@@ -368,7 +401,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 AND geno_is_wildtype = :wildType
                 ORDER BY term_name asc
                 """;
-        List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
+        List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createNativeQuery(sql)
                 .setParameter("zdbID", zdbID)
                 .setParameter("expressionFound", true)
                 .setParameter("wildType", true)
@@ -405,6 +438,14 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionFigureStage> figureStages = expRep.getExpressionFigureStagesByFish(fish);
         assertThat(figureStages, is(notNullValue()));
+    }
+
+    @Test
+    public void getExpressionFigureStagesByFish2() {
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-171026-19");
+
+        List<ExpressionFigureStage> figureStages = expRep.getExpressionFigureStagesByFish(fish);
+        assertThat(figureStages.size(), is(2));
     }
 
     @Test

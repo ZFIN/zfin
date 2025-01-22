@@ -6,9 +6,9 @@ import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.event.ZfinDispatcher;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import java.util.List;
 
 /**

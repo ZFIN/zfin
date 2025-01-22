@@ -5,10 +5,10 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.zfin.expression.Experiment;
 import org.zfin.expression.presentation.ExperimentPresentation;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyTag;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 
 public class CreateExperimentLinkTag extends BodyTagSupport{

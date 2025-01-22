@@ -33,7 +33,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;

@@ -7,7 +7,6 @@ import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
 
-import java.util.HashSet;
 import java.util.Set;
 
 

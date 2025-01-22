@@ -21,7 +21,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;

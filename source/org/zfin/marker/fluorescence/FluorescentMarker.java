@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

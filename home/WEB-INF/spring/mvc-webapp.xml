@@ -10,8 +10,9 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
        http://www.springframework.org/schema/data/jpa
        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
-    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-        <property name="useDefaultSuffixPattern" value="false"/>
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="useTrailingSlashMatch" value="false"/>
+        <property name="useSuffixPatternMatch" value="false"/>
     </bean>
 
     <bean id="sessionRegistry"  class="org.springframework.security.core.session.SessionRegistryImpl"/>

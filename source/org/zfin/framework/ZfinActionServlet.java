@@ -7,8 +7,8 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;

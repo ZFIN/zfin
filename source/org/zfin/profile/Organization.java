@@ -1,19 +1,20 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.profile.service.ProfileService;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 
@@ -22,62 +23,109 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@MappedSuperclass
 public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasImage, EntityZdbID {
 
     public static final String ACTIVE_STATUS = "active";
 
     @JsonView(View.API.class)
+    @Id
+    @Column(name = "zdb_id")
+    @GeneratedValue(generator = "zdbIdGenerator")
+    @GenericGenerator(name = "zdbIdGenerator", strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true"))
     private String zdbID;
 
     @NotNull(message = "Name is required")
     @Size(min = 1, max = 150, message = "Must not be empty and less than 150 characters.")
     @JsonView(View.API.class)
+    @Column(name = "name")
     protected String name;
 
     @Size(max = 100, message = "Must be less than 100 characters.")
 //    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$|^(\\d{3})[\\.](\\d{3})[\\.](\\d{4})$",
 //            message = "Must contain only numbers and appropriate punctuation.")
+    @Column(name = "phone")
     private String phone;
 
     @Size(max = 100, message = "Must be less than 100 characters.")
 //    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$|^(\\d{3})[\\.](\\d{3})[\\.](\\d{4})$",
 //            message = "Must contain only numbers and appropriate punctuation.")
+    @Column(name = "fax")
     private String fax;
 
     @Size(max = 150, message = "Must be less than 150 characters.")
 //    @Pattern(regexp = "^[\\w-]+(\\.[\\w-]+)*@([a-z0-9-]+(\\.[a-z0-9-]+)*?\\.[a-z]{2,6}|(\\d{1,3}\\.){3}\\d{1,3})(:\\d{4})?$",
 //            message = "Must be of the format (user)@(domain).(domain)")
+    @Column(name = "email")
     private String email;
 
     @Size(max = 2000, message = "Must be less than 2000 characters.")
+    @Column(name = "url")
     private String url;
     private Person owner;
 
     //    @Size(max=450,message = "Must be less than 450 characters.")
+    @Column(name = "address")
     private String address;
+    @Column(name = "country")
     private String country;
 
     private boolean active;
-    protected Set<SourceUrl> sourceUrls;
+
+    @JoinColumn(name = "srcurl_source_zdb_id")
+    @OneToMany
+    protected Set<SourceUrl> organizationUrls;
+
+    @Column(name = "status")
     private String status;
 
     @Size(max = 12000, message = "Must be less than 12000 characters.")
+    @Column(name = "bio")
     private String bio;
 
+    @Column(name = "image")
+
     private String image;
+    @ManyToOne
+    @JoinColumn(name = "contact_person")
     private Person contactPerson;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(
+            name = "int_data_source",
+            joinColumns = @JoinColumn(name = "ids_source_zdb_Id"),
+            inverseJoinColumns = @JoinColumn(name = "ids_data_zdb_id")
+    )
     private Set<Marker> markerSourceList;
+
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(
+            name = "int_data_supplier",
+            joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"),
+            inverseJoinColumns = @JoinColumn(name = "idsup_data_zdb_id")
+    )
     private Set<Marker> markerSupplierList;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name = "int_data_source", joinColumns = @JoinColumn(name = "ids_source_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "ids_data_zdb_id"))
     private Set<Feature> featureSourceList;
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name = "int_data_supplier", joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "idsup_data_zdb_id"))
     private Set<Feature> featureSupplierList;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name = "int_data_source", joinColumns = @JoinColumn(name = "ids_source_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "ids_data_zdb_id"))
     private Set<Genotype> genotypeSourceList;
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name = "int_data_supplier", joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "idsup_data_zdb_id"))
     private Set<Genotype> genotypeSupplierList;
-
-
-    private Set<Person> memberList;
 
 
     // not sure if this is used . . hopefully not
@@ -86,18 +134,13 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     // a non-persisted element, just a convenience
     private String prefix;
 
+    @Fetch(FetchMode.JOIN)
+    @ManyToOne
+    @JoinColumn(name = "epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 
     public String getLowerName() {
         return name.toLowerCase();
-    }
-
-    public Set<SourceUrl> getOrganizationUrls() {
-        return sourceUrls;
-    }
-
-    public void setOrganizationUrls(Set<SourceUrl> sourceUrls) {
-        this.sourceUrls = sourceUrls;
     }
 
     public boolean isActive() {
@@ -116,8 +159,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
      * @return OrganziationUrl
      */
     public SourceUrl getOrganizationOrderURL() {
-        if (sourceUrls != null && sourceUrls.size() > 0)
-            for (SourceUrl orderURL : sourceUrls) {
+        if (organizationUrls != null && organizationUrls.size() > 0)
+            for (SourceUrl orderURL : organizationUrls) {
                 if (SourceUrl.BusinessPurpose.ORDER_THIS.toString().equals(orderURL.getBusinessPurpose()))
                     return orderURL;
             }

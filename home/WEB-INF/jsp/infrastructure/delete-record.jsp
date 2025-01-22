@@ -86,7 +86,7 @@
                 </c:choose>
             </c:when>
             <c:otherwise>
-                <form:form id="deleteForm" commandName="formBean"
+                <form:form id="deleteForm" modelAttribute="formBean"
                            action="/action/infrastructure/record-deleted?zdbIDToDelete=${formBean.zdbIDToDelete}">
                     <table>
                         <tr class="spaceUnder">

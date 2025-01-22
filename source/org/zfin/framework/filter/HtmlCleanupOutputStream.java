@@ -1,8 +1,8 @@
 package org.zfin.framework.filter;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 import java.io.IOException;
-import javax.servlet.WriteListener;
+import jakarta.servlet.WriteListener;
 
 /**
  * Created by IntelliJ IDEA.

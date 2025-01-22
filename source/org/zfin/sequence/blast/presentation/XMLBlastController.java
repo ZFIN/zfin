@@ -27,9 +27,9 @@ import org.zfin.sequence.blast.*;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

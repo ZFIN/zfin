@@ -10,7 +10,7 @@
         <form:form id="journal-form"
                    cssClass="form-horizontal"
                    action="journal-add"
-                   commandName="formBean"
+                   modelAttribute="formBean"
                    ng-app="app"
                    method="post">
             <div class="form-group row">

@@ -1,45 +1,42 @@
 package org.zfin.sequence;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-
+@Entity
+@Table(name = "entrez_to_xref")
+@Setter
+@Getter
 public class EntrezOMIM implements Serializable {
 
+    @EmbeddedId
+    private EntrezOMIMId id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ex_entrez_acc_num", insertable = false, updatable = false, nullable = false)
     private Entrez entrezAccession;
-    private String omimAccession;
-    private String entrezAccessionNum;
 
+    @Embeddable
+    @Getter
+    @Setter
+    public static class EntrezOMIMId implements Serializable {
 
-    public String getEntrezAccessionNum() {
-        return entrezAccessionNum;
-    }
+        @Column(name = "ex_entrez_acc_num")
+        private String entrezAccessionNum;
 
-    public void setEntrezAccessionNum(String entrezAccessionNum) {
-        this.entrezAccessionNum = entrezAccessionNum;
-    }
-
-    public Entrez getEntrezAccession() {
-        return entrezAccession;
-    }
-
-    public void setEntrezAccession(Entrez entrezAccession) {
-        this.entrezAccession = entrezAccession;
-    }
-
-    public String getOmimAccession() {
-        return omimAccession;
-    }
-
-    public void setOmimAccession(String omimAccession) {
-        this.omimAccession = omimAccession;
+        @Column(name = "ex_xref")
+        private String omimAccession;
     }
 
     public int hashCode() {
         int num = 39;
-        if (omimAccession != null)
-            num += omimAccession.hashCode();
-        if (entrezAccessionNum != null)
-            num += entrezAccessionNum.hashCode();
+        if (id.omimAccession != null)
+            num += id.omimAccession.hashCode();
+        if (id.entrezAccessionNum != null)
+            num += id.entrezAccessionNum.hashCode();
         if (entrezAccession != null)
             num += entrezAccession.hashCode();
         return num;
@@ -58,21 +55,21 @@ public class EntrezOMIM implements Serializable {
         if (!(o instanceof EntrezOMIM omim))
             return false;
 
-        if (omimAccession == null)
+        if (id.omimAccession == null)
             throw new RuntimeException("omimAccession is null but should not!");
-        if (omim.omimAccession == null)
+        if (omim.id.omimAccession == null)
             throw new RuntimeException("omimAccession is null but should not!");
-        if (entrezAccessionNum == null)
+        if (id.entrezAccessionNum == null)
             throw new RuntimeException("entrezAccessionNum is null but should not!");
-        if (omim.entrezAccessionNum == null)
+        if (omim.id.entrezAccessionNum == null)
             throw new RuntimeException("entrezAccessionNum is null but should not!");
         if (entrezAccession == null)
             throw new RuntimeException("entrezAccession is null but should not!");
         if (omim.entrezAccession == null)
             throw new RuntimeException("entrezAccession is null but should not!");
 
-        return omimAccession.equals(omim.omimAccession) &&
-                (entrezAccessionNum.equals(omim.entrezAccessionNum)) &&
+        return id.omimAccession.equals(omim.id.omimAccession) &&
+                (id.entrezAccessionNum.equals(omim.id.entrezAccessionNum)) &&
                 (entrezAccession.equals(omim.entrezAccession));
     }
 }

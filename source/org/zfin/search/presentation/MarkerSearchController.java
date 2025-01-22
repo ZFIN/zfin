@@ -14,7 +14,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.search.service.MarkerSearchService;
 import org.zfin.util.URLCreator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

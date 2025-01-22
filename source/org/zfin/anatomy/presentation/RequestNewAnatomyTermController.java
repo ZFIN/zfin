@@ -14,7 +14,7 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * Controller for requesting a new anatomical structure.
@@ -32,7 +32,7 @@ public class RequestNewAnatomyTermController {
     }
 
     @Autowired
-    private javax.servlet.http.HttpServletRequest request;
+    private jakarta.servlet.http.HttpServletRequest request;
 
     @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {

@@ -16,8 +16,8 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;

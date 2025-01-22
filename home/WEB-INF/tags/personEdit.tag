@@ -30,7 +30,7 @@
     <div class='panes'>
         <div id='information'>
             ${person.emailList and empty person.email ? '<div style="color: red;">Please provide a valid email if on distribution list.</div>' : '' }
-            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
+            <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/edit/${person.zdbID}" enctype="multipart/form-data"
                        cssClass="edit-box mark-dirty" id="person-edit-information">
 
@@ -156,7 +156,7 @@
             </form:form>
         </div>
         <div id="biography">
-            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
+            <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/update-biography/${person.zdbID}" enctype="multipart/form-data"
                        id="person-edit-biography" cssClass="mark-dirty"
                     >
@@ -176,7 +176,7 @@
 
         </div>
         <div id="publications">
-            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
+            <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/update-publications/${person.zdbID}" enctype="multipart/form-data"
                        id="person-edit-publications" cssClass="mark-dirty"
                     >
@@ -196,7 +196,7 @@
 
 
         <div id='login'>
-            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
+            <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/edit-user-details/${person.zdbID}"
                        enctype="multipart/form-data" id="person-edit-login" cssClass="mark-dirty"
                     >

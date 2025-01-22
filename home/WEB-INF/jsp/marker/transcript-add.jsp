@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page>
-    <form:form commandName="formBean" >
+    <form:form modelAttribute="formBean" >
         <table>
             <tr>
                 <td>Transcript Name:</td>

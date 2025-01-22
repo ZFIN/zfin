@@ -3,7 +3,7 @@ package org.zfin.infrastructure;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.publication.Journal;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "source_alias")

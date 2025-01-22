@@ -3,7 +3,7 @@ package org.zfin.framework.services;
 import org.zfin.framework.dao.IndexerRunDAO;
 import org.zfin.indexer.IndexerRun;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 public class IndexerService extends BaseService<IndexerRun, IndexerRunDAO> {
 

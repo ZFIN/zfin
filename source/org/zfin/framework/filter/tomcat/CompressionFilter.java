@@ -15,15 +15,15 @@ package org.zfin.framework.filter.tomcat;
 * limitations under the License.
 */
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 
 
 /**
- * Implementation of <code>javax.servlet.Filter</code> used to compress
+ * Implementation of <code>jakarta.servlet.Filter</code> used to compress
  * the ServletResponse if it is bigger than a threshold.
  *
  * @author Amy Roh

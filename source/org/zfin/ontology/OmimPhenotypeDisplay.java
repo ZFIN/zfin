@@ -8,7 +8,7 @@ import org.zfin.marker.Marker;
 import org.zfin.orthology.Ortholog;
 import org.zfin.sequence.DBLink;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +64,9 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION", joinColumns = {
-		@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false)},
-		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id",
-			nullable = false, updatable = false)})
+	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION",
+		joinColumns = {@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false, insertable = false)},
+		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id", nullable = false, updatable = false, insertable = false)})
 	private List<Marker> zfinGene;
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -264,15 +264,6 @@ public interface ExpressionRepository {
     void deleteExpressionStructuresForPub(Publication publication);
 
     /**
-     * Delete an expression result record for a given figure.
-     * If the result has more than one figure it only removes the figure-result association.
-     *
-     * @param result expression result.
-     * @param figure Figure
-     */
-    void deleteExpressionResultPerFigure(ExpressionResult2 result, Figure figure);
-
-    /**
      * Check if a pile structure already exists.
      * check for:
      * suberterm

@@ -3,7 +3,7 @@ package org.zfin.publication;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.sequence.ReferenceDatabase;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pub_db_xref")

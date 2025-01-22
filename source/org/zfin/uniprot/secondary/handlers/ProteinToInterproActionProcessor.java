@@ -84,7 +84,7 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
                 where exists (select 1 from interpro_protein where ip_interpro_id = :interpro) 
                 and exists (select 1 from protein where up_uniprot_id = :uniprot)
                 """;
-        currentSession().createSQLQuery(sqlQuery)
+        currentSession().createNativeQuery(sqlQuery)
                 .setParameter("uniprot", proteinToInterproDTO.uniprot())
                 .setParameter("interpro", proteinToInterproDTO.interpro())
                 .executeUpdate();
@@ -103,7 +103,7 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
                 where pti_uniprot_id = :uniprot
                 and pti_interpro_id = :interpro
                 """;
-        currentSession().createSQLQuery(sql)
+        currentSession().createNativeQuery(sql)
                 .setParameter("uniprot", proteinToInterproDTO.uniprot())
                 .setParameter("interpro", proteinToInterproDTO.interpro())
                 .executeUpdate();

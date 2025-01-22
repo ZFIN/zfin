@@ -15,7 +15,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -57,7 +57,7 @@ public class HibernateFigureRepository implements FigureRepository {
             sql += "  and xpatex_probe_feature_zdb_id = :probeZdbID ";
         }
 
-        Query query = session.createSQLQuery(sql);
+        Query query = session.createNativeQuery(sql);
         query.setParameter("pubZdbID", publication.getZdbID());
         if (probeZdbID != null) {
             query.setParameter("probeZdbID", probeZdbID);

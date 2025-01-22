@@ -13,8 +13,8 @@ import org.zfin.util.FileUtil;
 import org.zfin.util.database.presentation.UnloadBean;
 import org.zfin.util.downloads.jaxb.DownloadFileEntry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;

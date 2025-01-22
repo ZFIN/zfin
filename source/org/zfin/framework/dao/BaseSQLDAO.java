@@ -7,11 +7,11 @@ import org.zfin.framework.api.SearchResponse;
 import org.zfin.framework.entity.BaseEntity;
 import org.zfin.gwt.root.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.IdentifiableType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.metamodel.IdentifiableType;
+import jakarta.persistence.metamodel.Metamodel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

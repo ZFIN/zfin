@@ -1,8 +1,7 @@
 package org.zfin.infrastructure.seo;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @XmlAccessorType(value = XmlAccessType.NONE)

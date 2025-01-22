@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -33,8 +33,8 @@ public class Subset implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "term_subset",
-            joinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)})
+            joinColumns = {@JoinColumn(name = "termsub_subset_id", nullable = false, updatable = false, insertable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false, insertable = false)})
     private Set<GenericTerm> terms;
 
     public long getId() {

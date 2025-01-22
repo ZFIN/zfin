@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.event.ZfinDispatcher;
 import org.zfin.gwt.root.ui.ValidationException;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

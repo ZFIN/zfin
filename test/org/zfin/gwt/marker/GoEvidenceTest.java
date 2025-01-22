@@ -19,6 +19,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * DB tests for MarkerGoEvidence code.
@@ -84,7 +85,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
 
 
         // set it to some random pub and add inference group
-        Publication publication = (Publication) HibernateUtil.currentSession().createCriteria(Publication.class).setMaxResults(1).uniqueResult();
+        Publication publication = (Publication) currentSession().createQuery("from Publication").setMaxResults(1).uniqueResult();
         assertNotSame(goEvidenceDTO.getPublicationZdbID(),publication.getZdbID());
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);
         goEvidenceDTO.setFlag(GoEvidenceQualifier.CONTRIBUTES_TO);

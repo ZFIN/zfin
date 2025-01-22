@@ -43,7 +43,7 @@
                 <tr>
                     <td>Number in Queue: ${formBean.run.queueCandidateCount}</td>
                 </tr>
-                <form:form commandName="formBean">
+                <form:form modelAttribute="formBean">
 
                     <%--<zfin2:errors path="*" cssClass="errors"/>--%>
                     <%--<zfin2:errors errorResult="${errors}" cssClass="error"/>--%>

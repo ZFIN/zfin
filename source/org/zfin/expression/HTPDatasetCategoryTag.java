@@ -2,7 +2,7 @@ package org.zfin.expression;
 
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * High throughput meta CV tags used to annotation datasets

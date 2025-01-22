@@ -7,8 +7,8 @@ import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 
 @Path("/api")

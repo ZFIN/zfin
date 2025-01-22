@@ -2,8 +2,8 @@ package org.zfin.framework.filter;
 
 import org.apache.logging.log4j.ThreadContext;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**

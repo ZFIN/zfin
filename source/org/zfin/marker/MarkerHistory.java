@@ -4,7 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,11 +28,11 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     @JoinColumn(name = "mhist_mrkr_zdb_id")
     private Marker marker;
     @Column(name = "mhist_reason", nullable = false)
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Reason")})
     private Reason reason;
     @Column(name = "mhist_event", nullable = false)
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerHistory$Event")})
     private Event event;
     //name after renaming event
@@ -46,7 +46,7 @@ public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
     @ManyToOne
     @JoinColumn(name = "mhist_dalias_zdb_id")
     private MarkerAlias markerAlias;
-    @Column(name = "mhist_mrkr_prev_name", nullable = false)
+    @Column(name = "mhist_mrkr_prev_name")
     private String oldMarkerName;
     @Column(name = "mhist_comments")
     private String comments;

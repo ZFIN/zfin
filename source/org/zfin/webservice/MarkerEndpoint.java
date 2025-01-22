@@ -12,12 +12,12 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.webservice.schema.*;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.util.List;
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

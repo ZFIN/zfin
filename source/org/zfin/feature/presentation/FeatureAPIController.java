@@ -18,7 +18,7 @@ import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")

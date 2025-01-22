@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.zfin.anatomy.DevelopmentStage;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity

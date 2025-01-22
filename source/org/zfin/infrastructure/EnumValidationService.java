@@ -3,7 +3,7 @@ package org.zfin.infrastructure;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.zfin.anatomy.AnatomyStatistics;
@@ -133,7 +133,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateRecordAttributionSourceType() throws EnumValidationException {
         String hql = "select attype_type from attribution_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, RecordAttribution.SourceType.values());
     }
 
@@ -141,38 +141,36 @@ public class EnumValidationService {
     @Ignore("Don't run this until all topics are in use")
     public void validateCurationTopics() throws EnumValidationException {
         String hql = "select distinct cur_topic from curation";
-        List topicList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List topicList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(topicList, Curation.Topic.values());
     }
 
     @ServiceTest
     public void validateCurationStatusType() throws EnumValidationException {
         String sql = "select distinct pts_status from pub_tracking_status";
-        List statusList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List statusList = HibernateUtil.currentSession().createNativeQuery(sql).list();
         checkEnumVersusDatabaseCollection(statusList, PublicationTrackingStatus.Type.values());
     }
 
     @ServiceTest
     public void validateCurationStatusName() throws EnumValidationException {
         String sql = "select distinct pts_status_display from pub_tracking_status";
-        List statusList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List statusList = HibernateUtil.currentSession().createNativeQuery(sql).list();
         checkEnumVersusDatabaseCollection(statusList, PublicationTrackingStatus.Name.values());
     }
 
     @ServiceTest
     public void validateCurationRole() throws EnumValidationException {
         String hql = "select distinct ptl_role from pub_tracking_location";
-        List roleList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List roleList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(roleList, PublicationTrackingLocation.Role.values());
     }
 
     @ServiceTest
     public void validateCurationLocation() throws EnumValidationException {
         String hql = "select distinct ptl_location_display from pub_tracking_location";
-        List locationList = HibernateUtil.currentSession().createSQLQuery(hql).list();
-        PublicationTrackingLocation.Name[] values = PublicationTrackingLocation.Name.values();
-        List<PublicationTrackingLocation.Name> cleaned = Arrays.stream(values).filter(name -> !name.equals(PublicationTrackingLocation.Name.INDEXER_UNPRIORITIZED)).toList();
-        checkEnumVersusDatabaseCollection(locationList, cleaned.toArray(new PublicationTrackingLocation.Name[0]));
+        List locationList = HibernateUtil.currentSession().createNativeQuery(hql).list();
+        checkEnumVersusDatabaseCollection(locationList, PublicationTrackingLocation.Name.values());
     }
 
     /**
@@ -181,7 +179,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateMarkerHistoryEvent() throws EnumValidationException {
         String hql = "select * from marker_history_event";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, MarkerHistory.Event.values());
     }
 
@@ -192,7 +190,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateMarkerHistoryReason() throws EnumValidationException {
         String hql = "select * from marker_history_reason";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, MarkerHistory.Reason.values());
     }
 
@@ -202,7 +200,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateMarkerRelationshipType() throws EnumValidationException {
         String hql = "select mreltype_name from marker_relationship_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, MarkerRelationship.Type.values());
     }
 
@@ -213,21 +211,21 @@ public class EnumValidationService {
     @ServiceTest
     public void validateFeatureType() throws EnumValidationException {
         String hql = "select ftrtype_name from feature_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, FeatureTypeEnum.values());
     }
 
     @ServiceTest
     public void validateFeatMutagen() throws EnumValidationException {
         String hql = "select * from mutagen";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Mutagen.values());
     }
 
     @ServiceTest
     public void validateFeatMutagee() throws EnumValidationException {
         String hql = "select * from mutagee";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Mutagee.values());
     }
 
@@ -244,21 +242,21 @@ public class EnumValidationService {
     @ServiceTest
     public void validateRunType() throws EnumValidationException {
         String hql = "select *  from run_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Run.Type.values());
     }
 
     @ServiceTest
     public void validateReferenceDatabaseType() throws EnumValidationException {
         String hql = "select fdbdt_data_type  from foreign_db_data_type group by fdbdt_data_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, ForeignDBDataType.DataType.values());
     }
 
     @ServiceTest
     public void validateReferenceDatabaseSuperType() throws EnumValidationException {
         String hql = "select fdbdt_super_type from foreign_db_data_type group by fdbdt_super_type";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, ForeignDBDataType.SuperType.values());
     }
 
@@ -286,7 +284,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateCloneProblemType() throws EnumValidationException {
         String hql = "select cpt_type from clone_problem_type cpt";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Clone.ProblemType.values());
     }
 
@@ -328,8 +326,8 @@ public class EnumValidationService {
 
     @ServiceTest
     public void validateGenotypeWildtypeEnum() throws EnumValidationException {
-        String hql = "select g.handle from Genotype g where g.wildtype = :isWildtype";
-        List typeList = HibernateUtil.currentSession().createQuery(hql).setBoolean("isWildtype", true).list();
+        String hql = "select g.handle from Genotype g where g.wildtype = true";
+        List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumValuesPresentInDatabaseString(typeList, Genotype.Wildtype.values());
     }
 
@@ -367,14 +365,14 @@ public class EnumValidationService {
     @ServiceTest
     public void validateHeavyChainIsotypes() throws EnumValidationException {
         String sql = "select hviso_name from heavy_chain_isotype";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(sql).list();
         checkEnumVersusDatabaseCollection(typeList, Isotype.HeavyChain.values());
     }
 
     @ServiceTest
     public void validateLightChainIsotypes() throws EnumValidationException {
         String sql = "select ltiso_name from light_chain_isotype";
-        List typeList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List typeList = HibernateUtil.currentSession().createNativeQuery(sql).list();
         checkEnumVersusDatabaseCollection(typeList, Isotype.LightChain.values());
     }
 
@@ -409,7 +407,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateProcessingTasks() {
         String sql = "select pct_task from processing_checklist_task";
-        List taskList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        List taskList = HibernateUtil.currentSession().createNativeQuery(sql).list();
         checkEnumValuesPresentInDatabaseString(taskList, ProcessingChecklistTask.Task.values());
     }
 

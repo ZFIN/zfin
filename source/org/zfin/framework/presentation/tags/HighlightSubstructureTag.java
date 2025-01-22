@@ -5,9 +5,9 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.presentation.PhenotypePresentation;
 import org.zfin.util.HighlightUtil;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 
 /** This tag class needs to be expanded to support a "type" attribute which allows it to be used for any

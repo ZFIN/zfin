@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.event.ZfinDispatcher;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import java.util.List;
 
 public interface ExpressionCurationService extends DirectRestService {

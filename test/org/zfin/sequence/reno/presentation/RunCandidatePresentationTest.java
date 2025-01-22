@@ -6,14 +6,14 @@ import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
-import org.zfin.sequence.Accession;
-import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.Candidate;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,12 +43,20 @@ public class RunCandidatePresentationTest extends EntityPresentation {
 
         MarkerDBLink dblink = new MarkerDBLink();
         dblink.setMarker(marker);
-        
+
+        ReferenceDatabase refDb = new ReferenceDatabase();
+        ForeignDBDataType dataType = new ForeignDBDataType();
+        dataType.setSuperType(ForeignDBDataType.SuperType.SEQUENCE);
+        dataType.setDataType(ForeignDBDataType.DataType.POLYPEPTIDE);
+        refDb.setForeignDBDataType(dataType);
+        refDb.setZdbID("ZDB-TEMPTESTID-123456-1");
+        dblink.setReferenceDatabase(refDb);
+
         Set<MarkerDBLink> dblinks = new HashSet<>();
         dblinks.add(dblink);
 
         Accession acc = new Accession();
-        acc.setBlastableMarkerDBLinks(dblinks);
+        acc.setDbLinks(dblinks.stream().map(link -> (DBLink) link).collect(Collectors.toSet()));
 
         Query query = new Query();
         query.setAccession(acc);

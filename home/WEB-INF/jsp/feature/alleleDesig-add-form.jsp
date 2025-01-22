@@ -3,7 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <z:page>
-    <form:form  commandName="formBean" method="post">
+    <form:form  modelAttribute="formBean" method="post">
         <label for="lineDesig" class="indented-label">Company/Lab Line Designation:</label>
         <form:input path="${CreateAlleleDesignationFormBean.NEW_LINE_DESIG}" size="25"
                     onkeypress="return noenter(event)"></form:input>

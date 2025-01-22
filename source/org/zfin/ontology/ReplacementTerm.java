@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Basic implementation of the Term interface.

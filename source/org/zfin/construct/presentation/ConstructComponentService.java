@@ -105,8 +105,8 @@ public class ConstructComponentService {
 
      public static int getComponentCount(String zdbID){
         String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
-        Query query = currentSession().createSQLQuery(sqlCount);
-        query.setString("zdbID", zdbID);
+        Query query = currentSession().createNativeQuery(sqlCount);
+        query.setParameter("zdbID", zdbID);
         int lastComp = (Integer) query.uniqueResult() + 1;
         return lastComp;
     }

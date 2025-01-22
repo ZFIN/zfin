@@ -4,7 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

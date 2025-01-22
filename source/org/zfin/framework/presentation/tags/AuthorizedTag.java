@@ -3,9 +3,9 @@ package org.zfin.framework.presentation.tags;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.profile.UserService;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * Check if the secure user has a given role or is the owner of the record.

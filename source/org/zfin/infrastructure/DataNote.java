@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

@@ -8,7 +8,7 @@
     <div class="alert alert-danger">${error}</div>
 </c:if>
 
-<form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
+<form:form method="POST" modelAttribute="publicationBean" cssClass="form-horizontal">
     <div class="__react-root" id="PubFileCheck" data-pub-id="${pubID}" data-unique-id="publicationFormTag"></div>
 
     <div class="form-group row">

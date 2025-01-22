@@ -3,10 +3,10 @@ package org.zfin.antibody.presentation;
 import org.zfin.antibody.Antibody;
 import org.zfin.framework.presentation.AnatomyFact;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Class that maps to a statistics table for antibodies

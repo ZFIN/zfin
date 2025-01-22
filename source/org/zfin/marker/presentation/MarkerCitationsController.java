@@ -17,9 +17,9 @@ import org.zfin.publication.PublicationType;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.wiki.presentation.Version;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;

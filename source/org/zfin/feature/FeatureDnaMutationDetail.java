@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.sequence.ReferenceDatabase;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Setter
 @Getter

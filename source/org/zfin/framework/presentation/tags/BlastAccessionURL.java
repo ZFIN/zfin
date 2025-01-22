@@ -4,9 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.blast.Database;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**

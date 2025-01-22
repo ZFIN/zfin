@@ -2,7 +2,7 @@ package org.zfin.datatransfer.go;
 
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * mapping of ECO ID to GO evidence Code

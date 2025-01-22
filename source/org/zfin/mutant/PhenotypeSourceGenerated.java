@@ -7,7 +7,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * An individual observation of phenotype

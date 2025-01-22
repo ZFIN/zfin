@@ -29,7 +29,7 @@ import org.zfin.search.*;
 import org.zfin.search.presentation.FacetValue;
 import org.zfin.util.URLCreator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;

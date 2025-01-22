@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "processing_checklist_task")
@@ -20,7 +20,7 @@ public class ProcessingChecklistTask {
     private long id;
 
     @Column(name = "pct_task")
-    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {
             @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.ProcessingChecklistTask$Task")
     })
     private Task task;

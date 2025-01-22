@@ -2,7 +2,7 @@ package org.zfin.datatransfer.daniocell;
 //daniocell_mapping
 
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "daniocell_mapping")

@@ -2,7 +2,7 @@ package org.zfin.feature;
 
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 

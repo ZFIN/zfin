@@ -1,57 +1,47 @@
 package org.zfin.sequence;
 
-//import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-
+import jakarta.persistence.*;
 import org.zfin.feature.Feature;
 
 import java.io.Serializable;
 
+@Entity
+@DiscriminatorValue("ALT")
 public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, Serializable {
 
-
-   // Logger logger = LogManager.getLogger(FeatureDBLink.class);
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dblink_linked_recid", nullable = false)
     private Feature feature;
-//    private Accession referencingAccession ;
-
 
     public Feature getFeature() {
         return feature;
     }
 
     public void setFeature(Feature feature) {
-        this.feature = feature
-        ;
+        this.feature = feature;
     }
 
     public boolean equals(Object o) {
         if (o instanceof FeatureDBLink dbLink) {
-            //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
-//                return true ;
-//            }
-
             if (dbLink.getFeature().getZdbID().equals(dbLink.getFeature().getZdbID())
-                    &&
-                    dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
-                    &&
-                    dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
-                    ) {
+                    && dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
+                    && dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())) {
                 return true;
             }
         }
         return false;
     }
 
-
     public int hashCode() {
         int result = 1;
-//        result += (getZdbID() != null ? getZdbID().hashCode() : 0) * 29;
         result += (getFeature() != null ? getFeature().hashCode() : 0) * 13;
         result += (getAccessionNumber() != null ? getAccessionNumber().hashCode() : 0) * 19;
-        result += (getReferenceDatabase() != null ? getReferenceDatabase().getZdbID().hashCode() : 0) * 17;
+        result += (getReferenceDatabase() != null
+                        ? getReferenceDatabase().getZdbID().hashCode()
+                        : 0)
+                * 17;
         return result;
     }
-
 
     public String toString() {
         String returnString = "";
@@ -77,17 +67,19 @@ public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, 
             return accCompare;
         }
 
-        int refDBCompare = getReferenceDatabase().getZdbID().compareTo(featureDBLink.getReferenceDatabase().getZdbID());
+        int refDBCompare = getReferenceDatabase()
+                .getZdbID()
+                .compareTo(featureDBLink.getReferenceDatabase().getZdbID());
         if (refDBCompare != 0) {
             return refDBCompare;
         }
 
-        int featureCompare = getFeature().getZdbID().compareTo(featureDBLink.getFeature().getZdbID());
+        int featureCompare =
+                getFeature().getZdbID().compareTo(featureDBLink.getFeature().getZdbID());
         if (featureCompare != 0) {
             return featureCompare;
         }
 
         return 0;
     }
-
 }

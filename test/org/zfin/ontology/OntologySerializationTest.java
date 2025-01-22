@@ -59,7 +59,6 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     @Test
     public void serializeStage() {
-        List<DevelopmentStage> developmentStageList = HibernateUtil.currentSession().createCriteria(DevelopmentStage.class).list();
         OntologyManager ontologyManager = new OntologyManager();
         ontologyManager.initOntologyMapFastNoRelations(Ontology.STAGE);
         assertNotNull(ontologyManager.getTermByName("Adult", Ontology.STAGE));

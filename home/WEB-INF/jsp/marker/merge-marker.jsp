@@ -1180,7 +1180,7 @@
 
 
         <c:if test="${formBean.markerToDelete.markerType.name eq 'ATB'}">
-            <form:form commandName="formBean" action="/action/marker/merge" onsubmit="return confirmMergeAntibody();" >
+            <form:form modelAttribute="formBean" action="/action/marker/merge" onsubmit="return confirmMergeAntibody();" >
                 <form:hidden path="zdbIDToDelete"/>
                 <form:errors path="*" cssClass="error"/><br>
                 <table>

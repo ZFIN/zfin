@@ -39,6 +39,10 @@ RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/
         sha256sum -c apache-groovy-binary-3.0.9.zip.sha256 && unzip apache-groovy-binary-3.0.9.zip
 RUN ln -s /opt/misc/groovy-3.0.9 /opt/misc/groovy
 
+#Java 11 has removed JAXB from the standard library, so we need to add it back in for Groovy
+RUN cd /opt/misc/groovy/lib && wget https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.2.3/jaxb-api-2.2.3.jar && \
+        wget https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/4.0.5/jaxb-impl-4.0.5.jar
+
 RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1/bowtie-1.3.1-linux-x86_64.zip/download -O bowtie-1.3.1.zip && \
         unzip bowtie-1.3.1.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie
 RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.5.3/bowtie2-2.5.3-linux-x86_64.zip/download -O bowtie2-2.5.3.zip && \

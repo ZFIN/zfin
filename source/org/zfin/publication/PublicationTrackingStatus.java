@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Arrays;
 
 @Setter
@@ -79,12 +79,12 @@ public class PublicationTrackingStatus {
     private long id;
 
     @Column(name = "pts_status")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Type")})
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Type")})
     @JsonView(View.API.class)
     private Type type;
 
     @Column(name = "pts_status_display")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Name")})
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Name")})
     @JsonView(View.API.class)
     private Name name;
 

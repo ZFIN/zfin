@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -15,9 +15,11 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdb_db_pk_id")
     private Long dbID;
+
+    //TODO: fix this error: org.hibernate.query.QueryArgumentException: Argument [Ensembl_Clone] of type [java.lang.String] did not match parameter type [org.zfin.sequence.ForeignDB$AvailableName (n/a)]
     @JsonView(View.SequenceDetailAPI.class)
     @Column(name = "fdb_db_name")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
     private AvailableName dbName;
     @Column(name = "fdb_db_query")
@@ -188,7 +190,6 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
             this.value = type;
         }
 
-
         public String toString() {
             return this.value;
         }
@@ -199,6 +200,10 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
                     return t;
             }
             throw new RuntimeException("No ForeignDB named " + type + " found.");
+        }
+
+        public static AvailableName fromString(String type) {
+            return getType(type);
         }
     }
 

@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.apache.commons.lang.ObjectUtils;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**

@@ -3,7 +3,7 @@ package org.zfin.anatomy;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.ontology.GenericTerm;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.ChoiceFormat;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class AnatomyStatistics implements Comparable<AnatomyStatistics>, Seriali
     private String zdbID;
     @Id
     @Column(name = "anatstat_object_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.anatomy.AnatomyStatistics$Type")})
     private Type type;
     @Column(name = "anatstat_object_count")

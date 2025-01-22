@@ -3,7 +3,7 @@ package org.zfin.ontology;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "human_gene_detail")

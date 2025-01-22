@@ -1,5 +1,8 @@
 package org.zfin.sequence;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -7,37 +10,32 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.io.Serializable;
 
 
+@Entity
+@Table(name = "entrez_to_xref")
+@Setter
+@Getter
 public class EntrezMGI implements Serializable {
 
+    @EmbeddedId
+    private EntrezMGIId id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ex_entrez_acc_num", insertable = false, updatable = false, nullable = false)
     private Entrez entrezAccession;
-    private String mgiAccession;
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class EntrezMGIId implements Serializable {
+
+        @Column(name = "ex_entrez_acc_num")
+        private String entrezAccessionNum;
+
+        @Column(name = "ex_xref")
+        private String mgiAccession;
+    }
+
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-    private String entrezAccessionNum;
-
-
-    public String getEntrezAccessionNum() {
-        return entrezAccessionNum;
-    }
-
-    public void setEntrezAccessionNum(String entrezAccessionNum) {
-        this.entrezAccessionNum = entrezAccessionNum;
-    }
-
-    public Entrez getEntrezAccession() {
-        return entrezAccession;
-    }
-
-    public void setEntrezAccession(Entrez entrezAccession) {
-        this.entrezAccession = entrezAccession;
-    }
-
-    public String getMgiAccession() {
-        return mgiAccession;
-    }
-
-    public void setMgiAccession(String mgiAccession) {
-        this.mgiAccession = mgiAccession;
-    }
 
     public ReferenceDatabase getRefDB() {
         return sequenceRepository.getReferenceDatabase(
@@ -49,10 +47,10 @@ public class EntrezMGI implements Serializable {
 
     public int hashCode() {
         int num = 39;
-        if (entrezAccessionNum != null)
-            num += entrezAccessionNum.hashCode();
-        if (mgiAccession != null)
-            num += mgiAccession.hashCode();
+        if (id.entrezAccessionNum != null)
+            num += id.entrezAccessionNum.hashCode();
+        if (id.mgiAccession != null)
+            num += id.mgiAccession.hashCode();
         return num;
     }
 
@@ -69,16 +67,16 @@ public class EntrezMGI implements Serializable {
         if (!(o instanceof EntrezMGI mgi))
             return false;
 
-        if (entrezAccessionNum == null)
+        if (id.entrezAccessionNum == null)
             throw new RuntimeException("entrezAccessionNum is null but should not!");
-        if (mgi.entrezAccessionNum == null)
+        if (mgi.id.entrezAccessionNum == null)
             throw new RuntimeException("entrezAccessionNum is null but should not!");
-        if (mgiAccession == null)
+        if (id.mgiAccession == null)
             throw new RuntimeException("mgiAccession is null but should not!");
-        if (mgi.mgiAccession == null)
+        if (mgi.id.mgiAccession == null)
             throw new RuntimeException("mgiAccession is null but should not!");
 
-        return (entrezAccessionNum.equals(mgi.entrezAccessionNum)) &&
+        return (id.entrezAccessionNum.equals(mgi.id.entrezAccessionNum)) &&
                 (entrezAccession.equals(mgi.entrezAccession));
     }
 }

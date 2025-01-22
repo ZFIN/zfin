@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.framework.entity.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Setter

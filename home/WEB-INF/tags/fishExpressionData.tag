@@ -56,8 +56,9 @@
                                     </c:if>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href='/action/expression/sequence-targeting-reagent-expression-figure-summary?strZdbID=${sequenceTargetingReagentID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                            ${xp.numberOfFigures} figures</a>
+<%--                                    Removed the following link due to no traffic hits on it over the last 12 months at least.  Also removed controller method FishExpressionSummaryController.getSequenceTargetingReagentExpressionFigureSummary  --%>
+<%--                                    <a href='/action/expression/sequence-targeting-reagent-expression-figure-summary?strZdbID=${sequenceTargetingReagentID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>${xp.numberOfFigures} figures</a>--%>
+                                    <span>${xp.numberOfFigures} figures</span>
                                 </c:otherwise>
                             </c:choose>
                             <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from

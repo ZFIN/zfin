@@ -6,7 +6,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class FeatureMarkerRelationship implements Comparable {
     @Column(name = "fmrel_zdb_id")
     private String zdbID;
     @Column(name = "fmrel_type")
-    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum")})
     private FeatureMarkerRelationshipTypeEnum type;
     @ManyToOne

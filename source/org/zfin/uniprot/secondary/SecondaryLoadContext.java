@@ -185,7 +185,7 @@ public class SecondaryLoadContext {
 
     public static List<InterProProteinDTO> fetchExistingInterproDomainRecords() {
         String sql = "select ip_interpro_id, ip_name, ip_type from interpro_protein";
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         List<InterProProteinDTO> interproDomainRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
@@ -199,7 +199,7 @@ public class SecondaryLoadContext {
 
     public static List<ProteinDTO> fetchExistingProteinRecords() {
         String sql = "select up_uniprot_id, up_length from protein";
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         List<ProteinDTO> proteinRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
@@ -212,7 +212,7 @@ public class SecondaryLoadContext {
 
     public static List<MarkerToProteinDTO> fetchExistingMarkerToProteinRecords() {
         String sql = "select mtp_mrkr_zdb_id, mtp_uniprot_id from marker_to_protein";
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         List<MarkerToProteinDTO> markerToProteinRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
@@ -225,7 +225,7 @@ public class SecondaryLoadContext {
 
     public static List<ProteinToInterproDTO> fetchExistingProteinToInterproRecords() {
         String sql = "select pti_uniprot_id, pti_interpro_id from protein_to_interpro";
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         List<ProteinToInterproDTO> proteinToInterproRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
@@ -238,7 +238,7 @@ public class SecondaryLoadContext {
 
     public static List<PdbDTO> fetchExistingPdbRecords() {
         String sql = "select ptp_uniprot_id, ptp_pdb_id from protein_to_pdb";
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         List<PdbDTO> pdbRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
@@ -261,7 +261,7 @@ public class SecondaryLoadContext {
                            and term_ontology in ('cellular_component', 'molecular_function', 'biological_process')
                            and mrkrgoev_term_zdb_id = term_zdb_id                
                 """;
-        List queryResults = currentSession().createSQLQuery(sql).list();
+        List queryResults = currentSession().createNativeQuery(sql).list();
         Map<String, String> termOntologyMap = new HashMap<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;

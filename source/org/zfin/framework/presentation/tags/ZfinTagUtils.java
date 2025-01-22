@@ -3,13 +3,13 @@ package org.zfin.framework.presentation.tags;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.PageContext;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.servlet.jsp.PageContext.*;
+import static jakarta.servlet.jsp.PageContext.*;
 
 /**
  * This class provides a means to retrieve a property value from a
@@ -68,7 +68,7 @@ public class ZfinTagUtils {
      * @param scope       Scope to be searched (page, request, session, application)
      *                    or <code>null</code> to use <code>findAttribute()</code> instead
      * @return property of specified JavaBean
-     * @throws javax.servlet.jsp.JspException if the specified bean is not found
+     * @throws jakarta.servlet.jsp.JspException if the specified bean is not found
      */
     public static Object lookup(
             PageContext pageContext,

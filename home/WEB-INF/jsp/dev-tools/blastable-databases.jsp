@@ -8,7 +8,7 @@
         div.summary li { padding-top: .1em; padding-bottom: .1em; }
     </style>
 
-    <form:form method="get" commandName="formBean">
+    <form:form method="get" modelAttribute="formBean">
         <form:select path="selectedReferenceDatabaseZdbID">
             <option value="">-Reference Database-</option>
             <form:options items="${formBean.referenceDatabases}" itemValue="zdbID" itemLabel="view"/>

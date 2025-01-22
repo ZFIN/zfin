@@ -95,7 +95,7 @@
         </b>
     </font>
 
-    <form:form commandName="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
+    <form:form modelAttribute="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
 
         <c:if test="${formBean.numOfPublishedPublications > 1 || formBean.numOfUnpublishedPublications > 1}">
             <c:choose>

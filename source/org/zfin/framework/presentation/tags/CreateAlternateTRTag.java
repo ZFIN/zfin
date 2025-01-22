@@ -3,11 +3,11 @@ package org.zfin.framework.presentation.tags;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.core.LoopTagStatus;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.jstl.core.LoopTagStatus;
+import jakarta.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -161,7 +161,7 @@ public class CreateAlternateTRTag extends TagSupport {
      * Close the TR tag.
      *
      * @return value indicating if the rest of the page should be evaluated or not.
-     * @throws javax.servlet.jsp.JspException
+     * @throws jakarta.servlet.jsp.JspException
      */
     public int doEndTag() throws JspException {
         try {

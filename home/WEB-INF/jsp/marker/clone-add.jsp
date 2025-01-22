@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page>
-    <form:form commandName="formBean"  >
+    <form:form modelAttribute="formBean"  >
         <form:hidden path="ownerZdbID"/>
         <table>
             <tr>

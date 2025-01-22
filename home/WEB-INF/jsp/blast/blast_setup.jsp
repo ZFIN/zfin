@@ -12,7 +12,7 @@
     <p>
     <div style="max-width: 950px;">
 
-    <form:form action="/action/blast/blast" commandName="formBean" enctype="multipart/form-data">
+    <form:form action="/action/blast/blast" modelAttribute="formBean" enctype="multipart/form-data">
 
 
         <div style="float: right">
