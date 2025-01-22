@@ -4,7 +4,7 @@
     <tr>
         <td>
             <z:attributeList>
-                <z:attributeListItem dtColSize="3" label="Lab ID">
+                <z:attributeListItem dtColSize="3" label="Lab ID" copyable="true">
                     <span id="marker-id">${formBean.zdbID}</span>
                 </z:attributeListItem>
 
