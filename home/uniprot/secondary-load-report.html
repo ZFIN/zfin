@@ -334,7 +334,7 @@
             `;
         }
 
-        function DetailDisplay({item, prevClick, nextClick}) {
+        function DetailDisplay({item, uniprotDatFile, prevClick, nextClick}) {
             function detailSummary(item) {
                 if (!item) {
                     return '';
@@ -345,6 +345,16 @@
                     return html`<div className="success"> This item will be loaded.</div>`;
                 } else if (item.type == 'DELETE') {
                     return html`<div className="error"> This item will be deleted.</div>`;
+                }
+            }
+
+            let uniprotFileDetails = "";
+            if (item.uniprotAccessions) {
+                for (let accession of item.uniprotAccessions) {
+                    if (uniprotDatFile[accession]) {
+                        uniprotFileDetails += uniprotDatFile[accession];
+                        uniprotFileDetails += "\n\n";
+                    }
                 }
             }
 
@@ -368,6 +378,10 @@
                     ${ item.details && html`
                         <h4>Details</h4>
                         <div className="details-box" dangerouslySetInnerHTML=${{__html: item.details}}></div>
+                    `}
+                    ${ uniprotFileDetails && html`
+                        <h4>UniProt DAT File Contents</h4>
+                        <div className="details-box" dangerouslySetInnerHTML=${{__html: uniprotFileDetails}}></div>
                     `}
                     ${ (combinedLinks(item).length > 0) && html`
                         <h4>Links</h4>
@@ -580,7 +594,7 @@
                                 <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
                             `}
                             ${activeTab == 'details' && html`
-                                <${DetailDisplay} item="${activeDetails}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                                <${DetailDisplay} item="${activeDetails}" uniprotDatFile="${reportData.uniprotDatFile}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
                             `}
                             ${activeTab == '' && html`
                                 <${ReportSummary} reportSummary="${reportSummary}" creationDate="${creationDate}" releaseID="${releaseID}" />

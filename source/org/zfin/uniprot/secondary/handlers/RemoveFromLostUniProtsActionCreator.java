@@ -62,16 +62,8 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
                         .dbName(this.dbName)
                         .accession(iplink.getAccession())
                         .geneZdbID(iplink.getDataZdbID())
-                        .details(
-                                existingUniprotsByGene.isEmpty() ? "" :
-                                    "Existing uniprots by gene " + iplink.getDataZdbID() + ": " +
-                                    existingUniprotsByGene
-                                            .stream()
-                                            .map(uniprot -> uniProtRecords.getUniprotFormatByAccession(uniprot.getAccession()))
-                                            .collect(Collectors.joining(","))
-                        )
+                        .uniprotAccessions(existingUniprotsByGene.stream().map(DBLinkSlimDTO::getAccession).collect(Collectors.toSet()))
                         .build());
-
             }
         }
         return newActions;

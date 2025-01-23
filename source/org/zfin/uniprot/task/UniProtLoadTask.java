@@ -74,6 +74,8 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
      */
     public static void main(String[] args) throws Exception {
 
+        log.info("UniProtLoadTask starting...");
+
         Date startTime = new Date();
         String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
         String commitChanges = getArgOrEnvironmentVar(args, 1, "UNIPROT_COMMIT_CHANGES", "false");
@@ -108,18 +110,25 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
             loadChangesIfNotDryRun(actions);
-            UniProtLoadSummaryItemDTO summary = calculateSummary(actions);
-            writeOutputReportFile(actions, summary);
+            List<UniProtLoadSummaryItemDTO> summary = calculateSummary(actions);
+            writeOutputReportFile(actions, summary, entries);
         }
     }
 
-    private UniProtLoadSummaryItemDTO calculateSummary(Set<UniProtLoadAction> actions) {
+    private List<UniProtLoadSummaryItemDTO> calculateSummary(Set<UniProtLoadAction> actions) {
         int preExistingUniprotLinksCount = context.getUniprotDbLinks().size();
         int newUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.LOAD)).toList().size();
         int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
         int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
         int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
-        return new UniProtLoadSummaryItemDTO("db_link records", Long.valueOf(preExistingUniprotLinksCount), Long.valueOf(postExistingUniprotLinks));
+        UniProtLoadSummaryItemDTO row1 = new UniProtLoadSummaryItemDTO("db_link records", Long.valueOf(preExistingUniprotLinksCount), Long.valueOf(postExistingUniprotLinks));
+
+        int preGenesWithDBLinksCount = context.getUniprotDbLinksByGeneID().size();
+        int genesLosingAllUniprotAccessions = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.INFO) && a.getSubType().equals(UniProtLoadAction.SubType.GENE_LOST_ALL_UNIPROTS)).toList().size();
+        int genesGainFirstUniprotAccession = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.INFO) && a.getSubType().equals(UniProtLoadAction.SubType.GENE_GAINS_FIRST_UNIPROT)).toList().size();
+        int postGenesWithDBLinksCount = preGenesWithDBLinksCount - genesLosingAllUniprotAccessions + genesGainFirstUniprotAccession;
+        UniProtLoadSummaryItemDTO row2 = new UniProtLoadSummaryItemDTO("genes with uniprot links (see INFO for details)", Long.valueOf(preGenesWithDBLinksCount), Long.valueOf(postGenesWithDBLinksCount));
+        return List.of(row1, row2);
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -167,6 +176,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             log.info("No input file specified, using latest unprocessed UniProt release: " + latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath() + ".");
             inputFileName = latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath();
             release = latestUnprocessedUniProtRelease.get();
+            if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
+                throw new RuntimeException("No such file (or empty): " + inputFileName);
+            }
         } else if (inputFileName.isEmpty()) {
             throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
@@ -190,11 +202,12 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new RemoveIgnoreActionsHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
         pipeline.addHandler(new FlagPotentialIssuesHandler());
+        pipeline.addHandler(new CheckLostUniprotsForObsoletesHandler());
 
         return pipeline.execute();
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryItemDTO summary) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, List<UniProtLoadSummaryItemDTO> summary, Map<String, RichSequenceAdapter> uniprotRecords) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 
@@ -203,6 +216,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             UniProtLoadActionsContainer actionsContainer = UniProtLoadActionsContainer.builder()
                     .actions(actions)
                     .summary(summary)
+                    .uniprotDatFile(buildDatFileMap(actions, uniprotRecords))
                     .build();
             String jsonContents = actionsToJson(actionsContainer);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
@@ -220,7 +234,6 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
 
-
     private void calculateContext() {
         if (contextInputFile != null && !contextInputFile.isEmpty() && new File(contextInputFile).exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -231,7 +244,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
                 log.error("Error reading context file " + contextInputFile + ": " + e.getMessage(), e);
             }
         } else {
+            log.debug("Creating context from DB connection.");
             context = UniProtLoadContext.createFromDBConnection();
+            log.debug("Context initialized");
         }
     }
 
@@ -239,5 +254,18 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(startTime);
         return String.format(UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE, timestamp, extension);
     }
+
+    private Map<String, String> buildDatFileMap(Set<UniProtLoadAction> actions, Map<String, RichSequenceAdapter> uniprotRecords) {
+        //only include the entries from the dat file that are actually being acted upon
+        Map<String, String> datFileMap = new HashMap<>();
+        actions.stream().map(UniProtLoadAction::getAccession).forEach(accession -> {
+            RichSequenceAdapter adapter = uniprotRecords.get(accession);
+            if (adapter != null) {
+                datFileMap.put(accession, adapter.toUniProtFormat());
+            }
+        });
+        return datFileMap;
+    }
+
 
 }

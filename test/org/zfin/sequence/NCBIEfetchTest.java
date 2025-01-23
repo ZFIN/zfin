@@ -1,10 +1,18 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
+import org.zfin.datatransfer.webservice.NCBIRefSeqFetch;
 import org.zfin.datatransfer.webservice.NCBIRequest;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -57,6 +65,65 @@ public class NCBIEfetchTest {
         } catch (IOException e) {
             fail("caught: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void useRefSeqFetchForNucleotide() throws FileNotFoundException, JsonProcessingException {
+        List<String> refseqs = List.of("NM_131184", "XM_021480495");
+        Map<String, NCBIRefSeqFetch.NCBIRefSeqData> details = new NCBIRefSeqFetch().fetchRefSeqsByID(refseqs);
+        NCBIRefSeqFetch.NCBIRefSeqData nmData = details.get("NM_131184");
+        assertEquals("NM_131184", nmData.caption());
+
+        NCBIRefSeqFetch.NCBIRefSeqData xmData = details.get("XM_021480495");
+        assertEquals("XM_021480495", xmData.caption());
+
+        NCBIRefSeqFetch.writeCache(new File("/tmp/output.json"), details);
+    }
+
+    @Test
+    public void useRefSeqFetchWithCacheForNucleotide() throws IOException {
+        List<String> refseqs = List.of("NM_131184", "XM_021480495");
+
+        NCBIRefSeqFetch fetcher = new NCBIRefSeqFetch();
+        fetcher.setCacheFile(createTempFixtureFileForRefSeqJson());
+        Map<String, NCBIRefSeqFetch.NCBIRefSeqData> details = fetcher.fetchRefSeqsByID(refseqs);
+        NCBIRefSeqFetch.NCBIRefSeqData nmData = details.get("NM_131184");
+        assertEquals("NM_131184", nmData.caption());
+        assertEquals("from cache", nmData.comment());
+
+        NCBIRefSeqFetch.NCBIRefSeqData xmData = details.get("XM_021480495");
+        assertEquals("XM_021480495", xmData.caption());
+        assertEquals("from cache", xmData.comment());
+    }
+
+    private File createTempFixtureFileForRefSeqJson() throws IOException {
+        File tempFile = Files.createTempFile("temp", ".json").toFile();
+        tempFile.deleteOnExit();
+        try (FileWriter fw = new FileWriter(tempFile)) {
+            fw.write(refseqTestFixtureJsonData());
+        }
+        return tempFile;
+    }
+
+    private String refseqTestFixtureJsonData() {
+        return """
+            {
+              "NM_131184" : {
+                "uid" : "45433522",
+                "caption" : "NM_131184",
+                "comment" : "from cache",
+                "status" : null,
+                "replacedby" : null
+              },
+              "XM_021480495" : {
+                "uid" : "2800552124",
+                "caption" : "XM_021480495",
+                "comment" : "from cache",
+                "status" : null,
+                "replacedby" : null
+              }
+            }
+            """;
     }
 
 }

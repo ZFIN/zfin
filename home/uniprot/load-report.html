@@ -18,6 +18,12 @@
         html, body {
             font: 14px/1.21 'Helvetica Neue', arial, sans-serif;
             font-weight: 400;
+            color: #333;
+            margin: 0;
+        }
+
+        html {
+            background-color: #c9e0e0;
         }
 
         h1 {
@@ -28,18 +34,64 @@
             vertical-align: top;
         }
 
+        #header {
+            background: no-repeat 20px 0px url("data:image/svg+xml,%3Csvg%20version%3D%221.0%22%20width%3D%2274.52%22%20height%3D%2289.879985%22%20viewBox%3D%220%200%201242%201498%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22%23ccc%22%3E%3Cpath%20d%3D%22M157%20797C76%20716%2039%20636%2039%20544c0-41%206-76%2022-116%2046-123%20172-253%20310-320%2073-36%20128-53%20218-66%2025-4%2031-4%2056-5%2016%200%2033-1%2039-2%209-1%2013-1%2027%200%208%201%2023%202%2033%202%2032%200%2069%204%20133%2016%20100%2018%20209%2055%20312%20104l15%207-3%205c-11%2019-45%2060-72%2088-94%2094-207%20162-343%20205-103%2033-165%2047-238%2052-8%201-24%202-35%203-11%202-29%204-39%204-130%2011-213%2041-260%2094-29%2033-43%2070-46%20120%200%2014%206%2062%2012%2081%201%204-2%202-23-19z%22%20style%3D%22display%3Ainline%3Bfill%3A%231a1a1a%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M988%20267c37-14%2047-61%2019-89-10-10-26-16-40-15-33%203-55%2035-47%2066%204%2019%2020%2034%2038%2040%207%202%2023%201%2030-2zM136%20577c17-23%2050-54%2075-70%2048-31%2086-42%20171-50%2010%200%2027-2%2037-3s29-3%2042-4c47-4%20137-15%20182-23%20107-17%20184-43%20210-70l5-5v-7c-2-19-27-49-45-54-6-2-9-1-29%2011-33%2020-84%2038-146%2051-47%2011-85%2017-207%2035-177%2026-220%2039-255%2081-23%2027-39%2062-47%20101-2%2011-3%2017-2%2017s4-5%209-10zM261%20310c12-6%2033-16%2058-25%20108-42%20228-75%20321-87%2041-6%2095-8%20121-4%2023%203%2024%203%2028-2%2014-16%2017-60%205-71-6-4-9-5-46-4-39%200-48%201-98%209-142%2022-279%2077-363%20144-19%2015-55%2051-55%2055%200%201%204-2%2010-5%205-3%2014-8%2019-10z%22%20style%3D%22fill%3A%23fff%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M963%20237c-9-3-13-10-13-22%200-11%207-19%2019-20%2010-1%2017%203%2021%2011%208%2019-8%2037-27%2031z%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M459%201258c-38-39-105-122-149-185-50-72-94-153-114-211-5-15-11-37-11-38%200%200%207%205%2014%2011%2036%2028%2080%2058%20125%2082%2030%2017%2034%2019%2048%2026%2084%2043%20195%2086%20291%20113%2011%204%2020%206%2021%207%201%200-1%201-5%203-110%2039-176%2069-190%2083-6%207-13%2024-15%2038-2%2016-1%2069%202%2084%200%202%200%203-1%203%200%200-8-7-16-16z%22%20style%3D%22fill%3A%231a1a1a%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M812%20997c-7-10-16-21-20-24-19-17-49-33-76-40-11-2-58-2-72%200-26%205-58%2018-82%2034l-10%207-31-14c-103-44-134-58-133-59%201-2%2038-26%2053-35%2088-52%20181-83%20258-85%2071-1%20117%208%20172%2035%2035%2018%2082%2053%20103%2076l5%206-4%206c-27%2039-50%2060-96%2085-22%2013-49%2025-53%2025-1%200-7-8-14-17z%22%20style%3D%22fill%3A%23035361%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M585%201163c10-5%2041-16%20108-40%2010-3%2030-11%2045-17%2014-6%2030-12%2036-14%2028-11%20103-44%20131-60%2067-36%2096-60%20116-97%2017-30%2023-52%2022-80-2-30-12-51-37-74-30-28-46-49-56-75-4-11-4-34%201-48%204-12%2019-29%2035-39%2029-20%2062-22%2091-7%2054%2027%2093%2073%20107%20127%2010%2038%201%20105-20%20153-16%2037-25%2050-48%2080-17%2021-21%2025-40%2040-8%207-17%2014-20%2016-16%2015-63%2041-105%2060-43%2018-56%2023-97%2034-16%205-34%209-41%2011-16%205-34%209-68%2014-14%203-31%206-37%207-9%202-19%202-38%203-29%201-29%201-51%205-8%201-21%202-27%203h-12z%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M807%201391c-47-5-101-31-141-65-32-27-65-66-85-99l-6-10c0-2%2011%204%2027%2013%2054%2031%2094%2050%20132%2062%2021%207%2029%208%2046%208%2028-1%2048-10%2066-28%2021-20%2028-39%2029-77l1-23%2023-6c36-8%2043-10%2075-26%2027-14%2030-15%2061-34%2012-8%2024-15%2027-16l5-3%202%208c3%2011%205%2022%207%2044%203%2022%203%2033-2%2061-8%2050-39%2098-83%20131-60%2045-127%2066-184%2060z%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%20style%3D%22fill%3A%23035361%3Bfill-opacity%3A1%22%2F%3E%3Cpath%20d%3D%22M331%2020c-18%203-40%2016-55%2031-6%207-7%2010-7%2029%200%2020%201%2022%2010%2034%2024%2030%2046%2044%2065%2040%2016-3%2035-13%2046-25%209-9%209-12%202-28-5-10-6-11-4-13%203-4%2026%202%2046%2012%2021%2010%2051%2032%2063%2046%2015%2016%2023%2049%2028%20109v8l3-6c7-16%2013-64%2010-84-3-22-8-44-11-47-1-1-1-2-1-3%200-6-26-42-40-55-21-21-73-44-106-48-10-1-42-1-49%200z%22%20transform%3D%22rotate(.011)%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(#fff, #fff, #c9e0e0);
+            height: 85px;
+            /*background-color: #006fc8;*/
+            /*color: #fff;*/
+            font-size: 34px;
+            padding: 10px 0 0;
+            min-width: 900px;
+        }
+
+        #header h1 {
+            padding: 0;
+            margin: 0;
+        }
+
         #content {
-            width: 1000px;
             display: flex;
+            background-color: #fff;
         }
 
         #left-nav {
             width: 270px;
+            padding: 10px;
+            border-right: 5px solid #c9e0e0;
+            border-left: 5px solid #c9e0e0;
+        }
+
+        #left-nav h2 {
+            /*text-align: center;*/
+            margin: 0;
+        }
+
+        #left-nav ul {
+            list-style: none;
+            /*background-color: white;*/
+            padding: 0;
+        }
+
+        #left-nav ul li {
+            font-weight: bold;
+        }
+
+        #left-nav ul li a {
+            padding: 10px;
+            display: block;
+            width: 90%;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom:5px;
+            background-color: #fff;
+            color: #476;
         }
 
         #right-content {
             width: 730px;
             padding-left: 50px;
+            padding-bottom: 20px;
         }
 
         .error::before {
@@ -63,13 +115,16 @@
         }
 
         #breadcrumb {
-            height: 2em;
+            height: 3em;
+            background-color: #c8e0e0;
+            padding-top: 5px;
         }
 
         #breadcrumb ul {
             list-style-type: none; /* Remove the default bullet points */
             margin: 0;
             padding: 0;
+            padding-top: 10px;
             margin-left: 10px;
             display: flex; /* Use the Flexbox layout to align list items horizontally */
         }
@@ -78,8 +133,9 @@
             margin-right: 10px; /* Add some space between list items */
         }
 
+
         #breadcrumb li::before {
-            content: " \00AB ";
+            content: " \00BB ";
         }
 
         #breadcrumb li:first-child::before {
@@ -88,6 +144,18 @@
 
         #breadcrumb a {
             margin-left: 10px;
+        }
+
+        .breadcrumb-button {
+            text-decoration: none;
+            background-color: #EEEEEE;
+            color: #333333;
+            padding: 4px 12px 4px 12px;
+            font-weight: bold;
+            color: #476;
+            border: 1px solid #bbbbff;
+            box-shadow: 0 0 5px rgba(0,0,0,.05), 2px 2px 5px rgba(0,0,0,.1);
+            border-radius: 4px;
         }
 
         table.summary {
@@ -100,6 +168,47 @@
         table.summary th, table.summary td {
             border: 1px solid #ccc;
             padding: 10px;
+        }
+        .detail-table {
+            border-collapse: collapse;
+        }
+
+        .detail-table th, .detail-table td {
+            text-align: left;
+            padding: 3px 10px;
+        }
+
+        .detail-table tr:nth-child(even) {
+            background-color: #c9e0e0ab;
+        }
+
+        .uniprot-tag {
+            display: inline-block;
+            padding: 2px;
+            background-color: #aeaeff;
+            border: 1px solid grey;
+            font-size: x-small;
+            margin: 0 2px;
+        }
+
+        .uniprot-tag-1 {
+            background-color: #ffc9d8;
+        }
+
+        .uniprot-tag-2 {
+            background-color: #49ff49;
+        }
+
+        .uniprot-tag-3 {
+            background-color: #d3d397;
+        }
+
+        .uniprot-tag-4 {
+            background-color: #ff8d3f;
+        }
+
+        .uniprot-tag-5 {
+            background-color: #b3e5c9;
         }
 
     </style>
@@ -180,6 +289,26 @@
 
         function SubTypeListing({items, type, subtype, onClick}) {
             const [subTypeItems, setSubTypeItems] = useState([]);
+            const [allTags, setAllTags] = useState([]);
+
+            function formatTag(tag) {
+                const tagName = tag.name.toLowerCase().replaceAll("_", " ");
+                if (!allTags.includes(tagName)) {
+                    setAllTags([...allTags, tagName]);
+                }
+                const className = "uniprot-tag uniprot-tag-" + allTags.indexOf(tagName);
+
+                return html` <span className="${className}">${tagName}</span> `
+            }
+
+            function tagFilter() {
+                return html`
+                <select className="tag-filter">
+                    <option>Filter</option>
+                    ${allTags.map( t => html`<option>${t}</option>`)}
+                </select>
+                `;
+            }
 
             useEffect(() => {
                 if (items) {
@@ -192,18 +321,36 @@
             return html`
                 <h2>${type} - ${subtype}</h2>
                 <p>Click on any of the records below for more details.</p>
-                <ul>
-                    ${subTypeItems.map(item => html`
-                        <li><a href="#" onClick=${() => onClick(item)}>
-                            ${item.accession} ${item.geneZdbID && ' - ' + item.geneZdbID}
-                            </a>
-                        </li>
-                    `)}
-                </ul>
+                <table className="detail-table">
+                    <thead>
+                    <tr>
+                        <th>ZDB Gene ID</th>
+                        <th>UniProt Accession</th>
+                        <th>Tags
+                            <!-- ${tagFilter()} -->
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        ${subTypeItems.map(item => html`
+                            <tr>
+                                <td><a href="#" onClick=${() => onClick(item)}>
+                                    ${item.geneZdbID}
+                                    </a>
+                                </td>
+                                <td><a href="#" onClick=${() => onClick(item)}>
+                                    ${item.accession}
+                                    </a>
+                                </td>
+                                <td>${ item.tags && item.tags.map(tag => formatTag(tag)) }</td>
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
             `;
         }
 
-        function DetailDisplay({item, prevClick, nextClick}) {
+        function DetailDisplay({item, prevClick, nextClick, uniprotDatFile}) {
             function detailSummary(item) {
                 if (!item) {
                     return '';
@@ -215,6 +362,11 @@
                 }
             }
 
+            let uniprotRecord = uniprotDatFile[item.accession];
+            if (!uniprotRecord) {
+                uniprotRecord = '';
+            }
+
             return html`
                 <div>
                     <h2>Details for Accession</h2>
@@ -223,6 +375,7 @@
                     <p>${detailSummary(item)}</p>
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
+                    <pre>${uniprotRecord}</pre>
                     <h4>Links</h4>
                     <ul>
                         ${item.links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
@@ -232,23 +385,30 @@
         }
 
         function ReportSummary({reportSummary}) {
-            const beforeCount = reportSummary.beforeLoadCount;
-            const afterCount = reportSummary.afterLoadCount;
-            const changeCount = afterCount - beforeCount;
-            const percentChange = (changeCount / beforeCount) * 100;
+            const rows = reportSummary.map(item => {
+                const beforeCount = item.beforeLoadCount;
+                const afterCount = item.afterLoadCount;
+                const changeCount = afterCount - beforeCount;
+                const percentChange = (changeCount / beforeCount) * 100;
 
-            //human readable
-            const before = beforeCount.toLocaleString('en-US');
-            const after = afterCount.toLocaleString('en-US');
-            const change = changeCount.toLocaleString('en-US');
-            const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+                //human readable
+                const before = beforeCount.toLocaleString('en-US');
+                const after = afterCount.toLocaleString('en-US');
+                const change = changeCount.toLocaleString('en-US');
+                const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+                return html`
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${before}</td>
+                        <td>${after}</td>
+                        <td>${change}</td>
+                        <td>${percent}%</td>
+                    </tr>
+                `;
+            })
 
             return html`
                     <h2>Summary</h2>
-                    Before the load, there were ${before} uniprot accessions in the database.
-                    After the load, there are ${after} uniprot accessions in the database.
-                    The total change is ${change} uniprot accessions
-                    (${percent}% change).
 
                     <h3>Table</h3>
                     <table class="summary">
@@ -262,13 +422,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Uniprot</td>
-                                <td>${before}</td>
-                                <td>${after}</td>
-                                <td>${change}</td>
-                                <td>${percent}%</td>
-                            </tr>
+                            ${rows}
                         </tbody>
                     </table>
             `;
@@ -303,15 +457,15 @@
                 <div id="breadcrumb">
                     <ul>
                     ${showHome() && html`
-                        <li><a href="#" onClick="${backToHome}">Home</a></li>
+                        <li><a className="breadcrumb-button" href="#" onClick="${backToHome}">Home</a></li>
                     `}
                     ${showType() && html`
-                        <li><a href="#" onClick="${() => onClick('list')}">${type}</a></li>
+                        <li><a className="breadcrumb-button" href="#" onClick="${() => onClick('list')}">${type}</a></li>
                     `}
                     ${activeTab == 'details' && html`
-                        <li><a href="#" onClick="${() => onClick('subtype')}">${subtype}</a></li>
+                        <li><a className="breadcrumb-button" href="#" onClick="${() => onClick('subtype')}">${subtype}</a></li>
                     `}
-                    <li><a href="#" onClick="${() => {}}">${activeTitle()}</a></li>
+                    <li><a className="breadcrumb-button" href="#" onClick="${() => {}}">${activeTitle()}</a></li>
                     </ul>
                 </div>
             `;
@@ -363,7 +517,6 @@
 
             function previousDetail() {
                 const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
-                console.log("found index", index);
                 if (index > 0) {
 
                     //find the previous item that matches subtype
@@ -378,7 +531,6 @@
 
             function nextDetail() {
                 const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
-                console.log("found n index", index);
 
                 if (index === -1) {
                     return;
@@ -403,13 +555,14 @@
 
             return html`
                 <div id="report">
-                    <h1>UniProt Load Report</h1>
-                    <h2 style=${{ textAlign: 'center' }}>  </h2>
+                    <div id='header'>
+                        <h1>UniProt Load Report</h1>
+                    </div>
                     <${Breadcrumb} activeTab="${activeTab}" type="${showTypeData}" subtype="${subTypeName}" details="${activeDetails}" onClick="${(item) => {breadcrumbClicked(item)}}"/>
                      <div id='content'>
                         <div id="left-nav">
-                            <h2>Navigation</h2>
-                            <p>These are the types of actions that will be performed by the load.</p>
+                            <h2>Categories</h2>
+                            <p>The types of actions that will be performed by the load</p>
                             <${ReportNavigation} reportNavigation=${reportNavigation} onNavigationClick=${handleNavigationClick}/>
                         </div>
                         <div id="right-content">
@@ -420,7 +573,7 @@
                                 <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
                             `}
                             ${activeTab == 'details' && html`
-                                <${DetailDisplay} item="${activeDetails}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                                <${DetailDisplay} item="${activeDetails}" uniprotDatFile="${reportData.uniprotDatFile}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
                             `}
                             ${activeTab == '' && html`
                                 <${ReportSummary} reportSummary="${reportSummary}" />

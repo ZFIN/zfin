@@ -9,8 +9,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.zfin.uniprot.adapter.RichSequenceAdapter.DatabaseSource.ZFIN;
+import java.util.Set;
 
 
 /**
@@ -71,7 +70,7 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
                 .accession(newRecord.accession())
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
-                .details(richSequenceAdapter.toUniProtFormat())
+                .uniprotAccessions(Set.of(richSequenceAdapter.getAccession()))
                 .build();
     }
 

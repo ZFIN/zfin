@@ -8,6 +8,7 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Creates actions for adding and deleting protein to interpro information (replaces part of protein_domain_info_load.pl)
@@ -67,7 +68,7 @@ public class ProteinToInterproActionCreator implements ActionCreator {
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO)
                 .relatedEntityFields(newRecord.toMap())
-                .details(richSequenceAdapter.toUniProtFormat())
+                .uniprotAccessions(Set.of(richSequenceAdapter.getAccession()))
                 .build();
     }
 
