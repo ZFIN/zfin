@@ -1706,9 +1706,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID) {
         String hql = """
-                     SELECT distinct ai
-                     FROM
-                     ExpressionResult2 er, GenericTerm ai
+                     SELECT distinct ai 
+                     FROM 
+                     ExpressionResult2 er, GenericTerm ai 
                       join er.expressionFigureStage efs
                       join efs.expressionExperiment ee
                       join ee.fishExperiment ge
@@ -1717,14 +1717,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                       WHERE
                      ee.gene.zdbID = :zdbID
                      AND er.superTerm.oboID = ai.oboID
-                     AND er.expressionFound = 't'
-                     AND ge.standard = 't'
-                     AND g.wildtype= 't'
+                     AND er.expressionFound = true
+                     AND ge.standard = true
+                     AND g.wildtype= true
                      ORDER BY ai.termName asc
                      """;
         return currentSession().createQuery(hql, GenericTerm.class)
-            .setParameter("zdbID", zdbID)
-            .list();
+                .setParameter("zdbID", zdbID)
+                .list();
     }
 
     public List<Figure> getFigures(ExpressionSummaryCriteria expressionCriteria) {
