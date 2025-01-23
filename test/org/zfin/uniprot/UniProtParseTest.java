@@ -27,6 +27,8 @@ public class UniProtParseTest extends AbstractDatabaseTest {
             RichStreamReaderAdapter reader = getRichStreamReaderForUniprotDatString(record, true);
             RichSequenceAdapter sequence = reader.nextRichSequence();
             String rawData = DatFileWriter.sequenceToString(sequence);
+            System.out.println(rawData);
+            System.out.flush();
             assertTrue(rawData.contains("RefSeq; XP_001343958.4; XM_001343922.7"));
         } catch (Exception e) {
             fail("Should not have thrown an exception");
@@ -44,6 +46,21 @@ public class UniProtParseTest extends AbstractDatabaseTest {
             String rawData = DatFileWriter.sequenceToString(sequencesByAccession.get("E9QDC9"));
             assertFalse(rawData.contains("RefSeq; XP_001343958; XM_001343922.7."));
             assertTrue(rawData.contains("RefSeq; XP_001343958; XM_001343922."));
+
+        } catch (Exception e) {
+            fail("Should not have thrown an exception");
+        }
+    }
+
+    @Test
+    public void getRefSeqsBoth() {
+        String record = testDat();
+        try {
+            RichStreamReaderAdapter reader = getRichStreamReaderForUniprotDatString(record, true);
+            Map<String, RichSequenceAdapter> sequencesByAccession = getMapOfAccessionsToSequencesFromStreamReader(reader);
+            assertEquals(1, sequencesByAccession.size());
+            RichSequenceAdapter sequence = sequencesByAccession.get("E9QDC9");
+            assertEquals(2, sequence.getRefSeqs().size());
 
         } catch (Exception e) {
             fail("Should not have thrown an exception");

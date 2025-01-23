@@ -43,6 +43,7 @@ echo "UNIPROT_COMMIT_CHANGES=$UNIPROT_COMMIT_CHANGES"
 rm -f $PWD/uniprot_load_report*.html $PWD/uniprot_context*.json $PWD/uniprot_load_report*.html.zip $PWD/uniprot_context*.json.zip
 export UNIPROT_OUTPUT_REPORT_FILE="$PWD/uniprot_load_report_$TIMESTAMP.html.zip"
 export UNIPROT_CONTEXT_FILE="$PWD/uniprot_context_$TIMESTAMP.json.zip"
+export NCBI_FETCH_CACHE_OUTPUT_FILE="$PWD/ncbi_refseq_api_results.json"
 cd $SOURCEROOT
 gradle uniprotLoadTask
         ]]>

@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.UniProtLoadLink;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
@@ -58,6 +57,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private String geneZdbID;
     private String relatedEntityID;
     private String details;
+    private Set<String> uniprotAccessions;
     private int length;
     @JsonIgnore
     private Class handlerClass;

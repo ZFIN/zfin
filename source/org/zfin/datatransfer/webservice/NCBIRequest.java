@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.webservice;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -97,6 +98,16 @@ public class NCBIRequest {
         }
     }
 
+    public String fetchRawText() throws ServiceConnectionException {
+        try {
+            InputStream response = getHttpResponseContent();
+            String content = IOUtils.toString(response, "UTF-8");
+            return content;
+        } catch (IOException e) {
+            throw new ServiceConnectionException("Unable to perform EUtils request", e);
+        }
+    }
+
     private InputStream getHttpResponseContent() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
@@ -111,6 +122,8 @@ public class NCBIRequest {
             nvps.add(new BasicNameValuePair(param.getKey(), param.getValue()));
         }
         post.setEntity(new UrlEncodedFormEntity(nvps));
+        log.info("Posting to URI: " + post.getURI());
+
         HttpResponse response = client.execute(post);
         InputStream responseContent = response.getEntity().getContent();
 
