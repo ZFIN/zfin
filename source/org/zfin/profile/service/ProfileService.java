@@ -482,6 +482,21 @@ public class ProfileService {
         return 1;
     }
 
+    /**
+     * If there is not an address for this person then insert the join record.
+     * If there is one, then update the join record.
+     * If there are multiple . . . create an error log and update both records.
+     *
+     * @param person     The person who gets updated with new address (based on organization)
+     * @param organization The organization that provides the address for the person
+     * @return Number of addresses updated.
+     */
+    public void setAddressForPersonByOrganization(Person person, Organization organization) {
+        person.setAddress(organization.getAddress());
+        person.setCountry(organization.getCountry());
+        HibernateUtil.currentSession().update(person);
+    }
+
 
     public int setMembersToOrganizationAddress(String organizationZdbID) {
         Organization organization = profileRepository.getOrganizationByZdbID(organizationZdbID);
@@ -574,7 +589,7 @@ public class ProfileService {
             logger.error("no address for organization: " + organization.getZdbID());
             return 0;
         }
-        int returnValue = setAddressForPerson(address, person.getZdbID());
+        setAddressForPersonByOrganization(person, organization);
         final PersonMemberPresentation personMemberPresentation = new PersonMemberPresentation();
         personMemberPresentation.setAddressToExisting(address, person.getZdbID());
         HibernateUtil.currentSession().flush();
