@@ -483,15 +483,13 @@ public class ProfileService {
     }
 
     /**
-     * If there is not an address for this person then insert the join record.
-     * If there is one, then update the join record.
-     * If there are multiple . . . create an error log and update both records.
+     * Set person's address based on their organization
      *
      * @param person     The person who gets updated with new address (based on organization)
      * @param organization The organization that provides the address for the person
      * @return Number of addresses updated.
      */
-    public void setAddressForPersonByOrganization(Person person, Organization organization) {
+    private void setAddressForPersonByOrganization(Person person, Organization organization) {
         person.setAddress(organization.getAddress());
         person.setCountry(organization.getCountry());
         HibernateUtil.currentSession().update(person);
