@@ -550,7 +550,6 @@ public class ProfileService {
         person.setAccountInfo(accountInfo);
         accountInfo.setPerson(person);
         HibernateUtil.currentSession().save(accountInfo);
-        HibernateUtil.currentSession().save(person);
 
         return person;
     }
