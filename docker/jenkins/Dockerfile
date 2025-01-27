@@ -74,6 +74,8 @@ RUN ln -s /mnt/research/vol/users /research/zusers
 RUN groupmod -n zfin gradle
 RUN groupadd -g 1076 fishadmin
 RUN usermod  -aG fishadmin gradle
+RUN groupadd -g 1476 zfishweb
+RUN usermod  -aG zfishweb gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
 RUN adduser gradle solr
