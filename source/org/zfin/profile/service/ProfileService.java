@@ -527,25 +527,29 @@ public class ProfileService {
 
         person.setEmailPrivacyPreference(getDefaultEmailPrivacyPreference());
 
-        AccountInfo accountInfo = new AccountInfo();
         String login = person.getPutativeLoginName();
         if (StringUtils.isEmpty(login)) {
             login = person.getEmail();
         }
+
+        person.setDeceased(false);
+        person.setUrl(processUrl(person.getUrl()));
+
+        HibernateUtil.currentSession().save(person);
+        HibernateUtil.currentSession().flush();
+
+        logger.debug("Created person: " + person);
+
+        AccountInfo accountInfo = new AccountInfo();
         accountInfo.setName(person.getFirstName() + " " + person.getLastName());
         accountInfo.setLogin(login);
         accountInfo.setRole(AccountInfo.Role.SUBMIT.toString());
         accountInfo.setPassword(encodePassword(person.getPass1()));
         accountInfo.setCookie(Math.random() + "-" + login);
 
-        person.setDeceased(false);
         person.setAccountInfo(accountInfo);
-        person.setUrl(processUrl(person.getUrl()));
-
-        HibernateUtil.currentSession().save(person);
-        HibernateUtil.currentSession().flush();
-        accountInfo.setZdbID(person.getZdbID());
-        HibernateUtil.currentSession().update(accountInfo);
+        accountInfo.setPerson(person);
+        HibernateUtil.currentSession().save(accountInfo);
 
         return person;
     }
