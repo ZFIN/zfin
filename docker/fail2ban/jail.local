@@ -1,5 +1,6 @@
 [DEFAULT]
 ignorecommand = /usr/local/bin/ignore_ip_check.sh <ip>
+ignoreip = 128.223.0.0/16 184.171.0.0/17 163.41.128.0/17 10.128.0.0/16 10.108.0.0/14 10.174.0.0/16
 
 [apache-forbidden]
 enabled = true
