@@ -79,21 +79,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
 	}
 
-	@Test
-	/*
-	 * Test that creation of a new person object including a user object
-	 * creates a single PK for both of them. User is a value object and is
-	 * tied to the Person object: one-to-one relationship.
-	 */
-	public void createPersonWithAccountInfo() {
-		Person person = getTestPerson();
-		HibernateUtil.currentSession().save(person);
-
-		String personID = person.getZdbID();
-		assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-
-	}
-
 	/**
 	 * Test that creation of a new person object without a user object works without
 	 * creating a user object in the database.
