@@ -2,6 +2,40 @@
 
 <z:page>
     <h1>ZFIN Data Contents</h1>
+    <div class="stats-controls">
+        <form method="GET">
+            <p>Showing data from
+                <select name="beginYear">
+                    <c:forEach var="y" items="${allYears}">
+                        <c:choose>
+                        <c:when test="${y == beginYear}">
+                            <option selected>${y}</option>
+                        </c:when>
+                        <c:otherwise>
+                            <option>${y}</option>
+                        </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </select>
+                to
+                <select name="endYear">
+                    <c:forEach var="y" items="${allYears}">
+                        <c:choose>
+                        <c:when test="${y == endYear}">
+                            <option selected>${y}</option>
+                        </c:when>
+                        <c:otherwise>
+                            <option>${y}</option>
+                        </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </select>
+                <button>Update</button>
+            </p>
+        </form>
+    </div>
+
+    <a href="annual-stats-view-download">Download CSV</a>
     <table style="border-collapse: collapse;">
         <tr>
             <td style="border: 1px solid black; width:280px;">&nbsp;</td>
