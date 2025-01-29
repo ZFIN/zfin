@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
@@ -38,6 +39,8 @@ public class PersonSearchController {
             Model model
             , PersonSearchBean searchBean
     ) {
+        HibernateUtil.createTransaction();
+
         // pass in letter and people
         PaginationResult<Person> personPaginationResult = profileRepository.searchPeople(searchBean);
         model.addAttribute("people", personPaginationResult.getPopulatedResults());
@@ -46,6 +49,8 @@ public class PersonSearchController {
         // pass in "type" and organizations
         model.addAttribute(LookupStrings.FORM_BEAN, searchBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Person Search");
+
+        HibernateUtil.flushAndCommitCurrentSession();
 
         return "profile/person-search";
 
