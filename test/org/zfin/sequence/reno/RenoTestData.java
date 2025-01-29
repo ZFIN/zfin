@@ -16,6 +16,7 @@ import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.Date;
+import java.util.Set;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -122,6 +123,7 @@ public class RenoTestData {
         queryGene.setAccessionNumberDisplay(accession1.getNumber());
         queryGene.setLength(1243);
         queryGene.setReferenceDatabase(accession1.getReferenceDatabase());
+        accession1.setDbLinks(Set.of(queryGene));
         session.save(queryGene);
         session.save(accession1);
 
