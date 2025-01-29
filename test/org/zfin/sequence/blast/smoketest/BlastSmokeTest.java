@@ -10,7 +10,6 @@ import org.zfin.AbstractSmokeTest;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.SequenceTargetingReagent;
-import spock.lang.Ignore;
 
 import java.io.IOException;
 import java.util.GregorianCalendar;
@@ -48,7 +47,6 @@ public class BlastSmokeTest extends AbstractSmokeTest {
      */
     @org.junit.Ignore //This fails on TRUNK -> TODO: write a jenkins job to replace this test
     @Test
-    @Ignore
     public void testRecentSTR() {
         SequenceTargetingReagent str = getRecentCrisprSTR();
         log.info("STR: " + str.getZdbID());
