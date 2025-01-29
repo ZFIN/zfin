@@ -15,7 +15,6 @@ public class VocabularyService {
     VocabularyTermDAO vocabularyTermDao = new VocabularyTermDAO();
 
     public VocabularyTerm getVocabularyTerm(VocabularyEnum vocabularyEnum, String vocabularyTermName) {
-        Vocabulary vocabulary = vocabularyDao.findByField("name", vocabularyEnum.getName()).getSingleResult();
         VocabularyTerm vocabularyTerm = vocabularyTermDao.findByField("name", vocabularyTermName).getSingleResult();
         return vocabularyTerm;
     }
