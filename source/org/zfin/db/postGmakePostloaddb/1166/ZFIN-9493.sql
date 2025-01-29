@@ -25,9 +25,6 @@ insert into ensembl_transcript_renaming
 values ('ENSDART00000190839', 'ENSDART00000190839', 'zgc:86839-201');
 
 insert into ensembl_transcript_renaming
-values ('ENSDART00000157687', 'ENSDART00000157687', 'zgc:63569-201');
-
-insert into ensembl_transcript_renaming
 values ('ENSDART00000080850', 'ENSDART00000080850', 'si:ch211-155i14.1-201');
 
 insert into ensembl_transcript_renaming
