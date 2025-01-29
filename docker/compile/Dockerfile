@@ -2,7 +2,7 @@ FROM gradle:7-jdk17
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y --no-install-recommends \
-       ant groovy tcsh sudo \
+       ant tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
