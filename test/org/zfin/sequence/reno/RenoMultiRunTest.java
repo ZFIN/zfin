@@ -21,6 +21,7 @@ import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -126,6 +127,9 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
         dblink1.setReferenceDatabase(refDb);
         dblink1.setMarker(gene);
         session.save(dblink1);
+
+
+        accession1.setDbLinks(Set.of(dblink1));
         session.save(accession1);
 
         // create Redundancy Query
@@ -288,7 +292,8 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
             Candidate candidate2 = runCandidate2.getCandidate();
             assertNotNull("candidate2 is not null", candidate2);
 
-            assertEquals("should be no runs", runs.size(), 0);
+            List<Run> runsRefreshed = session.createQuery("FROM Run r WHERE r.name='TestNomenRun1'", Run.class).list();
+            assertEquals("should be no runs", runsRefreshed.size(), 0);
 
             // if we are not loading with the -ee option, the cascade contraint isn't loaded.
             // to test this, we should have at least 100 accessions, though usually in the thousands
