@@ -122,22 +122,6 @@ public class OrganizationMembersController {
         return status ;
     }
 
-
-    // looks up folks
-    @RequestMapping(value = "/set-address/{personZdbId}/address/{sourceID}", method = RequestMethod.PUT)
-    public
-    @ResponseBody
-    int setAddress(@PathVariable String personZdbId, @PathVariable("sourceID") String sourceZdbID) {
-        Organization organization = profileRepository.getOrganizationByZdbID(sourceZdbID);
-        Person person = profileRepository.getPerson(personZdbId);
-
-        HibernateUtil.createTransaction();
-        int returnValue = profileService.setPersonAddressToOrganizationAddress(person, organization);
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        return returnValue;
-    }
-
     // looks up labs and companies
     @RequestMapping(value = "/find-member", method = RequestMethod.GET)
     public
