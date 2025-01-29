@@ -65,12 +65,9 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         loadSequenceMapFromDownloadFile();
 
         // <ensdargID, DBLink>
-        getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions();
-        getMarkerDBLinksWithVegaEnsemblOnlyAccessions();
-        getMarkerDBLinksWithGenbankEnsemblOnlyAccessions();
-
         ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions();
         ensdargMap.putAll(getMarkerDBLinksWithGenbankEnsemblOnlyAccessions());
+        ensdargMap.putAll(getMarkerDBLinksWithEnsemblAccessionsOnly());
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         // add all marker that do not have a single Ensembl transcript associated.
         ensdargMap.values().forEach(markerDBLink -> {
@@ -172,7 +169,8 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("lincRNA")
               || bioType.equals("miRNA")
               || bioType.equals("misc_RNA")
-              || bioType.equals("antisense"))) {
+              || bioType.equals("antisense")
+              || bioType.equals("snoRNA"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
                 || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
@@ -648,6 +646,27 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         return ensdargMap;
     }
 
+    private Map<String, MarkerDBLink> getMarkerDBLinksWithEnsemblAccessionsOnly() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        // vega gene list
+        List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
+        ensdargList.removeIf(markerDBLink -> vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
+
+        List<String> geneBankIDs = genbankList.stream().map(markerDB -> markerDB.getMarker().getZdbID()).toList();
+        ensdargList.removeIf(markerDBLink -> geneBankIDs.contains(markerDBLink.getMarker().getZdbID()));
+        System.out.println("Number of Genes that have no Vega and no GenBank ID: " + ensdargList.size());
+        Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
+            Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
+        try {
+            createReportNoEnsembl(ensdargMap, "report-transcript-no-ensembl.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ensdargMap;
+    }
+
     private Map<String, MarkerDBLink> getMarkerDBLinksWithVegaGenbankEnsemblAccessions() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
@@ -720,14 +739,14 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                     }
                     if (CollectionUtils.isNotEmpty(genoList) && genoList.size() == 1) {
                         AtomicReference<String> vega = new AtomicReference<>();
-                            vegaList.forEach(linkDisplay -> {
-                            if(linkDisplay.getAssociatedGeneID().equals(gene.getZdbID()) && linkDisplay.getAccession().startsWith("OTTDARG")){
+                        vegaList.forEach(linkDisplay -> {
+                            if (linkDisplay.getAssociatedGeneID().equals(gene.getZdbID()) && linkDisplay.getAccession().startsWith("OTTDARG")) {
                                 vega.set(linkDisplay.getAccession());
                             }
                         });
                         Genotype next = genoList.iterator().next();
                         if (next != null && next.getHandle().equals("TU")) {
-                            System.out.println(s + "\t" + gene.getAbbreviation()+"\t"+vega.get());
+                            System.out.println(s + "\t" + gene.getAbbreviation() + "\t" + vega.get());
                         }
                     }
                 });
@@ -741,16 +760,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                 ensdargOnly.add(ensdarg);
             }
         });
-        ensdargOnly.forEach(id ->{
+        ensdargOnly.forEach(id -> {
             Marker gene = getMarkerRepository().getMarkerByID(id);
             AtomicReference<String> ensdarg = new AtomicReference<>();
             ensdargList.forEach(linkDisplay -> {
-                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                if (linkDisplay.getMarker().getZdbID().equals(id)) {
                     ensdarg.set(linkDisplay.getAccessionNumber());
                 }
             });
-            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
-        } );
+            System.out.println(id + "\t" + gene.getAbbreviation() + "\t" + ensdarg.get());
+        });
         return ensdargOnly;
     }
 
@@ -761,16 +780,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                 ncbiOnly.add(ncbiID);
             }
         });
-        ncbiOnly.forEach(id ->{
+        ncbiOnly.forEach(id -> {
             Marker gene = getMarkerRepository().getMarkerByID(id);
             AtomicReference<String> ensdarg = new AtomicReference<>();
             ncbiList.forEach(linkDisplay -> {
-                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                if (linkDisplay.getMarker().getZdbID().equals(id)) {
                     ensdarg.set(linkDisplay.getAccessionNumber());
                 }
             });
-            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
-        } );
+            System.out.println(id + "\t" + gene.getAbbreviation() + "\t" + ensdarg.get());
+        });
         return ncbiOnly;
     }
 
