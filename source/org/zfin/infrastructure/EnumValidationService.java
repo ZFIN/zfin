@@ -169,7 +169,7 @@ public class EnumValidationService {
     @ServiceTest
     public void validateCurationLocation() throws EnumValidationException {
         String hql = "select distinct ptl_location_display from pub_tracking_location";
-        List locationList = HibernateUtil.currentSession().createNativeQuery(hql).list();
+        List<String> locationList = HibernateUtil.currentSession().createNativeQuery(hql, String.class).list();
         locationList.add("Unprioritized");
         PublicationTrackingLocation.Name[] values = PublicationTrackingLocation.Name.values();
         checkEnumVersusDatabaseCollection(locationList, values);
