@@ -65,12 +65,9 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         loadSequenceMapFromDownloadFile();
 
         // <ensdargID, DBLink>
-        getMarkerDBLinksWithVegaGenbankNoEnsemblAccessions();
-        getMarkerDBLinksWithVegaEnsemblOnlyAccessions();
-        getMarkerDBLinksWithGenbankEnsemblOnlyAccessions();
-
         ensdargMap = getMarkerDBLinksWithVegaGenbankEnsemblAccessions();
         ensdargMap.putAll(getMarkerDBLinksWithGenbankEnsemblOnlyAccessions());
+        ensdargMap.putAll(getMarkerDBLinksWithEnsemblAccessionsOnly());
         geneEnsdartMap = getSequenceRepository().getAllRelevantEnsemblTranscripts();
         // add all marker that do not have a single Ensembl transcript associated.
         ensdargMap.values().forEach(markerDBLink -> {
@@ -174,7 +171,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("misc_RNA")
               || bioType.equals("antisense"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
-                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme")) {
+                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("snoRNA")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
                 columns.put("biotype", bioType);
@@ -639,6 +636,27 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         genbankList.removeIf(markerDBLink -> strings.contains(markerDBLink.getMarker().getZdbID()));
         System.out.println("Number of Genes that have a Vega and GenBank Gene but no ensembl gene: " + genbankList.size());
         Map<String, MarkerDBLink> ensdargMap = genbankList.stream().collect(
+            Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
+        try {
+            createReportNoEnsembl(ensdargMap, "report-transcript-no-ensembl.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ensdargMap;
+    }
+
+    private Map<String, MarkerDBLink> getMarkerDBLinksWithEnsemblAccessionsOnly() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        // vega gene list
+        List<String> vegaGeneList = vegaList.stream().map(LinkDisplay::getAssociatedGeneID).toList();
+        ensdargList.removeIf(markerDBLink -> vegaGeneList.contains(markerDBLink.getMarker().getZdbID()));
+
+        List<String> geneBankIDs = genbankList.stream().map(markerDB -> markerDB.getMarker().getZdbID()).toList();
+        ensdargList.removeIf(markerDBLink -> geneBankIDs.contains(markerDBLink.getMarker().getZdbID()));
+        System.out.println("Number of Genes that have no Vega and no GenBank ID: " + ensdargList.size());
+        Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
             Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
         try {
             createReportNoEnsembl(ensdargMap, "report-transcript-no-ensembl.txt");
