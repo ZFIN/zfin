@@ -148,8 +148,14 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
 		// updated test by Ryan T. -- Assuming that the correct number of organizations for supplying this fish is now 2 and used to be 1
 		assertEquals(2, organizationLinks.size());
-		String expectedLink2 = """
+		String expectedLink1 = """
 			<a href="/action/profile/view/ZDB-LAB-130607-1">European Zebrafish Resource Center (EZRC)</a> <span style="font-size: small;">(<a href="http://www.ezrc.kit.edu/catalog.php?text=ZDB-GENO-960809-7">order this</a>)</span>
+			""";
+		String actualLink1 = organizationLinks.get(0).getLinkWithAttributionAndOrderThis();
+		assertEquals(expectedLink1.trim(), actualLink1.trim());
+
+		String expectedLink2 = """
+    		<a href="/action/profile/view/ZDB-LAB-991005-53">Zebrafish International Resource Center (ZIRC)</a> <span style="font-size: small;">(<a href="http://zebrafish.org?OID=ZDB-GENO-960809-7">order this</a>)</span>
 			""";
 		String actualLink2 = organizationLinks.get(1).getLinkWithAttributionAndOrderThis();
 		assertEquals(expectedLink2.trim(), actualLink2.trim());
