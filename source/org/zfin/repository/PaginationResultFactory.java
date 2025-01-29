@@ -55,7 +55,7 @@ public class PaginationResultFactory {
         } else {
             if (hasPotentialDuplicates)
                 ++startRecord;
-            scrollableResults.setRowNumber(startRecord - 1);
+            scrollableResults.setRowNumber(startRecord);
         }
         boolean foundAtLeastOneRecord = false;
         int numberOfDuplicates = 0;
