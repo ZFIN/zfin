@@ -417,6 +417,7 @@ public class HibernateProfileRepository implements ProfileRepository {
             			       LEFT OUTER JOIN lab l
             			                    ON l.zdb_id = id.idsup_supplier_zdb_id
             			WHERE  id.idsup_data_zdb_id =  :OID
+                        ORDER BY l.NAME
             """;
 
         return currentSession().createNativeQuery(sql)
