@@ -169,9 +169,10 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("lincRNA")
               || bioType.equals("miRNA")
               || bioType.equals("misc_RNA")
-              || bioType.equals("antisense"))) {
+              || bioType.equals("antisense")
+              || bioType.equals("snoRNA"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
-                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("snoRNA")) {
+                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
                 columns.put("biotype", bioType);
@@ -738,14 +739,14 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                     }
                     if (CollectionUtils.isNotEmpty(genoList) && genoList.size() == 1) {
                         AtomicReference<String> vega = new AtomicReference<>();
-                            vegaList.forEach(linkDisplay -> {
-                            if(linkDisplay.getAssociatedGeneID().equals(gene.getZdbID()) && linkDisplay.getAccession().startsWith("OTTDARG")){
+                        vegaList.forEach(linkDisplay -> {
+                            if (linkDisplay.getAssociatedGeneID().equals(gene.getZdbID()) && linkDisplay.getAccession().startsWith("OTTDARG")) {
                                 vega.set(linkDisplay.getAccession());
                             }
                         });
                         Genotype next = genoList.iterator().next();
                         if (next != null && next.getHandle().equals("TU")) {
-                            System.out.println(s + "\t" + gene.getAbbreviation()+"\t"+vega.get());
+                            System.out.println(s + "\t" + gene.getAbbreviation() + "\t" + vega.get());
                         }
                     }
                 });
@@ -759,16 +760,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                 ensdargOnly.add(ensdarg);
             }
         });
-        ensdargOnly.forEach(id ->{
+        ensdargOnly.forEach(id -> {
             Marker gene = getMarkerRepository().getMarkerByID(id);
             AtomicReference<String> ensdarg = new AtomicReference<>();
             ensdargList.forEach(linkDisplay -> {
-                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                if (linkDisplay.getMarker().getZdbID().equals(id)) {
                     ensdarg.set(linkDisplay.getAccessionNumber());
                 }
             });
-            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
-        } );
+            System.out.println(id + "\t" + gene.getAbbreviation() + "\t" + ensdarg.get());
+        });
         return ensdargOnly;
     }
 
@@ -779,16 +780,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
                 ncbiOnly.add(ncbiID);
             }
         });
-        ncbiOnly.forEach(id ->{
+        ncbiOnly.forEach(id -> {
             Marker gene = getMarkerRepository().getMarkerByID(id);
             AtomicReference<String> ensdarg = new AtomicReference<>();
             ncbiList.forEach(linkDisplay -> {
-                if(linkDisplay.getMarker().getZdbID().equals(id)){
+                if (linkDisplay.getMarker().getZdbID().equals(id)) {
                     ensdarg.set(linkDisplay.getAccessionNumber());
                 }
             });
-            System.out.println(id + "\t" + gene.getAbbreviation()+"\t"+ensdarg.get());
-        } );
+            System.out.println(id + "\t" + gene.getAbbreviation() + "\t" + ensdarg.get());
+        });
         return ncbiOnly;
     }
 
