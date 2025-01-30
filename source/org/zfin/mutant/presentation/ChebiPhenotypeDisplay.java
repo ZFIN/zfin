@@ -24,7 +24,7 @@ import java.util.TreeSet;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.CHEBI_PHENOTYPE_DISPLAY")
+@Table(schema = "ui", name = "chebi_phenotype_display")
 public class ChebiPhenotypeDisplay {
 
     @Id
