@@ -28,7 +28,7 @@ import java.util.TreeSet;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.TERM_PHENOTYPE_DISPLAY")
+@Table(schema = "ui", name = "term_phenotype_display")
 @JsonPropertyOrder({"fish", "anatomyItem", "numberOfFigures", "imgInFigure", "firstFigure", "phenotypeObserved"})
 public class FishStatistics extends EntityStatistics {
 

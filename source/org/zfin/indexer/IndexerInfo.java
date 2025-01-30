@@ -19,7 +19,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name = "ui.indexer_info")
+@Table(schema = "ui", name = "indexer_info")
 public class IndexerInfo extends BaseEntity {
 
     @Id

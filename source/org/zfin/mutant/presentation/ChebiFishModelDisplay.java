@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.ZEBRAFISH_MODELS_CHEBI_ASSOCIATION")
+@Table(schema = "ui", name = "zebrafish_models_chebi_association")
 public class ChebiFishModelDisplay {
 
     @Id
