@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
-@Table(name = "ui.indexer_task")
+@Table(schema = "ui", name = "indexer_task")
 public class IndexerTask extends BaseEntity {
 
     @Id

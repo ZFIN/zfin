@@ -24,7 +24,7 @@ import jakarta.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "ui.publication_expression_display")
+@Table(schema = "ui", name = "publication_expression_display")
 public class ExpressionTableRow implements ZdbID {
 
     @Id
