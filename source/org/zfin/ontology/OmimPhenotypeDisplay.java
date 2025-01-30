@@ -64,7 +64,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION",
+	@JoinTable(schema = "ui", name = "omim_zfin_association",
 		joinColumns = {@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false, insertable = false)},
 		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id", nullable = false, updatable = false, insertable = false)})
 	private List<Marker> zfinGene;
