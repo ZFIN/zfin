@@ -81,7 +81,7 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.ZEBRAFISH_MODELS_EVIDENCE_ASSOCIATION",
+	@JoinTable(schema = "ui", name = "zebrafish_models_evidence_association",
 		joinColumns = {@JoinColumn(name = "omea_zebfrafish_model_id", nullable = false, updatable = false, insertable = false)},
 		inverseJoinColumns = {@JoinColumn(name = "omea_term_zdb_id", nullable = false, updatable = false, insertable = false)})
 	private Set<GenericTerm> evidenceCodes;

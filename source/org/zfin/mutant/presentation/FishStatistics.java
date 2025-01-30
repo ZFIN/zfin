@@ -52,13 +52,13 @@ public class FishStatistics extends EntityStatistics {
     private Publication publication;
     @JsonView(View.ExpressedGeneAPI.class)
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UI.PHENOTYPE_ZFIN_ASSOCIATION",
+    @JoinTable(schema = "ui", name = "phenotype_zfin_association",
         joinColumns = {@JoinColumn(name = "pza_phenotype_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pza_gene_zdb_id", nullable = false, updatable = false, insertable = false)})
     private Set<Marker> affectedGenes;
     @JsonView(View.ExpressedGeneAPI.class)
     @ManyToMany(fetch=FetchType.LAZY)
-    @JoinTable(name = "UI.PHENOTYPE_WAREHOUSE_ASSOCIATION",
+    @JoinTable(schema = "ui", name = "phenotype_warehouse_association",
         joinColumns = {@JoinColumn(name = "pwa_phenotype_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pwa_phenotype_warehouse_id", nullable = false, updatable = false, insertable = false)})
     private Set<PhenotypeStatementWarehouse> phenotypeStatements;
