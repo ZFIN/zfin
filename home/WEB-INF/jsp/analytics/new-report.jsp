@@ -6,7 +6,7 @@
     <h3>New Analytics Report</h3>
     <p>Generate new analytics report.</p>
 
-    <form:form action="" method="POST" cssClass="form-horizontal" commandName="analyticsReportRequestForm">
+    <form:form action="" method="POST" cssClass="form-horizontal" modelAttribute="analyticsReportRequestForm">
 
     <div class="form-group row">
         <form:label path="credentials" cssClass="col-md-2 col-form-label required">Credentials</form:label>
