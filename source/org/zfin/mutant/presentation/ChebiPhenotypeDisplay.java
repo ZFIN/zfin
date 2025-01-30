@@ -47,7 +47,7 @@ public class ChebiPhenotypeDisplay {
     private Publication publication;
     @JsonView(View.API.class)
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "UI.CHEBI_PHENOTYPE_WAREHOUSE_ASSOCIATION",
+    @JoinTable(schema = "ui", name = "chebi_phenotype_warehouse_association",
         joinColumns = {@JoinColumn(name = "cpwa_phenotype_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "cpwa_phenotype_warehouse_id", nullable = false, updatable = false, insertable = false)})
     private List<PhenotypeStatementWarehouse> phenotypeStatements;
