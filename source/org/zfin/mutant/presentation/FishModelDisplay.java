@@ -22,7 +22,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.ZEBRAFISH_MODELS_DISPLAY")
+@Table(schema = "ui", name = "zebrafish_models_display")
 public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	@Id

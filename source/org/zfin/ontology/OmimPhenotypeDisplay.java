@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.OMIM_PHENOTYPE_DISPLAY")
+@Table(schema = "ui", name = "omim_phenotype_display")
 public class OmimPhenotypeDisplay implements Serializable {
 
 	@Id

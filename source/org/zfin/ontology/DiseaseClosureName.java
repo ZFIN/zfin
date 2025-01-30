@@ -20,7 +20,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.ALL_TERMS_CONTAINS")
+@Table(schema = "ui", name = "all_terms_contains")
 public class DiseaseClosureName implements Serializable {
 
 	@Id
