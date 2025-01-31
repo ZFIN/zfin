@@ -998,6 +998,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return result.getPopulatedResults();
     }
 
+    //TODO: check scrollable logic (https://zfin.org/action/api/lab/ZDB-LAB-971209-4/features?limit=10&page=2)
+    //Done: Actually, new logic is good, old logic is bad
     @Override
     public PaginationResult<Feature> getFeaturesForLab(String zdbID, Pagination pagination) {
         Session session = currentSession();

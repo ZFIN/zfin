@@ -42,6 +42,7 @@ public class FeatureAPIController {
         return response;
     }
 
+    //TODO: check logic -> done (https://zfin.org/action/api/lab/ZDB-LAB-971209-4/features?limit=1&page=2)
     @JsonView(View.FeatureAPI.class)
     @RequestMapping(value = "/lab/{zdbID}/features")
     public JsonResultResponse<Feature> getFeatureForLab(@PathVariable String zdbID,

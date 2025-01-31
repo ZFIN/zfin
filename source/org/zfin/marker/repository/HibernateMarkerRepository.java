@@ -1249,6 +1249,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(hql, String.class).list();
     }
 
+    //TODO: check scrollable logic -> done (https://trunk.zfin.org/action/ontology/show-high-quality-probes-substructures/ZDB-TERM-100331-730?page=3)
     @SuppressWarnings("unchecked")
     public PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();

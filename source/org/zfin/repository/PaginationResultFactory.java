@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class PaginationResultFactory {
 
+    //TODO: check logic -> done (https://zfin.org/action/expression/results?geneField=EGFP&journalType=ALL&includeSubstructures=true&geneZdbID=ZDB-EFG-070117-1&page=5)
     /**
      * Return records from 0 to max records
      *
@@ -35,6 +36,7 @@ public class PaginationResultFactory {
         return returnResult;
     }
 
+    //TODO: check logic -> done
     /**
      * @param startRecord       This is inclusive.
      * @param stopRecord        This is exclusive.
@@ -88,6 +90,7 @@ public class PaginationResultFactory {
         return returnResult;
     }
 
+    //TODO: check logic -> done (See: https://zfin.org/action/api/ontology/ZDB-TERM-160831-150272/chebi-zebrafish-models?directAnnotation=true&limit=5&page=2)
     /**
      * @param bean              PaginationBean
      * @param scrollableResults Scrollable Object
@@ -97,10 +100,12 @@ public class PaginationResultFactory {
         return createResultFromScrollableResultAndClose(bean.getFirstRecord() - 1, bean.getLastRecord(), scrollableResults);
     }
 
+    //TODO: check logic -> done (used by getProbes only. See: https://zfin.org/action/api/publication/ZDB-PUB-040907-1/probes?limit=10&page=6)
     public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(Pagination pagination, ScrollableResults scrollableResults) {
         return createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), scrollableResults);
     }
 
+    //TODO: Check logic -> done (only use on pages like https://zfin.org/action/updates/ZDB-GENE-991019-3)
     /**
      * Return a paginated subset of the list provided based on the pagination object provided
      * It will use the parameters of pagination (size, page number, etc.) to figure out the subset

@@ -94,6 +94,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
 
 
+    //TODO: check scrollable logic -> done (https://zfin.org/action/api/ontology/ZDB-TERM-100331-1074/expressed-genes?&limit=10&page=2)
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
      * the record number. Hibernate starts with the first row numbered '0'.
