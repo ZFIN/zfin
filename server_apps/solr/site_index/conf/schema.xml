@@ -594,6 +594,7 @@
 
         <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="phenotype_tag" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
         <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="complexity" type="long" indexed="true" stored="true" multiValued="false" default="10000000000"/>
