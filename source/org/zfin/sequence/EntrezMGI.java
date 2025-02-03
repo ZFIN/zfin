@@ -3,6 +3,8 @@ package org.zfin.sequence;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.zfin.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -33,6 +35,22 @@ public class EntrezMGI implements Serializable {
 
         @Column(name = "ex_xref")
         private String mgiAccession;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            EntrezMGIId that = (EntrezMGIId) o;
+
+            return new EqualsBuilder().append(getEntrezAccessionNum(), that.getEntrezAccessionNum()).append(getMgiAccession(), that.getMgiAccession()).isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(getEntrezAccessionNum()).append(getMgiAccession()).toHashCode();
+        }
     }
 
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
