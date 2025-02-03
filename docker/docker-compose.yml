@@ -50,6 +50,8 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
+      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+      - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - solr_data:/var/solr
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
@@ -97,7 +99,7 @@ services:
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
+      - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
@@ -121,7 +123,7 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
-      - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
+      - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
   tomcatdebug:
     hostname: tomcat
@@ -144,7 +146,7 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
-      - ${DOCKER_DOWNLOADS_PATH}:/research/zunloads/download-files
+      - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
   blast:
     build: ./blast/
@@ -179,6 +181,8 @@ services:
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
+      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp      
   fail2ban:
     build: ./fail2ban/
     cap_add:

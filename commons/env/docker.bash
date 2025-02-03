@@ -15,7 +15,7 @@ export DB_NAME="zfindb"
 export DB_UNLOADS_PATH="/opt/zfin/unloads/db"
 export DEFAULT_EMAIL="informix@zfin.org"
 export DOMAIN_NAME="zfin.org"
-export DOWNLOAD_DIRECTORY="/research/zunloads/download-files/docker"
+export DOWNLOAD_DIRECTORY="/opt/zfin/download-files"
 export GBROWSE_PATH_FROM_ROOT="action/gbrowse/"
 export GC_LOGGING_OPTS="-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -Xloggc:/opt/zfin//catalina_bases/zfin.org/logs/gc.log"
 export GRADLE_USER_HOME="~/.gradle"
@@ -72,4 +72,4 @@ export PATH=/opt/ab-blast:$PATH
 
 # Prompt
 export PROMPT_DIRTRIM=2
-export PS1="${INSTANCE}:\w\$ "
+export PS1="${MUTANT_NAME}:\w\$ "

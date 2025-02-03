@@ -54,13 +54,13 @@
         </copy>
         <echo message="registry: ${web-inf.dir}/conf/download-registry.xml"/>
         <echo message="registry to: ${download-dir}/${time-stamp}/download-registry.xml"/>
+        <antcall target="create-download-file-symlink" />
         <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/${time-stamp}/download-registry.xml" />
         <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/current/download-registry.xml" />
-        <antcall target="create-download-file-symlink" />
     </target>
 
     <target name="create-download-file-symlink">
-        <symlink link="${basedir}/home/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
+        <symlink link="${TARGETROOT}/home/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
         <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail" resource="${TARGETROOT}/home/data_transfer/Downloads"/>
     </target>
 
