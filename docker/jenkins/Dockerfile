@@ -53,7 +53,7 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
 RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
-RUN mkdir -p /opt/zfin/download-files/zfindb/current
+RUN mkdir -p /opt/zfin/download-files/
 RUN mkdir -p /opt/zfin/bin
 RUN ln -s /usr/bin/perl /opt/zfin/bin/perl
 RUN chown -R gradle:gradle /opt/zfin/
