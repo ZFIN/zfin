@@ -3,6 +3,8 @@ package org.zfin.sequence;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
@@ -29,6 +31,22 @@ public class EntrezOMIM implements Serializable {
 
         @Column(name = "ex_xref")
         private String omimAccession;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            EntrezOMIMId that = (EntrezOMIMId) o;
+
+            return new EqualsBuilder().append(getEntrezAccessionNum(), that.getEntrezAccessionNum()).append(getOmimAccession(), that.getOmimAccession()).isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(getEntrezAccessionNum()).append(getOmimAccession()).toHashCode();
+        }
     }
 
     public int hashCode() {

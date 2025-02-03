@@ -2548,7 +2548,19 @@
                 <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
-            <entity name="phenotype_misexpressed_gene"
+            <entity name="phenotype_tags"
+                    query="select
+                                distinct
+                                psg_tag || ',Any' as phenotype_tag,
+                                'pg-' || pg_id as pg_id
+                                from phenotype_observation_generated
+                                     join phenotype_source_generated on psg_pg_id = pg_id;"
+                    where="pg_id=phenotype.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
+
+        <entity name="phenotype_misexpressed_gene"
                     transformer="RegexTransformer"
                     query="select mrkr_abbrev || '!Any' as misexpressed_gene,
                                  mrkr_abbrev || ' misexpression' as expression_observation,
