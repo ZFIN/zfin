@@ -775,16 +775,13 @@ public class SearchPrototypeController {
             query.addSort("attribution_count", SolrQuery.ORDER.desc);
             model.addAttribute("sortDisplay", "Most Attributed First");
             model.addAttribute("showAttributionCount", true);
-
         } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Least Attributed")) {
-            query.addSort("date", SolrQuery.ORDER.asc);
+            query.addSort("attribution_count", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "Least Attributed First");
             model.addAttribute("showAttributionCount", true);
-
         } else {
             model.addAttribute("sortDisplay", "by Relevance");
         }
-
 
         return model;
     }

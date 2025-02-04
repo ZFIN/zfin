@@ -185,3 +185,8 @@ task imageThumbnailAndMediumSwapTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.figure.service.ImageThumbnailAndMediumSwapTask'
 }
+
+task validateSolrDihConfigTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.task.ValidateSolrDihConfigTask'
+}

@@ -219,6 +219,8 @@
                                             <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a>
                                             <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a>
                                             <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a>
+                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Most+Attributed">Most Attributed</a>
+                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Least+Attributed">Least Attributed</a>
                                         </div>
                                     </div>
                                 </div>
