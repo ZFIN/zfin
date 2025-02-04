@@ -71,6 +71,11 @@ public class ChebiPhenotypeDisplay {
     private Boolean hasImages;
 
     @JsonView(View.API.class)
+    @JsonProperty("isEqePhenotype")
+    @Column(name = "cpd_eqe_phenotype")
+    private Boolean isEqePhenotype;
+
+    @JsonView(View.API.class)
     @Column(name = "cpd_pub_count")
     private int numberOfPubs;
 
