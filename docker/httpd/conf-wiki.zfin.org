@@ -1,0 +1,47 @@
+<VirtualHost *:80>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName wiki.zfin.org
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://zfin.atlassian.net/wiki/$1 [R=301,L]
+</VirtualHost>
+<VirtualHost *:443>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName wiki.zfin.org
+    SSLEngine on
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://zfin.atlassian.net/wiki/$1 [R=301,L]
+</VirtualHost>
+
+<VirtualHost *:80>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName devwiki.zfin.org
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://zfin-test.atlassian.net/wiki/$1 [R=301,L]
+</VirtualHost>
+<VirtualHost *:443>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName devwiki.zfin.org
+    SSLEngine on
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://zfin-test.atlassian.net/wiki/$1 [R=301,L]
+</VirtualHost>
