@@ -62,7 +62,7 @@ export TARGETROOT="/opt/zfin/www_homes/zfin.org"
 export USER="docker"
 export VALIDATION_EMAIL_DBA="informix@zfin.org"
 export WEBHOST_BLASTDB_TO_COPY="/research/crick/blastdb"
-export WIKI_HOST="devwiki.zfin.org"
+export WIKI_HOST="wiki.zfin.org"
 export ZFIN_ADMIN="zfinadmn@zfin.org"
 
 export PATH=/opt/misc/groovy/bin:$PATH
