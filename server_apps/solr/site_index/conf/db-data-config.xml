@@ -1632,24 +1632,26 @@
             />
 
             <entity name="fish_phenotype_quality_parent"
-                    query="WITH subquery AS (
-                            SELECT
-                                   term_ont_id AS xref,
-                                   term_name AS phenotype_quality_parent,
-                                   genox_fish_zdb_id AS fish_zdb_id
-                            FROM phenotype_observation_generated psg
-                            JOIN phenotype_source_generated pg
-                             ON psg.psg_pg_id = pg.pg_id
-                            JOIN fish_experiment fe
-                             ON pg.pg_genox_zdb_id = fe.genox_zdb_id
-                            JOIN all_term_contains atc
-                             ON atc.alltermcon_contained_zdb_id = psg.psg_quality_zdb_id
+                    query="
+                        SELECT
+                            DISTINCT
+                            term_ont_id AS xref,
+                            term_name AS phenotype_quality_parent,
+                            genox_fish_zdb_id AS fish_zdb_id
+                        FROM
+                            phenotype_observation_generated psg
+                            JOIN phenotype_source_generated pg ON psg.psg_pg_id = pg.pg_id
+                            JOIN fish_experiment fe ON pg.pg_genox_zdb_id = fe.genox_zdb_id
+                            JOIN all_term_contains atc ON atc.alltermcon_contained_zdb_id = psg.psg_quality_zdb_id
                             JOIN term t ON t.term_zdb_id = atc.alltermcon_container_zdb_id
-                            WHERE psg.psg_tag IN ('abnormal', 'exacerbated', 'ameliorated')
+                        WHERE
+                            psg.psg_tag IN ('abnormal', 'exacerbated', 'ameliorated')
                             AND atc.alltermcon_container_zdb_id != atc.alltermcon_contained_zdb_id
-                            )
-                            select DISTINCT xref, phenotype_quality_parent, fish_zdb_id from subquery
-                            ORDER BY xref, phenotype_quality_parent, fish_zdb_id"
+                    ORDER BY
+                        term_ont_id,
+                        term_name,
+                        genox_fish_zdb_id
+                    "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             />
