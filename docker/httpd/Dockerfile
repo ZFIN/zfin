@@ -22,6 +22,7 @@ COPY ./httpd.conf /etc/httpd/conf/httpd.conf
 COPY ./01-zfin.conf /etc/httpd/conf.d/01-zfin.conf
 COPY ./conf-local /etc/httpd/conf/zfin/conf-local
 COPY ./conf-zfin.org /etc/httpd/conf/zfin/conf-zfin.org
+COPY ./conf-wiki.zfin.org /etc/httpd/conf/zfin/conf-wiki.zfin.org
 
 # Start Apache
 CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
