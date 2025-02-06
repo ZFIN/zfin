@@ -137,4 +137,4 @@ Alias /AdamAmsterdamFiles "/opt/zfin/loadUp/pubs/AdamAmsterdamFiles"
 #Load up the Virtual Hosts
 #
 Include conf/zfin/conf-zfin.org
-#Include conf/zfin/conf-wiki.zfin.org
+Include conf/zfin/conf-wiki.zfin.org
