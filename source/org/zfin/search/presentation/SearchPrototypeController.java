@@ -39,6 +39,8 @@ import java.net.URLConnection;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.search.service.FacetBuilderService.categorySupportsAttributionSort;
+import static org.zfin.search.service.FacetBuilderService.categorySupportsSort;
 
 @Controller
 @RequestMapping("/quicksearch")
@@ -200,11 +202,11 @@ public class SearchPrototypeController {
         }
 
 
-        //handle sorting... move this a separate method?  use an enum?
-        model = handleSorting(model, query, baseUrl, sort);
-
         category = getCategory(filterQuery, category);
         Map<String, String> facetMap = Category.getFacetMap();
+
+        //handle sorting... move this a separate method?  use an enum?
+        model = handleSorting(model, query, baseUrl, sort, category);
 
         // If results only matched in one category, the controller calls itself with this extra flag,
         // the 'We picked your category' message will keep showing up unless the category gets added to
@@ -214,6 +216,12 @@ public class SearchPrototypeController {
             baseUrlWithCategory.removeNameValuePair("category");
             baseUrlWithCategory.addNameValuePair("category", category);
             baseUrl = baseUrlWithCategory.getURL();
+        }
+
+        if (!categorySupportsSort(category, sort)) {
+            URLCreator baseUrlWithoutSort = new URLCreator(baseUrl);
+            baseUrlWithoutSort.removeNameValuePair("sort");
+            return "redirect:" + baseUrlWithoutSort.getURL();
         }
 
         model.addAttribute("baseUrl", baseUrl);
@@ -228,9 +236,7 @@ public class SearchPrototypeController {
             filterQuery = ArrayUtils.addAll(newFq, filterQuery);
         }
         SolrService.setCategory(category, query);
-
         StringBuilder queryString = new StringBuilder();
-
 
         String originalQ = q;
         if (!StringUtils.isEmpty(q)) {
@@ -241,7 +247,6 @@ public class SearchPrototypeController {
             queryString.append(q);
             queryString.append(" ");
         }
-
 
         query.setQuery(queryString.toString());
         query.addFilterQuery(filterQuery);
@@ -257,7 +262,6 @@ public class SearchPrototypeController {
             model.addAttribute("showResults", false);
             query.setRows(0);
         }
-
 
         QueryResponse response = new QueryResponse();
         try {
@@ -280,6 +284,8 @@ public class SearchPrototypeController {
 
         facetBuilderService = new FacetBuilderService(response, baseUrl, filterQuerySelectionMap);
         model.addAttribute("facetGroups", facetBuilderService.buildFacetGroup(category));
+        model.addAttribute("sortingOptions", facetBuilderService.buildSortingOptions(category));
+//        facetBuilderService.buildSortingOptions(category, model);
         model.addAttribute("facetQueries", facetBuilderService.getFacetQueries());
         model.addAttribute("response", response);
         model.addAttribute("query", query);
@@ -315,7 +321,6 @@ public class SearchPrototypeController {
             return viewResults(q, filterQuery, automaticallySelectedCategory, page, rows, sort,
                     highlight, explain, galleryMode, true, model, request);
         }
-
 
         injectHighlighting(results, response);
         resultService.injectAttributes(results);
@@ -399,7 +404,6 @@ public class SearchPrototypeController {
         //these are used to decide which search result template jsp tag to use
         model.addAttribute("geneCategoryName", Category.GENE.getName());
         model.addAttribute("fishCategoryName", Category.FISH.getName());
-
 
         return "search/prototype-results";
     }
@@ -748,7 +752,7 @@ public class SearchPrototypeController {
         return "search/phenotype";
     }
 
-    public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort) {
+    public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort, String category) {
         URLCreator urlWithoutSort = new URLCreator(baseUrl);
         urlWithoutSort.removeNameValuePair("sort");
         model.addAttribute("baseUrlWithoutSort", urlWithoutSort.getURL());
@@ -771,11 +775,11 @@ public class SearchPrototypeController {
             query.addSort("date", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "Oldest First");
             model.addAttribute("showDates", true);
-        } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Most Attributed")) {
+        } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Most Attributed") && categorySupportsAttributionSort(category)) {
             query.addSort("attribution_count", SolrQuery.ORDER.desc);
             model.addAttribute("sortDisplay", "Most Attributed First");
             model.addAttribute("showAttributionCount", true);
-        } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Least Attributed")) {
+        } else if (!StringUtils.isEmpty(sort) && StringUtils.equals(sort, "Least Attributed") && categorySupportsAttributionSort(category)) {
             query.addSort("attribution_count", SolrQuery.ORDER.asc);
             model.addAttribute("sortDisplay", "Least Attributed First");
             model.addAttribute("showAttributionCount", true);

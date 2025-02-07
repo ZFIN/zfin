@@ -215,12 +215,9 @@
                                         </a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="${baseUrlWithoutSort}">Relevance</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Most+Attributed">Most Attributed</a>
-                                            <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Least+Attributed">Least Attributed</a>
+                                            <c:forEach items="${sortingOptions}" var="sortOption">
+                                                <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=${sortOption.key}">${sortOption.value}</a>
+                                            </c:forEach>
                                         </div>
                                     </div>
                                 </div>
