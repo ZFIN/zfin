@@ -5516,7 +5516,7 @@ and child.term_ontology = 'disease_ontology';
                     query="select
                         mrkr_abbrev as zebrafish_gene,
                         mrkr_name as zebrafish_gene_full_name,
-                        xpatfig_fig_zdb_id as fig_zdb_id
+                        efs_fig_zdb_id as fig_zdb_id
                         from expression_experiment2
                              join marker on xpatex_gene_zdb_id = mrkr_zdb_id
                              join expression_figure_stage on xpatex_zdb_id = efs_xpatex_zdb_id
@@ -5529,7 +5529,7 @@ and child.term_ontology = 'disease_ontology';
             <entity name="figure_zebrafish_gene_alias"
                     query="select
                             dalias_alias as zebrafish_gene_previous_name,
-                            xpatfig_fig_zdb_id as fig_zdb_id
+                            efs_fig_zdb_id as fig_zdb_id
                             from expression_experiment2
                                  join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
                                  join expression_figure_stage on xpatex_zdb_id = efs_xpatex_zdb_id
@@ -5542,7 +5542,7 @@ and child.term_ontology = 'disease_ontology';
             <entity name="figure_reporter_gene"
                     query="select
                             mrkr_abbrev as reporter_gene,
-                            xpatfig_fig_zdb_id as fig_zdb_id
+                            efs_fig_zdb_id as fig_zdb_id
                             from expression_experiment2
                                  join expression_figure_stage on xpatex_zdb_id = efs_xpatex_zdb_id
                                  join expression_result2 on efs_pk_id = xpatres_efs_id
@@ -5951,7 +5951,7 @@ and child.term_ontology = 'disease_ontology';
                     query="
                         select
                             construct_name as construct,
-                            xpatfig_fig_zdb_id as fig_zdb_id,
+                            efs_fig_zdb_id as fig_zdb_id,
                             construct_zdb_id as xref
                         from construct
                              join feature_marker_relationship on construct_zdb_id = fmrel_mrkr_zdb_id
@@ -5975,7 +5975,7 @@ and child.term_ontology = 'disease_ontology';
                             distinct b.mrkr_zdb_id as xref,
                             b.mrkr_abbrev as coding_sequence,
                             dalias_alias as coding_sequence_full_name,
-                            xpatfig_fig_zdb_id as fig_zdb_id
+                            efs_fig_zdb_id as fig_zdb_id
                         from construct
                                  join feature_marker_relationship on construct_zdb_id = fmrel_mrkr_zdb_id
                                  join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
