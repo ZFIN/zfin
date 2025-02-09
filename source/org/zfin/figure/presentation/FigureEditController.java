@@ -2,7 +2,8 @@ package org.zfin.figure.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,10 +55,10 @@ public class FigureEditController {
         PublicationFigureSet pubFigures = new PublicationFigureSet();
         pubFigures.setPubCanShowImages(publication.isCanShowImages());
         pubFigures.setFigures(
-                publication.getFigures().stream()
-                        .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
-                        .map(FigureService::convertToFigurePresentationBean)
-                        .collect(Collectors.toList())
+            publication.getFigures().stream()
+                .sorted(Comparator.comparing(Figure::getOrderingLabel).thenComparing(Figure::getZdbID))
+                .map(FigureService::convertToFigurePresentationBean)
+                .collect(Collectors.toList())
         );
         return pubFigures;
     }
@@ -64,7 +66,10 @@ public class FigureEditController {
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.POST)
     public FigurePresentationBean createNewFigure(@PathVariable String zdbID, @RequestParam String label,
-                                                  @RequestParam String caption, @RequestParam List<MultipartFile> files) {
+                                                  @RequestParam String caption, @RequestParam(required = false) List<MultipartFile> files) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
         for (MultipartFile file : files) {
             if (!file.getContentType().startsWith("image/")) {
                 throw new InvalidWebRequestException("All files must be images. Invalid file type:" + file.getOriginalFilename());
@@ -112,7 +117,7 @@ public class FigureEditController {
         Publication pub = figure.getPublication();
 
         if (CollectionUtils.isNotEmpty(figure.getExpressionFigureStage()) ||
-                CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
+            CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
             throw new InvalidWebRequestException("Figure has expression or phenotype data attached", null);
         }
 
@@ -135,7 +140,7 @@ public class FigureEditController {
         Figure figure = figureRepository.getFigure(zdbID);
 
         if (!StringUtils.equals(figure.getLabel(), figureUpdates.getLabel()) &&
-                publicationService.publicationHasFigureWithLabel(figure.getPublication(), figureUpdates.getLabel())) {
+            publicationService.publicationHasFigureWithLabel(figure.getPublication(), figureUpdates.getLabel())) {
             throw new InvalidWebRequestException(figureUpdates.getLabel() + " already exists");
         }
 
@@ -156,7 +161,7 @@ public class FigureEditController {
 
     @ResponseBody
     @RequestMapping(value = "/image/{zdbID}", method = RequestMethod.DELETE)
-    public String  deleteImage(@PathVariable String zdbID) {
+    public String deleteImage(@PathVariable String zdbID) {
         Image image = publicationRepository.getImageById(zdbID);
         Publication pub = image.getFigure().getPublication();
 
@@ -196,8 +201,8 @@ public class FigureEditController {
 
     private String getFigureUpdateValue(Figure figure) {
         return figure.getZdbID() + "<BR>" +
-                figure.getLabel() + "<BR>" +
-                figure.getCaption();
+               figure.getLabel() + "<BR>" +
+               figure.getCaption();
     }
 
 }
