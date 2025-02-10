@@ -128,7 +128,7 @@ services:
   tomcatdebug:
     hostname: tomcat
     build: ./tomcat/
-    profiles: 
+    profiles:
       - debug
     environment:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
@@ -182,7 +182,7 @@ services:
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
-      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp      
+      - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
   fail2ban:
     build: ./fail2ban/
     cap_add:
@@ -199,7 +199,7 @@ services:
       - httpd_log:/var/log/httpd:ro #optional
     restart: unless-stopped
   elasticsearch:
-    build: 
+    build:
       context: ./elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
@@ -213,7 +213,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
   filebeat:
-    build: 
+    build:
       context: ./filebeat/
       args:
         ELK_VERSION: ${ELK_VERSION}
@@ -225,7 +225,7 @@ services:
       - httpd_log:/var/log/httpd
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
   kibana:
-    build: 
+    build:
       context: ./kibana/
       args:
         ELK_VERSION: ${ELK_VERSION}
