@@ -2,6 +2,7 @@ package org.zfin.mutant.presentation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
@@ -13,8 +14,8 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
-import jakarta.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -121,12 +122,14 @@ public class ChebiPhenotypeDisplay {
     public Set<GenericTerm> getAllChebiTerms() {
         Set<GenericTerm> allTerms = new TreeSet<>();
         allTerms.add(term);
-        allTerms.addAll(experiment.getExperimentConditions()
-            .stream()
-            .filter(experimentCondition -> experimentCondition.getChebiTerm() != null)
-            .map(ExperimentCondition::getChebiTerm)
-            .sorted()
-            .toList());
+        if (!isEqePhenotype) {
+            allTerms.addAll(experiment.getExperimentConditions()
+                .stream()
+                .map(ExperimentCondition::getChebiTerm)
+                .filter(Objects::nonNull)
+                .sorted()
+                .toList());
+        }
         return allTerms;
     }
 

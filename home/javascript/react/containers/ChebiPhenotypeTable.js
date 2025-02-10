@@ -8,7 +8,7 @@ import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink'
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
 import ShowDevInfo from '../components/ShowDevInfo';
 
-const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition, showDevInfo = false, indexer}) => {
+const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition, showDevInfo = false, indexer, eqe = false}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
@@ -76,6 +76,7 @@ const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'pheno
     if (directAnnotation) {
         params.directAnnotation = true;
     }
+    params.isEqe = eqe;
     if (isWildtype) {
         params.isWildtype = isWildtype;
     }

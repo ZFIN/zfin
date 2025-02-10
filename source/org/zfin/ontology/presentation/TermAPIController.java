@@ -1,6 +1,7 @@
 package org.zfin.ontology.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,6 @@ import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
-import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.MarkerStatistic;
@@ -23,7 +23,6 @@ import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -198,6 +197,7 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/phenotype-chebi", method = RequestMethod.GET)
     public JsonResultResponse<ChebiPhenotypeDisplay> getPhenotypeChebi(@PathVariable String termID,
                                                                        @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                       @RequestParam(value = "isEqe", required = false, defaultValue = "false") boolean isEqe,
                                                                        @RequestParam(value = "isWildtype", required = false) Boolean wildType,
                                                                        @RequestParam(value = "isMultiChebiCondition", required = false) Boolean isMultiChebiCondition,
                                                                        @RequestParam(value = "isAmelioratedExacerbated", required = false) Boolean isAmelioratedExacerbated,
@@ -218,6 +218,7 @@ public class TermAPIController {
         if (isAmelioratedExacerbated != null) {
             pagination.addToNotNullFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch");
         }
+        pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.isEqePhenotype", isEqe);
 
         pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.fish.wildtype", wildType);
         pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.multiChebiCondition", isMultiChebiCondition);
@@ -226,7 +227,11 @@ public class TermAPIController {
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.amelioratedExacerbatedPhenoSearch", filterModification);
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.fish.name", filterFishName);
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
-        pagination.addToFilterMapIfNotEmpty("chebiPhenotype.expConditionChebiSearch", filterTermName);
+        if (isEqe) {
+            pagination.addToFilterMapIfNotEmpty("chebiPhenotype.phenotypeStatementSearch", filterTermName);
+        } else {
+            pagination.addToFilterMapIfNotEmpty("chebiPhenotype.expConditionChebiSearch", filterTermName);
+        }
 
         PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseDirect = getDiseasePageRepository().getPhenotypeChebi(term, pagination, filterPhenotype, false);
         PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseAll = getDiseasePageRepository().getPhenotypeChebi(term, pagination, filterPhenotype, true);

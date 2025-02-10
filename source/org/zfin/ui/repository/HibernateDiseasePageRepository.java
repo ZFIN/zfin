@@ -9,6 +9,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -174,7 +175,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         // make phenotypeStatementWarehouse objects a unique list
         result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
             var psws = chebiPhenotypeDisplay.getPhenotypeStatements();
-            psws = firstInEachGrouping(psws, p -> p.getDisplayName());
+            psws = firstInEachGrouping(psws, PhenotypeStatementWarehouse::getDisplayName);
             if (StringUtils.isNotEmpty(filterPhenotype)) {
                 psws = psws.stream().filter(p -> containsIgnoreCase(p.getDisplayName(), filterPhenotype)).toList();
             }

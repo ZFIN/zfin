@@ -88,7 +88,7 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
     private static List<ChebiPhenotypeDisplay> getChebiPhenotypeEQEDisplays() {
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllPhenotypeWithChebiInEQE();
         List<ChebiPhenotypeDisplay> resultList = new ArrayList<>();
-        figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) ->
+        figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {
             experimentMao.forEach((term, phenotypeStatementWarehouses) -> {
                 ChebiPhenotypeDisplay display = new ChebiPhenotypeDisplay(fish, term);
                 List<PhenotypeStatementWarehouse> phenotypeStatements = (new ArrayList<>(phenotypeStatementWarehouses).stream().sorted()).toList();
@@ -130,7 +130,8 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                     .map(GenericTerm::getTermName)
                     .collect(Collectors.joining("|")));
                 resultList.add(display);
-            })));
+            });
+        }));
         return resultList;
     }
 
