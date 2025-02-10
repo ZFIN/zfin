@@ -31,7 +31,7 @@ const FishReporterExpressionTable = ({fishId}) => {
                 />
                 <a
                     className='popup-link data-popup-link'
-                    href={`/action/'ENSDART${row.experiment.zdbID}`}
+                    href={`/action/experiment/popup/${row.experiment.zdbID}`}
                 />
             </span>,
             filterName: 'conditionName',
