@@ -12,7 +12,7 @@ public class ExperimentPresentation extends EntityPresentation {
 
     // the following 2 variables are used for conditions
     private static final String experimentUri = "expression/experiment?id=";
-    private static final String experimentPopupUri = "expression/experiment-popup?id=";
+    private static final String experimentPopupUri = "'ENSDART";
 
     public static String getLink(Experiment experiment, boolean suppressPopupLink) {
         if (experiment == null)

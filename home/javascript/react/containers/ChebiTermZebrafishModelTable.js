@@ -38,7 +38,7 @@ const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
                 />
                 <a
                     className='popup-link data-popup-link'
-                    href={`/action/expression/experiment-popup?id=${row.fishModelDisplay.experiment.zdbID}`}
+                    href={`/action/'ENSDART${row.fishModelDisplay.experiment.zdbID}`}
                 />
             </span>,
             filterName: 'conditionName',

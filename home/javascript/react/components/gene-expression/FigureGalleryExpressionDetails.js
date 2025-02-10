@@ -64,7 +64,7 @@ const FigureGalleryExpressionDetails = ({figureDetails}) => {
                     <dd className='my-sm-0 mx-sm-2'>
                         <CommaSeparatedList semicolon>
                             {expression.experiments.map(experiment => (
-                                <a href={`/action/expression/experiment?id=${experiment.zdbID}`} key={experiment.zdbID}>
+                                <a href={`/action/experiment/${experiment.zdbID}`} key={experiment.zdbID}>
                                     {experiment.experimentConditions
                                         .map(condition => condition.displayName)
                                         .join(', ')

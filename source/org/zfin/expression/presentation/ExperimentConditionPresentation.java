@@ -14,8 +14,8 @@ import java.util.Set;
  */
 public class ExperimentConditionPresentation extends EntityPresentation {
 
-    private static final String uri = "expression/experiment?id=";
-    private static final String popupUri = "expression/experiment-popup?id=";
+    private static final String uri = "experiment/";
+    private static final String popupUri = "'ENSDART";
 
 
     /**
