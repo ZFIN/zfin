@@ -24,7 +24,7 @@ const QuickFigureDialog = ({pubId, toggle}) => {
         formData.append('caption', '');
 
         // add empty array of image files since the server expects it
-        formData.append('files', new Blob([], { type: 'image/*' }));        
+        //formData.append('files', new Blob([], { type: 'image/*' }));
 
         fetch(url, {
             method: 'POST',
