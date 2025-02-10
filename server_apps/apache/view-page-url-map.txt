@@ -41,7 +41,7 @@ RNAMO /action/marker/region/view/ZDB-RNAMO
 EFG	/action/marker/efg/view/ZDB-EFG
 EST	/action/marker/clone/view/ZDB-EST
 ETCONSTRCT	/action/marker/construct/view/ZDB-ETCONSTRCT
-EXP	/action/expression/experiment?id=ZDB-EXP
+EXP	/action/experiment/ZDB-EXP
 FIG	/action/figure/view/ZDB-FIG
 FISH	/action/fish/ZDB-FISH
 FOSMID	/action/marker/clone/view/ZDB-FOSMID
