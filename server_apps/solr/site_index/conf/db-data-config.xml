@@ -870,7 +870,6 @@
 
         </entity>
 
-
         <entity name="marker"
                 query="select
                            mrkr_zdb_id as id,
@@ -1131,6 +1130,10 @@
 
         <entity name="fish"
                 query="
+                SELECT
+                    fish_data.*,
+                    nvl (pub_count, 0) AS attribution_count
+                FROM (
                     SELECT fish_zdb_id     AS id,
                            '/'
                            || fish_zdb_id  AS url,
@@ -1174,7 +1177,15 @@
                                                WHERE  fishstr_fish_zdb_id = fish_zdb_id) ) )
                            AND fish_genotype_zdb_id = g.geno_zdb_id
                            AND genoback_geno_zdb_id = g.geno_zdb_id
-                           AND genoback_background_zdb_id = bg.geno_zdb_id;"
+                           AND genoback_background_zdb_id = bg.geno_zdb_id) AS fish_data
+                LEFT JOIN (
+                    SELECT
+                        recattrib_data_zdb_id,
+                        count(recattrib_source_zdb_id) AS pub_count
+                    FROM
+                        record_attribution
+                    GROUP BY
+                        recattrib_data_zdb_id) AS pub_counts ON fish_data.id = pub_counts.recattrib_data_zdb_id"
         >
 
             <entity name="fish_reporter_line_category"
@@ -1621,16 +1632,26 @@
             />
 
             <entity name="fish_phenotype_quality_parent"
-                    query="select distinct
-                           term_ont_id as xref, term_name as phenotype_quality_parent,
-                           genox_fish_zdb_id as fish_zdb_id
-                           from phenotype_observation_generated ps, phenotype_source_generated, fish_experiment, term, all_term_contains
-                           where term_zdb_id = alltermcon_container_zdb_id
-                            and alltermcon_contained_zdb_id = psg_quality_zdb_id
-                            and psg_pg_id = pg_id
-                            and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
-                            and alltermcon_container_zdb_id != alltermcon_contained_zdb_id;"
+                    query="
+                        SELECT
+                            DISTINCT
+                            term_ont_id AS xref,
+                            term_name AS phenotype_quality_parent,
+                            genox_fish_zdb_id AS fish_zdb_id
+                        FROM
+                            phenotype_observation_generated psg
+                            JOIN phenotype_source_generated pg ON psg.psg_pg_id = pg.pg_id
+                            JOIN fish_experiment fe ON pg.pg_genox_zdb_id = fe.genox_zdb_id
+                            JOIN all_term_contains atc ON atc.alltermcon_contained_zdb_id = psg.psg_quality_zdb_id
+                            JOIN term t ON t.term_zdb_id = atc.alltermcon_container_zdb_id
+                        WHERE
+                            psg.psg_tag IN ('abnormal', 'exacerbated', 'ameliorated')
+                            AND atc.alltermcon_container_zdb_id != atc.alltermcon_contained_zdb_id
+                    ORDER BY
+                        term_ont_id,
+                        term_name,
+                        genox_fish_zdb_id
+                    "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             />
@@ -2279,7 +2300,11 @@
         </entity>
 
         <entity name="str"
-                query="select
+                query="
+                SELECT
+                    str_data.*,
+                    nvl (pub_count, 0) AS attribution_count
+                FROM ( SELECT
                         mrkr_zdb_id as id,
                         'Sequence Targeting Reagent (STR)' as category,
                         mrkr_abbrev as name,
@@ -2293,7 +2318,16 @@
                         from marker
                              join marker_types on mrkr_type = marker_type
                              join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
-                        where mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT';"
+                        where mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT') AS str_data
+                LEFT JOIN (
+                    SELECT
+                        recattrib_data_zdb_id,
+                        count(recattrib_source_zdb_id) AS pub_count
+                    FROM
+                        record_attribution
+                    GROUP BY
+                        recattrib_data_zdb_id) AS pub_counts ON str_data.id = pub_counts.recattrib_data_zdb_id
+"
         >
 
             <entity name="str_name_sort"
@@ -6056,9 +6090,11 @@ and child.term_ontology = 'disease_ontology';
                               address as postal_address,
                               nvl(person_country, 'Unknown') as country,
                               email as email_address,
-                              orcid_id as related_accession
+                              orcid_id as related_accession,
+                              nvl(pub_count, 0) as attribution_count
                        from person
-                       where pers_is_hidden = 'f'"
+                            left join (select source_id, count(target_id) as pub_count from int_person_pub group by source_id) as pub_counts on zdb_id = source_id
+                       where pers_is_hidden = false "
         >
             <field column="biography" stripHTML="true"/>
 

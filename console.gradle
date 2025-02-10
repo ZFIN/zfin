@@ -186,8 +186,12 @@ task imageThumbnailAndMediumSwapTask(type: JavaExec) {
     main = 'org.zfin.figure.service.ImageThumbnailAndMediumSwapTask'
 }
 
+task validateSolrDihConfigTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.task.ValidateSolrDihConfigTask'
+}
+
 task loadZfishMetaTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.LoadZfishMetaTask'
 }
-

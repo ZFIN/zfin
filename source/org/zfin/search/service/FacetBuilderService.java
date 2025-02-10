@@ -736,4 +736,41 @@ public class FacetBuilderService {
 
         return filterQuerySelectionMap.containsKey(quotedFq);
     }
+
+    public Map<String, String> buildSortingOptions(String category) {
+        Map<String, String> options = new LinkedHashMap<>();
+        options.put("A+to+Z", "A to Z");
+        options.put("Z+to+A", "Z to A");
+        options.put("Newest", "Newest");
+        options.put("Oldest", "Oldest");
+
+        if (categorySupportsAttributionSort(category)) {
+            options.put("Most+Attributed", "Most Attributed");
+            options.put("Least+Attributed", "Least Attributed");
+        }
+        return options;
+    }
+
+    public static boolean categorySupportsAttributionSort(String category) {
+        if (StringUtils.isEmpty(category)) {
+            return false;
+        }
+        List<String> categoriesSupportingAttributions = List.of(
+                Category.MUTANT.getName(),
+                Category.REPORTER_LINE.getName(),
+                Category.SEQUENCE_TARGETING_REAGENT.getName(),
+                Category.ANTIBODY.getName()
+        );
+        return categoriesSupportingAttributions.contains(category);
+    }
+
+    public static boolean categorySupportsSort(String category, String sort) {
+        if (StringUtils.isEmpty(sort)) {
+            return true;
+        }
+        if (List.of("Most Attributed", "Least Attributed").contains(sort)) {
+            return categorySupportsAttributionSort(category);
+        }
+        return true;
+    }
 }
