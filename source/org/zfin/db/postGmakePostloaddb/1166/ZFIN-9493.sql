@@ -43,6 +43,10 @@ values ('ENSDART00000123608', 'ENSDART00000123608', 'zgc:100918-202');
 insert into ensembl_transcript_renaming
 values ('ENSDART00000182734', 'ENSDART00000182734', 'zgc:100918-201');
 
+delete from marker_history where mhist_mrkr_zdb_id = 'ZDB-TSCRIPT-241211-2576';
+
+delete from data_alias where dalias_data_zdb_id = 'ZDB-TSCRIPT-241211-2576';
+
 delete from zdb_active_data where zactvd_zdb_id = 'ZDB-TSCRIPT-241211-2576';
 
 update marker set mrkr_abbrev = 'tmem216-201', mrkr_name = 'tmem216-201' where mrkr_zdb_id = 'ZDB-TSCRIPT-141209-2285';

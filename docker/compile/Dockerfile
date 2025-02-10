@@ -56,7 +56,7 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
 RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
-RUN mkdir -p /opt/zfin/download-files/zfindb/current
+RUN mkdir -p /opt/zfin/download-files/
 RUN mkdir -p /opt/zfin/bin
 RUN ln -s /usr/bin/perl /opt/zfin/bin/perl
 RUN chown -R gradle:gradle /opt/zfin/
@@ -83,6 +83,8 @@ RUN groupadd -g 1076 fishadmin
 RUN usermod  -aG fishadmin gradle
 RUN groupadd -g 1476 zfishweb
 RUN usermod  -aG zfishweb gradle
+RUN groupadd -g 1477 zfloadup
+RUN usermod  -aG zfloadup gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
 RUN adduser gradle solr

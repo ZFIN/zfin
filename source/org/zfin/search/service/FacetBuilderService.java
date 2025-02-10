@@ -348,6 +348,7 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         facetGroups.add(buildSingleFacetGroup("Phenotypic Gene", GENE.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Phenotype Tag", PHENOTYPE_TAG.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Phenotype Statement", PHENOTYPE_STATEMENT.getName(), true));
 
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));

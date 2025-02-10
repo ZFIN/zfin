@@ -136,6 +136,7 @@ public enum FieldName {
     PAGES("pages"),
     PET_DATE("pet_date"),
     PHENOTYPE_QUALITY_TF("phenotype_quality_tf"),
+    PHENOTYPE_TAG("phenotype_tag"),
     PHENOTYPE_STATEMENT("phenotype_statement"),
     PROBE("probe"),
     PROPER_NAME("proper_name"),
