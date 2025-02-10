@@ -116,6 +116,7 @@ ChebiPhenotypeTable.propTypes = {
     indexer: PropTypes.string,
     endpointUrl: PropTypes.string,
     isWildtype: PropTypes.bool,
+    eqe: PropTypes.bool,
     showDevInfo: PropTypes.bool,
     isMultiChebiCondition: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
