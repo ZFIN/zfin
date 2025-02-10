@@ -2,8 +2,8 @@ package org.zfin.expression.presentation;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.repository.RepositoryFactory;
@@ -13,11 +13,11 @@ import org.zfin.repository.RepositoryFactory;
  */
 
 @Controller
-@RequestMapping("/expression")
+@RequestMapping("/experiment")
 public class ExperimentDetailController {
 
-    @RequestMapping("/experiment")
-    protected String getExperimentPage(@RequestParam String id, Model model) {
+    @RequestMapping("/{id}")
+    protected String getExperimentPage(@PathVariable String id, Model model) {
         Experiment experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(id);
 
         if (experiment == null) {
@@ -31,8 +31,8 @@ public class ExperimentDetailController {
     }
 
 
-    @RequestMapping("/experiment-popup")
-    protected String getExperimentPopup(@RequestParam String id, Model model) {
+    @RequestMapping("/popup/{id}")
+    protected String getExperimentPopup(@PathVariable String id, Model model) {
         Experiment experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(id);
 
         if (experiment == null) {
