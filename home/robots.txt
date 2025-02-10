@@ -46,7 +46,7 @@ Disallow: /action/phenotype/statement-popup/
 #More popups:
 Disallow: /action/api/marker/ZDB-*/citations.tsv
 Disallow: /action/api/marker/ZDB-*/citations.tsv
-Disallow: /action/expression/experiment-popup/
+Disallow: /action/experiment/popup/
 Disallow: /action/fish/fish-detail-popup/
 Disallow: /action/ontology/term-detail-popup/
 Disallow: /action/marker/gene-product-description/ZDB-*
