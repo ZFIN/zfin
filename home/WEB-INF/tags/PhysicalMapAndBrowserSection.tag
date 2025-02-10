@@ -17,7 +17,7 @@
                 <c:when test="${empty gbrowseImage}">
                     <!-- Without Genome Browser -->
                 </c:when>
-                <c:when test="${gbrowseImage.type == 'JBROWSE'}">
+                <c:when test="${gbrowseImage.type.toString() == 'JBrowse'}">
                     <!-- JBROWSE Genome Browser -->
                     <div class="jbrowse-image">
                         <zfin-gbrowse:genomeBrowserImageComponent image="${gbrowseImage}" />

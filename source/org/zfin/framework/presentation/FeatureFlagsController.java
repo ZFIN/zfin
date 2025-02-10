@@ -16,7 +16,14 @@ import org.zfin.framework.featureflag.FeatureFlags;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.zfin.profile.Person;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.zfin.framework.featureflag.FeatureFlags.isFlagEnabledForPersonScope;
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 @Log4j2
 @RestController
@@ -26,6 +33,13 @@ public class FeatureFlagsController {
     public ModelAndView homePage(Model model) throws Exception {
         model.addAttribute("flags", FeatureFlags.getFlags());
         return new ModelAndView("dev-tools/feature-flags");
+    }
+
+    @RequestMapping("/devtool/feature-flags/per-user")
+    public ModelAndView perUser(Model model, HttpServletRequest request) throws Exception {
+        String flagname = request.getParameter("flagname");
+        model.addAttribute("flagname", flagname);
+        return new ModelAndView("dev-tools/feature-flags-per-user", model.asMap());
     }
 
     @JsonView(View.API.class)
@@ -46,11 +60,29 @@ public class FeatureFlagsController {
         if ("global".equals(scope)) {
             FeatureFlags.setFeatureFlagForGlobalScope(name, "true".equals(value));
         } else if ("person".equals(scope)) {
-            FeatureFlags.setFeatureFlagForPersonScope(name, "true".equals(value));
+            String person = request.getParameter("person");
+            FeatureFlags.setFeatureFlagForPersonByUsername(person, name, "true".equals(value));
         }
         HibernateUtil.flushAndCommitCurrentSession();
 
         return nameValuePair;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/devtool/feature-flags/people", method = RequestMethod.GET)
+    public Map<String, Map<String, FeatureFlags.FlagState>> getPeople() {
+        List<Person> users = getProfileRepository().getRootUsers();
+        List<FeatureFlag> allFlags = FeatureFlags.getFlags();
+        Map<String, Map<String, FeatureFlags.FlagState>> peopleFlags = new HashMap<>();
+        for (Person user : users) {
+            Map<String, FeatureFlags.FlagState> flagStatus = new HashMap<>();
+            for (FeatureFlag featureFlag : allFlags) {
+                FeatureFlags.FlagState isSet = isFlagEnabledForPersonScope(featureFlag.getName(), user);
+                flagStatus.put(featureFlag.getName(), isSet);
+            }
+            peopleFlags.put(user.getUsername(), flagStatus);
+        }
+        return peopleFlags;
     }
 
 }

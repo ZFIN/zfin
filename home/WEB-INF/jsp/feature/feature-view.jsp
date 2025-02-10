@@ -2,6 +2,7 @@
 <%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 <%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 
+
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
