@@ -197,7 +197,7 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/phenotype-chebi", method = RequestMethod.GET)
     public JsonResultResponse<ChebiPhenotypeDisplay> getPhenotypeChebi(@PathVariable String termID,
                                                                        @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                       @RequestParam(value = "isEqe", required = false, defaultValue = "false") boolean isEqe,
+                                                                       @RequestParam(value = "hasChebiInPhenotype", required = false, defaultValue = "false") boolean hasChebiInPhenotype,
                                                                        @RequestParam(value = "isWildtype", required = false) Boolean wildType,
                                                                        @RequestParam(value = "isMultiChebiCondition", required = false) Boolean isMultiChebiCondition,
                                                                        @RequestParam(value = "isAmelioratedExacerbated", required = false) Boolean isAmelioratedExacerbated,
@@ -218,7 +218,7 @@ public class TermAPIController {
         if (isAmelioratedExacerbated != null) {
             pagination.addToNotNullFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch");
         }
-        pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.isEqePhenotype", isEqe);
+        pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.hasChebiInPhenotype", hasChebiInPhenotype);
 
         pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.fish.wildtype", wildType);
         pagination.addToBooleanFilterMapIfNotNull("chebiPhenotype.multiChebiCondition", isMultiChebiCondition);
@@ -227,7 +227,7 @@ public class TermAPIController {
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.amelioratedExacerbatedPhenoSearch", filterModification);
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.fish.name", filterFishName);
         pagination.addToFilterMapIfNotEmpty("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
-        if (isEqe) {
+        if (hasChebiInPhenotype) {
             pagination.addToFilterMapIfNotEmpty("chebiPhenotype.phenotypeStatementSearch", filterTermName);
         } else {
             pagination.addToFilterMapIfNotEmpty("chebiPhenotype.expConditionChebiSearch", filterTermName);

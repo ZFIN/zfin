@@ -111,7 +111,7 @@
                 <div class="__react-root" id="ChebiPhenotypeTable"
                      data-term-id="${term.zdbID}"
                      data-direct-annotation-only="true"
-                     data-eqe="true"
+                     data-has-chebi-in-phenotype="true"
                      data-show-dev-info="${showDevInfo}"
                      data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>

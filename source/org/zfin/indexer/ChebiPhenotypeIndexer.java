@@ -48,7 +48,7 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                     experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
                     display.setMultiChebiCondition(true);
                 }
-                display.setIsEqePhenotype(false);
+                display.setHasChebiInPhenotype(false);
                 Set<String> phenotypeTags = phenotypeStatements.stream()
                     .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
                                           warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
@@ -98,7 +98,7 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                     experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
                     display.setMultiChebiCondition(true);
                 }
-                display.setIsEqePhenotype(true);
+                display.setHasChebiInPhenotype(true);
                 Set<String> phenotypeTags = phenotypeStatements.stream()
                     .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
                                           warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))

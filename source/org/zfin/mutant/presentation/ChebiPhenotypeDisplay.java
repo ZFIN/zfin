@@ -72,9 +72,9 @@ public class ChebiPhenotypeDisplay {
     private Boolean hasImages;
 
     @JsonView(View.API.class)
-    @JsonProperty("isEqePhenotype")
-    @Column(name = "cpd_eqe_phenotype")
-    private Boolean isEqePhenotype;
+    @JsonProperty("hasChebiInPhenotype")
+    @Column(name = "cpd_has_chebi_in_phenotype")
+    private Boolean hasChebiInPhenotype;
 
     @JsonView(View.API.class)
     @Column(name = "cpd_pub_count")
@@ -122,7 +122,7 @@ public class ChebiPhenotypeDisplay {
     public Set<GenericTerm> getAllChebiTerms() {
         Set<GenericTerm> allTerms = new TreeSet<>();
         allTerms.add(term);
-        if (!isEqePhenotype) {
+        if (!hasChebiInPhenotype) {
             allTerms.addAll(experiment.getExperimentConditions()
                 .stream()
                 .map(ExperimentCondition::getChebiTerm)
