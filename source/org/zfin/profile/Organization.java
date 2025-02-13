@@ -135,7 +135,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     private String prefix;
 
     @Fetch(FetchMode.JOIN)
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 

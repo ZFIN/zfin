@@ -26,7 +26,7 @@ public class ZfinAllianceConverter {
         VocabularyTerm isModelOf = new VocabularyTerm();
         isModelOf.setName("is model of");
         ////annotation.set(isModelOf);
-        annotation.setModEntityId(model.getDiseaseAnnotation().getZdbID());
+        annotation.setPrimaryExternalId(model.getDiseaseAnnotation().getZdbID());
         return annotation;
     }
 
