@@ -22,6 +22,7 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
@@ -40,6 +41,8 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -774,6 +777,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         long numberOfStatusChanges = getPublicationRepository().getPublicationTrackingStatus(person, 48, status);
 
         assertTrue(numberOfStatusChanges >= 0);
+    }
+
+    // retrieve all phenotype annotations that have chebi terms in E1b or E2b
+    public void getAllChebiPhenotype() {
+        Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>>  status = getPublicationRepository().getAllPhenotypeWithChebiInEQE();
+        //assertTrue(numberOfStatusChanges >= 0);
     }
 }
 
