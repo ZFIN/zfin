@@ -107,6 +107,15 @@
                              data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>
             </z:section>
+            <z:section title="Phenotype affecting" appendedText="${term.termName}" show="${true}">
+                <div class="__react-root" id="ChebiPhenotypeTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                     data-has-chebi-in-phenotype="true"
+                     data-show-dev-info="${showDevInfo}"
+                     data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
+                ></div>
+            </z:section>
         </z:section>
 
         <z:section title="${HUMAN_DISEASE}">

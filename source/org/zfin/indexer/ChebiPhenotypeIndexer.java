@@ -1,5 +1,7 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.StatelessSession;
 import org.zfin.expression.Experiment;
@@ -13,9 +15,6 @@ import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Table;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +30,12 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
 
     @Override
     protected List<ChebiPhenotypeDisplay> inputOutput() {
+        List<ChebiPhenotypeDisplay> resultList = getChebiPhenotypeDisplays();
+        resultList.addAll(getChebiPhenotypeEQEDisplays());
+        return resultList;
+    }
+
+    private static List<ChebiPhenotypeDisplay> getChebiPhenotypeDisplays() {
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllChebiPhenotype();
         List<ChebiPhenotypeDisplay> resultList = new ArrayList<>();
         figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {
@@ -40,9 +45,60 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                 display.setPhenotypeStatements(phenotypeStatements);
                 display.setExperiment(experiment);
                 if (experiment.getExperimentConditions().size() > 1 &&
-                        experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
+                    experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
                     display.setMultiChebiCondition(true);
                 }
+                display.setHasChebiInPhenotype(false);
+                Set<String> phenotypeTags = phenotypeStatements.stream()
+                    .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
+                                          warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
+                    .map(PhenotypeStatementWarehouse::getTag)
+                    .collect(toSet());
+                if (phenotypeTags.size() > 0) {
+                    display.setAmelioratedExacerbatedPhenoSearch(String.join(", ", phenotypeTags));
+                }
+                Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
+                display.setNumberOfFigs(figs.size());
+                if (figs.size() == 1) {
+                    display.setFigure(figs.iterator().next());
+                }
+                long imageCount = figs.stream().filter(figure -> !figure.isImgless()).map(figure -> figure.getImages().size()).count();
+                if (imageCount > 0)
+                    display.setHasImages(true);
+                Set<Publication> pubs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure().getPublication()).collect(Collectors.toSet());
+                display.setNumberOfPubs(pubs.size());
+                if (pubs.size() == 1) {
+                    display.setPublication(pubs.iterator().next());
+                }
+                display.setFishSearch(fish.getName().replaceAll("<[^>]*>", ""));
+                display.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
+                display.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
+                display.setConditionSearch(experiment.getDisplayAllConditions());
+                display.setExpConditionChebiSearch(experiment.getExperimentConditions().stream()
+                    .map(ExperimentCondition::getChebiTerm)
+                    .filter(Objects::nonNull)
+                    .map(GenericTerm::getTermName)
+                    .collect(Collectors.joining("|")));
+                resultList.add(display);
+            });
+        }));
+        return resultList;
+    }
+
+    private static List<ChebiPhenotypeDisplay> getChebiPhenotypeEQEDisplays() {
+        Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllPhenotypeWithChebiInEQE();
+        List<ChebiPhenotypeDisplay> resultList = new ArrayList<>();
+        figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {
+            experimentMao.forEach((term, phenotypeStatementWarehouses) -> {
+                ChebiPhenotypeDisplay display = new ChebiPhenotypeDisplay(fish, term);
+                List<PhenotypeStatementWarehouse> phenotypeStatements = (new ArrayList<>(phenotypeStatementWarehouses).stream().sorted()).toList();
+                display.setPhenotypeStatements(phenotypeStatements);
+                display.setExperiment(experiment);
+                if (experiment.getExperimentConditions().size() > 1 &&
+                    experiment.getExperimentConditions().stream().anyMatch(experimentCondition -> experimentCondition.getChebiTerm() != null)) {
+                    display.setMultiChebiCondition(true);
+                }
+                display.setHasChebiInPhenotype(true);
                 Set<String> phenotypeTags = phenotypeStatements.stream()
                     .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
                                           warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
