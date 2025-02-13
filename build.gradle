@@ -261,7 +261,7 @@ project(':home') {
 
             sourceFiles.each { sourceFile ->
                 def targetFile = new File(targetDir, sourceFile.name)
-                targetFile.text = sourceFile.text
+                targetFile.bytes = sourceFile.bytes
             }
 
             println "Copied ${sourceFiles.size()} files to ${targetDir}"
