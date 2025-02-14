@@ -94,7 +94,7 @@ public class DiseaseAnnotationService extends AllianceService {
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
-        annotation.setModEntityId("ZFIN:" + fish.getZdbID());
+        annotation.setPrimaryExternalId("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
