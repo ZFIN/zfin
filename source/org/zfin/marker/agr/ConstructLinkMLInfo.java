@@ -93,7 +93,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                     dto.setDataProviderDto(dataProvider);
                     dto.setCreatedByCurie("ZFIN:CURATOR");
                     //dto.setTaxonCurie(ZfinDTO.taxonId);
-                    dto.setModEntityId("ZFIN:" + construct.getZdbID());
+                    dto.setPrimaryExternalId("ZFIN:" + construct.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(construct.getZdbID());
                     dto.setDateCreated(format(date));
                     List<PublicationAttribution> attributions = getInfrastructureRepository().getPublicationAttributions(construct.zdbID);

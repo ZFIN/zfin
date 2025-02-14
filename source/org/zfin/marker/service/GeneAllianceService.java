@@ -2,6 +2,8 @@ package org.zfin.marker.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.Gene;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
+import org.alliancegenome.curation_api.model.entities.ontology.SOTerm;
 import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneSymbolSlotAnnotation;
 import org.alliancegenome.curation_api.response.ObjectResponse;
@@ -21,14 +23,26 @@ public class GeneAllianceService extends AllianceService {
 
     public void submitGeneToAlliance(Marker marker) {
         Gene model = new Gene();
-        model.setCurie("ZFIN:" + marker.getZdbID());
+        model.setPrimaryExternalId("ZFIN:" + marker.getZdbID());
         GeneFullNameSlotAnnotation nameDtoName = new GeneFullNameSlotAnnotation();
         nameDtoName.setDisplayText(marker.getName());
+        nameDtoName.setFormatText(marker.getName());
+        VocabularyTerm fullName = new VocabularyTerm();
+        fullName.setName("full_name");
+        nameDtoName.setNameType(fullName);
         model.setGeneFullName(nameDtoName);
 
         GeneSymbolSlotAnnotation nameDtoSymbol = new GeneSymbolSlotAnnotation();
         nameDtoSymbol.setDisplayText(marker.getName());
+        nameDtoSymbol.setFormatText(marker.getName());
+        VocabularyTerm term = new VocabularyTerm();
+        term.setName("nomenclature_symbol");
+        nameDtoSymbol.setNameType(term);
         model.setGeneSymbol(nameDtoSymbol);
+        SOTerm soTerm = new SOTerm();
+        soTerm.setName("protein_coding_gene");
+        soTerm.setId(392916L);
+        model.setGeneType(soTerm);
         model.setTaxon(getNcbiTaxonTerm());
 
         ObjectResponse<Gene> geneResponse = null;

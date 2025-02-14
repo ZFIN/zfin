@@ -59,7 +59,7 @@ public class VariantLinkMLInfo extends LinkMLInfo {
             .map(variant -> {
                 org.alliancegenome.curation_api.model.ingest.dto.VariantDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.VariantDTO();
                 Feature feature = variant.getFeature();
-                dto.setModEntityId("ZFIN:" + feature.getZdbID().replace("ZDB-ALT","ZDB-VAR"));
+                dto.setPrimaryExternalId("ZFIN:" + feature.getZdbID().replace("ZDB-ALT","ZDB-VAR"));
                 dto.setTaxonCurie(ZfinDTO.taxonId);
                 org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");

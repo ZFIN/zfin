@@ -1,18 +1,13 @@
 package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
-import org.alliancegenome.curation_api.model.entities.CrossReference;
-import org.alliancegenome.curation_api.model.entities.ResourceDescriptor;
-import org.alliancegenome.curation_api.model.entities.ResourceDescriptorPage;
+import org.alliancegenome.curation_api.model.entities.*;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.alliancegenome.AgmRESTAllianceService;
 import org.zfin.mutant.Fish;
 import org.zfin.properties.ZfinPropertiesEnum;
-
-import java.util.List;
 
 @Log4j2
 @Service
@@ -23,8 +18,11 @@ public class FishService extends AllianceService {
 
     public void submitFishToAlliance(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
-        model.setCurie("ZFIN:" + fish.getZdbID());
+        model.setPrimaryExternalId("ZFIN:" + fish.getZdbID());
         model.setName(fish.getDisplayName());
+        VocabularyTerm term = new VocabularyTerm();
+        term.setName("fish");
+        model.setSubtype(term);
         model.setTaxon(getNcbiTaxonTerm());
         CrossReference reference = new CrossReference();
         reference.setReferencedCurie(model.getCurie());
@@ -48,8 +46,9 @@ public class FishService extends AllianceService {
     }
 
     public static void main(String[] args) {
-        ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
-        //ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
+        //ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
+        ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
+        ZfinPropertiesEnum.TARGETROOT.setValue(".");
         Fish fish = new Fish();
         fish.setZdbID("ZDB-FISH-220707-340");
         fish.setDisplayName("Fish Name");

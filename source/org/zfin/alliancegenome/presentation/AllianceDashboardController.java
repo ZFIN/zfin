@@ -29,9 +29,9 @@ public class AllianceDashboardController {
             FishRESTAllianceService service = new FishRESTAllianceService();
             List<AffectedGenomicModel> response = service.getAGM();
             List<String> allianceIDs = response.stream()
-                .filter(affectedGenomicModel -> affectedGenomicModel.getDataProvider().getSourceOrganization().getAbbreviation().equals("ZFIN"))
+                .filter(affectedGenomicModel -> affectedGenomicModel.getDataProvider().getAbbreviation().equals("ZFIN"))
                 .filter(affectedGenomicModel -> !affectedGenomicModel.getObsolete())
-                .map(affectedGenomicModel1 -> affectedGenomicModel1.getModEntityId().replace("ZFIN:", ""))
+                .map(affectedGenomicModel1 -> affectedGenomicModel1.getPrimaryExternalId().replace("ZFIN:", ""))
                 .toList();
 
             List<Fish> allFish = getFishRepository().getAllFish(0);

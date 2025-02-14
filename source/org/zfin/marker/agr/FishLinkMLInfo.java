@@ -60,7 +60,7 @@ public class FishLinkMLInfo extends LinkMLInfo {
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setSubtypeName("fish");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setModEntityId("ZFIN:" + fish.getZdbID());
+                dto.setPrimaryExternalId("ZFIN:" + fish.getZdbID());
                 GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
                 dto.setDateCreated(format(date));
                 org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
