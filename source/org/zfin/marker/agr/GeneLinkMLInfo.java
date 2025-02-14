@@ -64,6 +64,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
                 dto.setGeneSymbolDto(getNameSlotAnnotationDTOAbbrev(marker.getAbbreviation()));
                 dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getAbbreviation()));
                 dto.setGeneSynonymDtos(getNameSlotAnnotationDTOAliases(marker.getAliases()));
+                dto.setGeneTypeCurie("SO:0000704");
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");

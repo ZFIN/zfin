@@ -2,6 +2,8 @@ package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.Allele;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.alleleSlotAnnotations.AlleleFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.model.entities.slotAnnotations.alleleSlotAnnotations.AlleleSymbolSlotAnnotation;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,23 @@ public class AlleleService extends AllianceService {
 
     public void submitAlleleToAlliance(Feature feature) {
         Allele allele = new Allele();
-        allele.setCurie("ZFIN:" + feature.getZdbID());
+        allele.setPrimaryExternalId("ZFIN:" + feature.getZdbID());
         AlleleSymbolSlotAnnotation symbol = new AlleleSymbolSlotAnnotation();
         symbol.setDisplayText(feature.getAbbreviation());
+        symbol.setFormatText(feature.getAbbreviation());
+        VocabularyTerm symbolName = new VocabularyTerm();
+        symbolName.setName("nomenclature_symbol");
+        symbol.setNameType(symbolName);
         allele.setAlleleSymbol(symbol);
+
+        AlleleFullNameSlotAnnotation nameDtoName = new AlleleFullNameSlotAnnotation();
+        nameDtoName.setDisplayText(feature.getName());
+        nameDtoName.setFormatText(feature.getName());
+        VocabularyTerm fullName = new VocabularyTerm();
+        fullName.setName("full_name");
+        nameDtoName.setNameType(fullName);
+        allele.setAlleleFullName(nameDtoName);
+
         allele.setTaxon(getNcbiTaxonTerm());
 
         ObjectResponse<Allele> alleleResponse = null;
@@ -39,8 +54,9 @@ public class AlleleService extends AllianceService {
         ZfinPropertiesEnum.TARGETROOT.setValue(".");
         ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
         Feature feature = new Feature();
-        feature.setZdbID("ZDB-ALT-220707-341");
+        feature.setZdbID("v");
         feature.setAbbreviation("walter von der Vogelheide");
+        feature.setName("walter von der Vogelheide");
         AlleleService service = new AlleleService();
         service.restInterfaceAlliance = new AlleleRESTAllianceService();
         service.submitAlleleToAlliance(feature);
