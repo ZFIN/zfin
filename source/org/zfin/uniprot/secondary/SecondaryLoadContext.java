@@ -346,7 +346,11 @@ public class SecondaryLoadContext {
     }
 
     public List<DBLinkSlimDTO> getGenesByUniprot(String dataZdbID) {
-        return this.uniprotDbLinks.get(dataZdbID);
+        List<DBLinkSlimDTO> results = this.uniprotDbLinks.get(dataZdbID);
+        if(results == null) {
+            return Collections.emptyList();
+        }
+        return results;
     }
 
     public List<String> getGeneZdbIDsByUniprot(String uniprotAccession) {
