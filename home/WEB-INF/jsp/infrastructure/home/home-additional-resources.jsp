@@ -15,14 +15,14 @@
     <b>Browse Genome</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-        <c:choose>
-            <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
-                <li><a href="/action/jbrowse2">ZFIN</a></li>
-            </c:when>
-            <c:otherwise>
-                <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
-            </c:otherwise>
-        </c:choose>
+            <c:choose>
+                <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
+                    <li><a href="/action/jbrowse2">ZFIN</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
+                </c:otherwise>
+            </c:choose>
         </li>
         <li class="list-inline-item">
             <zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink>
