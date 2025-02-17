@@ -210,7 +210,7 @@
                         <tr>
                             <th>
                                 <b>Database Configuration</b>
-                            </td>
+                            </th>
                             <td>
                                 <b>&nbsp;</b>
                             </td>
