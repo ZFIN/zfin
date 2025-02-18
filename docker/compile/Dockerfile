@@ -97,7 +97,7 @@ COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
 
 USER gradle
-COPY ./cshrc /home/gradle/.cshrc
+#COPY ./cshrc /home/gradle/.cshrc
 COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile
 RUN git config --global --add safe.directory /opt/zfin/source_roots/zfin.org
