@@ -16,11 +16,11 @@
     <ul class="list-inline">
         <li class="list-inline-item">
             <c:choose>
-                <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
-                    <a href="/jbrowse/?data=data/GRCz11">ZFIN</a>
+                <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
+                    <li><a href="/action/jbrowse2">ZFIN</a></li>
                 </c:when>
                 <c:otherwise>
-                    <a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a>
+                    <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
                 </c:otherwise>
             </c:choose>
         </li>

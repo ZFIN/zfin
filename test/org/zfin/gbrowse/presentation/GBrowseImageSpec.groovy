@@ -19,7 +19,6 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
     LinkageRepository linkageRepository = RepositoryFactory.linkageRepository
 
     def setup() {
-        FeatureFlags.setFeatureFlagForGlobalScope(FeatureFlagEnum.JBROWSE.getName(), false)
     }
 
     def "urls contain correct base url"() {

@@ -25,6 +25,7 @@ const FeatureFlags = ({
                 <th>Flag</th>
                 <th>Enabled for Everyone</th>
                 <th>Enabled for Me</th>
+                <th>Enabled for Others</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@ const FeatureFlags = ({
                     <td>{flag.name}</td>
                     <td><FeatureFlag name={flag.name} enabled={flag.enabledForGlobalScope} url={url + '?scope=global'}/></td>
                     <td><FeatureFlag name={flag.name} enabled={flag.enabledForPersonScope} url={url + '?scope=person'}/></td>
+                    <td><a className='btn btn-primary' href={'/action/devtool/feature-flags/per-user?flagname=' + flag.name}>More</a></td>
                 </tr>
             )}
         </tbody>

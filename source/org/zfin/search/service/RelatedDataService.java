@@ -254,11 +254,7 @@ public class RelatedDataService {
     }
 
     private String makeGenomeBrowserLinkByID(String id) {
-        String url = GenomeLocation.Source.ZFIN_Zv9.getUrl() + id;
-
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)) {
-            url = "/action/jbrowse/byName?name=" + id;
-        }
+        String url = "/action/jbrowse/byName?name=" + id;
         return makeLink(GENOME_BROWSER, url);
     }
 
