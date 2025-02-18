@@ -9,6 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.gbrowse.presentation.GBrowseImageBuilder;
+import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
 import org.zfin.jbrowse.presentation.JBrowseImageBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,10 +25,10 @@ public class GenomeBrowserFactory {
     }
 
     public GenomeBrowserImageBuilder getImageBuilder() {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)) {
-            return new JBrowseImageBuilder();
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE2)) {
+            return new JBrowse2ImageBuilder();
         } else {
-            return new GBrowseImageBuilder();
+            return new JBrowseImageBuilder();
         }
     }
 

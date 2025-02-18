@@ -63,11 +63,11 @@
                 <ul>
                     <li><a href="/action/blast/blast">BLAST</a></li>
                     <c:choose>
-                        <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
-                            <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
+                        <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
+                            <li><a href="/action/jbrowse2">ZFIN</a></li>
                         </c:when>
                         <c:otherwise>
-                            <li><a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
+                            <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
                         </c:otherwise>
                     </c:choose>
                 </ul>

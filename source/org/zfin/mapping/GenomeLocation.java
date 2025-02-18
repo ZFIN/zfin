@@ -116,8 +116,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     public String getUrl() {
         if (source.getDisplayName().contains("NCBI")) {
             return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
-        } else if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)
-                && List.of(ZFIN, ZFIN_Zv9).contains(source)) {
+        } else if (List.of(ZFIN, ZFIN_Zv9).contains(source)) {
             return "/action/jbrowse/byName?name=" + accessionNumber;
         } else {
             return source.getUrl() + accessionNumber;
