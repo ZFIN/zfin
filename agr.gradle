@@ -151,6 +151,14 @@ task createFishLinkMLFile(type: JavaExec) {
     }
 }
 
+task createFishSTRLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.AgmStrAssociationLinkMLInfo'
+    doFirst {
+        args linkMLVersion
+    }
+}
+
 task createAllianceLinkMLFiles {
     dependsOn createGenesLinkMLFile
     dependsOn createAllelesLinkMLFile
@@ -158,6 +166,7 @@ task createAllianceLinkMLFiles {
     dependsOn createDiseaseInfoLinkMLFile
     dependsOn createConstructLinkMLFile
     dependsOn createVariantLinkMLFile
+    dependsOn createFishSTRLinkMLFile
 }
 
 task createAllianceFiles {
