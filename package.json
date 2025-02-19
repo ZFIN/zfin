@@ -28,7 +28,7 @@
     "@geneontology/wc-ribbon-strips": "0.0.37",
     "@geneontology/wc-ribbon-table": "0.0.57",
     "@jbrowse/react-app": "^2.18.0",
-    "@jbrowse/react-linear-genome-view": "^3.0.3",
+    "@jbrowse/react-linear-genome-view": "^2.18.0",
     "acorn": "^8.8.1",
     "babel-loader": "^9.1.3",
     "bootstrap": "^4.6.2",
