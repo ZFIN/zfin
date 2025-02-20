@@ -20,9 +20,9 @@
     <hudson.tasks.Shell>
       <command>
         <![CDATA[
-        cd $TARGETROOT/server_apps/data_transfer/MEOW && \
-        ./meow.pl && \
-        tar cvzf $DOWNLOAD_DIRECTORY/current/meow.tar.gz *.txt
+cd $TARGETROOT/server_apps/data_transfer/MEOW && \
+perl ./meow.pl && \
+tar cvzf $DOWNLOAD_DIRECTORY/current/meow.tar.gz *.txt
         ]]>
       </command>
     </hudson.tasks.Shell>
