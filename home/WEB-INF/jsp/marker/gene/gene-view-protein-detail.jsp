@@ -7,6 +7,7 @@
         <thead>
             <tr>
                 <th>Protein</th>
+                <th class="text-right">Links</th>
                 <th class="text-right">Length</th>
                 <c:forEach var="category" items="${formBean.proteinType}">
                     <th>${category}</th>
@@ -18,22 +19,20 @@
                 <tr>
                     <td class="text-nowrap">
                         <zfin:link entity="${category.proDBLink}"/>
-                        <z:otherPagesDropdown>
+                    </td>
+                    <td class="text-right">
                             <zfin2:externalLink
-                                    className="dropdown-item"
                                     href="https://www.ebi.ac.uk/interpro/protein/UniProt/${category.proDBLink.accessionNumber}"
                             >
                                 InterPro
                             </zfin2:externalLink>
                             <c:if test="${category.PDB}">
                                 <zfin2:externalLink
-                                        className="dropdown-item"
                                         href="/action/infrastructure/pdb-link-list/${category.proDBLink.accessionNumber}"
                                 >
                                     PDB
                                 </zfin2:externalLink>
                             </c:if>
-                        </z:otherPagesDropdown>
                     </td>
                     <td class="text-right">${category.proDBLink.length}</td>
                     <c:forEach var="entry" items="${category.interProDomain}">
