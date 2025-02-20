@@ -7,7 +7,7 @@
         <thead>
             <tr>
                 <th>Protein</th>
-                <th class="text-right">Links</th>
+                <th class="text-right">Additional Resources</th>
                 <th class="text-right">Length</th>
                 <c:forEach var="category" items="${formBean.proteinType}">
                     <th>${category}</th>
