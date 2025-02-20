@@ -18,7 +18,13 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/MEOW &amp;&amp; ./meow.pl</command>
+      <command>
+        <![CDATA[
+        cd $TARGETROOT/server_apps/data_transfer/MEOW && \
+        ./meow.pl && \
+        tar cvzf $DOWNLOAD_DIRECTORY/current/meow.tar.gz *.txt
+        ]]>
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
