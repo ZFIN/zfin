@@ -2,6 +2,10 @@ a {
     text-decoration: none;
 }
 
+#domain-details-per-protein a.external {
+    white-space: nowrap;
+}
+
 .external:after,
 a[href^="http://"]:not([href*="zfin.org"]):after,
 a[href^="https://"]:not([href*="zfin.org"]):after {
