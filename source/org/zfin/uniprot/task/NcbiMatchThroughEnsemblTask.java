@@ -298,7 +298,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             WHERE
                 dblink_linked_recid IS NULL) AS x
         """;
-        BigInteger count = (BigInteger) session.createNativeQuery(query).uniqueResult();
+        Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
         // Get semi-final report using the above mapping tables.
