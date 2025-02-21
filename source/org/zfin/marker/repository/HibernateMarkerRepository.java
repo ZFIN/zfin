@@ -3277,7 +3277,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<Marker> getWithdrawnMarkers() {
-        String hql = "from Marker where mrkr_abbrev like :withdrawn ";
+        String hql = "from Marker where abbreviation like :withdrawn ";
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
         return query.list();
