@@ -666,7 +666,7 @@ sub prepareNCBIgeneLoadDatabaseQuery {
     #--------------------------------------------------------------------------------------------------------------------
 
     try {
-        doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
+        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
     } catch {
         chomp $_;
         reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: faile at prepareNCBIgeneLoad.sql - $_");
@@ -3191,7 +3191,7 @@ sub executeDeleteAndLoadSQLFile {
     }
 
     try {
-        doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
+        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
     } catch {
         chomp $_;
         reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
