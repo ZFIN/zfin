@@ -18,6 +18,20 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
             width: '120px',
         },
         {
+            label: 'Fish',
+            content: (row) => <CommaSeparatedList>
+                {row.primaryAnnotations.map(annotation => {
+                    return <a
+                        href={'/' + annotation.diseaseAnnotationSubject.primaryExternalId}
+                        dangerouslySetInnerHTML={{__html: annotation.diseaseAnnotationSubject.name}}
+                        key={annotation.diseaseAnnotationSubject.primaryExternalId}
+                    />
+                })}
+            </CommaSeparatedList>,
+            filterName: 'disease',
+            width: '120px',
+        },
+        {
             label: 'Evidence',
             content: (evidenceCodes) => <CommaSeparatedList>
                 {evidenceCodes.evidenceCodes.map(code => {
