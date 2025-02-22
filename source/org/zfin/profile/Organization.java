@@ -18,9 +18,6 @@ import org.zfin.mutant.Genotype;
 import java.util.Set;
 
 
-/**
- *
- */
 @Setter
 @Getter
 @MappedSuperclass
@@ -91,8 +88,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @JoinColumn(name = "contact_person")
     private Person contactPerson;
 
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "int_data_source",
             joinColumns = @JoinColumn(name = "ids_source_zdb_Id"),
@@ -100,8 +96,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     )
     private Set<Marker> markerSourceList;
 
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "int_data_supplier",
             joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"),
@@ -109,21 +104,17 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     )
     private Set<Marker> markerSupplierList;
 
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_data_source", joinColumns = @JoinColumn(name = "ids_source_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "ids_data_zdb_id"))
     private Set<Feature> featureSourceList;
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_data_supplier", joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "idsup_data_zdb_id"))
     private Set<Feature> featureSupplierList;
 
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_data_source", joinColumns = @JoinColumn(name = "ids_source_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "ids_data_zdb_id"))
     private Set<Genotype> genotypeSourceList;
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_data_supplier", joinColumns = @JoinColumn(name = "idsup_supplier_zdb_Id"), inverseJoinColumns = @JoinColumn(name = "idsup_data_zdb_id"))
     private Set<Genotype> genotypeSupplierList;
 
@@ -134,8 +125,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     // a non-persisted element, just a convenience
     private String prefix;
 
-    @Fetch(FetchMode.JOIN)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 
