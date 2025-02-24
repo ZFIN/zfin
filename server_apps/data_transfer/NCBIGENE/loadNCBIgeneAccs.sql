@@ -41,7 +41,7 @@ update ncbi_gene_load
 alter table ncbi_gene_load 
   alter column sequence_length type integer USING sequence_length::integer;
 
-update ncbi_gene_load set zdb_id = get_id('DBLINK');
+update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
 --!echo 'CHECK: how many RefSeq and GenBank accessions missing length before the load'
 
@@ -68,11 +68,6 @@ delete from record_attribution
                   and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-37','ZDB-FDBCONT-040412-42','ZDB-FDBCONT-040412-36')
               )
    and not exists (select 'x' from ncbi_dblink_to_preserve where prsv_dblink_zdb_id = recattrib_data_zdb_id);
-
---!echo 'Insert into zdb_active_data the new zdb ids of db_link records'
-
-insert into zdb_active_data select zdb_id from ncbi_gene_load;
-
 
 \echo 'Skipping duplicate entries in db_link table for the new records that would violate key:';
 select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id
