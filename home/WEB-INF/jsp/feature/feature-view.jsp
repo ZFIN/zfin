@@ -13,12 +13,19 @@
 <c:set var="SUPPLEMENTAL" value="Supplemental Information"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="DISEASE_ASSOCIATION" value="${NavigationMenuOptions.DISEASE_ASSOCIATION.value}"/>
+<c:set var="PHENOTYPE" value="${NavigationMenuOptions.PHENOTYPE.value}"/>
 <c:set var="GBROWSE" value="Genome Browser"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage
-        sections="${[SUMMARY, NOTES, GBROWSE, VARIANTS, SEQUENCES, FISH, SUPPLEMENTAL, CITATIONS]}"
->
+<c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA)}">
+    <c:set var="sections" value="${[SUMMARY, NOTES, GBROWSE, VARIANTS, SEQUENCES, FISH, SUPPLEMENTAL, DISEASE_ASSOCIATION, PHENOTYPE, CITATIONS]}"/>
+</c:if>
+<c:if test="${!zfn:isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA)}">
+    <c:set var="sections" value="${[SUMMARY, NOTES, GBROWSE, VARIANTS, SEQUENCES, FISH, SUPPLEMENTAL, CITATIONS]}"/>
+</c:if>
+
+<z:dataPage sections="${sections}">
+
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.feature}"/>
     </jsp:attribute>
@@ -57,6 +64,12 @@
         <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA)}">
             <z:section title="${DISEASE_ASSOCIATION}">
                 <div class="__react-root" id="DiseaseAssociationTable"
+                     data-allele-id="${formBean.feature.zdbID}"
+                ></div>
+            </z:section>
+
+            <z:section title="${PHENOTYPE}">
+                <div class="__react-root" id="PhenotypeTable"
                      data-allele-id="${formBean.feature.zdbID}"
                 ></div>
             </z:section>
