@@ -33,22 +33,6 @@ const PhenotypeTable = ({alleleId, directAnnotationOnly}) => {
             filterName: 'disease',
             width: '120px',
         },
-/*
-        {
-            label: 'Reference',
-            content: (row) => <CommaSeparatedList>
-                {row.references.map(reference => {
-                    return <a
-                        href={'/' + reference.pubModID}
-                        dangerouslySetInnerHTML={{__html: reference.shortCitation}}
-                        key={reference.curie}
-                    />
-                })}
-            </CommaSeparatedList>,
-            filterName: 'reference',
-            width: '120px',
-        },
-*/
     ];
 
     const params = {};
