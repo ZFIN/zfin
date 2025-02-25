@@ -51,25 +51,14 @@
             <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
         </c:if>
 
-        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_UNIVERSAL_ANALYTICS)}">
         <script>
-            <c:choose>
-            <c:when test="${ZfinPropertiesEnum.GOOGLE_ANALYTICS_ID.value() != '0'}">
             !function (z, b, r, f, i, s, h) {
                 z.GoogleAnalyticsObject = i, z[i] = z[i] || function () {
                     (z[i].q = z[i].q || []).push(arguments)
                 }, z[i].l = +new Date, s = b.createElement(r), h = b.getElementsByTagName(r)[0], s.src = f, h.parentNode.insertBefore(s, h)
             }(this, document, "script", "//www.google-analytics.com/analytics.js", "ga");
-            ga('create', '@GOOGLE_ANALYTICS_ID@', {'cookieDomain': 'zfin.org'});
             ga('send', 'pageview');
-            </c:when>
-            <c:otherwise>
-            window.ga = window.ga || function () {
-            };
-            </c:otherwise>
-            </c:choose>
         </script>
-        </c:if>
 
         <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_GA4_ANALYTICS)}">
             <!-- Google tag (gtag.js) -->
