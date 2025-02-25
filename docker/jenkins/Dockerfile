@@ -102,6 +102,10 @@ USER gradle
 COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile
 
+# Disable nested search, see: https://github.com/jenkinsci/nested-view-plugin/compare/nested-view-1.23...nested-view-1.24
+# http://plugins.jenkins.io/nested-view/releases/#version_1.24
+RUN touch /home/gradle/.nestedViewsSearch
+
 #CMD ["/usr/bin/tcsh"]
 #CMD ["/bin/bash","-l"]
 CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
