@@ -2591,7 +2591,9 @@
                                      join phenotype_source_generated on psg_pg_id = pg_id;"
                     where="pg_id=phenotype.id"
                     cacheImpl="SortedMapBackedCache"
-            />
+            >
+                <field name="phenotype_tag" column="phenotype_tag" splitBy=","/>
+            </entity>
 
 
         <entity name="phenotype_misexpressed_gene"
