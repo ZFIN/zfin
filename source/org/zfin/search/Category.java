@@ -148,6 +148,7 @@ public enum Category {
             FieldName.GENE,
             SEQUENCE_ALTERATION,
             IS_MONOGENIC,
+            PHENOTYPE_TAG,
             STAGE,
             ANATOMY_TF,
             BIOLOGICAL_PROCESS_TF,
