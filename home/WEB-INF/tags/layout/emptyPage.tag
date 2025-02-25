@@ -29,21 +29,13 @@
         <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
 
         <!-- Google tag (gtag.js) -->
-        <c:choose>
-            <c:when test="${GA4_ANALYTICS_ID != '0'}">
-                <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
-                <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', '${GA4_ANALYTICS_ID}');
-                </script>
-            </c:when>
-            <c:otherwise>
-                <!-- No GA4_ANALYTICS_ID set -->
-            </c:otherwise>
-        </c:choose>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA4_ANALYTICS_ID}');
+        </script>
 
     </head>
 
