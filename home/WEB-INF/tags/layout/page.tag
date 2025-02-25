@@ -41,7 +41,8 @@
         jquery is loaded via CDN here instead being part of the webpack bundle so that
         bootstrap 4 plays nicely with inline script tags. not sure if this is the best
         solution, but it's at least pretty noninvasive
-        jsdelivr is used as the cdn because it works in china --%>
+        jsdelivr is used as the cdn because it works in china
+--%>
         <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
         <script src="${zfn:getAssetPath("vendor-common.js")}"></script>
         <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
@@ -51,33 +52,14 @@
             <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
         </c:if>
 
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
         <script>
-            !function (z, b, r, f, i, s, h) {
-                z.GoogleAnalyticsObject = i, z[i] = z[i] || function () {
-                    (z[i].q = z[i].q || []).push(arguments)
-                }, z[i].l = +new Date, s = b.createElement(r), h = b.getElementsByTagName(r)[0], s.src = f, h.parentNode.insertBefore(s, h)
-            }(this, document, "script", "//www.google-analytics.com/analytics.js", "ga");
-            ga('send', 'pageview');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA4_ANALYTICS_ID}');
         </script>
-
-        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_GA4_ANALYTICS)}">
-            <!-- Google tag (gtag.js) -->
-            <c:choose>
-                <c:when test="${GA4_ANALYTICS_ID != '0'}">
-                    <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
-                    <script>
-                        window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-
-                        gtag('config', '${GA4_ANALYTICS_ID}');
-                    </script>
-                </c:when>
-                <c:otherwise>
-                    <!-- No GA4_ANALYTICS_ID set -->
-                </c:otherwise>
-            </c:choose>
-        </c:if>
 
     </head>
 <%--
