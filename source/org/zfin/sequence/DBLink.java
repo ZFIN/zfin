@@ -43,9 +43,9 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @JsonView(View.SequenceAPI.class)
     @Id
     @Column(name = "dblink_zdb_id", nullable = false)
-    @GeneratedValue(generator = "zdbIdGenerator")
+    @GeneratedValue(generator = "zdbIdGeneratorForDBLink")
     @org.hibernate.annotations.GenericGenerator(
-            name = "zdbIdGenerator",
+            name = "zdbIdGeneratorForDBLink",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "DBLINK"),
