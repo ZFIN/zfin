@@ -16,7 +16,6 @@
 /home/WEB-INF/lib/axiom-impl-1.2.7.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/backport-util-concurrent-3.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/biojava.1.7.1.jar filter=lfs diff=lfs merge=lfs -text
-/home/WEB-INF/lib/blast-serialization-1.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/byte-buddy-1.12.7.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/bytecode.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/c3p0-0.9.5.5.jar filter=lfs diff=lfs merge=lfs -text
