@@ -55,7 +55,7 @@ dependencies {
     implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
     implementation files('home/WEB-INF/lib/obo.jar')
     implementation files('home/WEB-INF/lib/bbop.jar')
-    implementation files('home/WEB-INF/lib/blast-serialization-1.0.jar')
+    implementation files('home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar')
     implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
     // maven reference does not have version 1.0, so using the plain jar file
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
