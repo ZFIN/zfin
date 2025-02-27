@@ -169,6 +169,11 @@
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
+        <mapping class="org.zfin.orthology.EvidenceCode"/>
+        <mapping class="org.zfin.orthology.NcbiOtherSpeciesGene"/>
+        <mapping class="org.zfin.orthology.Ortholog"/>
+        <mapping class="org.zfin.orthology.OrthologEvidence"/>
+        <mapping class="org.zfin.orthology.OrthologExternalReference"/>
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
         <mapping class="org.zfin.profile.AccountInfo"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
