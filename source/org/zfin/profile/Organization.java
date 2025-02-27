@@ -125,7 +125,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     // a non-persisted element, just a convenience
     private String prefix;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 
