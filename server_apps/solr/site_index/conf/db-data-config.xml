@@ -2583,6 +2583,7 @@
             </entity>
 
             <entity name="phenotype_tags"
+                    transformer="RegexTransformer"
                     query="select
                                 distinct
                                 psg_tag || ',Any' as phenotype_tag,
