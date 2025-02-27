@@ -69,15 +69,15 @@
 
 <!--    </class>                                                                                                     -->
 
-    <class name="org.zfin.orthology.EvidenceCode" table="ortholog_evidence_code">
+<!--    <class name="org.zfin.orthology.EvidenceCode" table="ortholog_evidence_code">                                -->
 
-        <id name='code' type="string">
-            <column name="oevcode_code" not-null="true"/>
-            <generator class="native"/>
-        </id>
-        <property name="order" column="oevcode_order" type="java.lang.Integer" not-null="true"/>
-        <property name="name" column="oevcode_name" not-null="true"/>
+<!--        <id name='code' type="string">                                                                           -->
+<!--            <column name="oevcode_code" not-null="true"/>                                                        -->
+<!--            <generator class="native"/>                                                                          -->
+<!--        </id>                                                                                                    -->
+<!--        <property name="order" column="oevcode_order" type="java.lang.Integer" not-null="true"/>                 -->
+<!--        <property name="name" column="oevcode_name" not-null="true"/>                                            -->
 
-    </class>
+<!--    </class>                                                                                                     -->
 
 </hibernate-mapping>
