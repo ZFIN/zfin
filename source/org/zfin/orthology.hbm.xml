@@ -48,26 +48,26 @@
 
 <!--    </class>                                                                                                     -->
 
-    <class name="org.zfin.orthology.NcbiOtherSpeciesGene" table="ncbi_ortholog" mutable="false">
-        <id name="ID" type="string">
-            <column name="noi_ncbi_gene_id" not-null="true"/>
-        </id>
-        <property name="name" column="noi_name"/>
-        <property name="abbreviation" column="noi_symbol"/>
-        <property name="chromosome" column="noi_chromosome" type="string"/>
+<!--    <class name="org.zfin.orthology.NcbiOtherSpeciesGene" table="ncbi_ortholog" mutable="false">                 -->
+<!--        <id name="ID" type="string">                                                                             -->
+<!--            <column name="noi_ncbi_gene_id" not-null="true"/>                                                    -->
+<!--        </id>                                                                                                    -->
+<!--        <property name="name" column="noi_name"/>                                                                -->
+<!--        <property name="abbreviation" column="noi_symbol"/>                                                      -->
+<!--        <property name="chromosome" column="noi_chromosome" type="string"/>                                      -->
 
-        <many-to-one name="organism" column="noi_taxid" class="org.zfin.Species"/>
+<!--        <many-to-one name="organism" column="noi_taxid" class="org.zfin.Species"/>                               -->
 
-        <set name="ncbiExternalReferenceList" table="ncbi_ortholog_external_reference" sort="natural" fetch="join">
-            <key column="noer_other_species_ncbi_gene_id"/>
-            <composite-element class="org.zfin.orthology.NcbiOrthoExternalReference">
-                <parent name="ncbiOtherSpeciesGene"/>
-                <many-to-one name="referenceDatabase" column="noer_fdbcont_zdb_id"/>
-                <property name="accessionNumber" column="noer_other_species_accession_number"/>
-            </composite-element>
-        </set>
+<!--        <set name="ncbiExternalReferenceList" table="ncbi_ortholog_external_reference" sort="natural" fetch="join"> -->
+<!--            <key column="noer_other_species_ncbi_gene_id"/>                                                      -->
+<!--            <composite-element class="org.zfin.orthology.NcbiOrthoExternalReference">                            -->
+<!--                <parent name="ncbiOtherSpeciesGene"/>                                                            -->
+<!--                <many-to-one name="referenceDatabase" column="noer_fdbcont_zdb_id"/>                             -->
+<!--                <property name="accessionNumber" column="noer_other_species_accession_number"/>                  -->
+<!--            </composite-element>                                                                                 -->
+<!--        </set>                                                                                                   -->
 
-    </class>
+<!--    </class>                                                                                                     -->
 
     <class name="org.zfin.orthology.EvidenceCode" table="ortholog_evidence_code">
 

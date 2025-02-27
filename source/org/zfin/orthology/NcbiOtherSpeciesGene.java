@@ -37,7 +37,7 @@ public class NcbiOtherSpeciesGene implements Serializable {
     @JoinColumn(name = "noi_taxid")
     private Species organism;
 
-    @OneToMany(mappedBy = "ncbiOtherSpeciesGene", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ncbiOtherSpeciesGene", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy
     private Set<NcbiOrthoExternalReference> ncbiExternalReferenceList;
 
