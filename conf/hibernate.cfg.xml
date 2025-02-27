@@ -170,6 +170,7 @@
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.orthology.EvidenceCode"/>
+        <mapping class="org.zfin.orthology.NcbiOrthoExternalReference"/>
         <mapping class="org.zfin.orthology.NcbiOtherSpeciesGene"/>
         <mapping class="org.zfin.orthology.Ortholog"/>
         <mapping class="org.zfin.orthology.OrthologEvidence"/>
