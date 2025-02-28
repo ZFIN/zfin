@@ -99,7 +99,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         m.setZdbID("ZDB-GENE-081022-77");
         markerGoTermEvidence.setMarker(m);
         GenericTerm term = new GenericTerm();
-        term.setZdbID("ZDB-TERM-091209-4029");
+        term.setZdbID("ZDB-TERM-091209-6070");
         markerGoTermEvidence.setGoTerm(term);
         assertNotNull(markerGoTermEvidenceRepository.getNdExistsForGoGeneEvidenceCode(markerGoTermEvidence));
         // some random go term
