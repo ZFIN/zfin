@@ -82,7 +82,7 @@ function FigureEdit({ pubId }) {
             });
     }
 
-    function updateFigureLabel(figure, label) {
+    async function updateFigureLabel(figure, label) {
         figure.label = label;
         const index = figures.findIndex((f) => f.zdbId === figure.zdbId);
 
@@ -91,17 +91,25 @@ function FigureEdit({ pubId }) {
             const newFigures = [...figures];
             newFigures[index] = figure;
             setFigures(newFigures);
-            return Promise.reject({ message: 'Label is required'});
+            throw new Error('Label is required');
         }
 
-        return FigureService.updateFigure(figure)
-            .then(() => {
-                if (index > -1) {
-                    const newFigures = [...figures];
-                    newFigures[index] = figure;
-                    setFigures(newFigures);
-                }
-            });
+        try {
+            const serverResponse = await FigureService.updateFigure(figure);
+            if (serverResponse.code) {
+                //error code received
+                throw new Error(serverResponse.message);
+            }
+
+            if (index > -1) {
+                const newFigures = [...figures];
+                newFigures[index] = figure;
+                setFigures(newFigures);
+            }
+        } catch (error) {
+            console.error('Error updating figure:', error);
+            throw error;
+        }
     }
 
     function figureSaved(figures) {
