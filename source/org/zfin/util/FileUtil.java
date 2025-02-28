@@ -16,10 +16,14 @@ import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -515,6 +519,51 @@ public final class FileUtil {
             FileUtils.copyURLToFile(connection.getURL(), file);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new IOException("Error while setting up SSL context", e);
+        }
+    }
+
+    /**
+     * Try to create and delete a temporary file in the given directory.
+     * If it fails, throw an IOException.
+     */
+    public static void assertPathWritePermissions(File dirToTest) throws IOException {
+        StringBuilder errorOutput = new StringBuilder();
+
+        if (!dirToTest.exists()) {
+            throw new IOException("Path does not exist: " + dirToTest);
+        }
+
+        if (!dirToTest.isDirectory()) {
+            throw new IOException("Path is not a directory: " + dirToTest);
+        }
+
+        try {
+            File tempFile = File.createTempFile("temporary-file-", ".tmp", dirToTest);
+            tempFile.delete();
+            return; // Success
+        } catch (IOException e) {
+            errorOutput.append("Failed to write temporary file to ").append(dirToTest).append("\n");
+
+            try {
+                Set<PosixFilePermission> filePerm = Files.getPosixFilePermissions(Paths.get(dirToTest.getAbsolutePath()));
+                String permission = PosixFilePermissions.toString(filePerm);
+                errorOutput.append("File permissions for ").append(dirToTest).append(": ").append(permission).append("\n");
+            } catch (IOException nestedException) {
+                errorOutput.append("Could not read file permissions\n");
+            }
+
+            try {
+                PosixFileAttributes attrs = Files.readAttributes(Paths.get(dirToTest.getAbsolutePath()), PosixFileAttributes.class);
+                UserPrincipal owner = attrs.owner();
+                GroupPrincipal group = attrs.group();
+                errorOutput.append("Owner: ").append(owner.getName()).append("\n");
+                errorOutput.append("Group: ").append(group.getName()).append("\n");
+            } catch (IOException nestedException) {
+                errorOutput.append("Could not read file ownership information\n");
+            }
+        }
+        if (!errorOutput.isEmpty()) {
+            throw new IOException(errorOutput.toString());
         }
     }
 

@@ -4,13 +4,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.marker.Marker;
@@ -21,6 +21,7 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.repository.BlastRepository;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.util.FileUtil;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -323,6 +324,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         if (false == fastaSequence.startsWith(">")) {
             throw new BlastDatabaseException("dumped fasta sequences must begin with defline: " + fastaSequence);
         }
+        checkBlastPathWritePermissions();
         File tempFile = File.createTempFile("dump", ".fa", new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()));
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tempFile));
 
@@ -351,6 +353,19 @@ public abstract class AbstractWublastBlastService implements BlastService {
             }
         bufferedWriter.close();
         return tempFile;
+    }
+
+    /**
+     * Try to create and delete a temporary file in the blast storage directory.
+     * If it fails, more details will be written to the logs to help diagnose.
+     */
+    private void checkBlastPathWritePermissions() {
+        File blastPath = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());
+        try {
+            FileUtil.assertPathWritePermissions(blastPath);
+        } catch (IOException e) {
+            logger.error("Failed to write to blast path: " + blastPath.toString() + "\n" + e.getMessage(), e);
+        }
     }
 
     protected Set<String> getAccessionsFromFile(File accessionFile) throws BlastDatabaseException {
