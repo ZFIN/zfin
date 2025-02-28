@@ -35,8 +35,8 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @Size(min = 17, max = 50)
     @JsonView(View.Default.class)
     @Column(name = "zdb_id", nullable = false)
-    @GeneratedValue(generator = "zdbIdGenerator")
-    @GenericGenerator(name = "zdbIdGenerator", strategy = "org.zfin.database.ZdbIdGenerator",
+    @GeneratedValue(generator = "zdbIdGeneratorForPerson")
+    @GenericGenerator(name = "zdbIdGeneratorForPerson", strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "PERS"),
                     @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
