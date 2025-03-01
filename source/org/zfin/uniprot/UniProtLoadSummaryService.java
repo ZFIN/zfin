@@ -51,8 +51,8 @@ public class UniProtLoadSummaryService {
         for (Object result : results) {
             Object[] row = (Object[]) result;
             String description = (String) row[3];
-            BigInteger count = (BigInteger) row[2];
-            UniProtLoadSummaryItemDTO summary = new UniProtLoadSummaryItemDTO(description, count.longValue(), null);
+            Long count = (Long) row[2];
+            UniProtLoadSummaryItemDTO summary = new UniProtLoadSummaryItemDTO(description, count, null);
             summaryList.putBeforeSummary(summary);
         }
         return summaryList;
@@ -72,8 +72,8 @@ public class UniProtLoadSummaryService {
         for (Object result : results) {
             Object[] row = (Object[]) result;
             String description = (String) row[3];
-            BigInteger count = (BigInteger) row[2];
-            UniProtLoadSummaryItemDTO summary = new UniProtLoadSummaryItemDTO(description, null, count.longValue());
+            Long count = (Long) row[2];
+            UniProtLoadSummaryItemDTO summary = new UniProtLoadSummaryItemDTO(description, null, count);
             beforeSummary.putAfterSummary(summary);
         }
         return beforeSummary;
