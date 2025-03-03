@@ -84,7 +84,7 @@ const config = {
         new webpack.BannerPlugin({ //Add UTF-8 charset to top of style css file
             banner: '@charset "UTF-8";',
             raw: true,
-            test: /style\.bundle\.\w+\.css$/
+            test: /\.bundle\.\w+\.css$/
         }),
         new WebpackAssetsManifest({
             output: '../asset-manifest.json', // relative to output.path
