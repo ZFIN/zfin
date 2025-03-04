@@ -34,6 +34,7 @@ const InlineEditTextarea = ({
         try {
             await onSave(text);
             setEditing(false);
+            setError('');
         } catch (response) {
             if (response && response.message) {
                 setError(response.message);
