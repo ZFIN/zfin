@@ -5,6 +5,7 @@ ignorecommand = /usr/local/bin/ignore_ip_check.sh <ip>
 enabled = true
 port = http,https
 filter = apache-forbidden
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 10
 
@@ -12,6 +13,7 @@ maxretry = 10
 enabled = true
 port = http,https
 filter = apache-unavailable
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 10 
 
@@ -19,6 +21,7 @@ maxretry = 10
 enabled = true
 port = http,https
 filter = zfin-search
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 5
 bantime = 1d
