@@ -32,7 +32,7 @@ public class FeatureValidationService {
                 if (StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())) {
                     return "You must specify an assembly if you specify a location";
                 }
-                if (!featureDTO.getKnownInsertionSite()) {
+                if (!featureDTO.getKnownInsertionSite() && (featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_INSERTION)) {
                     return "You must mark \"Known Insertion Site\" if you specify a location";
                 }
             }
