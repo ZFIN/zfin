@@ -17,12 +17,13 @@ export const addFigure = (pubId, label, caption, fileList) => {
     }).then(response => response.json());
 };
 
-export const updateFigure = (fig) => {
-    return fetch(`/action/figure/${fig.zdbId}`, {
+export const updateFigure = async (fig) => {
+    const response = await fetch(`/action/figure/${fig.zdbId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fig)
-    }).then(response => response.json());
+        body: JSON.stringify(fig),
+    });
+    return response.json();
 };
 
 export const deleteFigure = (fig) => {
