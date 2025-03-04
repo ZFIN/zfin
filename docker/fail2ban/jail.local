@@ -6,6 +6,7 @@ ignoreip = 128.223.0.0/16 184.171.0.0/17 163.41.128.0/17 10.128.0.0/16 10.108.0.
 enabled = true
 port = http,https
 filter = apache-forbidden
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 10
 
@@ -13,6 +14,7 @@ maxretry = 10
 enabled = true
 port = http,https
 filter = apache-unavailable
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 10 
 
@@ -20,6 +22,7 @@ maxretry = 10
 enabled = true
 port = http,https
 filter = zfin-search
+chain = DOCKER-USER
 logpath = /var/log/httpd/zfin_access
 maxretry = 5
 bantime = 1d
