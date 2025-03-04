@@ -394,6 +394,9 @@ public class ProfileService {
             logger.error("Person[" + personZdbID + "] already belongs to organization[" + organizationZdbID + "]");
             return false;
         }
+
+        setPersonCountryByOrganizationIfNotSet(personZdbID, organizationZdbID);
+
         if (organizationZdbID.startsWith("ZDB-LAB")) {
             return profileRepository.addLabMember(personZdbID, organizationZdbID, position) == 1;
         } else if (organizationZdbID.startsWith("ZDB-COMPANY")) {
@@ -402,6 +405,20 @@ public class ProfileService {
 
         logger.error("failed trying to add a person to something that was not a lab or company: " + organizationZdbID);
         return false;
+    }
+
+    /**
+     * add organization's country as person's country (if not already set for person)
+     * @param personZdbID The persons's ID
+     * @param organizationZdbID The organization's ID
+     */
+    private void setPersonCountryByOrganizationIfNotSet(String personZdbID, String organizationZdbID) {
+        Person person = profileRepository.getPerson(personZdbID);
+        if (StringUtils.isEmpty(person.getCountry())) {
+            Organization organization = profileRepository.getOrganizationByZdbID(organizationZdbID);
+            person.setCountry(organization.getCountry());
+            HibernateUtil.currentSession().update(person);
+        }
     }
 
     public boolean changeOrganizationPosition(PersonMemberPresentation personMemberPresentation) {
