@@ -616,7 +616,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
     implementation group: 'taglibs', name: 'standard', version: '1.1.2'
 
-    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.1.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
+    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.2.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
     implementation files('home/WEB-INF/lib/agr_curation_api-v0.36.1.jar')
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')
