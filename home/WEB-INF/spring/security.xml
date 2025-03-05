@@ -202,7 +202,7 @@
         <security:intercept-url pattern="/action/login-redirect?error=true" access="permitAll"/>
 
         <security:intercept-url pattern="/ajax/accessionservice" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/ajax/anatomylookup" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/ajax/anatomylookup" access="permitAll"/>
         <security:intercept-url pattern="/ajax/featureservice" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/ajax/session-save" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/ajax/transcriptservice" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
