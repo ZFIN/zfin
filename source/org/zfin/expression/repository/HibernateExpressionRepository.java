@@ -1453,11 +1453,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = """
-                     select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox 
-                           where fishox.fish = :fish 
-                             and fishox = xpExp.fishExperiment 
-                             and xpRslt.expressionExperiment = xpExp 
-                             and xpExp.gene != null
+                     select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox
+                           where fishox.fish = :fish
+                             and fishox = xpExp.fishExperiment
+                             and xpRslt.expressionExperiment = xpExp
+                             and xpExp.gene is not null
                              and xpExp.gene.zdbID not like :markerId
                      """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
