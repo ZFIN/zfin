@@ -473,12 +473,10 @@ public class HibernateLinkageRepository implements LinkageRepository {
             list.add(linkage.getEntity());
         }
         List<EntityZdbID> uniqueList = new ArrayList<>(list);
-        uniqueList.sort((o1, o2) -> {
-            if (!o1.getEntityType().equals(o2.getEntityType())) {
-                return o1.getEntityType().compareTo(o2.getEntityType());
-            }
-            return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
-        });
+        uniqueList.sort(Comparator.comparing(
+                        EntityZdbID::getEntityType, Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(EntityZdbID::getAbbreviationOrder, Comparator.nullsFirst(Comparator.naturalOrder())));
+
         return uniqueList;
     }
 
