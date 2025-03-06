@@ -65,6 +65,9 @@ public class MappingService {
         if (entity instanceof Feature) {
             return getChromosomeLocationDisplay(getLinkageRepository().getGenomeLocation((Feature) entity));
         }
+        if (entity == null) {
+            return "Error null entity";
+        }
         return "not yet implemented for " + entity.getClass().getName();
     }
 
