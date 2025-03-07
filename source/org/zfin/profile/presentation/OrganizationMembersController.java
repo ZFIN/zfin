@@ -87,6 +87,9 @@ public class OrganizationMembersController {
         personMemberPresentation.setPosition(position);
         personMemberPresentation.setAddFunction();
         boolean status = profileService.addPersonToOrganization(personMemberPresentation);
+
+
+
         HibernateUtil.currentSession().getTransaction().commit();
 
         return "";
