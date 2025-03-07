@@ -1098,7 +1098,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<Marker> getConstructsByAttribution(String name) {
         String hql = "select distinct m from Marker m , PublicationAttribution pa " +
-                     "where lower(m.name) like lower(:name)  and pa.dataZdbID = m.zdbID  and m.markerType like '%CONS%'  ";
+                     "where lower(m.name) like lower(:name)  and pa.dataZdbID = m.zdbID  and m.markerType.name like '%CONS%'  ";
 //                + " order by m.abbreviationOrder asc " ;
         List<Marker> markerList = new ArrayList<>(HibernateUtil.currentSession().createQuery(hql, Marker.class).setParameter("name", "%" + name + "%").list());
         markerList.sort(new MarkerAbbreviationComparator(name));
