@@ -511,6 +511,7 @@ function resetFields() {
     $("#prefix").val("");
     $("#constructDisplayName").val("");
     $("#cName").val("");
+    $("#constructSequence").val("");
     $("#constructStoredName").val("");
     $("#storedCass1").val("");
     $("#constructAlias").val("");
