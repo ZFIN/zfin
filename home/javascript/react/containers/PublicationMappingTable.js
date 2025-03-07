@@ -8,7 +8,7 @@ const PublicationMappingTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Entity Type',
-            content: row => row.entity.type,
+            content: row => row.entity.entityType,
             width: '250px',
         },
         {
