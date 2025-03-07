@@ -28,6 +28,8 @@ public class FeatureMarkerLinkageMember extends LinkageMember {
 
     public void setFeature(Feature feature) {
         this.feature = feature;
+        entityOne = feature;
+        entityTwo = marker;
     }
 
     @Override

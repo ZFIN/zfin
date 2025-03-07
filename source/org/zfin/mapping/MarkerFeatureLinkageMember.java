@@ -18,6 +18,8 @@ public class MarkerFeatureLinkageMember extends LinkageMember {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+        entityOne = marker;
+        entityTwo = feature;
     }
 
     public Feature getFeature() {
@@ -47,8 +49,4 @@ public class MarkerFeatureLinkageMember extends LinkageMember {
         return inverse;
     }
 
-    @Override
-    public int compareTo(LinkageMember o) {
-        return 0;
-    }
 }

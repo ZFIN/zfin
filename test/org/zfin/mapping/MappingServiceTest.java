@@ -3,6 +3,7 @@ package org.zfin.mapping;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.Feature;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.ChromosomalLocationBean;
 
@@ -95,5 +96,17 @@ public class MappingServiceTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getLinkageMembersForPublication() {
+        String pubID = "ZDB-PUB-141203-77";
+        List<LinkageMember> linkageMembers = HibernateUtil.currentSession().createQuery("from LinkageMember where linkage.publication.zdbID = :id", LinkageMember.class).setParameter("id", pubID).list();
+        assertTrue(linkageMembers.size() > 0);
+
+        linkageMembers.forEach(linkageMember -> {
+            assertTrue(linkageMember.getEntityOne() != null);
+            assertTrue(linkageMember.getEntityTwo() != null);
+        });
+
+    }
 
 }
