@@ -169,6 +169,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("lincRNA")
               || bioType.equals("miRNA")
               || bioType.equals("misc_RNA")
+              || bioType.equals("scaRNA")
               || bioType.equals("antisense")
               || bioType.equals("snoRNA"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
