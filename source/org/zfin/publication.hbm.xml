@@ -45,7 +45,7 @@
         </property>
 
         <property name="publisher">
-            <column name="jrnl_publisher" not-null="true"/>
+            <column name="jrnl_publisher"/>
         </property>
 
         <property name="isNice">
