@@ -182,8 +182,8 @@ public abstract class UiIndexer<Entity> extends Thread {
         session.insert(entity);
     }
 
-    protected void cleanoutTable(String... tables) {
-        List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).toList();
+    protected void cleanoutTable(String schema, String... tables) {
+        List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).map(s -> schema + "." + s).toList();
         log.info(getLogPrefix() + " Cleaning out tables: ");
         tableNames.forEach(table -> {
             HibernateUtil.createTransaction();

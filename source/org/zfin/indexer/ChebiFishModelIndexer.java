@@ -1,18 +1,14 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.expression.ExperimentCondition;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.service.OntologyService;
 
-import jakarta.persistence.Table;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
@@ -57,8 +53,9 @@ public class ChebiFishModelIndexer extends UiIndexer<ChebiFishModelDisplay> {
 
     @Override
     protected void cleanUiTables() {
+        String schema = ChebiFishModelDisplay.class.getAnnotation(Table.class).schema();
         String fishModelTable = ChebiFishModelDisplay.class.getAnnotation(Table.class).name();
-        cleanoutTable(fishModelTable);
+        cleanoutTable(schema, fishModelTable);
     }
 
 }
