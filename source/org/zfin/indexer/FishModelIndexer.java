@@ -1,5 +1,7 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.framework.api.Pagination;
@@ -8,8 +10,6 @@ import org.zfin.mutant.Zygosity;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.service.OntologyService;
 
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,8 +99,9 @@ public class FishModelIndexer extends UiIndexer<FishModelDisplay> {
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+        String schema = FishModelDisplay.class.getAnnotation(Table.class).schema();
         String fishModelTable = FishModelDisplay.class.getAnnotation(Table.class).name();
-        cleanoutTable(associationTable, fishModelTable);
+        cleanoutTable(schema, associationTable, fishModelTable);
     }
 
 }

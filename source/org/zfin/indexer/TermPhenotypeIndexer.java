@@ -1,5 +1,7 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
@@ -10,8 +12,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Table;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,10 +55,11 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
     @Override
     protected void cleanUiTables() {
         try {
+            String schema = FishStatistics.class.getDeclaredField("affectedGenes").getAnnotation(JoinTable.class).schema();
             String associationTable = FishStatistics.class.getDeclaredField("affectedGenes").getAnnotation(JoinTable.class).name();
             String associationTable1 = FishStatistics.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
             String fishStatsTable = FishStatistics.class.getAnnotation(Table.class).name();
-            cleanoutTable(associationTable, associationTable1, fishStatsTable);
+            cleanoutTable(schema, associationTable, associationTable1, fishStatsTable);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
