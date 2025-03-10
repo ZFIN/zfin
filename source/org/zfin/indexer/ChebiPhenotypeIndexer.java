@@ -138,9 +138,10 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
     @Override
     protected void cleanUiTables() {
         try {
+            String schema = ChebiPhenotypeDisplay.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).schema();
             String associationTable = ChebiPhenotypeDisplay.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
             String chebiPhenotypeTable = ChebiPhenotypeDisplay.class.getAnnotation(Table.class).name();
-            cleanoutTable(associationTable, chebiPhenotypeTable);
+            cleanoutTable(schema, associationTable, chebiPhenotypeTable);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
