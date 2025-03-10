@@ -1,13 +1,13 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.framework.api.Pagination;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.ontology.service.OntologyService;
 
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,9 +36,10 @@ public class GenesInvolvedIndexer extends UiIndexer<OmimPhenotypeDisplay> {
     @Override
     protected void cleanUiTables() {
         try {
+            String schema = OmimPhenotypeDisplay.class.getDeclaredField("zfinGene").getAnnotation(JoinTable.class).schema();
             String associationTable = OmimPhenotypeDisplay.class.getDeclaredField("zfinGene").getAnnotation(JoinTable.class).name();
             String omimTable = OmimPhenotypeDisplay.class.getAnnotation(Table.class).name();
-            cleanoutTable(associationTable, omimTable);
+            cleanoutTable(schema, associationTable, omimTable);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

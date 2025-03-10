@@ -1,11 +1,11 @@
 package org.zfin.indexer;
 
+import jakarta.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.figure.presentation.ExpressionTableRow;
 
-import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class PublicationExpressionIndexer extends UiIndexer<ExpressionTableRow> 
         List<ExpressionTableRow> resultList = new ArrayList<>();
         expressionResults.forEach(expressionResult -> {
             Figure figure = expressionResult.getExpressionFigureStage().getFigure();
-            ExpressionTableRow row = new ExpressionTableRow(expressionResult.getExpressionFigureStage(),expressionResult);
+            ExpressionTableRow row = new ExpressionTableRow(expressionResult.getExpressionFigureStage(), expressionResult);
             row.setFigure(figure);
             row.setPublication(expressionResult.getExpressionFigureStage().getExpressionExperiment().getPublication());
             resultList.add(row);
@@ -34,8 +34,9 @@ public class PublicationExpressionIndexer extends UiIndexer<ExpressionTableRow> 
 
     @Override
     protected void cleanUiTables() {
+        String schema = ExpressionTableRow.class.getAnnotation(Table.class).schema();
         String expressionPub = ExpressionTableRow.class.getAnnotation(Table.class).name();
-        cleanoutTable(expressionPub);
+        cleanoutTable(schema, expressionPub);
     }
 
 }
