@@ -154,10 +154,15 @@ public class BaseSQLDAO<E extends BaseEntity> extends BaseEntityDAO<E> {
                         }
                     }
 
-                    log.debug("Column Alias: " + column.getAlias() + " Column Java Type: " + column.getJavaType() + " Column Model: " + column.getModel() + " Column Type Alias: "
-                              + column.type().getAlias() + " Column Parent Path Alias: " + column.getParentPath().getAlias());
-                    log.debug("Count Column Alias: " + countColumn.getAlias() + " Count Column Java Type: " + countColumn.getJavaType() + " Count Column Model: " + countColumn.getModel()
-                              + " Count Column Type Alias: " + countColumn.type().getAlias() + " Count Column Parent Path Alias: " + countColumn.getParentPath().getAlias());
+                    try {
+                        log.debug("Column Alias: " + column.getAlias() + " Column Java Type: " + column.getJavaType() + " Column Model: " + column.getModel() + " Column Type Alias: "
+                                + column.type().getAlias() + " Column Parent Path Alias: " + column.getParentPath().getAlias());
+                        log.debug("Count Column Alias: " + countColumn.getAlias() + " Count Column Java Type: " + countColumn.getJavaType() + " Count Column Model: " + countColumn.getModel()
+                                + " Count Column Type Alias: " + countColumn.type().getAlias() + " Count Column Parent Path Alias: " + countColumn.getParentPath().getAlias());
+                    } catch (Exception e) {
+                        log.error("Encountered error trying to output debug information for column metadata");
+                        log.error(e);
+                    }
                 }
             } else {
                 column = root.get(key);
