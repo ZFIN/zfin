@@ -25,8 +25,11 @@ public class CheckFilePermissionsTask extends AbstractScriptWrapper {
 
     private void runTask() {
         initAll();
-        List<String> pathsToTest = List.of(ZfinPropertiesEnum.LOADUP_FULL_PATH.value(),
-                ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());
+        List<String> pathsToTest = List.of(
+                ZfinPropertiesEnum.LOADUP_FULL_PATH.value(),
+                ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value(),
+                ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/data_transfer/PUBMED" //authors file (Load-Complete-Author-Names_d)
+        );
         int numberOfErrors = 0;
 
         System.out.println("Checking permissions for " + pathsToTest.size() + " directories");
