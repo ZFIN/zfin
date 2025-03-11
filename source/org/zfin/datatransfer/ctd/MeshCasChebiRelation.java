@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor  
+@NoArgsConstructor
 public class MeshCasChebiRelation {
     private String mesh;
     private String meshName;
@@ -14,3 +14,4 @@ public class MeshCasChebiRelation {
     private String chebi;
     private String chebiName;
 }
+
