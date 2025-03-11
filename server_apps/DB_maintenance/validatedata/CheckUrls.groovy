@@ -19,7 +19,6 @@ static void main(String... args) {
     cli.propertyFilePath(args: 1, 'Name of the job to be displayed in report')
     cli.dataDirectory(args: 2, 'Name of the job to be displayed in report')
     cli.jobName(args: 3, 'Name of the job to be displayed in report')
-    cli.shortVersion(args: 4, 'Name of the job to be displayed in report')
     options = cli.parse(args)
     if (!options) {
         System.exit(1)
