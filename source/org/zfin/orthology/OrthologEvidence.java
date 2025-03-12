@@ -1,17 +1,40 @@
 package org.zfin.orthology;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "ortholog_evidence")
+@Getter
+@Setter
 public class OrthologEvidence implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "oev_id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "oev_ortho_zdb_id", nullable = false)
     private Ortholog ortholog;
+
+    @ManyToOne
+    @JoinColumn(name = "oev_code", nullable = false)
     private EvidenceCode evidenceCode;
+
+    @ManyToOne
+    @JoinColumn(name = "oev_pubs_zdb_id", nullable = false)
     private Publication publication;
+
+    @ManyToOne
+    @JoinColumn(name = "oev_evidence_term_zdb_id")
     private GenericTerm evidenceTerm;
+
     public OrthologEvidence() {
     }
 
@@ -21,49 +44,14 @@ public class OrthologEvidence implements Serializable {
         this.publication = publication;
     }
 
-    public EvidenceCode getEvidenceCode() {
-        return evidenceCode;
-    }
-
-    public void setEvidenceCode(EvidenceCode evidenceCode) {
-        this.evidenceCode = evidenceCode;
-    }
-
-    public Ortholog getOrtholog() {
-        return ortholog;
-    }
-
-    public void setOrtholog(Ortholog ortholog) {
-        this.ortholog = ortholog;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public GenericTerm getEvidenceTerm() {
-        return evidenceTerm;
-    }
-
-    public void setEvidenceTerm(GenericTerm evidenceTerm) {
-        this.evidenceTerm = evidenceTerm;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         OrthologEvidence that = (OrthologEvidence) o;
-
-        if (!ortholog.equals(that.ortholog)) return false;
-        if (!evidenceCode.equals(that.evidenceCode)) return false;
-        return publication.equals(that.publication);
-
+        return ortholog.equals(that.ortholog) &&
+                evidenceCode.equals(that.evidenceCode) &&
+                publication.equals(that.publication);
     }
 
     @Override
@@ -80,8 +68,8 @@ public class OrthologEvidence implements Serializable {
         CL,
         FC,
         NT,
-	    PT,
-	    OT;
+        PT,
+        OT;
 
         public String toString() {
             return name();
@@ -90,7 +78,5 @@ public class OrthologEvidence implements Serializable {
         public String getString() {
             return name();
         }
-
     }
-
 }

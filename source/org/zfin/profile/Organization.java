@@ -28,8 +28,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @JsonView(View.API.class)
     @Id
     @Column(name = "zdb_id")
-    @GeneratedValue(generator = "zdbIdGenerator")
-    @GenericGenerator(name = "zdbIdGenerator", strategy = "org.zfin.database.ZdbIdGenerator",
+    @GeneratedValue(generator = "zdbIdGeneratorForOrganization")
+    @GenericGenerator(name = "zdbIdGeneratorForOrganization", strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true"))
     private String zdbID;
 
@@ -125,7 +125,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     // a non-persisted element, just a convenience
     private String prefix;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "epp_pk_id")
     private EmailPrivacyPreference emailPrivacyPreference;
 
