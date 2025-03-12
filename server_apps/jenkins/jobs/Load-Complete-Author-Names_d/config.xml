@@ -16,25 +16,13 @@
     </triggers>
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
+    <!-- TODO: remove load_complete_authers.pl and related files that are no longer needed (see: https://github.com/ZFIN/zfin/pull/459) -->
     <builders>
-        <hudson.tasks.Shell>
-            <command><![CDATA[
-mkdir -p $TARGETROOT/server_apps/data_transfer/PUBMED
-touch $TARGETROOT/server_apps/data_transfer/PUBMED/authors
-            ]]></command>
-        </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.11">
             <targets>load-author-names</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
-    <publishers>
-        <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/PUBMED/authors</artifacts>
-            <latestOnly>false</latestOnly>
-            <allowEmptyArchive>false</allowEmptyArchive>
-        </hudson.tasks.ArtifactArchiver>
-    </publishers>
     <buildWrappers>
     </buildWrappers>
 </project>
