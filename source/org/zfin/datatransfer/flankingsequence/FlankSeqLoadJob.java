@@ -13,16 +13,15 @@ import java.util.List;
 
 public class FlankSeqLoadJob extends AbstractValidateDataReportTask {
 
-private static Logger logger = LogManager.getLogger(FlankSeqLoadJob.class);
+    private static Logger logger = LogManager.getLogger(FlankSeqLoadJob.class);
 
 
-
-public FlankSeqLoadJob(String jobName, String propertyPath, String baseDir) {
+    public FlankSeqLoadJob(String jobName, String propertyPath, String baseDir) {
         super(jobName, propertyPath, baseDir);
-        }
+    }
 
-@Override
-public int execute() {
+    @Override
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -36,19 +35,19 @@ public int execute() {
         rg.setReportTitle("Report for " + jobName);
         rg.includeTimestamp();
         for (String message : fsProcessor.getMessages()) {
-        rg.addIntroParagraph(message);
+            rg.addIntroParagraph(message);
         }
         List<List<String>> updated = fsProcessor.getUpdated();
         rg.addDataTable(updated.size() + " Updated features", Arrays.asList("feature", "seq1", "seq2"), updated);
         for (String error : fsProcessor.getErrors()) {
-        rg.addErrorMessage(error);
+            rg.addErrorMessage(error);
         }
         rg.writeFiles(new File(dataDirectory, jobName), jobName);
 
         return fsProcessor.getErrors().size();
-        }
+    }
 
-public static void main(String[] args) {
+    public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
         String jobName = args[2];
@@ -56,8 +55,8 @@ public static void main(String[] args) {
 
         job.initDatabase();
         System.exit(job.execute());
-        }
-        }
+    }
+}
 
 
 

@@ -51,7 +51,6 @@
         <mapping resource="org/zfin/marker.hbm.xml"/>
         <mapping resource="org/zfin/mapping.hbm.xml"/>
         <mapping resource="org/zfin/mutant.hbm.xml"/>
-        <mapping resource="org/zfin/orthology.hbm.xml"/>
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
@@ -169,6 +168,12 @@
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TermStage"/>
         <mapping class="org.zfin.ontology.TransitiveClosure"/>
+        <mapping class="org.zfin.orthology.EvidenceCode"/>
+        <mapping class="org.zfin.orthology.NcbiOrthoExternalReference"/>
+        <mapping class="org.zfin.orthology.NcbiOtherSpeciesGene"/>
+        <mapping class="org.zfin.orthology.Ortholog"/>
+        <mapping class="org.zfin.orthology.OrthologEvidence"/>
+        <mapping class="org.zfin.orthology.OrthologExternalReference"/>
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
         <mapping class="org.zfin.profile.AccountInfo"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>

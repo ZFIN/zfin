@@ -47,7 +47,7 @@
         <property name="bio"/>
         <property name="image"/>
         <many-to-one name="contactPerson" column="contact_person" class="org.zfin.profile.Person"/>
-        <many-to-one name="emailPrivacyPreference" column="epp_pk_id" class="org.zfin.profile.EmailPrivacyPreference" fetch="join"/>
+        <many-to-one name="emailPrivacyPreference" column="epp_pk_id" class="org.zfin.profile.EmailPrivacyPreference"/>
 
         <set name="organizationUrls">
             <key column="srcurl_source_zdb_id"/>

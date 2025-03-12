@@ -20,8 +20,8 @@ import java.util.Set;
 public class FishExperiment implements Comparable<FishExperiment> {
 
     @Id
-    @GeneratedValue(generator = "zdbIdGenerator")
-    @GenericGenerator(name = "zdbIdGenerator",
+    @GeneratedValue(generator = "zdbIdGeneratorForFishExperiment")
+    @GenericGenerator(name = "zdbIdGeneratorForFishExperiment",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @Parameter(name = "type", value = "GENOX"),

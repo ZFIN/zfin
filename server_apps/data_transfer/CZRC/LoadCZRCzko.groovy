@@ -23,7 +23,6 @@ import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
 import org.zfin.sequence.STRMarkerSequence
 
-import javax.persistence.*
 import org.hibernate.Session
 
 import static com.xlson.groovycsv.CsvParser.parseCsv

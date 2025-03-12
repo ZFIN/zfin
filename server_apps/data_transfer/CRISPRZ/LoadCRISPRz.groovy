@@ -25,7 +25,6 @@ import org.zfin.sequence.MarkerDBLink
 import org.zfin.sequence.ReferenceDatabase
 import org.zfin.sequence.STRMarkerSequence
 import org.zfin.sequence.DBLink
-import javax.persistence.*
 import org.hibernate.Session
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
