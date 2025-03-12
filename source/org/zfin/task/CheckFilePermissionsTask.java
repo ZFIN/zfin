@@ -6,6 +6,8 @@ import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -25,15 +27,18 @@ public class CheckFilePermissionsTask extends AbstractScriptWrapper {
 
     private void runTask() {
         initAll();
-        List<String> pathsToTest = List.of(
-                ZfinPropertiesEnum.LOADUP_FULL_PATH.value(),
-                ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value(),
-                ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/data_transfer/PUBMED" //authors file (Load-Complete-Author-Names_d)
+        List<Path> pathsToTest = List.of(
+                Paths.get(ZfinPropertiesEnum.LOADUP_FULL_PATH.value()),
+                Paths.get(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()),
+                Paths.get(ZfinPropertiesEnum.TARGETROOT.value(), "server_apps/data_transfer/PUBMED"), //authors file (Load-Complete-Author-Names_d)
+                Paths.get(ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY.value(), "..", ZfinPropertiesEnum.INSTANCE.value())
         );
         int numberOfErrors = 0;
 
         System.out.println("Checking permissions for " + pathsToTest.size() + " directories");
-        for (String path : pathsToTest) {
+        System.out.println("Use the VERBOSE=true environment variable to get detailed output.");
+
+        for (Path path : pathsToTest) {
             boolean success = checkDirectoryWritePermissions(path);
             if (!success) {
                 numberOfErrors++;
@@ -42,8 +47,8 @@ public class CheckFilePermissionsTask extends AbstractScriptWrapper {
         System.exit(numberOfErrors);
     }
 
-    private boolean checkDirectoryWritePermissions(String path) {
-        File dir = new File(path);
+    private boolean checkDirectoryWritePermissions(Path path) {
+        File dir = path.toFile();
         try {
             FileUtil.assertPathWritePermissions(dir);
             System.out.println("Good : " + dir.getAbsolutePath());

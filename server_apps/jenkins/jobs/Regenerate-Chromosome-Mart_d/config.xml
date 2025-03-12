@@ -18,8 +18,15 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
+        <command><![CDATA[
+cd $SOURCEROOT
+mkdir -p reports/tests
+touch reports/tests/chromosomeMartUnitTestsPostgres.txt
+        ]]></command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenChromosomeMart.sh </command>
-    </hudson.tasks.Shell>7
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
