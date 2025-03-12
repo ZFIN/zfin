@@ -6,7 +6,7 @@ FULL_SCRIPT_FILE="$CHROMOSOMEMARTDIR/chromosomeMartAutomated.sql"
 CONVERT_CHROMOSOMEMART_FILE="$CHROMOSOMEMARTDIR/chromosomeMartRegen.sql"
 ALL_CHROMOSOMEMART_SCRIPTS="$CHROMOSOMEMARTDIR/allChromosomeMart.sql"
 
-rm -rf "$FULL_SCRIPT_FILE" "$CONVERT_CHROMOSOMEMART_FILE" "$ALL_CHROMOSOMEMART_SCRIPTS"
+rm -f "$FULL_SCRIPT_FILE" "$CONVERT_CHROMOSOMEMART_FILE" "$ALL_CHROMOSOMEMART_SCRIPTS"
 
 chromosomeMartScripts=(
     "begin.sql"
@@ -38,12 +38,12 @@ for name in "${regenChromosomeMartScripts[@]}"; do
     cat "$CHROMOSOMEMARTDIR/$name" >> "$CONVERT_CHROMOSOMEMART_FILE"
 done
 
-if [[ -z "$1" ]]; then
+if [ -z "$1" ]; then
     echo "ready to start dropTables.sql DBNAME from environment."
-    "${PGBINDIR}/psql" -v ON_ERROR_STOP=1 "$DBNAME" < "$FULL_SCRIPT_FILE"
+    ${PGBINDIR}/psql -v ON_ERROR_STOP=1 "$DBNAME" < "$FULL_SCRIPT_FILE"
 else
     echo "ready to start dropTables.sql DBNAME provided from script call."
-    "${PGBINDIR}/psql" -v ON_ERROR_STOP=1 "$1" < "$FULL_SCRIPT_FILE"
+    ${PGBINDIR}/psql -v ON_ERROR_STOP=1 "$1" < "$FULL_SCRIPT_FILE"
 fi
 
 exit 0
