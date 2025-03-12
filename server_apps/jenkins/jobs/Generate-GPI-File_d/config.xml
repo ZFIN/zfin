@@ -21,7 +21,7 @@
       <command>cd $SOURCEROOT &amp;&amp; gradle createGPIFile</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi.gz $DOWNLOAD_DIRECTORY/current/</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/GO &amp;&amp; cp zfin.gpi.gz zfin.gpi2.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
