@@ -1,62 +1,55 @@
-#!/bin/tcsh
+#!/bin/bash -e
 
-# rm old reports
+# Remove old reports
+export INSTANCE="<!--|INSTANCE|-->"
 
-setenv INSTANCE <!--|INSTANCE|-->;
+if [ -e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt" ]; then
+  /bin/rm "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt"
+fi
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt
+if [ -e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt" ]; then
+  /bin/rm "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt"
+fi
 
-endif
+if [ -e "<!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt" ]; then
+  /bin/rm "<!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt"
+fi
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt
+if [ -e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTestsPostgres.txt" ]; then
+  /bin/rm "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTestsPostgres.txt"
+fi
 
-endif
+echo "done with file delete"
 
-if ( -e <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt) then
- /bin/rm <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt
-endif
+# Build up the warehouse
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMart.sh
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTestsPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTests.txt
+if [ $? -ne 0 ]; then
+  echo "regen chromosome mart (the building tables, not the public tables) failed"
+  exit 1
+fi
 
-endif
+echo "done with runchromosomemart on <!--|DB_NAME|-->"
 
-echo "done with file delete" ;
-# build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMart.sh 
+# Run the validation tests via Ant
+cd "<!--|SOURCEROOT|-->" || exit 1
+echo "cd'd to <!--|SOURCEROOT|-->"
 
-if ($? != 0) then
- echo "regen chromosome mart (the building tables, not the public tables) failed";
-exit 1;
-endif
+ant run-chromosomemart-unittests &> reports/tests/chromosomeMartUnitTestsPostgres.txt
+cp reports/tests/chromosomeMartUnitTestsPostgres.txt "<!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/"
 
-echo "done with runchromosomemart on <!--|DB_NAME|--> ";
-# run the validation tests via ant.
+if [ $? -ne 0 ]; then
+  echo "regen chromosome mart (the building tables, not the public tables) failed on unit tests"
+  exit 1
+fi
 
-cd <!--|SOURCEROOT|-->
-echo "cd'd to <!--|SOURCEROOT|-->" ;
+# Move the current table data to backup, move the new data to current
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 "<!--|DB_NAME|-->" < "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql"
 
-/opt/zfin/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTestsPostgres.txt
-cp reports/tests/chromosomeMartUnitTestsPostgres.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/.
+if [ $? -ne 0 ]; then
+  echo "refresh chromosome mart (the public tables) failed and was rolled back"
+  exit 1
+fi
 
-if ($? != 0) then
-   echo "regen chromosome mart (the building tables, not the public tables) failed on unit tests";
-exit 1;
-endif
-
-#echo "done with ant tests" ;
-
-# move the current table data to backup, move the new data to current.
-
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql 
-
-if ($? != 0) then
-   echo "refresh chromosome mart (the public tables) failed and was rolled back";
-exit 1;
-endif
-
-echo "success" ;
-
-exit 0;
+echo "success"
+exit 0

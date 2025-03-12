@@ -30,7 +30,6 @@ public class CheckFilePermissionsTask extends AbstractScriptWrapper {
         List<Path> pathsToTest = List.of(
                 Paths.get(ZfinPropertiesEnum.LOADUP_FULL_PATH.value()),
                 Paths.get(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()),
-                Paths.get(ZfinPropertiesEnum.TARGETROOT.value(), "server_apps/data_transfer/PUBMED"), //authors file (Load-Complete-Author-Names_d)
                 Paths.get(ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY.value(), "..", ZfinPropertiesEnum.INSTANCE.value())
         );
         int numberOfErrors = 0;
