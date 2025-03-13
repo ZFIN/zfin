@@ -138,6 +138,7 @@ public class ReportGenerator {
                     directory.mkdirs();
                 }
                 File outputFile = new File(directory, baseName + "." + format.toString().toLowerCase());
+                log.info("Writing report to " + outputFile.getAbsolutePath());
                 FileWriter writer = new FileWriter(outputFile);
                 write(writer, format);
             } catch (TemplateException | IOException e) {

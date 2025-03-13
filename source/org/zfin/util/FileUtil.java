@@ -518,4 +518,53 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Try to create and delete a temporary file in the given directory.
+     * If it fails, throw an IOException.
+     */
+    public static void assertPathWritePermissions(File dirToTest) throws IOException {
+        StringBuilder errorOutput = new StringBuilder();
+
+        if (!dirToTest.exists()) {
+            throw new IOException("Path does not exist: " + dirToTest);
+        }
+
+        if (!dirToTest.isDirectory()) {
+            throw new IOException("Path is not a directory: " + dirToTest);
+        }
+
+        try {
+            File tempFile = File.createTempFile("temporary-file-", ".tmp", dirToTest);
+            tempFile.delete();
+            return; // Success
+        } catch (IOException e) {
+            errorOutput.append("Failed to write temporary file to ").append(dirToTest).append("\n");
+
+            try {
+                Set<PosixFilePermission> filePerm = Files.getPosixFilePermissions(Paths.get(dirToTest.getAbsolutePath()));
+                String permission = PosixFilePermissions.toString(filePerm);
+                errorOutput.append("File permissions for ").append(dirToTest).append(": ").append(permission).append("\n");
+            } catch (IOException nestedException) {
+                errorOutput.append("Could not read file permissions\n");
+            }
+
+            try {
+                PosixFileAttributes attrs = Files.readAttributes(Paths.get(dirToTest.getAbsolutePath()), PosixFileAttributes.class);
+                UserPrincipal owner = attrs.owner();
+                GroupPrincipal group = attrs.group();
+
+                int uid = (int) Files.getAttribute(Paths.get(dirToTest.getAbsolutePath()), "unix:uid");
+                int gid = (int) Files.getAttribute(Paths.get(dirToTest.getAbsolutePath()), "unix:gid");
+
+                errorOutput.append("Owner: ").append(owner.getName()).append(" (" + uid + ")\n");
+                errorOutput.append("Group: ").append(group.getName()).append(" (" + gid + ")\n");
+            } catch (IOException nestedException) {
+                errorOutput.append("Could not read file ownership information\n");
+            }
+        }
+        if (!errorOutput.isEmpty()) {
+            throw new IOException(errorOutput.toString());
+        }
+    }
+
 }
