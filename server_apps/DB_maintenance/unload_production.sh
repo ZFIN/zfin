@@ -1,6 +1,8 @@
 #!/bin/tcsh -e
 
 set pth=/research/zunloads/databases/${INSTANCE}
+mkdir -p $pth
+
 set dirname=`date +"%Y.%m.%d.1"`
 
 ${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp.sh

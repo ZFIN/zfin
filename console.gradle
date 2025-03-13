@@ -195,3 +195,9 @@ task loadZfishMetaTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.LoadZfishMetaTask'
 }
+
+task checkFilePermissionsTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.task.CheckFilePermissionsTask'
+}
+

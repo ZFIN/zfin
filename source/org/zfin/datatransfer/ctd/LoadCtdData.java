@@ -121,13 +121,17 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     private MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation) {
+        return getMeshChebiMapping(relation, service);
+    }
+
+    public static MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation, VocabularyService vocabularyService) {
         MeshChebiMapping mcMapping = new MeshChebiMapping();
         mcMapping.setMeshID(relation.getMesh());
         mcMapping.setMeshName(relation.getMeshName());
         mcMapping.setChebiID(relation.getChebi());
         mcMapping.setCasID(relation.getCas());
-        mcMapping.setPredicate(service.getVocabularyTerm("predicate", "exact"));
-        mcMapping.setMappingJustification(service.getVocabularyTerm("mapping justification", "MappingChaining"));
+        mcMapping.setPredicate(vocabularyService.getVocabularyTerm("predicate", "exact"));
+        mcMapping.setMappingJustification(vocabularyService.getVocabularyTerm("mapping justification", "MappingChaining"));
         return mcMapping;
     }
 

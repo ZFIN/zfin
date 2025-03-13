@@ -211,12 +211,15 @@
     </target>
 
     <target name="load-signafish" description="">
+        <echo message="arg1: ${web-inf.dir}/zfin.properties"/>
+        <echo message="arg2: ${validateData}/report_data"/>
+        <echo message="arg3: env.JOB_NAME"/>
         <java classname="org.zfin.datatransfer.LoadSignafishJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
-            <arg value="${jobName}"/>
+            <arg value="${env.JOB_NAME}"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>

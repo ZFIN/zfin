@@ -28,7 +28,7 @@ public class VocabularyService {
             Vocabulary vocab = vocabularyDao.findByField("name", vocabulary).getSingleResult();
             HashMap<String, Object> map = new HashMap<>();
             map.put("name", vocabularyTerm);
-            map.put("vocabulary", vocab.getId());
+            map.put("vocabulary.id", vocab.getId());
             SearchResponse<VocabularyTerm> term = vocabularyTermDao.findByParams(null, map);
             vocabMap.put(vocabularyTerm,term.getSingleResult() );
             vocabCacheMap.put(vocabulary, vocabMap);
