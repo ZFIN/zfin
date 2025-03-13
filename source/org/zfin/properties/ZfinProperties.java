@@ -207,6 +207,7 @@ public final class ZfinProperties {
                 freeMarkerConfiguration.setDirectoryForTemplateLoading(templateFile);
             } catch (IOException e) {
                 logger.error("Could not find template directory", e);
+                logger.error("Directory: " + ZfinPropertiesEnum.WEBROOT_DIRECTORY.value() +"/" + "WEB-INF" + "/" + "templates");
             }
         }
         return freeMarkerConfiguration;
