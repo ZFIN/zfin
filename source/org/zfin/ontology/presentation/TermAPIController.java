@@ -146,10 +146,6 @@ public class TermAPIController {
     public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
                                                             @RequestParam(value = "includeNormalPhenotype", required = false, defaultValue = "false") boolean isIncludeNormalPhenotype,
-                                                            @RequestParam(value = "filter.geneSymbol", required = false) String filterGeneSymbol,
-                                                            @RequestParam(value = "filter.fishName", required = false) String filterFishName,
-                                                            @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
-                                                            @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                             @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -158,19 +154,6 @@ public class TermAPIController {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
             return response;
-
-        if (StringUtils.isNotEmpty(filterGeneSymbol)) {
-            pagination.addToFilterMap("fishStat.geneSymbolSearch", filterGeneSymbol);
-        }
-        if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fishStat.fish.name", filterFishName);
-        }
-        if (StringUtils.isNotEmpty(filterPhenotype)) {
-            pagination.addToFilterMap("fishStat.phenotypeStatementSearch", filterPhenotype);
-        }
-        if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("fishStat.term.termName", filterTermName);
-        }
 
         PaginationResult<FishStatistics> phenotypeForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false, isIncludeNormalPhenotype);
         PaginationResult<FishStatistics> phenotypeForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true, isIncludeNormalPhenotype);
