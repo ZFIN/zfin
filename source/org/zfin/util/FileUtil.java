@@ -556,8 +556,12 @@ public final class FileUtil {
                 PosixFileAttributes attrs = Files.readAttributes(Paths.get(dirToTest.getAbsolutePath()), PosixFileAttributes.class);
                 UserPrincipal owner = attrs.owner();
                 GroupPrincipal group = attrs.group();
-                errorOutput.append("Owner: ").append(owner.getName()).append("\n");
-                errorOutput.append("Group: ").append(group.getName()).append("\n");
+
+                int uid = (int) Files.getAttribute(Paths.get(dirToTest.getAbsolutePath()), "unix:uid");
+                int gid = (int) Files.getAttribute(Paths.get(dirToTest.getAbsolutePath()), "unix:gid");
+
+                errorOutput.append("Owner: ").append(owner.getName()).append(" (" + uid + ")\n");
+                errorOutput.append("Group: ").append(group.getName()).append(" (" + gid + ")\n");
             } catch (IOException nestedException) {
                 errorOutput.append("Could not read file ownership information\n");
             }

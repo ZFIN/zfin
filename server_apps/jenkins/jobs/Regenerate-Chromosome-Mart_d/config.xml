@@ -19,11 +19,11 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenChromosomeMart.sh </command>
-    </hudson.tasks.Shell>7
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/warehouse/chromosomeMart/*.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/*.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
