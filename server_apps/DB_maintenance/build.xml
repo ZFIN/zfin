@@ -47,17 +47,6 @@
         <echo message="Set Timestamp on unload."/>
     </target>
 
-    <target name="checkUrls">
-	<exec executable="${validateData}/validatedata/CheckUrls.groovy">
-            <arg value="-propertyFilePath"/>
-            <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="-dataDirectory"/>
-            <arg value="${validateData}/validatedata"/>
-            <arg value="-jobName"/>
-            <arg value="Check-Urls_m"/>
-	</exec>
-    </target>
-
     <target name="load-gaf-paint" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
