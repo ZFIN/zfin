@@ -24,7 +24,7 @@ public class OrthologEvidence implements Serializable {
     private Ortholog ortholog;
 
     @ManyToOne
-    @JoinColumn(name = "oev_code", nullable = false)
+    @JoinColumn(name = "oev_evidence_code", nullable = false)
     private EvidenceCode evidenceCode;
 
     @ManyToOne
