@@ -1,7 +1,7 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 import org.hibernate.Session
-import org.hibernate.criterion.Order
+import org.hibernate.query.Order;
 import org.zfin.framework.HibernateSessionCreator
 import org.zfin.framework.HibernateUtil
 import org.zfin.profile.Company
@@ -9,6 +9,8 @@ import org.zfin.profile.Lab
 import org.zfin.profile.Person
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import java.util.concurrent.*
 
@@ -34,10 +36,8 @@ static void main(String... args) {
     tx = session.beginTransaction()
 
 
-    List<Lab> labList = new ArrayList<>()
-    labList.addAll((List<Lab>) session.createCriteria(Lab.class)
-            .addOrder(Order.asc("name"))
-            .list())
+        List<Lab> labList = new ArrayList<>(session.createQuery("from Lab order by name", Lab.class)
+            .list());
 
     println "Total labs: " + labList.size()
 
@@ -62,10 +62,8 @@ static void main(String... args) {
     })
 
     List<List<String>> brokenPersonUrls = new ArrayList<>()
-    List<Person> personList = new ArrayList<>()
-    personList.addAll((List<Person>) session.createCriteria(Person.class)
-            .addOrder(Order.asc("shortName"))
-            .list())
+    List<Person> personList = new ArrayList<>(session.createQuery("from Person order by shortName", Person.class)
+            .list());
 
     index = 0
     personList.any({ person ->
@@ -89,10 +87,8 @@ static void main(String... args) {
     })
 
     List<List<String>> brokenCompanyUrls = new ArrayList<>()
-    List<Company> companyList = new ArrayList<>()
-    companyList.addAll((List<Company>) session.createCriteria(Company.class)
-            .addOrder(Order.asc("name"))
-            .list())
+    List<Company> companyList = new ArrayList<>(session.createQuery("from Company order by name", Company.class)
+            .list());
 
     index = 0
     companyList.any({ company ->
@@ -144,7 +140,10 @@ static void main(String... args) {
     System.exit(0)
 }
 
-static int getResponseCode(String urlString) throws MalformedURLException, IOException {
+static int getResponseCode(String urlString) throws IOException {
+        if(!urlString.toLowerCase().startsWith("http")){
+            return -1;
+        }
     URL u = new URL(urlString)
     HttpURLConnection huc = (HttpURLConnection) u.openConnection()
     huc.setRequestMethod("HEAD")
@@ -155,7 +154,7 @@ static int getResponseCode(String urlString) throws MalformedURLException, IOExc
         responseCode = future.get(3, TimeUnit.SECONDS)
     } catch (TimeoutException ignored) {
         return -1
-    } catch (InterruptedException ignored) {
+    } catch (InterruptedException | MalformedURLException ignored) {
         return -1
     } catch (ExecutionException ignored) {
         return -1

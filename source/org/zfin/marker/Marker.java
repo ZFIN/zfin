@@ -41,9 +41,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = LogManager.getLogger(Marker.class);
 
-    /*private String zdbID;
-    private String name;*/
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String abbreviation;
     private String abbreviationOrder;
     private Set<ExpressionExperiment2> expressionExperiments;
@@ -75,14 +72,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     // cashed attribute
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
 
     public String getAbbreviationOrder() {
         return abbreviationOrder;
@@ -122,7 +111,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
         return aliases;
     }
-
+    @JsonView({View.ExpressedGeneAPI.class, View.API.class})
+    public String getAbbreviation() {
+        return abbreviation;
+    }
     public void setAliases(Set<MarkerAlias> aliases) {
         this.aliases = aliases;
     }
