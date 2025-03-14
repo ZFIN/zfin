@@ -348,10 +348,25 @@ INSERT INTO tmp_flybase
   INNER JOIN foreign_db ON fdb_db_pk_id = fdbcont_fdb_db_id
   WHERE fdb_db_name = 'FLYBASE';
 
+-- Create temp view of the following evidence code summary:
+-- CL	Conserved genome location (synteny)	ECO:0000177	genomic context evidence
+-- PT	Phylogenetic tree	ECO:0000080	phylogenetic evidence
+-- OT	Other	ECO:0000204	author statement
+-- AA	Amino acid sequence comparison	ECO:0000031	protein BLAST evidence used in manual assertion
+-- FC	Functional complementation	ECO:0000088	biological system reconstruction evidence
+-- NT	Nucleotide sequence comparison	ECO:0000032	nucleotide BLAST evidence used in manual assertion
+-- CE	Coincident expression	ECO:0000075	gene expression similarity evidence
+create temp view ortholog_evidence_summary as
+select distinct oev_evidence_code as code, oevcode_name as code_name, term_ont_id as eco_code, term_name as eco_name
+from ortholog_evidence
+         join term on oev_evidence_term_zdb_id = term.term_zdb_id
+         join ortholog_evidence_code on oev_evidence_code = oevcode_code;
+
 --! echo "'./downloadsStaging/human_orthos.txt'"
 create view human_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   tmp_omim.accession, tmp_gene.accession as accession2, tmp_hgnc.accession as accession3, oev_evidence_code, oev_pub_zdb_id
+                  ,oes.code_name, oes.eco_code, oes.eco_name
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
@@ -359,6 +374,7 @@ create view human_orthos as
     LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
     LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+    LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
     WHERE organism_common_name = 'Human'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
@@ -369,12 +385,14 @@ drop view human_orthos;
 create view fly_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   tmp_flybase.accession, tmp_gene.accession as accession2, oev_evidence_code, oev_pub_zdb_id
+                  ,oes.code_name, oes.eco_code, oes.eco_name
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
     INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
     LEFT OUTER JOIN tmp_flybase ON ortho_zdb_id = tmp_flybase.ortho_id
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
     WHERE organism_common_name = 'Fruit fly'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
@@ -385,12 +403,14 @@ drop view fly_orthos;
 create view mouse_orthos as
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                   'MGI:' || tmp_mgi.accession, tmp_gene.accession as accession2, oev_evidence_code, oev_pub_zdb_id
+                  ,oes.code_name, oes.eco_code, oes.eco_name
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
     INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
     LEFT OUTER JOIN tmp_mgi ON ortho_zdb_id = tmp_mgi.ortho_id
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+    LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
     WHERE organism_common_name = 'Mouse'
     AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
