@@ -7,6 +7,7 @@ import org.zfin.publication.Publication;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "ortholog_evidence")
@@ -14,20 +15,21 @@ import java.io.Serializable;
 @Setter
 public class OrthologEvidence implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "oev_id")
-    private Long id;
+    @EmbeddedId
+    private OrthologEvidenceId id;
 
     @ManyToOne
+    @MapsId("ortholog")
     @JoinColumn(name = "oev_ortho_zdb_id", nullable = false)
     private Ortholog ortholog;
 
     @ManyToOne
+    @MapsId("evidenceCode")
     @JoinColumn(name = "oev_evidence_code", nullable = false)
     private EvidenceCode evidenceCode;
 
     @ManyToOne
+    @MapsId("publication")
     @JoinColumn(name = "oev_pub_zdb_id", nullable = false)
     private Publication publication;
 
@@ -39,6 +41,7 @@ public class OrthologEvidence implements Serializable {
     }
 
     public OrthologEvidence(EvidenceCode evidenceCode, Ortholog ortholog, Publication publication) {
+        this.id = new OrthologEvidenceId(ortholog.getZdbID(), evidenceCode.getCode(), publication.getZdbID());
         this.evidenceCode = evidenceCode;
         this.ortholog = ortholog;
         this.publication = publication;
@@ -77,6 +80,39 @@ public class OrthologEvidence implements Serializable {
 
         public String getString() {
             return name();
+        }
+    }
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class OrthologEvidenceId implements Serializable {
+
+        private String ortholog; // Maps to oev_ortho_zdb_id
+        private String evidenceCode; // Maps to oev_evidence_code
+        private String publication; // Maps to oev_pub_zdb_id
+
+        public OrthologEvidenceId() {}
+
+        public OrthologEvidenceId(String ortholog, String evidenceCode, String publication) {
+            this.ortholog = ortholog;
+            this.evidenceCode = evidenceCode;
+            this.publication = publication;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            OrthologEvidenceId that = (OrthologEvidenceId) o;
+            return Objects.equals(ortholog, that.ortholog) &&
+                    Objects.equals(evidenceCode, that.evidenceCode) &&
+                    Objects.equals(publication, that.publication);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(ortholog, evidenceCode, publication);
         }
     }
 }
