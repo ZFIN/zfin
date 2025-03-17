@@ -781,12 +781,14 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                 <![CDATA[
                     SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                                     tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                                    ,oes.code_name, oes.eco_code, oes.eco_name
                         FROM ortholog
                         INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
                         INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
                         INNER JOIN organism on ortho_other_species_taxid = organism_taxid
                         LEFT OUTER JOIN tmp_flybase on ortho_zdb_id = tmp_flybase.ortho_id
                         LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                        LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
                         WHERE organism_common_name = 'Fruit fly'
                         ORDER BY mrkr_zdb_id;
                 ]]>
@@ -800,6 +802,9 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="7">Gene ID</Column>
             <Column id="8">Evidence</Column>
             <Column id="9">Pub ID</Column>
+            <Column id="10">ZFIN Abbreviation Name</Column>
+            <Column id="11">ECO ID</Column>
+            <Column id="12">ECO Term Name</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -817,6 +822,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                 <![CDATA[
                     SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                                     tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+                                    ,oes.code_name, oes.eco_code, oes.eco_name
                         FROM ortholog
                         INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
                         INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
@@ -824,6 +830,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                         LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
                         LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
                         LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+                        LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
                         WHERE organism_common_name = 'Human'
                         ORDER BY mrkr_zdb_id;
                 ]]>
@@ -838,6 +845,9 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="8">HGNC ID</Column>
             <Column id="9">Evidence</Column>
             <Column id="10">Pub ID</Column>
+            <Column id="11">ZFIN Abbreviation Name</Column>
+            <Column id="12">ECO ID</Column>
+            <Column id="13">ECO Term Name</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -855,12 +865,14 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                 <![CDATA[
                     SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
                                     'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                                    ,oes.code_name, oes.eco_code, oes.eco_name
                       FROM ortholog
                       INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
                       INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
                       INNER JOIN organism on ortho_other_species_taxid = organism_taxid
                       LEFT OUTER JOIN tmp_mgi on ortho_zdb_id = tmp_mgi.ortho_id
                       LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                      LEFT JOIN ortholog_evidence_summary oes ON oes.code = oev_evidence_code
                       WHERE organism_common_name = 'Mouse'
                       ORDER BY mrkr_zdb_id;
                 ]]>
@@ -874,6 +886,9 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="7">Gene ID</Column>
             <Column id="8">Evidence</Column>
             <Column id="9">Pub ID</Column>
+            <Column id="10">ZFIN Abbreviation Name</Column>
+            <Column id="11">ECO ID</Column>
+            <Column id="12">ECO Term Name</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
