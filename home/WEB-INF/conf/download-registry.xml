@@ -845,7 +845,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="8">HGNC ID</Column>
             <Column id="9">Evidence</Column>
             <Column id="10">Pub ID</Column>
-            <Column id="11">ZFIN Abbrev. Name</Column>
+            <Column id="11">ZFIN Abbreviation Name</Column>
             <Column id="12">ECO ID</Column>
             <Column id="13">ECO Term Name</Column>
         </Download>
@@ -886,7 +886,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="7">Gene ID</Column>
             <Column id="8">Evidence</Column>
             <Column id="9">Pub ID</Column>
-            <Column id="10">ZFIN Abbrev. Name</Column>
+            <Column id="10">ZFIN Abbreviation Name</Column>
             <Column id="11">ECO ID</Column>
             <Column id="12">ECO Term Name</Column>
         </Download>
