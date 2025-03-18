@@ -131,6 +131,7 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
         NOCTUA("Noctua"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
+        OMIM_PS("OMIM"),
         PANTHER("PANTHER"),
         PREVEGA("PREVEGA"),
         PROSITE("PROSITE"),
