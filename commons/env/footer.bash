@@ -7,4 +7,4 @@ export PATH=/opt/ab-blast:$PATH
 
 # Prompt
 export PROMPT_DIRTRIM=2
-export PS1="${MUTANT_NAME}:\w\$ "
+export PS1="${INSTANCE}:\w\$ "
