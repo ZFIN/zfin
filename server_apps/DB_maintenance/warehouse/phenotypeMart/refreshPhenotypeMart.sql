@@ -60,7 +60,7 @@ begin work;
 truncate phenotype_observation_generated;
 commit work;
 begin work;
-truncate phenotype_source_generated;
+truncate phenotype_source_generated cascade;
 commit work;
 begin work;
 
