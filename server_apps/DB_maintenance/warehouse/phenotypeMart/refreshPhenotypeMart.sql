@@ -57,10 +57,10 @@ begin work;
 truncate phenotype_generated_curated_mapping;
 commit work;
 begin work;
-truncate phenotype_source_generated;
+truncate phenotype_observation_generated;
 commit work;
 begin work;
-truncate phenotype_observation_generated;
+truncate phenotype_source_generated;
 commit work;
 begin work;
 
