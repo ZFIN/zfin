@@ -1017,10 +1017,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Set<DataNote> dataNotes = feature.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
+                HibernateUtil.createTransaction();
                 infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "updated note", dataNote.getNote(), noteDTO.getNoteData());
                 dataNote.setNote(noteDTO.getNoteData());
                 HibernateUtil.currentSession().update(dataNote);
-                HibernateUtil.currentSession().flush();
+                HibernateUtil.flushAndCommitCurrentSession();
                 return;
             }
         }
