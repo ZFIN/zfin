@@ -11,7 +11,7 @@ RUN apt update && apt install -y --no-install-recommends \
 #add the postgresql repo so we can have a postgresql client that matches the server
 ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
-    && apt update && apt install -y postgresql-client
+    && apt update && apt install -y postgresql-client-15 
 
 #RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 #RUN echo \
@@ -113,7 +113,7 @@ CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang.reflect=ALL-UNNAMED \
 	--add-opens java.desktop/java.awt=ALL-UNNAMED \
 	-Dinstance=docker \
-	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.479.2.war \
+	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.492.2.war \
 	 --httpPort=9499 \
 	--sessionTimeout=604800 \
 	--sessionEviction=604800 \
