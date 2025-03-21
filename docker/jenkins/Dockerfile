@@ -113,7 +113,7 @@ CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang.reflect=ALL-UNNAMED \
 	--add-opens java.desktop/java.awt=ALL-UNNAMED \
 	-Dinstance=docker \
-	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.479.2.war \
+	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.492.2.war \
 	 --httpPort=9499 \
 	--sessionTimeout=604800 \
 	--sessionEviction=604800 \
