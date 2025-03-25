@@ -13,14 +13,14 @@
 
 <c:choose>
     <c:when test="${link != null}">
-        <dt class="col-sm-${dtColSize} mb-sm-2"><a href="${link}">${label}</a></dt>
+        <dt class="col-sm-${dtColSize} mb-sm-2 attribute-list-item-dt"><a href="${link}">${label}</a></dt>
     </c:when>
     <c:otherwise>
-        <dt class="col-sm-${dtColSize} mb-sm-2">${label} <c:if test="${not empty statsLink}"><a class="popup-link info-popup-link" href="/action/publication/stats/view?section=${statsLink}"></a></c:if></dt>
+        <dt class="col-sm-${dtColSize} mb-sm-2 attribute-list-item-dt">${label} <c:if test="${not empty statsLink}"><a class="popup-link info-popup-link" href="/action/publication/stats/view?section=${statsLink}"></a></c:if></dt>
     </c:otherwise>
 </c:choose>
 
-<dd class="col-sm-${ddColSize}">
+<dd class="col-sm-${ddColSize} mb-sm-${ddColSize} attribute-list-item-dd">
     <c:if test="${empty copyable}">
         <jsp:doBody/>
     </c:if>
