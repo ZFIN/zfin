@@ -27,7 +27,7 @@
 
             <a class="no-icon" href="https://bsky.app/profile/zfinmod.bsky.social">
                 <div class="contact-info">
-                    <div class="contact-icon bluesky-icon"></div>
+                    <div class="contact-icon"><i class="fab fa-fw fa-bluesky"></i></div>
                     <div class="contact-details">@zfinmod.bsky.social</div>
                 </div>
             </a>
