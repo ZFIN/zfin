@@ -26,7 +26,7 @@
   </builders>
   <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/GO/*.gz</artifacts>
+            <artifacts>server_apps/data_transfer/GO/zfin.gpi2.gz</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
