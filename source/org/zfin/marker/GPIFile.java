@@ -4,14 +4,17 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
+import org.zfin.sequence.service.TranscriptService;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
-import org.apache.commons.io.FileUtils;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -35,54 +38,36 @@ public class GPIFile extends AbstractScriptWrapper {
     private void init() throws IOException {
         initAll();
         File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi.gz");
-        OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
-        String encoding = "UTF8";
-        OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
-        Writer bw = null;
-        try {
-             bw = new BufferedWriter(osw);
+
+        try (OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
+             OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+             BufferedWriter bw = new BufferedWriter(osw)) {
 
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
-
-            bw.write("!gpi-version:1.2");
-            bw.write('\n');
-
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-            Date date = new Date();
-            String dateOutput = sdf.format(date);
-
-            bw.write("!" + dateOutput + " $");
-            bw.write('\n');
-            bw.write('\n');
             System.out.println("Total genes to return: " + genes.size());
+
+            bw.write("!gpi-version:1.2\n");
+            bw.write("!" + new SimpleDateFormat("MM/dd/yyyy").format(new Date()) + " $\n\n");
+
             for (Marker gene : genes) {
-                StringBuilder geneRow = new StringBuilder();
-                geneRow.append("ZFIN");
-                geneRow.append('\t');
-                geneRow.append(gene.getZdbID());
-                geneRow.append('\t');
-                geneRow.append(gene.getAbbreviation());
-                geneRow.append('\t');
-                geneRow.append(gene.getName());
-                geneRow.append('\t');
+                List<String> csvRow = new ArrayList<>();
+                csvRow.add("ZFIN");
+                csvRow.add(gene.getZdbID());
+                csvRow.add(gene.getAbbreviation());
+                csvRow.add(gene.getName());
+
                 if (CollectionUtils.isNotEmpty(gene.getAliases())) {
-                    for (MarkerAlias geneAlias : gene.getAliases()) {
-                        geneRow.append(geneAlias.getAlias());
-                        geneRow.append("|");
-                    }
-                    Integer lastPipe = geneRow.length();
-                    geneRow.deleteCharAt(lastPipe - 1);
+                    csvRow.add(gene.getAliases().stream().map(MarkerAlias::getAlias).collect(Collectors.joining("|")));
                 } else {
-                    geneRow.append(" ");
+                    //Is there a reason we use a space instead of empty string?
+                    csvRow.add(" ");
                 }
-                geneRow.append('\t');
-                geneRow.append(gene.getSoTerm().getTermName().toLowerCase());
-                geneRow.append('\t');
-                geneRow.append("taxon:7955");
-                geneRow.append('\t');
+
+                csvRow.add(gene.getSoTerm().getTermName().toLowerCase());
+                csvRow.add("taxon:7955");
                 //purposeful tab here, to represent parent id that we don't have
-                geneRow.append("");
-                geneRow.append('\t');
+                csvRow.add("");
+                List<String> geneDbLinks = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
                     for (DBLink dblink : gene.getDbLinks()) {
                         String dbName = dblink.getReferenceDatabase().getForeignDB().getDbName().toString();
@@ -104,29 +89,19 @@ public class GPIFile extends AbstractScriptWrapper {
                         if (dbName.contains("miR")) {
                             dbName = "ZFIN";
                         }
-                        geneRow.append(dbName).append(":").append(dblink.getAccessionNumber());
-                        geneRow.append("|");
+                        geneDbLinks.add(dbName + ":" + dblink.getAccessionNumber());
                     }
-                    Integer lastPipe = geneRow.length();
-                    geneRow.deleteCharAt(lastPipe - 1);
-                } else {
-                    geneRow.append("");
                 }
+                List<DBLink> relatedRNACentralIdDbLinks = TranscriptService.getRelatedRNACentralIDs(gene);
+                geneDbLinks.addAll(relatedRNACentralIdDbLinks.stream().map(id -> "RNACentral:" + id.getAccessionNumber()).toList());
+
+                csvRow.add(String.join("|", geneDbLinks));
+
                 //purposeful tab here, to represent the field 'Properties' that we don't have
-                geneRow.append('\t');
-                geneRow.append("");
-                geneRow.append('\n');
-                bw.write(geneRow.toString());
+                csvRow.add("");
+                bw.write(String.join("\t", csvRow) + "\n");
             }
+            System.out.println("Wrote GPI file to " + gpiFile.getAbsolutePath() + " with " + genes.size() + " genes");
         }
-             finally{
-                if (bw != null) {
-                    bw.close();
-                }
-            }
-        }
-
-
     }
-
-
+}

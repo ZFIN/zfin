@@ -21,7 +21,11 @@ import org.zfin.sequence.*;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
+import static org.zfin.Species.Type.ZEBRAFISH;
+import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.sequence.ForeignDB.AvailableName.RNA_CENTRAL;
+import static org.zfin.sequence.ForeignDBDataType.DataType.OTHER;
+import static org.zfin.sequence.ForeignDBDataType.SuperType.SUMMARY_PAGE;
 
 public class TranscriptService {
 
@@ -50,6 +54,22 @@ public class TranscriptService {
         Set<RelatedMarker> relatedMarkers;
         relatedMarkers = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         return relatedMarkers;
+    }
+
+    public static List<DBLink> getRelatedRNACentralIDs(Marker gene) {
+        ReferenceDatabase rnaCentralReferenceDatabase = getSequenceRepository().getReferenceDatabase(RNA_CENTRAL, OTHER, SUMMARY_PAGE, ZEBRAFISH);
+        Set<RelatedMarker> transcripts = getRelatedTranscripts(gene);
+        List<DBLink> links = new ArrayList<>();
+
+        for(RelatedMarker relatedMarker : transcripts) {
+            Transcript transcript = getMarkerRepository().getTranscriptByZdbID(relatedMarker.getMarker().getZdbID());
+            List<TranscriptDBLink> dblinks = getSequenceRepository().getTranscriptDBLinksForTranscript(transcript, rnaCentralReferenceDatabase);
+            for (TranscriptDBLink link : dblinks ) {
+                links.add(link);
+            }
+        }
+        Collections.sort(links, Comparator.comparing(DBLink::getAccessionNumber));
+        return links;
     }
 
     public static Set<RelatedMarker> getTargetGenes(Transcript transcript) {

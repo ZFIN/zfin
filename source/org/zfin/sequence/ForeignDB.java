@@ -176,7 +176,7 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
         AGR_DISEASE("Alliance"),
         CZRC("CZRC"),
         PDB("PDB"),
-        RNA_CENTRAL("RNACentral"),
+        RNA_CENTRAL("RNA Central"),
         ZIRC_PROTOCOL("ZIRCProtocol");
 
 
