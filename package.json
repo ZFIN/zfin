@@ -24,7 +24,7 @@
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
-    "@fortawesome/fontawesome-free": "^6.2.1",
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "@geneontology/wc-ribbon-strips": "0.0.37",
     "@geneontology/wc-ribbon-table": "0.0.57",
     "@jbrowse/react-app": "^2.18.0",
