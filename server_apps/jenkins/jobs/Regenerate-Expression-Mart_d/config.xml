@@ -18,6 +18,9 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
+      <command>chmod +x $TARGETROOT/server_apps/DB_maintenance/warehouse/regenExpressionMart.sh </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenExpressionMart.sh </command>
     </hudson.tasks.Shell>
   </builders>
