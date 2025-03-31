@@ -876,6 +876,7 @@
 /server_apps/jenkins/plugins/naginator.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/nested-view.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/next-executions.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/oss-symbols-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/plugin-util-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/scm-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/script-security.jpi filter=lfs diff=lfs merge=lfs -text
