@@ -1,7 +1,7 @@
 #! /bin/tcsh -e
 
 #$1 db name
-set EXPRESSIONMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart
+set EXPRESSIONMARTDIR=$ROOT_PATH/server_apps/DB_maintenance/warehouse/expressionMart
 set FULL_SCRIPT_FILE=$EXPRESSIONMARTDIR/expressionMartAutomated.sql
 set CONVERT_EXPRESSIONMART_FILE=$EXPRESSIONMARTDIR/expressionMartRegen.sql
 set ALL_EXPRESSIONMART_SCRIPTS=$EXPRESSIONMARTDIR/allExpressionMart.sql
