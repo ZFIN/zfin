@@ -27,3 +27,13 @@ logpath = /var/log/httpd/zfin_access
 maxretry = 5
 bantime = 1d
 findtime = 1d
+
+[zfin-botsearch]
+enabled = true
+port = http,https
+filter = zfin-botsearch
+chain = DOCKER-USER
+logpath = /var/log/httpd/zfin_access
+maxretry = 5
+bantime = 1d
+findtime = 1d
