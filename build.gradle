@@ -391,7 +391,7 @@ task getLatestSolrUnload() {
     doLast {
         if (solrunloadspath != '/research/zunloads/solr/zfindb') {
             def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
-            def filepath = command.execute().text
+            def filepath = command.execute().text.trim()
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
@@ -416,7 +416,7 @@ task getLatestDatabaseUnload() {
     doLast {
         if (dbunloadspath != '/research/zunloads/databases/zfindb') {
             def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
-            def filepath = command.execute().text
+            def filepath = command.execute().text.trim()
             println "Getting " + filepath
             exec {
                 ignoreExitValue = true
