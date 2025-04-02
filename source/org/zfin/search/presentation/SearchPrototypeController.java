@@ -417,7 +417,7 @@ public class SearchPrototypeController {
                       @RequestParam(value = "fq", required = false) String[] filterQuery,
                       @RequestParam(value = "category", required = false) String category,
                       @RequestParam(value = "field", required = true) String field,
-                      @RequestParam(value = "term", required = true) String term,
+                      @RequestParam(value = "term", required = false) String term,
                       @RequestParam(value = "limit", required = false) Integer limit,
                       @RequestParam(value = "sort", required = false) String sort,
                       HttpServletRequest request) {
