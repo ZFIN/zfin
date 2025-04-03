@@ -111,7 +111,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
         return aliases;
     }
-    @JsonView({View.ExpressedGeneAPI.class, View.API.class})
+    @JsonView({View.ExpressedGeneAPI.class, View.API.class, View.ExpressionPublicationUI.class})
     public String getAbbreviation() {
         return abbreviation;
     }
