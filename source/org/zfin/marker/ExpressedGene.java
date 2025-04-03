@@ -2,13 +2,11 @@ package org.zfin.marker;
 
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.ExpressionStatement;
-import org.zfin.expression.Figure;
-import org.zfin.framework.presentation.FigureData;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Presentation object that holds
@@ -16,7 +14,7 @@ import java.util.List;
 public class ExpressedGene {
 
     private Marker gene;
-    private List<ExpressionStatement> expressionStatements;
+    private Set<ExpressionStatement> expressionStatements;
 
     public ExpressedGene(Marker gene) {
         this.gene = gene;
@@ -27,26 +25,22 @@ public class ExpressedGene {
     }
 
     public List<ExpressionStatement> getExpressionStatements() {
-        return expressionStatements;
-    }
-
-    public void setExpressionStatements(List<ExpressionStatement> expressionStatements) {
-        this.expressionStatements = expressionStatements;
+        return expressionStatements.stream().collect(Collectors.toList());
     }
 
     public void addExpressionStatement(ExpressionStatement expressionStatement) {
-        if (expressionStatements == null)
-            expressionStatements = new ArrayList<ExpressionStatement>();
-        if (!expressionStatements.contains(expressionStatement))
-            expressionStatements.add(expressionStatement);
+        if (expressionStatements == null) {
+            expressionStatements = new TreeSet<>();
+        }
+        expressionStatements.add(expressionStatement);
     }
 
     public void addExpressionStatements(List<ExpressionStatement> expressionStatementList) {
-        if (CollectionUtils.isEmpty(expressionStatementList))
+        if (CollectionUtils.isEmpty(expressionStatementList)) {
             return;
-        if (expressionStatements == null)
-            expressionStatements = new ArrayList<ExpressionStatement>();
-        for (ExpressionStatement expressionStatement : expressionStatementList)
+        }
+        for (ExpressionStatement expressionStatement : expressionStatementList) {
             addExpressionStatement(expressionStatement);
+        }
     }
 }

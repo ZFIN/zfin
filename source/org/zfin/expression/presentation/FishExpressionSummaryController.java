@@ -11,7 +11,6 @@ import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collections;
