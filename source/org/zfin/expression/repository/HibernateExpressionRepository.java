@@ -1365,7 +1365,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                            where fishox.fish = :fish 
                              and fishox = xpExp.fishExperiment 
                              and xpRslt.expressionExperiment = xpExp 
-                             and xpExp.gene != null
+                             and xpExp.gene IS NOT null
                      """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("fish", fish);
@@ -1475,7 +1475,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                   where fishox.fish = :fish
                     and fishox = xpExp.fishExperiment
                     and xpRslt.expressionExperiment = xpExp
-                    and xpExp.gene != null
+                    and xpExp.gene IS NOT null
                     and xpExp.gene.zdbID like :markerId
             """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
@@ -1493,7 +1493,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                            where fishox.fish = :fish 
                              and fishox = xpExp.fishExperiment 
                              and xpRslt.expressionExperiment = xpExp 
-                             and xpExp.antibody != null
+                             and xpExp.antibody IS NOT null
                      """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("fish", fish);
