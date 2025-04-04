@@ -8,7 +8,8 @@ public enum FeatureFlagEnum {
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
-    USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false);
+    USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false),
+    ENABLE_CAPTCHA("Enable Captcha", false);
 
 
     private final String name;

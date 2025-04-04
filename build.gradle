@@ -294,6 +294,10 @@ task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludes = ['Makefile', 'build.gradle']
 }
 
+task "server_apps;tokens;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/tokens'
+}
+
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/DB_maintenance'
     excludes = ['Makefile', 'build.gradle']
@@ -367,6 +371,7 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:Downloads:createSymlink',
              'server_apps;data_transfer;Ensembl;deployFiles',
              'server_apps;Reports;deployFiles',
+             'server_apps;tokens;deployFiles',
              'deployGitInfoFile',
              'cgi-bin;deployFiles',
              'server_apps;perl_lib;deployFiles',
