@@ -658,7 +658,7 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
                 }
                 Collections.sort(expressionStatements);
                 ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
-                expressedGene.setExpressionStatements(expressionStatements);
+                expressedGene.addExpressionStatements(expressionStatements);
                 expressedGenes.add(expressedGene);
             }
             figureExpressionSummary.setExpressedGenes(expressedGenes);

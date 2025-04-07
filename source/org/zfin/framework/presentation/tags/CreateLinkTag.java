@@ -99,7 +99,7 @@ public class CreateLinkTag extends BodyTagSupport {
     private String createLinkFromSingleDomainObject(Object o) throws JspException {
 
         if (o == null) {
-            logger.error("Tying to create a link with a null object:\n" + getBodyContent().getString());
+            logger.error("Trying to create a link with a null object:\n" + getBodyContent().getString());
             return "";
         }
 
