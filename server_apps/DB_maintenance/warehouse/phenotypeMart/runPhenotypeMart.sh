@@ -1,7 +1,7 @@
 #! /bin/tcsh -e
 
 #$1 db name
-set PHENOTYPEMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart
+set PHENOTYPEMARTDIR=$ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart
 set FULL_SCRIPT_FILE=$PHENOTYPEMARTDIR/phenotypeMartAutomated.sql
 set CONVERT_PHENOTYPEMART_FILE=$PHENOTYPEMARTDIR/phenotypeMartRegen.sql
 set ALL_PHENOTYPEMART_SCRIPTS=$PHENOTYPEMARTDIR/allPhenotypeMart.sql

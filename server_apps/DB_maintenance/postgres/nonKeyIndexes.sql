@@ -276,8 +276,6 @@ create index lms_lnkg_zdb_id_index on linkage_membership_search(lms_lnkg_zdb_id)
 create index lms_lnkgmem_id_index on linkage_membership_search(lms_lnkgmem_id);
 create index lms_member_1_zdb_id_fk_odc on linkage_membership_search(lms_member_1_zdb_id);
 create index lms_member_2_zdb_id_fk_odc on linkage_membership_search(lms_member_2_zdb_id);
-create index lmsb_lnkg_zdb_id_index on linkage_membership_search_bkup(lms_lnkg_zdb_id);
-create index lmsb_lnkgmem_id_index on linkage_membership_search_bkup(lms_lnkgmem_id);
 create index lmst_lnkg_zdb_id_index on linkage_membership_search_temp(lms_lnkg_zdb_id);
 create index lmst_lnkgmem_id_index on linkage_membership_search_temp(lms_lnkgmem_id);
 create index lnkg_or_lg_index on linkage_old(lnkg_or_lg);
@@ -454,8 +452,6 @@ create index sfclb_chromosome_index on sequence_feature_chromosome_location_bkup
 create index sfclb_data_index on sequence_feature_chromosome_location_bkup(sfcl_data_zdb_id);
 create index sfclg_chromosome_index on sequence_feature_chromosome_location_generated(sfclg_chromosome);
 create index sfclg_mrkr_index on sequence_feature_chromosome_location_generated(sfclg_data_zdb_id);
-create index sfclgb_chromosome_index on sequence_feature_chromosome_location_generated_bkup(sfclg_chromosome);
-create index sfclgb_data_index on sequence_feature_chromosome_location_generated_bkup(sfclg_data_zdb_id);
 create index sfclgt_chromosome_index on sequence_feature_chromosome_location_generated_temp(sfclg_chromosome);
 create index sfclgt_data_index on sequence_feature_chromosome_location_generated_temp(sfclg_data_zdb_id);
 create index chmst_chromosome_index on sequence_feature_chromosome_location_temp(sfcl_chromosome);
