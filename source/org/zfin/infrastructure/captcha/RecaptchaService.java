@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
@@ -18,16 +17,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.zfin.profile.service.ProfileService.isLoggedIn;
 
 @Log4j2
 public class RecaptchaService {
@@ -82,6 +80,9 @@ public class RecaptchaService {
      * @return
      */
     public static Optional<String> getRedirectUrlIfNeeded(HttpServletRequest request) {
+        if (isLoggedIn()) {
+            return Optional.empty();
+        }
         if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
             return Optional.empty();
         }
