@@ -54,11 +54,6 @@ public class RecaptchaService {
      * @param response
      */
     public static void setSuccessfulCaptchaToken(HttpServletResponse response) {
-//        //USING SESSION (Needs HttpServletRequest instead of HttpServletResponse)
-//        HttpSession session = request.getSession();
-//        session.setAttribute("CAPTCHA_VALIDATED", true);
-
-        //USING COOKIE
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
         captchaCookie.setMaxAge(RECAPTCHA_COOKIE_MAX_AGE);
         captchaCookie.setPath("/");
@@ -71,11 +66,6 @@ public class RecaptchaService {
      * @param response
      */
     public static void unsetSuccessfulCaptchaToken(HttpServletResponse response) {
-//        //USING SESSION
-//        HttpSession session = request.getSession();
-//        session.setAttribute("CAPTCHA_VALIDATED", false);
-
-        //USING COOKIE
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
         captchaCookie.setMaxAge(0);
         captchaCookie.setPath("/");
@@ -89,15 +79,6 @@ public class RecaptchaService {
      * @return true if verified human
      */
     private static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
-//        //USING SESSION
-//        HttpSession session = request.getSession();
-//        Boolean sessionValue = (Boolean) session.getAttribute("CAPTCHA_VALIDATED");
-//        if (sessionValue == null) {
-//            return false;
-//        }
-//        return sessionValue;
-
-        //USING COOKIE
         Cookie cookie = WebUtils.getCookie(request, RECAPTCHA_COOKIE_NAME);
         if (cookie != null && RECAPTCHA_COOKIE_VALUE.equals(cookie.getValue())) {
             return true;
