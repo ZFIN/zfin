@@ -27,8 +27,6 @@ import java.util.*;
  */
 public interface ExpressionRepository {
 
-    int getExpressionPubCountForGene(Marker marker);
-
     int getExpressionPubCountForEfg(Marker marker);
 
     int getExpressionPubCountForClone(Clone marker);
@@ -45,8 +43,6 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForGeneInSitu(Marker marker);
     
     int getWtExpressionFigureCountForGene(Marker marker);
-    int getExpressionFigureCountForGenotype(Genotype genotype);
-
     int getExpressionFigureCountForFish(Fish fish);
 
     FigureLink getExpressionSingleFigure(Marker marker);
@@ -359,8 +355,6 @@ public interface ExpressionRepository {
     List<ExpressionResult2> getExpressionOnObsoletedTerms();
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
     int getImagesForEfg(PublicationExpressionBean publicationExpressionBean);
-
-    List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID);
 
     /**
      * Retrieve all terms that are used in an expression statement.

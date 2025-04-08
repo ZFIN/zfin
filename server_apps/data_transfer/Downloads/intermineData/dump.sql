@@ -170,10 +170,6 @@ select source_id, target_id from int_person_pub;
 \copy (select * from personAssociations) to './intermineData/people/1person_associations.txt' with delimiter as '|' null as '';
 drop view personAssociations;
 
---\copy (select * from xpat) to './intermineData/zfin_expression/1xpat.txt' with delimiter as '|' null as '';
--- select * from expression_experiment
---   where exists (select 'x' from expression_result where xpatres_xpatex_zdb_id =xpatex_zdb_id) ;
-
 create view xpatres as
  select res.xpatres_pk_id, res.xpatres_expression_found, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id as id2,xpatex.xpatex_source_zdb_id,xpatex.xpatex_assay_name,xpatex.xpatex_probe_feature_zdb_id, xpatex.xpatex_gene_zdb_id, xpatex.xpatex_dblink_zdb_id, xpatex.xpatex_genox_zdb_id, xpatex.xpatex_atb_zdb_id, xpatfig.efs_fig_Zdb_id, termt.term_ont_id as id3, fish_zdb_id, genox_exp_zdb_id
   from expression_experiment2 xpatex
