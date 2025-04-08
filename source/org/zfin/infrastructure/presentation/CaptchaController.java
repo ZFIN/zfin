@@ -24,7 +24,8 @@ public class CaptchaController {
     public String challenge(
             Model model,
             @PathVariable String version,
-            @RequestParam(name="redirect") String redirect) throws IOException {
+            @RequestParam(name="redirect", required = false) String redirect
+    ) throws IOException {
         model.addAttribute("siteKey", RecaptchaKeys.getSiteKey(version));
         model.addAttribute("redirect", redirect);
         return "infrastructure/captcha" + version + "-challenge";

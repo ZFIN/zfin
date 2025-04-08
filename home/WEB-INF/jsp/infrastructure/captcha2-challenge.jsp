@@ -3,7 +3,7 @@
 <c:set var="recaptchaSiteKey" value="${siteKey}" />
 <c:set var="recaptchaRedirect" value="${redirect}" />
 
-<z:emptyPage>
+<z:emptyPage omitZfinCommonJS="true">
 
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -26,11 +26,7 @@
 
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
-    <script src="${zfn:getAssetPath("vendor-common.js")}"></script>
-    <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
     <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
     <script>
         // Ensure the body is visible after the CSS has been loaded
