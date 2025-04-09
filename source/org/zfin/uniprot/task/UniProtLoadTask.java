@@ -136,7 +136,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             log.info("Loading changes into database.");
             loadChanges(actions);
         } else {
-            log.info("Dry run, not loading changes into database.");
+            log.info("Dry run, not loading changes into database. (set UNIPROT_COMMIT_CHANGES environment variable to 'true' to load changes).");
         }
     }
 
