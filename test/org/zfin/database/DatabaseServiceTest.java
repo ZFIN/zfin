@@ -156,13 +156,11 @@ public class DatabaseServiceTest {
         foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT);
         statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, Table.FISH);
         assertEquals("SELECT fish_1.* FROM fish as fish_1, fish_experiment as fish_experiment_1, " +
-                "expression_experiment2 as expression_experiment_1, expression_result2 as expression_result_1, expression_figure_stage " +
+                "expression_experiment as expression_experiment_1, expression_result as expression_result_1 " +
                 "WHERE fish_1.fish_zdb_id = 'ZDB-FISH-091027-2' " +
                 "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
                 "AND fish_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
-                "AND expression_experiment_1.xpatex_zdb_id = efs_xpatex_zdb_id " +
-                "AND efs_pk_id = xpatres_efs_id    ",
-            statement.getQuery());
+                "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id", statement.getQuery());
 
     }
 
@@ -179,13 +177,11 @@ public class DatabaseServiceTest {
         List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT);
         DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
         assertEquals("SELECT COUNT(*) FROM fish as fish_1, fish_experiment as fish_experiment_1, " +
-                "expression_experiment2 as expression_experiment_1, expression_result2 as expression_result_1, expression_figure_stage " +
+                "expression_experiment as expression_experiment_1, expression_result as expression_result_1 " +
                 "WHERE fish_1.fish_zdb_id = 'ZDB-FISH-030619-2' " +
                 "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
                 "AND fish_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
-                "AND expression_experiment_1.xpatex_zdb_id = efs_xpatex_zdb_id " +
-                     "AND efs_pk_id = xpatres_efs_id ",
-            statement.getQuery());
+                "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id", statement.getQuery());
 
     }
 
