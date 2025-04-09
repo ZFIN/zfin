@@ -23,8 +23,5 @@ delete from db_link where dblink_acc_num = 'ENSDART00000172822' and dblink_linke
 delete from db_link where dblink_acc_num = 'OTTDART00000030201' and dblink_linked_recid = 'ZDB-TSCRIPT-090929-12457';
 
 insert into db_link (dblink_zdb_id, dblink_acc_num, dblink_fdbcont_zdb_id, dblink_linked_recid, dblink_info, dblink_length)
-values (get_id_and_insert_active_data('DBLINK'), 'ENSDART00000061638', 'ZDB-FDBCONT-240304-1', 'ZDB-TSCRIPT-241211-1163', 'Ensembl Load from '|| CURRENT_DATE, 651);
-
-insert into db_link (dblink_zdb_id, dblink_acc_num, dblink_fdbcont_zdb_id, dblink_linked_recid, dblink_info, dblink_length)
 values (get_id_and_insert_active_data('DBLINK'), 'ENSDART00000162083', 'ZDB-FDBCONT-240304-1', 'ZDB-TSCRIPT-090929-12457', 'Ensembl Load from '|| CURRENT_DATE, 3621);
 
