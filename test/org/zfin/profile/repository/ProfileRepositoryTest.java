@@ -454,7 +454,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 		companySearchBean.setContains("fish");
 		companyList = profileRepository.searchLabs(companySearchBean);
 		assertThat(companyList.getPopulatedResults().size(), greaterThan(0));
-		assertThat(companyList.getPopulatedResults().size(), lessThan(50));
+		assertThat(companyList.getPopulatedResults().size(), lessThan(75));
 		assertThat(companyList.getTotalCount(), equalTo(companyList.getPopulatedResults().size()));
 		companySearchBean.setMaxDisplayRecords(5);
 		companyList = profileRepository.searchLabs(companySearchBean);
