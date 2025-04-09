@@ -1,11 +1,9 @@
 package org.zfin.sequence;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.solr.client.solrj.io.stream.JSONTupleStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +12,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
+import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.SequenceService;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
@@ -77,7 +78,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
         String markerZdbID = "ZDB-GENE-041014-357";
         String bacZdbID = "ZDB-BAC-041007-134";
 
-        List<Triple<String,String,String>> accessions = new ArrayList<>();
+        List<Triple<String, String, String>> accessions = new ArrayList<>();
         accessions.add(new ImmutableTriple<>(markerZdbID, "CAI11751", "GenPept"));
         accessions.add(new ImmutableTriple<>(markerZdbID, "GQ202546", "GenBank"));
         accessions.add(new ImmutableTriple<>(markerZdbID, "GDQH01030811", "GenBank"));
@@ -95,7 +96,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
 
         List<MarkerDBLink> links = new ArrayList<>();
         List<String> accessionsNotFound = new ArrayList<>();
-        for(Triple<String,String,String> acc : accessions) {
+        for (Triple<String, String, String> acc : accessions) {
             MarkerDBLink mdl = (MarkerDBLink) getSequenceRepository().getDBLink(acc.getLeft(), acc.getMiddle(), acc.getRight());
             links.add(mdl);
             if (mdl == null) {
@@ -103,11 +104,53 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
             }
         }
 
-        assertEquals( "Accessions not found: " + accessionsNotFound.toString(), 0, accessionsNotFound.size());
+        assertEquals("Accessions not found: " + accessionsNotFound.toString(), 0, accessionsNotFound.size());
         assertEquals(links.size(), 14);
 
         List<MarkerDBLink> aggregatedLinks = MarkerService.aggregateDBLinksByPub(links);
 
         assertEquals(aggregatedLinks.size(), 12);
+    }
+
+    @Test
+    public void testAllGenes() {
+
+        List<String> allGeneIds = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("genes_without_ids.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                allGeneIds.add(values[0]);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            FileWriter writer = new FileWriter("sequenceIDs.txt", false);
+
+
+//            List<String> ids = List.of("ZDB-GENE-141216-102");
+            allGeneIds.forEach(id -> {
+                try {
+                    JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(id, new Pagination(), true, false);
+                    response.getResults().forEach(markerDBLink -> {
+                        try {
+                            String line = id + "," + markerDBLink.getAccessionNumber();
+                            writer.write(line + "\n");
+                        } catch (Exception e) {
+                            logger.error("Error writing to file", e);
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("Error writing to file", e);
+                }
+            });
+            writer.close();
+            List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber("ENSDARG00000002898");
+        } catch (Exception e) {
+            logger.error("Error writing to file", e);
+        }
+        //assertNotNull(accessions);
     }
 }
