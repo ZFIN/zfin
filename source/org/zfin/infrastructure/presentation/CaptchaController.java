@@ -1,15 +1,16 @@
 package org.zfin.infrastructure.presentation;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.infrastructure.captcha.RecaptchaKeys;
 import org.zfin.infrastructure.captcha.RecaptchaService;
 
@@ -20,34 +21,37 @@ import java.io.IOException;
 @RequestMapping("/captcha")
 public class CaptchaController {
 
-    @RequestMapping(value = "/{version}/challenge", method = RequestMethod.GET)
+    @GetMapping("/challenge")
     public String challenge(
             Model model,
-            @PathVariable String version,
             @RequestParam(name="redirect", required = false) String redirect
     ) throws IOException {
-        model.addAttribute("siteKey", RecaptchaKeys.getSiteKey(version));
+        model.addAttribute("siteKey", RecaptchaKeys.getSiteKey());
         model.addAttribute("redirect", redirect);
-        return "infrastructure/captcha" + version + "-challenge";
+
+        //if we somehow got to this challenge page without captcha's enabled, just redirect back
+        if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
+            if (StringUtils.isEmpty(redirect)) {
+                return "redirect:/";
+            }
+            return "redirect:" + redirect;
+        }
+        return "infrastructure/captcha-" + RecaptchaService.getCurrentVersion() + "-challenge";
     }
 
-    @RequestMapping(value = "/{version}/challenge", method = RequestMethod.POST)
+    @PostMapping("/challenge")
     public String challengeResponse(
-            @PathVariable String version,
-            HttpServletRequest request,
-            HttpServletResponse response
+            @RequestParam(name = "g-recaptcha-response") String challengeResponse,
+            HttpServletRequest request
     ) throws IOException {
-        String challengeResponse = request.getParameter("g-recaptcha-response");
         String redirect = request.getParameter("redirect");
-        boolean success = RecaptchaService.verifyRecaptcha(version, challengeResponse);
-        if (success) {
-            RecaptchaService.setSuccessfulCaptchaToken(response);
+        if (RecaptchaService.verifyRecaptcha(challengeResponse)) {
             if (StringUtils.isEmpty(redirect)) {
                 return "infrastructure/captcha-response";
-            } else {
-                return "redirect:" + redirect;
             }
+            return "redirect:" + redirect;
         }
         return "infrastructure/captcha-failed";
     }
+
 }

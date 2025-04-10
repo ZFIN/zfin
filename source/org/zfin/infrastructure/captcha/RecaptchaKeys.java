@@ -1,6 +1,8 @@
 package org.zfin.infrastructure.captcha;
 
 import org.apache.commons.lang3.StringUtils;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
@@ -9,48 +11,26 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.zfin.infrastructure.captcha.RecaptchaService.getCurrentVersion;
+
 public class RecaptchaKeys {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public enum Version {
-        V2("2"),
-        V3("3");
-
-        private final String number;
-
-        Version(String versionNumber) {
-            this.number = versionNumber;
-        }
-
-        public static Version fromString(String versionString) {
-            for (Version v : values()) {
-                if (v.number.equals(versionString)) {
-                    return v;
-                }
-            }
-            throw new IllegalArgumentException("Unknown version: " + versionString);
-        }
-
+        V2,
+        V3;
     }
 
-    public static String getSiteKey(String version) throws IOException {
-        return getSiteKey(Version.fromString(version));
+    public static String getSiteKey() throws IOException {
+        return getValue("recaptchaSiteKey", getCurrentVersion());
     }
 
-    public static String getSiteKey(Version version) throws IOException {
-        return getValue("recaptchaSiteKey", version);
+    public static String getSecretKey() throws IOException {
+        return getValue("recaptchaSecretKey", getCurrentVersion());
     }
 
-    public static String getSecretKey(String version) throws IOException {
-        return getSecretKey(Version.fromString(version));
-    }
-
-    public static String getSecretKey(Version version) throws IOException {
-        return getValue("recaptchaSecretKey", version);
-    }
-
-    private static String getValue(String filenamePrefix, Version keyType) throws IOException {
-        String filename = filenamePrefix + "V" + keyType.number + ".txt";
+    private static String getValue(String filenamePrefix, Version recaptchaVersion) throws IOException {
+        String filename = filenamePrefix + recaptchaVersion.name() + ".txt";
         return cache.computeIfAbsent(filename, k -> {
             try {
                 return getTokenFileValue(k);

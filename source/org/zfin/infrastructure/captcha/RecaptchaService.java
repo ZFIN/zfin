@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.zfin.infrastructure.service.RequestService.getCurrentResponse;
 import static org.zfin.profile.service.ProfileService.isLoggedIn;
 
 @Log4j2
@@ -34,7 +36,6 @@ public class RecaptchaService {
 
     private static final String BASE_URL = "https://www.google.com/recaptcha/api/siteverify";
     private static final double CONFIDENCE_THRESHOLD = 0.5;
-    private static final String RECAPTCHA_VERSION = "3";
 
     //TODO: should we compute this algorithmically? If we see bots setting this without going through captcha,
     //      we should use some cryptography to set it in a way that prevents tampering.
@@ -43,15 +44,14 @@ public class RecaptchaService {
     private static final int RECAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week
 
     //These are the json keys we use to communicate with recaptcha API
-    private static final String RECAPTCHA_ARG_SECRET = "secret";
-    private static final String RECAPTCHA_ARG_RESPONSE = "response";
-    private static final String RECAPTCHA_ARG_REMOTEIP = "remoteip";
-    private static final String RECAPTCHA_RESPONSE_SUCCESS = "success";
+    private enum RecaptchaApiRequestKeys {secret, response, remoteip;}
+
+    private enum RecaptchaApiResponseKeys {success, score;}
 
     /**
      * Set the current session as having been successfully verified using captcha
      *
-     * @param response
+     * @param response Server response object to add cookie to
      */
     public static void setSuccessfulCaptchaToken(HttpServletResponse response) {
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
@@ -63,7 +63,7 @@ public class RecaptchaService {
 
     /**
      * Remove the session variable so the current user is not considered verified by captcha
-     * @param response
+     * @param response Server response object to remove cookie from
      */
     public static void unsetSuccessfulCaptchaToken(HttpServletResponse response) {
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
@@ -75,7 +75,7 @@ public class RecaptchaService {
 
     /**
      * Check if the current session is verified by captcha
-     * @param request
+     * @param request Check if this request object has the needed cookie
      * @return true if verified human
      */
     private static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
@@ -90,8 +90,8 @@ public class RecaptchaService {
      * If captcha rules require a redirection to run through the captcha validation process,
      * this method will return the URL to redirect to. If it returns empty, then no redirect is needed.
      *
-     * @param request
-     * @return
+     * @param request The current request object so we can determine the redirect page to come back to
+     * @return If empty, no redirect is needed. Otherwise, use the value as the destination for a 302 redirect
      */
     public static Optional<String> getRedirectUrlIfNeeded(HttpServletRequest request) {
         if (isLoggedIn()) {
@@ -110,24 +110,23 @@ public class RecaptchaService {
         }
 
         // Add the current URL as a query parameter to the CAPTCHA challenge redirect
-        return Optional.of("/action/captcha/" + RECAPTCHA_VERSION + "/challenge?redirect=" + URLEncoder.encode(currentUrl, StandardCharsets.UTF_8));
+        return Optional.of("/action/captcha/challenge?redirect=" + URLEncoder.encode(currentUrl, StandardCharsets.UTF_8));
     }
 
     /**
      * Using the response from the client, call the google api and ask if the response
      * is from a verified human.
      *
-     * @param version The specific version of google recaptcha api
      * @param challengeResponse The response from the client
      * @return true if a verified human
      * @throws IOException if cannot read captcha keys
      */
-    public static boolean verifyRecaptcha(RecaptchaKeys.Version version, String challengeResponse) throws IOException {
-        return verifyRecaptchaWithGoogle(challengeResponse, null, RecaptchaKeys.getSecretKey(version));
-    }
-
-    public static boolean verifyRecaptcha(String version, String challengeResponse) throws IOException {
-        return verifyRecaptcha(RecaptchaKeys.Version.fromString(version), challengeResponse);
+    public static boolean verifyRecaptcha(String challengeResponse) throws IOException {
+        if (verifyRecaptchaWithGoogle(challengeResponse, null)) {
+            RecaptchaService.setSuccessfulCaptchaToken(getCurrentResponse());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -135,18 +134,22 @@ public class RecaptchaService {
      *
      * @param userResponse The user response token from the frontend.
      * @param remoteIp     Optional: The IP address of the user (can be null).
-     * @param secretKey    API key from google.
      * @return true if the verification is successful, false otherwise.
      */
-    private static boolean verifyRecaptchaWithGoogle(String userResponse, String remoteIp, String secretKey) {
+    private static boolean verifyRecaptchaWithGoogle(String userResponse, String remoteIp) throws IOException {
+        if (StringUtils.isEmpty(userResponse)) {
+            return false;
+        }
+        String secretKey = RecaptchaKeys.getSecretKey();
         // Prepare the POST parameters
         List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair(RECAPTCHA_ARG_SECRET, secretKey));
-        nvps.add(new BasicNameValuePair(RECAPTCHA_ARG_RESPONSE, userResponse));
+        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.secret.name(), secretKey));
+        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.response.name(), userResponse));
         if (remoteIp != null && !remoteIp.isEmpty()) {
-            nvps.add(new BasicNameValuePair(RECAPTCHA_ARG_REMOTEIP, remoteIp));
+            nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.remoteip.name(), remoteIp));
         }
 
+        log.info("Verifying recaptcha with google challenge");
         try (CloseableHttpClient client = HttpClientBuilder.create()
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build())
                 .build()) {
@@ -158,13 +161,33 @@ public class RecaptchaService {
 
             String responseString = EntityUtils.toString(response.getEntity());
             JsonNode jsonResponse = new ObjectMapper().readTree(responseString);
-            if (jsonResponse.has("score")) {
-                return jsonResponse.get("score").asDouble() >= CONFIDENCE_THRESHOLD;
+            boolean isHuman = true;
+            if (jsonResponse.has(RecaptchaApiResponseKeys.score.name())) {
+                double score = jsonResponse.get(RecaptchaApiResponseKeys.score.name()).asDouble();
+                log.info("Score: " + score);
+                if (score < CONFIDENCE_THRESHOLD) {
+                    isHuman = false;
+                }
             }
-            return jsonResponse.get(RECAPTCHA_RESPONSE_SUCCESS).asBoolean();
+            if (isHuman && jsonResponse.get(RecaptchaApiResponseKeys.success.name()).asBoolean()) {
+                log.info("Success Verifying recaptcha");
+            } else {
+                log.info("Failure Verifying recaptcha");
+                log.info("UserResponse: " + userResponse);
+                log.info("Details: " + responseString);
+                isHuman = false;
+            }
+            return isHuman;
         } catch (Exception e) {
+            log.info("Failure Verifying recaptcha due to exception: ", e);
             return false;
         }
     }
 
+    public static RecaptchaKeys.Version getCurrentVersion() {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.RECAPTCHA_V2)) {
+            return RecaptchaKeys.Version.V2;
+        }
+        return RecaptchaKeys.Version.V3;
+    }
 }
