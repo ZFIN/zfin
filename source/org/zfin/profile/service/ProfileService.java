@@ -96,6 +96,14 @@ public class ProfileService {
     }
 
     /**
+     * If any user is logged in, return true
+     * @return true if user is logged in, otherwise false
+     */
+    public static boolean isLoggedIn() {
+        return getCurrentSecurityUserNoGuest() != null;
+    }
+
+    /**
      * This returns a Person object of the current security person.
      * If no authorized Person is found return guest user.
      * The guest user is created by the authenticationNullHandler.
