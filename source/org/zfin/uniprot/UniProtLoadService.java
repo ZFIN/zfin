@@ -82,22 +82,25 @@ public class UniProtLoadService {
     }
 
     private static void bulkLoadActionForNewDbLinks(List<UniProtLoadAction> actions) {
+        ReferenceDatabase refDB = getUniProtReferenceDatabase();
+        String linkInfo = getUniProtLoadLinkInfo();
         List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).toList());
         Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker));
         List<MarkerDBLink> dblinks = new ArrayList<>();
         for(UniProtLoadAction action : actions) {
-            log.info("Adding dblink: " + action.getAccession() + " " + action.getGeneZdbID());
+            log.info("Adding dblink to load list: " + action.getAccession() + " " + action.getGeneZdbID());
             Marker marker = markerMap.get(action.getGeneZdbID());
             MarkerDBLink newLink = new MarkerDBLink();
             newLink.setAccessionNumber(action.getAccession());
             newLink.setMarker(marker);
-            newLink.setReferenceDatabase(getUniProtReferenceDatabase());
+            newLink.setReferenceDatabase(refDB);
             newLink.setLength(action.getLength());
-            newLink.setLinkInfo(getUniProtLoadLinkInfo());
+            newLink.setLinkInfo(linkInfo);
             dblinks.add(newLink);
         }
         addHistoryUpdatesForNewDbLinks(dblinks);
         Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
+        log.info("Loading dblink list to database");
         getSequenceRepository().addDBLinks(dblinks, publication, 50);
     }
 
