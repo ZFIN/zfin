@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
@@ -51,7 +52,7 @@ public class RecaptchaService {
     /**
      * Set the current session as having been successfully verified using captcha
      *
-     * @param response
+     * @param response Server response object to add cookie to
      */
     public static void setSuccessfulCaptchaToken(HttpServletResponse response) {
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
@@ -63,7 +64,7 @@ public class RecaptchaService {
 
     /**
      * Remove the session variable so the current user is not considered verified by captcha
-     * @param response
+     * @param response Server response object to remove cookie from
      */
     public static void unsetSuccessfulCaptchaToken(HttpServletResponse response) {
         Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
@@ -75,7 +76,7 @@ public class RecaptchaService {
 
     /**
      * Check if the current session is verified by captcha
-     * @param request
+     * @param request Check if this request object has the needed cookie
      * @return true if verified human
      */
     private static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
@@ -90,8 +91,8 @@ public class RecaptchaService {
      * If captcha rules require a redirection to run through the captcha validation process,
      * this method will return the URL to redirect to. If it returns empty, then no redirect is needed.
      *
-     * @param request
-     * @return
+     * @param request The current request object so we can determine the redirect page to come back to
+     * @return If empty, no redirect is needed. Otherwise, use the value as the destination for a 302 redirect
      */
     public static Optional<String> getRedirectUrlIfNeeded(HttpServletRequest request) {
         if (isLoggedIn()) {
@@ -139,6 +140,9 @@ public class RecaptchaService {
      * @return true if the verification is successful, false otherwise.
      */
     private static boolean verifyRecaptchaWithGoogle(String userResponse, String remoteIp, String secretKey) {
+        if (StringUtils.isEmpty(userResponse)) {
+            return false;
+        }
         // Prepare the POST parameters
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair(RECAPTCHA_ARG_SECRET, secretKey));
