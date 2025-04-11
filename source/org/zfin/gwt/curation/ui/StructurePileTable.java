@@ -128,7 +128,7 @@ class StructurePileTable extends ZfinFlexTable {
             }
             add.addClickHandler(new AddActionButtonListener(rowIndex, structure));
             Label stage = null;
-            if (structure.getStageRange() == null || structure.getEnd() == null) {
+            if (structure.getStart() == null || structure.getEnd() == null) {
                 stage = new Label("No stage range provided for this structure");
             } else {
                 stage = new Label(structure.getStageRange());
