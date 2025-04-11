@@ -553,7 +553,7 @@ public class ExpressionService {
     }
 
     /**
-     * Split an existing expression_result record into multiple ones with a given term and start-end stages.
+     * Split an existing expression_result2 record into multiple ones with a given term and start-end stages.
      *
      * @param statement TermStageSplitStatement
      */
@@ -563,7 +563,7 @@ public class ExpressionService {
         if (CollectionUtils.isEmpty(expressionResultList)) {
             return null;
         }
-        logger.info("Found " + expressionResultList.size() + " expression_result records");
+        logger.info("Found " + expressionResultList.size() + " expression_result2 records");
         ExpressionResultSplitStatement splitStatement = new ExpressionResultSplitStatement();
         for (ExpressionResult2 result : expressionResultList) {
             // create new records for the remaining split parts

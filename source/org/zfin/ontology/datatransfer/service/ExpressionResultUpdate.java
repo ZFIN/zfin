@@ -98,7 +98,7 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
             // find expression-result objects
             for (ExpressionResultUpdateRecord record : expressionUpdateRecords) {
                 ExpressionResult2 expressionResult = getExpressionRepository().getExpressionResult(record.getExpressionResultID());
-                // no expression_result record found
+                // no expression_result2 record found
                 if (expressionResult == null) {
                     LOG.info("No record found: " + record.getExpressionResultID());
                     continue;

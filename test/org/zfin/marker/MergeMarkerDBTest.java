@@ -220,7 +220,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
      * if EEa not contained in antibody B: then
      * update the antibody on EEa to point to antibody B
      * else
-     * if EEa matches as expression_experiment B on antibody B (EEb): then
+     * if EEa matches as expression_experiment2 B on antibody B (EEb): then
      * for all expression_results in EEa: ERa
      * if ERa not contained in expression_results on EEb (ERb): then
      * update ERa to point to EEb

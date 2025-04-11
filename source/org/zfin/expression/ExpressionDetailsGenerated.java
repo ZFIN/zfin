@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Mapping of expression_experiment2 table which
- * moves figure into expression_experiment, and
+ * moves figure into expression_experiment2, and
  * uses a pk id rather than a zdb_id
  */
 public class ExpressionDetailsGenerated {
