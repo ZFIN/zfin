@@ -4957,8 +4957,8 @@ and child.term_ontology = 'disease_ontology';
             union
             select term_ont_id, 'Expression,Any' as term_usage
             from term
-            where exists (select 'x' from expression_result where xpatres_superterm_zdb_id = term_zdb_id)
-              and exists (select 'x' from expression_result where xpatres_subterm_zdb_id = term_zdb_id)
+            where exists (select 'x' from expression_result2 where xpatres_superterm_zdb_id = term_zdb_id)
+              and exists (select 'x' from expression_result2 where xpatres_subterm_zdb_id = term_zdb_id)
             union
             select term_ont_id, 'Gene,Any' as term_usage
             from term
@@ -5339,22 +5339,6 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
-
-            <!-- this works, but until there's a full set of expression/phenotype stuff, I'm gonna comment it out..
-
-                         <entity name="pub_expressed_gene"
-                               datasource="db" query="select
-                                      distinct mrkr_abbrev as expressed_gene,
-                                      xpatex_source_zdb_id as pub_zdb_id
-                               from marker,
-                                    expression_experiment,
-                                    expression_result,
-                                    expression_pattern_figure,
-                                    figure
-                               where mrkr_zdb_id = xpatex_gene_zdb_id
-                                 and xpatres_xpatex_zdb_id = xpatex_zdb_id"
-                               cacheImpl="SortedMapBackedCache"
-                               where="pub_zdb_id=publication.id"/>-->
 
             <entity name="pub_feature"
                     query="select recattrib_source_zdb_id as pub_zdb_id,

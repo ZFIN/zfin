@@ -1259,10 +1259,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public long getExpressionCount(Publication publication) {
         String sql = """
-            select count(distinct xpatfig_fig_zdb_id)
-              from figure, expression_pattern_figure
+            select count(distinct efs_fig_zdb_id)
+              from figure, expression_figure_stage
              where fig_source_zdb_id = :zdbID
-                     and fig_zdb_id=xpatfig_fig_zdb_id
+                     and fig_zdb_id=efs_fig_zdb_id
             """;
         return getCount(sql, publication.getZdbID());
     }
@@ -1353,8 +1353,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             from construct_figure
             where consfig_fig_zdb_id = fig_zdb_id)
             or exists (select 'x'
-            from expression_pattern_figure
-            where xpatfig_fig_zdb_id = fig_zdb_id)
+            from expression_figure_stage
+            where efs_fig_zdb_id = fig_zdb_id)
             or exists (select 'x'
             from genotype_figure_fast_search
             where gffs_fig_zdb_id = fig_zdb_id)

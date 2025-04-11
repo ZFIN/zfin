@@ -138,7 +138,7 @@ select count(*), 'Expression & Phenotype', 'Gene expression experiments', now() 
 
 -- Gene expression patterns
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() from expression_result
+select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() from expression_result2
 ;
 
 -- clean Gene expression patterns

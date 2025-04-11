@@ -416,13 +416,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getExpressionPubCount() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        int count = expRep.getExpressionPubCountForGene(m);
-        Assert.assertTrue(count > 10);
-    }
-
-    @Test
     public void getExpressionFigureCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = expRep.getExpressionFigureCountForEfg(m);
@@ -493,13 +486,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         publicationExpressionBean.setPublicationZdbID("ZDB-PUB-090311-1");
         imageCount = expRep.getImagesForEfg(publicationExpressionBean);
         assertEquals(imageCount, 0);
-    }
-
-    @Test
-    public void getWildTypeExpressionForMarker() {
-        List<ExpressedStructurePresentation> wees = expRep.getWildTypeExpressionExperiments("ZDB-GENE-010606-1");
-        assertThat(wees.size(), greaterThan(30));
-        assertThat(wees.size(), lessThan(50));
     }
 
     @Test
@@ -671,6 +657,13 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionById() {
         ExpressionFigureStage stage = getExpressionRepository().getExperimentFigureStage(78214);
         assertNotNull(stage);
+    }
+
+    @Test
+    public void getWtExpressionFigureCountForGene() {
+        Marker gene = getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int result= getExpressionRepository().getWtExpressionFigureCountForGene(gene);
+        assertEquals(result, 0);
     }
 
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parse a expression_Result update file
+ * Parse a expression_Result2 update file
  * xpatID startStageName endStageName TermOboID
  */
 public class ExpressionResultUpdateParser {

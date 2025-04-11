@@ -38,7 +38,7 @@ import static org.zfin.gwt.curation.ui.CurationEntryPoint.expressionService;
  * A) Displayed are all expressions (unless the experiment filter, aka banana bar when it was yellow instead of
  * green), ordered by figure, gene (non-gene experiments first) and fish.
  * B) Delete-Button: The Delete-button removes the expression, i.e.
- * expression_results, expression_pattern_figure. Clicking the button pops up a Java Script confirmation box
+ * expression_results2, expression_figure_stage. Clicking the button pops up a Java Script confirmation box
  * that indicates the action's consequences. The experiments the expressions are associated are not deleted.
  * C) When you mouse over an experiment its background color changes to a light green-blue that changes back to its
  * original background color upon mouse out
