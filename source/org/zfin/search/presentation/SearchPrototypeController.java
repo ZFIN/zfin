@@ -106,9 +106,9 @@ public class SearchPrototypeController {
                               Model model,
                               HttpServletRequest request) {
         //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> recaptchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (recaptchaRedirectUrl.isPresent()) {
-            return "redirect:" + recaptchaRedirectUrl.get();
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
         }
 
         if (page == null) {

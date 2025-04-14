@@ -32,8 +32,8 @@ public class CaptchaKeys {
         return getValue("captchaSecretKey-", getCurrentVersion());
     }
 
-    private static String getValue(String filenamePrefix, Version recaptchaVersion) throws IOException {
-        String filename = filenamePrefix + recaptchaVersion.name() + ".txt";
+    private static String getValue(String filenamePrefix, Version captchaVersion) throws IOException {
+        String filename = filenamePrefix + captchaVersion.name() + ".txt";
         return cache.computeIfAbsent(filename, k -> {
             try {
                 return getTokenFileValue(k);

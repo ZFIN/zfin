@@ -41,9 +41,9 @@ public class CaptchaService {
 
     //TODO: should we compute this algorithmically? If we see bots setting this without going through captcha,
     //      we should use some cryptography to set it in a way that prevents tampering.
-    private static final String RECAPTCHA_COOKIE_NAME = "grcptv";
-    private static final String RECAPTCHA_COOKIE_VALUE = "rcv_true";
-    private static final int RECAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week
+    private static final String CAPTCHA_COOKIE_NAME = "grcptv";
+    private static final String CAPTCHA_COOKIE_VALUE = "rcv_true";
+    private static final int CAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week
 
     //These are the json keys we use to communicate with recaptcha API
     private enum RecaptchaApiRequestKeys {secret, response, remoteip;}
@@ -56,8 +56,8 @@ public class CaptchaService {
      * @param response Server response object to add cookie to
      */
     public static void setSuccessfulCaptchaToken(HttpServletResponse response) {
-        Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
-        captchaCookie.setMaxAge(RECAPTCHA_COOKIE_MAX_AGE);
+        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, CAPTCHA_COOKIE_VALUE);
+        captchaCookie.setMaxAge(CAPTCHA_COOKIE_MAX_AGE);
         captchaCookie.setPath("/");
 
         response.addCookie(captchaCookie);
@@ -68,7 +68,7 @@ public class CaptchaService {
      * @param response Server response object to remove cookie from
      */
     public static void unsetSuccessfulCaptchaToken(HttpServletResponse response) {
-        Cookie captchaCookie = new Cookie(RECAPTCHA_COOKIE_NAME, RECAPTCHA_COOKIE_VALUE);
+        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, CAPTCHA_COOKIE_VALUE);
         captchaCookie.setMaxAge(0);
         captchaCookie.setPath("/");
 
@@ -81,8 +81,8 @@ public class CaptchaService {
      * @return true if verified human
      */
     private static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, RECAPTCHA_COOKIE_NAME);
-        if (cookie != null && RECAPTCHA_COOKIE_VALUE.equals(cookie.getValue())) {
+        Cookie cookie = WebUtils.getCookie(request, CAPTCHA_COOKIE_NAME);
+        if (cookie != null && CAPTCHA_COOKIE_VALUE.equals(cookie.getValue())) {
             return true;
         }
         return false;
@@ -175,16 +175,16 @@ public class CaptchaService {
                 }
             }
             if (isHuman && jsonResponse.get(RecaptchaApiResponseKeys.success.name()).asBoolean()) {
-                log.info("Success Verifying recaptcha");
+                log.info("Success Verifying captcha");
             } else {
-                log.info("Failure Verifying recaptcha");
+                log.info("Failure Verifying captcha");
                 log.info("UserResponse: " + userResponse);
                 log.info("Details: " + responseString);
                 isHuman = false;
             }
             return isHuman;
         } catch (Exception e) {
-            log.info("Failure Verifying recaptcha due to exception: ", e);
+            log.info("Failure Verifying captcha due to exception: ", e);
             return true;
         }
     }
