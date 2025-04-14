@@ -395,6 +395,8 @@ public interface ExpressionRepository {
 
     List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID);
 
+    List<ExpressionResult2> getPhenotypeFromExpressionsByFeatureSlowPerformance(String featureID);
+
     List<ExpressionResult2> getPhenotypeFromExpressionsByFeature(String featureID);
 
     /**
