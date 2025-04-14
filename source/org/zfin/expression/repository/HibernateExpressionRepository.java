@@ -1926,20 +1926,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public List<ExpressionResult2> getPhenotypeFromExpressionsByFeatureSlowPerformance(String featureID) {
-        String hql = """
-            select result from ExpressionResult2 result, GenotypeFeature genoFeature 
-                 where result.phenotypeTermSet IS NOT EMPTY 
-             AND genoFeature.feature.zdbID = :zdbID 
-             AND genoFeature in elements(result.expressionFigureStage.expressionExperiment.fishExperiment.fish.genotype.genotypeFeatures) 
-            """;
-        Query<ExpressionResult2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult2.class);
-        query.setParameter("zdbID", featureID);
-
-        return query.list();
-    }
-
-    @Override
     public List<ExpressionResult2> getPhenotypeFromExpressionsByFeature(String featureID) {
         String hql = """
                 select result
