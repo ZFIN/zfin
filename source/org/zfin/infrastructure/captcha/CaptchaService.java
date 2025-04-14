@@ -28,13 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.zfin.infrastructure.service.RequestService.getCurrentRequest;
 import static org.zfin.infrastructure.service.RequestService.getCurrentResponse;
 import static org.zfin.profile.service.ProfileService.isLoggedIn;
 
 @Log4j2
-public class RecaptchaService {
+public class CaptchaService {
 
-    private static final String BASE_URL = "https://www.google.com/recaptcha/api/siteverify";
+    private static final String RECAPTCHA_BASE_URL = "https://www.google.com/recaptcha/api/siteverify";
+    private static final String HCAPTCHA_BASE_URL = "https://api.hcaptcha.com/siteverify";
     private static final double CONFIDENCE_THRESHOLD = 0.5;
 
     //TODO: should we compute this algorithmically? If we see bots setting this without going through captcha,
@@ -121,9 +123,9 @@ public class RecaptchaService {
      * @return true if a verified human
      * @throws IOException if cannot read captcha keys
      */
-    public static boolean verifyRecaptcha(String challengeResponse) throws IOException {
-        if (verifyRecaptchaWithGoogle(challengeResponse, null)) {
-            RecaptchaService.setSuccessfulCaptchaToken(getCurrentResponse());
+    public static boolean verifyCaptcha(String challengeResponse) throws IOException {
+        if (verifyCaptchaWithAPI(challengeResponse, null)) {
+            CaptchaService.setSuccessfulCaptchaToken(getCurrentResponse());
             return true;
         }
         return false;
@@ -136,11 +138,11 @@ public class RecaptchaService {
      * @param remoteIp     Optional: The IP address of the user (can be null).
      * @return true if the verification is successful, false otherwise.
      */
-    private static boolean verifyRecaptchaWithGoogle(String userResponse, String remoteIp) throws IOException {
+    private static boolean verifyCaptchaWithAPI(String userResponse, String remoteIp) throws IOException {
         if (StringUtils.isEmpty(userResponse)) {
             return false;
         }
-        String secretKey = RecaptchaKeys.getSecretKey();
+        String secretKey = CaptchaKeys.getSecretKey();
         // Prepare the POST parameters
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.secret.name(), secretKey));
@@ -154,13 +156,16 @@ public class RecaptchaService {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build())
                 .build()) {
 
-            HttpPost post = new HttpPost(BASE_URL);
+            HttpPost post = new HttpPost(verifyUrl());
             post.setEntity(new UrlEncodedFormEntity(nvps));
 
             HttpResponse response = client.execute(post);
 
             String responseString = EntityUtils.toString(response.getEntity());
             JsonNode jsonResponse = new ObjectMapper().readTree(responseString);
+
+            log.info("IP Address: " + getCurrentRequest().getRemoteAddr());
+
             boolean isHuman = true;
             if (jsonResponse.has(RecaptchaApiResponseKeys.score.name())) {
                 double score = jsonResponse.get(RecaptchaApiResponseKeys.score.name()).asDouble();
@@ -180,14 +185,24 @@ public class RecaptchaService {
             return isHuman;
         } catch (Exception e) {
             log.info("Failure Verifying recaptcha due to exception: ", e);
-            return false;
+            return true;
         }
     }
 
-    public static RecaptchaKeys.Version getCurrentVersion() {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.RECAPTCHA_V2)) {
-            return RecaptchaKeys.Version.V2;
+    private static String verifyUrl() {
+        if (getCurrentVersion().equals(CaptchaKeys.Version.hCaptcha)) {
+            return HCAPTCHA_BASE_URL;
         }
-        return RecaptchaKeys.Version.V3;
+        return RECAPTCHA_BASE_URL;
+    }
+
+    public static CaptchaKeys.Version getCurrentVersion() {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.H_CAPTCHA)) {
+            return CaptchaKeys.Version.hCaptcha;
+        }
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.RECAPTCHA_V2)) {
+            return CaptchaKeys.Version.V2;
+        }
+        return CaptchaKeys.Version.V3;
     }
 }

@@ -10,7 +10,8 @@ public enum FeatureFlagEnum {
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
     USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false),
     ENABLE_CAPTCHA("Enable Captcha", false),
-    RECAPTCHA_V2("Use Recaptcha V2 - Otherwise V3", false);
+    RECAPTCHA_V2("Use Recaptcha V2 - Otherwise V3", false),
+    H_CAPTCHA("Use hCaptcha - Otherwise Recaptcha", true);
 
 
     private final String name;

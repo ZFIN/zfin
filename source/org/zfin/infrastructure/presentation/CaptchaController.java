@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.infrastructure.captcha.RecaptchaKeys;
-import org.zfin.infrastructure.captcha.RecaptchaService;
+import org.zfin.infrastructure.captcha.CaptchaKeys;
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class CaptchaController {
             Model model,
             @RequestParam(name="redirect", required = false) String redirect
     ) throws IOException {
-        model.addAttribute("siteKey", RecaptchaKeys.getSiteKey());
+        model.addAttribute("siteKey", CaptchaKeys.getSiteKey());
         model.addAttribute("redirect", redirect);
 
         //if we somehow got to this challenge page without captcha's enabled, just redirect back
@@ -36,7 +36,7 @@ public class CaptchaController {
             }
             return "redirect:" + redirect;
         }
-        return "infrastructure/captcha-" + RecaptchaService.getCurrentVersion() + "-challenge";
+        return "infrastructure/captcha-" + CaptchaService.getCurrentVersion() + "-challenge";
     }
 
     @PostMapping("/challenge")
@@ -45,7 +45,7 @@ public class CaptchaController {
             HttpServletRequest request
     ) throws IOException {
         String redirect = request.getParameter("redirect");
-        if (RecaptchaService.verifyRecaptcha(challengeResponse)) {
+        if (CaptchaService.verifyCaptcha(challengeResponse)) {
             if (StringUtils.isEmpty(redirect)) {
                 return "infrastructure/captcha-response";
             }

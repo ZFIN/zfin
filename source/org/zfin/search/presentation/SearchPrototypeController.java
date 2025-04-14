@@ -22,10 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.infrastructure.captcha.RecaptchaService;
+import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -108,7 +106,7 @@ public class SearchPrototypeController {
                               Model model,
                               HttpServletRequest request) {
         //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> recaptchaRedirectUrl = RecaptchaService.getRedirectUrlIfNeeded(request);
+        Optional<String> recaptchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
         if (recaptchaRedirectUrl.isPresent()) {
             return "redirect:" + recaptchaRedirectUrl.get();
         }
