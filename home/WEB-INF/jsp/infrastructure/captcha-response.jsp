@@ -7,12 +7,11 @@
                 <div style="display: none;" class="captcha-challenge text-center p-4 border rounded shadow">
                     <h2>Robot Check</h2>
                     <p>Thank you for verifying your browser.</p>
-                    <p>Our site is experiencing large amounts of traffic right now.
-                        To ensure our community of researchers get the best experience, we need to make sure you are human.</p>
 
                     <p>Please let us know if you experience any problems while we work to address this problem.<br/>
                         <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information">Contact Information</a>.
                     </p>
+                    <p>Return to <a href="/">zfin.org</a></p>
                 </div>
             </div>
         </div>

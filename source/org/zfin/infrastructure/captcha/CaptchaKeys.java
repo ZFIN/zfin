@@ -21,7 +21,8 @@ public class CaptchaKeys {
     public enum Version {
         V2,
         V3,
-        hCaptcha;
+        hCaptcha,
+        altcha;
     }
 
     public static String getSiteKey() throws IOException {
@@ -45,6 +46,10 @@ public class CaptchaKeys {
 
     private static String getTokenFileValue(String tokenFilename) throws IOException {
         Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/tokens/" + tokenFilename);
-        return StringUtils.chomp(Files.readString(file));
+        String value = StringUtils.chomp(Files.readString(file));
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        return value;
     }
 }

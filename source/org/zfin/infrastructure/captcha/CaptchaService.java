@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.altcha.altcha.Altcha;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -53,9 +54,9 @@ public class CaptchaService {
     /**
      * Set the current session as having been successfully verified using captcha
      *
-     * @param response Server response object to add cookie to
      */
-    public static void setSuccessfulCaptchaToken(HttpServletResponse response) {
+    public static void setSuccessfulCaptchaToken() {
+        HttpServletResponse response = getCurrentResponse();
         Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, CAPTCHA_COOKIE_VALUE);
         captchaCookie.setMaxAge(CAPTCHA_COOKIE_MAX_AGE);
         captchaCookie.setPath("/");
@@ -124,11 +125,27 @@ public class CaptchaService {
      * @throws IOException if cannot read captcha keys
      */
     public static boolean verifyCaptcha(String challengeResponse) throws IOException {
-        if (verifyCaptchaWithAPI(challengeResponse, null)) {
-            CaptchaService.setSuccessfulCaptchaToken(getCurrentResponse());
+        if (StringUtils.isEmpty(challengeResponse)) {
+            return false;
+        }
+        if (getCurrentVersion().equals(CaptchaKeys.Version.altcha)) {
+            if (verifyAltcha(challengeResponse)) {
+                setSuccessfulCaptchaToken();
+                return true;
+            }
+        } else if (verifyCaptchaWithAPI(challengeResponse, null)) {
+            setSuccessfulCaptchaToken();
             return true;
         }
         return false;
+    }
+
+    private static boolean verifyAltcha(String challengeResponse) throws IOException {
+        try {
+            return Altcha.verifySolution(challengeResponse, CaptchaKeys.getSecretKey(), true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -202,6 +219,9 @@ public class CaptchaService {
         }
         if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.RECAPTCHA_V2)) {
             return CaptchaKeys.Version.V2;
+        }
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.ALTCHA)) {
+            return CaptchaKeys.Version.altcha;
         }
         return CaptchaKeys.Version.V3;
     }

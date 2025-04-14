@@ -41,10 +41,13 @@ public class CaptchaController {
 
     @PostMapping("/challenge")
     public String challengeResponse(
-            @RequestParam(name = "g-recaptcha-response") String challengeResponse,
             HttpServletRequest request
     ) throws IOException {
         String redirect = request.getParameter("redirect");
+        String challengeResponse = request.getParameter("g-recaptcha-response");
+        if (CaptchaService.getCurrentVersion().equals(CaptchaKeys.Version.altcha)) {
+            challengeResponse = request.getParameter("altcha");
+        }
         if (CaptchaService.verifyCaptcha(challengeResponse)) {
             if (StringUtils.isEmpty(redirect)) {
                 return "infrastructure/captcha-response";

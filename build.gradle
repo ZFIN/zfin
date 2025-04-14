@@ -728,6 +728,9 @@ dependencies {
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
     implementation 'org.jooq:jool:0.9.15'
+
+    implementation files('home/WEB-INF/lib/altcha-1.1.2.jar')
+
 }
 
 sourceSets {
