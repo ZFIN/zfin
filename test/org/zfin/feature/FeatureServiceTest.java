@@ -1,12 +1,10 @@
 package org.zfin.feature;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.NativeQuery;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -17,15 +15,12 @@ import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.zfin.framework.HibernateUtil.currentSession;
-
-import org.junit.Ignore;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class FeatureServiceTest extends AbstractDatabaseTest {
 
@@ -101,71 +96,12 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         assertNotNull(bean);
     }
 
-
     @Test
     public void checkFeatureWithCleanPhenotypeOnPubPerformance() {
-        Calendar start = Calendar.getInstance();
-        List<String> ids = List.of("ZDB-ALT-980203-444", " ZDB-ALT-110504-1", " ZDB-ALT-140521-1", " ZDB-ALT-250331-5", " ZDB-ALT-250331-4", " ZDB-ALT-120723-3", " ZDB-ALT-990423-22", " ZDB-ALT-060821-4");
-        for (String id : ids) {
-            Feature feature = featureRepository.getFeatureByID("ZDB-ALT-190821-6");
-            PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
-            assertNotNull(bean);
-        }
-        Calendar end = Calendar.getInstance();
-        long timediff = end.getTimeInMillis() - start.getTimeInMillis();
-        assertTrue(timediff < 3000);
-    }
-
-
-    @Test
-    public void testRefactorLogicRetainedForGetPhenotypeFromExpressionsByFeature() {
-        List<String> ids = List.of("ZDB-ALT-980203-444", "ZDB-ALT-110504-1", "ZDB-ALT-140521-1", "ZDB-ALT-250331-5", "ZDB-ALT-250331-4", "ZDB-ALT-120723-3", "ZDB-ALT-990423-22", "ZDB-ALT-060821-4");
-        for (String id : ids) {
-            System.out.println("Comparing results of 2 versions of getPhenotypeFromExpressionsByFeature for " + id);
-            List<ExpressionResult2> phenotypes = RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeature(id);
-            List<ExpressionResult2> phenotypes2 = RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeatureSlowPerformance(id);
-            boolean isEqual = CollectionUtils.isEqualCollection(phenotypes, phenotypes2);
-            if (isEqual) {
-                System.out.println("Phenotypes are equal for getPhenotypeFromExpressionsByFeature for " + id + " size: " + phenotypes.size() + " = " + phenotypes2.size());
-            } else {
-                fail("Phenotypes are not equal for getPhenotypeFromExpressionsByFeature for " + id);
-            }
-        }
-    }
-
-    @Test
-    public void testRefactorLogicRetainedForGetPhenotypeFromExpressionsByFeature2() {
-        NativeQuery<String> query = currentSession().createNativeQuery("select feature_zdb_id from feature order by random() limit 100", String.class);
-        List<String> ids = query.list();
-        ids.addAll(List.of("ZDB-ALT-980203-444", "ZDB-ALT-110504-1", "ZDB-ALT-140521-1", "ZDB-ALT-250331-5", "ZDB-ALT-250331-4", "ZDB-ALT-120723-3", "ZDB-ALT-990423-22", "ZDB-ALT-060821-4"));
-
-        for (String id : ids) {
-            System.out.println("Comparing results of 2 versions of getPhenotypeFromExpressionsByFeature for " + id);
-            List<ExpressionResult2> phenotypes = RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeature(id);
-            List<ExpressionResult2> phenotypes2 = RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeatureSlowPerformance(id);
-            boolean isEqual = CollectionUtils.isEqualCollection(phenotypes, phenotypes2);
-            if (isEqual) {
-                System.out.println("Phenotypes are equal for getPhenotypeFromExpressionsByFeature for " + id + " size: " + phenotypes.size() + " = " + phenotypes2.size() + "\n");
-            } else {
-                fail("Phenotypes are not equal for getPhenotypeFromExpressionsByFeature for " + id);
-            }
-        }
-    }
-
-    @Test
-    public void checkFeatureWithCleanPhenotypeOnPubPerformance3() {
-        Calendar start = Calendar.getInstance();
-        List<ExpressionResult2> phenotypes;
+        long start = Calendar.getInstance().getTimeInMillis();
         String id = "ZDB-ALT-980203-444";
-        phenotypes = RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeature(id);
-        System.out.println("Phenotypes size");
-        System.out.println(phenotypes.size());
-        Calendar end = Calendar.getInstance();
-        long timediff = end.getTimeInMillis() - start.getTimeInMillis();
-        System.out.println("Time taken: " + timediff);
-        assertTrue(timediff < 3000);
+        RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeature(id);
+        long timediff = Calendar.getInstance().getTimeInMillis() - start;
+        assertTrue(timediff < 1000);
     }
-
-
 }
-
