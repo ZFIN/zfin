@@ -2,25 +2,25 @@ package org.zfin.feature;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
-import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Ignore;
+import static org.junit.Assert.assertTrue;
 
 public class FeatureServiceTest extends AbstractDatabaseTest {
 
@@ -95,5 +95,13 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
         assertNotNull(bean);
     }
-}
 
+    @Test
+    public void checkFeatureWithCleanPhenotypeOnPubPerformance() {
+        long start = Calendar.getInstance().getTimeInMillis();
+        String id = "ZDB-ALT-980203-444";
+        RepositoryFactory.getExpressionRepository().getPhenotypeFromExpressionsByFeature(id);
+        long timediff = Calendar.getInstance().getTimeInMillis() - start;
+        assertTrue(timediff < 1000);
+    }
+}
