@@ -1,5 +1,7 @@
 package org.zfin.search.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -31,8 +34,6 @@ import org.zfin.search.FieldName;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -45,6 +46,8 @@ import static org.zfin.search.service.FacetBuilderService.categorySupportsSort;
 @Controller
 @RequestMapping("/quicksearch")
 public class SearchPrototypeController {
+
+    private static final boolean ENABLE_CAPTCHA = true;
 
     @Autowired
     private SolrService solrService;
@@ -102,23 +105,27 @@ public class SearchPrototypeController {
                               @RequestParam(required = false, defaultValue = "true") Boolean appendCategoryToBaseUrl,
                               Model model,
                               HttpServletRequest request) {
+        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
+
         if (page == null) {
             page = 1;
         }
-        if (category != null)
+        if (category != null) {
             category = POLICY.sanitize(category);
-
+        }
         if (StringUtils.isNotEmpty(q)) {
             q = q.trim();
         }
-
 
         Boolean redirectToFirstResult = false;
         if (StringUtils.startsWith(q, "!!")) {
             redirectToFirstResult = true;
             q = q.substring(2);
         }
-
 
         if (StringUtils.isNotEmpty(q)) {
             String url = null;

@@ -3,6 +3,7 @@
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
+<%@ attribute name="omitZfinCommonJS" required="false" type="java.lang.Boolean" %>
 
 <c:set var="GA4_ANALYTICS_ID" value="${ZfinPropertiesEnum.GA4_ANALYTICS_ID.value()}" />
 <c:if test="${empty GA4_ANALYTICS_ID}">
@@ -26,7 +27,9 @@
 
         <title>${title}</title>
 
-        <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
+        <c:if test="${!omitZfinCommonJS}">
+            <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
+        </c:if>
 
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
