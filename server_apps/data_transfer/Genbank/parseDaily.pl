@@ -77,7 +77,7 @@ while (my $gbfile = shift @ARGV) {
         $accession = $1;
         $gi = $accession;
 
-        /ORGANISM\s+([\w\[\]].+)\n/ or die "ORGANISM unmatched for $locus \n";
+        /ORGANISM\s+([\w\[\]\'].+)\n/ or die "ORGANISM unmatched for $locus \n";
         $organism = $1;
         $dbsource = gb;
         $dbsource = emb if /Center code: SC/;

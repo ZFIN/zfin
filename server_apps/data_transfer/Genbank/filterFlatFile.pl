@@ -66,7 +66,7 @@ while (my $gbfile = shift @ARGV) {
 
         $totalRecordCoundWithLocus++;
 
-        /ORGANISM\s+([\w\[\]].+)\n/ or die "ORGANISM unmatched \n";
+        /ORGANISM\s+([\w\[\]\'].+)\n/ or die "ORGANISM unmatched at record $progress : \n\n$_ \n";
         $organism = $1;
         if ($organism eq 'Danio rerio' || $organism eq 'Mus musculus' || $organism eq 'Homo sapiens') {
             $totalFilteredRecordCount++;
