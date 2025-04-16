@@ -1,6 +1,7 @@
 package org.zfin.sequence.blast.repository;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
@@ -85,31 +86,39 @@ public class HibernateBlastRepository implements BlastRepository {
         return query.list();
     }
 
+    @Override
     public Set<String> getAllValidAccessionNumbers(Database database) {
-        Set<String> returnAccessions = new HashSet<>();
+        Set<String> dBLinkAccessionSet = getAllValidAccessionNumbersFromDBLinks(database);
+        Set<String> accessionBankSet = getAllValidAccessionsFromAccessionBank(database);
 
-        String hql1 = "select dbl.accessionNumber " +
-                      " from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd " +
-                      " where bd.zdbID = :databaseZdbID";
-        Query query1 = HibernateUtil.currentSession().createQuery(hql1);
-        query1.setParameter("databaseZdbID", database.getZdbID());
-        returnAccessions.addAll(query1.list());
+        Collection<String> onlyInAccessionBank = CollectionUtils.subtract(accessionBankSet, dBLinkAccessionSet);
+        if (onlyInAccessionBank.size() > 0) {
+            logger.warn("Accession numbers in accession_bank not found in DB_LINK: " + onlyInAccessionBank);
+        }
 
-        String hql2 = "select acc.number" +
-                      " from Accession  acc join acc.referenceDatabase rd join rd.primaryBlastDatabase bd " +
-                      " where bd.zdbID = :databaseZdbID";
-        Query query2 = HibernateUtil.currentSession().createQuery(hql2);
-        query2.setParameter("databaseZdbID", database.getZdbID());
-        List accessionBankList = query2.list();
-        Set<String> onlyAccessionBankList = new HashSet<>();
-        onlyAccessionBankList.addAll((accessionBankList));
-        for (String accFromDbLink : returnAccessions)
-            onlyAccessionBankList.remove(accFromDbLink);
-        if (onlyAccessionBankList.size() > 0)
-            logger.warn("Accession numbers in accession_bank not found in DB_LINK: " + onlyAccessionBankList);
+        return SetUtils.union(dBLinkAccessionSet, accessionBankSet);
+    }
 
-        returnAccessions.addAll(accessionBankList);
-        return returnAccessions;
+    private Set<String> getAllValidAccessionNumbersFromDBLinks(Database database) {
+        String hql = """
+                        select dbl.accessionNumber
+                        from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd
+                        where bd.zdbID = :databaseZdbID
+                      """;
+        Query<String> query = HibernateUtil.currentSession().createQuery(hql, String.class);
+        query.setParameter("databaseZdbID", database.getZdbID());
+        return new HashSet<>(query.list());
+    }
+
+    private Set<String> getAllValidAccessionsFromAccessionBank(Database database) {
+        String hql = """
+                        select acc.number
+                        from Accession acc join acc.referenceDatabase rd join rd.primaryBlastDatabase bd
+                        where bd.zdbID = :databaseZdbID
+                  """;
+        Query<String> query = HibernateUtil.currentSession().createQuery(hql, String.class);
+        query.setParameter("databaseZdbID", database.getZdbID());
+        return new HashSet<>(query.list());
     }
 
     @SuppressWarnings("unchecked")
