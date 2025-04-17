@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.zfin.gwt.curation.ui.CurationModuleType.CONSTREACT;
 import static org.zfin.gwt.curation.ui.CurationModuleType.CONSTRUCT;
 
 /**
@@ -125,16 +124,12 @@ public class CurationController implements CurationService {
     }
 
     /**
-     * Filter out the CONSTREACT (new react based construct tab) tab if the feature flag is not enabled.
+     * Filter out curation tabs if we want to hide them
      * @param allCurationTabs
      * @return
      */
     private List<CurationModuleType> enabledCurationTabs(List<CurationModuleType> allCurationTabs) {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_REACT_CONSTRUCT_TAB)) {
-            return allCurationTabs.stream().filter(t -> t != CONSTRUCT).collect(Collectors.toList());
-        } else {
-            return allCurationTabs.stream().filter(t -> t != CONSTREACT).collect(Collectors.toList());
-        }
+        return allCurationTabs;
     }
 
     @ResponseBody
