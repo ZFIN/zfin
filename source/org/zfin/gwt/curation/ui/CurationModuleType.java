@@ -15,7 +15,7 @@ import java.util.List;
  */
 public enum CurationModuleType {
 
-    CONSTRUCT("CONSTRUCT", "Construct") {
+    CONSTRUCT("CONSTRUCT", "Construct v1") {
         @Override
         public ZfinCurationModule initializeModule(String publicationID) {
             return new ConstructCurationModule(publicationID);

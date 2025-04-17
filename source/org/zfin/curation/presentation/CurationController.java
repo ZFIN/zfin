@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zfin.gwt.curation.ui.CurationModuleType.CONSTREACT;
+import static org.zfin.gwt.curation.ui.CurationModuleType.CONSTRUCT;
 
 /**
  * This Controller is used to facilitate the curation tabs.
@@ -130,7 +131,7 @@ public class CurationController implements CurationService {
      */
     private List<CurationModuleType> enabledCurationTabs(List<CurationModuleType> allCurationTabs) {
         if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_REACT_CONSTRUCT_TAB)) {
-            return allCurationTabs;
+            return allCurationTabs.stream().filter(t -> t != CONSTRUCT).collect(Collectors.toList());
         } else {
             return allCurationTabs.stream().filter(t -> t != CONSTREACT).collect(Collectors.toList());
         }
