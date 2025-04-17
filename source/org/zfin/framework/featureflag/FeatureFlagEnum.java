@@ -7,8 +7,7 @@ public enum FeatureFlagEnum {
     JBROWSE2("jBrowse2", false),
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
-    SHOW_ALLIANCE_DATA("Show Alliance Data", false),
-    USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false);
+    SHOW_ALLIANCE_DATA("Show Alliance Data", false);
 
 
     private final String name;
