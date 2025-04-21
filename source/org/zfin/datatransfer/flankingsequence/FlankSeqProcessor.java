@@ -110,6 +110,7 @@ public class FlankSeqProcessor {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
+                                        this.updated.add(List.of("Update FGMD:" + feature.getZdbID(), refSeq, "POINT_MUTATION"));
                                     }
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart + 1, locStart + offset).getBases());
@@ -127,6 +128,7 @@ public class FlankSeqProcessor {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
+                                        this.updated.add(List.of("Update FGMD:" + feature.getZdbID(), refSeq, "INDEL"));
                                     }
 
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
@@ -187,16 +189,14 @@ public class FlankSeqProcessor {
         HibernateUtil.currentSession().refresh(fgmd);
         HibernateUtil.currentSession().update(ftr);
         HibernateUtil.currentSession().refresh(ftr);
-
+        this.updated.add(List.of("New FGMD: " +ftr.getZdbID(), seqRef, "+"));
     }
 
     private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
-        boolean changed = false;
         boolean newSequence = featureRepository.getFeatureVariant(ftr) == null;
         VariantSequence vrSeq;
         if (newSequence) {
             vrSeq = new VariantSequence();
-            changed = true;
         } else {
             vrSeq = featureRepository.getFeatureVariant(ftr);
         }
@@ -222,7 +222,7 @@ public class FlankSeqProcessor {
                 vfsVariation = ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar();
             }
         }
-        changed = changed || this.setFlankSeqIfChanged(vrSeq,
+        boolean updateMade = this.setFlankSeqIfChanged(vrSeq,
                 ftr.getZdbID(),
                 seq1,
                 seq2,
@@ -233,8 +233,18 @@ public class FlankSeqProcessor {
                 "Genomic",
                 vfsTargetSequence,
                 vfsVariation);
+        boolean changed = newSequence || updateMade;
 
-        HibernateUtil.currentSession().save(vrSeq);
+        try {
+            if (changed) {
+                HibernateUtil.currentSession().save(vrSeq);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.out.println("Insertion failed at ...");
+            System.exit(1);
+        }
         if (newSequence) {
             PublicationAttribution pa = new PublicationAttribution();
             pa.setPublication(pubRepo.getPublication("ZDB-PUB-191030-9"));
@@ -253,15 +263,21 @@ public class FlankSeqProcessor {
 
     private boolean setFlankSeqIfChanged(VariantSequence vrSeq, String zdbID, String vfsLeftEnd, String vfsRightEnd, int vfsOffsetStart, int vfsOffsetStop, String vfsFlankType, String vfsFlankOrigin, String vfsType, String vfsTargetSequence, String vfsVariation) {
         boolean changed = false;
-        if (!vrSeq.getVseqDataZDB().equals(zdbID)) {
+        if (zdbID == null) {
+            System.out.println("zdbID is null");
+        }
+        if (vrSeq.getVseqDataZDB() == null) {
+            System.out.println("vseqDataZDB is null");
+        }
+        if (!Objects.equals(vrSeq.getVseqDataZDB(),zdbID)) {
             vrSeq.setVseqDataZDB(zdbID);
             changed = true;
         }
-        if (!vrSeq.getVfsLeftEnd().equals(vfsLeftEnd)) {
+        if (!Objects.equals(vrSeq.getVfsLeftEnd(), vfsLeftEnd)) {
             vrSeq.setVfsLeftEnd(vfsLeftEnd);
             changed = true;
         }
-        if (!vrSeq.getVfsRightEnd().equals(vfsRightEnd)) {
+        if (!Objects.equals(vrSeq.getVfsRightEnd(), vfsRightEnd)) {
             vrSeq.setVfsRightEnd(vfsRightEnd);
             changed = true;
         }
@@ -273,36 +289,27 @@ public class FlankSeqProcessor {
             vrSeq.setVfsOffsetStop(vfsOffsetStop);
             changed = true;
         }
-        if (!vrSeq.getVfsFlankType().equals(vfsFlankType)) {
+        if (!Objects.equals(vrSeq.getVfsFlankType(), vfsFlankType)) {
             vrSeq.setVfsFlankType(vfsFlankType);
             changed = true;
         }
-        if (!vrSeq.getVfsFlankOrigin().equals(vfsFlankOrigin)) {
+        if (!Objects.equals(vrSeq.getVfsFlankOrigin(), vfsFlankOrigin)) {
             vrSeq.setVfsFlankOrigin(vfsFlankOrigin);
             changed = true;
         }
-        if (!vrSeq.getVfsType().equals(vfsType)) {
+        if (!Objects.equals(vrSeq.getVfsType(), vfsType)) {
             vrSeq.setVfsType(vfsType);
             changed = true;
         }
-        if (vfsTargetSequence != null && !vrSeq.getVfsTargetSequence().equals(vfsTargetSequence)) {
+        if (vfsTargetSequence != null && !Objects.equals(vrSeq.getVfsTargetSequence(), vfsTargetSequence)) {
             vrSeq.setVfsTargetSequence(vfsTargetSequence);
             changed = true;
         }
-        if (vfsVariation != null && !vrSeq.getVfsVariation().equals(vfsVariation)) {
+        if (vfsVariation != null && !Objects.equals(vrSeq.getVfsVariation(), vfsVariation)) {
             vrSeq.setVfsVariation(vfsVariation);
             changed = true;
         }
         return changed;
-    }
-
-    private boolean setPropertyIfChanged(VariantSequence vrSeq, String propertyName, Object value) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Object originalProperty = PropertyUtils.getProperty(vrSeq, propertyName);
-        if (Objects.equals(originalProperty, value)) {
-            return false;
-        }
-        PropertyUtils.setProperty(vrSeq, propertyName, value);
-        return true;
     }
 
     public List<String> getMessages() {

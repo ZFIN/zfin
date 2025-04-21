@@ -188,8 +188,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
             select distinct fs.feature
             from FeatureGenomicMutationDetail fs
             where fs.feature.abbreviation not like 'sa%'
+            order by fs.zdbID
             """;
-
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         return query.list();
     }

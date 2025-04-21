@@ -227,6 +227,7 @@
         <mapping class="org.zfin.mapping.Location"/>
         <mapping class="org.zfin.mapping.FeatureLocation"/>
         <mapping class="org.zfin.mapping.MarkerLocation"/>
+        <mapping class="org.zfin.mapping.VariantSequence"/>
         <mapping class="org.zfin.mutant.FishExperiment"/>
         <mapping class="org.zfin.mutant.GeneGenotypeExperiment"/>
 
