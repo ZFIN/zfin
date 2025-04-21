@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
  * contains any RefSeq records that have been obsoleted and replaced with a new RefSeq.  If that's the case,
  * and if ZFIN has the newer RefSeq, these delete actions should be flagged as expected to be re-added later.
  *
+ * Additionally, this handler will add some tagging information to INFO actions for cases where our logic
+ * thinks that a uniprot dblink should be deleted, but since it is a manually curated dblink, it is only flagged
+ * as an INFO action. This will give curators more information so they can re-examine those accessions.
+ *
  * Optional environment variables:
  *   NCBI_FETCH_CACHE_INPUT_FILE=/path/to/somefile.json:
  *   If set, input cache will be used instead of fetching from NCBI api
@@ -37,13 +41,23 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
         initialize();
         log.debug("Check Lost Uniprot for obsoletes");
 
-        List<UniProtLoadAction> deletes = actions.stream().filter(a -> UniProtLoadAction.Type.DELETE.equals(a.getType())).toList();
-        initializeNcbiRefseqData(uniProtRecords, deletes);
+        List<UniProtLoadAction> deletesAndWouldBeDeletes = actions.stream().filter(a -> shouldReviewActionForObsoletes(a)).toList();
+        initializeNcbiRefseqData(uniProtRecords, deletesAndWouldBeDeletes);
 
-        //go through each of the deletes and check if they have refseqs that are replacements for obsoleted ones
-        for(UniProtLoadAction action : deletes) {
+        //go through each of the deletesAndWouldBeDeletes and check if they have refseqs that are replacements for obsoleted ones
+        for(UniProtLoadAction action : deletesAndWouldBeDeletes) {
             checkAndUpdateAction(action, uniProtRecords, context);
         }
+    }
+
+    //Only some types of actions need to be reviewed to find out if they are related to obsoleted RefSeq information
+    private static boolean shouldReviewActionForObsoletes(UniProtLoadAction a) {
+        if (UniProtLoadAction.Type.DELETE.equals(a.getType())) {
+            return true;
+        } else if (UniProtLoadAction.SubType.MANUALLY_CURATED_ACCESSION_WOULD_BE_LOST.equals(a.getSubType())) {
+            return true;
+        }
+        return false;
     }
 
     private void initialize() {
@@ -57,6 +71,20 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
     }
 
     private void checkAndUpdateAction(UniProtLoadAction action, Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context) {
+        checkAndUpdateActionCommon(action, uniProtRecords, context);
+        if (action.getSubType().equals(UniProtLoadAction.SubType.MANUALLY_CURATED_ACCESSION_WOULD_BE_LOST)) {
+            checkAndUpdateActionForManualCurations(action, uniProtRecords, context);
+        }
+    }
+
+    private void checkAndUpdateActionForManualCurations(UniProtLoadAction action, Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context) {
+        RichSequenceAdapter uniprotData = uniProtRecords.get(action.getAccession());
+        if (uniprotData == null) {
+            action.addDetails("No uniprot data found for accession " + action.getAccession());
+        }
+    }
+
+    private void checkAndUpdateActionCommon(UniProtLoadAction action, Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context) {
         RichSequenceAdapter uniprotData = uniProtRecords.get(action.getAccession());
         if (uniprotData == null) {
             log.debug("No uniprot record for accession " + action.getAccession());
@@ -86,14 +114,17 @@ public class CheckLostUniprotsForObsoletesHandler implements UniProtLoadHandler 
                 action.addTag(UniProtLoadAction.CategoryTag.REPLACED_REFSEQ);
                 action.addDetails(details);
 
-                //default behavior is to not delete a uniprot/gene dblink if the refseq mismatch is due to the refseq getting a replacement
-                //we expect the difference to reconcile itself over time
-                if ("true".equals(System.getenv("UNIPROT_DELETE_REPLACED_REFSEQ_FLAG"))) {
-                    log.info("Deleting UniProt accession despite replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession() + "/" + refseq);
-                } else {
-                    log.info("Changing action type from DELETE to WARNING due to replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession());
-                    action.setType(UniProtLoadAction.Type.WARNING);
-                    action.addDetails("\nTo DELETE this uniprot accession, re-run uniprot load with flag 'UNIPROT_DELETE_REPLACED_REFSEQ_FLAG' set to 'true'.");
+                //handle replacement logic for DELETE actions only
+                if (UniProtLoadAction.Type.DELETE.equals(action.getType())) {
+                    //default behavior is to not delete a uniprot/gene dblink if the refseq mismatch is due to the refseq getting a replacement
+                    //we expect the difference to reconcile itself over time
+                    if ("true".equals(System.getenv("UNIPROT_DELETE_REPLACED_REFSEQ_FLAG"))) {
+                        log.info("Deleting UniProt accession despite replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession() + "/" + refseq);
+                    } else {
+                        log.info("Changing action type from DELETE to WARNING due to replaced refseq: " + action.getGeneZdbID() + "/" + action.getAccession());
+                        action.setType(UniProtLoadAction.Type.WARNING);
+                        action.addDetails("\nTo DELETE this uniprot accession, re-run uniprot load with flag 'UNIPROT_DELETE_REPLACED_REFSEQ_FLAG' set to 'true'.");
+                    }
                 }
 
                 log.debug(details);

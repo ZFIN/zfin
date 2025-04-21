@@ -82,11 +82,14 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         //do some filtering based on attributions for lost UniProts
         List<DBLinkSlimDTO> filteredLostUniProts = new ArrayList<>();
         List<DBLinkSlimDTO> removeAttributionOnly = new ArrayList<>();
+        List<DBLinkSlimDTO> wouldBeLostUniProtsWithNonLoadPublication = new ArrayList<>();
 
         for(DBLinkSlimDTO lostUniProt: genesThatLostUniProts) {
             if (lostUniProt.containsNonLoadPublication()) {
                 if (lostUniProt.containsLoadPublication()) {
                     removeAttributionOnly.add(lostUniProt);
+                } else {
+                    wouldBeLostUniProtsWithNonLoadPublication.add(lostUniProt);
                 }
             } else {
                 filteredLostUniProts.add(lostUniProt);
@@ -102,6 +105,12 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         //create actions for removing load attribution if associated with non-load publication
         for(DBLinkSlimDTO lostUniProt: removeAttributionOnly) {
             UniProtLoadAction action = createRemoveAttributionAction(uniProtRecords, context, lostUniProt);
+            actions.add(action);
+        }
+
+        //create actions for uniprot accessions that would be lost if we removed manually curated accessions
+        for(DBLinkSlimDTO lostUniProt: wouldBeLostUniProtsWithNonLoadPublication) {
+            UniProtLoadAction action = createWouldBeLostUniProtInfoAction(uniProtRecords, context, lostUniProt);
             actions.add(action);
         }
 
@@ -162,6 +171,21 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
             action.setDetails(action.getDetails() + "\n" + "This association will be removed.");
         }
         action.setDetails(action.getDetails() + "\n\n" + sequenceDetails);
+        return action;
+    }
+
+    private UniProtLoadAction createWouldBeLostUniProtInfoAction(Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context, DBLinkSlimDTO lostUniProt) {
+        UniProtLoadAction action = new UniProtLoadAction();
+        action.setGeneZdbID(lostUniProt.getDataZdbID());
+        action.setAccession(lostUniProt.getAccession());
+        action.setType(UniProtLoadAction.Type.INFO);
+        action.setSubType(UniProtLoadAction.SubType.MANUALLY_CURATED_ACCESSION_WOULD_BE_LOST);
+
+        action.addLink(UniProtLoadLink.create(ZFIN, lostUniProt.getDataZdbID(), "#sequences"));
+        action.addLink(UniProtLoadLink.create(UNIPROTKB, lostUniProt.getAccession()));
+
+        action.setDetails("This association is manually curated so no action is taken, otherwise, it would be lost.");
+
         return action;
     }
 

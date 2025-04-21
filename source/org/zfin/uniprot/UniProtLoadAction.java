@@ -76,7 +76,9 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         REMOVE_ATTRIBUTION("Remove Attribution"),
         ADD_ATTRIBUTION("Add Attribution"),
         GENE_LOST_ALL_UNIPROTS("ZFIN Gene Lost All UniProt Accessions"),
-        GENE_GAINS_FIRST_UNIPROT("ZFIN Gene Gains First UniProt Accession");
+        GENE_GAINS_FIRST_UNIPROT("ZFIN Gene Gains First UniProt Accession"),
+        MANUALLY_CURATED_ACCESSION_WOULD_BE_LOST("Manually Curated UniProt Accession Would Be Lost"),
+        ;
 
         private final String value;
 
