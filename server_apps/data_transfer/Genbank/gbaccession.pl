@@ -75,13 +75,20 @@ if (!(-e "$newfile")) {
 
 # filter file to relevant entries only
 print "Running filterFlatFile.pl on $newfile \n";
-system ("./filterFlatFile.pl $newfile")  &&  &writeReport("filterFlatFile.pl failed.");
+my $returnCode = system("./filterFlatFile.pl $newfile");
+if ($returnCode != 0) {
+    &writeReport("filterFlatFile.pl failed.");
+    exit $returnCode;
+}
 
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
 print "Running parseDaily.pl on $newfile \n";
-system ("./parseDaily.pl $newfile")  &&  &writeReport("parseDaily.pl failed.");
-
+$returnCode = system("./parseDaily.pl $newfile")
+if ($returnCode != 0) {
+    &writeReport("parseDaily.pl failed.");
+    exit $returnCode;
+}
 
 # only move the FASTA files and flat files to development_machine if that script
 # is run from production.
