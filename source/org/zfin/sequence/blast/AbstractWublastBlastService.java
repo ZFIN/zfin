@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This class
@@ -406,12 +407,18 @@ public abstract class AbstractWublastBlastService implements BlastService {
     // ToDo: need to handle the exceptions better. Too clunky...
     public boolean validateCuratedDatabases() throws BlastDatabaseException {
         List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED);
+        logger.info("Validating curated databases: " +
+                databases.size() + " " +
+                databases.stream().map(d -> d.getAbbrev().getValue()).collect(Collectors.joining(", ")));
+
         boolean success = true;
         for (Database database : databases) {
             logger.info("validating: " + database.getName());
             try {
                 validateDatabase(database);
+                logger.info("Validation success for: " + database.getAbbrev());
             } catch (BlastDatabaseException e) {
+                logger.info("Validation failed for:  " + database.getAbbrev());
                 logger.error(e.getMessage());
                 success = false;
             }
@@ -478,8 +485,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
         } catch (IOException e) {
             throw new BlastDatabaseException(": ");
         }
-
-
     }
 
     protected void checkAllAccessionsAreInDatabase(Database blastDatabase, File accessionFile) throws BlastDatabaseException {
@@ -501,6 +506,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
             DefaultExecutor defaultExecutor = new DefaultExecutor();
             PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream, byteArrayErrorStream);
             defaultExecutor.setStreamHandler(pumpStreamHandler);
+            logger.info("Executing command: " + commandLine.toString());
+
             try {
                 defaultExecutor.execute(commandLine);
             } catch (IOException e) {
@@ -522,7 +529,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             }
 
             if (errorOutput.trim().length() > 0) {
-                throw new BlastDatabaseException("Failed to find all sequences in blast database [" + blastDatabase.getDisplayName() + "]: " + errorOutput);
+                throw new BlastDatabaseException("Failed to find all sequences in blast database [" + blastDatabase.getDisplayName() + " (" + blastDatabase.getAbbrev() + ")]: \n" + errorOutput);
             }
 
         } catch (BlastDatabaseException e) {
