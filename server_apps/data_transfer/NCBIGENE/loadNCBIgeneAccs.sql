@@ -82,10 +82,7 @@ where exists(
 insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
 select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
   from ncbi_gene_load
-  where not exists(
-         select 'x' from db_link where (dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id)
-                                     = (mapped_zdb_gene_id, ncbi_accession, fdbcont_zdb_id)
-      );
+    ON CONFLICT (dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id) DO NOTHING;
 
 --! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
 
