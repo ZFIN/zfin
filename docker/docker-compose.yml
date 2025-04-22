@@ -98,7 +98,7 @@ services:
       #- nfs-loadup:/opt/zfin/loadUp
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
-      - /opt/zfin/hh_atlas:/opt/zfin/hh_atlas
+      - ${DOCKER_HHATLAS_PATH}:/opt/zfin/hh_atlas
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro

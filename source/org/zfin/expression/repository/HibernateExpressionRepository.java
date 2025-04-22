@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.datatransfer.daniocell.DanioCellMapping;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
@@ -1929,10 +1928,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public List<ExpressionResult2> getPhenotypeFromExpressionsByFeature(String featureID) {
         String hql = """
-            select result from ExpressionResult2 result, GenotypeFeature genoFeature 
-                 where result.phenotypeTermSet IS NOT EMPTY 
-             AND genoFeature.feature.zdbID = :zdbID 
-             AND genoFeature in elements(result.expressionFigureStage.expressionExperiment.fishExperiment.fish.genotype.genotypeFeatures) 
+                select result
+                from ExpressionResult2 result
+                join result.expressionFigureStage efs
+                join efs.expressionExperiment ee
+                join ee.fishExperiment fe
+                join fe.fish f
+                join f.genotype g
+                join g.genotypeFeatures genoFeature
+                where result.phenotypeTermSet IS NOT EMPTY
+                  and genoFeature.feature.zdbID = :zdbID
             """;
         Query<ExpressionResult2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult2.class);
         query.setParameter("zdbID", featureID);
