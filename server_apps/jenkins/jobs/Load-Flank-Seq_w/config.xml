@@ -23,7 +23,11 @@
     </hudson.tasks.Ant>
   </builders>
   <publishers>
-
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/DB_maintenance/report_data/Load-Flank-Seq_w/Load-Flank-Seq_w.*</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
