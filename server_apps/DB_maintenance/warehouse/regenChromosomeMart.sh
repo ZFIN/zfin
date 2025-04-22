@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Move the current table data to backup, move the new data to current
-${PGBINDIR}/psql --echo-all -v ON_ERROR_STOP=1 "$DB_NAME" < "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql" &> "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReport.txt
+${PGBINDIR}/psql --echo-all -v ON_ERROR_STOP=1 "$DB_NAME" < "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql" &> "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReport.txt"
 
 if [ $? -ne 0 ]; then
   echo "refresh chromosome mart (the public tables) failed and was rolled back"
