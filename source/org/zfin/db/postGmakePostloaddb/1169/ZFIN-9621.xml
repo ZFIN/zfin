@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-9323-load">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1169/remove-accession-bank-data.txt"
+                  tableName="zfinnucl" quotchar='"' separator=",">
+            <column header="ID" name="id" type="String"/>
+        </loadData>
+        <output  target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+</databaseChangeLog>
