@@ -58,7 +58,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public int getWtExpressionFigureCountForGene(Marker marker) {
         String sql = """
-               select distinct efs_xpatex_zdb_id, xpatex_source_zdb_id
+               select count(distinct efs_fig_zdb_id)
                        from expression_figure_stage
                             join expression_result2
                                    on expression_figure_stage.efs_pk_id = expression_result2.xpatres_efs_id
