@@ -40,7 +40,6 @@ import org.zfin.util.TermFigureStageRange;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.util.ZfinPropertyUtils.getStringOrNull;
@@ -1306,12 +1305,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = """
-                     select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox 
-                           where fishox.fish = :fish 
-                             and fishox = xpExp.fishExperiment 
-                             and xpRslt.expressionExperiment = xpExp 
-                             and xpExp.gene IS NOT null
-                     """;
+            select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox 
+                  where fishox.fish = :fish 
+                    and fishox = xpExp.fishExperiment 
+                    and xpRslt.expressionExperiment = xpExp 
+                    and xpExp.gene IS NOT null
+            """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("fish", fish);
 
@@ -1380,13 +1379,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String sql = """
-            select distinct efs_fig_zdb_id  
+            select distinct xpatex_source_zdb_id
                  from expression_figure_stage
                  join expression_result2 on expression_figure_stage.efs_pk_id = expression_result2.xpatres_efs_id
                  join expression_experiment2 on xpatex_zdb_id = expression_figure_stage.efs_xpatex_zdb_id
                  join fish_experiment fe on expression_experiment2.xpatex_genox_zdb_id = fe.genox_zdb_id
                  join figure on efs_fig_zdb_id = fig_zdb_id
-             where genox_fish_zdb_id = :fishID 
+             where genox_fish_zdb_id = :fishID
             """;
         Query query = HibernateUtil.currentSession().createNativeQuery(sql);
         query.setParameter("fishID", fish.getZdbID());
@@ -1407,7 +1406,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("fish", fish);
-        query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
+        query.setParameter("markerId", "ZDB-EFG" + "%");
 
         return query.list();
     }
@@ -1434,12 +1433,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = """
-                     select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox 
-                           where fishox.fish = :fish 
-                             and fishox = xpExp.fishExperiment 
-                             and xpRslt.expressionExperiment = xpExp 
-                             and xpExp.antibody IS NOT null
-                     """;
+            select xpRslt from ExpressionFigureStage xpRslt, ExpressionExperiment2 xpExp, FishExperiment fishox 
+                  where fishox.fish = :fish 
+                    and fishox = xpExp.fishExperiment 
+                    and xpRslt.expressionExperiment = xpExp 
+                    and xpExp.antibody IS NOT null
+            """;
         Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("fish", fish);
 
