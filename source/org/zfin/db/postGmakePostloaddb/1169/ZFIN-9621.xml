@@ -9,8 +9,12 @@
         http://www.liquibase.org/xml/ns/pro
         http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
+    <changeSet author="cmpich" id="ZFIN-9323-load">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1169/remove-accession-bank-data.txt"
+                  tableName="zfinnucl" quotchar='"' separator=",">
+            <column header="ID" name="id" type="String"/>
+        </loadData>
+        <output  target="STDOUT">OUTPUT</output>
+    </changeSet>
 
-    <include file="source/org/zfin/db/postGmakePostloaddb/1169/ZFIN-9621-pre.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1169/ZFIN-9621.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1169/ZFIN-9621.sql" />
 </databaseChangeLog>
