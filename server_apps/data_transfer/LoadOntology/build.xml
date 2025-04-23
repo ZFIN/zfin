@@ -29,7 +29,7 @@
     <property name="goQualifierSourceURL" value="file:///research/zusers/informix/Curation/go-qualifier.obo"/>
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/research/zusers/informix/Curation/zeco.obo"/>
-    <property name="anatomyOboURL" value="file:///research/zusers/informix/Curation/anatomy.obo"/>
+    <property name="anatomyOboURL" value="https://raw.githubusercontent.com/ZFIN/zebrafish-anatomical-ontology/refs/heads/master/src/ontology/zfa-edit.obo"/>
     <property name="stageOboURL" value="file:///research/zusers/informix/Curation/zfs.obo"/>
     <property name="mmoURL" value="file:///research/zusers/informix/Curation/mmo.obo"/>
 
