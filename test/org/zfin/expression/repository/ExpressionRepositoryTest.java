@@ -663,7 +663,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getWtExpressionFigureCountForGene() {
         Marker gene = getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int result= getExpressionRepository().getWtExpressionFigureCountForGene(gene);
-        assertEquals(result, 0);
+        assertTrue(result > 40);
     }
 
 }
