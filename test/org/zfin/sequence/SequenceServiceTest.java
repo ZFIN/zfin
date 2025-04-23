@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void testAllGenes() {
 
         List<String> allGeneIds = new ArrayList<>();

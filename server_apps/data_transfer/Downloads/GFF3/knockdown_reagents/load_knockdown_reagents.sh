@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 
 GLOBALSTORE="/research/zprodmore/gff3"
 TARGETDIR="$TARGETROOT/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/"
