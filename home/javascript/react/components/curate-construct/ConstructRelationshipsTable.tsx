@@ -40,7 +40,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
     const [loading, setLoading] = React.useState<boolean>(true);
     const [constructRelationshipRows, setConstructRelationshipRows] = React.useState<ConstructRelationshipRow[]>([]);
     const [publicationConstructs, setPublicationConstructs] = React.useState<MarkerNameAndZdbId[]>([]);
-    const [markersForRelation, setMarkersForRelation] = React.useState<MarkerNameAndZdbId[]>([]);
+    const [regionsForRelation, setRegionsForRelation] = React.useState<MarkerNameAndZdbId[]>([]);
     const [selectedMarker, setSelectedMarker] = React.useState<string>('');
     const [selectedConstruct, setSelectedConstruct] = React.useState<string>('');
     const RELATIONSHIP_TO_ADD = 'contains region';
@@ -188,8 +188,8 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/${RELATIONSHIP_TO_ADD}/markersForRelation`);
             const markersData = await response.json();
-
-            setMarkersForRelation(markersData.map(({ label, zdbID }) => ({ label, zdbID })).sort((a, b) => a.label.localeCompare(b.label)));
+            const regionsData = markersData.filter(m => m.markerType == 'Engineered Region');
+            setRegionsForRelation(regionsData.map(({ label, zdbID }) => ({ label, zdbID })).sort((a, b) => a.label.localeCompare(b.label)));
         } catch (error) {
             console.error('Failed to fetch markers for relation:', error);
         }
@@ -290,7 +290,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
                     <td><select className='gwt-ListBox'><option>{RELATIONSHIP_TO_ADD}</option></select></td>
                     <td><select className='gwt-ListBox' onChange={(e) => setSelectedMarker(e.target.value)}>
                         <option value='-----------'>-----------</option>
-                        {markersForRelation.map(marker => (
+                        {regionsForRelation.map(marker => (
                             <option key={marker.zdbID} value={marker.zdbID}>{marker.label}</option>
                         ))}
                     </select></td>
