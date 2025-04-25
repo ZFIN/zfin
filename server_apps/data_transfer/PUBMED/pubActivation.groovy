@@ -10,9 +10,10 @@ WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
 DBNAME = System.getenv("DBNAME")
 
 println("Running complete_auther_names.pl at " + new Date())
-def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
+def workingDir = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED"
+def scriptPath = "${workingDir}/complete_auther_names.pl"
 def command = "perl -w $scriptPath"
-println command.execute().text
+println command.execute(null, new File(workingDir)).text
 
 println("Running pub_check_and_addback_volpg.pl at " + new Date())
 def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
