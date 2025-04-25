@@ -761,17 +761,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
         Session session = HibernateUtil.currentSession();
         String hql = """
-                select distinct dbl 
-                from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref 
-                where dbl.referenceDatabase = ref 
-                and ref.foreignDBDataType.superType = :superType 
-                and dbl.dataZdbID = :markerZdbId 
+                select distinct dbl
+                from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref
+                where dbl.referenceDatabase = ref
+                and ref.foreignDBDataType.superType = :superType
+                and dbl.dataZdbID = :markerZdbId
                 and not exists (from DisplayGroupMember dgm where dgm.referenceDatabase = ref and dgm.displayGroup = dg)
                 and dg.groupName = :groupName
             """;
 
 
-        Query query = session.createQuery(hql);
+        Query<DBLink> query = session.createQuery(hql, DBLink.class);
         query.setParameter("superType", superType);
         query.setParameter("groupName", DisplayGroup.GroupName.HIDDEN_DBLINKS);
         query.setParameter("markerZdbId", zdbID);
@@ -870,14 +870,14 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     private List<RelatedMarkerDBLinkDisplay> getDBLinksForNthRelatedMarker(boolean isFirstMarker, Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
         String hql = """
-                select distinct dbl, mr 
+                select distinct dbl, mr
                 from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,
-                MarkerRelationship  mr  
-                where dg.groupName = :displayGroup 
-                and dbl.referenceDatabase=ref 
+                MarkerRelationship  mr
+                where dg.groupName = :displayGroup
+                and dbl.referenceDatabase=ref
                 and dgm.referenceDatabase = ref
                 and dgm.displayGroup = dg
-                and mr.markerRelationshipType.name in (:types) 
+                and mr.markerRelationshipType.name in (:types)
             """;
 
         if (isFirstMarker) {
