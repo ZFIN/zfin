@@ -9,6 +9,20 @@ import org.zfin.properties.ZfinPropertiesEnum
 import groovy.xml.StreamingMarkupBuilder
 import java.time.LocalDate
 
+//Allow option to update existing pubs
+def fetchMode = System.getProperty('fetchMode', 'insert')
+println "Current fetch mode: ${fetchMode}"
+if (!(fetchMode in ['insert', 'update'])) {
+    println "Error: fetchMode must be either 'insert' or 'update'"
+    System.exit(1)
+}
+//require ids if fetchMode is update
+if (fetchMode == 'update' && args.length < 1) {
+    println "Error: When using fetchMode=update, you must provide IDs as command line arguments"
+    println "Usage: groovy -DfetchMode=update fetchPubsFromPubMed.groovy id1 id2 id3 ..."
+    System.exit(1)
+}
+
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
@@ -141,8 +155,14 @@ PARSE_PUBS.withWriter { pubLog ->
     articles.eachWithIndex{ GPathResult article, int i -> processArticle(printer, article, i) }
 }
 
-dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ERROR_STOP=1 " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/loadNewPubs.sql " +
+def loadSqlFilename = "loadNewPubs.sql"
+if (fetchMode == 'update') {
+    loadSqlFilename = "updateExistingPubs.sql"
+}
+
+dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql --echo-all -v ON_ERROR_STOP=1 " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/${loadSqlFilename} " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 dbaccessProc.waitFor()
 
+System.exit(dbaccessProc.exitValue())
