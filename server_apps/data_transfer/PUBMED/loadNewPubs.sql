@@ -22,7 +22,7 @@ create temp table tmp_pubs (
   pubType text);
 
 \copy tmp_pubs from 'parsePubs.log';
-\copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pubAlreadyinZFIN.txt' delimiter '|';
+\copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to 'pubAlreadyinZFIN.txt' delimiter '|';
 
 delete from tmp_pubs
 where (authors = 'none' or authors is null)
@@ -148,7 +148,7 @@ from tmp_new_journals;
 insert into zdb_active_source (zactvs_zdb_id)
   select id from tmp_ids;
 
-\copy (select distinct get_id('JRNL'), journaltitle, iso, issn from tmp_new_pubs where journal_zdb_id is null) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt' delimiter '|';
+\copy (select distinct get_id('JRNL'), journaltitle, iso, issn from tmp_new_pubs where journal_zdb_id is null) to 'newJournals.txt' delimiter '|';
 
 insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_print_issn)
   select id, journaltitle, iso, false, issn
@@ -191,9 +191,9 @@ update tmp_new_pubs
 set day = '0'||day
 where length(day) = 1;
 
-\copy (select * from tmp_new_pubs) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPublicationsAdded.txt' delimiter '|';
+\copy (select * from tmp_new_pubs) to 'newPublicationsAdded.txt' delimiter '|';
 
-\copy (select zdb_id, pmid, title from tmp_new_pubs) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPubSummary.txt' delimiter '|';
+\copy (select zdb_id, pmid, title from tmp_new_pubs) to 'newPubSummary.txt' delimiter '|';
 
 insert into publication (
   pub_pmc_id,
@@ -289,7 +289,7 @@ create temp table tmp_mesh (
   is_major boolean
 ) ;
 
-\copy tmp_mesh from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log' delimiter '|';
+\copy tmp_mesh from 'parseMesh.log' delimiter '|';
 
 insert into mesh_heading (mh_pub_zdb_id, mh_mesht_mesh_descriptor_id, mh_descriptor_is_major_topic)
   select distinct tmp_new_pubs.zdb_id, tmp_mesh.descriptor_id, tmp_mesh.is_major
