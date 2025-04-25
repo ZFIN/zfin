@@ -188,7 +188,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/${RELATIONSHIP_TO_ADD}/markersForRelation`);
             const markersData = await response.json();
-            const regionsData = markersData.filter(m => m.markerType == 'Engineered Region');
+            const regionsData = markersData.filter(m => m.markerType === 'Engineered Region');
             setRegionsForRelation(regionsData.map(({ label, zdbID }) => ({ label, zdbID })).sort((a, b) => a.label.localeCompare(b.label)));
         } catch (error) {
             console.error('Failed to fetch markers for relation:', error);
