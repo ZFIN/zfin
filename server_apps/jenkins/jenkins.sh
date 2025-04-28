@@ -14,9 +14,12 @@ echo JENKINS_PORT  $JENKINS_PORT
 echo PID_FILE      $PID_FILE
 echo JAVA_HOME $JAVA_HOME
 
+# https://www.jenkins.io/doc/book/security/configuring-content-security-policy/
+# Allow script execution in artifacts (used in reports) by setting '-Dhudson.model.DirectoryBrowserSupport.CSP=' (empty string)
+
 start_jenkins() {
 echo 'Starting Jenkins...'
-    nohup $JAVA_HOME/bin/java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
+    nohup $JAVA_HOME/bin/java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/java.awt=ALL-UNNAMED -Dhudson.model.DirectoryBrowserSupport.CSP= -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
     echo pid: $(cat $PID_FILE)
 #	start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec $COMMAND
 }
