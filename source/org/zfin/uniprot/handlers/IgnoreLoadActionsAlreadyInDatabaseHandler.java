@@ -33,8 +33,10 @@ public class IgnoreLoadActionsAlreadyInDatabaseHandler implements UniProtLoadHan
                 } else {
                     if (existingRecord.getPublicationIDs().size() == 0) {
                         log.info("Keeping load action for " + action.getAccession() + " because it is already in the database, but has no attributions.");
-                        action.setSubType(UniProtLoadAction.SubType.ADD_ATTRIBUTION);
+                    } else {
+                        log.info("Adding attribution for " + action.getAccession() + " to " + existingRecord.getPublicationIDs());
                     }
+                    action.setSubType(UniProtLoadAction.SubType.ADD_ATTRIBUTION);
                 }
             }
         }
