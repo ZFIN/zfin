@@ -370,7 +370,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             select xpatres_pk_id, img_zdb_id, img_image 
             from expression_result2
                  join expression_figure_stage on xpatres_efs_id = efs_pk_id 
-                 join figure on xpatres_pk_id = fig_source_zdb_id
+                 join figure on efs_fig_zdb_id = fig_zdb_id
                  join image on img_fig_zdb_id = fig_zdb_id 
                  join publication on publication.zdb_id = fig_source_zdb_id 
             where pub_can_show_images = true 
