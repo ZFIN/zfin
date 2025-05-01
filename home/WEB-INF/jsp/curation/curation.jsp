@@ -5,6 +5,13 @@
 <%--    <script src="${zfn:getAssetPath("angular.js")}"></script>--%>
     <script src="${zfn:getAssetPath("curation.js")}"></script>
 
+    <style>
+        /*TODO: remove this when switching to new construct edit*/
+        #CONSTRUCT-tab {
+            display: none;
+        }
+    </style>
+
     <c:if test="${hasCorrespondence}">
         <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
     </c:if>
@@ -318,4 +325,56 @@
     </div>
 
     <script src="${zfn:getAssetPath("react.js")}"></script>
+
+    <script>
+        //TODO: Remove this when converting to new construct edit interface
+        //Instead, we can strip out all of the old construct edit code (see: https://github.com/ZFIN/zfin/pull/1404/files)
+        let hideLegacyTab = true;
+        function unhideLegacyTabIfEnabled() {
+            $.getJSON('/action/devtool/feature-flags').then(flags => {
+               const flag = flags.filter(f => f.name == 'Use Legacy Construct Tab' )[0];
+               if (flag.enabled) {
+                   $('#CONSTRUCT-tab').show();
+                   hideLegacyTab = false;
+               }
+            });
+        }
+
+        function handleHidingOldConstructTab() {
+            let isInitialized = false;
+
+            function clickNextTabIfActive() {
+                const element = $('#CONSTRUCT-tab');
+                if (element.hasClass('active')) {
+                    $('#CONSTREACT-tab').click();
+                    isInitialized = true;
+                }
+            }
+
+            function constreactTabLoaded() {
+                $('#CONSTREACT-tab').removeClass('nav-tabs-loading');
+            }
+
+            const intervalHandle = setInterval(() => {
+                if (!isInitialized) {
+                    try {
+                        clickNextTabIfActive();
+                        constreactTabLoaded();
+                    } catch (e) {
+                        console.log("not active yet");
+                    }
+                } else {
+                    clearInterval(intervalHandle);
+                }
+                if (!hideLegacyTab) {
+                    clearInterval(intervalHandle);
+                }
+            }, 500);
+        }
+
+        handleHidingOldConstructTab();
+        unhideLegacyTabIfEnabled();
+
+    </script>
+
 </z:page>
