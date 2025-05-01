@@ -267,7 +267,10 @@ public class ConstructComponentService {
             throw new InvalidConstructNameException("Cannot change construct type");
         }
 
-        validateConstructNameOrThrowException(newName.toString());
+        //updating construct to the same name is allowed--presumably the components will have changed in some way
+        if (!oldMarker.getName().equals(newName.toString())) {
+            validateConstructNameOrThrowException(newName.toString());
+        }
 
         //update the construct relationships based on the name change
         updateConstructRelationships(constructZdbID, newName, pubZdbID);
