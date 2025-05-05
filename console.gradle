@@ -201,3 +201,29 @@ task checkFilePermissionsTask(type: JavaExec) {
     main = 'org.zfin.task.CheckFilePermissionsTask'
 }
 
+task csvMerge(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.util.CSVMerge'
+
+    // Get arguments from the command line
+    // So this can be called like so:
+    // gradle csvMergerTask --args="before_db_link.csv before_recattrib.csv dblink_zdb_id recattrib_data_zdb_id recattrib_source_zdb_id /tmp/combined.csv"
+}
+
+task csvDiff(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.util.CSVDiff'
+
+    // Get arguments from the command line
+    // So this can be called like so:
+    // gradle csvDiffTask --args="dblink_cmp_ before_combined.csv after_combined.csv dblink_linked_recid,dblink_acc_num,dblink_fdbcont_zdb_id,recattrib_source_zdb_id dblink_info,dblink_zdb_id"
+}
+
+task ncbiCharacterize(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ncbi.NCBICharacterizationProcess'
+
+    // Get arguments from the command line
+    // So this can be called like so:
+    // gradle ncbiCharacterize --args="$TARGETROOT/server_apps/datatransfer/NCBIGENE"
+}
