@@ -22,6 +22,15 @@ RUN usermod  -aG zfishweb zfishweb
 RUN groupadd -g 1477 zfloadup
 RUN usermod  -aG zfloadup zfishweb
 
+RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
+-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.local.only=false \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Dcom.sun.management.jmxremote.port=9012 \
+-Djava.rmi.server.hostname=$(hostname -i) \
+-Dcom.sun.management.jmxremote.rmi.port=9012 \
+-Dcom.sun.management.jmxremote.ssl=false"' > bin/setenv.sh
+
 USER zfishweb
 
 COPY ./postgresql-42.2.18.jar  /usr/local/tomcat/lib
