@@ -189,9 +189,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
             from FeatureGenomicMutationDetail fs
             where fs.feature.abbreviation not like 'sa%'
             """;
-
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
-        return query.list();
+        return query.list().stream().sorted(Comparator.comparing(Feature::getAbbreviation)).collect(Collectors.toList());
     }
 
     @Override
