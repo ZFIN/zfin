@@ -1,5 +1,7 @@
 package org.zfin.task.metricsmonitor;
 
+import lombok.extern.log4j.Log4j2;
+
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -20,48 +22,42 @@ import java.util.Date;
  * If the captcha is enabled, it will disable when the relevant metrics drop below the corresponding "_LOW" thresholds
  * and a certain amount of time has passed (SECONDS_TO_ENABLE)
  */
+@Log4j2
 public class MetricsMonitor {
-    private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://%s:%d/jmxrmi";
     private static final String TOMCAT_CONNECTOR_NAME = "https-openssl-nio-8443";
 
-    private final String host;
-    private final int port;
-    private final int interval;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private HighLoadAction triggerAction = new HighLoadAction();
     private JMXConnector jmxConnector;
     private MBeanServerConnection mbeanConn;
     private SystemMetricsDTO previousSystemMetrics;
     private long rowNumber = 0;
-
-    public MetricsMonitor(String host, int port, int interval) {
-        this.host = host;
-        this.port = port;
-        this.interval = interval;
-    }
+    private MetricsMonitorConfig configuration;
 
     private void run() throws IOException {
-            this.connect();
-            this.startMonitoring();
+        this.init();
+        this.connect();
+        this.startMonitoring();
+    }
+
+    private void init() {
+        this.configuration = MetricsMonitorConfig.getInstance();
     }
 
     public void connect() throws IOException {
-        String urlString = String.format(JMX_URL, host, port);
-        System.out.println("Connecting to " + urlString);
-        JMXServiceURL url = new JMXServiceURL(urlString);
+        log.info("Connecting to " + configuration.jmxUrl());
+        JMXServiceURL url = new JMXServiceURL(configuration.jmxUrl());
         jmxConnector = JMXConnectorFactory.connect(url);
         mbeanConn = jmxConnector.getMBeanServerConnection();
-        System.out.println("Connected to Tomcat JMX at " + urlString);
     }
 
     public void startMonitoring() {
-        System.out.println("Starting Monitoring");
         while (true) {
             try {
                 SystemMetricsDTO metrics = collectMetrics();
                 printMetrics(metrics);
                 triggerActionForMetrics(metrics);
-                Thread.sleep(this.interval * 1000);
+                Thread.sleep(this.configuration.getPollingIntervalSeconds() * 1000);
             } catch (Exception e) {
                 System.err.println("Error collecting metrics: " + e.getMessage());
                 e.printStackTrace();
@@ -128,16 +124,6 @@ public class MetricsMonitor {
         }
     }
 
-    private Long getTomcatRequestCount() throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException, IOException, MalformedObjectNameException {
-        ObjectName httpsName = new ObjectName("Catalina:name=\"" + TOMCAT_CONNECTOR_NAME + "\",type=GlobalRequestProcessor");
-        return ((Integer)mbeanConn.getAttribute(httpsName, "requestCount")).longValue();
-    }
-
-    private Long getTomcatProcessingTime() throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException, IOException, MalformedObjectNameException {
-        ObjectName httpsName = new ObjectName("Catalina:name=\"" + TOMCAT_CONNECTOR_NAME + "\",type=GlobalRequestProcessor");
-        return ((Long)mbeanConn.getAttribute(httpsName, "processingTime"));
-    }
-
     private void collectLoadAverageMetrics(SystemMetricsDTO metrics) {
         try {
             // Path to the loadavg file
@@ -176,26 +162,31 @@ public class MetricsMonitor {
         }
     }
 
+    private Long getTomcatRequestCount() throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException, IOException, MalformedObjectNameException {
+        ObjectName httpsName = new ObjectName("Catalina:name=\"" + TOMCAT_CONNECTOR_NAME + "\",type=GlobalRequestProcessor");
+        return ((Integer)mbeanConn.getAttribute(httpsName, "requestCount")).longValue();
+    }
+
+    private Long getTomcatProcessingTime() throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException, IOException, MalformedObjectNameException {
+        ObjectName httpsName = new ObjectName("Catalina:name=\"" + TOMCAT_CONNECTOR_NAME + "\",type=GlobalRequestProcessor");
+        return ((Long)mbeanConn.getAttribute(httpsName, "processingTime"));
+    }
+
     public void disconnect() throws IOException {
         if (jmxConnector != null) {
             jmxConnector.close();
-            System.out.println("Disconnected from Tomcat JMX");
+            log.error("Disconnected from Tomcat JMX");
         }
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 3) {
-            System.out.println("Usage: java MetricsMonitor <host> <port> [pollingIntervalSeconds]");
-            System.out.println("Example: java MetricsMonitor localhost 9012 60");
-            System.out.println("Other configuration items by environment variables: MS_PER_REQUEST_THRESHOLD_HIGH MS_PER_REQUEST_THRESHOLD_LOW LOAD_THRESHOLD_HIGH LOAD_THRESHOLD_LOW MS_TO_ENABLE DBHOST DBUSER DBNAME");
+        if (args.length > 0) {
+            System.out.println("Usage: java MetricsMonitor");
+            System.out.println("Use environment variables to change default values: JMX_HOST JMX_PORT POLLING_INTERVAL_SECONDS MS_PER_REQUEST_THRESHOLD_HIGH MS_PER_REQUEST_THRESHOLD_LOW LOAD_THRESHOLD_HIGH LOAD_THRESHOLD_LOW MS_TO_ENABLE DBHOST DBUSER DBNAME");
             System.exit(1);
         }
 
-        String host = args[0];
-        int port = Integer.parseInt(args[1]);
-        int interval = args.length > 2 ? Integer.parseInt(args[2]) : 60;  // Default to 60 seconds
-
-        MetricsMonitor monitor = new MetricsMonitor(host, port, interval);
+        MetricsMonitor monitor = new MetricsMonitor();
         monitor.run();
     }
 }
