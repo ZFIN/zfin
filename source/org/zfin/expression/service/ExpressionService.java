@@ -638,7 +638,7 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
             FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
             List<ExpressedGene> expressedGenes = new ArrayList<>(figureListMap.get(figure).size());
             for (ExpressionExperiment2 expressionExperiment : expressionExperiments) {
-                List<ExpressionStatement> expressionStatements = new ArrayList<>(figureListMap.get(figure).size());
+                SortedSet<ExpressionStatement> expressionStatements = new TreeSet<>();
                 if (!expressionExperiment.getAllFigures().contains(figure)) {
                     continue;
                 }
@@ -650,13 +650,9 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
                         ExpressionStatement statement = new ExpressionStatement();
                         statement.setEntity(result.getEntity());
                         statement.setExpressionFound(result.isExpressionFound());
-                        // ensure distinctness
-                        if (!expressionStatements.contains(statement)) {
-                            expressionStatements.add(statement);
-                        }
+                        expressionStatements.add(statement);
                     });
                 }
-                Collections.sort(expressionStatements);
                 ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
                 expressedGene.addExpressionStatements(expressionStatements);
                 expressedGenes.add(expressedGene);
