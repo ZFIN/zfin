@@ -6,7 +6,7 @@ import java.util.Date;
 public class HighLoadAction {
 
     public static final String TRIGGER_ON_SQL = "update zdb_feature_flag set zfeatflag_enabled=true, zfeatflag_last_modified=now() where zfeatflag_name in ('Enable Captcha', 'Use altcha')";
-    public static final String TRIGGER_OFF_SQL = "update zdb_feature_flag set zfeatflag_enabled=false";
+    public static final String TRIGGER_OFF_SQL = "update zdb_feature_flag set zfeatflag_enabled=false, zfeatflag_last_modified=now() where zfeatflag_name in ('Enable Captcha')";
     private final MetricsMonitorConfig configuration;
 
     public boolean isTriggered = false;
