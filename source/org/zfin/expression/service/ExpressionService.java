@@ -643,11 +643,11 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
                     continue;
                 }
                 for (ExpressionFigureStage figureStage : expressionExperiment.getFigureStageSet()) {
-                    ExpressionStatement statement = new ExpressionStatement();
                     if (!figureStage.getFigure().equals(figure)) {
                         continue;
                     }
                     figureStage.getExpressionResultSet().forEach(result -> {
+                        ExpressionStatement statement = new ExpressionStatement();
                         statement.setEntity(result.getEntity());
                         statement.setExpressionFound(result.isExpressionFound());
                         // ensure distinctness
