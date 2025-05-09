@@ -3,6 +3,7 @@ package org.zfin.marker;
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.ExpressionStatement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,7 +36,7 @@ public class ExpressedGene {
         expressionStatements.add(expressionStatement);
     }
 
-    public void addExpressionStatements(List<ExpressionStatement> expressionStatementList) {
+    public void addExpressionStatements(Collection<ExpressionStatement> expressionStatementList) {
         if (CollectionUtils.isEmpty(expressionStatementList)) {
             return;
         }

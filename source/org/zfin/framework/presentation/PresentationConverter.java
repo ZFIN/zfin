@@ -1,5 +1,6 @@
 package org.zfin.framework.presentation;
 
+import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
