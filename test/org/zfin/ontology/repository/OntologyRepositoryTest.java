@@ -484,7 +484,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("do not include in regular tests as it takes more than a minute")
     public void getExpressionAnnotationStageViolations() {
         List<ExpressionResult2> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);

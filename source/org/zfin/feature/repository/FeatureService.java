@@ -186,7 +186,7 @@ public class FeatureService {
             return null;
         }
 
-        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+            return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
                 feature.getFeatureDnaMutationDetail().getZdbID(),
                 RecordAttribution.SourceType.STANDARD);
     }
