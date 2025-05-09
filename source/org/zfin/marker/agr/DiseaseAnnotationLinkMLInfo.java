@@ -134,7 +134,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         }
                         List<String> evidenceCodes = evidenceSet.stream().map(ZfinAllianceConverter::convertEvidenceCodes).flatMap(Collection::stream).map(ECOTerm::getCurie).collect(toList());
                         annotation.setEvidenceCodeCuries(evidenceCodes);
-                        annotation.setReferenceCurie(getSingleReference(publication));
+                        annotation.setEvidenceCurie(getSingleReference(publication));
                         annotation.setModInternalId(getUniqueID(fish, publication, evidenceCodes, fishExperiment.getExperiment().getName(), disease));
 
                         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
@@ -191,7 +191,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream().map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
-        annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        annotation.setEvidenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
         annotation.setModInternalId(getUniqueID(fish, damo.getDiseaseAnnotation().getPublication(), ecoTerms, damo.getFishExperiment().getExperiment().getName(), damo.getDiseaseAnnotation().getDisease()));
 
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());

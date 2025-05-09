@@ -102,7 +102,7 @@ public class DiseaseAnnotationService extends AllianceService {
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream()
                 .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
-        annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        annotation.setEvidenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
 //        org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition =new ConditionRelationDTO();
