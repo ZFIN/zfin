@@ -12,7 +12,7 @@ public enum FeatureFlagEnum {
     ENABLE_CAPTCHA("Enable Captcha", false),
     RECAPTCHA_V3("Use Recaptcha V3", false),
     RECAPTCHA_V2("Use Recaptcha V2", false),
-    H_CAPTCHA("Use hCaptcha", true),
+    H_CAPTCHA("Use hCaptcha", false),
     ALTCHA("Use altcha", false);
 
 
