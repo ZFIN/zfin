@@ -8,11 +8,11 @@ public enum FeatureFlagEnum {
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
-    USE_LEGACY_CONSTRUCT_TAB("Use Legacy Construct Tab", false),
+    USE_REACT_CONSTRUCT_TAB("Use React-Based Construct Tab on Curation UI", false),
     ENABLE_CAPTCHA("Enable Captcha", false),
     RECAPTCHA_V3("Use Recaptcha V3", false),
     RECAPTCHA_V2("Use Recaptcha V2", false),
-    H_CAPTCHA("Use hCaptcha", false),
+    H_CAPTCHA("Use hCaptcha", true),
     ALTCHA("Use altcha", false);
 
 
