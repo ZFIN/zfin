@@ -514,7 +514,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             select count(distinct efs_fig_zdb_id)
             	           from expression_figure_stage
             	                join expression_result2 on efs_pk_id = xpatres_efs_id
-            	                join expression_experiment on efs_xpatex_zdb_id = xpatex_zdb_id
+            	                join expression_experiment2 on efs_xpatex_zdb_id = xpatex_zdb_id
             	                join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
             	          where genox_fish_zdb_id = :fishID
             	         and xpatex_atb_zdb_id is null

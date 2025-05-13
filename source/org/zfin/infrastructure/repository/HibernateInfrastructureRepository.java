@@ -903,7 +903,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         if (m.isInTypeGroup(Marker.TypeGroup.ATB)) {
             return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
-                                                                                 " from record_attribution ra , expression_experiment ee " +
+                                                                                 " from record_attribution ra , expression_experiment2 ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
                                                                                  " and ee.xpatex_atb_zdb_id = :zdbID " +
                                                                                  " and ee.xpatex_source_zdb_id = :pubZdbID " +
@@ -917,7 +917,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         else if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
-                                                                                 " from record_attribution ra , expression_experiment ee " +
+                                                                                 " from record_attribution ra , expression_experiment2 ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
                                                                                  " and ee.xpatex_gene_zdb_id = :zdbID " +
                                                                                  " and ee.xpatex_source_zdb_id = :pubZdbID " +
@@ -929,7 +929,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
             return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                                  "select count(*)" +
-                                                                                 " from record_attribution ra , expression_experiment ee " +
+                                                                                 " from record_attribution ra , expression_experiment2 ee " +
                                                                                  " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
                                                                                  " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
                                                                                  " and ee.xpatex_source_zdb_id = :pubZdbID " +
@@ -1557,7 +1557,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createNativeQuery(" " +
                                                                              "  select count(*)  " +
-                                                                             " from record_attribution ra, fish_experiment ge, expression_experiment ee, fish f " +
+                                                                             " from record_attribution ra, fish_experiment ge, expression_experiment2 ee, fish f " +
                                                                              " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
                                                                              " and ee.xpatex_genox_zdb_id = ge.genox_zdb_id " +
                                                                              " and ge.genox_fish_zdb_id = :zdbID " +
