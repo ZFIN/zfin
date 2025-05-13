@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-9514">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1169/Crispr_Load_file_ZDB-PUB-191214-4.csv"
+                  tableName="crispr_detail" >
+            <column header="id" name="zko_id" type="String"/>
+            <column header="symbol" name="symbol" type="String"/>
+            <column header="zdbID" name="zdb_id" type="String"/>
+            <column header="ensdarg" name="ensdarg" type="String"/>
+            <column header="sequence1" name="sequence1" type="String"/>
+            <column header="sequence1" name="sequence2" type="String"/>
+            <column header="sequence1" name="sequence3" type="String"/>
+            <column header="sequence1" name="sequence4" type="String"/>
+            <column header="sequence1" name="sequence5" type="String"/>
+            <column header="sequence1" name="sequence6" type="String"/>
+            <column header="sequence1" name="sequence7" type="String"/>
+            <column header="sequence1" name="sequence8" type="String"/>
+            <column header="sequence1" name="sequence9" type="String"/>
+            <column header="sequence1" name="sequence10" type="String"/>
+            <column header="sequence1" name="sequence11" type="String"/>
+            <column header="sequence1" name="sequence12" type="String"/>
+            <column header="sequence1" name="sequence13" type="String"/>
+            <column header="sequence1" name="sequence14" type="String"/>
+            <column header="sequence1" name="sequence15" type="String"/>
+            <column header="sequence1" name="sequence16" type="String"/>
+            <column header="sequence1" name="sequence17" type="String"/>
+            <column header="sequence1" name="sequence18" type="String"/>
+            <column header="sequence1" name="sequence19" type="String"/>
+            <column header="sequence1" name="sequence20" type="String"/>
+            <column header="sequence1" name="sequence21" type="String"/>
+        </loadData>
+        <output target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+</databaseChangeLog>
