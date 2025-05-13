@@ -129,7 +129,11 @@ public class CurationController implements CurationService {
      * @return
      */
     private List<CurationModuleType> enabledCurationTabs(List<CurationModuleType> allCurationTabs) {
-        return allCurationTabs;
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_REACT_CONSTRUCT_TAB)) {
+            return allCurationTabs;
+        } else {
+            return allCurationTabs.stream().filter(t -> t != CONSTREACT).collect(Collectors.toList());
+        }
     }
 
     @ResponseBody
