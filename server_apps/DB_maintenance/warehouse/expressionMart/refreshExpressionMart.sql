@@ -22,7 +22,7 @@ insert into expression_experiment_bkup (xpatex_zdb_id,
 	    xpatex_direct_submission_date,
 	    xpatex_dblink_zdb_id,
 	    xpatex_genox_zdb_id,
-	    xpatex_atb_Zdb_id from expression_experiment;
+	    xpatex_atb_Zdb_id from expression_experiment2;
 
 insert into expression_result_bkup (xpatres_pk_id,
        xpatres_xpatex_zdb_id,
