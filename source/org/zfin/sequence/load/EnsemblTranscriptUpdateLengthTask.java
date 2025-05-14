@@ -65,14 +65,14 @@ public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
         CollectionUtils.removeAll(zfinGeneAccessionIDs, ensemblGeneAccessionIDs).forEach(missingID -> {
             List<String> zdbIDs = map.get(missingID).stream().map(markerDBLink -> markerDBLink.getMarker().getZdbID()).toList();
             String idConcat = missingID + " - " + StringUtils.join(zdbIDs, ",");
-            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_OBSOLETE, missingID, idConcat, "This ENSDARG ID is not found at ENSEMBL", 0, new HashMap<>());
+            LoadAction obsoletedAction = new LoadAction(LoadAction.Type.INFO, ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE, missingID, idConcat, "This ENSDARG ID is not found in the ENSEMBL transcript file", 0, new HashMap<>());
             zdbIDs.forEach(zdbID -> {
                 LoadLink link = new LoadLink(idConcat, "https://zfin.org/" + zdbID);
                 obsoletedAction.addLink(link);
             });
             if (zdbIDs.size() > 1) {
                 obsoletedAction.setType(LoadAction.Type.WARNING);
-                obsoletedAction.setSubType(ZFIN_OBSOLETE_MULTIPLE);
+                obsoletedAction.setSubType(ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE_MULTIPLE);
             }
             actions.add(obsoletedAction);
         });
