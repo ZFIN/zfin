@@ -3,7 +3,7 @@ import qs from 'qs';
 import DataTable from '../data-table';
 import {TermRelationshipTypeStat} from '../../containers/TermRelationshipListView';
 import {TermLink} from './TermRelationshipInlineView';
-import {RelatedTerm} from "./TermRelationshipView";
+import {RelatedTerm} from './TermRelationshipView';
 
 interface TermRelationshipTableProps {
     termId: string;

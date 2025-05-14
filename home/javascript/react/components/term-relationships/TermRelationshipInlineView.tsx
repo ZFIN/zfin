@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {TermRelationshipTypeStat} from '../../containers/TermRelationshipListView';
 import qs from 'qs';
-import {RelatedTerm} from "./TermRelationshipView";
+import {RelatedTerm} from './TermRelationshipView';
 
 export interface RelatedOntologyTermsProps {
     relationshipType: TermRelationshipTypeStat;
