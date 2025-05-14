@@ -58,8 +58,8 @@ public class LoadAction implements Comparable<LoadAction> {
         NO_NAME_FOR_TRANSCRIPT_FOUND("No Name found for Transcript"),
         UNSUPPTORTED_BIOTYPE("Unsupported Biotype"),
         ENSEMBL_TRANSCRIPTS_DUPLICATE_PER_NAME("Multiple Transcripts in Ensembl have the same name in ENSEMBL"),
-        ZFIN_OBSOLETE("OBSOLETED ENSDARG IDs in ZFIN"),
-        ZFIN_OBSOLETE_MULTIPLE("OBSOLETED ENSDARG IDs in ZFIN on multiple ZDB IDs"),
+        ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE("ENSDARG ID in ZFIN but not in the Transcript fasta file"),
+        ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE_MULTIPLE("ENSDARG ID in ZFIN but not in the Transcript fasta file"),
         ZFIN_TRANSCRIPT_OBSOLETE("OBSOLETED ENSDART IDs in ZFIN"),
         ADD_ATTRIBUTION("Add Attribution");
 
