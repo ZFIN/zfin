@@ -37,7 +37,7 @@ public enum Table {
     EXPERIMENT("EXP", "experiment", "exp_zdb_id", "exp_name"),
     EXPERIMENT_CONDITION("EXPCOND", "experiment_Condition", "expcond_zdb_id", "expcond_comments"),
     EXPRESSION_EXPERIMENT2("XPAT", "expression_experiment2", "xpatex_zdb_id", "xpatex_source_zdb_id,xpatex_gene_zdb_id,xpatex_genox_zdb_id", "xpatex_assay_name"),
-    EXPRESSION_FIGURE_STAGE("XPATRES", "expression_figure_stage", "efs_pk_id", null),
+    EXPRESSION_FIGURE_STAGE("EFS", "expression_figure_stage", "efs_pk_id", null),
     EXPRESSION_RESULT2("XPATRES", "expression_result2", "xpatres_pk_id", null, "xpatres_expression_found"),
     EXTERNAL_NOTE("EXTNOTE", "external_note", "extnote_zdb_id"),
     EXTERNAL_REFERENCE("EXREFF", "external_reference", "exref_pk_id"),
