@@ -85,6 +85,42 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getOntologyTermRelationshipTypes() {
+        String azamacrocycleID = "CHEBI:52898";
+        GenericTerm term = ontologyRepository.getTermByOboID(azamacrocycleID);
+        Set<String> parents = ontologyRepository.getDirectlyRelatedRelationshipTypes(term, true).keySet();
+        Set<String> children = ontologyRepository.getDirectlyRelatedRelationshipTypes(term, false).keySet();
+        assertNotNull(parents);
+        assertNotNull(children);
+        assertEquals(1, parents.size());
+        assertEquals(1, children.size());
+    }
+
+
+    @Test
+    public void getOntologyTermRelationshipsByTypes() {
+        String azamacrocycleID = "CHEBI:52898";
+        GenericTerm term = ontologyRepository.getTermByOboID(azamacrocycleID);
+        Map<String, Long> parents = ontologyRepository.getDirectlyRelatedRelationshipTypes(term, true);
+        Map<String, Long> children = ontologyRepository.getDirectlyRelatedRelationshipTypes(term, false);
+
+        for(String type : parents.keySet()) {
+            List<GenericTermRelationship> rels = ontologyRepository.getDirectlyRelatedRelationshipsByType(term, type, true, null, null);
+            assertTrue(rels.size() > 6000);
+        }
+
+        for(String type : children.keySet()) {
+            List<GenericTermRelationship> rels2 = ontologyRepository.getDirectlyRelatedRelationshipsByType(term, type, false, null, null);
+            assertTrue(rels2.size() > 0);
+        }
+
+        assertNotNull(parents);
+        assertNotNull(children);
+        assertEquals(1, parents.size());
+        assertEquals(1, children.size());
+    }
+
+    @Test
     public void goOntologyContainsAllGOTerms() {
         List<String> ignoreGoIDs = new ArrayList<>(getOntologyRepository()
             .getObsoleteAndSecondaryTerms()
