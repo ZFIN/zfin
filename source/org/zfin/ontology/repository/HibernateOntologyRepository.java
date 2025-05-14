@@ -1,5 +1,9 @@
 package org.zfin.ontology.repository;
 
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -17,9 +21,6 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,6 +51,93 @@ public class HibernateOntologyRepository implements OntologyRepository {
             """, GenericTerm.class);
         query.setParameter("ontology", ontology);
         return query.list();
+    }
+
+    /**
+     * With a given term, return all the direct relationships (just the types of relationships--eg. "is_a", etc.).
+     * Each type of relationship is the key to the returned map, the value is the number of relationships of that type.
+     * The forward argument is used to specify whether to return the relationships where the term is termOne vs termTwo
+     *
+     * @param term The term that has relationships
+     * @param forward true if the term should be termOne of the relationship, false if termTwo
+     * @return Map of relationship types with counts per type
+     */
+    @Override
+    public Map<String, Long> getDirectlyRelatedRelationshipTypes(GenericTerm term, boolean forward) {
+        Session session = HibernateUtil.currentSession();
+        String hql = String.format("""
+            SELECT r.type, COUNT(r.id)
+            FROM GenericTermRelationship r
+            WHERE r.%s = :term
+            GROUP BY r.type
+            ORDER BY r.type
+            """, forward ? "termOne" : "termTwo" );
+        Query<Tuple> query = session.createQuery(hql, Tuple.class);
+        query.setParameter("term", term);
+        List<Tuple> results = query.list();
+
+        //convert to Map
+        Map<String, Long> typeCountMap = new HashMap<>();
+        for (Tuple result : results) {
+            String type = (String) result.get(0);
+            Long count = (Long) result.get(1);
+            typeCountMap.put(type, count);
+        }
+
+        return typeCountMap;
+    }
+
+    /**
+     * Get all the direct relationships for a term
+     * @param term              the term
+     * @param relationshipType  the type of relationship (eg "is_a", etc.)
+     * @param forward           if true, the term is the subject of the relationship, otherwise it's the object
+     * @param offset            if we are paging into the results, how many results deep? (can be null to omit)
+     * @param limit             the number of results to return
+     * @return  All the relationships that fit the criteria
+     */
+    @Override
+    public List<GenericTermRelationship> getDirectlyRelatedRelationshipsByType(GenericTerm term, String relationshipType, boolean forward, Integer offset, Integer limit) {
+        Session session = HibernateUtil.currentSession();
+        String hql = String.format("""
+                                    SELECT r FROM GenericTermRelationship r
+                                    WHERE r.type = :relType
+                                    AND r.%s = :term
+                                    ORDER BY r.type
+                                    """, forward ? "termOne" : "termTwo" );
+
+        Query<GenericTermRelationship> query = session.createQuery(hql, GenericTermRelationship.class);
+        query.setParameter("relType", relationshipType);
+        query.setParameter("term", term);
+        if (offset != null) {
+            query.setFirstResult(offset);
+        }
+        if (limit != null) {
+            query.setMaxResults(limit);
+        }
+        return query.list();
+    }
+
+    /**
+     * Get the counts for all the direct relationships for a term
+     * @param term              the term
+     * @param relationshipType  the type of relationship (eg "is_a", etc.)
+     * @param forward           if true, the term is the subject of the relationship, otherwise it's the object
+     * @return  The number of relationships that fit the criteria
+     */
+    @Override
+    public Integer getDirectlyRelatedRelationshipsCountByType(GenericTerm term, String relationshipType, boolean forward) {
+        Session session = HibernateUtil.currentSession();
+        String hql = String.format("""
+                                    SELECT count(r) FROM GenericTermRelationship r
+                                    WHERE r.type = :relType
+                                    AND r.%s = :term
+                                    """, forward ? "termOne" : "termTwo" );
+
+        Query<Number> query = session.createQuery(hql, Number.class);
+        query.setParameter("relType", relationshipType);
+        query.setParameter("term", term);
+        return query.getSingleResult().intValue();
     }
 
     @Override
