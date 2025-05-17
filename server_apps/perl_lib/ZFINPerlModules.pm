@@ -69,30 +69,58 @@ sub doSystemCommandOrFailWithEmail {
 }
 
 sub sendMailWithAttachedReport {
-    my $MAILTO = $_[1];
-    my $SUBJECT = $_[2];
-    my $TXTFILE = $_[3]; 
-    
-    print "\n\nMAILTO ::: $MAILTO  \n";
-    print "\n\nSUBJECT ::: $SUBJECT  \n";
-    print "\n\nTXTFILE ::: $TXTFILE  \n\n\n";
+    my ($self, $recipient, $subject, $attachment_path) = @_;
 
-    # Create a new multipart message:
-    my $msg = new MIME::Lite 
-	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
-	Subject => "$SUBJECT",
-	Type    => 'multipart/mixed';
+    # Log mail information
+    print "\nPreparing mail:";
+    print "\n  To: $recipient";
+    print "\n  Subject: $subject";
+    print "\n  Attachment: $attachment_path\n";
 
-    attach $msg 
-	Type     => 'text/plain',   
-	Path     => "$TXTFILE";
+    # Create a new multipart message
+    my $msg = MIME::Lite->new(
+        From    => $ENV{LOGNAME},
+        To      => $recipient,
+        Subject => $subject,
+        Type    => 'multipart/mixed'
+    );
 
-    # Output the message to sendmail
-    open (SENDMAIL, "| $SENDMAIL_COMMAND");
-    $msg->print(\*SENDMAIL);
-    close (SENDMAIL);
+    # Attach the report file
+    attach $msg
+	Type     => 'text/plain',
+	Path     => "$attachment_path";
 
+    # Check if we should write to file instead of sending
+    if ($ENV{EMAIL_TO_FILE} && $ENV{EMAIL_TO_FILE} eq "true") {
+        # Generate a unique filename based on timestamp and recipient
+        my $timestamp = time();
+        my $safe_recipient = $recipient;
+        $safe_recipient =~ s/[^\w\.\-]/_/g;  # Replace non-word chars with underscore
+        my $output_file = "/tmp/email_${timestamp}_${safe_recipient}.eml";
+
+        # Write the email to a file
+        print "\n  Mode: Writing to file ($output_file)\n\n";
+
+        open(my $outfile, ">", $output_file)
+            or die "Failed to open output file $output_file: $!";
+        $msg->print($outfile);
+        close($outfile)
+            or warn "Failed to close output file $output_file: $!";
+
+        return { success => 1, mode => 'file', path => $output_file };
+    }
+    else {
+        # Send through sendmail
+        print "\n  Mode: Sending via sendmail\n\n";
+
+        open(my $sendmail, "| $SENDMAIL_COMMAND")
+            or die "Failed to open sendmail: $!";
+        $msg->print($sendmail);
+        close($sendmail)
+            or warn "Failed to close sendmail: $!";
+
+        return { success => 1, mode => 'sendmail' };
+    }
 }
 
 sub countData() {
