@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
  new_values jsonb
 );
 
-CREATE OR REPLACE FUNCTION get_primary_key_column(table_name text) RETURNS text AS $$
+CREATE OR REPLACE FUNCTION get_primary_key_column(table_name text) RETURNS text AS '
 DECLARE
     pk_column text;
 BEGIN
@@ -37,9 +37,10 @@ BEGIN
 
     RETURN pk_column;
 END;
-$$ LANGUAGE plpgsql;
+'
+LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION audit_trigger() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION audit_trigger() RETURNS TRIGGER AS '
 DECLARE
     new_data jsonb;
     old_data jsonb;
@@ -50,19 +51,19 @@ DECLARE
     record_pk_column text;
     record_pk_value text;
 BEGIN
-    user_id := current_setting('audit.user_id', true);
+    user_id := current_setting(''audit.user_id'', true);
 
     IF user_id IS NULL THEN
         user_id := current_user;
     END IF;
 
-    new_values := '{}';
-    old_values := '{}';
+    new_values := ''{}'';
+    old_values := ''{}'';
 
     -- Get the primary key column for this table
     record_pk_column := get_primary_key_column(TG_TABLE_NAME);
 
-    IF TG_OP = 'INSERT' THEN
+    IF TG_OP = ''INSERT'' THEN
         new_data := to_jsonb(NEW);
         new_values := new_data;
 
@@ -71,7 +72,7 @@ BEGIN
             record_pk_value := new_data ->> record_pk_column;
         END IF;
 
-    ELSIF TG_OP = 'UPDATE' THEN
+    ELSIF TG_OP = ''UPDATE'' THEN
         new_data := to_jsonb(NEW);
         old_data := to_jsonb(OLD);
 
@@ -88,7 +89,7 @@ BEGIN
             record_pk_value := new_data ->> record_pk_column;
         END IF;
 
-    ELSIF TG_OP = 'DELETE' THEN
+    ELSIF TG_OP = ''DELETE'' THEN
         old_data := to_jsonb(OLD);
         old_values := old_data;
 
@@ -102,13 +103,14 @@ BEGIN
     INSERT INTO audit_log (table_name, record_id, operation_type, changed_by, original_values, new_values)
     VALUES (TG_TABLE_NAME, record_pk_value, TG_OP, user_id, old_values, new_values);
 
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+    IF TG_OP = ''INSERT'' OR TG_OP = ''UPDATE'' THEN
         RETURN NEW;
     ELSE
         RETURN OLD;
     END IF;
 END;
-$$ LANGUAGE plpgsql;
+'
+LANGUAGE plpgsql;
 
 CREATE TRIGGER zdb_feature_flag_trigger
     BEFORE INSERT OR UPDATE OR DELETE
