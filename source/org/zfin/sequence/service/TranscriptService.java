@@ -20,6 +20,8 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -61,10 +63,10 @@ public class TranscriptService {
         Set<RelatedMarker> transcripts = getRelatedTranscripts(gene);
         List<DBLink> links = new ArrayList<>();
 
-        for(RelatedMarker relatedMarker : transcripts) {
+        for (RelatedMarker relatedMarker : transcripts) {
             Transcript transcript = getMarkerRepository().getTranscriptByZdbID(relatedMarker.getMarker().getZdbID());
             List<TranscriptDBLink> dblinks = getSequenceRepository().getTranscriptDBLinksForTranscript(transcript, rnaCentralReferenceDatabase);
-            for (TranscriptDBLink link : dblinks ) {
+            for (TranscriptDBLink link : dblinks) {
                 links.add(link);
             }
         }
@@ -417,5 +419,25 @@ public class TranscriptService {
         }
 
         return sortedTranscripts;
+    }
+
+    // check if there are transcripts with names according to
+    // <geneSymbol>-<index>
+    public static Integer getLargestTxIndex(List<Transcript> links, String geneSymbol) {
+        List<Integer> indexes = links.stream()
+            .map(Marker::getAbbreviation)
+            .map(txAbbrev -> {
+                Pattern pattern = Pattern.compile("(" + geneSymbol + "-)(\\d{3})");
+                Matcher matcher = pattern.matcher(txAbbrev);
+                boolean matchFound = matcher.find();
+                if (matchFound) {
+                    return Integer.parseInt(matcher.group(2));
+                } else {
+                    return 0;
+                }
+            })
+            .sorted()
+            .toList();
+        return indexes.get(indexes.size() - 1);
     }
 }
