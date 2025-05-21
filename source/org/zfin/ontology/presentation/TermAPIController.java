@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
+import org.zfin.fish.presentation.EfgAPIController;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationResult;
@@ -16,22 +17,24 @@ import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.*;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.OmimPhenotypeDisplay;
+import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.ontology.service.OntologyService.convertTermRelationshipsToRelationshipPresentations;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @RestController
 @RequestMapping("/api/ontology")
 public class TermAPIController {
+
+    @JsonView(View.API.class)
+    private record TermRelationshipStatDTO(String relationshipType, String humanName, boolean isForward, long count) {};
 
     @Autowired
     private OntologyRepository ontologyRepository;
@@ -137,6 +140,70 @@ public class TermAPIController {
         response.setTotal(form.getTotalNumberOfExpressedGenes());
         response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
         response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/relationshipTypes", method = RequestMethod.GET)
+    public List<TermRelationshipStatDTO> getRelationshipTypes(@PathVariable String termID, @RequestParam(value = "includeStartEndStages", required = false, defaultValue = "false") boolean includeStartEndStages) {
+
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        List<TermRelationshipStatDTO> relationshipTypeStats = new ArrayList<>();
+        for (Boolean forward : List.of(true, false)) {
+            Map<String, Long> typeCount = ontologyRepository.getDirectlyRelatedRelationshipTypes(term, forward);
+            for (String type : typeCount.keySet()) {
+                if (!includeStartEndStages && (type.toLowerCase().equals("start stage") || type.toLowerCase().equals("end stage"))) {
+                    continue;
+                }
+                List<GenericTermRelationship> rels = ontologyRepository.getDirectlyRelatedRelationshipsByType(term, type, forward, null, 1);
+                List<RelationshipPresentation> presentations = convertTermRelationshipsToRelationshipPresentations(term, rels);
+                RelationshipPresentation presentation = presentations.get(0);
+                TermRelationshipStatDTO stat = new TermRelationshipStatDTO(type, presentation.getType(), forward, typeCount.get(type));
+                relationshipTypeStats.add(stat);
+            }
+        }
+        return relationshipTypeStats;
+    }
+
+    /**
+     * Get all direct relationships to a term with the given type and forward criteria
+     * eg. https://zfin.org/action/api/ontology/ZDB-TERM-160831-162280/relationships?type=is_a&forward=true
+     *
+     * @param termID The term
+     * @param relationshipType The type of relationship ("develops from", "end stage", "is_a", "part of", "start stage", etc.)
+     * @param isForward if true, the given term is the subject of relationship, otherwise the object
+     * @param pagination pagination settings
+     * @return RelationshipPresentation object
+     */
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/relationships", method = RequestMethod.GET)
+    public JsonResultResponse<Term> getRelationships(@PathVariable String termID,
+                                                     @RequestParam(value = "relationshipType", required = true) String relationshipType,
+                                                     @RequestParam(value = "isForward", required = true) Boolean isForward,
+                                                     @Version Pagination pagination) {
+
+        HibernateUtil.createTransaction();
+        JsonResultResponse<Term> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null) {
+            return response;
+        }
+
+        Integer page = pagination.getPage();
+        Integer limit = pagination.getLimit();
+        int start = (page - 1) * limit;
+
+        Integer totalCount = ontologyRepository.getDirectlyRelatedRelationshipsCountByType(term, relationshipType, isForward);
+        List<GenericTermRelationship> termRelationships = ontologyRepository.getDirectlyRelatedRelationshipsByType(term, relationshipType, isForward, start, limit);
+        
+        List<RelationshipPresentation> relationshipPresentations = convertTermRelationshipsToRelationshipPresentations(term, termRelationships);
+        RelationshipPresentation presentation = relationshipPresentations.get(0);
+
+        response.setResults(presentation.getItems());
+        response.setTotal(totalCount);
+        response.setReturnedRecords(presentation.getItems().size());
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
     }

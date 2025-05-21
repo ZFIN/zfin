@@ -244,47 +244,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             terms.addAll(parentTermRelationships);
 
         return terms;
-//        if (relationships != null){
-//            return relationships;
-//        }
-//
-//        relationships = new ArrayList<TermRelationship>();
-//        relationships.addAll(RepositoryFactory.getOntologyRepository().getTermRelationships(this));
-////        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository() ;
-////        Term t = ontologyRepository.getTermByOboID(getOboID());
-////        relationships.addAll(ontologyRepository.getTermRelationships(t));
-//        return relationships;
     }
-
-//    public List<TermRelationship> getRelatedTerms() {
-//        return relationships;
-//    }
-//
-//    @Override
-//    public void setRelatedTerms(List<TermRelationship> relationships) {
-//        this.relationships = relationships;
-//    }
-
-//    public List<Term> getChildrenTerms() {
-//        if (CollectionUtils.isNotEmpty(children))
-//            return children;
-//
-//        if (relationships == null)
-//            return null;
-//
-//        children = new ArrayList<Term>();
-//        for (TermRelationship rel : relationships) {
-//            Term relatedTerm = rel.getRelatedTerm(this);
-//            // the null check comes from the AO which has start and end relationship to stage terms which are not yet set
-//            // upon deserialization of the obo files.
-//
-//            // is a hibernate object and so expects to have a session
-//            // so need to explicitly be bound to it since we don't know how this object was retrieved (memory vs DB).
-//            if (relatedTerm != null && relatedTerm.equals(rel.getTermTwo()))
-//                children.add(relatedTerm);
-//        }
-//        return children;
-//    }
 
     public Set<Image> getImages() {
         return images;

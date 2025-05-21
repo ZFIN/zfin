@@ -82,37 +82,37 @@ public class OntologyService {
         return newList;
     }
 
+    public static List<RelationshipPresentation> convertTermRelationshipsToRelationshipPresentations(GenericTerm term, List<GenericTermRelationship> termRelationships) {
+        if (termRelationships == null) {
+            return Collections.emptyList();
+        }
+        Map<String, RelationshipPresentation> types = new HashMap<>();
+        for (TermRelationship rel : termRelationships) {
+            String displayName;
+            if (rel.getTermTwo() == null) {
+                logger.error("No term two found for: " + rel.getZdbId());
+            }
+            if (rel.getTermTwo().equals(term)) {
+                displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
+            } else {
+                displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), false);
+            }
+            RelationshipPresentation presentation = types.get(displayName);
+            if (presentation == null) {
+                presentation = new RelationshipPresentation();
+                presentation.setType(displayName);
+            }
+            presentation.addTerm(rel.getRelatedTerm(term));
+            types.put(displayName, presentation);
+        }
+
+        return types.values().stream().collect(toList());
+    }
+
     public static List<RelationshipPresentation> getRelatedTerms(GenericTerm term) {
         logger.debug("get related terms for " + term.getTermName());
-        Map<String, RelationshipPresentation> types = new HashMap<>(5);
         List<GenericTermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
-        if (relatedItems != null) {
-            for (TermRelationship rel : relatedItems) {
-                String displayName;
-                if (rel.getTermTwo() == null) {
-                    logger.error("No term two found for: " + rel.getZdbId());
-                }
-                if (rel.getTermTwo().equals(term)) {
-                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
-                } else {
-                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), false);
-                }
-                logger.debug("displayName: " + displayName);
-                RelationshipPresentation presentation = types.get(displayName);
-                if (presentation == null) {
-                    presentation = new RelationshipPresentation();
-                    presentation.setType(displayName);
-                }
-                presentation.addTerm(rel.getRelatedTerm(term));
-                types.put(displayName, presentation);
-            }
-        } else {
-            logger.debug("term has no RelatedTerms");
-        }
-        List<RelationshipPresentation> relPresentations = new ArrayList<>(types.size());
-        for (String type : types.keySet()) {
-            relPresentations.add(types.get(type));
-        }
+        List<RelationshipPresentation> relPresentations = convertTermRelationshipsToRelationshipPresentations(term, relatedItems);
         Collections.sort(relPresentations);
         return relPresentations;
     }
