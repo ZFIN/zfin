@@ -46,12 +46,12 @@ const Jbrowse2AppContainer = () => {
                     'minimized': false,
                     'type': 'LinearGenomeView',
                     'offsetPx': 0,
-                    'bpPerPx': 1,
+                    'bpPerPx': 80,
                     'displayedRegions': [
                         {
                             'refName': '18',
-                            'start': 20408298,
-                            'end': 30612993,
+                            'start': 20426411,
+                            'end': 20519170,
                             'reversed': false,
                             'assemblyName': 'GRCz11'
                         }
