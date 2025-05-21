@@ -160,6 +160,12 @@ public interface OntologyRepository {
 
     Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology);
 
+    Map<String, Long> getDirectlyRelatedRelationshipTypes(GenericTerm term, boolean forward);
+
+    List<GenericTermRelationship> getDirectlyRelatedRelationshipsByType(GenericTerm term, String relationshipType, boolean forward, Integer offset, Integer limit);
+
+    Integer getDirectlyRelatedRelationshipsCountByType(GenericTerm term, String relationshipType, boolean forward);
+
     EcoGoEvidenceCodeMapping getEcoEvidenceCode(GenericTerm term);
 
     Collection<TermDTO> getTermDTOsFromOntologyNoRelation(Ontology stage);
