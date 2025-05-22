@@ -138,7 +138,7 @@ services:
       JPDA_TRANSPORT: dt_socket
     entrypoint: ["catalina.sh", "jpda", "run"]
     ports:
-      - "127.0.0.1:5000-5009:5000"
+      - "127.0.0.1:5000:5000"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
