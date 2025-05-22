@@ -1,12 +1,69 @@
 --liquibase formatted sql
 --changeset cmpich:ZFIN-9514
 
+-- use replaced data when gene is not found
+create temp table temp_replaced_marker as
+    (select distinct zdb_Id from gene_allele_mutation_detail
+                   where not exists (
+                       select * from marker where mrkr_zdb_id = zdb_id
+                       )
+                     and zdb_id is not null and zdb_id != ''
+    )
+;
+
+select mrkr_zdb_id from marker, temp_replaced_marker, zdb_replaced_data
+    where mrkr_zdb_id = zrepld_new_zdb_id
+  and zrepld_old_zdb_id = zdb_id;
+
+update gene_allele_mutation_detail as g
+    set zdb_id = (
+        select mrkr_zdb_id from marker, temp_replaced_marker as t, zdb_replaced_data
+        where mrkr_zdb_id = zrepld_new_zdb_id
+          and zrepld_old_zdb_id = t.zdb_id
+                                      and t.zdb_id = g.zdb_id
+                    )
+where zdb_id in (select zdb_id from temp_replaced_marker)
+;
+
 -- set feature_zdb_id when allele_name is found
 update gene_allele_mutation_detail
 set feature_zdb_id = (select feature_zdb_id
                       from feature
                       where feature_abbrev = allele_name)
 where exists(select * from feature where feature_abbrev = allele_name)
+;
+
+-- insert into temp table then create
+create temp table temp_feature as
+    (select get_id_and_insert_active_data('ALT') as id,
+            allele_name as name
+     from gene_allele_mutation_detail
+     where allele_name is not null
+       and feature_zdb_id is null
+       and zdb_id is not null
+       and zdb_id is not null )
+;
+
+insert into feature (feature_zdb_id, feature_abbrev, feature_name, feature_type)
+    (select id,
+            allele_name,
+            allele_name,
+            'INDEL'
+     from gene_allele_mutation_detail, temp_feature
+     where allele_name is not null
+       and allele_name = name
+       and feature_zdb_id is null
+       and zdb_id is not null )
+;
+-- generate feature_marker_relationship records
+insert into feature_marker_relationship (fmrel_zdb_id, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id, fmrel_type)
+(select get_id_and_insert_active_data('FMREL'),
+        id,
+            zdb_id,
+            'is allele of'
+     from gene_allele_mutation_detail, temp_feature
+     where allele_name = name
+       and trim(zdb_id) != '' )
 ;
 
 -- set is all
