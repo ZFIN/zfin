@@ -12,6 +12,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 @Service
 public class OrthologService {
@@ -24,10 +25,15 @@ public class OrthologService {
         Iterator<OrthologEvidence> it = existingCodes.iterator();
         while (it.hasNext()) {
             OrthologEvidence evidence = it.next();
-            if (evidence.getPublication().equals(publication))
+            if (evidence.getPublication().equals(publication) && !evidenceSet.contains(evidence)) {
+                getOrthologyRepository().removeEvidenceCode(evidence);
                 it.remove();
+            }
         }
         if (CollectionUtils.isNotEmpty(evidenceSet)) {
+            evidenceSet.forEach(evidence -> {
+                getOrthologyRepository().saveEvidenceCode(evidence);
+            });
             existingCodes.addAll(evidenceSet);
             getInfrastructureRepository().insertRecordAttribution(ortholog.getZdbID(), publication.getZdbID());
             // attribute the gene to the pub as well
