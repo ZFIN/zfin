@@ -89,7 +89,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setParameter("dbName", name);
         query.setParameter("type", type);
         query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE);
-        query.setParameter("organism", Species.Type.ZEBRAFISH);
+        query.setParameter("organism", Species.Type.ZEBRAFISH.toString());
 
         return (List<ReferenceDatabase>) query.list();
     }
