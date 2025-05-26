@@ -1,13 +1,13 @@
-#!/bin/tcsh
+#!/bin/bash -e
 
 # have to provide a path to find the refseq_zf_rna and gbk_zf* blastdbs.  Right now, we cd to the BLASTSERVER_BLAST_DATABASE_PATH to get this in our
 # path.
 
-cd /opt/zfin/blastdb/Current || exit 1
-
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
 BLASTSERVER_BLAST_DATABASE_PATH="/opt/zfin/blastdb/Current"
 WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/dev_files"
+
+cd /opt/zfin/blastdb/Current || exit 1
 
 
 # get a fasta file from the GenBank db
@@ -22,5 +22,3 @@ xdget -n -f -e $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_genomicDNA/xdget_zfi
 
 echo "done making fasta files genomicDNA"
 
-
-exit

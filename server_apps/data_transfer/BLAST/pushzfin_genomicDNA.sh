@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 
 # have to provide a path to find the refseq_zf_rna and gbk_zf* blastdbs.  Right now, we cd to the BLASTSERVER_BLAST_DATABASE_PATH to get this in our
 # path.
@@ -23,4 +23,3 @@ mv $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_genomicDNA/GenomicDNA.* $BLASTSE
 echo "done moving the genomicDNA blastdbs to /Current/"
 rm $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_genomicDNA/*.fa
 
-exit

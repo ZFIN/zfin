@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 # recreate the GenomicDNA blastdb using zfin seq accessions,
 # the RefSeq RNA db and the GenBank all blastdb.
 
@@ -20,4 +20,3 @@ echo "push genomicDNA"
 
 echo "done with processGenomicDNA.sh"
 
-exit
