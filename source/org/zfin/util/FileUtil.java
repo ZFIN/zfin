@@ -23,6 +23,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -568,6 +569,35 @@ public final class FileUtil {
         }
         if (!errorOutput.isEmpty()) {
             throw new IOException(errorOutput.toString());
+        }
+    }
+
+    public static void createZipArchive(File outputZipFile, List<File> inputFiles) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(outputZipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            byte[] buffer = new byte[1024];
+
+            for (File inputFile : inputFiles) {
+                if (!inputFile.exists()) {
+                    continue; // Skip files that don't exist
+                }
+
+                // Create a new ZIP entry
+                ZipEntry zipEntry = new ZipEntry(inputFile.getName());
+                zos.putNextEntry(zipEntry);
+
+                // Read the file and write it to the ZIP output stream
+                try (FileInputStream fis = new FileInputStream(inputFile)) {
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, length);
+                    }
+                }
+
+                // Close the ZIP entry
+                zos.closeEntry();
+            }
         }
     }
 
