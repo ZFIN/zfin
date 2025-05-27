@@ -18,3 +18,5 @@ sudo /bin/chown gradle /var/run/docker.sock
 /opt/zfin/source_roots/zfin.org/docker/compile/generate_base.sh
 cd /opt/zfin/source_roots/zfin.org
 source commons/env/docker.env
+alias restartTomcatDebug='cd docker && docker compose down tomcatdebug && docker compose up -d tomcatdebug && cd -''
+alias restartTomcat='cd docker && docker compose down tomcat && docker compose up -d tomcat && cd -''
