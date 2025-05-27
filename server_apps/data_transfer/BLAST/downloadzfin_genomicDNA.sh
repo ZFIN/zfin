@@ -8,7 +8,7 @@ BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta
 cd /opt/zfin/blastdb/Current
 
 
-/local/bin/wget -q "http://test.zfin.org/action/blast/blast-files?action=GENOMIC_GENBANK" -O $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl
+/local/bin/wget -q "http://zfin.org/action/blast/blast-files?action=GENOMIC_GENBANK" -O $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl
 
 if [ -f `cat $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl`]; then
 echo "file $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl is empty, not copying."
