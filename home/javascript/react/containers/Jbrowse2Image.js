@@ -69,6 +69,16 @@ const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
                                 configuration: 'zfin_gene-1687907419159-LinearBasicDisplay'
                             }
                         ]
+                    },
+                    {
+                        type: 'FeatureTrack',
+                        configuration: 'zfin_knockdown_reagent',
+                        displays: [
+                            {
+                                type: 'LinearBasicDisplay',
+                                configuration: 'knockdown_reagent-1687908500113-LinearBasicDisplay'
+                            }
+                        ]
                     }
                 ],
             },
