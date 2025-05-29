@@ -66,11 +66,12 @@ insert into feature_marker_relationship (fmrel_zdb_id, fmrel_ftr_zdb_id, fmrel_m
        and trim(zdb_id) != '' )
 ;
 
-
 update gene_allele_mutation_detail set feature_zdb_id = (
     select id from temp_feature
     where name = allele_name
-);
+)
+where feature_zdb_id is null
+;
 
 
 -- set is all
