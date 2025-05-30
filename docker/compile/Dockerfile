@@ -28,6 +28,7 @@ RUN apt update && apt install -y --no-install-recommends \
         npm install -g npm
 
 RUN cpanm Devel::Camelcadedb
+RUN cpanm JSON
 
 COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail

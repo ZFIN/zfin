@@ -9,7 +9,7 @@
 
     <script>
         //PLACEHOLDER_START
-        window.UNIPROT_REPORT = JSON_GOES_HERE;
+        window.REPORT_DATA = JSON_GOES_HERE;
         //PLACEHOLDER_END
     </script>
 
@@ -326,12 +326,12 @@
                         <th>ZDB Gene ID</th>
                         <th>UniProt Accession</th>
                         <th>Tags
-                            <!-- ${tagFilter()} -->
+                                <!-- ${tagFilter()} -->
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                        ${subTypeItems.map(item => html`
+                    ${subTypeItems.map(item => html`
                             <tr>
                                 <td><a href="#" onClick=${() => onClick(item)}>
                                     ${item.geneZdbID}
@@ -349,7 +349,7 @@
             `;
         }
 
-        function DetailDisplay({item, prevClick, nextClick, uniprotDatFile}) {
+        function DetailDisplay({item, prevClick, nextClick, supplementalData}) {
             function detailSummary(item) {
                 if (!item) {
                     return '';
@@ -361,10 +361,9 @@
                 }
             }
 
-            let uniprotRecord = uniprotDatFile[item.accession];
-            if (!uniprotRecord) {
-                uniprotRecord = '';
-            }
+            let supplementals = item.supplementalDataKeys.map(k => supplementalData[k])
+                .filter(k => k !== null)
+                .join("\n======================\n");
 
             return html`
                 <div>
@@ -374,7 +373,7 @@
                     <p>${detailSummary(item)}</p>
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
-                    <pre>${uniprotRecord}</pre>
+                    <pre>${supplementals}</pre>
                     <h4>Links</h4>
                     <ul>
                         ${item.links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
@@ -383,47 +382,54 @@
             `;
         }
 
-        function ReportSummary({reportSummary}) {
-            const rows = reportSummary.map(item => {
-                const beforeCount = item.beforeLoadCount;
-                const afterCount = item.afterLoadCount;
-                const changeCount = afterCount - beforeCount;
-                const percentChange = (changeCount / beforeCount) * 100;
+        function ReportSummaryTable({reportSummaryTable}) {
+            const summaryRows = reportSummaryTable["rows"];
+            const summaryHeaders = reportSummaryTable["headers"];
+            if (!summaryRows || summaryRows.length === 0) {
+                return null;
+            }
 
-                //human readable
-                const before = beforeCount.toLocaleString('en-US');
-                const after = afterCount.toLocaleString('en-US');
-                const change = changeCount.toLocaleString('en-US');
-                const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+            const headerKeys = summaryHeaders.map(h => h.key);
+            const headerTitles = summaryHeaders.map(h => h.title);
+            const headerRow = html`
+                <tr>
+                    ${headerTitles.map(rowName => html`
+                        <th>${rowName}</th>
+                    `)}
+                </tr>
+            `;
+            const tableRows = summaryRows.map(row => {
+                return html`<tr>
+                    ${headerKeys.map(colName => html`<td>${row[colName]}</td>`)}
+                </tr>`;
+            });
+            return html`
+                <table class="summary">
+                    <thead>
+                    ${headerRow}
+                    </thead>
+                    <tbody>
+                    ${tableRows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function ReportSummary({reportSummary, meta}) {
+            const summaryDescription = reportSummary.description;
+            const summaryRows = reportSummary.tables;
+            if (!summaryRows || !summaryRows.length || summaryRows.length === 0) {
                 return html`
-                    <tr>
-                        <td>${item.description}</td>
-                        <td>${before}</td>
-                        <td>${after}</td>
-                        <td>${change}</td>
-                        <td>${percent}%</td>
-                    </tr>
+                <h2>Summary</h2>
+                <p>${summaryDescription}</p>
                 `;
-            })
+            }
 
             return html`
-                    <h2>Summary</h2>
-
-                    <h3>Table</h3>
-                    <table class="summary">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th># Before</th>
-                                <th># After</th>
-                                <th>Net Change</th>
-                                <th>Percent Change</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${rows}
-                        </tbody>
-                    </table>
+                <h2>Summary</h2>
+                <p>${summaryDescription}</p>
+                ${summaryRows.map(table => html`<${ReportSummaryTable} reportSummaryTable=${table}/>`)}
+                <p class="meta">Created at: ${new Date(meta.creationDate).toLocaleString()}</p>
             `;
         }
 
@@ -555,7 +561,7 @@
             return html`
                 <div id="report">
                     <div id='header'>
-                        <h1>UniProt Load Report</h1>
+                        <h1>${reportData.meta.title}</h1>
                     </div>
                     <${Breadcrumb} activeTab="${activeTab}" type="${showTypeData}" subtype="${subTypeName}" details="${activeDetails}" onClick="${(item) => {breadcrumbClicked(item)}}"/>
                      <div id='content'>
@@ -572,10 +578,10 @@
                                 <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
                             `}
                             ${activeTab == 'details' && html`
-                                <${DetailDisplay} item="${activeDetails}" uniprotDatFile="${reportData.uniprotDatFile}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                                <${DetailDisplay} item="${activeDetails}" supplementalData="${reportData.supplementalData}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
                             `}
                             ${activeTab == '' && html`
-                                <${ReportSummary} reportSummary="${reportSummary}" />
+                                <${ReportSummary} reportSummary="${reportSummary}" meta=${reportData.meta} />
                             `}
                         </div>
                     </div>
@@ -583,7 +589,7 @@
             `;
         }
         document.getElementById('root').innerHTML = '';
-        render(html`<${App} reportData=${window.UNIPROT_REPORT}/>`, document.getElementById('root'));
+        render(html`<${App} reportData=${window.REPORT_DATA}/>`, document.getElementById('root'));
     }
 
     document.addEventListener('DOMContentLoaded', () => {

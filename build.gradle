@@ -334,9 +334,15 @@ task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = ['SangerMutants', 'Ensembl']
 }
 
+task "server_apps;data_transfer;NCBIGENE;reportTemplate" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'home/uniprot/'
+    includes = ['zfin-report-template.html']
+    targetPath = 'server_apps/data_transfer/NCBIGENE'
+}
+
 task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer/Ensembl'
-    includes = ['sh', 'sql', 'groovy']
+    includes = ['.sh', '.sql', '.groovy']
 }
 
 project(':server_apps:data_transfer:Downloads') {
@@ -375,6 +381,7 @@ task make(type: GradleBuild) {
              'deployGitInfoFile',
              'cgi-bin;deployFiles',
              'server_apps;perl_lib;deployFiles',
+             'server_apps;data_transfer;NCBIGENE;reportTemplate',
     ]
 }
 
