@@ -66,6 +66,12 @@ insert into feature_marker_relationship (fmrel_zdb_id, fmrel_ftr_zdb_id, fmrel_m
        and trim(zdb_id) != '' )
 ;
 
+insert into feature_assay (featassay_feature_zdb_id,featassay_mutagee, featassay_mutagen)
+(
+select id, 'embryos', 'CRISPR' from temp_feature
+)
+;
+
 update gene_allele_mutation_detail set feature_zdb_id = (
     select id from temp_feature
     where name = allele_name
