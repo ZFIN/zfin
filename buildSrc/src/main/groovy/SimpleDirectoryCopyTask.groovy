@@ -1,6 +1,7 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.GradleException
 
@@ -17,6 +18,10 @@ class SimpleDirectoryCopyTask extends DefaultTask {
 
     @Input
     List<String> excludeDirs = []  // List of directories to exclude (relative to sourcePath)
+
+    @Input
+    @Optional
+    String targetPath = null //Override the default target ($targetroot/$sourcePath)
 
     // Access global properties from the project.ext
     @Internal
@@ -138,6 +143,11 @@ class SimpleDirectoryCopyTask extends DefaultTask {
         def targetDir = new File("$targetroot/$sourcePath")
         def sourceDir = new File(sourcePath)
 
+        //override the default target dir if provided
+        if (targetPath != null) {
+            targetDir = new File("$targetroot/$targetPath")
+        }
+
         if (!sourceDir.exists()) {
             println "Source directory does not exist: $sourceDir"
             return
@@ -190,9 +200,9 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                 }
 
                 // Filter files based on includes and excludes
-                def extension = file.name.tokenize('.').last()
                 def filename = file.name
-                if ((includes.isEmpty() || includes.contains(extension)) && !excludes.contains(filename)) {
+
+                if ((includes.isEmpty() || includes.any(include -> include.endsWith(file.name))) && !excludes.contains(filename)) {
                     def destinationFile = new File(targetDir, relativePath)
                     destinationFile.parentFile.mkdirs()
 
