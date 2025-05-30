@@ -36,7 +36,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv</artifacts>
+      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv,server_apps/data_transfer/NCBIGENE/*html,server_apps/data_transfer/NCBIGENE/*json,server_apps/data_transfer/NCBIGENE/*xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
