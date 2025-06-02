@@ -4,9 +4,10 @@
 
 
 BLASTSERVER_BLAST_DATABASE_PATH="/opt/zfin/blastdb"
-WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
+#WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
+WEBHOST_FASTA_FILE_PATH="/tmp"
 
-/local/bin/wget -q "http://zfin.org/action/blast/blast-files?action=GENOMIC_GENBANK" -O @WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl
+/local/bin/wget -q "http://localhost/action/blast/blast-files?action=GENOMIC_GENBANK" -O $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl
 
 if ( -f $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl ) then
 cp $WEBHOST_FASTA_FILE_PATH/zfin_genomic_genbank_acc.unl $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_genomicDNA/;
