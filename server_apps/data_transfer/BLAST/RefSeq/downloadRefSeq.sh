@@ -15,7 +15,7 @@ echo "== Unzip files for refseq == "
 gunzip downloadedProt.gz
 gunzip downloadedRNA.gz
 
-echo "== rename the fastafiles from refseq to more familiar names at ZFIN == "
+echo "== rename the fasta files from RefSeq to more familiar names at ZFIN == "
 cp downloadedProt refseq_zf_aa.fa
 cp downloadedRNA refseq_zf_rna.fa
 
