@@ -4,19 +4,19 @@
 
 echo "getAccFile genomicDNA" 
 
-./downloadzfin_genomicDNA.sh
+zfin+genomicDNA//downloadzfin_genomicDNA.sh
 
 echo "makeFastaFile genomicDNA" 
 
-./assemblezfin_genomicDNA.sh
+zfin+genomicDNA/assemblezfin_genomicDNA.sh
 
 echo "convert genomicDNA" 
 
-./convertzfin_genomicDNA.sh
+zfin+genomicDNA/convertzfin_genomicDNA.sh
 
 echo "push genomicDNA" 
 
-./pushzfin_genomicDNA.sh
+zfin+genomicDNA/pushzfin_genomicDNA.sh
 
 echo "done with processGenomicDNA.sh" 
 
