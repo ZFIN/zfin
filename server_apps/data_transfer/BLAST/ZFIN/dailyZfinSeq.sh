@@ -7,55 +7,55 @@
 #source /research/zusers/blast/BLAST_load/properties/current;
 
 echo "process zfin_mrph" ;
-zfin_mrph/processzfin_mrph.sh
+#zfin_mrph/processzfin_mrph.sh
 
 echo "";
 echo "";
 
 echo "process zfin_publishedProtein" ;
-zfin_publishedProtein/processzfin_publishedProtein.sh
+#zfin_publishedProtein/processzfin_publishedProtein.sh
 
 echo "";
 echo "";
 
 echo "process zfin_unreleasedProtein" ;
-zfin_unreleasedProtein/processzfin_unreleasedProtein.sh
+#zfin_unreleasedProtein/processzfin_unreleasedProtein.sh
 
 echo "";
 echo "";
 
 echo "process zfin_vega" ;
-zfin_vega/processzfin_vega.sh
+#zfin_vega/processzfin_vega.sh
 
 echo "";
 echo "";
 
 echo "process vega_withdrawn" ;
-zfin_vegaWithdrawn/processzfin_vegaWithdrawn.sh
+#zfin_vegaWithdrawn/processzfin_vegaWithdrawn.sh
 
 echo "";
 echo "";
 
 echo "process zfin_cdna" ;
-zfin_cdna/processzfin_cdna.sh
+#zfin_cdna/processzfin_cdna.sh
 
 echo "";
 echo "";
 
 echo "process zfin_xpat_cdna" ;
-zfin_xpat_cdna/processzfin_xpat_cdna.sh
+#zfin_xpat_cdna/processzfin_xpat_cdna.sh
 
 echo "";
 echo "";
 
 echo "process zfin_unreleasedRNA" ;
-zfin_unreleasedRNA/processzfin_unreleasedRNA.sh
+#zfin_unreleasedRNA/processzfin_unreleasedRNA.sh
 
 echo "";
 echo "";
 
 echo "process zfin_microRNA" ;
-zfin_microRNA/processzfin_microRNA.sh
+#zfin_microRNA/processzfin_microRNA.sh
 
 echo "";
 echo "";
