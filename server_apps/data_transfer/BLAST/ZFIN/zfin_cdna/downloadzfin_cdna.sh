@@ -19,13 +19,13 @@ else
 echo "file $WEBHOST_FASTA_FILE_PATH/zfin_genbank_cdna_acc.unl is empty, not copying."
 fi
 
-/local/bin/wget "http://@WEBHOST_HOSTNAME@/action/blast/blast-files?action=GENBANK_ALL" -O $WEBHOST_FASTA_FILE_PATH@/zfin_genbank_acc.unl
+/local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_ALL" -O $WEBHOST_FASTA_FILE_PATH@/zfin_genbank_acc.unl
 
 if [ -f $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl ]; then
 cp  $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/
 else
 echo "file $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl is empty, not copying."
-endif
+fi
 
 
 
