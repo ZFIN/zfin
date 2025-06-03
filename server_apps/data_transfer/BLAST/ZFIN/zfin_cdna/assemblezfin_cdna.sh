@@ -32,10 +32,9 @@ cat new_zfin_gb_seq_rna.fa >> new_zfin_gb_seq.fa
  # Rename
  #=============
 
- mv new_zfin_gb_seq.fa zfin_gb_seq.fa
- mv new_zfin_gb_seq_mrna.fa zfin_cdna_seq.fa
+ mv new_zfin_gb_seq.fa $BLASTSERVER_FASTA_FILE_PATH/zfin_cdna/zfin_gb_seq.fa
+ mv new_zfin_gb_seq_mrna.fa $BLASTSERVER_FASTA_FILE_PATH/zfin_cdna/zfin_cdna_seq.fa
 
  echo "done with assemblezfin_cdna.fa"
 
-endif 
 exit

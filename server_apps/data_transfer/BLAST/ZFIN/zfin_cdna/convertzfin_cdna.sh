@@ -7,11 +7,10 @@
 BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
-WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
 
 rm -f $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/vega_zfin.fa
 
-xdformat -n -r $BLAST_DATABASE_PATH/Current/vega_zfin > $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/vega_zfin.fa
+xdformat -n -r $BLAST_DATABASE_PATH/Current/vega_zfin > $BLASTSERVER_FASTA_FILE_PATH/zfin_cdna/vega_zfin.fa
 
 cat $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/vega_zfin.fa >> $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/zfin_cdna_seq.fa
 
@@ -23,6 +22,5 @@ xdformat -n -o zfin_gb_seq -e $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/
 xdformat -n -o zfin_cdna_seq -e $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/xdformat_zfin_cdna.log -I -t "ZFIN cDNA Sequence Set" $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_cdna/zfin_cdna_seq.fa
 
 echo "done formatting zfin_cdna into dbs" 
-
 
 exit
