@@ -4,7 +4,7 @@
 
 echo "getAccFile genomicDNA" 
 
-zfin_genomicDNA//downloadzfin_genomicDNA.sh
+zfin_genomicDNA/downloadzfin_genomicDNA.sh
 
 echo "makeFastaFile genomicDNA" 
 

@@ -5,6 +5,7 @@
 
 BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
+
 BLASTSERVER_BLAST_DATABASE_PATH="/research/zblastfiles/zmore/blastRegeneration"
 
 cd $BLASTSERVER_BLAST_DATABASE_PATH/Current
