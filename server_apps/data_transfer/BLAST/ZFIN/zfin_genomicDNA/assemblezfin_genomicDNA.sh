@@ -1,4 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
+# do not use bash -e
+## otherwise this script stops at the first xdget command as the log file consists accessions that
+# are not found
 
 # have to provide a path to find the refseq_zf_rna and gbk_zf* blastdbs.  Right now, we cd to the BLASTSERVER_BLAST_DATABASE_PATH to get this in our 
 # path.
