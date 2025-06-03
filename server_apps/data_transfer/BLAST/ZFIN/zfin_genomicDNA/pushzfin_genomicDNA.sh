@@ -5,11 +5,11 @@ BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta
 
 # move current to backup
 
-mv $BLAST_DATABASE_PATH/Current/GenomicDNA.* $BLAST_DATABASE_PATH/Backup
+mv $BLAST_DATABASE_PATH/Current/GenomicDNA.* $BLAST_DATABASE_PATH/Backup/
 
 # move new to current
 
-mv $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/GenomicDNA.* $BLAST_DATABASE_PATH/Current
+mv $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/GenomicDNA.* $BLAST_DATABASE_PATH/Current/
 
 
 #if (@HOSTNAME@ == genomics.cs.uoregon.edu) then
