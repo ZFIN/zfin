@@ -12,13 +12,11 @@ error_exit() {
     exit 1
 }
 
-#BLAST_PATH="/opt/zfin/blastdb"
-
 mv $BLAST_PATH/Current/refseq_zf_*.x* $BLAST_PATH/Backup
 
 log_message "Move the blastdbs for refseq to the Current dir"
-echo "== Move the blastdbs for refseq to the Current dir == "
-/bin/cp refseq_zf_*.x* $BLAST_PATH/Current/
+
+cp refseq_zf_*.x* $BLAST_PATH/Current/
 
 #/bin/rm -rf *.fa;
 
@@ -26,5 +24,5 @@ echo "== Move the blastdbs for refseq to the Current dir == "
 
 touch "refseq.ftp" ;
 
-echo "== Finish refseq load ==" ;
+log_message "Finished pushing RefSeq files"
 exit

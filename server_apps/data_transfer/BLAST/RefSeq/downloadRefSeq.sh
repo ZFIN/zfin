@@ -3,9 +3,6 @@
 # The script download RefSeq zebrafish file
 #
 source "config.sh"
-log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "refseq_process.log"
-}
 
 log_message "Starting RefSeq download..."
 

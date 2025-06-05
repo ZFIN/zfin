@@ -20,6 +20,6 @@ log_message "Push RefSeq"
 #    @TARGET_PATH@/RefSeq/distributeToNodesRefSeq.sh
 #endif 
 
-log_message "Finished RefSeq"
+log_message "Finished RefSeq Load"
 
 exit
