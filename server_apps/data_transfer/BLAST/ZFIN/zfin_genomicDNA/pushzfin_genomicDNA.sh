@@ -2,16 +2,15 @@
 
 source "../config.sh"
 
-BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
 
 # move current to backup
 
-mv $BLAST_DATABASE_PATH/Current/GenomicDNA.* $BLAST_DATABASE_PATH/Backup/
+mv $BLAST_PATH/Current/GenomicDNA.* $BLAST_PATH/Backup/
 
 # move new to current
 
-mv $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/GenomicDNA.* $BLAST_DATABASE_PATH/Current/
+mv GenomicDNA.* $BLAST_PATH/Current/
 
 
 #if (@HOSTNAME@ == genomics.cs.uoregon.edu) then
@@ -19,6 +18,5 @@ mv $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/GenomicDNA.* $BLAST_DATABASE_PAT
 #endif 
 
 echo "done moving the genomicDNA blastdbs to /Current/"
-#rm @BLASTSERVER_FASTA_FILE_PATH@/fasta/ZFIN/zfin_genomicDNA/*.fa
 
 exit

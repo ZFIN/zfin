@@ -9,8 +9,8 @@ source "../config.sh"
 BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
 
-xdformat -n -o $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/GenomicDNA -e $BLASTSERVER_FASTA_FILE_PATH/zfin_genomicDNA/xdformat_zfin_genomic_dna_all.log -I -Tgb1 -Ttpe -t "GenomicDNA" $BLASTSERVER_FASTA_FILE_PATH/zfin_genomic_dna_all.fa
+xdformat -n -e xdformat_zfin_genomic_dna_all.log -o GenomicDNA  -I -Tgb1 -Ttpe -t "GenomicDNA" zfin_genomic_dna_all.fa
 
-echo "done creating the blastdb genomicDNA"
+echo "done creating the blastdb GenomicDNA"
 
 exit
