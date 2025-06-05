@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+source "../config.sh"
+
 BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
 
