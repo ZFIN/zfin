@@ -11,11 +11,11 @@ wget -Nq "ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.rna.fna.gz
 wait # Wait for both downloads to complete
 
 if [[ ! -s "zebrafish.1.protein.faa.gz" ]]; then
-  error_exit "Downloaded file zebrafish.1.protein.faa.gz is empty: $filename"
+  error_exit "Downloaded file zebrafish.1.protein.faa.gz is empty"
 fi
 
 if [[ ! -s "zebrafish.1.rna.fna.gz" ]]; then
-  error_exit "Downloaded file zebrafish.1.rna.fna.gz is empty: $filename"
+  error_exit "Downloaded file zebrafish.1.rna.fna.gz is empty"
 fi
 
 cp zebrafish.1.protein.faa.gz downloadedProt.gz
