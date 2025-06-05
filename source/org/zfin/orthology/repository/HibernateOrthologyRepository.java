@@ -208,4 +208,25 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         return query.list();
     }
 
+    @Override
+    public void saveEvidenceCode(OrthologEvidence evidence) {
+        String sql = """
+                    INSERT INTO ortholog_evidence (oev_ortho_zdb_id, oev_evidence_code, oev_pub_zdb_id, oev_evidence_term_zdb_id)
+                        VALUES (:oev_ortho_zdb_id, :code, :pub_zdb_id, :term_zdb_id)
+                    ON CONFLICT DO NOTHING
+                    """;
+        Query query = currentSession().createNativeQuery(sql);
+        query.setParameter("oev_ortho_zdb_id", evidence.getOrtholog().getZdbID());
+        query.setParameter("code", evidence.getEvidenceCode().getCode());
+        query.setParameter("pub_zdb_id", evidence.getPublication().getZdbID());
+        query.setParameter("term_zdb_id", evidence.getEvidenceTerm().getZdbID());
+        query.executeUpdate();
+    }
+
+    @Override
+    public void removeEvidenceCode(OrthologEvidence evidence) {
+        currentSession().delete(evidence);
+    }
+
+
 }
