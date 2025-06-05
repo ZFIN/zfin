@@ -39,5 +39,5 @@ public interface FishRepository {
      */
     WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
 
-    List<Fish> getAllFish(int numberOrRecords);
+    List<Fish> getAllFish(int numberOfRecords);
 }
