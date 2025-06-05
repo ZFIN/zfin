@@ -2,6 +2,8 @@
 #
 # This script pushes the RefSeq zebrafish blast db to the /Current dir
 
+source "config.sh"
+
 set -euo pipefail  # More strict than just -e
 
 # Add function for error handling

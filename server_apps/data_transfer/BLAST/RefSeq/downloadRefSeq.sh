@@ -9,8 +9,8 @@ log_message() {
 
 log_message "Starting RefSeq download..."
 
-wget -N "ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.protein.faa.gz" &
-wget -N "ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.rna.fna.gz" &
+wget -Nq "ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.protein.faa.gz" &
+wget -Nq "ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.rna.fna.gz" &
 wait  # Wait for both downloads to complete
 
 cp zebrafish.1.protein.faa.gz downloadedProt.gz
