@@ -2,10 +2,7 @@
 #
 # This script converts the RefSeq zebrafish file
 # into a ab-blast fasta file.
-
-log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "refseq_process.log"
-}
+source "config.sh"
 
 log_message "Starting RefSeq conversion..."
 log_message "Format the RefSeq files into blast db"

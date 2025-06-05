@@ -3,10 +3,7 @@
 # This script downloads and process RefSeq zebrafish file
 # and formats it into refseq_zf_rna and refseq_zf_prt dataset.
 #
-log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "refseq_process.log"
-}
-
+source "config.sh"
 log_message "Starting RefSeq processing..."
 log_message "In RefSeq/ directory"
 log_message "Download RefSeq"
