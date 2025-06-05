@@ -3,7 +3,6 @@
 # put them into a blastdb using the blastfiles on genomix.
 
 
-BLASTSERVER_BLAST_DATABASE_PATH="/opt/zfin/blastdb"
 BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration"
 WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
 

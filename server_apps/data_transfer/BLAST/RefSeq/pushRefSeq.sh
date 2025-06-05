@@ -1,14 +1,21 @@
-#!/bin/bash -e
+#!/bin/bash
 #
 # This script pushes the RefSeq zebrafish blast db to the /Current dir
 
-BLASTSERVER_BLAST_DATABASE_PATH="/opt/zfin/blastdb"
+set -euo pipefail  # More strict than just -e
 
-rm -rf @BLASTSERVER_BLAST_DATABASE_PATH@/Backup/refseq_zf_*.x*
-mv $BLASTSERVER_BLAST_DATABASE_PATH/Current/refseq_zf_*.x* $BLASTSERVER_BLAST_DATABASE_PATH/Backup
+# Add function for error handling
+error_exit() {
+    echo "ERROR: $1" >&2
+    exit 1
+}
+
+BLAST_PATH="/opt/zfin/blastdb"
+
+mv $BLAST_PATH/Current/refseq_zf_*.x* $BLAST_PATH/Backup
 
 echo "== Move the blastdbs for refseq to the Current dir == "
-/bin/cp refseq_zf_*.x* $BLASTSERVER_BLAST_DATABASE_PATH/Current/
+/bin/cp refseq_zf_*.x* $BLAST_PATH/Current/
 
 #/bin/rm -rf *.fa;
 
