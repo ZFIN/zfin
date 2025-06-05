@@ -3,18 +3,19 @@
 # This script downloads and process RefSeq zebrafish file
 # and formats it into refseq_zf_rna and refseq_zf_prt dataset.
 #
+log_message() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "refseq_process.log"
+}
 
-# cd $TARGETROOT/server_apps/data_transfer/BLAST/RefSeq
- 
-echo "==| at RefSeq/ ==|"
-
-echo "==| download refseq==|"
+log_message "Starting RefSeq processing..."
+log_message "In RefSeq/ directory"
+log_message "Download RefSeq"
  ./downloadRefSeq.sh
 
-echo "==| convert refseq==|"
+log_message "Convert RefSeq"
  ./convertRefSeq.sh
 
-echo "==| push refseq ==|"
+log_message "Push RefSeq"
  ./pushRefSeq.sh
 
 #if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
@@ -22,6 +23,6 @@ echo "==| push refseq ==|"
 #    @TARGET_PATH@/RefSeq/distributeToNodesRefSeq.sh
 #endif 
 
-echo "== Finish RefSeq =="
+log_message "Finished RefSeq"
 
 exit

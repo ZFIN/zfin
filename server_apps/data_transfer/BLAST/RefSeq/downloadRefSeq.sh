@@ -3,8 +3,6 @@
 # The script download RefSeq zebrafish file
 #
 
-echo "== Download RefSeq files =="
-
 log_message() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "refseq_process.log"
 }
@@ -18,14 +16,15 @@ wait  # Wait for both downloads to complete
 cp zebrafish.1.protein.faa.gz downloadedProt.gz
 cp zebrafish.1.rna.fna.gz downloadedRNA.gz
 
-echo "== Unzip files for refseq == "
+log_message "Unzip files for refseq..."
+
 gunzip downloadedProt.gz
 gunzip downloadedRNA.gz
 
-echo "== rename the fasta files from RefSeq to more familiar names at ZFIN == "
+log_message "rename the fasta files from RefSeq to more familiar names at ZFIN"
 
 cp "downloadedProt" "refseq_zf_aa.fa"
-cp downloadedRNA refseq_zf_rna.fa
+cp "downloadedRNA" "refseq_zf_rna.fa"
 
 rm -rf downloaded*;
 
