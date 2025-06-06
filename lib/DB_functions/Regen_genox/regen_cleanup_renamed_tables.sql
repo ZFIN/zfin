@@ -19,6 +19,7 @@ BEGIN
                          AND schemaname = 'public')
         LOOP
             raise notice 'dropping table %', table_name;
+            perform remove_foreign_keys('public', table_name);
             EXECUTE 'DROP TABLE IF EXISTS ' || table_name || ' CASCADE';
             result := result || ' ' || table_name;
         END LOOP;
