@@ -808,7 +808,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
         </Download>
         <Download orderIndex="1">
             <Name>
-                Human and Zebrafish Orthology
+                Manually curated Human and Zebrafish Orthology
             </Name>
             <Category>
                 Orthology Data
