@@ -3,31 +3,23 @@
 # Each Sunday after zfin finish data transfer in
 # get the most up-to-date accession list from almost.
 #
+source "../config.sh"
 
-BLASTSERVER_FASTA_FILE_PATH="/research/zblastfiles/files/blastRegeneration/fasta/ZFIN"
-WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
+/local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_CDNA" -O zfin_genbank_cdna_acc.unl
 
-#===============
-# Download files
-#===============
-
-/local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_CDNA" -O $WEBHOST_FASTA_FILE_PATH/zfin_genbank_cdna_acc.unl
-
-if [ -f $WEBHOST_FASTA_FILE_PATH/zfin_genbank_cdna_acc.unl ]; then
-cp  $WEBHOST_FASTA_FILE_PATH/zfin_genbank_cdna_acc.unl $BLASTSERVER_FASTA_FILE_PATH/zfin_cdna/
+if [ -f zfin_genbank_cdna_acc.unl ]; then
+  log_message "Successfully downloaded cDNA GenBank accessions ($(wc -l <zfin_genomic_genbank_acc.unl) lines)"
 else
-echo "file $WEBHOST_FASTA_FILE_PATH/zfin_genbank_cdna_acc.unl is empty, not copying."
+  error_exit "file zfin_genbank_cdna_acc.unl is empty, not copying."
 fi
 
-/local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_ALL" -O $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl
+/local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_ALL" -O zfin_genbank_acc.unl
 
-if [ -f $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl ]; then
-cp  $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl $BLASTSERVER_FASTA_FILE_PATH/zfin_cdna/
+if [ -f zfin_genbank_acc.unl ]; then
+  log_message "Successfully downloaded GenBank accessions ($(wc -l <zfin_genbank_acc.unl) lines)"
 else
-echo "file $WEBHOST_FASTA_FILE_PATH/zfin_genbank_acc.unl is empty, not copying."
+  error_exit "file zfin_genbank_acc.unl is empty, not copying."
 fi
 
-
-
-echo "done downloading zfin_genbank_acc.unl zfin_genbank_cdna_acc.unl"
+log_message "Done with download"
 exit

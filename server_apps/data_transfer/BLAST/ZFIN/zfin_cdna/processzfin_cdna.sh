@@ -4,16 +4,19 @@
 # get the most up-to-date accession list from almost.
 #
 
-echo "download zfin_cdna" ;
-zfin_cdna/downloadzfin_cdna.sh
+source "../config.sh"
+log_message "***** Starting ZFIN cDNA Sequences *****"
 
-echo "assemble zfin_cdna" ;
-zfin_cdna/assemblezfin_cdna.sh
+log_message "download zfin_cdna" ;
+./downloadzfin_cdna.sh
 
-echo "convert zfin_cdna" ;
-zfin_cdna/convertzfin_cdna.sh
+log_message "assemble zfin_cdna" ;
+./assemblezfin_cdna.sh
 
-echo "push zfin_cdna" ;
-zfin_cdna/pushzfin_cdna.sh
+log_message "convert zfin_cdna" ;
+./convertzfin_cdna.sh
+
+log_message "push zfin_cdna" ;
+./pushzfin_cdna.sh
 
 exit
