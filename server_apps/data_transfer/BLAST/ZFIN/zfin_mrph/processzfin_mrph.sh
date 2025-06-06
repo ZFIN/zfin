@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 #
 # Scp Morpholino sequence from embryonix,
 # update blast db.

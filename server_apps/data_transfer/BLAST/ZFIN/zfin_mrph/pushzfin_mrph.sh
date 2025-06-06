@@ -1,16 +1,16 @@
-#!/bin/tcsh
+#!/bin/bash -e
 #
 # Scp Morpholino sequence and
 # microRNA sequence from embryonix,
 # update blast db.
 # 
-
+ source "../config.sh"
 #=======================
 # Move current to backup
 # update current dir
 #========================
 
-mv @BLASTSERVER_FASTA_FILE_PATH@/fasta/ZFIN/zfin_mrph/zfin_mrph.x* @BLASTSERVER_BLAST_DATABASE_PATH@/Current/
+cp zfin_mrph.x* $BLAST_PATH/Current/
 
 #if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
 #
