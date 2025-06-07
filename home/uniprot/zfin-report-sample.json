@@ -1,0 +1,265 @@
+{
+  "meta": {
+    "title": "The title of the report",
+    "creationDate": 1748623228072
+  },
+  "summary": {
+    "description": "Sample Report for All Loads",
+    "tables": [
+      {
+        "description": "Description of this table",
+        "headers": [
+          {"key": "desc", "title": "Description"},
+          {"key": "bfr", "title": "Before"},
+          {"key": "aft", "title": "After"}
+        ],
+        "rows": [
+          {"desc": "db_link records", "bfr": 40824, "aft": 48703},
+          {"desc": "genes with uniprot links (see INFO for details)", "bfr": 20949, "aft": 21699}
+        ]
+      }
+    ]
+  },
+  "actions": [
+    {
+      "id": "c48581e7",
+      "type": "INFO",
+      "subType": "ZFIN Gene Lost All UniProt Accessions",
+      "accession": null,
+      "supplementalDataKeys": [],
+      "geneZdbID": "ZDB-GENE-030131-2956",
+      "details": "This gene has lost all UniProt accessions in this load (1 before load).  Lost uniprots: M9MM97",
+      "length": 0,
+      "links": [
+        {
+          "title": "ZFIN:ZDB-GENE-030131-2956",
+          "href": "https://zfin.org/ZDB-GENE-030131-2956"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "c48581e0",
+      "type": "LOAD",
+      "subType": "Matched via RefSeq: Single Gene per Accession",
+      "accession": "A0A0G2KCC7",
+      "supplementalDataKeys": ["A0A0G2KCC7"],
+      "geneZdbID": "ZDB-GENE-130530-678",
+      "details": "UniProt Accession: A0A0G2KCC7\n==========================\nMatched ZFIN Gene ID: ZDB-GENE-130530-678 (kbtbd11)\nBased on the RefSeq(s): XM_068214591, XP_068070692\n",
+      "length": 699,
+      "links": [
+        {
+          "title": "RefSeq:XM_068214591",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_068214591"
+        },
+        {
+          "title": "RefSeq:XP_068070692",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_068070692"
+        },
+        {
+          "title": "UniProtKB:A0A0G2KCC7",
+          "href": "http://www.uniprot.org/uniprot/A0A0G2KCC7"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-130530-678",
+          "href": "https://zfin.org/ZDB-GENE-130530-678"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "c48581e1",
+      "type": "DELETE",
+      "subType": "ZFIN Gene Losing UniProt Accession",
+      "accession": "A0A0R4ICM1",
+      "supplementalDataKeys": ["A0A0R4ICM1"],
+      "geneZdbID": "ZDB-GENE-141212-384",
+      "details": "This gene currently has a UniProt association, but when we run the latest\nUniProt release through our matching pipeline, we don't find a match.\n\nThis association will be removed.\n\nZDB-GENE-141212-384 (si:ch211-161f7.2) would lose its UniProt association with A0A0R4ICM1.\n",
+      "length": 0,
+      "links": [
+        {
+          "title": "UniProtKB:A0A0R4ICM1",
+          "href": "http://www.uniprot.org/uniprot/A0A0R4ICM1"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-141212-384",
+          "href": "https://zfin.org/ZDB-GENE-141212-384#sequences"
+        }
+      ],
+      "tags": [
+        {
+          "name": "LOST_ALL_UNIPROTS",
+          "value": "ZFIN Gene Losing All UniProt Accessions"
+        }
+      ]
+    },
+    {
+      "id": "c48581e2",
+      "type": "WARNING",
+      "subType": "Multiple Genes per Accession: Contains Approved Accession",
+      "accession": "A0A8M1RER7",
+      "supplementalDataKeys": ["A0A8M1RER7"],
+      "geneZdbID": "ZDB-GENE-090311-21;ZDB-GENE-041210-340",
+      "details": "This UniProt accession has multiple genes associated with it, but at least one of the gene associations is supported by a non-load publication.\n\nUniProt Accession: A0A8M1RER7\n==========================\nMatched ZFIN Gene ID: ZDB-GENE-090311-21 (si:dkeyp-13d11.2)\nBased on the RefSeq(s): XM_003197684, XP_003197732\nMatched ZFIN Gene ID: ZDB-GENE-041210-340 (si:dkey-6f10.4)\nBased on the RefSeq(s): XM_005160774, XP_005160831\n",
+      "length": 0,
+      "links": [
+        {
+          "title": "RefSeq:XM_003197684",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_003197684"
+        },
+        {
+          "title": "RefSeq:XM_005160774",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_005160774"
+        },
+        {
+          "title": "RefSeq:XP_003197732",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_003197732"
+        },
+        {
+          "title": "RefSeq:XP_005160831",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_005160831"
+        },
+        {
+          "title": "UniProtKB:A0A8M1RER7",
+          "href": "http://www.uniprot.org/uniprot/A0A8M1RER7"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-041210-340",
+          "href": "https://zfin.org/ZDB-GENE-041210-340"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-090311-21",
+          "href": "https://zfin.org/ZDB-GENE-090311-21"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "c48581e4",
+      "type": "ERROR",
+      "subType": "Multiple Genes per Accession",
+      "accession": "A0A8M2B204",
+      "supplementalDataKeys": ["A0A8M2B204"],
+      "geneZdbID": "ZDB-GENE-110411-175;ZDB-GENE-110510-4",
+      "details": "UniProt Accession: A0A8M2B204\n==========================\nMatched ZFIN Gene ID: ZDB-GENE-110411-175 (itgam.1)\nBased on the RefSeq(s): XM_005156007, XP_005156064\nMatched ZFIN Gene ID: ZDB-GENE-110510-4 (itgam.2)\nBased on the RefSeq(s): XM_005156007, XP_005156064\n",
+      "length": 0,
+      "links": [
+        {
+          "title": "RefSeq:XM_005156007",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_005156007"
+        },
+        {
+          "title": "RefSeq:XP_005156064",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_005156064"
+        },
+        {
+          "title": "UniProtKB:A0A8M2B204",
+          "href": "http://www.uniprot.org/uniprot/A0A8M2B204"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-110411-175",
+          "href": "https://zfin.org/ZDB-GENE-110411-175"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-110510-4",
+          "href": "https://zfin.org/ZDB-GENE-110510-4"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "c48581f4",
+      "type": "LOAD",
+      "subType": "Matched via RefSeq: Single Gene per Accession",
+      "accession": "A0A8M2B3T5",
+      "supplementalDataKeys": ["A0A8M2B3T5"],
+      "geneZdbID": "ZDB-GENE-150206-1",
+      "details": "UniProt Accession: A0A8M2B3T5\n==========================\nMatched ZFIN Gene ID: ZDB-GENE-150206-1 (fam181b)\nBased on the RefSeq(s): XM_005157487, XP_005157544\n",
+      "length": 321,
+      "links": [
+        {
+          "title": "RefSeq:XM_005157487",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_005157487"
+        },
+        {
+          "title": "RefSeq:XP_005157544",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_005157544"
+        },
+        {
+          "title": "UniProtKB:A0A8M2B3T5",
+          "href": "http://www.uniprot.org/uniprot/A0A8M2B3T5"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-150206-1",
+          "href": "https://zfin.org/ZDB-GENE-150206-1"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "c48581c4",
+      "type": "LOAD",
+      "subType": "Matched via RefSeq: Single Gene per Accession",
+      "accession": "A0A8M2B3V8",
+      "supplementalDataKeys": ["A0A0R4ICM1"],
+      "geneZdbID": "ZDB-GENE-100927-1",
+      "details": "UniProt Accession: A0A8M2B3V8\n==========================\nMatched ZFIN Gene ID: ZDB-GENE-100927-1 (hps6)\nBased on the RefSeq(s): XM_005156935, XP_005156992\n",
+      "length": 842,
+      "links": [
+        {
+          "title": "RefSeq:XM_005156935",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XM_005156935"
+        },
+        {
+          "title": "RefSeq:XP_005156992",
+          "href": "http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=XP_005156992"
+        },
+        {
+          "title": "UniProtKB:A0A8M2B3V8",
+          "href": "http://www.uniprot.org/uniprot/A0A8M2B3V8"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-100927-1",
+          "href": "https://zfin.org/ZDB-GENE-100927-1"
+        }
+      ],
+      "tags": [],
+      "relatedActionsKeys": ["thisWillLinkActions"]
+    },
+    {
+      "id": "c4858bf4",
+      "type": "DELETE",
+      "subType": "ZFIN Gene Losing UniProt Accession",
+      "accession": "A0A8M2B434",
+      "supplementalDataKeys": ["A0A8M2B434"],
+      "geneZdbID": "ZDB-GENE-070912-362",
+      "details": "This gene currently has a UniProt association, but when we run the latest\nUniProt release through our matching pipeline, we don't find a match.\n\nThis association will be removed.\n\nNo sequence details found for A0A8M2B434",
+      "length": 0,
+      "links": [
+        {
+          "title": "UniProtKB:A0A8M2B434",
+          "href": "http://www.uniprot.org/uniprot/A0A8M2B434"
+        },
+        {
+          "title": "ZFIN:ZDB-GENE-070912-362",
+          "href": "https://zfin.org/ZDB-GENE-070912-362#sequences"
+        }
+      ],
+      "tags": [
+        {
+          "name": "LOST_ALL_UNIPROTS",
+          "value": "ZFIN Gene Losing All UniProt Accessions"
+        }
+      ],
+      "relatedActionsKeys": ["thisWillLinkActions"]
+    }
+  ],
+  "supplementalData": {
+    "A0A0G2KCC7": "ID   A0A0G2KCC7_DANRE          Unreviewed;         699 AA.\nAC   A0A0G2KCC7; A0A8M2BL76;\nDT   22-JUL-2015, integrated into UniProtKB/TrEMBL.\nDT   22-JUL-2015, sequence version 1.\nDT   05-FEB-2025, entry version 48.\nDE   SubName: Full=Kelch repeat and BTB (POZ) domain-containing 11 {ECO:0000313|Ensembl:ENSDARP00000129935};\nDE   SubName: Full=Kelch repeat and BTB domain-containing protein 11 {ECO:0000313|RefSeq:XP_068070692.1};.\nGN   Name=kbtbd11 {ECO:0000313|RefSeq:XP_068070692.1};\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   EMBL; CABZ01026432; -; NOT_ANNOTATED_CDS; Genomic_DNA.\nDR   RefSeq; XP_068070692; XM_068214591.\nDR   Ensembl; ENSDART00000161002.2; ENSDARP00000129935.1; ENSDARG00000104958.3.\nDR   GeneID; 557467; -.\nDR   ZFIN; ZDB-GENE-130530-678; kbtbd11.\nDR   InterPro; IPR000210; BTB/POZ_dom.\nDR   InterPro; IPR015915; Kelch-typ_b-propeller.\nDR   InterPro; IPR052310; Kelch/BTB_domain_protein.\nDR   InterPro; IPR006652; Kelch_1.\nDR   InterPro; IPR011333; SKP1/BTB/POZ_sf.\nDR   Pfam; PF00651; BTB; 1.\nDR   Pfam; PF01344; Kelch_1; 1.\nDR   PROSITE; PS50097; BTB; 1.\nPE   4: Predicted;\nKW   Kelch repeat {ECO:0000256|ARBA:ARBA00022441}; Reference proteome {ECO:0000313|Proteomes:UP000000437}; Repeat {ECO:0000256|ARBA:ARBA00022737}.\n//\n",
+    "A0A0R4ICM1": "ID   A0A0R4ICM1_DANRE          Unreviewed;         440 AA.\nAC   A0A0R4ICM1; A0A8M6Z8S3;\nDT   20-JAN-2016, integrated into UniProtKB/TrEMBL.\nDT   20-JAN-2016, sequence version 1.\nDT   05-FEB-2025, entry version 35.\nDE   SubName: Full=Si:ch211-161f7.2 {ECO:0000313|Ensembl:ENSDARP00000130663};.\nGN   Name=si:ch211-161f7.2 {ECO:0000313|Ensembl:ENSDARP00000130663;\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   EMBL; CR318645; -; NOT_ANNOTATED_CDS; Genomic_DNA.\nDR   Ensembl; ENSDART00000158691.2; ENSDARP00000130663.1; ENSDARG00000103205.2.\nDR   GeneID; 101883987; -.\nDR   ZFIN; ZDB-GENE-141212-384; si:ch211-161f7.2.\nDR   GO; GO:0005634; C:nucleus; IDA:ZFIN.\nDR   GO; GO:0048513; P:animal organ development; IEA:UniProtKB-ARBA.\nDR   InterPro; IPR026092; RAI2/SOBP.\nDR   Pfam; PF15279; SOBP; 1.\nPE   4: Predicted;\n//\n",
+    "A0A8M1RER7": "ID   A0A8M1RER7_DANRE          Unreviewed;         321 AA.\nAC   A0A8M1RER7;\nDT   03-AUG-2022, integrated into UniProtKB/TrEMBL.\nDT   03-AUG-2022, sequence version 1.\nDT   05-FEB-2025, entry version 15.\nDE   SubName: Full=Uncharacterized protein si:dkey-6f10.4 {ECO:0000313|RefSeq:XP_005160831.1};\nDE   SubName: Full=Uncharacterized protein si:dkeyp-13d11.2 {ECO:0000313|RefSeq:XP_003197732.1};.\nGN   Name=si:dkeyp-13d11.2 {ECO:0000313|RefSeq:XP_003197732.1; Synonyms=si:dkey-6f10.4 {ECO:0000313|RefSeq:XP_005160831.1, ECO:0000313|ZFIN:ZDB-GENE-041210-340};\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   RefSeq; XP_003197732; XM_003197684.\nDR   RefSeq; XP_005160831; XM_005160774.\nDR   GeneID; 101885159; -.\nDR   GeneID; 567658; -.\nDR   ZFIN; ZDB-GENE-041210-340; si:dkey-6f10.4.\nDR   ZFIN; ZDB-GENE-090311-21; si:dkeyp-13d11.2.\nDR   InterPro; IPR053164; IS1016-like_transposase.\nDR   InterPro; IPR024445; Tnp_ISXO2-like.\nDR   Pfam; PF12762; DDE_Tnp_IS1595; 1.\nPE   4: Predicted;\nKW   Reference proteome {ECO:0000313|Proteomes:UP000000437}.\n//\n",
+    "A0A8M2B3V8": "ID   A0A8M2B3V8_DANRE          Unreviewed;         842 AA.\nAC   A0A8M2B3V8;\nDT   03-AUG-2022, integrated into UniProtKB/TrEMBL.\nDT   03-AUG-2022, sequence version 1.\nDT   05-FEB-2025, entry version 15.\nDE   SubName: Full=BLOC-2 complex member HPS6 {ECO:0000313|RefSeq:XP_005156992.1};.\nGN   Name=hps6 {ECO:0000313|RefSeq:XP_005156992.1};\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   RefSeq; XP_005156992; XM_005156935.\nDR   GeneID; 101882947; -.\nDR   InterPro; IPR017218; BLOC-2_complex_Hps6_subunit.\nDR   InterPro; IPR046822; HPS6_C.\nDR   InterPro; IPR046823; HPS6_N.\nDR   Pfam; PF15702; HPS6; 1.\nDR   Pfam; PF20468; HPS6_C; 1.\nPE   4: Predicted;\nKW   Reference proteome {ECO:0000313|Proteomes:UP000000437}.\n//\n",
+    "A0A8M2B3T5": "ID   A0A8M2B3T5_DANRE          Unreviewed;         321 AA.\nAC   A0A8M2B3T5;\nDT   03-AUG-2022, integrated into UniProtKB/TrEMBL.\nDT   03-AUG-2022, sequence version 1.\nDT   05-FEB-2025, entry version 15.\nDE   SubName: Full=Protein FAM181B {ECO:0000313|RefSeq:XP_005157544.1};.\nGN   Name=fam181b {ECO:0000313|RefSeq:XP_005157544.1};\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   RefSeq; XP_005157544; XM_005157487.\nDR   GeneID; 101883805; -.\nDR   InterPro; IPR029359; FAM181.\nDR   InterPro; IPR053819; TEADIR3_omega_loop.\nDR   Pfam; PF15238; TEADIR3; 1.\nPE   4: Predicted;\nKW   Reference proteome {ECO:0000313|Proteomes:UP000000437}.\n//\n",
+    "A0A8M2B204": "ID   A0A8M2B204_DANRE          Unreviewed;        2294 AA.\nAC   A0A8M2B204;\nDT   05-FEB-2025, integrated into UniProtKB/TrEMBL.\nDT   05-FEB-2025, sequence version 1.\nDT   05-FEB-2025, entry version 1.\nDE   SubName: Full=LOW QUALITY PROTEIN: uncharacterized protein itgam.1 {ECO:0000313|RefSeq:XP_005156064.2};.\nGN   Name=itgam.1 {ECO:0000313|RefSeq:XP_005156064.2;\nOS   Danio rerio (Zebrafish) (Brachydanio rerio).\nOC   .\nOX   NCBI_TaxID=7955;\nCC   ---------------------------------------------------------------------------\nCC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms\nCC   Distributed under the Creative Commons Attribution (CC BY 4.0) License\nCC   ---------------------------------------------------------------------------\nDR   RefSeq; XP_005156064; XM_005156007.\nDR   GeneID; 101882585; -.\nDR   ZFIN; ZDB-GENE-110411-175; itgam.1.\nDR   GO; GO:0009897; C:external side of plasma membrane; IDA:ZFIN.\nDR   GO; GO:0008305; C:integrin complex; IBA:GO_Central.\nDR   GO; GO:0005178; F:integrin binding; IBA:GO_Central.\nDR   GO; GO:0046872; F:metal ion binding; IEA:UniProtKB-KW.\nDR   GO; GO:0033627; P:cell adhesion mediated by integrin; IBA:GO_Central.\nDR   GO; GO:0098609; P:cell-cell adhesion; IBA:GO_Central.\nDR   GO; GO:0007160; P:cell-matrix adhesion; IBA:GO_Central.\nDR   GO; GO:0007229; P:integrin-mediated signaling pathway; IBA:GO_Central.\nDR   InterPro; IPR013517; FG-GAP.\nDR   InterPro; IPR013519; Int_alpha_beta-p.\nDR   InterPro; IPR000413; Integrin_alpha.\nDR   InterPro; IPR013649; Integrin_alpha_Ig-like_1.\nDR   InterPro; IPR048285; Integrin_alpha_Ig-like_2.\nDR   InterPro; IPR028994; Integrin_alpha_N.\nDR   InterPro; IPR032695; Integrin_dom_sf.\nDR   InterPro; IPR048633; ITGAX-like_Ig_3.\nDR   InterPro; IPR002035; VWF_A.\nDR   InterPro; IPR036465; vWFA_dom_sf.\nDR   Pfam; PF01839; FG-GAP; 3.\nDR   Pfam; PF08441; Integrin_A_Ig_1; 1.\nDR   Pfam; PF20805; Integrin_A_Ig_2; 1.\nDR   Pfam; PF21520; ITGAX-like_Ig_3; 1.\nDR   Pfam; PF00092; VWA; 1.\nDR   PROSITE; PS51470; FG_GAP; 7.\nDR   PROSITE; PS50234; VWFA; 1.\nPE   4: Predicted;\nKW   Reference proteome {ECO:0000313|Proteomes:UP000000437}.\n//\n"
+  }
+}
