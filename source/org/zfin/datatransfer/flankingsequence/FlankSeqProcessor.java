@@ -1,7 +1,6 @@
 package org.zfin.datatransfer.flankingsequence;
 
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.zfin.framework.HibernateUtil.currentSession;
 import static java.time.LocalDate.now;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 /**
