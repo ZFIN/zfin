@@ -52,7 +52,12 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             });
             loadConstructList();
             const bodyJson = await result.json();
-            setSuccessMessage(bodyJson.message);
+            if (bodyJson.success === false) {
+                setErrorMessage('Error updating construct: ' + bodyJson.message);
+            } else {
+                setSuccessMessage(bodyJson.message);
+                setSelectedConstruct(null);
+            }
         } catch (error) {
             setErrorMessage('Error updating construct');
         }
@@ -102,6 +107,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             {displayMode === 'edit' && <div className='mt-2'>
                 <span className='bold'>EDIT CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
                 <CurateConstructForm
+                    key={selectedConstruct}
                     publicationId={publicationId}
                     constructId={selectedConstruct}
                     submitButtonLabel='Update'
@@ -117,7 +123,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             {displayMode === 'new' && <div className='mt-2'>
                 <span className='bold'>NEW CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
                 <CurateConstructForm
+                    key={selectedConstruct}
                     publicationId={publicationId}
+                    constructId={selectedConstruct}
                     submitButtonLabel='Save'
                     onCancel={cancelEdit}
                     onSubmit={submitForm}
