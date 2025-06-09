@@ -3130,7 +3130,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 .map(name -> name.replace(".csv", ""))
                 .map(name -> name.replace("before_after_cmp_", ""))
                 .collect(Collectors.toList());
-        converter.run(new File(workingDir, "before_after_cmp.xlsx"), csvs, sheetNames, true);
+        converter.run(new File(workingDir, "before_after.xlsx"), csvs, sheetNames, true);
         print(LOG, "Combined CSVs into Excel report: before_after_cmp.xlsx\n");
     }
 
