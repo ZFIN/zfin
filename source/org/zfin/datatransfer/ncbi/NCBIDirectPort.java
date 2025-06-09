@@ -3424,9 +3424,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                     String command = String.format("gunzip -c %s | grep '^7955' | gzip -n > %s", refSeqCatalogGz.getAbsolutePath(), refSeqDanioTemp.getAbsolutePath());
                     doSystemCommand(List.of("bash", "-c", command), "refseq_filter_out.log", "refseq_filter_err.log");
-                    String refSeqDanioMd5 = md5File(refSeqDanioTemp, LOG);
-                    if (refSeqDanioMd5 != null && refSeqDanioTemp.exists() && refSeqDanioTemp.length() > 0) {
-                        File refSeqDanioFinal = new File(workingDir, "RefSeqCatalog.danio." + refSeqDanioMd5 + ".gz");
+
+                    if (refSeqDanioTemp.exists() && refSeqDanioTemp.length() > 0) {
+                        File refSeqDanioFinal = new File(workingDir, "RefSeqCatalog.danio." + refSeqCatalogMd5 + ".gz");
                         Files.move(refSeqDanioTemp.toPath(), refSeqDanioFinal.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         print(LOG, "Created filtered " + refSeqDanioFinal.getName() + "\n");
                     } else {
@@ -3455,9 +3455,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     rmFile(workingDir,"gene2accession.danio.*.gz", true);
                     String command = String.format("gunzip -c %s | grep -E '^7955|^#tax_id' | gzip -n > %s", gene2accessionGz.getAbsolutePath(), gene2accessionDanioTemp.getAbsolutePath());
                     doSystemCommand(List.of("bash", "-c", command), "g2a_filter_out.log", "g2a_filter_err.log");
-                    String gene2accessionDanioMd5 = md5File(gene2accessionDanioTemp, LOG);
-                    if (gene2accessionDanioMd5 != null && gene2accessionDanioTemp.exists() && gene2accessionDanioTemp.length() > 0) {
-                        File gene2accessionDanioFinal = new File(workingDir, "gene2accession.danio." + gene2accessionDanioMd5 + ".gz");
+
+                    if (gene2accessionDanioTemp.exists() && gene2accessionDanioTemp.length() > 0) {
+                        File gene2accessionDanioFinal = new File(workingDir, "gene2accession.danio." + gene2accessionMd5 + ".gz");
                         Files.move(gene2accessionDanioTemp.toPath(), gene2accessionDanioFinal.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         print(LOG, "Created filtered " + gene2accessionDanioFinal.getName() + "\n");
                     } else {

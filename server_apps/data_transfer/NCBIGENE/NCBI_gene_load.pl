@@ -649,8 +649,7 @@ sub downloadNCBIFilesForRelease {
             unlink "RefSeqCatalog.danio.gz" if -e "RefSeqCatalog.danio.gz";
             doSystemCommand("cat RefSeqCatalog.gz | gunzip -d | grep '^7955' | gzip -n > RefSeqCatalog.danio.gz");
 
-            #rename file to include new md5 hash
-            $hash = md5File("RefSeqCatalog.danio.gz");
+            #rename file to include original md5 hash
             rename("RefSeqCatalog.danio.gz", "RefSeqCatalog.danio.$hash.gz");
         }
 
@@ -666,8 +665,7 @@ sub downloadNCBIFilesForRelease {
             unlink "gene2accession.danio.gz" if -e "gene2accession.danio.gz";
             doSystemCommand("cat gene2accession.gz | gunzip -d | grep -E '^7955|^#tax_id' | gzip -n > gene2accession.danio.gz");
 
-            #rename file to include new md5 hash
-            $hash = md5File("gene2accession.danio.gz");
+            #rename file to include original md5 hash
             rename("gene2accession.danio.gz", "gene2accession.danio.$hash.gz");
         }
 
