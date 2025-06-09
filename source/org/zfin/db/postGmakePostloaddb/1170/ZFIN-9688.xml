@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="rtaylor" id="ZFIN-9688">
+        <!-- Restore sequence_feature_chromosome_location_generated table from backup.
+            These are the rows that are deleted when we run regenerate-chromosome-mart_d.
+            This is something of a workaround for ZFIN-9688, until we can figure out how to
+            regenerate the chromosome mart without deleting these rows. See the ZFIN-9688 ticket
+            for more details.
+        -->
+
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1170/ZFIN-9688-02-restore.csv"
+                  tableName="tmp_sfclg" quotchar='"' separator=",">
+            <column header="sfclg_chromosome" name="sfclg_chromosome" type="String"/>
+            <column header="sfclg_data_zdb_id" name="sfclg_data_zdb_id" type="String"/>
+            <column header="sfclg_pk_id" name="sfclg_pk_id" type="Numeric"/>
+            <column header="sfclg_acc_num" name="sfclg_acc_num" type="String"/>
+            <column header="sfclg_start" name="sfclg_start" type="Numeric"/>
+            <column header="sfclg_end" name="sfclg_end" type="Numeric"/>
+            <column header="sfclg_location_source" name="sfclg_location_source" type="String"/>
+            <column header="sfclg_location_subsource" name="sfclg_location_subsource" type="String"/>
+            <column header="sfclg_fdb_db_id" name="sfclg_fdb_db_id" type="Numeric"/>
+            <column header="sfclg_pub_zdb_id" name="sfclg_pub_zdb_id" type="String"/>
+            <column header="sfclg_assembly" name="sfclg_assembly" type="String"/>
+            <column header="sfclg_gbrowse_track" name="sfclg_gbrowse_track" type="String"/>
+            <column header="sfclg_evidence_code" name="sfclg_evidence_code" type="String"/>
+        </loadData>
+
+        <output target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+</databaseChangeLog>
