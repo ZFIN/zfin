@@ -2,6 +2,8 @@ package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -36,6 +38,9 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     private String fgmdVarStrand;
     @Column(name = "fgmd_padded_base")
     private String fgmdPaddedBase;
+    @Column(name="fgmd_modified_at")
+    private Date fgmdModifiedAt;
+
     @OneToMany(mappedBy = "featureGenomicMutationDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<VariantNote> externalNotes;
 
