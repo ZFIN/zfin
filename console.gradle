@@ -228,6 +228,11 @@ task ncbiCharacterize(type: JavaExec) {
     // gradle ncbiCharacterize --args="$TARGETROOT/server_apps/datatransfer/NCBIGENE"
 }
 
+task ncbiLoadPort(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ncbi.NCBIDirectPort'
+}
+
 task csv2xlsx(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.util.CSVToXLSXConverter'

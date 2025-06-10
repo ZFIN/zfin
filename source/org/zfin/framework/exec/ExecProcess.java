@@ -1,22 +1,29 @@
 package org.zfin.framework.exec;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 
 /**
  * Make this class wrap the apache exec stuff.
  */
+@Setter
+@Getter
 public class ExecProcess {
 
     protected CommandLine commandLine;
-    protected ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    protected ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream();
+    protected OutputStream outputStream = new ByteArrayOutputStream();
+    protected OutputStream errorStream = new ByteArrayOutputStream();
+    protected File workingDirectory;
     protected int[] exitValues = {0};
     // this might get used once we have an input stream
 //    protected FileInputStream fileInputStream  ;
@@ -41,8 +48,11 @@ public class ExecProcess {
     public int exec() throws IOException, InterruptedException {
         DefaultExecutor defaultExecutor = new DefaultExecutor();
         defaultExecutor.setExitValues(exitValues);
+        if (workingDirectory != null) {
+            defaultExecutor.setWorkingDirectory(workingDirectory);
+        }
 //        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream,byteArrayErrorStream,fileInputStream) ;
-        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream, byteArrayErrorStream);
+        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(outputStream, errorStream);
         defaultExecutor.setStreamHandler(pumpStreamHandler);
         return defaultExecutor.execute(commandLine);
     }
@@ -68,27 +78,19 @@ public class ExecProcess {
     }
 
     public String getStandardError() {
-        if (byteArrayErrorStream == null) {
+        if (errorStream == null) {
             return null;
         } else {
-            return byteArrayErrorStream.toString();
+            return errorStream.toString();
         }
     }
 
     public String getStandardOutput() {
-        if (byteArrayOutputStream == null) {
+        if (outputStream == null) {
             return null;
         } else {
-            return byteArrayOutputStream.toString();
+            return outputStream.toString();
         }
-    }
-
-    public int[] getExitValues() {
-        return exitValues;
-    }
-
-    public void setExitValues(int[] exitValues) {
-        this.exitValues = exitValues;
     }
 
     public String toString() {
@@ -97,6 +99,13 @@ public class ExecProcess {
 
     public static String exec(String command) throws IOException, InterruptedException {
         ExecProcess process = new ExecProcess(command);
+        process.exec();
+        return process.getStandardOutput();
+    }
+
+    public static String exec(File workingDirectory, String command) throws IOException, InterruptedException {
+        ExecProcess process = new ExecProcess(command);
+        process.setWorkingDirectory(workingDirectory);
         process.exec();
         return process.getStandardOutput();
     }
