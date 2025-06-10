@@ -208,6 +208,11 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         return query.list();
     }
 
+
+    //TODO: This method would be better as an hql query. The reason we are using a native query is that the evidence code
+    // is not a simple string but an entity, which complicates the mapping of the composite key.
+    // See the OrthologEvidence class for more details.
+    // Also see ZFIN-9718 (and ZFIN-9780) for the issue with using an entity as part of a composite key.
     @Override
     public void saveEvidenceCode(OrthologEvidence evidence) {
         String sql = """
