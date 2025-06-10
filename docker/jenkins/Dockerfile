@@ -27,6 +27,7 @@ RUN apt update && apt install -y --no-install-recommends \
 #       docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 RUN cpanm Devel::Camelcadedb
+RUN cpanm JSON
 
 COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail

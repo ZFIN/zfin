@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Embed the minified version of the preact library files -->
+    <!--    https://esm.sh/v131/htm@3.1.1/es2022/preact/standalone.js -->
+    <!--    just replace the export{A as b...} with return {b: A...} -->
+    <script> window.preactStandalone = (function () {var N,f,en,D,tn,B,_n,F={},rn=[],yn=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function C(e,n){for(var t in n)e[t]=n[t];return e}function on(e){var n=e.parentNode;n&&n.removeChild(e)}function ln(e,n,t){var _,l,r,u={};for(r in n)r=="key"?_=n[r]:r=="ref"?l=n[r]:u[r]=n[r];if(arguments.length>2&&(u.children=arguments.length>3?N.call(arguments,2):t),typeof e=="function"&&e.defaultProps!=null)for(r in e.defaultProps)u[r]===void 0&&(u[r]=e.defaultProps[r]);return U(e,u,_,l,null)}function U(e,n,t,_,l){var r={type:e,props:n,key:t,ref:_,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:l??++en};return f.vnode!=null&&f.vnode(r),r}function W(e){return e.children}function A(e,n){this.props=e,this.context=n}function E(e,n){if(n==null)return e.__?E(e.__,e.__.__k.indexOf(e)+1):null;for(var t;n<e.__k.length;n++)if((t=e.__k[n])!=null&&t.__e!=null)return t.__e;return typeof e.type=="function"?E(e):null}function un(e){var n,t;if((e=e.__)!=null&&e.__c!=null){for(e.__e=e.__c.base=null,n=0;n<e.__k.length;n++)if((t=e.__k[n])!=null&&t.__e!=null){e.__e=e.__c.base=t.__e;break}return un(e)}}function R(e){(!e.__d&&(e.__d=!0)&&D.push(e)&&!L.__r++||B!==f.debounceRendering)&&((B=f.debounceRendering)||tn)(L)}function L(){for(var e;L.__r=D.length;)e=D.sort(function(n,t){return n.__v.__b-t.__v.__b}),D=[],e.some(function(n){var t,_,l,r,u,a;n.__d&&(u=(r=(t=n).__v).__e,(a=t.__P)&&(_=[],(l=C({},r)).__v=r.__v+1,V(a,r,l,t.__n,a.ownerSVGElement!==void 0,r.__h!=null?[u]:null,_,u??E(r),r.__h),an(_,r),r.__e!=u&&un(r)))})}function cn(e,n,t,_,l,r,u,a,s,h){var o,m,c,i,p,b,v,y=_&&_.__k||rn,k=y.length;for(t.__k=[],o=0;o<n.length;o++)if((i=t.__k[o]=(i=n[o])==null||typeof i=="boolean"?null:typeof i=="string"||typeof i=="number"||typeof i=="bigint"?U(null,i,null,null,i):Array.isArray(i)?U(W,{children:i},null,null,null):i.__b>0?U(i.type,i.props,i.key,null,i.__v):i)!=null){if(i.__=t,i.__b=t.__b+1,(c=y[o])===null||c&&i.key==c.key&&i.type===c.type)y[o]=void 0;else for(m=0;m<k;m++){if((c=y[m])&&i.key==c.key&&i.type===c.type){y[m]=void 0;break}c=null}V(e,i,c=c||F,l,r,u,a,s,h),p=i.__e,(m=i.ref)&&c.ref!=m&&(v||(v=[]),c.ref&&v.push(c.ref,null,i),v.push(m,i.__c||p,i)),p!=null?(b==null&&(b=p),typeof i.type=="function"&&i.__k!=null&&i.__k===c.__k?i.__d=s=sn(i,s,e):s=fn(e,i,c,y,p,s),h||t.type!=="option"?typeof t.type=="function"&&(t.__d=s):e.value=""):s&&c.__e==s&&s.parentNode!=e&&(s=E(c))}for(t.__e=b,o=k;o--;)y[o]!=null&&(typeof t.type=="function"&&y[o].__e!=null&&y[o].__e==t.__d&&(t.__d=E(_,o+1)),hn(y[o],y[o]));if(v)for(o=0;o<v.length;o++)pn(v[o],v[++o],v[++o])}function sn(e,n,t){var _,l;for(_=0;_<e.__k.length;_++)(l=e.__k[_])&&(l.__=e,n=typeof l.type=="function"?sn(l,n,t):fn(t,l,l,e.__k,l.__e,n));return n}function fn(e,n,t,_,l,r){var u,a,s;if(n.__d!==void 0)u=n.__d,n.__d=void 0;else if(t==null||l!=r||l.parentNode==null)n:if(r==null||r.parentNode!==e)e.appendChild(l),u=null;else{for(a=r,s=0;(a=a.nextSibling)&&s<_.length;s+=2)if(a==l)break n;e.insertBefore(l,r),u=r}return u!==void 0?u:l.nextSibling}function $(e,n,t){n[0]==="-"?e.setProperty(n,t):e[n]=t==null?"":typeof t!="number"||yn.test(n)?t:t+"px"}function T(e,n,t,_,l){var r;n:if(n==="style")if(typeof t=="string")e.style.cssText=t;else{if(typeof _=="string"&&(e.style.cssText=_=""),_)for(n in _)t&&n in t||$(e.style,n,"");if(t)for(n in t)_&&t[n]===_[n]||$(e.style,n,t[n])}else if(n[0]==="o"&&n[1]==="n")r=n!==(n=n.replace(/Capture$/,"")),n=n.toLowerCase()in e?n.toLowerCase().slice(2):n.slice(2),e.l||(e.l={}),e.l[n+r]=t,t?_||e.addEventListener(n,r?G:j,r):e.removeEventListener(n,r?G:j,r);else if(n!=="dangerouslySetInnerHTML"){if(l)n=n.replace(/xlink[H:h]/,"h").replace(/sName$/,"s");else if(n!=="href"&&n!=="list"&&n!=="form"&&n!=="tabIndex"&&n!=="download"&&n in e)try{e[n]=t??"";break n}catch{}typeof t=="function"||(t!=null&&(t!==!1||n[0]==="a"&&n[1]==="r")?e.setAttribute(n,t):e.removeAttribute(n))}}function j(e){this.l[e.type+!1](f.event?f.event(e):e)}function G(e){this.l[e.type+!0](f.event?f.event(e):e)}function V(e,n,t,_,l,r,u,a,s){var h,o,m,c,i,p,b,v,y,k,H,d=n.type;if(n.constructor!==void 0)return null;t.__h!=null&&(s=t.__h,a=n.__e=t.__e,n.__h=null,r=[a]),(h=f.__b)&&h(n);try{n:if(typeof d=="function"){if(v=n.props,y=(h=d.contextType)&&_[h.__c],k=h?y?y.props.value:h.__:_,t.__c?b=(o=n.__c=t.__c).__=o.__E:("prototype"in d&&d.prototype.render?n.__c=o=new d(v,k):(n.__c=o=new A(v,k),o.constructor=d,o.render=kn),y&&y.sub(o),o.props=v,o.state||(o.state={}),o.context=k,o.__n=_,m=o.__d=!0,o.__h=[]),o.__s==null&&(o.__s=o.state),d.getDerivedStateFromProps!=null&&(o.__s==o.state&&(o.__s=C({},o.__s)),C(o.__s,d.getDerivedStateFromProps(v,o.__s))),c=o.props,i=o.state,m)d.getDerivedStateFromProps==null&&o.componentWillMount!=null&&o.componentWillMount(),o.componentDidMount!=null&&o.__h.push(o.componentDidMount);else{if(d.getDerivedStateFromProps==null&&v!==c&&o.componentWillReceiveProps!=null&&o.componentWillReceiveProps(v,k),!o.__e&&o.shouldComponentUpdate!=null&&o.shouldComponentUpdate(v,o.__s,k)===!1||n.__v===t.__v){o.props=v,o.state=o.__s,n.__v!==t.__v&&(o.__d=!1),o.__v=n,n.__e=t.__e,n.__k=t.__k,n.__k.forEach(function(w){w&&(w.__=n)}),o.__h.length&&u.push(o);break n}o.componentWillUpdate!=null&&o.componentWillUpdate(v,o.__s,k),o.componentDidUpdate!=null&&o.__h.push(function(){o.componentDidUpdate(c,i,p)})}o.context=k,o.props=v,o.state=o.__s,(h=f.__r)&&h(n),o.__d=!1,o.__v=n,o.__P=e,h=o.render(o.props,o.state,o.context),o.state=o.__s,o.getChildContext!=null&&(_=C(C({},_),o.getChildContext())),m||o.getSnapshotBeforeUpdate==null||(p=o.getSnapshotBeforeUpdate(c,i)),H=h!=null&&h.type===W&&h.key==null?h.props.children:h,cn(e,Array.isArray(H)?H:[H],n,t,_,l,r,u,a,s),o.base=n.__e,n.__h=null,o.__h.length&&u.push(o),b&&(o.__E=o.__=null),o.__e=!1}else r==null&&n.__v===t.__v?(n.__k=t.__k,n.__e=t.__e):n.__e=gn(t.__e,n,t,_,l,r,u,s);(h=f.diffed)&&h(n)}catch(w){n.__v=null,(s||r!=null)&&(n.__e=a,n.__h=!!s,r[r.indexOf(a)]=null),f.__e(w,n,t)}}function an(e,n){f.__c&&f.__c(n,e),e.some(function(t){try{e=t.__h,t.__h=[],e.some(function(_){_.call(t)})}catch(_){f.__e(_,t.__v)}})}function gn(e,n,t,_,l,r,u,a){var s,h,o,m=t.props,c=n.props,i=n.type,p=0;if(i==="svg"&&(l=!0),r!=null){for(;p<r.length;p++)if((s=r[p])&&(s===e||(i?s.localName==i:s.nodeType==3))){e=s,r[p]=null;break}}if(e==null){if(i===null)return document.createTextNode(c);e=l?document.createElementNS("http://www.w3.org/2000/svg",i):document.createElement(i,c.is&&c),r=null,a=!1}if(i===null)m===c||a&&e.data===c||(e.data=c);else{if(r=r&&N.call(e.childNodes),h=(m=t.props||F).dangerouslySetInnerHTML,o=c.dangerouslySetInnerHTML,!a){if(r!=null)for(m={},p=0;p<e.attributes.length;p++)m[e.attributes[p].name]=e.attributes[p].value;(o||h)&&(o&&(h&&o.__html==h.__html||o.__html===e.innerHTML)||(e.innerHTML=o&&o.__html||""))}if(function(b,v,y,k,H){var d;for(d in y)d==="children"||d==="key"||d in v||T(b,d,null,y[d],k);for(d in v)H&&typeof v[d]!="function"||d==="children"||d==="key"||d==="value"||d==="checked"||y[d]===v[d]||T(b,d,v[d],y[d],k)}(e,c,m,l,a),o)n.__k=[];else if(p=n.props.children,cn(e,Array.isArray(p)?p:[p],n,t,_,l&&i!=="foreignObject",r,u,r?r[0]:t.__k&&E(t,0),a),r!=null)for(p=r.length;p--;)r[p]!=null&&on(r[p]);a||("value"in c&&(p=c.value)!==void 0&&(p!==e.value||i==="progress"&&!p)&&T(e,"value",p,m.value,!1),"checked"in c&&(p=c.checked)!==void 0&&p!==e.checked&&T(e,"checked",p,m.checked,!1))}return e}function pn(e,n,t){try{typeof e=="function"?e(n):e.current=n}catch(_){f.__e(_,t)}}function hn(e,n,t){var _,l;if(f.unmount&&f.unmount(e),(_=e.ref)&&(_.current&&_.current!==e.__e||pn(_,null,n)),(_=e.__c)!=null){if(_.componentWillUnmount)try{_.componentWillUnmount()}catch(r){f.__e(r,n)}_.base=_.__P=null}if(_=e.__k)for(l=0;l<_.length;l++)_[l]&&hn(_[l],n,typeof e.type!="function");t||e.__e==null||on(e.__e),e.__e=e.__d=void 0}function kn(e,n,t){return this.constructor(e,t)}function En(e,n,t){var _,l,r;f.__&&f.__(e,n),l=(_=typeof t=="function")?null:t&&t.__k||n.__k,r=[],V(n,e=(!_&&t||n).__k=ln(W,null,[e]),l||F,F,n.ownerSVGElement!==void 0,!_&&t?[t]:l?null:n.firstChild?N.call(n.childNodes):null,r,!_&&t?t:l?l.__e:n.firstChild,_),an(r,e)}function Sn(e,n){var t={__c:n="__cC"+_n++,__:e,Consumer:function(_,l){return _.children(l)},Provider:function(_){var l,r;return this.getChildContext||(l=[],(r={})[n]=this,this.getChildContext=function(){return r},this.shouldComponentUpdate=function(u){this.props.value!==u.value&&l.some(R)},this.sub=function(u){l.push(u);var a=u.componentWillUnmount;u.componentWillUnmount=function(){l.splice(l.indexOf(u),1),a&&a.call(u)}}),_.children}};return t.Provider.__=t.Consumer.contextType=t}N=rn.slice,f={__e:function(e,n){for(var t,_,l;n=n.__;)if((t=n.__c)&&!t.__)try{if((_=t.constructor)&&_.getDerivedStateFromError!=null&&(t.setState(_.getDerivedStateFromError(e)),l=t.__d),t.componentDidCatch!=null&&(t.componentDidCatch(e),l=t.__d),l)return t.__E=t}catch(r){e=r}throw e}},en=0,A.prototype.setState=function(e,n){var t;t=this.__s!=null&&this.__s!==this.state?this.__s:this.__s=C({},this.state),typeof e=="function"&&(e=e(C({},t),this.props)),e&&C(t,e),e!=null&&this.__v&&(n&&this.__h.push(n),R(this))},A.prototype.forceUpdate=function(e){this.__v&&(this.__e=!0,e&&this.__h.push(e),R(this))},A.prototype.render=W,D=[],tn=typeof Promise=="function"?Promise.prototype.then.bind(Promise.resolve()):setTimeout,L.__r=0,_n=0;var x,g,z,S=0,I=[],J=f.__b,K=f.__r,Q=f.diffed,X=f.__c,Y=f.unmount;function P(e,n){f.__h&&f.__h(g,e,S||n),S=0;var t=g.__H||(g.__H={__:[],__h:[]});return e>=t.__.length&&t.__.push({}),t.__[e]}function bn(e){return S=1,Cn(vn,e)}function Cn(e,n,t){var _=P(x++,2);return _.t=e,_.__c||(_.__=[t?t(n):vn(void 0,n),function(l){var r=_.t(_.__[0],l);_.__[0]!==r&&(_.__=[r,_.__[1]],_.__c.setState({}))}],_.__c=g),_.__}function Pn(e,n){var t=P(x++,3);!f.__s&&q(t.__H,n)&&(t.__=e,t.__H=n,g.__H.__h.push(t))}function xn(e,n){var t=P(x++,4);!f.__s&&q(t.__H,n)&&(t.__=e,t.__H=n,g.__h.push(t))}function Dn(e){return S=5,dn(function(){return{current:e}},[])}function wn(e,n,t){S=6,xn(function(){typeof e=="function"?e(n()):e&&(e.current=n())},t==null?t:t.concat(e))}function dn(e,n){var t=P(x++,7);return q(t.__H,n)&&(t.__=e(),t.__H=n,t.__h=e),t.__}function Tn(e,n){return S=8,dn(function(){return e},n)}function Un(e){var n=g.context[e.__c],t=P(x++,9);return t.c=e,n?(t.__==null&&(t.__=!0,n.sub(g)),n.props.value):e.__}function An(e,n){f.useDebugValue&&f.useDebugValue(n?n(e):e)}function Mn(e){var n=P(x++,10),t=bn();return n.__=e,g.componentDidCatch||(g.componentDidCatch=function(_){n.__&&n.__(_),t[1](_)}),[t[0],function(){t[1](void 0)}]}function Hn(){I.forEach(function(e){if(e.__P)try{e.__H.__h.forEach(M),e.__H.__h.forEach(O),e.__H.__h=[]}catch(n){e.__H.__h=[],f.__e(n,e.__v)}}),I=[]}f.__b=function(e){g=null,J&&J(e)},f.__r=function(e){K&&K(e),x=0;var n=(g=e.__c).__H;n&&(n.__h.forEach(M),n.__h.forEach(O),n.__h=[])},f.diffed=function(e){Q&&Q(e);var n=e.__c;n&&n.__H&&n.__H.__h.length&&(I.push(n)!==1&&z===f.requestAnimationFrame||((z=f.requestAnimationFrame)||function(t){var _,l=function(){clearTimeout(r),Z&&cancelAnimationFrame(_),setTimeout(t)},r=setTimeout(l,100);Z&&(_=requestAnimationFrame(l))})(Hn)),g=void 0},f.__c=function(e,n){n.some(function(t){try{t.__h.forEach(M),t.__h=t.__h.filter(function(_){return!_.__||O(_)})}catch(_){n.some(function(l){l.__h&&(l.__h=[])}),n=[],f.__e(_,t.__v)}}),X&&X(e,n)},f.unmount=function(e){Y&&Y(e);var n=e.__c;if(n&&n.__H)try{n.__H.__.forEach(M)}catch(t){f.__e(t,n.__v)}};var Z=typeof requestAnimationFrame=="function";function M(e){var n=g;typeof e.__c=="function"&&e.__c(),g=n}function O(e){var n=g;e.__c=e.__(),g=n}function q(e,n){return!e||e.length!==n.length||n.some(function(t,_){return t!==e[_]})}function vn(e,n){return typeof n=="function"?n(e):n}var mn=function(e,n,t,_){var l;n[0]=0;for(var r=1;r<n.length;r++){var u=n[r++],a=n[r]?(n[0]|=u?1:2,t[n[r++]]):n[++r];u===3?_[0]=a:u===4?_[1]=Object.assign(_[1]||{},a):u===5?(_[1]=_[1]||{})[n[++r]]=a:u===6?_[1][n[++r]]+=a+"":u?(l=e.apply(a,mn(e,a,t,["",null])),_.push(l),a[0]?n[0]|=2:(n[r-2]=0,n[r]=l)):_.push(a)}return _},nn=new Map,Fn=function(e){var n=nn.get(this);return n||(n=new Map,nn.set(this,n)),(n=mn(this,n.get(e)||(n.set(e,n=function(t){for(var _,l,r=1,u="",a="",s=[0],h=function(c){r===1&&(c||(u=u.replace(/^\s*\n\s*|\s*\n\s*$/g,"")))?s.push(0,c,u):r===3&&(c||u)?(s.push(3,c,u),r=2):r===2&&u==="..."&&c?s.push(4,c,0):r===2&&u&&!c?s.push(5,0,!0,u):r>=5&&((u||!c&&r===5)&&(s.push(r,0,u,l),r=6),c&&(s.push(r,c,0,l),r=6)),u=""},o=0;o<t.length;o++){o&&(r===1&&h(),h(o));for(var m=0;m<t[o].length;m++)_=t[o][m],r===1?_==="<"?(h(),s=[s],r=3):u+=_:r===4?u==="--"&&_===">"?(r=1,u=""):u=_+u[0]:a?_===a?a="":u+=_:_==='"'||_==="'"?a=_:_===">"?(h(),r=1):r&&(_==="="?(r=5,l=u,u=""):_==="/"&&(r<5||t[o][m+1]===">")?(h(),r===3&&(s=s[0]),r=s,(s=s[0]).push(2,0,r),r=0):_===" "||_==="	"||_===` `||_==="\r"?(h(),r=2):u+=_),r===3&&u==="!--"&&(r=4,s=s[0])}return h(),s}(e)),n),arguments,[])).length>1?n:n[0]}.bind(ln);return{Component: A, createContext: Sn, h: ln, html: Fn, render: En, useCallback: Tn, useContext: Un, useDebugValue: An, useEffect: Pn, useErrorBoundary: Mn, useImperativeHandle: wn, useLayoutEffect: xn, useMemo: dn, useReducer: Cn, useRef: Dn, useState: bn};})();</script>
+
+    <script>
+        //PLACEHOLDER_START
+        window.REPORT_DATA = JSON_GOES_HERE;
+        //PLACEHOLDER_END
+    </script>
+
+    <style>
+        html, body {
+            font: 14px/1.21 'Helvetica Neue', arial, sans-serif;
+            font-weight: 400;
+            color: #333;
+            margin: 0;
+        }
+
+        html {
+            background-color: #c9e0e0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        #header {
+            background: no-repeat 20px 0px url("data:image/svg+xml,%3Csvg%20version%3D%221.0%22%20width%3D%2274.52%22%20height%3D%2289.879985%22%20viewBox%3D%220%200%201242%201498%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22%23ccc%22%3E%3Cpath%20d%3D%22M157%20797C76%20716%2039%20636%2039%20544c0-41%206-76%2022-116%2046-123%20172-253%20310-320%2073-36%20128-53%20218-66%2025-4%2031-4%2056-5%2016%200%2033-1%2039-2%209-1%2013-1%2027%200%208%201%2023%202%2033%202%2032%200%2069%204%20133%2016%20100%2018%20209%2055%20312%20104l15%207-3%205c-11%2019-45%2060-72%2088-94%2094-207%20162-343%20205-103%2033-165%2047-238%2052-8%201-24%202-35%203-11%202-29%204-39%204-130%2011-213%2041-260%2094-29%2033-43%2070-46%20120%200%2014%206%2062%2012%2081%201%204-2%202-23-19z%22%20style%3D%22display%3Ainline%3Bfill%3A%231a1a1a%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M988%20267c37-14%2047-61%2019-89-10-10-26-16-40-15-33%203-55%2035-47%2066%204%2019%2020%2034%2038%2040%207%202%2023%201%2030-2zM136%20577c17-23%2050-54%2075-70%2048-31%2086-42%20171-50%2010%200%2027-2%2037-3s29-3%2042-4c47-4%20137-15%20182-23%20107-17%20184-43%20210-70l5-5v-7c-2-19-27-49-45-54-6-2-9-1-29%2011-33%2020-84%2038-146%2051-47%2011-85%2017-207%2035-177%2026-220%2039-255%2081-23%2027-39%2062-47%20101-2%2011-3%2017-2%2017s4-5%209-10zM261%20310c12-6%2033-16%2058-25%20108-42%20228-75%20321-87%2041-6%2095-8%20121-4%2023%203%2024%203%2028-2%2014-16%2017-60%205-71-6-4-9-5-46-4-39%200-48%201-98%209-142%2022-279%2077-363%20144-19%2015-55%2051-55%2055%200%201%204-2%2010-5%205-3%2014-8%2019-10z%22%20style%3D%22fill%3A%23fff%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M963%20237c-9-3-13-10-13-22%200-11%207-19%2019-20%2010-1%2017%203%2021%2011%208%2019-8%2037-27%2031z%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M459%201258c-38-39-105-122-149-185-50-72-94-153-114-211-5-15-11-37-11-38%200%200%207%205%2014%2011%2036%2028%2080%2058%20125%2082%2030%2017%2034%2019%2048%2026%2084%2043%20195%2086%20291%20113%2011%204%2020%206%2021%207%201%200-1%201-5%203-110%2039-176%2069-190%2083-6%207-13%2024-15%2038-2%2016-1%2069%202%2084%200%202%200%203-1%203%200%200-8-7-16-16z%22%20style%3D%22fill%3A%231a1a1a%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M812%20997c-7-10-16-21-20-24-19-17-49-33-76-40-11-2-58-2-72%200-26%205-58%2018-82%2034l-10%207-31-14c-103-44-134-58-133-59%201-2%2038-26%2053-35%2088-52%20181-83%20258-85%2071-1%20117%208%20172%2035%2035%2018%2082%2053%20103%2076l5%206-4%206c-27%2039-50%2060-96%2085-22%2013-49%2025-53%2025-1%200-7-8-14-17z%22%20style%3D%22fill%3A%23035361%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M585%201163c10-5%2041-16%20108-40%2010-3%2030-11%2045-17%2014-6%2030-12%2036-14%2028-11%20103-44%20131-60%2067-36%2096-60%20116-97%2017-30%2023-52%2022-80-2-30-12-51-37-74-30-28-46-49-56-75-4-11-4-34%201-48%204-12%2019-29%2035-39%2029-20%2062-22%2091-7%2054%2027%2093%2073%20107%20127%2010%2038%201%20105-20%20153-16%2037-25%2050-48%2080-17%2021-21%2025-40%2040-8%207-17%2014-20%2016-16%2015-63%2041-105%2060-43%2018-56%2023-97%2034-16%205-34%209-41%2011-16%205-34%209-68%2014-14%203-31%206-37%207-9%202-19%202-38%203-29%201-29%201-51%205-8%201-21%202-27%203h-12z%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%2F%3E%3Cpath%20d%3D%22M807%201391c-47-5-101-31-141-65-32-27-65-66-85-99l-6-10c0-2%2011%204%2027%2013%2054%2031%2094%2050%20132%2062%2021%207%2029%208%2046%208%2028-1%2048-10%2066-28%2021-20%2028-39%2029-77l1-23%2023-6c36-8%2043-10%2075-26%2027-14%2030-15%2061-34%2012-8%2024-15%2027-16l5-3%202%208c3%2011%205%2022%207%2044%203%2022%203%2033-2%2061-8%2050-39%2098-83%20131-60%2045-127%2066-184%2060z%22%20transform%3D%22matrix(1%200%200%20-1%200%201498)%22%20style%3D%22fill%3A%23035361%3Bfill-opacity%3A1%22%2F%3E%3Cpath%20d%3D%22M331%2020c-18%203-40%2016-55%2031-6%207-7%2010-7%2029%200%2020%201%2022%2010%2034%2024%2030%2046%2044%2065%2040%2016-3%2035-13%2046-25%209-9%209-12%202-28-5-10-6-11-4-13%203-4%2026%202%2046%2012%2021%2010%2051%2032%2063%2046%2015%2016%2023%2049%2028%20109v8l3-6c7-16%2013-64%2010-84-3-22-8-44-11-47-1-1-1-2-1-3%200-6-26-42-40-55-21-21-73-44-106-48-10-1-42-1-49%200z%22%20transform%3D%22rotate(.011)%22%20style%3D%22fill%3A%234c8f98%3Bfill-opacity%3A1%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(#fff, #fff, #c9e0e0);
+            height: 85px;
+            /*background-color: #006fc8;*/
+            /*color: #fff;*/
+            font-size: 34px;
+            padding: 10px 0 0;
+            min-width: 900px;
+        }
+
+        #header h1 {
+            padding: 0;
+            margin: 0;
+        }
+
+        #content {
+            display: flex;
+            background-color: #fff;
+        }
+
+        #left-nav {
+            width: 270px;
+            padding: 10px;
+            border-right: 5px solid #c9e0e0;
+            border-left: 5px solid #c9e0e0;
+        }
+
+        #left-nav h2 {
+            /*text-align: center;*/
+            margin: 0;
+        }
+
+        #left-nav ul {
+            list-style: none;
+            /*background-color: white;*/
+            padding: 0;
+        }
+
+        #left-nav ul li {
+            font-weight: bold;
+        }
+
+        #left-nav ul li a {
+            padding: 10px;
+            display: block;
+            width: 90%;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom:5px;
+            background-color: #fff;
+            color: #476;
+        }
+
+        #right-content {
+            width: 730px;
+            padding-left: 50px;
+            padding-bottom: 20px;
+        }
+
+        .error::before {
+            content: "\274C";
+        }
+
+        .success::before {
+            content: "\2705";
+        }
+
+        .prev, .next {
+            width: 100px;
+        }
+
+        .prev::before {
+            content: "\2190 ";
+        }
+
+        .next::after {
+            content: " \2192";
+        }
+
+        #breadcrumb {
+            height: 3em;
+            background-color: #c8e0e0;
+            padding-top: 5px;
+        }
+
+        #breadcrumb ul {
+            list-style-type: none; /* Remove the default bullet points */
+            margin: 0;
+            padding: 0;
+            padding-top: 10px;
+            margin-left: 10px;
+            display: flex; /* Use the Flexbox layout to align list items horizontally */
+        }
+
+        #breadcrumb li {
+            margin-right: 10px; /* Add some space between list items */
+        }
+
+
+        #breadcrumb li::before {
+            content: " \00BB ";
+        }
+
+        #breadcrumb li:first-child::before {
+            content: "";
+        }
+
+        #breadcrumb a {
+            margin-left: 10px;
+        }
+
+        .breadcrumb-button {
+            text-decoration: none;
+            background-color: #EEEEEE;
+            color: #333333;
+            padding: 4px 12px 4px 12px;
+            font-weight: bold;
+            color: #476;
+            border: 1px solid #bbbbff;
+            box-shadow: 0 0 5px rgba(0,0,0,.05), 2px 2px 5px rgba(0,0,0,.1);
+            border-radius: 4px;
+        }
+
+        table.summary {
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+        table.summary th {
+            text-align: left;
+        }
+        table.summary th, table.summary td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .detail-table {
+            border-collapse: collapse;
+        }
+
+        .detail-table th, .detail-table td {
+            text-align: left;
+            padding: 3px 10px;
+        }
+
+        .detail-table tr:nth-child(even) {
+            background-color: #c9e0e0ab;
+        }
+
+        .uniprot-tag {
+            display: inline-block;
+            padding: 2px;
+            background-color: #aeaeff;
+            border: 1px solid grey;
+            font-size: x-small;
+            margin: 0 2px;
+        }
+
+        .uniprot-tag-1 {
+            background-color: #ffc9d8;
+        }
+
+        .uniprot-tag-2 {
+            background-color: #49ff49;
+        }
+
+        .uniprot-tag-3 {
+            background-color: #d3d397;
+        }
+
+        .uniprot-tag-4 {
+            background-color: #ff8d3f;
+        }
+
+        .uniprot-tag-5 {
+            background-color: #b3e5c9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<script>
+
+    function reportApplication() {
+        const { html, render, useState, useEffect } = window.preactStandalone;
+
+        function ActionTypeSummary({typeName}) {
+            switch (typeName) {
+                case 'LOAD':
+                    return html`<div>LOAD - These accessions will be loaded.</div>`;
+                case 'DELETE':
+                    return html`<div>DELETE - These are cases where an accession will be dropped from a gene.</div>`;
+                case 'ERROR':
+                    return html`<div>ERROR - These accessions have been marked as having errors so won't be loaded.</div>`;
+                case 'WARNING':
+                    return html`<div>WARNING - These cases are warnings and will not be loaded.</div>`;
+                case 'INFO':
+                    return html`<div>INFO - These cases are informational and will not be loaded.</div>`;
+            }
+        }
+
+        function ReportNavigation({reportNavigation, onNavigationClick}) {
+
+            //sort by LOAD, DELETE, ERROR, INFO, WARNING
+            const orderedKeys = ['LOAD', 'DELETE', 'ERROR', 'WARNING', 'INFO'];
+            const remainingKeys = reportNavigation.map(item => item.type).filter(item => !orderedKeys.includes(item));
+            const allKeys = orderedKeys.concat(remainingKeys);
+
+            function countByType(type) {
+                const item = reportNavigation.find(item => item.type === type);
+                return item ? item.count : 0;
+            }
+
+            return html`
+                <ul>
+                    ${allKeys.map(item => html`
+                        <li><a href="#" onClick=${() => onNavigationClick(item)}>
+                            ${item} (${countByType(item)})
+                        </a>
+                        </li>
+                    `)}
+                </ul>
+            `;
+        }
+
+        function SubTypeSummary({items, type, onClick}) {
+            const [titleSummary, setTitleSummary] = useState([{type: 'test', count: 1}]);
+
+            useEffect(() => {
+                if (items) {
+                    let counts = {};
+                    const filteredItems = items.filter( item => item.type === type);
+                    for(let item of filteredItems) {
+                        counts[item.subType] = counts[item.subType] ? counts[item.subType] + 1 : 1;
+                    }
+                    setTitleSummary(Object.keys(counts).map(type => ({type, count: counts[type]})));
+                }
+            }, [items, type]);
+
+            return html`
+                <h2>${type}</h2>
+                <${ActionTypeSummary} typeName=${type} />
+                <ul>
+                    ${titleSummary.map(item => html`
+                        <li><a href="#" onClick=${() => onClick(item.type)}>
+                            ${item.type} (${item.count})
+                        </a>
+                        </li>
+                    `)}
+                </ul>
+            `;
+        }
+
+        function SubTypeListing({items, type, subtype, onClick}) {
+            const [subTypeItems, setSubTypeItems] = useState([]);
+            const [allTags, setAllTags] = useState([]);
+
+            function formatTag(tag) {
+                const tagName = tag.name.toLowerCase().replaceAll("_", " ");
+                if (!allTags.includes(tagName)) {
+                    setAllTags([...allTags, tagName]);
+                }
+                const className = "uniprot-tag uniprot-tag-" + allTags.indexOf(tagName);
+
+                return html` <span className="${className}">${tagName}</span> `
+            }
+
+            function tagFilter() {
+                return html`
+                <select className="tag-filter">
+                    <option>Filter</option>
+                    ${allTags.map( t => html`<option>${t}</option>`)}
+                </select>
+                `;
+            }
+
+            useEffect(() => {
+                if (items) {
+                    let counts = {};
+                    const filteredItems = items.filter( item => item.type === type && item.subType === subtype);
+                    setSubTypeItems(filteredItems);
+                }
+            }, [items, type, subtype]);
+
+            return html`
+                <h2>${type} - ${subtype}</h2>
+                <p>Click on any of the records below for more details.</p>
+                <table className="detail-table">
+                    <thead>
+                    <tr>
+                        <th>ZDB Gene ID</th>
+                        <th>UniProt Accession</th>
+                        <th>Tags
+                                <!-- ${tagFilter()} -->
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    ${subTypeItems.map(item => html`
+                            <tr>
+                                <td><a href="#" onClick=${() => onClick(item)}>
+                                    ${item.geneZdbID}
+                                    </a>
+                                </td>
+                                <td><a href="#" onClick=${() => onClick(item)}>
+                                    ${item.accession}
+                                    </a>
+                                </td>
+                                <td>${ item.tags && item.tags.map(tag => formatTag(tag)) }</td>
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function DetailDisplay({items, item, prevClick, nextClick, goToDetail, supplementalData}) {
+            function detailSummary(item) {
+                if (!item) {
+                    return '';
+                }
+                if (item.type == 'ERROR') {
+                    return html`<div className="error"> This accession was marked as having an error so won't be loaded.</div>`;
+                } else if (item.type == 'LOAD') {
+                    return html`<div className="success"> This accession will be loaded.</div>`;
+                }
+            }
+
+            let supplementals = item.supplementalDataKeys.map(k => supplementalData[k])
+                .filter(k => k !== null)
+                .join("\n======================\n");
+
+
+            //figure out if there are any related actions
+            let relatedActions = [];
+            if (item.relatedActionsKeys && item.relatedActionsKeys.length > 0) {
+                relatedActions = items.filter(
+                    i => {
+                        if (i.id == item.id) {return false;}
+                        return (i.relatedActionsKeys || []).some(r => item.relatedActionsKeys.includes(r));
+                    }
+                );
+            }
+
+            return html`
+                <div>
+                    <h2>Details for Accession</h2>
+                    <div><button href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
+                    <h3>${item.accession}</h3>
+                    <p>${detailSummary(item)}</p>
+                    <h3>${item.subType}</h3>
+                    <pre>${item.details}</pre>
+                    <pre>${supplementals}</pre>
+                    <h4>Links</h4>
+                    <ul>
+                        ${item.links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
+                    </ul>
+                    ${ relatedActions && relatedActions.length > 0 &&
+                        html`<h4>Related Actions</h4>
+                            <ul>
+                            ${relatedActions.map( i => html`<li><a href="#" onClick="${() => goToDetail(i.id)}" >${i.type}: ${i.subType}: <span class="hidden">${i.id}</span></a></li>`)}
+                            </ul>
+                        `
+                    }
+                </div>
+            `;
+        }
+
+        function ReportSummaryTable({reportSummaryTable}) {
+            const summaryRows = reportSummaryTable["rows"];
+            const summaryHeaders = reportSummaryTable["headers"];
+            const summaryDescription = reportSummaryTable["description"];
+            if (!summaryRows || summaryRows.length === 0) {
+                return null;
+            }
+
+            const headerKeys = summaryHeaders.map(h => h.key);
+            const headerTitles = summaryHeaders.map(h => h.title);
+            const headerRow = html`
+                <tr>
+                    ${headerTitles.map(rowName => html`
+                        <th>${rowName}</th>
+                    `)}
+                </tr>
+            `;
+            const tableRows = summaryRows.map(row => {
+                return html`<tr>
+                    ${headerKeys.map(colName => html`<td>${row[colName]}</td>`)}
+                </tr>`;
+            });
+            return html`
+                <h4>${summaryDescription}</h4>
+                <table class="summary">
+                    <thead>
+                    ${headerRow}
+                    </thead>
+                    <tbody>
+                    ${tableRows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function ReportSummary({reportSummary, meta}) {
+            const summaryDescription = reportSummary.description;
+            const summaryRows = reportSummary.tables;
+            if (!summaryRows || !summaryRows.length || summaryRows.length === 0) {
+                return html`
+                <h2>Summary</h2>
+                <p>${summaryDescription}</p>
+                `;
+            }
+
+            return html`
+                <h2>Summary</h2>
+                <p>${summaryDescription}</p>
+                ${summaryRows.map(table => html`<${ReportSummaryTable} reportSummaryTable=${table}/>`)}
+                <p class="meta">Created at: ${new Date(meta.creationDate).toLocaleString()}</p>
+            `;
+        }
+
+        function Breadcrumb({activeTab, type, subtype, details, onClick}) {
+            function backToHome() {
+                onClick('');
+            }
+
+            function showHome() {
+                return activeTab == 'list' || activeTab == 'subtype' || activeTab == 'details';
+            }
+
+            function showType() {
+                return activeTab == 'subtype' || activeTab == 'details';
+            }
+
+            function activeTitle() {
+                if (activeTab == '') {
+                    return 'Home';
+                } else if (activeTab == 'list') {
+                    return type;
+                } else if (activeTab == 'subtype') {
+                    return subtype;
+                } else if (activeTab == 'details') {
+                    return details.accession;
+                }
+            }
+
+            return html`
+                <div id="breadcrumb">
+                    <ul>
+                    ${showHome() && html`
+                        <li><a className="breadcrumb-button" href="#" onClick="${backToHome}">Home</a></li>
+                    `}
+                    ${showType() && html`
+                        <li><a className="breadcrumb-button" href="#" onClick="${() => onClick('list')}">${type}</a></li>
+                    `}
+                    ${activeTab == 'details' && html`
+                        <li><a className="breadcrumb-button" href="#" onClick="${() => onClick('subtype')}">${subtype}</a></li>
+                    `}
+                    <li><a className="breadcrumb-button" href="#" onClick="${() => {}}">${activeTitle()}</a></li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function App({reportData}) {
+            const reportActions = reportData.actions;
+            const reportSummary = reportData.summary;
+            const [reportNavigation, setReportNavigation] = useState([{type: 'test', count: 1}]);
+            const [showTypeData, setShowTypeData] = useState(null);
+            const [activeTab, setActiveTab] = useState('');
+            const [activeDetails, setActiveDetails] = useState('');
+            const [subTypeName, setSubTypeName] = useState('');
+
+            useEffect(() => {
+                if (reportActions) {
+                    let counts = {};
+                    for(let item of reportActions) {
+                        counts[item.type] = counts[item.type] ? counts[item.type] + 1 : 1;
+                    }
+                    setReportNavigation(Object.keys(counts).map(type => ({type, count: counts[type]})));
+                }
+            }, []);
+
+            function handleNavigationClick(type) {
+                setActiveTab('list');
+                setShowTypeData(type);
+            }
+
+            function subTypeClicked(typeName) {
+                setActiveTab('subtype');
+                setSubTypeName(typeName);
+            }
+
+            function itemClicked(item) {
+                setActiveTab('details');
+                setActiveDetails(item);
+            }
+
+            function breadcrumbClicked(item) {
+                if (item == '') {
+                    setActiveTab('');
+                } else if (item == 'list') {
+                    setActiveTab('list');
+                } else if (item == 'subtype') {
+                    setActiveTab('subtype');
+                }
+            }
+
+            function previousDetail() {
+                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
+                if (index > 0) {
+
+                    //find the previous item that matches subtype
+                    for(let i = index - 1; i >= 0; i--) {
+                        if (reportActions[i].subType == subTypeName) {
+                            setActiveDetails(reportActions[i]);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            function nextDetail() {
+                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
+
+                if (index === -1) {
+                    return;
+                }
+
+                //find the next item that matches subtype
+                for(let i = index + 1; i < reportActions.length; i++) {
+                    if (reportActions[i].subType == subTypeName) {
+                        setActiveDetails(reportActions[i]);
+                        return;
+                    }
+                }
+            }
+
+            function goToDetail(id) {
+                foundDetail = reportActions.find(i => i.id === id);
+
+                setShowTypeData(foundDetail.type);
+                setSubTypeName(foundDetail.subType);
+                setActiveDetails(foundDetail);
+            }
+
+            if (!reportActions || !reportNavigation) {
+                return html`
+                    <div>
+                        <h4>No Report Data Provided</h4>
+                    </div>
+                `;
+            }
+
+            return html`
+                <div id="report">
+                    <div id='header'>
+                        <h1>${reportData.meta.title}</h1>
+                    </div>
+                    <${Breadcrumb} activeTab="${activeTab}" type="${showTypeData}" subtype="${subTypeName}" details="${activeDetails}" onClick="${(item) => {breadcrumbClicked(item)}}"/>
+                     <div id='content'>
+                        <div id="left-nav">
+                            <h2>Categories</h2>
+                            <p>The types of actions that will be performed by the load</p>
+                            <${ReportNavigation} reportNavigation=${reportNavigation} onNavigationClick=${handleNavigationClick}/>
+                        </div>
+                        <div id="right-content">
+                            ${activeTab == 'list' && html`
+                                <${SubTypeSummary} items="${reportActions}" type="${showTypeData}" onClick="${(typeName) => subTypeClicked(typeName)}"/>
+                            `}
+                            ${activeTab == 'subtype' && html`
+                                <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
+                            `}
+                            ${activeTab == 'details' && html`
+                                <${DetailDisplay} items="${reportActions}" item="${activeDetails}" supplementalData="${reportData.supplementalData}" prevClick="${previousDetail}" nextClick="${nextDetail}" goToDetail="${goToDetail}"/>
+                            `}
+                            ${activeTab == '' && html`
+                                <${ReportSummary} reportSummary="${reportSummary}" meta=${reportData.meta} />
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('root').innerHTML = '';
+        render(html`<${App} reportData=${window.REPORT_DATA}/>`, document.getElementById('root'));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        reportApplication();
+    });
+</script>
+
+<div id="root">
+    <div class="error">
+        <h2>Error Loading Report</h2>
+        <p>If you are viewing this report in Jenkins, you may have to download the file first by pressing ctrl+s or cmd+s</p>
+    </div>
+</div>
+
+</body>
+
+</html>
