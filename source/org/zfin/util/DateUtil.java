@@ -54,4 +54,12 @@ public class DateUtil {
         return new SimpleDateFormat(format).format(new Date());
     }
 
+    /**
+     * A default version of getting the current time as a string
+     * @return
+     */
+    public static String nowToString() {
+        return nowToString("yyyy-MM-dd HH:mm:ss");
+    }
+
 }

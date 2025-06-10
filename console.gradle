@@ -227,3 +227,12 @@ task ncbiCharacterize(type: JavaExec) {
     // So this can be called like so:
     // gradle ncbiCharacterize --args="$TARGETROOT/server_apps/datatransfer/NCBIGENE"
 }
+
+task csv2xlsx(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.util.CSVToXLSXConverter'
+
+    // Get arguments from the command line
+    // So this can be called like so:
+    // gradle csv2xlsx --args="output.xlsx input1.csv input2.csv input3.csv..."
+}

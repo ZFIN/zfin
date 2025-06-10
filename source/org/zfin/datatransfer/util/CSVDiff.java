@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.util;
 
+import lombok.Setter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -7,6 +8,9 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.datatransfer.ncbi.port.PortHelper.envTrue;
 
 /**
  * Utility class to compare two CSV files and generate breakdown reports of their differences.
@@ -32,6 +36,10 @@ public class CSVDiff {
     private List<CSVRecord> file2Records = new ArrayList<>();
     private List<String> headers = new ArrayList<>();
 
+    //if true, generate the "retained" and "updates_ignored" files. Otherwise, leave them out as they are not important
+    @Setter
+    private Boolean keepAllFiles = false;
+
     /**
      * Constructor for the CSV Difference Utility.
      *
@@ -45,6 +53,99 @@ public class CSVDiff {
         this.ignoreColumns = ignoreColumns != null ? ignoreColumns : new String[0];
     }
 
+    public Map<String, List<CSVRecord>> processToMap(String file1Path, String file2Path) throws IOException {
+        Map<String, List<CSVRecord>> results = new HashMap<>();
+        int beforeCount = 0;
+        int afterCount = 0;
+        int retainedCount = 0;
+        int ignoredCount1 = 0;
+        int ignoredCount2 = 0;
+        int updated1Count = 0;
+        int updated2Count = 0;
+        int deletedCount = 0;
+        int addedCount = 0;
+
+        if (envTrue("KEEP_ALL_FILES")) {
+            setKeepAllFiles(true);
+        }
+
+        // Read the CSV files
+        readCSVFiles(file1Path, file2Path);
+
+        beforeCount = file1Records.size();
+        afterCount  = file2Records.size();
+
+        // Make working copies of the data
+        List<CSVRecord> file1Copy = new ArrayList<>(file1Records);
+        List<CSVRecord> file2Copy = new ArrayList<>(file2Records);
+
+        // Find records that are exactly the same (all columns match)
+        List<CSVRecord> retainedRecords = findRetainedRecords(file1Copy, file2Copy);
+        retainedCount = retainedRecords.size();
+        if (keepAllFiles) {
+            results.put("retained", retainedRecords);
+        }
+
+        // Remove retained records from both sets
+        removeRecordsFromLists(retainedRecords, file1Copy, file2Copy, true);
+
+        // Find records with changes only in ignored columns
+        Map<String, List<CSVRecord>> ignoredUpdatedRecords = findUpdatedRecordsOnlyInIgnoredColumns(file1Copy, file2Copy);
+        List<CSVRecord> ignoredUpdated1 = ignoredUpdatedRecords.get("file1");
+        List<CSVRecord> ignoredUpdated2 = ignoredUpdatedRecords.get("file2");
+
+        ignoredCount1 = ignoredUpdated1.size();
+        ignoredCount2 = ignoredUpdated2.size();
+        if (keepAllFiles) {
+            results.put("ignoredUpdated1", ignoredUpdated1);
+            results.put("ignoredUpdated2", ignoredUpdated2);
+        }
+
+        // Remove records with only ignored column changes from both sets
+        removeRecordsFromLists(ignoredUpdated1, file1Copy, null, false);
+        removeRecordsFromLists(ignoredUpdated2, null, file2Copy, false);
+
+        // Find records with matching keys but different values in non-ignored columns
+        Map<String, List<CSVRecord>> updatedRecords = findUpdatedRecords(file1Copy, file2Copy);
+        List<CSVRecord> updated1 = updatedRecords.get("file1");
+        List<CSVRecord> updated2 = updatedRecords.get("file2");
+        results.put("updated1", updated1);
+        results.put("updated2", updated2);
+        updated1Count = updated1.size();
+        updated2Count = updated2.size();
+
+        // Remove updated records from both sets
+        removeRecordsFromLists(updated1, file1Copy, null, false);
+        removeRecordsFromLists(updated2, null, file2Copy, false);
+
+        // Write deletes (in file1 but not in file2)
+        results.put("deleted", file1Copy);
+        deletedCount = file1Copy.size();
+
+        // Write adds (in file2 but not in file1)
+        results.put("added", file2Copy);
+        addedCount = file2Copy.size();
+
+        // Add summary data to the map:
+        try {
+            String summaryHeaderData = "beforeCount,afterCount,retainedCount,ignoredCount1,ignoredCount2,updated1Count,updated2Count,deletedCount,addedCount";
+            String summaryContent = List.of(beforeCount,afterCount,retainedCount,ignoredCount1,ignoredCount2,updated1Count,updated2Count,deletedCount,addedCount).stream().map(Object::toString).collect(Collectors.joining(","));
+            String csvData = summaryHeaderData + "\n" + summaryContent ;
+            CSVFormat format = CSVFormat.DEFAULT.withFirstRecordAsHeader();
+
+            Iterable<CSVRecord> summaryRecords = format.parse(new StringReader(csvData));
+            CSVRecord summaryRow = summaryRecords.iterator().next();
+            List<CSVRecord> summaryRowAsList = new ArrayList<>();
+            summaryRowAsList.add(summaryRow);
+            results.put("summary", summaryRowAsList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+
     /**
      * Process the two CSV files and generate the difference reports.
      *
@@ -54,6 +155,9 @@ public class CSVDiff {
      * @throws IOException If there is an error reading or writing files
      */
     public List<File> process(String file1Path, String file2Path) throws IOException {
+        if (envTrue("KEEP_ALL_FILES")) {
+            setKeepAllFiles(true);
+        }
         List<File> generatedFiles = new ArrayList<>();
 
         // Read the CSV files
@@ -68,9 +172,13 @@ public class CSVDiff {
 
         // Find records that are exactly the same (all columns match)
         List<CSVRecord> retainedRecords = findRetainedRecords(file1Copy, file2Copy);
-        writeCSVFile(outputPrefix + "_retained.csv", retainedRecords, headers);
-        System.out.println("Wrote " + retainedRecords.size() + " records to " + outputPrefix + "_retained.csv");
-        generatedFiles.add(new File(outputPrefix + "_retained.csv"));
+        if (keepAllFiles) {
+            writeCSVFile(outputPrefix + "_retained.csv", retainedRecords, headers);
+            System.out.println("Wrote " + retainedRecords.size() + " records to " + outputPrefix + "_retained.csv");
+            generatedFiles.add(new File(outputPrefix + "_retained.csv"));
+        } else {
+            System.out.println("Ignoring " + retainedRecords.size() + " records. (use KEEP_ALL_FILES to include these rows in output)");
+        }
 
         // Remove retained records from both sets
         removeRecordsFromLists(retainedRecords, file1Copy, file2Copy, true);
@@ -80,12 +188,17 @@ public class CSVDiff {
         List<CSVRecord> ignoredUpdated1 = ignoredUpdatedRecords.get("file1");
         List<CSVRecord> ignoredUpdated2 = ignoredUpdatedRecords.get("file2");
 
-        writeCSVFile(outputPrefix + "_updates_ignored_1.csv", ignoredUpdated1, headers);
-        writeCSVFile(outputPrefix + "_updates_ignored_2.csv", ignoredUpdated2, headers);
-        System.out.println("Wrote " + ignoredUpdated1.size() + " records to " + outputPrefix + "_updates_ignored_1.csv");
-        System.out.println("Wrote " + ignoredUpdated2.size() + " records to " + outputPrefix + "_updates_ignored_2.csv");
-        generatedFiles.add(new File(outputPrefix + "_updates_ignored_1.csv"));
-        generatedFiles.add(new File(outputPrefix + "_updates_ignored_2.csv"));
+        if (keepAllFiles) {
+            writeCSVFile(outputPrefix + "_updates_ignored_1.csv", ignoredUpdated1, headers);
+            writeCSVFile(outputPrefix + "_updates_ignored_2.csv", ignoredUpdated2, headers);
+            System.out.println("Wrote " + ignoredUpdated1.size() + " records to " + outputPrefix + "_updates_ignored_1.csv");
+            System.out.println("Wrote " + ignoredUpdated2.size() + " records to " + outputPrefix + "_updates_ignored_2.csv");
+            generatedFiles.add(new File(outputPrefix + "_updates_ignored_1.csv"));
+            generatedFiles.add(new File(outputPrefix + "_updates_ignored_2.csv"));
+        } else {
+            System.out.println("Ignoring " + ignoredUpdated1.size() + " records to " + outputPrefix + "_updates_ignored_1.csv. (use KEEP_ALL_FILES to include these rows in output)");
+            System.out.println("Ignoring " + ignoredUpdated2.size() + " records to " + outputPrefix + "_updates_ignored_2.csv. (use KEEP_ALL_FILES to include these rows in output)");
+        }
 
         // Remove records with only ignored column changes from both sets
         removeRecordsFromLists(ignoredUpdated1, file1Copy, null, false);
@@ -353,6 +466,17 @@ public class CSVDiff {
         }
     }
 
+    private void writeCSVFile(String filePath, List<CSVRecord> records) throws IOException {
+        if (records.isEmpty()) {
+            System.out.println("No records to write to " + filePath);
+            writeCSVFile(filePath, records, Collections.emptyList());
+            return;
+        }
+        List<String> headers = new ArrayList<>(records.get(0).getParser().getHeaderNames());
+        writeCSVFile(filePath, records, headers);
+    }
+
+
     /**
      * Main method to demonstrate usage of the CSVDifferenceUtility.
      *
@@ -453,4 +577,20 @@ public class CSVDiff {
         return result;
     }
 
+    public List<File> writeMapToCSVs(File workingDir, String prefix, Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<File> outputFiles = new ArrayList<>();
+        for (Map.Entry<String, List<CSVRecord>> entry : beforeAfterComparison.entrySet()) {
+            System.out.println("Writing " + entry.getValue().size() + " records to file for key " + entry.getKey());
+            String fileName = prefix + "_" + entry.getKey() + ".csv";
+            File outputFile = new File(workingDir, fileName);
+            outputFiles.add(outputFile);
+            try {
+                writeCSVFile(outputFile.getAbsolutePath(), entry.getValue());
+                System.out.println("Wrote " + entry.getValue().size() + " records to " + outputFile.getAbsolutePath());
+            } catch (IOException e) {
+                System.err.println("Error writing file " + outputFile.getAbsolutePath() + ": " + e.getMessage());
+            }
+        }
+        return outputFiles;
+    }
 }
