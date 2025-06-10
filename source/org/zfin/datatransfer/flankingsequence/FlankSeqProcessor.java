@@ -96,13 +96,10 @@ public class FlankSeqProcessor {
                 if (isItTuesday) {
                     System.out.println("Updating all non-sa features with genomic mutation details");
                     nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets();
-                    System.out.println("nonSaFeaturesWithGenomicMutDets.size() = " + nonSaFeaturesWithGenomicMutDets.size());
                 } else {
                     System.out.println("Updating non-sa features with genomic mutation details modified in the last 48 hours");
                     nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets(Date.valueOf(now().minusDays(2)));
-                    System.out.println("nonSaFeaturesWithGenomicMutDets.size() = " + nonSaFeaturesWithGenomicMutDets.size());
                 }
-
                 System.out.println("nonSaFeaturesWithGenomicMutDets.size() = " + nonSaFeaturesWithGenomicMutDets.size());
 
                 int i = 0;
