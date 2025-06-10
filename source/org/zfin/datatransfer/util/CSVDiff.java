@@ -10,7 +10,8 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.datatransfer.ncbi.port.PortHelper.envTrue;
+import static org.zfin.util.ZfinSystemUtils.envTrue;
+
 
 /**
  * Utility class to compare two CSV files and generate breakdown reports of their differences.
