@@ -60,7 +60,7 @@ public class LoadAction implements Comparable<LoadAction> {
         ENSEMBL_TRANSCRIPTS_DUPLICATE_PER_NAME("Multiple Transcripts in Ensembl have the same name in ENSEMBL"),
         ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE("ENSDARG ID in ZFIN but not in the Transcript fasta file"),
         ZFIN_ENSDARG_NOT_TRANSCRIPT_FILE_MULTIPLE("ENSDARG ID in ZFIN but not in the Transcript fasta file"),
-        ZFIN_TRANSCRIPT_OBSOLETE("OBSOLETED ENSDART IDs in ZFIN"),
+        ZFIN_ENSDART_NOT_TRANSCRIPT_FILE("ENSDART ID in ZFIN but not in the Transcript fasta file"),
         ADD_ATTRIBUTION("Add Attribution");
 
         private final String value;
