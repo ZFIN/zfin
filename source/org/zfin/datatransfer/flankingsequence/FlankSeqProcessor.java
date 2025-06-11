@@ -20,12 +20,13 @@ import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static java.time.LocalDate.now;
 
 
 /**
