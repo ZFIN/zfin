@@ -56,7 +56,7 @@ const GeneAlleleTable = ({geneId}) => {
         },
         {
             label: 'Mutagen',
-            content: ({featureAssay}) => (featureAssay.mutagen.value || <NoData placeholder='Unknown' />),
+            content: ({featureAssay}) => (featureAssay && featureAssay.mutagen.value || <NoData placeholder='Unknown' />),
             width: '80px',
         },
         {
