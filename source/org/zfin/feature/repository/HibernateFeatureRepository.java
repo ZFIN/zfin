@@ -184,12 +184,21 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets() {
+        return getNonSaFeaturesWithGenomicMutDets(null);
+    }
+
+    @Override
+    public List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate) {
+        Boolean startDateIsNull = startDate == null;
         String hql = """
             select distinct fs.feature
             from FeatureGenomicMutationDetail fs
             where fs.feature.abbreviation not like 'sa%'
+            and (:startDateIsNull = true OR fs.fgmdModifiedAt >= :startDate)
             """;
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
+        query.setParameter("startDate", startDate);
+        query.setParameter("startDateIsNull", startDateIsNull);
         return query.list().stream().sorted(Comparator.comparing(Feature::getAbbreviation)).collect(Collectors.toList());
     }
 

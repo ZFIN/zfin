@@ -20,6 +20,7 @@ import org.zfin.profile.OrganizationFeaturePrefix;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -68,6 +69,8 @@ public interface FeatureRepository {
     List<Feature> getFeaturesWithGenomicMutDets();
 
     List<Feature> getNonSaFeaturesWithGenomicMutDets();
+
+    List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate);
 
     List<Feature> getDeletionFeatures();
 
