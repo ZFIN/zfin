@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZFIN Reports Schema",
+  "description": "Schema for ZFIN load reports containing metadata, summary statistics, supplemental data, and actions",
+  "type": "object",
+  "required": ["meta", "summary", "supplementalData", "actions"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Report metadata",
+      "required": ["title", "creationDate"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the report"
+        },
+        "releaseID": {
+          "type": "string",
+          "description": "Release identifier"
+        },
+        "creationDate": {
+          "type": "integer",
+          "description": "Creation date as Unix timestamp in milliseconds"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary information about the load",
+      "required": ["description", "tables"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Descriptive text about the load process"
+        },
+        "tables": {
+          "type": "array",
+          "description": "Array of summary statistics tables",
+          "items": {
+            "type": "object",
+            "description": "Individual table with description, headers, and rows",
+            "required": ["rows"],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Description of what this table contains"
+              },
+              "headers": {
+                "type": "array",
+                "description": "Column headers for the table",
+                "items": {
+                  "type": "object",
+                  "description": "Header definition with key and display title",
+                  "required": ["key", "title"],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "The key used to reference this column in row data"
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "The display title for this column"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "rows": {
+                "type": "array",
+                "description": "Table data rows",
+                "items": {
+                  "type": "object",
+                  "description": "Table row - can contain any properties"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "supplementalData": {
+      "type": "object",
+      "description": "Additional data keyed by accession numbers"
+    },
+    "actions": {
+      "type": "array",
+      "description": "List of actions performed during the load",
+      "items": {
+        "type": "object",
+        "description": "Action performed during the load",
+        "required": ["id","type", "subType", "accession", "geneZdbID", "details", "length", "supplementalDataKeys"],
+        "properties": {
+          "id": {
+            "description": "Unique identifier for this action. Could be md5. Could be integer."
+          },
+          "type": {
+            "description": "Type of action"
+          },
+          "subType": {
+            "description": "Subtype of the action"
+          },
+          "accession": {
+            "description": "Accession number associated with the action"
+          },
+          "geneZdbID": {
+            "description": "ZFIN gene database ID"
+          },
+          "details": {
+            "description": "Detailed description of the action"
+          },
+          "length": {
+            "description": "Length parameter"
+          },
+          "uniprotAccessions": {
+            "type": "array",
+            "description": "Array of UniProt accession numbers",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relatedEntityID": {
+            "description": "ID of related entity, null if none"
+          },
+          "dbName": {
+            "description": "Database name"
+          },
+          "md5": {
+            "description": "MD5 hash with additional metadata"
+          },
+          "relatedEntityFields": {
+            "type": "object",
+            "description": "Fields related to the entity"
+          },
+          "supplementalDataKeys": {
+            "type": "array",
+            "description": "Keys referencing entries in supplementalData",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relatedActionsKeys": {
+            "type": "array",
+            "description": "Keys referencing other actions related to this one. Matches based on this same set.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "type": "array",
+            "description": "Array of related links",
+            "items": {
+              "type": "object",
+              "required": ["title", "href"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Display title for the link"
+                },
+                "href": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL of the link"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "tags": {
+            "type": "array",
+            "description": "Array of tags associated with the action",
+            "items": {
+              "type": "object",
+              "required": ["name", "value"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Tag name/identifier"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Tag description/value"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

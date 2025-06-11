@@ -791,6 +791,9 @@
 /lib/Java/obo-util.zip filter=lfs diff=lfs merge=lfs -text
 /lib/Java/ontologies/robot.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/opencsv-2.1.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/poi-5.2.5.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/poi-ooxml-5.2.5.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/poi-ooxml-lite-5.2.5.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/postgresql-42.2.18.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/schemaSpy_5.0.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/selenium-api-2.35.0.jar filter=lfs diff=lfs merge=lfs -text
