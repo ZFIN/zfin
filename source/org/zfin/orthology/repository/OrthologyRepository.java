@@ -65,4 +65,8 @@ public interface OrthologyRepository extends CachedRepository {
     Ortholog getOrthologByGeneAndNcbi(Marker gene, NcbiOtherSpeciesGene ncbiGene);
 
     List<NcbiOrthoExternalReference> getNcbiExternalReferenceList(String ncbiID);
+
+    void saveEvidenceCode(OrthologEvidence evidence);
+
+    void removeEvidenceCode(OrthologEvidence evidence);
 }
