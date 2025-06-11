@@ -43,6 +43,7 @@ import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQU
 import static org.zfin.sequence.load.EnsemblLoadAction.HTTPS_WWW_ENSEMBL_ORG_DANIO_RERIO_GENE_SUMMARY_G;
 import static org.zfin.sequence.load.EnsemblLoadAction.ZFIN_WWW;
 import static org.zfin.sequence.load.LoadAction.SubType.*;
+import static org.zfin.sequence.service.TranscriptService.getLargestTxIndex;
 
 public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
@@ -116,6 +117,8 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
     private List<EnsemblErrorRecord> errorRecords = new ArrayList<>();
 
+    private Map<String, Integer> endartsIndexMap = new HashMap<>();
+
     private void createSingleTranscript(TranscriptRecord transcriptRecord, boolean useDuplicationRenaming) {
         String ensdartID = transcriptRecord.ensdartID;
         RichSequence ensemblSequence = transcriptRecord.richSequence;
@@ -126,14 +129,23 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         if (useDuplicationRenaming) {
             Object[] record = ensdartDuplicationMap.get(ensdartID);
             if (record == null) {
-                LoadLink newTranscriptLink = new LoadLink(transcriptRecord.ensdartID, "null");
-                LoadAction newTranscript = new LoadAction(LoadAction.Type.WARNING, NO_NAME_FOR_TRANSCRIPT_FOUND, transcriptRecord.ensdartID, marker.zdbID, "This ENSDART is not loaded into ZFIN", 0, new HashMap<>());
-                newTranscript.addLink(newTranscriptLink);
-                actions.add(newTranscript);
-                return;
+                // generate new transcript name
+                String geneSymbol = marker.getAbbreviation();
+                List<TranscriptDBLink> links = geneEnsdartMap.get(geneEnsdartMap.keySet().stream().filter(marker1 -> marker1.getZdbID().equals(marker.getZdbID())).toList().get(0));
+                if (CollectionUtils.isEmpty(links)) {
+                    transcriptName = getNewTranscriptName(geneSymbol, 0);
+                } else {
+                    // get the largest index of existing transcripts: tx_name= <geneSymbol>-index
+                    int largestIndex = getLargestTxIndex(links.stream().map(TranscriptDBLink::getTranscript).toList(), geneSymbol);
+                    transcriptName = getNewTranscriptName(geneSymbol, largestIndex);
+                }
+            } else {
+                transcriptName = (String) record[2];
             }
-            transcriptName = (String) record[2];
-
+            LoadLink newTranscriptLink = new LoadLink(transcriptRecord.ensdartID, "null");
+            LoadAction newTranscript = new LoadAction(LoadAction.Type.INFO, NO_NAME_FOR_TRANSCRIPT_FOUND, transcriptRecord.ensdartID, marker.zdbID, "This ENSDART is loaded into ZFIN with automatic name generation", 0, new HashMap<>());
+            newTranscript.addLink(newTranscriptLink);
+            actions.add(newTranscript);
         }
         existingMarker = getMarkerRepository().getMarkerByAbbreviation(transcriptName);
 
@@ -170,10 +182,12 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("miRNA")
               || bioType.equals("misc_RNA")
               || bioType.equals("scaRNA")
+              || bioType.equals("snRNA")
               || bioType.equals("antisense")
+              || bioType.equals("transcribed_unprocessed_pseudogene")
               || bioType.equals("snoRNA"))) {
             if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
-                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme")) {
+                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("sense_overlapping")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
                 columns.put("biotype", bioType);
@@ -197,6 +211,16 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
             return;
         }
         addLoadAction(ensdartID, transcript.getZdbID(), transcriptRecord.richSequence, LoadAction.Type.LOAD, ENSDART_LOADED);
+    }
+
+
+    // use 201 as the default appendix for the first transcript
+    private String getNewTranscriptName(String geneSymbol, int currentIndex) {
+        String transcriptName;
+        Integer newIndex = endartsIndexMap.computeIfAbsent(geneSymbol, k -> currentIndex == 0 ? 200 : currentIndex) + 1;
+        transcriptName = geneSymbol + "-" + newIndex;
+        endartsIndexMap.put(geneSymbol, newIndex);
+        return transcriptName;
     }
 
     private void persistTranscriptInfo(String ensdartID, RichSequence ensemblSequence, Marker marker, Transcript transcript) {
