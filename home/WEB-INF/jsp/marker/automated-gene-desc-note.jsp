@@ -16,16 +16,13 @@
         provided.
     </p>
     <p>
-        For more information on the Alliance of Genome Resources please visit: <a href="http://www.alliancegenome.org">www.alliancegenome.org</a>
-    </p>
-    <p>
         For more information on the Gene Ontology, please visit: <a href="http://www.geneontology.org">www.geneontology.org</a>
     </p>
     <p>
         For more information on the Disease Ontology, please visit: <a href="http://disease-ontology.org">disease-ontology.org</a>
     </p>
     <p>
-        For more information on generation of the description please see Kishore et. al. 2019
+        For more information on generation of the description please see <a href="https://pubmed.ncbi.nlm.nih.gov/32559296">Kishore et. al. 2020</a>
     </p>
 </div>
 

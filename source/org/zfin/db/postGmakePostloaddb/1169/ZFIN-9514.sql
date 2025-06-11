@@ -80,6 +80,7 @@ where feature_zdb_id is null
 ;
 
 
+
 -- set is all
 update gene_allele_mutation_detail
 set has_gene_allele = true
