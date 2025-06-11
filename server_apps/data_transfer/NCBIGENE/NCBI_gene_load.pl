@@ -36,6 +36,7 @@ use FindBin;
 #relative path to library file(s) (ZFINPerlModules.pm)
 use lib "$FindBin::Bin/../../perl_lib/";
 use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File assertFileExistsAndNotEmpty) ;
+use JSON;
 
 our $debug = 1;
 #########################
@@ -187,6 +188,8 @@ if (exists($ENV{'SWISSPROT_EMAIL_REPORT'})) {
 
 our $stepCount = 0;
 our $STEP_TIMESTAMP = 0;
+our $START_TIMESTAMP = strftime("%Y-%m-%d_%H-%M-%S", localtime(time()));
+my $dataReport = {d=>{success=>0,error=>"key is required"}};
 
 ###########################
 # End Globals             #
@@ -439,6 +442,9 @@ sub main {
     captureAfterState();
     printTimingInformation(4201);
 
+    compareBeforeAndAfterState();
+    printTimingInformation(4202);
+
     emailLoadReports();
     printTimingInformation(43);
 
@@ -533,25 +539,32 @@ sub removeOldFiles {
     # remove old files
     #------------------------------------------------
 
+    print "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl\n";
+
+    system("/bin/rm -f prepareLog*");
+    system("/bin/rm -f loadLog*");
+    system("/bin/rm -f logNCBIgeneLoad");
+    system("/bin/rm -f debug*");
+    system("/bin/rm -f report*");
+    system("/bin/rm -f *.html");
+    system("/bin/rm -f *.csv");
+    system("/bin/rm -f *.xlsx");
+    system("/bin/rm -f *.json");
+    system("/bin/rm -f toDelete.unl");
+    system("/bin/rm -f toMap.unl");
+    system("/bin/rm -f toLoad.unl");
+    system("/bin/rm -f length.unl");
+    system("/bin/rm -f noLength.unl");
+
     if (!$ENV{"SKIP_DOWNLOADS"}) {
         if (!$ENV{"NO_SLEEP"}) {
             print "Removing old files in 30 seconds...\n";
             sleep(30);
         }
 
-        print "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl seq.fasta zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
-        system("/bin/rm -f prepareLog*");
-        system("/bin/rm -f loadLog*");
-        system("/bin/rm -f logNCBIgeneLoad");
-        system("/bin/rm -f debug*");
-        system("/bin/rm -f report*");
-        system("/bin/rm -f toDelete.unl");
-        system("/bin/rm -f toMap.unl");
-        system("/bin/rm -f toLoad.unl");
-        system("/bin/rm -f length.unl");
-        system("/bin/rm -f noLength.unl");
-        system("/bin/rm -f seq.fasta");
+        print "Removing seq.fasta zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
 
+        system("/bin/rm -f seq.fasta");
         system("/bin/rm -f zf_gene_info.gz");
         system("/bin/rm -f gene2vega.gz");
         system("/bin/rm -f gene2accession.gz");
@@ -636,8 +649,7 @@ sub downloadNCBIFilesForRelease {
             unlink "RefSeqCatalog.danio.gz" if -e "RefSeqCatalog.danio.gz";
             doSystemCommand("cat RefSeqCatalog.gz | gunzip -d | grep '^7955' | gzip -n > RefSeqCatalog.danio.gz");
 
-            #rename file to include new md5 hash
-            $hash = md5File("RefSeqCatalog.danio.gz");
+            #rename file to include original md5 hash
             rename("RefSeqCatalog.danio.gz", "RefSeqCatalog.danio.$hash.gz");
         }
 
@@ -653,8 +665,7 @@ sub downloadNCBIFilesForRelease {
             unlink "gene2accession.danio.gz" if -e "gene2accession.danio.gz";
             doSystemCommand("cat gene2accession.gz | gunzip -d | grep -E '^7955|^#tax_id' | gzip -n > gene2accession.danio.gz");
 
-            #rename file to include new md5 hash
-            $hash = md5File("gene2accession.danio.gz");
+            #rename file to include original md5 hash
             rename("gene2accession.danio.gz", "gene2accession.danio.$hash.gz");
         }
 
@@ -684,40 +695,60 @@ sub downloadNCBIFilesForRelease {
 }
 
 sub captureBeforeState {
-    try {
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'}  -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from db_link order by dblink_linked_recid, dblink_acc_num) to 'before_db_link.csv' with csv header \" >prepareLog1 2> prepareLog2");
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'}  -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from record_attribution order by recattrib_data_zdb_id, recattrib_source_zdb_id) to 'before_recattrib.csv' with csv header \" >prepareLog1 2> prepareLog2");
-    } catch {
-        chomp $_;
-        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at before capture - $_");
-    } ;
-
-    print LOG "Done with preparing the delete list and the list for mapping.\n\n";
-
-    my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog1");
-
-    $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog2");
+    captureState("before_load.csv");
 }
 
-
 sub captureAfterState {
+    captureState("after_load.csv");
+}
+
+sub captureState {
+    my $outputFilename = shift;
     try {
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from db_link order by dblink_linked_recid, dblink_acc_num) to 'after_db_link.csv' with csv header \" >prepareLog1 2> prepareLog2");
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from record_attribution order by recattrib_data_zdb_id, recattrib_source_zdb_id) to 'after_recattrib.csv' with csv header \" >prepareLog1 2> prepareLog2");
+        my $command = "psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'}  -d $ENV{'DB_NAME'} -a -c " .
+            "\"\\copy (select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id " .
+            " from db_link d left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id " .
+            " group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id " .
+            " order by dblink_linked_recid, dblink_acc_num ) to '$outputFilename' with csv header \" >prepareLog1 2> prepareLog2";
+        doSystemCommand($command);
     } catch {
         chomp $_;
         reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at before capture - $_");
     } ;
+}
 
-    print LOG "Done with preparing the delete list and the list for mapping.\n\n";
+sub compareBeforeAndAfterState {
+    my $beforeFile = "before_load.csv";
+    my $afterFile = "after_load.csv";
 
-    my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog1");
+    if (!-e $beforeFile || !-e $afterFile) {
+        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: before or after file is missing");
+    }
 
-    $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog2");
+    my $currentDir = cwd;
+    my $command = "gradle ncbiCharacterize --args=\"$currentDir/$beforeFile $currentDir/$afterFile\"";
+
+    # Set the JAVA_HOME path to override the jenkins one
+    $ENV{'JAVA_HOME'} = getPropertyValue("JAVA_HOME");
+    if (exists($ENV{'OVERRIDE_JAVA_HOME'})) {
+        print "Overriding JAVA_HOME with $ENV{'OVERRIDE_JAVA_HOME'}\n";
+        $ENV{'JAVA_HOME'} = $ENV{'OVERRIDE_JAVA_HOME'};
+    }
+
+    my $cmdString = "cd " . $ENV{'SOURCEROOT'} . " ; " .
+        $command . " ; " .
+        "cd $currentDir";
+    print "Executing $cmdString\n";
+    print LOG "Executing $cmdString\n";
+
+    doSystemCommand($cmdString);
+
+
+    if (-s "before_after.xlsx") {
+        print LOG "Differences found between before and after state. See before_after.xlsx for details.\n";
+    } else {
+        print LOG "Difference generation failed for before and after state.\n";
+    }
 }
 
 sub prepareNCBIgeneLoadDatabaseQuery {
@@ -1116,6 +1147,26 @@ sub readZfinGeneInfoFile {
     }
 
     $curGeneZDBidsSymbols->finish();
+
+    # Global: $ctVegaIdsNCBI
+    # Global: %NCBIgeneWithMultipleVega
+    # Global: %NCBIidsGeneSymbols
+    # Global: %geneSymbolsNCBIids
+    # Global: %vegaIdsNCBIids
+    # Global: %vegaIdwithMultipleNCBIids
+    my $debugHash = {
+        ctVegaIdsNCBI             => $ctVegaIdsNCBI,
+        NCBIgeneWithMultipleVega  => \%NCBIgeneWithMultipleVega,
+        NCBIidsGeneSymbols        => \%NCBIidsGeneSymbols,
+        geneSymbolsNCBIids        => \%geneSymbolsNCBIids,
+        vegaIdsNCBIids            => \%vegaIdsNCBIids,
+        vegaIdwithMultipleNCBIids => \%vegaIdwithMultipleNCBIids
+    };
+
+    my $debugFile = "debug_readZfinGeneInfoFile";
+    open(my $debugOutputFile, ">$debugFile") || die("Cannot open  : $!\n");
+    print $debugOutputFile encode_json($debugHash);
+    close($debugOutputFile);
 }
 
 sub initializeSetsOfZfinRecordsPart1 {
@@ -1573,6 +1624,24 @@ sub parseGene2AccessionFile {
         foreach my $acc (keys %supportingAccNCBI) {print DBG16 "$acc\t" . joinElementsFromMaybeArray($supportingAccNCBI{$acc}) . "\n";}
 
         close DBG16;
+    }
+    
+    if ($debug) {
+        my $debugHash = {
+            "GenBankDNAncbiGeneIds", => \%GenBankDNAncbiGeneIds,
+            "GenPeptNCBIgeneIds",    => \%GenPeptNCBIgeneIds,
+            "RefPeptNCBIgeneIds",    => \%RefPeptNCBIgeneIds,
+            "RefSeqDNAncbiGeneIds",  => \%RefSeqDNAncbiGeneIds,
+            "RefSeqRNAncbiGeneIds",  => \%RefSeqRNAncbiGeneIds,
+            "supportedGeneNCBI",     => \%supportedGeneNCBI,
+            "supportingAccNCBI",     => \%supportingAccNCBI,
+            "noLength",              => \%noLength
+        };
+
+        my $debugFile = "debug16.json";
+        open(my $debugOutputFile, ">$debugFile") || die("Cannot open  : $!\n");
+        print $debugOutputFile encode_json($debugHash);
+        close($debugOutputFile);
     }
 
 }
@@ -3512,6 +3581,82 @@ sub reportAllLoadStatistics {
     print STATS_PRIORITY1 "$numGenesGenBankAfter       \t";
     printf STATS_PRIORITY1 "%.2f\n", ($numGenesGenBankAfter - $numGenesGenBankBefore) / $numGenesGenBankBefore * 100 if ($numGenesGenBankBefore > 0);
 
+    my $jsonReportData = {
+        meta    => {
+            title        => "NCBI Load Report",
+            releaseID    => "",
+            creationDate => time() * 1000
+        },
+        summary => {
+            description => "NCBI Load: Percentage change of various categories of records",
+            tables      => [
+                {
+                    description => "First Table",
+                    headers     => [
+                        { "key" => "desc", "title" => "number of db_link records with gene" },
+                        { "key" => "before", "title" => "before load" },
+                        { "key" => "after", "title" => "after load" },
+                        { "key" => "perc", "title" => "percentage change" }
+                    ],
+                    rows        => [
+                        {
+                            "desc"   => "NCBI gene Id",
+                            "before" => $numNCBIgeneIdBefore,
+                            "after"  => $numNCBIgeneIdAfter,
+                            "perc"   => percentageDisplay($numNCBIgeneIdBefore, $numNCBIgeneIdAfter)
+                        },
+                        {
+                            "desc"   => "RefSeq RNA",
+                            "before" => $numRefSeqRNABefore,
+                            "after"  => $numRefSeqRNAAfter,
+                            "perc"   => percentageDisplay($numRefSeqRNABefore, $numRefSeqRNAAfter)
+                        },
+                        {
+                            "desc"   => "RefPept",
+                            "before" => $numRefPeptBefore,
+                            "after"  => $numRefPeptAfter,
+                            "perc"   => percentageDisplay($numRefPeptBefore, $numRefPeptAfter)
+                        },
+                        {
+                            "desc"   => "RefSeq DNA",
+                            "before" => $numRefSeqDNABefore,
+                            "after"  => $numRefSeqDNAAfter,
+                            "perc"   => percentageDisplay($numRefSeqDNABefore, $numRefSeqDNAAfter)
+                        },
+                        {
+                            "desc"   => "GenBank RNA",
+                            "before" => $numGenBankRNABefore,
+                            "after"  => $numGenBankRNAAfter,
+                            "perc"   => percentageDisplay($numGenBankRNABefore, $numGenBankRNAAfter)
+                        }
+                    ]
+                }
+            ]
+        },
+        actions => []
+    };
+
+    #Write jsonReportData to file
+    my $jsonString = encode_json($jsonReportData);
+    my $jsonFilename = "ncbi_report.json";
+    open(FH, '>', $jsonFilename) or die $!;
+    print FH $jsonString;
+    close(FH);
+
+    #Use report template to create report
+    my $templateFile = $ENV{'SOURCEROOT'} . "/home/uniprot/zfin-report-template.html";
+    my $reportFilename = "ncbi_report.html";
+
+    open my $templateFileInput, '<', $templateFile or die "can't open $templateFile: $!";
+    open my $templateFileOutput, '>', $reportFilename or die "can't open $reportFilename: $!";
+    while (<$templateFileInput>) {
+        s/JSON_GOES_HERE/$jsonString/;
+        print $templateFileOutput $_;
+    }
+    close $templateFileInput or die "can't close $templateFile: $!";
+    close $templateFileOutput or die "can't close $reportFilename: $!";
+
+
     my @keysSortedByValues = sort { lc($geneZDBidsSymbols{$a}) cmp lc($geneZDBidsSymbols{$b}) } keys %geneZDBidsSymbols;
 
     print STATS_PRIORITY1 "\n\nList of genes used to have RefSeq acc but no longer having any:\n";
@@ -3649,6 +3794,12 @@ sub getArtifactComparisonURLs {
     $buffer .= "===========================================================================\n\n";
 
     return $buffer;
+}
+
+sub percentageDisplay {
+    my $before = shift;
+    my $after = shift;
+    return ($before > 0) ? sprintf("%.2f%%", ($after - $before) / $before * 100) : "N/A";
 }
 
 main();
