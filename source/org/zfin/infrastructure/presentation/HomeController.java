@@ -14,14 +14,15 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
 public class HomeController {
+
+    private static int countOfDesiredRecentImages = 2;
+    private static int recentPublicationsWindowDays = 30;
 
     @Autowired
     private ZebrashareRepository zebrashareRepository;
@@ -32,15 +33,8 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET)
     public String index(Model model) {
         List<Image> recentlyCuratedImages = figureRepository.getRecentlyCuratedImages();
+        List<Image> carouselImages = reorderWithSomeRandomness(recentlyCuratedImages);
 
-        // shuffling with this seed causes the carousel image set to change only once a day
-        long seed = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond();
-        Collections.shuffle(recentlyCuratedImages, new Random(seed));
-        List<Image> carouselImages;
-        if (recentlyCuratedImages.size() > 5)
-            carouselImages = recentlyCuratedImages.subList(0, 5);
-        else
-            carouselImages = recentlyCuratedImages;
         List<String> sanitizedCaptions = carouselImages.stream()
                 .map(Image::getFigure)
                 .map(Figure::getCaption)
@@ -55,10 +49,87 @@ public class HomeController {
         return "infrastructure/home/home";
     }
 
+    /**
+     * This method reorders the carousel images with some randomness while ensuring that we have a set of recent images.
+     * It will try to find at least `countOfDesiredRecentImages` images within a window of `recentPublicationsWindowDays`.
+     * If not enough recent images are found, it will expand the window until it finds enough or exhausts the search.
+     * The remaining images are shuffled to provide some randomness.
+     *
+     * @param carouselImagesInput the input list of images
+     * @return a list of reordered images for the carousel
+     */
+    private static List<Image> reorderWithSomeRandomness(List<Image> carouselImagesInput) {
+        long seed = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond();
+        List<Image> recentImages = getPrioritizedRecentImages(carouselImagesInput, seed);
+
+        //remove recentImages
+        carouselImagesInput.removeAll(recentImages);
+
+        // shuffling with this seed causes the carousel image set to change only once a day
+        Collections.shuffle(carouselImagesInput, new Random(seed));
+
+        ArrayList<Image> combinedImages = new ArrayList<>(recentImages);
+        combinedImages.addAll(carouselImagesInput);
+
+        //truncate to 5 images
+        if (combinedImages.size() > 5) {
+            combinedImages = new ArrayList<>(combinedImages.subList(0, 5));
+        }
+
+        return combinedImages;
+    }
+
     @RequestMapping(path = "/submit-data")
     public String submitDataLandingPage(Model model) {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Ways to Submit Data");
         return "infrastructure/submit-data-landing-page";
+    }
+
+    /**
+     * This method filters the carousel images to ensure that we have a set of recent images.
+     * It will try to find at least `countOfDesiredRecentImages` images within a window of `recentPublicationsWindowDays`.
+     * If not enough recent images are found, it will expand the window until it finds enough or exhausts the search.
+     * This is so our carousel always has some recent images.
+     *
+     * @param carouselImagesInput the input list of images
+     * @param seed                the seed for randomization (applied at the end)
+     * @return a list of prioritized recent images
+     */
+    private static List<Image> getPrioritizedRecentImages(List<Image> carouselImagesInput, long seed) {
+        int acceptableWindowDays = recentPublicationsWindowDays;
+        List<Image> recentImages = new ArrayList<>();
+
+        for(int i = 1; i <= 12; i++) {
+            recentImages = filterImagesToRecentDays(carouselImagesInput, acceptableWindowDays * i);
+            if (recentImages.size() >= countOfDesiredRecentImages) {
+                break;
+            }
+        }
+
+        if (recentImages.size() > countOfDesiredRecentImages) {
+            Collections.shuffle(recentImages, new Random(seed));
+            recentImages = recentImages.subList(0, countOfDesiredRecentImages);
+        }
+        return recentImages;
+    }
+
+    /**
+     * Filters the input list of images to only include those published within the last `days` days.
+     *
+     * @param carouselImagesInput the input list of images
+     * @param days                the number of days to look back
+     * @return a list of images published within the last `days` days
+     */
+    private static List<Image> filterImagesToRecentDays(List<Image> carouselImagesInput, int days) {
+        List<Image> recentImages = carouselImagesInput.stream()
+                .filter(image -> {
+                    GregorianCalendar pubDate = image.getFigure().getPublication().getPublicationDate();
+                    GregorianCalendar cutoff = new GregorianCalendar();
+                    cutoff.add(Calendar.DAY_OF_YEAR, -days);
+                    return pubDate.after(cutoff);
+                })
+                .collect(Collectors.toList());
+        return recentImages;
     }
 
 }
