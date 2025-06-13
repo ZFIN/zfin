@@ -28,7 +28,7 @@ public class CloneJBrowseController {
     @RequestMapping("/jbrowse/proxy/**")
     public ResponseEntity<String> getProxy(Model model) {
         String pathInfo = request.getPathInfo();
-        String relativePath = pathInfo.replace("/api/jbrowse/proxy/", "");
+        String relativePath = pathInfo.replace("/api/jbrowse/proxy/jbrowse/", "");
         String queryString = request.getQueryString() == null ?
                 "" :
                 "?" + request.getQueryString();
