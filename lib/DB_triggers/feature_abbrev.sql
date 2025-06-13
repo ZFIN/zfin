@@ -10,7 +10,7 @@ declare feature_abbrev_order feature.feature_abbrev_order%TYPE :=zero_pad(NEW.fe
 begin
 
      NEW.feature_abbrev = feature_abbrev;
-     NEW.feature_abbrev_order = zero_pad(NEW.feature_abbrev_order);
+     NEW.feature_abbrev_order = zero_pad(NEW.feature_abbrev);
 
      perform checkFeatureAbbrev(NEW.feature_zdb_id,
        		 		     NEW.feature_type, 
