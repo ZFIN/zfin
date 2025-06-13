@@ -4,6 +4,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.GradleException
 
+import java.nio.file.Files
+
 class SimpleDirectoryCopyTask extends DefaultTask {
 
     @Input
@@ -218,6 +220,11 @@ class SimpleDirectoryCopyTask extends DefaultTask {
                     } else {
                         copySingleFile(file, destinationFile)
                     }
+                    //set destination file permissions to be the same as the source file
+                    def permissions = Files.getPosixFilePermissions(file.toPath())
+                    Files.setPosixFilePermissions(destinationFile.toPath(), permissions)
+
+
                 } else {
                     if (debugMode) {
                         println "    Skipped: $relativePath (Skipped by includes/excludes)"
