@@ -1,6 +1,7 @@
 package org.zfin.figure.repository;
 
 
+import jakarta.persistence.Tuple;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Calendar.YEAR;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -137,7 +139,7 @@ public class HibernateFigureRepository implements FigureRepository {
     @Override
     public List<Image> getRecentlyCuratedImages() {
         String hql = """
-            select distinct image
+            select distinct image, publication.publicationDate
             from Image as image
             inner join image.figure as figure
             inner join figure.publication as publication
@@ -160,15 +162,17 @@ public class HibernateFigureRepository implements FigureRepository {
                 )
               )
             )
+            order by publication.publicationDate desc
             """;
 
         Calendar oneYearAgo = Calendar.getInstance();
         oneYearAgo.add(YEAR, -1);
-        Query<Image> query = currentSession().createQuery(hql, Image.class);
+        Query<Tuple> query = currentSession().createQuery(hql, Tuple.class);
         query.setParameter("oneYearAgo", oneYearAgo);
         query.setParameter("closedCurated", PublicationTrackingStatus.Name.CLOSED_CURATED);
 
-        return query.list();
+        return query.list().stream().map(tuple -> tuple.get(0, Image.class))
+                .collect(Collectors.toList());
     }
 
 }
