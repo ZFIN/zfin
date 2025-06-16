@@ -10,6 +10,8 @@ import org.apache.commons.text.StringSubstitutor;
 import org.hibernate.query.NativeQuery;
 import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
+import org.zfin.datatransfer.report.model.LoadReportAction;
+import org.zfin.datatransfer.report.model.LoadReportActionLink;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
@@ -58,14 +60,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private String pubMappedbasedOnVega = "ZDB-PUB-130725-2";
     private String pubMappedbasedOnNCBISupplement = "ZDB-PUB-230516-87";
 
-    private String fdcontNCBIgeneId = "ZDB-FDBCONT-040412-1";
-    private String fdcontVega = "ZDB-FDBCONT-040412-14";
-    private String fdcontGenBankRNA = "ZDB-FDBCONT-040412-37";
-    private String fdcontGenPept = "ZDB-FDBCONT-040412-42";
-    private String fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
-    private String fdcontRefSeqRNA = "ZDB-FDBCONT-040412-38";
-    private String fdcontRefPept = "ZDB-FDBCONT-040412-39";
-    private String fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
+    private static final String fdcontNCBIgeneId = "ZDB-FDBCONT-040412-1";
+    private static final String fdcontVega = "ZDB-FDBCONT-040412-14";
+    private static final String fdcontGenBankRNA = "ZDB-FDBCONT-040412-37";
+    private static final String fdcontGenPept = "ZDB-FDBCONT-040412-42";
+    private static final String fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
+    private static final String fdcontRefSeqRNA = "ZDB-FDBCONT-040412-38";
+    private static final String fdcontRefPept = "ZDB-FDBCONT-040412-39";
+    private static final String fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 
     public File beforeFile;
     public File afterFile;
@@ -219,7 +221,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     public static void main(String[] args) {
         NCBIDirectPort port = new NCBIDirectPort();
-        port.initAll(); // This will call initProperties() and initDatabase()
+        port.initAll();
         port.run();
         System.exit(0);
     }
@@ -3060,18 +3062,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         //break down changes into subsets using the provided before and after files
         String outputPrefix = new File(workingDir, "ncbi_compare_").toString();
         CSVDiff diff = new CSVDiff(outputPrefix,
-                new String[]{"dblink_linked_recid","dblink_acc_num","dblink_fdbcont_zdb_id","recattrib_source_zdb_id"},
-                new String[]{"dblink_info","dblink_zdb_id"});
+                new String[]{"dblink_linked_recid", "dblink_acc_num", "dblink_fdbcont_zdb_id", "recattrib_source_zdb_id"},
+                new String[]{"dblink_info", "dblink_zdb_id"});
         CSVRecord beforeAfterSummary = null;
+        Map<String, List<CSVRecord>> beforeAfterComparison = null;
         try {
-            Map<String, List<CSVRecord>> beforeAfterComparison = diff.processToMap(beforeFile.getAbsolutePath(), afterFile.getAbsolutePath());
+            beforeAfterComparison = diff.processToMap(beforeFile.getAbsolutePath(), afterFile.getAbsolutePath());
             System.out.println("Generated before-after comparison with " + beforeAfterComparison.size() + " categories.");
             System.out.println(beforeAfterComparison.keySet().stream().sorted().collect(Collectors.joining("; ")));
             List<File> csvs = diff.writeMapToCSVs(workingDir, "before_after_cmp_", beforeAfterComparison);
             System.out.println("Generated " + csvs.size() + " CSV files for before-after comparison.");
             List<CSVRecord> beforeAfterSummaryList = beforeAfterComparison.get("summary");
             beforeAfterSummary = beforeAfterSummaryList.remove(0);
-            beforeAfterComparison.clear();
             combineCsvsToExcelReport(csvs);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -3081,7 +3083,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         NCBIReportBuilder builder = new NCBIReportBuilder();
 
-        NCBIReportBuilder.SummaryTable table = builder.addSummaryTable("number of db_link records with gene");
+        NCBIReportBuilder.SummaryTableBuilder table = builder.addSummaryTable("number of db_link records with gene");
         table.setHeaders(List.of("Category", "Before Load", "After Load", "Percentage Change"));
         table.addBeforeAfterCountSummaryRow("NCBI gene Id", numNCBIgeneIdBefore, numNCBIgeneIdAfter);
         table.addBeforeAfterCountSummaryRow("RefSeq RNA", numRefSeqRNABefore, numRefSeqRNAAfter);
@@ -3091,7 +3093,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table.addBeforeAfterCountSummaryRow("GenPept", numGenPeptBefore, numGenPeptAfter);
         table.addBeforeAfterCountSummaryRow("GenBank DNA", numGenBankDNABefore, numGenBankDNAAfter);
 
-        NCBIReportBuilder.SummaryTable table2 = builder.addSummaryTable("number of genes");
+        NCBIReportBuilder.SummaryTableBuilder table2 = builder.addSummaryTable("number of genes");
         table2.setHeaders(List.of("Category", "Before Load", "After Load", "Percentage Change"));
         table2.addBeforeAfterCountSummaryRow("with RefSeq", ctGenesWithRefSeqBefore, ctGenesWithRefSeqAfter);
         table2.addBeforeAfterCountSummaryRow("with RefSeq NM", numGenesRefSeqRNABefore, numGenesRefSeqRNAAfter);
@@ -3099,7 +3101,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table2.addBeforeAfterCountSummaryRow("with GenBank", numGenesGenBankBefore, numGenesGenBankAfter);
 
         if (beforeAfterSummary != null) {
-            NCBIReportBuilder.SummaryTable table3 = builder.addSummaryTable("totals before and after load");
+            NCBIReportBuilder.SummaryTableBuilder table3 = builder.addSummaryTable("totals before and after load");
             table3.setHeaders(List.of("Category", "Count"));
             table3.addSummaryRow(List.of("Number of db_link records before load", beforeAfterSummary.get("beforeCount")));
             table3.addSummaryRow(List.of("Number of db_link records after load", beforeAfterSummary.get("afterCount")));
@@ -3109,6 +3111,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             table3.addSummaryRow(List.of("Number of db_link records added", beforeAfterSummary.get("addedCount")));
             table3.addSummaryRow(List.of("Number of db_link records deleted", beforeAfterSummary.get("deletedCount")));
         }
+
+        builder.addActions(createActions(beforeAfterComparison));
 
         ObjectNode report = builder.build();
 
@@ -3122,6 +3126,117 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         } catch (IOException e) {
             print(LOG, "ERROR: JSON reporting failed: " + e.getMessage());
         }
+        beforeAfterComparison.clear();
+    }
+
+    private List<LoadReportAction> createActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+
+        actions.addAll(createDeleteActions(beforeAfterComparison));
+        actions.addAll(createLoadActions(beforeAfterComparison));
+        actions.addAll(createUpdateActions(beforeAfterComparison));
+
+        return actions;
+    }
+
+    private List<LoadReportAction> createLoadActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+        List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("added", Collections.emptyList());
+        for(CSVRecord record : deletedRecords) {
+            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.LOAD);
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private List<LoadReportAction> createDeleteActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+        List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("deleted", Collections.emptyList());
+        for(CSVRecord record : deletedRecords) {
+            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.DELETE);
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private List<LoadReportAction> createUpdateActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<CSVRecord> updatedRecordsBefore = beforeAfterComparison.getOrDefault("updated1", Collections.emptyList());
+        List<CSVRecord> updatedRecordsAfter = beforeAfterComparison.getOrDefault("updated2", Collections.emptyList());
+        if (updatedRecordsBefore.isEmpty() && updatedRecordsAfter.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (updatedRecordsBefore.size() != updatedRecordsAfter.size()) {
+            print(LOG, "WARNING: Mismatched number of updated records before and after comparison.\n");
+            throw new IllegalStateException("Mismatched number of updated records before and after comparison.");
+        }
+        Iterator<CSVRecord> iterator1 = updatedRecordsBefore.iterator();
+        Iterator<CSVRecord> iterator2 = updatedRecordsAfter.iterator();
+        List<LoadReportAction> actions = new ArrayList<>();
+        while(iterator1.hasNext()) {
+            CSVRecord record1 = iterator1.next();
+            CSVRecord record2 = iterator2.next();
+            assertRecordsMatch(record1, record2);
+            LoadReportAction action = csvRecordToAction(record1, LoadReportAction.Type.UPDATE);
+            action.setDetails("Updated record from " + record1.get("dblink_zdb_id") + " to " + record2.get("dblink_zdb_id") + ", " +
+                              record1.get("dblink_length") + " to " + record2.get("dblink_length") + ", " +
+                              record1.get("recattrib_source_zdb_id") + " to " + record2.get("recattrib_source_zdb_id"));
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private void assertRecordsMatch(CSVRecord record1, CSVRecord record2) {
+        if (record1.get("dblink_linked_recid").equals(record2.get("dblink_linked_recid")) &&
+            record1.get("dblink_acc_num").equals(record2.get("dblink_acc_num")) &&
+            record1.get("dblink_fdbcont_zdb_id").equals(record2.get("dblink_fdbcont_zdb_id"))) {
+            // Records match, proceed
+        } else {
+            print(LOG, "ERROR: Mismatched records in before-after comparison.\n");
+            throw new IllegalStateException("Mismatched records in before-after comparison.");
+        }
+    }
+
+    private LoadReportAction csvRecordToAction(CSVRecord record, LoadReportAction.Type type) {
+        String zdbId = record.get("dblink_linked_recid");
+        String accNum = record.get("dblink_acc_num");
+        String fdbcontZdbId = record.get("dblink_fdbcont_zdb_id");
+
+        LoadReportAction action = new LoadReportAction();
+        action.setType(type);
+
+        String dbName = switch(fdbcontZdbId) {
+            case fdcontNCBIgeneId -> "NCBI Gene";
+            case fdcontVega -> "NCBI Vega";
+            case fdcontGenBankRNA -> "GenBank RNA";
+            case fdcontGenPept -> "GenPept";
+            case fdcontGenBankDNA -> "GenBank DNA";
+            case fdcontRefSeqRNA -> "RefSeq RNA";
+            case fdcontRefPept -> "RefSeq Peptide";
+            case fdcontRefSeqDNA -> "RefSeq DNA";
+            default -> "Unknown Database";
+        };
+        action.setDbName(dbName);
+        action.setRelatedEntityFields(Map.of("Database", dbName));
+
+        String subType = switch(type) {
+            case DELETE -> "Lost ";
+            case LOAD -> "New ";
+            case UPDATE -> "Updated ";
+            default -> "Unknown ";
+        };
+        action.setSubType(subType + dbName + " Accession");
+        action.setAccession(accNum);
+        action.setGeneZdbID(zdbId);
+        action.setId(accNum + zdbId + fdbcontZdbId);
+        action.setDetails(String.format("Accession %s for gene %s in database %s (%s)",
+                accNum, zdbId, dbName, fdbcontZdbId));
+        action.setSupplementalDataKeys(Collections.emptyList());
+        action.setLinks(List.of(
+                new LoadReportActionLink("ZFIN Gene", "https://zfin.org/" + zdbId),
+                new LoadReportActionLink("NCBI Gene", "https://www.ncbi.nlm.nih.gov/gene/" + accNum)
+        ));
+        action.setRelatedActionsKeys(List.of(zdbId));
+        return action;
     }
 
     private void combineCsvsToExcelReport(List<File> csvs) {
