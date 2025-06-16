@@ -142,21 +142,26 @@
     #for using the prototype search from kinetix/zfin.org
     ProxyPass /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
     ProxyPassReverse /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
-    <Location /build>
-    	Require env ZfinRestrictedHosts
-        ProxyPass         http://localhost:8282/build
-        ProxyPassReverse  http://localhost:8282/build
-        #ProxyPassReverse  http://zfin.org/build
-        ProxyPassReverse  http://stage.zfin.org/build
+
+    #this is required by mod_auth_openidc
+    PassEnv OPENIDC_CRYPTOPASSPHRASE OPENIDC_CLIENTID OPENIDC_CLIENTSECRET
+    OIDCCryptoPassphrase ${OPENIDC_CRYPTOPASSPHRASE}
+    OIDCProviderMetadataURL https://bouncer.zfin.org/realms/ZFIN/.well-known/openid-configuration
+    OIDCClientID ${OPENIDC_CLIENTID}
+    OIDCClientSecret ${OPENIDC_CLIENTSECRET}
+    OIDCRedirectURI /users/callback
+    # maps the preferred_username claim to the REMOTE_USER environment variable
+    OIDCRemoteUserClaim preferred_username
+    OIDCXForwardedHeaders X-Forwarded-Host X-Forwarded-Port X-Forwarded-Proto
+
+    <Location /users/>
+        AuthType openid-connect
+        Require valid-user
     </Location>
     <Location /jobs>
-        Require env ZfinRestrictedHosts
-        AuthName "LDAP Login - Any User"
-        AuthType Basic
-        AuthBasicProvider ldap
-        AuthLDAPUrl "ldaps://bouncer1.zfin.org bouncer2.zfin.org/cn=users,cn=accounts,dc=zfin,dc=org?uid"
+        AuthType openid-connect
         <RequireAll>
-          Require env ZfinHosts
+          #Require env ZfinHosts
           Require valid-user
         </RequireAll>
         ProxyPass         http://jenkins:9499/jobs
@@ -170,20 +175,11 @@
     <Location /solr>
       # Make sure you're using HTTPS, or anyone can read your LDAP password.
       SSLRequireSSL
-
-      ################
-      ### Any User ###
-      ################
-      AuthName "LDAP Login - Any User"
-      AuthType Basic
-      AuthBasicProvider ldap
-      AuthLDAPUrl "ldaps://bouncer1.zfin.org bouncer2.zfin.org/cn=users,cn=accounts,dc=zfin,dc=org?uid"
+      AuthType openid-connect
       <RequireAll>
         Require env ZfinRestrictedHosts
         Require valid-user
       </RequireAll>
-      #Satisfy any
-
       ProxyPass         http://solr:8983/solr
       ProxyPassReverse  http://solr:8983/solr
     </Location>
