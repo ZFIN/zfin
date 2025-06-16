@@ -107,9 +107,21 @@
                 <echo message="Configuration file ${JENKINS_HOME}/config.xml is already deployed"/>
             </then>
             <else>
-                <copy tofile="${JENKINS_HOME}/config.xml" file="${basedir}/server_apps/jenkins/config.xml"/>
+		<copy tofile="${JENKINS_HOME}/config.xml">
+		    <fileset file="${basedir}/server_apps/jenkins/config.xml"/>
+                    <filterset>
+		        <filter token="CLIENTID" value="${env.OPENIDC_CLIENTID}"/>
+                        <filter token="CLIENTSECRET" value="${env.OPENIDC_CLIENTSECRET}"/>
+                    </filterset>
+	        </copy>
             </else>
         </if>
+	<copy tofile="${JENKINS_HOME}/jenkins.model.JenkinsLocationConfiguration.xml">
+	    <fileset file="${basedir}/server_apps/jenkins/jenkins.model.JenkinsLocationConfiguration.xml"/>
+            <filterset>
+                <filter token="INSTANCE" value="${env.INSTANCE}"/>
+            </filterset>
+        </copy>
         <if>
             <available file="${JENKINS_HOME}/hudson.tasks.Ant.xml"/>
             <then>
