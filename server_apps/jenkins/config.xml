@@ -5,47 +5,68 @@
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
- <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
-    <permission>hudson.model.Computer.Build:fishadmin</permission>
-    <permission>hudson.model.Computer.Configure:fishadmin</permission>
-    <permission>hudson.model.Computer.Connect:fishadmin</permission>
-    <permission>hudson.model.Computer.Create:fishadmin</permission>
-    <permission>hudson.model.Computer.Delete:fishadmin</permission>
-    <permission>hudson.model.Computer.Disconnect:fishadmin</permission>
-    <permission>hudson.model.Hudson.Administer:fishadmin</permission>
-    <permission>hudson.model.Hudson.ConfigureUpdateCenter:fishadmin</permission>
-    <permission>hudson.model.Hudson.Read:fishadmin</permission>
-    <permission>hudson.model.Hudson.RunScripts:fishadmin</permission>
-    <permission>hudson.model.Hudson.UploadPlugins:fishadmin</permission>
-    <permission>hudson.model.Item.Build:curators</permission>
-    <permission>hudson.model.Item.Build:fishadmin</permission>
-    <permission>hudson.model.Item.Cancel:curators</permission>
-    <permission>hudson.model.Item.Cancel:fishadmin</permission>
-    <permission>hudson.model.Item.Configure:fishadmin</permission>
-    <permission>hudson.model.Item.Create:fishadmin</permission>
-    <permission>hudson.model.Item.Delete:fishadmin</permission>
-    <permission>hudson.model.Item.Discover:curators</permission>
-    <permission>hudson.model.Item.Discover:fishadmin</permission>
-    <permission>hudson.model.Item.Read:curators</permission>
-    <permission>hudson.model.Item.Read:fishadmin</permission>
-    <permission>hudson.model.Item.Workspace:curators</permission>
-    <permission>hudson.model.Item.Workspace:fishadmin</permission>
-    <permission>hudson.model.Run.Delete:fishadmin</permission>
-    <permission>hudson.model.Run.Update:fishadmin</permission>
-    <permission>hudson.model.View.Configure:fishadmin</permission>
-    <permission>hudson.model.View.Create:fishadmin</permission>
-    <permission>hudson.model.View.Delete:fishadmin</permission>
-    <permission>hudson.model.View.Read:curators</permission>
-    <permission>hudson.model.View.Read:fishadmin</permission>
-    <permission>hudson.scm.SCM.Tag:fishadmin</permission>
+  <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
+    <permission>GROUP:com.cloudbees.plugins.credentials.CredentialsProvider.Create:systems</permission>
+    <permission>GROUP:com.cloudbees.plugins.credentials.CredentialsProvider.Delete:systems</permission>
+    <permission>GROUP:com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:systems</permission>
+    <permission>GROUP:com.cloudbees.plugins.credentials.CredentialsProvider.Update:systems</permission>
+    <permission>GROUP:com.cloudbees.plugins.credentials.CredentialsProvider.View:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Build:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Configure:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Connect:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Create:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Delete:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Disconnect:systems</permission>
+    <permission>GROUP:hudson.model.Computer.Provision:systems</permission>
+    <permission>GROUP:hudson.model.Hudson.Administer:systems</permission>
+    <permission>GROUP:hudson.model.Hudson.Read:systems</permission>
+    <permission>GROUP:hudson.model.Item.Build:curators</permission>
+    <permission>GROUP:hudson.model.Item.Build:systems</permission>
+    <permission>GROUP:hudson.model.Item.Cancel:curators</permission>
+    <permission>GROUP:hudson.model.Item.Cancel:systems</permission>
+    <permission>GROUP:hudson.model.Item.Configure:systems</permission>
+    <permission>GROUP:hudson.model.Item.Create:systems</permission>
+    <permission>GROUP:hudson.model.Item.Delete:systems</permission>
+    <permission>GROUP:hudson.model.Item.Discover:curators</permission>
+    <permission>GROUP:hudson.model.Item.Discover:systems</permission>
+    <permission>GROUP:hudson.model.Item.Read:curators</permission>
+    <permission>GROUP:hudson.model.Item.Read:systems</permission>
+    <permission>GROUP:hudson.model.Item.Workspace:curators</permission>
+    <permission>GROUP:hudson.model.Item.Workspace:systems</permission>
+    <permission>GROUP:hudson.model.Run.Delete:systems</permission>
+    <permission>GROUP:hudson.model.Run.Replay:systems</permission>
+    <permission>GROUP:hudson.model.Run.Update:systems</permission>
+    <permission>GROUP:hudson.model.View.Configure:systems</permission>
+    <permission>GROUP:hudson.model.View.Create:systems</permission>
+    <permission>GROUP:hudson.model.View.Delete:systems</permission>
+    <permission>GROUP:hudson.model.View.Read:curators</permission>
+    <permission>GROUP:hudson.model.View.Read:systems</permission>
+    <permission>GROUP:hudson.scm.SCM.Tag:systems</permission>
   </authorizationStrategy>
-  <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.2">
-    <server>ldaps://bouncer2.zfin.org</server>
-    <rootDN>dc=zfin,dc=org</rootDN>
-    <inhibitInferRootDN>false</inhibitInferRootDN>
-    <userSearchBase>cn=users,cn=accounts</userSearchBase>
-    <userSearch>uid={0}</userSearch>
-    <disableMailAddressResolver>false</disableMailAddressResolver>
+  <securityRealm class="org.jenkinsci.plugins.oic.OicSecurityRealm" plugin="oic-auth@4.494.v6b_f419104767">
+    <userIdStrategy class="jenkins.model.IdStrategy$CaseSensitive"/>
+    <groupIdStrategy class="jenkins.model.IdStrategy$CaseSensitive"/>
+    <clientId>@CLIENTID@</clientId>
+    <clientSecret>@CLIENTSECRET@</clientSecret>
+    <userNameField>preferred_username</userNameField>
+    <fullNameFieldName>name</fullNameFieldName>
+    <emailFieldName>email</emailFieldName>
+    <groupsFieldName>groups</groupsFieldName>
+    <disableSslVerification>false</disableSslVerification>
+    <logoutFromOpenidProvider>false</logoutFromOpenidProvider>
+    <escapeHatchEnabled>false</escapeHatchEnabled>
+    <escapeHatchSecret>{AQAAABAAAABA6RfWZ4tAeuOTh8KEHCJ6WOYyc7kVKS8wtKxjBFVbCUI5Yg4ZjQZkjJ39VmLggf0HXhlMD5JgLIq/DrHKU6B+9laHssOw58dTdyXS4D7tyoM=}</escapeHatchSecret>
+    <serverConfiguration class="org.jenkinsci.plugins.oic.OicServerWellKnownConfiguration">
+      <wellKnownOpenIDConfigurationUrl>https://bouncer.zfin.org/realms/ZFIN/.well-known/openid-configuration</wellKnownOpenIDConfigurationUrl>
+    </serverConfiguration>
+    <rootURLFromRequest>false</rootURLFromRequest>
+    <sendScopesInTokenRequest>false</sendScopesInTokenRequest>
+    <pkceEnabled>false</pkceEnabled>
+    <disableTokenVerification>false</disableTokenVerification>
+    <nonceDisabled>false</nonceDisabled>
+    <tokenExpirationCheckDisabled>false</tokenExpirationCheckDisabled>
+    <allowTokenAccessWithoutOicSession>false</allowTokenAccessWithoutOicSession>
+    <allowedTokenExpirationClockSkewSeconds>0</allowedTokenExpirationClockSkewSeconds>
   </securityRealm>
   <disableRememberMe>false</disableRememberMe>
   <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>

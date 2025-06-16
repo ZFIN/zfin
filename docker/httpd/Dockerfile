@@ -2,7 +2,7 @@ FROM fedora:latest
 
 # Install Apache
 RUN yum -y update
-RUN yum -y install httpd httpd-tools mod_ssl mod_ldap \
+RUN yum -y install httpd httpd-tools mod_ssl mod_ldap mod_auth_openidc \
                    perl-DBI perl-DBD-Pg \
                    perl-CGI perl-Carp perl-Net-HTTP perl-libwww-perl perl-URI
 
