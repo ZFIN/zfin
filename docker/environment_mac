@@ -18,3 +18,7 @@ ELK_VERSION=8.2.3
 ELASTIC_PASSWORD=ChangeMe!
 LOGSTASH_INTERNAL_PASSWORD=ChangeMe!
 KIBANA_SYSTEM_PASSWORD=ChangeMe!
+#This won't work on laptops currently but you will need it in .env to stop errors/warnings
+OPENIDC_CRYPTOPASSPHRASE=passphrase-changeme
+OPENIDC_CLIENTID=dazed.zfin.org
+OPENIDC_CLIENTSECRET=secret-from-keycloak
