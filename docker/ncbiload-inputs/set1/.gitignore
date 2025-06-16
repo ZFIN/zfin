@@ -1,0 +1,10 @@
+*.bak
+*.sql
+gene2accession.gz
+gene2vega.gz
+ncbi_matches_through_ensembl.csv
+README.md
+RefSeqCatalog.gz
+RELEASE_NUMBER
+seq.fasta
+zf_gene_info.gz
