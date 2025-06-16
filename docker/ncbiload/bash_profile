@@ -1,0 +1,5 @@
+#sudo /bin/chown gradle /run/host-services/ssh-auth.sock
+#sudo /bin/chown gradle /var/run/docker.sock
+#/opt/zfin/source_roots/zfin.org/docker/compile/generate_base.sh
+source /opt/zfin/source_roots/zfin.org/commons/env/${INSTANCE}.bash
+cd /opt/zfin/source_roots/zfin.org
