@@ -387,6 +387,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         printStatsBeforeDelete();
         printTimingInformation(39);
 
+        if (envTrue("EARLY_EXIT")) {
+            System.out.println("Early exit requested, skipping delete and load.");
+            print(LOG, "Early exit requested, skipping delete and load.\n");
+            return;
+        }
+
         executeDeleteAndLoadSQLFile();
         printTimingInformation(40);
 
@@ -1729,14 +1735,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             inputFile = new File(overrideReportFile);
             print(LOG, "Using provided report file through LOAD_NCBI_ONE_WAY_REPORT: " + inputFile.getAbsolutePath() + "\n");
         } else {
-            //TODO: refactor to not use gradle
 
             inputFile = new File(sourceRoot, "ncbi_matches_through_ensembl.csv");
-//            String gradleCommand = String.format("cd %s ; ./gradlew -DncbiFileUrl=file://%s/zf_gene_info.gz ncbiMatchThroughEnsemblTask ; cd %s",
-//                    sourceRoot,
-//                    workingDir.getAbsolutePath(), // zf_gene_info.gz is in workingDir
-//                    workingDir.getAbsolutePath()); // cd back to workingDir, though doSystemCommand handles this
-
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
                 task.runTask(new String[]{});
