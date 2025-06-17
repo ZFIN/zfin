@@ -152,7 +152,7 @@ public class HibernateSessionCreator {
         }
     }
 
-    public static final int BATCH_SIZE = 50;
+    public static final int BATCH_SIZE = 2000;
 
     private Configuration createConfiguration(String db) {
         Configuration config = new Configuration();
