@@ -79,7 +79,7 @@ public class NCBIGff3Processor {
             .map((entry) -> {
                 Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
                 pair.setKey(entry.getKey());
-                //pair.setValue(entry.getValue());
+                pair.setValue(entry.getValue().stream().map(String::trim).collect(Collectors.joining(",")));
                 return pair;
             }).collect(Collectors.toSet());
     }

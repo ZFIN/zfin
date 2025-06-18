@@ -5,11 +5,13 @@ import org.zfin.indexer.IndexerHelper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Gff3NcbiService {
     Gff3NcbiDAO gff3NcbiDAO = new Gff3NcbiDAO();
+    Gff3NcbiAttributesDAO gff3NcbiAttributesDAO = new Gff3NcbiAttributesDAO();
     static final int BATCH_SIZE = 2000;
 
 
@@ -27,6 +29,15 @@ public class Gff3NcbiService {
         try {
             System.out.println("Insert batch number: " + index++ + " with size: " + records.size() + " records.");
             for (Gff3Ncbi record : records) {
+                Set<Gff3NcbiAttributePair> attributePairs = record.getAttributePairs();
+                record.setAttributePairs(attributePairs);
+                // Set the bidirectional relationship before persisting
+                if (attributePairs != null) {
+                    attributePairs.forEach(attributePair -> {
+                        attributePair.setGff3Ncbi(record);
+                    });
+                }
+                // Let Hibernate handle the cascade - only persist the parent
                 gff3NcbiDAO.persist(record);
             }
         } catch (Exception e) {
