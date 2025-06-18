@@ -421,6 +421,12 @@ sub main {
     printStatsBeforeDelete();
     printTimingInformation(39);
 
+    if ($ENV{'EARLY_EXIT'}) {
+        print LOG "Early exit requested, skipping deletion and load steps.\n";
+        print "Early exit requested, skipping deletion and load steps.\n";
+        exit;
+    }
+
     #-----------------------------------------------------------------------------------------------------------------------
     # Step 8: execute the SQL file to do the deletion according to delete list, and do the loading according to te add list
     #-----------------------------------------------------------------------------------------------------------------------
