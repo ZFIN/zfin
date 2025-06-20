@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/")
 public class HomeController {
 
-    private static int countOfDesiredRecentImages = 2;
-    private static int recentPublicationsWindowDays = 30;
+    private static final int countOfDesiredRecentImages = 2;
+    private static final int recentPublicationsWindowDays = 30;
 
     @Autowired
     private ZebrashareRepository zebrashareRepository;
@@ -96,11 +96,10 @@ public class HomeController {
      * @return a list of prioritized recent images
      */
     private static List<Image> getPrioritizedRecentImages(List<Image> carouselImagesInput, long seed) {
-        int acceptableWindowDays = recentPublicationsWindowDays;
         List<Image> recentImages = new ArrayList<>();
 
-        for(int i = 1; i <= 12; i++) {
-            recentImages = filterImagesToRecentDays(carouselImagesInput, acceptableWindowDays * i);
+        for(int month = 1; month <= 12; month++) {
+            recentImages = filterImagesToRecentDays(carouselImagesInput, recentPublicationsWindowDays * month);
             if (recentImages.size() >= countOfDesiredRecentImages) {
                 break;
             }
@@ -121,7 +120,7 @@ public class HomeController {
      * @return a list of images published within the last `days` days
      */
     private static List<Image> filterImagesToRecentDays(List<Image> carouselImagesInput, int days) {
-        List<Image> recentImages = carouselImagesInput.stream()
+        return carouselImagesInput.stream()
                 .filter(image -> {
                     GregorianCalendar pubDate = image.getFigure().getPublication().getPublicationDate();
                     GregorianCalendar cutoff = new GregorianCalendar();
@@ -129,7 +128,6 @@ public class HomeController {
                     return pubDate.after(cutoff);
                 })
                 .collect(Collectors.toList());
-        return recentImages;
     }
 
 }
