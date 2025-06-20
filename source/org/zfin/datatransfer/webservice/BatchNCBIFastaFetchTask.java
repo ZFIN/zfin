@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.webservice;
 
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import java.io.*;
@@ -15,7 +16,9 @@ import java.util.List;
 public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
 
     private static final int BATCH_SIZE = 168;
+    @Setter
     private String inputFilename;
+    @Setter
     private String outputFilename;
     private BufferedWriter writer;
     private BufferedReader reader;
@@ -26,6 +29,15 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     }
 
     public BatchNCBIFastaFetchTask() {
+        initAll();
+        initInputs();
+        initFiles();
+    }
+
+    public BatchNCBIFastaFetchTask(String inputFilename, String outputFilename) {
+        this.inputFilename = inputFilename;
+        this.outputFilename = outputFilename;
+
         initAll();
         initInputs();
         initFiles();
@@ -100,6 +112,10 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
         return lines;
     }
 
+    public String toString() {
+        return "BatchNCBIFastaFetchTask [inputFilename=" + inputFilename + "] [outputFilename=" + outputFilename + "]";
+    }
+
     private void initFiles() {
         writer = getBufferedWriter();
         try {
@@ -121,12 +137,21 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     }
 
     private void initInputs() {
+        if (inputFilename == null) {
+            inputFilename = System.getProperty("ncbiLoadInput");
+        }
 
-        inputFilename = System.getProperty("ncbiLoadInput");
-        outputFilename = System.getProperty("ncbiLoadOutput");
+        if (outputFilename == null) {
+            outputFilename = System.getProperty("ncbiLoadOutput");
+        }
 
         if (null == inputFilename || null == outputFilename) {
             LOG.error("Must provide system properties: ncbiLoadInput and ncbiLoadOutput");
+            System.exit(1);
+        }
+
+        if (!new File(inputFilename).exists()) {
+            LOG.error("Input file " + inputFilename + " does not exist");
             System.exit(1);
         }
     }
@@ -140,4 +165,5 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
             System.exit(6);
         }
     }
+
 }
