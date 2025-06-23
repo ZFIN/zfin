@@ -4,28 +4,28 @@
 #
 
 
-rm -f @BLASTSERVER_BLAST_DATABASE_PATH@/Backup/ensemblProt_zf.x*
-mv @BLASTSERVER_BLAST_DATABASE_PATH@/Current/ensemblProt_zf.x* @BLASTSERVER_BLAST_DATABASE_PATH@/Backup
-cp ensemblProt_zf.x* @BLASTSERVER_BLAST_DATABASE_PATH@/Current/
+rm -f /research/zblastfiles/zmore/blastRegeneration/Backup/ensemblProt_zf.x*
+mv /research/zblastfiles/zmore/blastRegeneration/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/blastRegeneration/Backup
+cp ensemblProt_zf.x* /research/zblastfiles/zmore/blastRegeneration/Current/
 
 
 rm -rf *.fa;
 rm -rf downloaded*;
 
-if ("@WEBHOST_BLAST_DATABASE_PATH@" == "/research/zfin.org/blastdb") then
+if ("/research/zfin.org/blastdb" == "/research/zfin.org/blastdb") then
 
 # this rsync will update the default environment on zygotix for developers
-    /local/bin/rsync -rcvuK @BLASTSERVER_BLAST_DATABASE_PATH@/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/dev_blastdb/Current
-    /local/bin/rsync -rcvuK @BLASTSERVER_BLAST_DATABASE_PATH@/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/testdb/Current/
-    /local/bin/rsync -rcvuK @BLASTSERVER_BLAST_DATABASE_PATH@/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/trunk/Current/
+    /local/bin/rsync -rcvuK /research/zblastfiles/zmore/blastRegeneration/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/dev_blastdb/Current
+    /local/bin/rsync -rcvuK /research/zblastfiles/zmore/blastRegeneration/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/testdb/Current/
+    /local/bin/rsync -rcvuK /research/zblastfiles/zmore/blastRegeneration/Current/ensemblProt_zf.x* /research/zblastfiles/zmore/trunk/Current/
 
 
     # update webhost only if this is a prod run
-    /bin/rm -f @WEBHOST_BLAST_DATABASE_PATH@/Backup/ensemblProt_zf.x*
-    /bin/mv @WEBHOST_BLAST_DATABASE_PATH@/Current/ensemblProt_zf.x* @WEBHOST_BLAST_DATABASE_PATH@/Backup
-    /bin/cp ensemblProt_zf.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/
-    /bin/chgrp zfishweb @WEBHOST_BLAST_DATABASE_PATH@/Current/ensemblProt_zf*.x*
-    /bin/chmod 664 @WEBHOST_BLAST_DATABASE_PATH@/Current/ensemblProt_zf*.x*  
+    /bin/rm -f /research/zfin.org/blastdb/Backup/ensemblProt_zf.x*
+    /bin/mv /research/zfin.org/blastdb/Current/ensemblProt_zf.x* /research/zfin.org/blastdb/Backup
+    /bin/cp ensemblProt_zf.x* /research/zfin.org/blastdb/Current/
+    /bin/chgrp zfishweb /research/zfin.org/blastdb/Current/ensemblProt_zf*.x*
+    /bin/chmod 664 /research/zfin.org/blastdb/Current/ensemblProt_zf*.x*  
 
 endif
 

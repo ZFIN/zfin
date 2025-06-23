@@ -6,13 +6,13 @@
 #      -v            verbose
 #      fasta file
  
-echo "==| at @BLASTSERVER_FASTA_FILE_PATH@/EnsemblProt |=="
+echo "==| at /research/zblastfiles/files/blastRegeneration/EnsemblProt |=="
 
 rm xdformat_ensemblProt_zf.log ;
 
 echo "==| Format the file into blast db |== "
 
-@BLASTSERVER_XDFORMAT@ -p -e xdformat_ensemblProt_zf.log -t "Zebrafish Ensembl Proteins" -I -o ensemblProt_zf ensemblProt_zf.fa
+/opt/ab-blast/xdformat -p -e xdformat_ensemblProt_zf.log -t "Zebrafish Ensembl Proteins" -I -o ensemblProt_zf ensemblProt_zf.fa
 
 echo "==| Exit convertEnsemblProt.sh |== "
 
