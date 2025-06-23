@@ -70,6 +70,12 @@ public class Gff3Ncbi extends BaseEntity {
         }
         return null;
     }
+
+    public String getGeneZdbID() {
+        return attributePairs.stream()
+            .filter(pair -> "gene_id".equals(pair.getKey()))
+            .findAny().get().getValue();
+    }
 }
 
 

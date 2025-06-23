@@ -10,9 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
-import org.zfin.database.HibernateUpgradeHelper;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
@@ -238,25 +239,25 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @SuppressWarnings("unchecked")
     public List<String> getGenbankCdnaDBLinks() {
         return (List<String>) HibernateUtil.currentSession().createNativeQuery("" +
-                                                                            "select  dbl.dblink_acc_num from db_link dbl , marker m, marker_type_group_member gm " +
-                                                                            "where dbl.dblink_fdbcont_zdb_id in  " +
-                                                                            "(  " +
-                                                                            "   select  " +
-                                                                            "   fdbc.fdbcont_zdb_id  " +
-                                                                            "   from foreign_db_contains fdbc, foreign_db db, foreign_db_data_type dt  " +
-                                                                            "   where " +
-                                                                            "   db.fdb_db_name in( 'GenBank', 'RefSeq')  " +
-                                                                            "   and " +
-                                                                            "   dt.fdbdt_data_type = 'RNA'  " +
-                                                                            "   and " +
-                                                                            "   fdbc.fdbcont_fdb_db_id = db.fdb_db_pk_id  " +
-                                                                            "   and " +
-                                                                            "   fdbc.fdbcont_fdbdt_id = dt.fdbdt_pk_id  " +
-                                                                            ")  " +
-                                                                            "and m.mrkr_zdb_id=dbl.dblink_linked_recid " +
-                                                                            "and gm.mtgrpmem_mrkr_type=m.mrkr_type " +
-                                                                            "and gm.mtgrpmem_mrkr_type_group in ('GENEDOM','CDNA_AND_EST') " +
-                                                                            " ").list();
+                                                                               "select  dbl.dblink_acc_num from db_link dbl , marker m, marker_type_group_member gm " +
+                                                                               "where dbl.dblink_fdbcont_zdb_id in  " +
+                                                                               "(  " +
+                                                                               "   select  " +
+                                                                               "   fdbc.fdbcont_zdb_id  " +
+                                                                               "   from foreign_db_contains fdbc, foreign_db db, foreign_db_data_type dt  " +
+                                                                               "   where " +
+                                                                               "   db.fdb_db_name in( 'GenBank', 'RefSeq')  " +
+                                                                               "   and " +
+                                                                               "   dt.fdbdt_data_type = 'RNA'  " +
+                                                                               "   and " +
+                                                                               "   fdbc.fdbcont_fdb_db_id = db.fdb_db_pk_id  " +
+                                                                               "   and " +
+                                                                               "   fdbc.fdbcont_fdbdt_id = dt.fdbdt_pk_id  " +
+                                                                               ")  " +
+                                                                               "and m.mrkr_zdb_id=dbl.dblink_linked_recid " +
+                                                                               "and gm.mtgrpmem_mrkr_type=m.mrkr_type " +
+                                                                               "and gm.mtgrpmem_mrkr_type_group in ('GENEDOM','CDNA_AND_EST') " +
+                                                                               " ").list();
     }
 
     /**
@@ -308,19 +309,19 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @SuppressWarnings("unchecked")
     public List<String> getGenbankSequenceDBLinks() {
         return (List<String>) HibernateUtil.currentSession().createNativeQuery("" +
-                                                                            " select dblink_acc_num " +
-                                                                            "from db_link " +
-                                                                            "where dblink_fdbcont_zdb_id in " +
-                                                                            "(" +
-                                                                            "   select " +
-                                                                            "   fdbcont_zdb_id " +
-                                                                            "   from foreign_db_contains, foreign_db, foreign_db_data_type " +
-                                                                            "   where fdb_db_name = 'GenBank' " +
-                                                                            "   and fdbdt_super_type = 'sequence' " +
-                                                                            "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
-                                                                            "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
-                                                                            ")   " +
-                                                                            "").list();
+                                                                               " select dblink_acc_num " +
+                                                                               "from db_link " +
+                                                                               "where dblink_fdbcont_zdb_id in " +
+                                                                               "(" +
+                                                                               "   select " +
+                                                                               "   fdbcont_zdb_id " +
+                                                                               "   from foreign_db_contains, foreign_db, foreign_db_data_type " +
+                                                                               "   where fdb_db_name = 'GenBank' " +
+                                                                               "   and fdbdt_super_type = 'sequence' " +
+                                                                               "   and fdbcont_fdbdt_id = fdbdt_pk_id " +
+                                                                               "   and fdbcont_fdb_db_id = fdb_db_pk_id " +
+                                                                               ")   " +
+                                                                               "").list();
     }
 
     public List<DBLink> getDBLinks(String accessionString, ReferenceDatabase... referenceDatabases) {
@@ -903,13 +904,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
             }
         }
         Query<Tuple> query = HibernateUtil.currentSession().createQuery(hql, Tuple.class)
-                .setParameter("markerZdbId", marker.getZdbID())
-                .setParameter("displayGroup", groupName)
-                .setParameterList("types", types);
+            .setParameter("markerZdbId", marker.getZdbID())
+            .setParameter("displayGroup", groupName)
+            .setParameterList("types", types);
         List<Tuple> results = query.list();
         return results.stream().map(tuple -> {
-            MarkerDBLink dblink = (MarkerDBLink)tuple.get(0);
-            MarkerRelationship mr = (MarkerRelationship)tuple.get(1);
+            MarkerDBLink dblink = (MarkerDBLink) tuple.get(0);
+            MarkerRelationship mr = (MarkerRelationship) tuple.get(1);
 
             RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
             MarkerRelationshipType relationshipType = mr.getMarkerRelationshipType();
@@ -988,12 +989,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
             .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
             .setResultTransformer(
 
-                                            (Object[] tuple, String[] aliases) -> {
+                (Object[] tuple, String[] aliases) -> {
                     MarkerDBLink dbLink = new MarkerDBLink();
                     dbLink.setAccessionNumber(tuple[0].toString());
                     dbLink.setDataZdbID(tuple[1].toString());
                     return dbLink;
-            })
+                })
             .list();
         Map<String, String> accessionCandidates = new HashMap<String, String>();
         for (DBLink dbLink : dblinks) {
@@ -1077,7 +1078,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
             .setParameter("dataZdbID", marker.getZdbID())
             .setResultTransformer(
 
-                                                           (Object[] tuple, String[] aliases) -> {
+                (Object[] tuple, String[] aliases) -> {
                     AccessionPresentation accessionPresentation = new AccessionPresentation();
                     accessionPresentation.setAccessionNumber(tuple[0].toString());
                     if (tuple[2] == null) {
@@ -1087,7 +1088,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                     }
                     return accessionPresentation;
 
-            })
+                })
             .list();
     }
 
@@ -1150,12 +1151,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
                                                          ForeignDBDataType.SuperType superType,
                                                          Species.Type species) {
         String hql = """
-                      from ReferenceDatabase referenceDatabase 
-                      where referenceDatabase.foreignDB.dbName in (:dbNames) 
-                      and referenceDatabase.foreignDBDataType.dataType in  (:types)
-                      and referenceDatabase.foreignDBDataType.superType = :superType
-                      and referenceDatabase.organism  = :organism
-                     """;
+             from ReferenceDatabase referenceDatabase 
+             where referenceDatabase.foreignDB.dbName in (:dbNames) 
+             and referenceDatabase.foreignDBDataType.dataType in  (:types)
+             and referenceDatabase.foreignDBDataType.superType = :superType
+             and referenceDatabase.organism  = :organism
+            """;
         Query<ReferenceDatabase> query = HibernateUtil.currentSession().createQuery(hql, ReferenceDatabase.class);
         query.setParameterList("dbNames", availableNames);
         query.setParameterList("types", dataTypes);
@@ -1251,6 +1252,26 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public DisplayGroup getDisplayGroup(DisplayGroup.GroupName displayGroupName) {
         return HibernateUtil.currentSession().createQuery("from DisplayGroup where groupName = :groupName", DisplayGroup.class)
             .setParameter("groupName", displayGroupName).uniqueResult();
+    }
+
+    @Override
+    public List<MarkerGenomeLocation> getAllGenomeLocations(GenomeLocation.Source source) {
+        Session session = HibernateUtil.currentSession();
+        String hql = """
+            from MarkerGenomeLocation
+            where source = :source
+            """;
+        Query<MarkerGenomeLocation> query = session.createQuery(hql, MarkerGenomeLocation.class);
+        query.setParameter("source", source);
+
+        return query.list();
+    }
+
+    @Override
+    public void saveOrUpdateGenomeLocation(GenomeLocation genomeLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.saveOrUpdate(genomeLocation);
+        session.flush();
     }
 }
 

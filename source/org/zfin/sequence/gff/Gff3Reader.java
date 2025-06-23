@@ -4,6 +4,11 @@ import htsjdk.tribble.AbstractFeatureReader;
 import htsjdk.tribble.FeatureReader;
 import htsjdk.tribble.gff.Gff3Codec;
 import htsjdk.tribble.gff.Gff3Feature;
+import org.hibernate.SessionFactory;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * Utility class for reading GFF3 files using HTSJDK
@@ -24,15 +31,24 @@ public class Gff3Reader {
         this.filePath = filePath;
     }
 
+    public static void init() {
+        ZfinProperties.init();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false);
+        }
+    }
+
     /**
      * Initialize the GFF3 reader
      */
     public void initialize() throws IOException {
+        init();
         File gff3File = new File(filePath);
         if (!gff3File.exists()) {
             throw new IOException("GFF3 file not found: " + filePath);
         }
-        
+
         // Create reader with GFF3 codec
         reader = AbstractFeatureReader.getFeatureReader(filePath, new Gff3Codec(), false);
     }
@@ -47,11 +63,11 @@ public class Gff3Reader {
 
         List<Gff3Feature> features = new ArrayList<>();
         Iterator<Gff3Feature> iterator = reader.iterator();
-        
+
         while (iterator.hasNext()) {
             features.add(iterator.next());
         }
-        
+
         return features;
     }
 
@@ -62,26 +78,6 @@ public class Gff3Reader {
         List<Gff3Feature> allFeatures = readAllFeatures();
         return allFeatures.stream()
             .filter(feature -> feature.getType().equals(featureType))
-            .toList();
-    }
-
-    /**
-     * Read features by source (column 2 in GFF3)
-     */
-    public List<Gff3Feature> readFeaturesBySource(String source) throws IOException {
-        List<Gff3Feature> allFeatures = readAllFeatures();
-        return allFeatures.stream()
-            .filter(feature -> feature.getSource().equals(source))
-            .toList();
-    }
-
-    /**
-     * Read features by chromosome/sequence ID
-     */
-    public List<Gff3Feature> readFeaturesByChromosome(String chromosome) throws IOException {
-        List<Gff3Feature> allFeatures = readAllFeatures();
-        return allFeatures.stream()
-            .filter(feature -> feature.getContig().equals(chromosome))
             .toList();
     }
 
@@ -98,7 +94,7 @@ public class Gff3Reader {
         System.out.println("Score: " + feature.getScore());
         System.out.println("Strand: " + feature.getStrand());
         System.out.println("Phase: " + feature.getPhase());
-        
+
         // Print attributes
         Map<String, List<String>> attributes = feature.getAttributes();
         System.out.println("Attributes:");
@@ -116,14 +112,6 @@ public class Gff3Reader {
     }
 
     /**
-     * Get first attribute value (common case)
-     */
-    public String getFirstAttributeValue(Gff3Feature feature, String attributeName) {
-        List<String> values = getAttributeValues(feature, attributeName);
-        return values.isEmpty() ? null : values.get(0);
-    }
-
-    /**
      * Close the reader
      */
     public void close() throws IOException {
@@ -135,7 +123,7 @@ public class Gff3Reader {
     /**
      * Example usage and testing
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.out.println("Usage: java Gff3Reader <path-to-gff3-file>");
             return;
@@ -172,4 +160,5 @@ public class Gff3Reader {
             }
         }
     }
+
 }
