@@ -48,14 +48,14 @@ public class Gff3NcbiService {
         HibernateUtil.currentSession().clear();
     }
 
-    private Collection<List<Gff3Ncbi>> createBatch(List<Gff3Ncbi> resultList) {
+    public static Collection<List<Gff3Ncbi>> createBatch(List<Gff3Ncbi> resultList) {
         IndexerHelper helper = new IndexerHelper();
         helper.startProcess();
         int numberOfBatches = resultList.size() / BATCH_SIZE + 1;
         AtomicInteger counter = new AtomicInteger();
         Collection<List<Gff3Ncbi>> batchedList = resultList.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / numberOfBatches)).values();
-        helper.addQuickReport(" Create batches: " + batchedList.size());
-        System.out.println("Number of batches: " + batchedList.size() + " from " + resultList.size() + " records. ");
+        helper.addQuickReport(" Batches of size: " + batchedList.size());
+        System.out.println("Number of batches: " + numberOfBatches + " of size " + BATCH_SIZE);
         return batchedList;
     }
 

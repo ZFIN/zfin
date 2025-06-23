@@ -58,6 +58,18 @@ public class Gff3Ncbi extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "gff3Ncbi", fetch = FetchType.LAZY)
     private Set<Gff3NcbiAttributePair> attributePairs;
 
+    public String getGeneID() {
+        String dbxrefEntry = attributePairs.stream()
+            .filter(pair -> "Dbxref".equals(pair.getKey()))
+            .findAny().get().getValue();
+        String[] xrefComponents = dbxrefEntry.split(",");
+        for (String component : xrefComponents) {
+            if (component.startsWith("GeneID:")) {
+                return component.split(":")[1];
+            }
+        }
+        return null;
+    }
 }
 
 
