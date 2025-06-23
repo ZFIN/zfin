@@ -4,6 +4,8 @@
 package org.zfin.sequence.repository;
 
 import org.zfin.Species;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -153,6 +155,10 @@ public interface SequenceRepository {
     Integer deleteReferenceProteinByDBLinkID(String dbLinkID);
 
     DisplayGroup getDisplayGroup(DisplayGroup.GroupName displayGroupName);
+
+    List<MarkerGenomeLocation> getAllGenomeLocations(GenomeLocation.Source source);
+
+    void saveOrUpdateGenomeLocation(GenomeLocation genomeLocation);
 }
 
 
