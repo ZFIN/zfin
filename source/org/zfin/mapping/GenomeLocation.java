@@ -115,7 +115,11 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public String getUrl() {
         if (source.getDisplayName().contains("NCBI")) {
-            return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
+            if(source.equals(NCBI_LOADER)) {
+                return source.getUrl() + accessionNumber + "&assm=GCF_049306965.1&context=gene";
+            } else {
+                return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
+            }
         } else if (List.of(ZFIN, ZFIN_Zv9).contains(source)) {
             return "/action/jbrowse/byName?name=" + accessionNumber;
         } else {
@@ -213,6 +217,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         VEGA("VegaStartEndLoader", true, "Vega", "http://vega.sanger.ac.uk/Danio_rerio/Location/View?db=core;g="),
         //NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
         NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
+        NCBI_LOADER("NCBILoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
         UCSC("UCSCStartEndLoader", true, "UCSC", "https://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer11&position="),
         GENERAL_LOAD("General Load", false, "General Load", null),
         OTHER_MAPPING("other map location", false, "Other Mapping", null);
