@@ -32,7 +32,7 @@ echo "==| Go over fasta file for defline adjustment |=="
 
 /bin/cp downloaded ensprot.fa;
 
-/research/zusers/blast/BLAST_load/target/EnsemblP/deflineSwitch.pl ensprot.fa > ensemblProt_zf.fa
+@TARGET_PATH@/EnsemblP/deflineSwitch.pl ensprot.fa > ensemblProt_zf.fa
 
 /bin/rm -f downloaded;
 /bin/rm ensprot.fa;
