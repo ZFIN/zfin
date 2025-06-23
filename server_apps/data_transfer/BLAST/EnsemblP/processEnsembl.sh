@@ -18,9 +18,9 @@
 #
 
 
-@TARGET_PATH@/EnsemblP/downloadEnsembl.sh
+/research/zusers/blast/BLAST_load/target/EnsemblP/downloadEnsembl.sh
 
-@TARGET_PATH@/EnsemblP/convertEnsembl.sh 
-@TARGET_PATH@/EnsemblP/pushEnsembl.sh
+/research/zusers/blast/BLAST_load/target/EnsemblP/convertEnsembl.sh 
+/research/zusers/blast/BLAST_load/target/EnsemblP/pushEnsembl.sh
 
 exit
