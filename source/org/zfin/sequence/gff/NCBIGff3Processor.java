@@ -8,10 +8,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -53,6 +50,7 @@ public class NCBIGff3Processor {
                 ncbi.setScore(String.valueOf(feature.getScore()));
                 ncbi.setFrame(String.valueOf(feature.getPhase()));
                 ncbi.setStrand(feature.getStrand() != null ? feature.getStrand().name() : "unknown");
+                ncbi.setAttributes(generateAttributes(feature.getAttributes()));
                 ncbi.setAttributePairs(generateAttributePairs(feature.getAttributes()));
                 return ncbi;
             })
@@ -74,12 +72,35 @@ public class NCBIGff3Processor {
         reader.close();
     }
 
-    private Set<Gff3NcbiAttributePair> generateAttributePairs(Map<String, List<String>> attributes) {
+    private String generateAttributes(Map<String, List<String>> attributes) {
         return attributes.entrySet().stream()
             .map((entry) -> {
                 Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
                 pair.setKey(entry.getKey());
                 pair.setValue(entry.getValue().stream().map(String::trim).collect(Collectors.joining(",")));
+                return pair;
+            }).collect(Collectors.toSet()).stream().map(pair -> pair.getKey() + "=" + pair.getValue()).collect(Collectors.joining(";"));
+    }
+
+    private static Set<String> persistKeySet = new HashSet<>();
+
+    static {
+        persistKeySet.add("gene_id");
+        persistKeySet.add("gene_name");
+        //persistKeySet.add("transcript");
+        persistKeySet.add("Parent");
+        persistKeySet.add("ID");
+        persistKeySet.add("Dbxref");
+    }
+
+    private Set<Gff3NcbiAttributePair> generateAttributePairs(Map<String, List<String>> attributes) {
+        return attributes.entrySet().stream()
+            .filter(entry -> persistKeySet.contains(entry.getKey()))
+            .map((entry) -> {
+                Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
+                pair.setKey(entry.getKey());
+                pair.setValue(entry.getValue().stream()
+                    .map(String::trim).collect(Collectors.joining(",")));
                 return pair;
             }).collect(Collectors.toSet());
     }
