@@ -667,6 +667,9 @@ dependencies {
     implementation group: 'org.apache.cxf', name: 'cxf-rt-rs-client', version: '3.4.2'
     implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.12.2'
     implementation group: 'org.json', name: 'json', version: '20210307'
+    
+    // JSON Schema validation for ZFIN report serialization
+    implementation group: 'com.github.erosb', name: 'everit-json-schema', version: '1.14.1'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
     //implementation group: 'log4j', name: 'log4j', version: '1.2.15'
@@ -779,6 +782,15 @@ test {
 
         if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
+
+
+//            includeTestsMatching "org.zfin.datatransfer.report.model.ZfinReportTest"
+//            includeTestsMatching "org.zfin.datatransfer.report.model.LoadReportMetaTest"
+//            includeTestsMatching "org.zfin.datatransfer.report.model.LoadReportSummaryTest"
+//            includeTestsMatching "org.zfin.datatransfer.report.model.LoadReportActionTest"
+//            includeTestsMatching "org.zfin.datatransfer.report.util.ZfinReportSerializationUtilTest"
+
+
             //spock tests
 
             includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
