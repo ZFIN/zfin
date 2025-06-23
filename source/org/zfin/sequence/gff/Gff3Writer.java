@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
@@ -22,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 @Log4j2
@@ -74,6 +78,7 @@ public class Gff3Writer {
     }
 
     private void createZfinGeneFile() throws IOException {
+        HibernateUtil.createTransaction();
         Map<String, Object> params = new HashMap<>();
         params.put("feature", "gene");
 
@@ -96,7 +101,7 @@ public class Gff3Writer {
             .collect(Collectors.toSet());
 
         // Gene IDs not matching a ZFIN record
-        List<String> notFoundGeneIDs  = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
+        List<String> notFoundGeneIDs = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
 
         Map<String, String> genbankZFiNMap = genbankList.stream()
             .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
@@ -114,7 +119,9 @@ public class Gff3Writer {
                 }
             })
             .toList();
-        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
+        HibernateUtil.rollbackTransaction();
+        upsertSequenceFeatureChromosomeRecords(filteredResults);
+//        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
     }
 
     private void createRefSeqFile() throws IOException {
@@ -258,6 +265,38 @@ public class Gff3Writer {
         } catch (IOException e) {
             System.out.println("ERROR: Could not write report file: " + e.getMessage());
         }
+    }
+
+    private void upsertSequenceFeatureChromosomeRecords(List<Gff3Ncbi> filteredResults) {
+        HibernateUtil.createTransaction();
+        try {
+
+            List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
+            Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
+                .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
+            filteredResults.forEach(gff3Ncbi -> {
+                String geneID = gff3Ncbi.getGeneID();
+                MarkerGenomeLocation genomeLocation;
+                if (geneIDMap.containsKey(geneID)) {
+                    genomeLocation = geneIDMap.get(geneID);
+                } else {
+                    genomeLocation = new MarkerGenomeLocation();
+                }
+                genomeLocation.setAccessionNumber(geneID);
+                genomeLocation.setMarker(getMarkerRepository().getMarker(gff3Ncbi.getGeneZdbID()));
+                genomeLocation.setAssembly("GRCz12tu");
+                genomeLocation.setChromosome(gff3Ncbi.getChromosome());
+                genomeLocation.setStart(gff3Ncbi.getStart());
+                genomeLocation.setEnd(gff3Ncbi.getEnd());
+                genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER);
+                getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
+            });
+        } catch (Exception e) {
+            log.log(Level.ERROR, "Error saving genome location: ", e);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        String n = "chr";
     }
 
 }
