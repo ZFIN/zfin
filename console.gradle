@@ -241,3 +241,8 @@ task csv2xlsx(type: JavaExec) {
     // So this can be called like so:
     // gradle csv2xlsx --args="output.xlsx input1.csv input2.csv input3.csv..."
 }
+
+task createGff3Files(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.gff.Gff3Writer'
+}

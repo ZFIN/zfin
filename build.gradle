@@ -708,7 +708,7 @@ dependencies {
 
 
 //    testCompile group: 'org.openqa.selenium', name: 'selenium', version: '0.8.1'
-
+    implementation("com.github.samtools:htsjdk:4.3.0")
     //testImplementation('org.codehaus.groovy:groovy-all:3.0.6')
     testImplementation group: 'org.spockframework', name: 'spock-junit4', version: '2.3-groovy-3.0'
     testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.3-groovy-3.0'
@@ -725,6 +725,7 @@ dependencies {
 
     // not working: odd
     //testCompile group: 'org.jenkins-ci.plugins', name: 'testInProgress-client', version: '1.1'
+    implementation files('lib/Java/opencsv-2.1.jar')
     implementation files('lib/Java/testInProgress-client-1.1.jar')
     implementation files('lib/Java/selenium-api-2.35.0.jar')
     implementation files('lib/Java/selenium-htmlunit-driver-2.35.0.jar')

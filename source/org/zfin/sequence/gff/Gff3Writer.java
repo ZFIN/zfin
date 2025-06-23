@@ -1,0 +1,265 @@
+package org.zfin.sequence.gff;
+
+import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.hibernate.SessionFactory;
+import org.zfin.framework.HibernateSessionCreator;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.load.LoadAction;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+
+@Log4j2
+public class Gff3Writer {
+
+    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
+
+    Gff3NcbiDAO dao = new Gff3NcbiDAO();
+    public Set<LoadAction> actions = new HashSet<>();
+
+    public static void main(String[] args) {
+        init();
+        Gff3Writer processor = new Gff3Writer();
+        processor.start();
+    }
+
+    private ReportBuilder.SummaryTable summaryTable;
+
+    private void start() {
+        try {
+            ReportBuilder builder = prepareReports();
+            createZfinGeneFile();
+            createRefSeqFile();
+            createReport(builder);
+        } catch (IOException e) {
+            log.error("Error processing GFF3 file", e);
+        }
+    }
+
+    private ReportBuilder prepareReports() {
+        ReportBuilder builder = new ReportBuilder();
+        builder.setTitle("GFF3 Generation Report");
+        summaryTable = builder.addSummaryTable("GFF Feature Records");
+        summaryTable.setHeaders(List.of("GFF Feature", "Number of Records exported"));
+        return builder;
+    }
+
+    private void createReport(ReportBuilder builder) {
+        ObjectNode report = builder.build();
+        try {
+            String jsonString = builder.getJsonString(report);
+
+            // Write to file
+            FileUtils.writeStringToFile(new File(".", "gff3_ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
+            writeOutputReportFile(jsonString);
+
+        } catch (IOException e) {
+            log.error("JSON reporting failed: " + e.getMessage(), e);
+        }
+    }
+
+    private void createZfinGeneFile() throws IOException {
+        Map<String, Object> params = new HashMap<>();
+        params.put("feature", "gene");
+
+        Pagination pagination = new Pagination();
+        pagination.setLimit(0);
+        pagination.setPage(0);
+        Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
+        summaryTable.addSummaryRow(List.of("ZFIN genes", String.valueOf(totalRecords)));
+        System.out.println("Total NCBI Gene records found: " + totalRecords);
+        pagination.setLimit(400000);
+        pagination.setPage(0);
+        List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
+        List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
+        // remove records without ZFIN gene association
+        // retrieve all MarkerDBLinks for zfin genes with genbank accession
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        System.out.println("Total GenBank Records in ZFIN found: " + genbankList.size());
+        Set<String> genBankIDsInZFIN = genbankList.stream()
+            .map(DBLink::getAccessionNumber)
+            .collect(Collectors.toSet());
+
+        // Gene IDs not matching a ZFIN record
+        List<String> notFoundGeneIDs  = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
+
+        Map<String, String> genbankZFiNMap = genbankList.stream()
+            .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
+        List<Gff3Ncbi> filteredResults = results.stream()
+            .filter(record -> record.getAttributePairs().stream()
+                .anyMatch(pair -> genBankIDsInZFIN.contains(pair.getGeneID())))
+            .peek(gff3NcbiRecord -> {
+                String geneID = gff3NcbiRecord.getGeneID();
+                String zfinID = genbankZFiNMap.get(geneID);
+                if (zfinID != null) {
+                    Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
+                    pair.setKey("gene_id");
+                    pair.setValue(zfinID);
+                    gff3NcbiRecord.getAttributePairs().add(pair);
+                }
+            })
+            .toList();
+        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
+    }
+
+    private void createRefSeqFile() throws IOException {
+        Map<String, Object> params = new HashMap<>();
+        params.put("source", "BestRefSeq");
+
+        Pagination pagination = new Pagination();
+        pagination.setLimit(0);
+        pagination.setPage(0);
+        Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
+        summaryTable.addSummaryRow(List.of("ZFIN RefSeq Accessions", String.valueOf(totalRecords)));
+        System.out.println("Total records found: " + totalRecords);
+        pagination.setLimit(400000);
+        pagination.setPage(0);
+        List<Gff3Ncbi> results = dao.findRecordsBySource("BestRefSeq");
+        writeGff3File("zfin_refSeq.GRCz12.gff3", results);
+    }
+
+    public static void init() {
+        ZfinProperties.init();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory == null) {
+            new HibernateSessionCreator(false);
+        }
+    }
+
+    public void writeGff3File(String gff3FilePath, List<Gff3Ncbi> records) throws IOException {
+        File file = new File(gff3FilePath);
+
+        try {
+            FileWriter outputfile = new FileWriter(file);
+            CSVWriter writer = new CSVWriter(outputfile, '\t', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+
+            String[] header = {"##gff-version 3"};
+            writer.writeNext(header);
+            Collection<List<Gff3Ncbi>> batches = Gff3NcbiService.createBatch(records);
+            batches.forEach(batch -> {
+                List<String[]> collect = batch.stream().map(record -> {
+                    String[] line = new String[9];
+                    line[0] = record.getChromosome();
+                    line[1] = record.getSource();
+                    line[2] = record.getFeature();
+                    line[3] = String.valueOf(record.getStart());
+                    line[4] = String.valueOf(record.getEnd());
+                    line[5] = record.getScore();
+                    line[6] = record.getStrand();
+                    line[7] = String.valueOf(record.getFrame());
+                    line[8] = generateAttributeColumn(record.getAttributePairs());
+                    return line;
+                }).collect(Collectors.toList());
+                writer.writeAll(collect);
+                try {
+                    writer.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String generateAttributeColumn(Set<Gff3NcbiAttributePair> attributePairs) {
+        TreeSet<Gff3NcbiAttributePair> sortedPairs = new TreeSet<>(attributePairs);
+        return sortedPairs.stream().filter(pair -> persistKeySet.contains(pair.getKey())).map(pair -> pair.getKey() + "=" + pair.getValue()).collect(Collectors.joining(";"));
+    }
+
+    private String generateAttributes(Map<String, List<String>> attributes) {
+        return attributes.entrySet().stream().map((entry) -> {
+            Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
+            pair.setKey(entry.getKey());
+            pair.setValue(entry.getValue().stream().map(String::trim).collect(Collectors.joining(",")));
+            return pair;
+        }).collect(Collectors.toSet()).stream().map(pair -> pair.getKey() + "=" + pair.getValue()).collect(Collectors.joining(";"));
+    }
+
+    private static Set<String> persistKeySet = new LinkedHashSet<>();
+
+    static {
+        persistKeySet.add("ID");
+        persistKeySet.add("Dbxref");
+        persistKeySet.add("gene_id");
+        persistKeySet.add("gene_name");
+        persistKeySet.add("transcript");
+        //persistKeySet.add("Parent");
+    }
+
+    private Set<Gff3NcbiAttributePair> generateAttributePairs(Map<String, List<String>> attributes) {
+        return attributes.entrySet().stream().filter(entry -> persistKeySet.contains(entry.getKey())).map((entry) -> {
+            Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
+            pair.setKey(entry.getKey());
+            pair.setValue(entry.getValue().stream().map(String::trim).collect(Collectors.joining(",")));
+            return pair;
+        }).collect(Collectors.toSet());
+    }
+
+    static Map<String, String> chromoMap = new HashMap<>();
+
+    static {
+        chromoMap.put("NC_133176.1", "1");
+        chromoMap.put("NC_133177.1", "2");
+        chromoMap.put("NC_133178.1", "3");
+        chromoMap.put("NC_133179.1", "4");
+        chromoMap.put("NC_133180.1", "5");
+        chromoMap.put("NC_133181.1", "6");
+        chromoMap.put("NC_133182.1", "7");
+        chromoMap.put("NC_133183.1", "8");
+        chromoMap.put("NC_133184.1", "9");
+        chromoMap.put("NC_133185.1", "10");
+        chromoMap.put("NC_133186.1", "11");
+        chromoMap.put("NC_133187.1", "12");
+        chromoMap.put("NC_133188.1", "13");
+        chromoMap.put("NC_133189.1", "14");
+        chromoMap.put("NC_133190.1", "15");
+        chromoMap.put("NC_133191.1", "16");
+        chromoMap.put("NC_133192.1", "17");
+        chromoMap.put("NC_133193.1", "18");
+        chromoMap.put("NC_133194.1", "19");
+        chromoMap.put("NC_133195.1", "20");
+        chromoMap.put("NC_133196.1", "21");
+        chromoMap.put("NC_133197.1", "22");
+        chromoMap.put("NC_133198.1", "23");
+        chromoMap.put("NC_133199.1", "24");
+        chromoMap.put("NC_133200.1", "25");
+        chromoMap.put("NC_002333.2", "MT");
+
+    }
+
+    private void writeOutputReportFile(String jsonString) {
+        String sourceRoot = ZfinPropertiesEnum.SOURCEROOT.value();
+        if (sourceRoot == null) {
+            sourceRoot = System.getenv("SOURCEROOT");
+        }
+        File reportFile = new File(".", "gff3_ncbi_report.html");
+        try {
+            String template = "./home/uniprot/zfin-report-template.html";
+            String templateContents = FileUtils.readFileToString(new File(template));
+            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
+            FileUtils.writeStringToFile(reportFile, filledTemplate);
+        } catch (IOException e) {
+            System.out.println("ERROR: Could not write report file: " + e.getMessage());
+        }
+    }
+
+}
+
+
