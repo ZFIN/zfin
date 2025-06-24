@@ -3,7 +3,6 @@ package org.zfin.sequence.gff;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.hibernate.SessionFactory;
@@ -44,7 +43,7 @@ public class Gff3Writer {
 
     private ReportBuilder.SummaryTable summaryTable;
 
-    private void start() {
+    public void start() {
         try {
             ReportBuilder builder = prepareReports();
             createZfinGeneFile();
@@ -78,6 +77,12 @@ public class Gff3Writer {
     }
 
     private void createZfinGeneFile() throws IOException {
+        List<Gff3Ncbi> filteredResults = getZfinGeneRecords();
+        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
+        upsertSequenceFeatureChromosomeRecords(filteredResults);
+    }
+
+    private List<Gff3Ncbi> getZfinGeneRecords() {
         HibernateUtil.createTransaction();
         Map<String, Object> params = new HashMap<>();
         params.put("feature", "gene");
@@ -100,28 +105,12 @@ public class Gff3Writer {
             .map(DBLink::getAccessionNumber)
             .collect(Collectors.toSet());
 
-        // Gene IDs not matching a ZFIN record
-        List<String> notFoundGeneIDs = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
-
-        Map<String, String> genbankZFiNMap = genbankList.stream()
-            .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
+        // filter out those records that have a ZFIN Gene ID
         List<Gff3Ncbi> filteredResults = results.stream()
-            .filter(record -> record.getAttributePairs().stream()
-                .anyMatch(pair -> genBankIDsInZFIN.contains(pair.getGeneID())))
-            .peek(gff3NcbiRecord -> {
-                String geneID = gff3NcbiRecord.getGeneID();
-                String zfinID = genbankZFiNMap.get(geneID);
-                if (zfinID != null) {
-                    Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
-                    pair.setKey("gene_id");
-                    pair.setValue(zfinID);
-                    gff3NcbiRecord.getAttributePairs().add(pair);
-                }
-            })
+            .filter(record -> record.getGeneZdbID() != null)
             .toList();
         HibernateUtil.rollbackTransaction();
-        upsertSequenceFeatureChromosomeRecords(filteredResults);
-//        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
+        return filteredResults;
     }
 
     private void createRefSeqFile() throws IOException {
@@ -148,7 +137,7 @@ public class Gff3Writer {
         }
     }
 
-    public void writeGff3File(String gff3FilePath, List<Gff3Ncbi> records) throws IOException {
+    public void writeGff3File(String gff3FilePath, List<Gff3Ncbi> records) {
         File file = new File(gff3FilePath);
 
         try {
