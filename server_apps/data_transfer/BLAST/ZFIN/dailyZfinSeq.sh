@@ -15,13 +15,15 @@ cd ..
 echo "";
 
 echo "process zfin_publishedProtein" ;
-#zfin_publishedProtein/processzfin_publishedProtein.sh
-
+cd zfin_publishedProtein
+#./processzfin_publishedProtein.sh
+cd ..
 echo "";
 
 log_message "process zfin_unreleasedProtein" ;
-#zfin_unreleasedProtein/processzfin_unreleasedProtein.sh
-
+cd zfin_unreleasedProtein
+#./processzfin_unreleasedProtein.sh
+cd ..
 echo "";
 
 log_message "process zfin_vega" ;
@@ -41,7 +43,9 @@ cd ..
 echo "";
 
 log_message "process zfin_xpat_cdna" ;
-#zfin_xpat_cdna/processzfin_xpat_cdna.sh
+cd zfin_xpat_cdna
+./processzfin_xpat_cdna.sh
+cd ..
 
 echo "";
 
