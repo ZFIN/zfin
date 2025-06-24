@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class Gff3NcbiService {
     Gff3NcbiDAO gff3NcbiDAO = new Gff3NcbiDAO();
-    Gff3NcbiAttributesDAO gff3NcbiAttributesDAO = new Gff3NcbiAttributesDAO();
     static final int BATCH_SIZE = 2000;
 
 
@@ -33,9 +32,7 @@ public class Gff3NcbiService {
                 record.setAttributePairs(attributePairs);
                 // Set the bidirectional relationship before persisting
                 if (attributePairs != null) {
-                    attributePairs.forEach(attributePair -> {
-                        attributePair.setGff3Ncbi(record);
-                    });
+                    attributePairs.forEach(attributePair -> attributePair.setGff3Ncbi(record));
                 }
                 // Let Hibernate handle the cascade - only persist the parent
                 gff3NcbiDAO.persist(record);
