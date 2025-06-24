@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Usage:
 #       processEnsembl.sh remote_file_name
@@ -18,9 +18,9 @@
 #
 
 
-@TARGET_PATH@/EnsemblP/downloadEnsembl.sh
+./downloadEnsembl.sh
 
-@TARGET_PATH@/EnsemblP/convertEnsembl.sh 
-@TARGET_PATH@/EnsemblP/pushEnsembl.sh
+./convertEnsembl.sh
+./pushEnsembl.sh
 
 exit
