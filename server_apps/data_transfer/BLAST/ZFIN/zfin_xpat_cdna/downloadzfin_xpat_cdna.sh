@@ -6,7 +6,7 @@
 
 source "../config.sh"
 
-cd $BLAST_PATH/fasta/ZFIN/zfin_xpat_cdna
+#cd $BLAST_PATH/fasta/ZFIN/zfin_xpat_cdna
 
 #=======================
 # Move current to backup
