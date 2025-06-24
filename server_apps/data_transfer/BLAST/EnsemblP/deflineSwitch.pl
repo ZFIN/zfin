@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/usr/bin/env perl
 #
 # Read in Ensembl Zebrafish cdna.fa file, switch the item order in defline,
 # write output to standard output.
