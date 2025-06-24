@@ -40,10 +40,10 @@
         </hudson.triggers.TimerTrigger>
     </triggers>
     <concurrentBuild>false</concurrentBuild>
-    <customWorkspace>$SOURCEROOT</customWorkspace>
+    <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd server_apps/data_transfer/BLAST/EnsemblP/ &amp;&amp; ./processEnsembl.sh</command>
+            <command>cd $TARGETROOT/server_apps/data_transfer/BLAST/EnsemblP/ &amp;&amp; ./processEnsembl.sh</command>
             <configuredLocalRules/>
         </hudson.tasks.Shell>
     </builders>

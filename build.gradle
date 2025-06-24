@@ -298,6 +298,11 @@ task "server_apps;tokens;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/tokens'
 }
 
+task "server_apps;data_transfer;BLAST;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/BLAST'
+    excludes = ['Danio_rerio.GRCz10.pep.all.fa.gz', 'Danio_rerio.GRCz11.pep.all.fa.gz', 'Danio_rerio.Zv9.pep.all.fa.gz']
+}
+
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/DB_maintenance'
     excludes = ['Makefile', 'build.gradle']
@@ -372,6 +377,7 @@ task make(type: GradleBuild) {
              'server_apps;data_transfer;Ensembl;deployFiles',
              'server_apps;Reports;deployFiles',
              'server_apps;tokens;deployFiles',
+             'server_apps;data_transfer;BLAST;deployFiles',
              'deployGitInfoFile',
              'cgi-bin;deployFiles',
              'server_apps;perl_lib;deployFiles',

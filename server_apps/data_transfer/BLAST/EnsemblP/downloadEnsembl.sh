@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 #
 # Downloads sequence files from Ensembl
 #
@@ -21,20 +21,20 @@
 #
 
 
-/local/bin/wget -Nq "ftp://ftp.ensembl.org/pub/current_fasta/danio_rerio/pep/*.pep.all.fa.gz"
+wget -Nq "ftp://ftp.ensembl.org/pub/current_fasta/danio_rerio/pep/Danio_rerio.GRCz11.pep.all.fa.gz"
 
-/bin/cp *.pep.all.fa.gz downloaded.gz;
+cp Danio_rerio.GRCz11.pep.all.fa.gz downloaded.gz;
 
 echo "== Unzip file == "
-/local/bin/gunzip downloaded.gz
+gunzip downloaded.gz
 
 echo "==| Go over fasta file for defline adjustment |=="
 
-/bin/cp downloaded ensprot.fa;
+cp downloaded ensprot.fa;
 
-@TARGET_PATH@/EnsemblP/deflineSwitch.pl ensprot.fa > ensemblProt_zf.fa
+./deflineSwitch.pl ensprot.fa > ensemblProt_zf.fa
 
-/bin/rm -f downloaded;
-/bin/rm ensprot.fa;
+rm -f downloaded;
+rm ensprot.fa;
 
 exit

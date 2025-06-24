@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash
 #
 # Downloads sequence files from Ensembl
 #
