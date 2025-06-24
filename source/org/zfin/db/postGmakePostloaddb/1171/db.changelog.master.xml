@@ -7,12 +7,6 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1171/ZFIN-9723.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1171/ZFIN-9775.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-pre.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-00.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-01.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-02.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-03.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi-04.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1171/gff3-ncbi.sql" />
 
 </databaseChangeLog>
