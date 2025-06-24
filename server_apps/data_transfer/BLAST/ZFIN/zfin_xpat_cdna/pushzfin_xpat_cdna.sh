@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 #
 # Each Sunday after zfin finish data transfer in
 # get the most up-to-date accession list from almost.
