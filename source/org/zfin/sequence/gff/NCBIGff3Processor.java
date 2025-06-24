@@ -1,27 +1,48 @@
 package org.zfin.sequence.gff;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 @Log4j2
 public class NCBIGff3Processor {
 
+    private ReportBuilder.SummaryTable summaryTable;
+    private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
+    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
+
     public static void main(String[] args) {
         init();
         NCBIGff3Processor processor = new NCBIGff3Processor();
-        try {
+        ReportBuilder builder = processor.prepareReports();
+/*
+            processor.downloadNcbiGff3File();
             processor.processEnsemblGff3("GCF_049306965.1_GRCz12tu_genomic.gff");
-        } catch (IOException e) {
-            log.error("Error processing GFF3 file", e);
-        }
+*/
+        processor.markZfinGeneRecords();
+        processor.createReport(builder);
+
     }
 
     public static void init() {
@@ -38,6 +59,8 @@ public class NCBIGff3Processor {
         // Get all gene features
         List<Gff3Feature> allRecords = reader.readAllFeatures();
         System.out.println("Total records: " + allRecords.size());
+        summaryTable.addSummaryRow(List.of(String.valueOf(allRecords.size())));
+
         List<Gff3Ncbi> records = allRecords.stream()
             .map(feature -> {
                 Gff3Ncbi ncbi = new Gff3Ncbi();
@@ -55,20 +78,9 @@ public class NCBIGff3Processor {
                 return ncbi;
             })
             .toList();
-        
-        
-/*
-        genes.forEach(gene -> {
-            String geneId = reader.getFirstAttributeValue(gene, "gene_id");
-            String geneName = reader.getFirstAttributeValue(gene, "gene_name");
-
-            // Process gene data...
-        });
-*/
 
         Gff3NcbiService service = new Gff3NcbiService();
         service.saveAll(records);
-
         reader.close();
     }
 
@@ -82,7 +94,7 @@ public class NCBIGff3Processor {
             }).collect(Collectors.toSet()).stream().map(pair -> pair.getKey() + "=" + pair.getValue()).collect(Collectors.joining(";"));
     }
 
-    private static Set<String> persistKeySet = new HashSet<>();
+    private static final Set<String> persistKeySet = new HashSet<>();
 
     static {
         persistKeySet.add("gene_id");
@@ -136,6 +148,114 @@ public class NCBIGff3Processor {
         chromoMap.put("NC_002333.2", "MT");
 
     }
+
+    private void downloadNcbiGff3File() {
+        String zippedFileName = "GCF_049306965.1_GRCz12tu_genomic.gff.gz";
+        File file = new File(zippedFileName);
+        if (file.exists()) {
+            return;
+        }
+
+        String fileURL = "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_049306965.1_GRCz12tu/" + zippedFileName;
+
+        try {
+            FileUtils.copyURLToFile(
+                new URL(fileURL),
+                new File(zippedFileName),
+                60000,
+                READ_TIMEOUT);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        FileUtil.gunzipFile(zippedFileName);
+    }
+
+    private List<Gff3Ncbi> markZfinGeneRecords() {
+        HibernateUtil.createTransaction();
+        Map<String, Object> params = new HashMap<>();
+        params.put("feature", "gene");
+
+        Pagination pagination = new Pagination();
+        pagination.setLimit(0);
+        pagination.setPage(0);
+        Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
+        summaryTable.addSummaryRow(List.of(String.valueOf(totalRecords)));
+        System.out.println("Total NCBI Gene records found: " + totalRecords);
+        pagination.setLimit(400000);
+        pagination.setPage(0);
+        List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
+        List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
+        // remove records without ZFIN gene association
+        // retrieve all MarkerDBLinks for zfin genes with genbank accession
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        System.out.println("Total GenBank Records in ZFIN found: " + genbankList.size());
+        Set<String> genBankIDsInZFIN = genbankList.stream()
+            .map(DBLink::getAccessionNumber)
+            .collect(Collectors.toSet());
+
+        // Gene IDs not matching a ZFIN record
+        List<String> notFoundGeneIDs = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
+
+        Map<String, String> genbankZFiNMap = genbankList.stream()
+            .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
+        List<Gff3Ncbi> filteredResults = results.stream()
+            .filter(record -> record.getAttributePairs().stream()
+                .anyMatch(pair -> genBankIDsInZFIN.contains(pair.getGeneID())))
+            .peek(gff3NcbiRecord -> {
+                String geneID = gff3NcbiRecord.getGeneID();
+                String zfinID = genbankZFiNMap.get(geneID);
+                if (zfinID != null) {
+                    Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
+                    pair.setKey("gene_id");
+                    pair.setValue(zfinID);
+                    HibernateUtil.currentSession().persist(pair);
+                    gff3NcbiRecord.getAttributePairs().add(pair);
+                }
+            })
+            .toList();
+        HibernateUtil.rollbackTransaction();
+        return filteredResults;
+    }
+
+
+    private ReportBuilder prepareReports() {
+        ReportBuilder builder = new ReportBuilder();
+        builder.setTitle("NCBI GFF3 Import Report");
+        summaryTable = builder.addSummaryTable("GFF Feature Records");
+        summaryTable.setHeaders(List.of("Number of Records exported"));
+        return builder;
+    }
+
+    private void createReport(ReportBuilder builder) {
+        ObjectNode report = builder.build();
+        try {
+            String jsonString = builder.getJsonString(report);
+
+            // Write to file
+            FileUtils.writeStringToFile(new File(".", "gff3_ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
+            writeOutputReportFile(jsonString);
+
+        } catch (IOException e) {
+            log.error("JSON reporting failed: " + e.getMessage(), e);
+        }
+    }
+
+    private void writeOutputReportFile(String jsonString) {
+        String sourceRoot = ZfinPropertiesEnum.SOURCEROOT.value();
+        if (sourceRoot == null) {
+            sourceRoot = System.getenv("SOURCEROOT");
+        }
+        File reportFile = new File(".", "gff3_ncbi_report.html");
+        try {
+            String template = "./home/uniprot/zfin-report-template.html";
+            String templateContents = FileUtils.readFileToString(new File(template));
+            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
+            FileUtils.writeStringToFile(reportFile, filledTemplate);
+        } catch (IOException e) {
+            System.out.println("ERROR: Could not write report file: " + e.getMessage());
+        }
+    }
+
 }
 
 
