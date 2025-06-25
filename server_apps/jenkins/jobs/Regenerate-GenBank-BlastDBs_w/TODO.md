@@ -34,7 +34,7 @@ blastdbupdate.pl:$reptfiles{"genbank"} = "@SCRIPT_PATH@/genbankupdate.report";
 blastdbupdate.pl:$stampfiles{"genbank"} = "@SCRIPT_PATH@/GenBank/genbank.ftp";
 blastdbupdate.pl:    system ("@TARGET_PATH@/GenBank/weeklyGB/weeklyGbUpdate.sh > @SCRIPT_PATH@/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
 blastdbupdate.pl:    print MAIL "\t please check "."@SCRIPT_PATH@/GenBank/weeklyGB/"."weeklyGbupdate.report. \n";
-GenBank//convertGenBank.sh:touch @SCRIPT_PATH@/GenBank/genbank.ftp;
+GenBank/convertGenBank.sh:touch @SCRIPT_PATH@/GenBank/genbank.ftp;
 ```
 
 So it's only used to write a couple reports and keep track of a timestamp
