@@ -72,12 +72,16 @@ log_message "process zfin_publishedRNA" ;
 echo "";
 
 log_message "process zfin_crispr" ;
-#zfin_crispr/processzfin_crispr.sh
+cd zfin_crispr
+./processzfin_crispr.sh
+cd ..
 
 echo "";
 
 log_message "process zfin_talen" ;
-#zfin_talen/processzfin_talen.sh
+cd zfin_talen
+./processzfin_talen.sh
+cd ..
 
 
 exit
