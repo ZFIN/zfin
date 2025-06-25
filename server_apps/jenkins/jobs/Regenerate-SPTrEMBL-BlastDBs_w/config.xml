@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Regenerate sptr_zf, sptr_ms, sptr_hs blast dbs.</description>
+  <description>Regenerate refseq_zf_rna and refseq_zf_aa blastdbs</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -41,15 +41,7 @@
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd server_apps/data_transfer/BLAST/SPTrEMBL/ &amp;&amp; ./processSPTrEMBL.sh</command>
-      <configuredLocalRules/>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command></command>
-      <configuredLocalRules/>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command></command>
+      <command>cd server_apps/data_transfer/BLAST/RefSeq/ &amp;&amp; ./processRefSeq.sh</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
