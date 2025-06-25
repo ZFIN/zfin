@@ -14,7 +14,7 @@
     </jenkins.model.BuildDiscarderProperty>
     <EnvInjectJobProperty plugin="envinject@2.3.0">
       <info>
-        <propertiesFilePath>/opt/zfin/www_homes/test/home/WEB-INF/zfin.properties</propertiesFilePath>
+        <propertiesFilePath>/opt/zfin/www_homes/zfin.org/home/WEB-INF/zfin.properties</propertiesFilePath>
         <secureGroovyScript plugin="script-security@1.73">
           <script></script>
           <sandbox>false</sandbox>
