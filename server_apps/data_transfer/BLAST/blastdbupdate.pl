@@ -1,14 +1,14 @@
-#!/private/bin/perl -w
+#!/usr/bin/env perl
 #
 # The script checks several ftp sites for new release,
 # and invokes corresponding scripts to transfer and 
 # process data. It executes at @BLASTSERVER_FASTA_FILE_PATH@/fasta, 
 # uses timestamped *.ftp file to probe new release,
-# then calls scripts under @SCRIPT_PATH@ to execute.
+# then calls scripts under $SCRIPT_PATH to execute.
 # Outputs are saved in *.report file. This script
 # runs weekly and sends out summary via email.
 
-
+use warnings;
 use strict;
 use Net::FTP;
 
@@ -16,12 +16,13 @@ use Net::FTP;
 #== Define variables
 #====================================== 
 my ($mailprog, %scripts, %reptfiles, %stampfiles, $ftpFile);
+my $SCRIPT_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 
 $scripts{"genbank"} = "@TARGET_PATH@/GenBank/processGB.sh";
 
-$reptfiles{"genbank"} = "@SCRIPT_PATH@/genbankupdate.report";
+$reptfiles{"genbank"} = "$SCRIPT_PATH/genbankupdate.report";
 
-$stampfiles{"genbank"} = "@SCRIPT_PATH@/GenBank/genbank.ftp";
+$stampfiles{"genbank"} = "$SCRIPT_PATH/GenBank/genbank.ftp";
 
 $mailprog = "/usr/sbin/sendmail -t -oi -oem" ;
 
@@ -221,7 +222,7 @@ sub getRemoteFileTimestamp ($$) {
 sub genbankWeeklyUpdate (){
 
     system ("/bin/rm -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/weeklyGB/weeklyGbupdate.report") && die "weeklyGbupdate: report deletion fail";
-    system ("@TARGET_PATH@/GenBank/weeklyGB/weeklyGbUpdate.sh > @SCRIPT_PATH@/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
-    print MAIL "\t please check "."@SCRIPT_PATH@/GenBank/weeklyGB/"."weeklyGbupdate.report. \n";
+    system ("@TARGET_PATH@/GenBank/weeklyGB/weeklyGbUpdate.sh > $SCRIPT_PATH/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
+    print MAIL "\t please check "."$SCRIPT_PATH/GenBank/weeklyGB/"."weeklyGbupdate.report. \n";
 }
 

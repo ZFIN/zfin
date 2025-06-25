@@ -1,7 +1,8 @@
 #!/bin/tcsh
 #
 # Move GB release files and then convert them to wublast dbs.
-# 
+#
+setenv SCRIPT_PATH $TARGETROOT/server_apps/data_transfer/BLAST
 
 cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB
 
@@ -36,7 +37,7 @@ cp @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB/gbk_zf_rna.fa @BLASTSERVER_FASTA_FILE_
 # Stamp on stamp file 
 #----------------------
 
-touch @SCRIPT_PATH@/GenBank/genbank.ftp;
+touch $SCRIPT_PATH/GenBank/genbank.ftp;
 
 echo "==| exit GenBank convert |=="
 
