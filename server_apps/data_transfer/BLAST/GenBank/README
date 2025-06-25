@@ -1,0 +1,74 @@
+Progression of files:
+--------------------------------------------------
+All files downloaded to: 
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/GB/
+(script itself creates and manages this directory).
+
+Blastdbs and log files generated in:
+/tmp  and (depending on mode)
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank
+
+Blastdbs moved to:
+$BLASTSERVER_BLAST_DATABASE_PATH/Current
+
+--------------------------------------------------
+Usage (from your checkout directory):
+--------------------------------------------------
+
+./processGenBank.sh : runs throu all targets in the proper order.  Downloads
+files, processes them, converts them to blast db files and pushes the 
+blast files to the production area of blast files.
+
+./revertGenBank.sh : more complicated than the other revert scripts.  Because
+there are so many files and dbs are so large, we have to move the symlink 
+from /Current to /Backup, and then cp the files around.  Best not to
+revert too often, or move the files manually, if you only need a small set.
+
+./downloadGenBank.sh : downloads many, many, many files (almost 75G of files
+just for the EST division of GenBank), from almost all divisions of 
+GenBank.  Just downloading the EST files takes 14 hours.  
+Unzipping just 1/3 of these files takes 3 hours, parsing just 1/3
+of these files takes 4 hours, doing the rest of the processing takes a long, 
+long time too.  
+
+./convertGenBank.sh : takes each file and runs it through gb2fa.pl
+parsing just 1/3 of these files takes 4 hours, doing the rest of the 
+processing takes a long, long time too.
+  
+./pushGenBank.sh : pushes blastdb files from building dir to 
+$BLASTSERVER_BLAST_DATABASE_PATH/Current/ by moving symlinks around.
+
+
+--------------------------------------------------
+Files created:
+--------------------------------------------------
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/*
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/GB/*
+@BLASTSERVER_FASTA_FILE_PATH@/fasta/GB_daily/*
+
+
+--------------------------------------------------
+Blast dbs created in the filesystem:
+--------------------------------------------------
+$BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk_*.x*
+
+
+--------------------------------------------------
+informixdb.blast_database row:
+--------------------------------------------------
+blastdb_abbrev like gbk*
+
+
+------------------------------------------------------------
+Download info: 
+------------------------------------------------------------
+
+	 time: at least 24 hours, and at least 150 G
+	 content: many, many files for a full GB release; also many
+	 	  divisions.
+		  
+------------------------------------------------------------
+Remaining Higgly-Piggly-ness:
+------------------------------------------------------------
+Can be called in update mode and in fullRelease mode 
+from two different scripts.  Can be called weekly and daily.
