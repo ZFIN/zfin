@@ -3,6 +3,8 @@
 # Assemble GB release
 # 
 
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+
 # requires that a GB subdir is already created in @BLASTSERVER_FASTA_FILE_PATH@/fasta
 # this is done automatically by downloadGenBank.sh
 
@@ -24,7 +26,7 @@ foreach dir (*)
     echo "==| parse $dir files GenBank|=="
     foreach file (*.seq)
       echo "parsing file: $file";
-      @TARGET_PATH@/GenBank/gb2fa.pl $file
+      $TARGET_PATH/GenBank/gb2fa.pl $file
     end
 
     echo "==|remove .seq files GenBank |=="

@@ -17,8 +17,9 @@ use Net::FTP;
 #====================================== 
 my ($mailprog, %scripts, %reptfiles, %stampfiles, $ftpFile);
 my $SCRIPT_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
+my $TARGET_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 
-$scripts{"genbank"} = "@TARGET_PATH@/GenBank/processGB.sh";
+$scripts{"genbank"} = "$TARGET_PATH/GenBank/processGB.sh";
 
 $reptfiles{"genbank"} = "$SCRIPT_PATH/genbankupdate.report";
 
@@ -222,7 +223,7 @@ sub getRemoteFileTimestamp ($$) {
 sub genbankWeeklyUpdate (){
 
     system ("/bin/rm -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/weeklyGB/weeklyGbupdate.report") && die "weeklyGbupdate: report deletion fail";
-    system ("@TARGET_PATH@/GenBank/weeklyGB/weeklyGbUpdate.sh > $SCRIPT_PATH/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
+    system ("$TARGET_PATH/GenBank/weeklyGB/weeklyGbUpdate.sh > $SCRIPT_PATH/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
     print MAIL "\t please check "."$SCRIPT_PATH/GenBank/weeklyGB/"."weeklyGbupdate.report. \n";
 }
 

@@ -2,20 +2,22 @@
 
 cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB_daily
 
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+
 echo "== cp the files over from embryonix, and move old files to backup; weeklyCpGenBank.sh =="
 # cp the files over from embryonix, and move old files to backup.
-@TARGET_PATH@/GenBank/weeklyGB/weeklyCpGenBank.sh
+$TARGET_PATH/GenBank/weeklyGB/weeklyCpGenBank.sh
 
 echo "== merge one week's nc files into nonredundant fasta files. weeklyNrdbGenBank.sh =="
 # merge one week's nc files into nonredundant fasta files.
-@TARGET_PATH@/GenBank/weeklyGB/weeklyNrdbGenBank.sh
+$TARGET_PATH/GenBank/weeklyGB/weeklyNrdbGenBank.sh
 
 echo "== make blastdbs weeklyWudbFormatGenBank.sh =="
 # make blastdbs
-@TARGET_PATH@/GenBank/weeklyGB/weeklyWudbFormatGenBank.sh
+$TARGET_PATH/GenBank/weeklyGB/weeklyWudbFormatGenBank.sh
 
 # push new blastdbs to /Current
-@TARGET_PATH@/GenBank/weeklyGB/weeklyPushGenBank.sh
+$TARGET_PATH/GenBank/weeklyGB/weeklyPushGenBank.sh
 
 exit 0
 

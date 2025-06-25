@@ -4,6 +4,8 @@
 # Since GenBank is so large, we have to move symlinks around
 # to try and prevent user downtime.
 
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+
 # rm the current fasta files
 rm @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/*.fa
 

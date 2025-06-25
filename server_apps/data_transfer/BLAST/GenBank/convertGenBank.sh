@@ -3,6 +3,7 @@
 # Move GB release files and then convert them to wublast dbs.
 #
 setenv SCRIPT_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
 
 cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB
 
@@ -11,7 +12,7 @@ cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB
 #---------------------------------
 echo "==| Move assembled files to GenBank dir |=="
 
-mv gbk_zf_acc.unl @TARGET_PATH@/GenBank/accession_genbank.unl
+mv gbk_zf_acc.unl $TARGET_PATH/GenBank/accession_genbank.unl
 
 mv @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB/*.fa ../GenBank
 
@@ -31,7 +32,7 @@ cp @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB/gbk_zf_rna.fa @BLASTSERVER_FASTA_FILE_
 # Database formatting
 #-----------------------------------
 
-@TARGET_PATH@/GenBank/wudbformat.sh
+$TARGET_PATH/GenBank/wudbformat.sh
 
 #----------------------
 # Stamp on stamp file 
