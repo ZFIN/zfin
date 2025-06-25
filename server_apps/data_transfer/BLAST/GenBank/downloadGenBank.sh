@@ -3,6 +3,8 @@
 # Download GB release
 # 
 
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+
 cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/
 
 #-----------------------------
@@ -20,21 +22,21 @@ cd GB
 #---------------------
 echo "==| DOWNLOAD GenBank Release |=="
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh est;
+$TARGET_PATH/GenBank/loadGBdiv.sh est;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh gss;
+$TARGET_PATH/GenBank/loadGBdiv.sh gss;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh htc;
+$TARGET_PATH/GenBank/loadGBdiv.sh htc;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh htg;
+$TARGET_PATH/GenBank/loadGBdiv.sh htg;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh sts;
+$TARGET_PATH/GenBank/loadGBdiv.sh sts;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh pri;
+$TARGET_PATH/GenBank/loadGBdiv.sh pri;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh rod;
+$TARGET_PATH/GenBank/loadGBdiv.sh rod;
 
-@TARGET_PATH@/GenBank/loadGBdiv.sh vrt;
+$TARGET_PATH/GenBank/loadGBdiv.sh vrt;
 
 #---------------------------
 # Clean up intermediate data 

@@ -10,10 +10,11 @@
 # still be undesired we will do the hard way to flip the wu-db symlink 
 # at each compute node too.
 # After the updates, the temporary GB dir would be dropped. 
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
 
 echo "==| pushGbRelease.sh |=="
 
-@TARGET_PATH@/GenBank/postGbRelease.sh
+$TARGET_PATH/GenBank/postGbRelease.sh
 
 echo "==| done with pushGenBank |==" 
 
