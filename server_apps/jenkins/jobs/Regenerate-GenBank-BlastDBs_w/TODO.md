@@ -79,6 +79,8 @@ We just need to make sure the directory exists whenever referenced.
 #### WEBHOST_BLAST_DATABASE_PATH
 This seems like it should be the same as BLASTSERVER_BLAST_DATABASE_PATH (/opt/zfin/blastdb)
 
+#### WEBHOST_FASTA_FILE_PATH
+This is set to /research/zblastfiles/dev_files on playground. This should be fine as well.
 
 
 ### Perl and executable paths:
