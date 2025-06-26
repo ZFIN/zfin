@@ -36,7 +36,7 @@ ln -s $BLASTSERVER_BLAST_DATABASE_PATH/Current $BLASTSERVER_BLAST_DATABASE_PATH/
 
 # only to the distributeToNodes bit on Genomix
 #if ($INSTANCE == /genomix.cs.uoregon.edu) then
-#    @TARGET_PATH@/GenBank/distributeToNodesGenBank.sh
+#    $TARGET_PATH/GenBank/distributeToNodesGenBank.sh
 #endif
 
 exit
