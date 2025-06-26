@@ -11,7 +11,7 @@ setenv BLASTSERVER_BLAST_DATABASE_PATH /opt/zfin/blastdb
 
 echo "==| Rsync dbs for GenBank |=="
 
-if ({@HOSTNAME@} == genomix.cs.uoregon.edu) then
+if ({$INSTANCE} == genomix.cs.uoregon.edu) then
  foreach i (001  003 004 005)
    rsync -avz -e ssh $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk_* node${i}:$BLASTSERVER_BLAST_DATABASE_PATH/Current
  end

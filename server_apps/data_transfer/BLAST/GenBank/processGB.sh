@@ -22,7 +22,7 @@ echo "==| New release is formatted at $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank
 
 $TARGET_PATH/GenBank/postGbRelease.sh
 
-#if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
+#if ($INSTANCE == genomix.cs.uoregon.edu) then
 # $TARGET_PATH/distributeToNodesGenBank.sh
 #endif
 

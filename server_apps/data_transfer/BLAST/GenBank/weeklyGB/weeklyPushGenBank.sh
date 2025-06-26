@@ -13,7 +13,7 @@ rm $BLASTSERVER_BLAST_DATABASE_PATH/wu-db
 ln -s $BLASTSERVER_BLAST_DATABASE_PATH/Current $BLASTSERVER_BLAST_DATABASE_PATH/wu-db
 
 # only to the distributeToNodes bit on Genomix
-if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
+if ($INSTANCE == genomix.cs.uoregon.edu) then
     $TARGET_PATH/GenBank/distributeToNodesGenBank.sh
 endif
 
