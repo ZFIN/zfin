@@ -5,6 +5,7 @@ import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -28,21 +29,45 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class NCBIGff3Processor {
 
-    private ReportBuilder.SummaryTable summaryTable;
+    public static final String GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF = "GCF_049306965.1_GRCz12tu_genomic.gff";
+
+    static {
+        Configurator.setLevel("htsjdk.tribble.gff.Gff3Codec", org.apache.logging.log4j.Level.ERROR);
+    }
+
+    private ReportBuilder.SummaryTable summaryTableLoad;
+    private ReportBuilder.SummaryTable summaryTableFeatureHisto;
     private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         init();
         NCBIGff3Processor processor = new NCBIGff3Processor();
-        ReportBuilder builder = processor.prepareReports();
-/*
-            processor.downloadNcbiGff3File();
-            processor.processEnsemblGff3("GCF_049306965.1_GRCz12tu_genomic.gff");
-*/
-        processor.markZfinGeneRecords();
-        processor.createReport(builder);
+        processor.start();
 
+    }
+
+    private void start() throws IOException {
+        ReportBuilder builder = prepareReports();
+        String fileName = GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF;
+        if ((new File(GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF + ".test")).exists()) {
+            fileName = GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF + ".test";
+        } else {
+            downloadNcbiGff3File();
+        }
+        processEnsemblGff3(fileName);
+        markZfinGeneRecords();
+        createFeatureTypeHistogram();
+        createReport(builder);
+    }
+
+    private void createFeatureTypeHistogram() {
+        Map<String, Integer> histogram = dao.getFeatureTypeHistogram();
+        Map<String, Integer> sortedMap = histogram.entrySet().
+            stream().
+            sorted(Map.Entry.comparingByValue()).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        sortedMap.forEach((feature, count) -> summaryTableFeatureHisto.addSummaryRow(List.of(feature, String.valueOf(count))));
     }
 
     public static void init() {
@@ -59,7 +84,7 @@ public class NCBIGff3Processor {
         // Get all gene features
         List<Gff3Feature> allRecords = reader.readAllFeatures();
         System.out.println("Total records: " + allRecords.size());
-        summaryTable.addSummaryRow(List.of(String.valueOf(allRecords.size())));
+        summaryTableLoad.addSummaryRow(List.of("All records in File", String.valueOf(allRecords.size())));
 
         List<Gff3Ncbi> records = allRecords.stream()
             .map(feature -> {
@@ -106,6 +131,7 @@ public class NCBIGff3Processor {
     }
 
     private Set<Gff3NcbiAttributePair> generateAttributePairs(Map<String, List<String>> attributes) {
+
         return attributes.entrySet().stream()
             .filter(entry -> persistKeySet.contains(entry.getKey()))
             .map((entry) -> {
@@ -179,7 +205,7 @@ public class NCBIGff3Processor {
         pagination.setLimit(0);
         pagination.setPage(0);
         Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
-        summaryTable.addSummaryRow(List.of(String.valueOf(totalRecords)));
+        summaryTableLoad.addSummaryRow(List.of("Gene", String.valueOf(totalRecords)));
         System.out.println("Total NCBI Gene records found: " + totalRecords);
         pagination.setLimit(400000);
         pagination.setPage(0);
@@ -198,6 +224,10 @@ public class NCBIGff3Processor {
 
         Map<String, String> genbankZFiNMap = genbankList.stream()
             .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
+        summaryTableLoad.addSummaryRow(List.of(
+            "ZFIN Gene Records matching NCBI Gene Records",
+            String.valueOf(genbankZFiNMap.size())
+        ));
         List<Gff3Ncbi> filteredResults = results.stream()
             .filter(record -> record.getAttributePairs().stream()
                 .anyMatch(pair -> genBankIDsInZFIN.contains(pair.getGeneID())))
@@ -208,12 +238,13 @@ public class NCBIGff3Processor {
                     Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
                     pair.setKey("gene_id");
                     pair.setValue(zfinID);
+                    pair.setGff3Ncbi(gff3NcbiRecord);
                     HibernateUtil.currentSession().persist(pair);
                     gff3NcbiRecord.getAttributePairs().add(pair);
                 }
             })
             .toList();
-        HibernateUtil.rollbackTransaction();
+        HibernateUtil.flushAndCommitCurrentSession();
         return filteredResults;
     }
 
@@ -221,8 +252,10 @@ public class NCBIGff3Processor {
     private ReportBuilder prepareReports() {
         ReportBuilder builder = new ReportBuilder();
         builder.setTitle("NCBI GFF3 Import Report");
-        summaryTable = builder.addSummaryTable("GFF Feature Records");
-        summaryTable.setHeaders(List.of("Number of Records exported"));
+        summaryTableLoad = builder.addSummaryTable("GFF Records");
+        summaryTableLoad.setHeaders(List.of("Record Type", "Count"));
+        summaryTableFeatureHisto = builder.addSummaryTable("Feature Histogram");
+        summaryTableFeatureHisto.setHeaders(List.of("Feature Type", "Count"));
         return builder;
     }
 
