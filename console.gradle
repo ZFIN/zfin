@@ -246,3 +246,8 @@ task createGff3Files(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.Gff3Writer'
 }
+
+task loadGff3NcbiFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.gff.NCBIGff3Processor'
+}
