@@ -62,8 +62,21 @@ We can set it to $TARGETROOT/server_apps/data_transfer/BLAST/
 #### BLASTSERVER_BLAST_DATABASE_PATH
 This is now set to $BLAST_PATH which is /opt/zfin/blastdb
 ```
-
+BLAST/GenBank/devoGenBank.sh
+BLAST/GenBank/distributeToNodesGenBank.sh
+BLAST/GenBank/postGbRelease.sh
+BLAST/GenBank/revertGenBank.sh
+BLAST/GenBank/sync.sh
+BLAST/GenBank/weeklyGB/weeklyPushGenBank.sh
+BLAST/GenBank/weeklyGB/weeklyWudbFormatGenBank.sh
+BLAST/blastdbupdate.pl
 ```
+
+#### BLASTSERVER_FASTA_FILE_PATH
+This is set to /tmp/fasta_file_path on playground. That should be fine.
+We just need to make sure the directory exists whenever referenced.
+
+
 
 ### Perl and executable paths:
 - `#!/private/bin/perl -w` becomes `#!/usr/bin/env perl` followed by `use warnings`

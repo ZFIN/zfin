@@ -4,14 +4,19 @@
 # 
 
 setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+setenv BLASTSERVER_FASTA_FILE_PATH /tmp/fasta_file_path
 
-cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/
+# Ensure the fasta directories exist
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/Backup
+
+cd $BLASTSERVER_FASTA_FILE_PATH/fasta/
 
 #-----------------------------
 # Clean up previous log 
 #-----------------------------
 rm -f GenBank/xdformat*.log
-mv GB/*.fa @BLASTSERVER_FASTA_FILE_PATH@/Backup
+mv GB/*.fa $BLASTSERVER_FASTA_FILE_PATH/Backup
 rm -rf GB/ftp.ncbi.nih.gov
 rm -rf GB
 mkdir GB

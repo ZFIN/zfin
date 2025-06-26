@@ -4,11 +4,15 @@
 # 
 
 setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+setenv BLASTSERVER_FASTA_FILE_PATH /tmp/fasta_file_path
 
-# requires that a GB subdir is already created in @BLASTSERVER_FASTA_FILE_PATH@/fasta
+# Ensure the fasta directory exists
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/GB
+
+# requires that a GB subdir is already created in $BLASTSERVER_FASTA_FILE_PATH/fasta
 # this is done automatically by downloadGenBank.sh
 
-cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB
+cd $BLASTSERVER_FASTA_FILE_PATH/fasta/GB
 
 
 #---------------------------
