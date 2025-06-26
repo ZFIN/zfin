@@ -59,6 +59,11 @@ Used in the following files:
 ```
 We can set it to $TARGETROOT/server_apps/data_transfer/BLAST/
 
+#### BLASTSERVER_BLAST_DATABASE_PATH
+This is now set to $BLAST_PATH which is /opt/zfin/blastdb
+```
+
+```
 
 ### Perl and executable paths:
 - `#!/private/bin/perl -w` becomes `#!/usr/bin/env perl` followed by `use warnings`
