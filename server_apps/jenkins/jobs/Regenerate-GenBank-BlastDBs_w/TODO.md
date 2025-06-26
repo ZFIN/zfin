@@ -82,6 +82,11 @@ This seems like it should be the same as BLASTSERVER_BLAST_DATABASE_PATH (/opt/z
 #### WEBHOST_FASTA_FILE_PATH
 This is set to /research/zblastfiles/dev_files on playground. This should be fine as well.
 
+#### HOSTNAME
+This is set to testbed.zfin.org on playground. It is now set to $INSTANCE. It's only used to 
+determine if the script is running on PROD or TEST.  It would always evaluate to false on playground.
+It will continue to evaluate to false.
+
 
 ### Perl and executable paths:
 - `#!/private/bin/perl -w` becomes `#!/usr/bin/env perl` followed by `use warnings`

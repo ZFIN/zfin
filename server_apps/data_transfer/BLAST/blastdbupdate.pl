@@ -21,6 +21,7 @@ my $TARGET_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $BLASTSERVER_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
 my $BLASTSERVER_FASTA_FILE_PATH = "/tmp/fasta_file_path";
 my $WEBHOST_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
+my $INSTANCE = $ENV{'INSTANCE'} || "";
 
 # Ensure the directories exist
 system("mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta");
@@ -50,7 +51,7 @@ if ( &checkRelease ("genbank") ) {
     &genbankWeeklyUpdate ();
 }
 
-if ("@HOSTNAME@" eq "watson.zfin.org" && "$WEBHOST_BLAST_DATABASE_PATH" eq "/research/zfin.org/blastdb"){
+if ("$INSTANCE" eq "watson.zfin.org" && "$WEBHOST_BLAST_DATABASE_PATH" eq "/research/zfin.org/blastdb"){
     &cpToProductionAndRsyncDev();
 }
 close MAIL;
