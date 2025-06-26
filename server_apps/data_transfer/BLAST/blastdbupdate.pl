@@ -20,9 +20,12 @@ my $SCRIPT_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $TARGET_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $BLASTSERVER_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
 my $BLASTSERVER_FASTA_FILE_PATH = "/tmp/fasta_file_path";
+my $WEBHOST_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
 
-# Ensure the fasta directory exists
+# Ensure the directories exist
 system("mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta");
+system("mkdir -p $WEBHOST_BLAST_DATABASE_PATH/Current");
+system("mkdir -p $WEBHOST_BLAST_DATABASE_PATH/Backup");
 
 $scripts{"genbank"} = "$TARGET_PATH/GenBank/processGB.sh";
 
@@ -47,7 +50,7 @@ if ( &checkRelease ("genbank") ) {
     &genbankWeeklyUpdate ();
 }
 
-if ("@HOSTNAME@" eq "watson.zfin.org" && "@WEBHOST_BLAST_DATABASE_PATH@" eq "/research/zfin.org/blastdb"){
+if ("@HOSTNAME@" eq "watson.zfin.org" && "$WEBHOST_BLAST_DATABASE_PATH" eq "/research/zfin.org/blastdb"){
     &cpToProductionAndRsyncDev();
 }
 close MAIL;
@@ -62,7 +65,7 @@ sub cpToProductionAndRsyncDev() {
     # WEBHOST_BLAST_DATABASE_PATH is always /research/zfin.org/blastdb.  
     # we do these one by one because we don't want to overwrite any load files on zfin.org    # from ZFIN (especially curated ones)
 
-    system("rm -f @WEBHOST_BLAST_DATABASE_PATH@/Backup/gbk*") && die "@WEBHOST_BLAST_DATABASE_PATH@/Backup delete failed for blastdbupdate.pl";
+    system("rm -f $WEBHOST_BLAST_DATABASE_PATH/Backup/gbk*") && die "$WEBHOST_BLAST_DATABASE_PATH/Backup delete failed for blastdbupdate.pl";
 
     # check if files exist; if they don't we don't want to put the current files to backup and then 
     # have nothing to move.
@@ -70,16 +73,16 @@ sub cpToProductionAndRsyncDev() {
     my $ckFile = "$BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/gbk_zf_mrna.xnd";
     if  (-e $ckFile) {
 	# rm the current files for blastdbupdate members.
-	system("mv -f @WEBHOST_BLAST_DATABASE_PATH@/Current/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Backup/" ) && die "@WEBHOST_BLAST_DATABASE_PATH@/Current/gbk* delete failed for blastdbupdate.pl";
-	system("mv -f $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/") && die "@WEBHOST_BLAST_DATABASE_PATH@/Current mv failed from $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk";
+	system("mv -f $WEBHOST_BLAST_DATABASE_PATH/Current/gbk*.x* $WEBHOST_BLAST_DATABASE_PATH/Backup/" ) && die "$WEBHOST_BLAST_DATABASE_PATH/Current/gbk* delete failed for blastdbupdate.pl";
+	system("mv -f $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/gbk*.x* $WEBHOST_BLAST_DATABASE_PATH/Current/") && die "$WEBHOST_BLAST_DATABASE_PATH/Current mv failed from $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk";
 	}
 
 
     # change group to zfishweb for informix files.
-    system("/bin/chgrp -R -L zfishweb @WEBHOST_BLAST_DATABASE_PATH@/Current/*.x*") ;
-    system("/bin/chgrp -R -L zfishweb @WEBHOST_BLAST_DATABASE_PATH@/Backup/*.x*") ;
-    system("/bin/chmod -R -L g+w @WEBHOST_BLAST_DATABASE_PATH@/Current/*.x*") ;
-    system("/bin/chmod -R -L g+w @WEBHOST_BLAST_DATABASE_PATH@/Backup/*.x*") ;
+    system("/bin/chgrp -R -L zfishweb $WEBHOST_BLAST_DATABASE_PATH/Current/*.x*") ;
+    system("/bin/chgrp -R -L zfishweb $WEBHOST_BLAST_DATABASE_PATH/Backup/*.x*") ;
+    system("/bin/chmod -R -L g+w $WEBHOST_BLAST_DATABASE_PATH/Current/*.x*") ;
+    system("/bin/chmod -R -L g+w $WEBHOST_BLAST_DATABASE_PATH/Backup/*.x*") ;
 
     # this rsync will update the default environment on genomix for developers.
     system("/local/bin/rsync -vu $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk*.x* /research/zblastfiles/zmore/dev_blastdb/Current/") ;
