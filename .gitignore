@@ -36,3 +36,38 @@ docker/elasticsearch/state/
 *~
 \#*\#
 out/
+
+# Claude Code and AI Development Tools
+.claude/
+.cursor/
+.roo/
+.roomodes
+.windsurfrules
+.mcp.json
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Task Master AI
+.taskmaster/
+task-*.md
+taskmaster-*.json
+
+# Claude Code session files
+CLAUDE.md.backup
+claude-session-*.json
+.claude-*
+
+# AI tool temporary files
+ai-temp-*
+temp-ai-*
+*-ai-temp.*
+
+.clinerules
+.env.example
+.github/instructions
+.trae
+.vscode
+.windsurf
