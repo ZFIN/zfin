@@ -18,6 +18,7 @@ use Net::FTP;
 my ($mailprog, %scripts, %reptfiles, %stampfiles, $ftpFile);
 my $SCRIPT_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $TARGET_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
+my $BLASTSERVER_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
 
 $scripts{"genbank"} = "$TARGET_PATH/GenBank/processGB.sh";
 
@@ -52,7 +53,7 @@ close MAIL;
 # 
 ###############################################################
 sub cpToProductionAndRsyncDev() {
-    chdir "@BLASTSERVER_BLAST_DATABASE_PATH@/Current" ;
+    chdir "$BLASTSERVER_BLAST_DATABASE_PATH/Current" ;
     
     # WEBHOST_BLAST_DATABASE_PATH is always /research/zfin.org/blastdb.  
     # we do these one by one because we don't want to overwrite any load files on zfin.org    # from ZFIN (especially curated ones)
@@ -66,7 +67,7 @@ sub cpToProductionAndRsyncDev() {
     if  (-e $ckFile) {
 	# rm the current files for blastdbupdate members.
 	system("mv -f @WEBHOST_BLAST_DATABASE_PATH@/Current/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Backup/" ) && die "@WEBHOST_BLAST_DATABASE_PATH@/Current/gbk* delete failed for blastdbupdate.pl";
-	system("mv -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/") && die "@WEBHOST_BLAST_DATABASE_PATH@/Current mv failed from @BLASTSERVER_BLAST_DATABASE_PATH@/Current/gbk";
+	system("mv -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/") && die "@WEBHOST_BLAST_DATABASE_PATH@/Current mv failed from $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk";
 	}
 
 
@@ -77,9 +78,9 @@ sub cpToProductionAndRsyncDev() {
     system("/bin/chmod -R -L g+w @WEBHOST_BLAST_DATABASE_PATH@/Backup/*.x*") ;
 
     # this rsync will update the default environment on genomix for developers.
-    system("/local/bin/rsync -vu @BLASTSERVER_BLAST_DATABASE_PATH@/Current/gbk*.x* /research/zblastfiles/zmore/dev_blastdb/Current/") ;
-    system("/local/bin/rsync -vu @BLASTSERVER_BLAST_DATABASE_PATH@/Current/gbk*.x* /research/zblastfiles/zmore/trunk/Current/") ;
-    system("/local/bin/rsync -vu @BLASTSERVER_BLAST_DATABASE_PATH@/Current/gbk*.x* /research/zblastfiles/zmore/test/Current/") ;
+    system("/local/bin/rsync -vu $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk*.x* /research/zblastfiles/zmore/dev_blastdb/Current/") ;
+    system("/local/bin/rsync -vu $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk*.x* /research/zblastfiles/zmore/trunk/Current/") ;
+    system("/local/bin/rsync -vu $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk*.x* /research/zblastfiles/zmore/test/Current/") ;
 
 }
 
