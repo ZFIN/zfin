@@ -1,0 +1,3 @@
+source /opt/zfin/source_roots/zfin.org/commons/env/${INSTANCE}.bash
+cd /opt/zfin/source_roots/zfin.org
+alias nano='nano -Ynone'
