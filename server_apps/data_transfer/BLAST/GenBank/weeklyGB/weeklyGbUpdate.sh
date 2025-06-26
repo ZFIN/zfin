@@ -1,8 +1,12 @@
 #!/bin/tcsh
 
-cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/GB_daily
-
+setenv BLASTSERVER_FASTA_FILE_PATH /tmp/fasta_file_path
 setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+
+# Ensure the fasta directory exists
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/GB_daily
+
+cd $BLASTSERVER_FASTA_FILE_PATH/fasta/GB_daily
 
 echo "== cp the files over from embryonix, and move old files to backup; weeklyCpGenBank.sh =="
 # cp the files over from embryonix, and move old files to backup.

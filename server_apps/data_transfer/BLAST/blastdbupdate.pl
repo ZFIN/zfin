@@ -2,7 +2,7 @@
 #
 # The script checks several ftp sites for new release,
 # and invokes corresponding scripts to transfer and 
-# process data. It executes at @BLASTSERVER_FASTA_FILE_PATH@/fasta, 
+# process data. It executes at $BLASTSERVER_FASTA_FILE_PATH/fasta, 
 # uses timestamped *.ftp file to probe new release,
 # then calls scripts under $SCRIPT_PATH to execute.
 # Outputs are saved in *.report file. This script
@@ -19,6 +19,10 @@ my ($mailprog, %scripts, %reptfiles, %stampfiles, $ftpFile);
 my $SCRIPT_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $TARGET_PATH = $ENV{'TARGETROOT'} . "/server_apps/data_transfer/BLAST";
 my $BLASTSERVER_BLAST_DATABASE_PATH = "/opt/zfin/blastdb";
+my $BLASTSERVER_FASTA_FILE_PATH = "/tmp/fasta_file_path";
+
+# Ensure the fasta directory exists
+system("mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta");
 
 $scripts{"genbank"} = "$TARGET_PATH/GenBank/processGB.sh";
 
@@ -36,7 +40,7 @@ print MAIL "Subject: DB release detection report\n";
 #= Execute checking & updates
 #===============================
 
-chdir "@BLASTSERVER_FASTA_FILE_PATH@/fasta";
+chdir "$BLASTSERVER_FASTA_FILE_PATH/fasta";
 
 if ( &checkRelease ("genbank") ) { 
     # no new release
@@ -63,11 +67,11 @@ sub cpToProductionAndRsyncDev() {
     # check if files exist; if they don't we don't want to put the current files to backup and then 
     # have nothing to move.
 
-    my $ckFile = "@BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/gbk_zf_mrna.xnd";
+    my $ckFile = "$BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/gbk_zf_mrna.xnd";
     if  (-e $ckFile) {
 	# rm the current files for blastdbupdate members.
 	system("mv -f @WEBHOST_BLAST_DATABASE_PATH@/Current/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Backup/" ) && die "@WEBHOST_BLAST_DATABASE_PATH@/Current/gbk* delete failed for blastdbupdate.pl";
-	system("mv -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/") && die "@WEBHOST_BLAST_DATABASE_PATH@/Current mv failed from $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk";
+	system("mv -f $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/gbk*.x* @WEBHOST_BLAST_DATABASE_PATH@/Current/") && die "@WEBHOST_BLAST_DATABASE_PATH@/Current mv failed from $BLASTSERVER_BLAST_DATABASE_PATH/Current/gbk";
 	}
 
 
@@ -155,7 +159,7 @@ sub checkNewfile ($) {
 		# initial the update process and write the output to a file
 		system ("$script $optmode > $reptfile 2>&1") &&  print MAIL "\t Update Failed! \n";
 		print MAIL "\t Finish update at ".`date`;
-		print MAIL "\t please check @BLASTSERVER_FASTA_FILE_PATH@/fasta$reptfile.\n";
+		print MAIL "\t please check $BLASTSERVER_FASTA_FILE_PATH/fasta$reptfile.\n";
 		return 0;
     }else {
 		
@@ -223,7 +227,7 @@ sub getRemoteFileTimestamp ($$) {
 #
 sub genbankWeeklyUpdate (){
 
-    system ("/bin/rm -f @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/weeklyGB/weeklyGbupdate.report") && die "weeklyGbupdate: report deletion fail";
+    system ("/bin/rm -f $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/weeklyGB/weeklyGbupdate.report") && die "weeklyGbupdate: report deletion fail";
     system ("$TARGET_PATH/GenBank/weeklyGB/weeklyGbUpdate.sh > $SCRIPT_PATH/GenBank/weeklyGB/weeklyGbupdate.report 2>&1 ") &&  print MAIL "\t Update Failed! \n" ;
     print MAIL "\t please check "."$SCRIPT_PATH/GenBank/weeklyGB/"."weeklyGbupdate.report. \n";
 }

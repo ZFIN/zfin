@@ -6,12 +6,17 @@
 
 setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
 setenv BLASTSERVER_BLAST_DATABASE_PATH /opt/zfin/blastdb
+setenv BLASTSERVER_FASTA_FILE_PATH /tmp/fasta_file_path
+
+# Ensure the fasta directories exist
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/Backup
 
 # rm the current fasta files
-rm @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank/*.fa
+rm $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank/*.fa
 
 # mv the fasta files from last time back into place
-mv @BLASTSERVER_FASTA_FILE_PATH@/fasta/Backup/*.fa @BLASTSERVER_FASTA_FILE_PATH@/fasta/GenBank
+mv $BLASTSERVER_FASTA_FILE_PATH/fasta/Backup/*.fa $BLASTSERVER_FASTA_FILE_PATH/fasta/GenBank
 
 # swap the symlinks b/c these files are sooo big.
 rm $BLASTSERVER_BLAST_DATABASE_PATH/wu-db
