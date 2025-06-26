@@ -26,7 +26,7 @@ if ("@WEBHOST_BLAST_DATABASE_PATH@" == "/research/zfin.org/blastdb") then
 
 endif
 
-/bin/rm -f vegaprotein_zf.x* ;
+rm -f vegaprotein_zf.x* ;
 
 echo "== Finish Push =="
 
