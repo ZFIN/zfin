@@ -76,6 +76,9 @@ BLAST/blastdbupdate.pl
 This is set to /tmp/fasta_file_path on playground. That should be fine.
 We just need to make sure the directory exists whenever referenced.
 
+#### WEBHOST_BLAST_DATABASE_PATH
+This seems like it should be the same as BLASTSERVER_BLAST_DATABASE_PATH (/opt/zfin/blastdb)
+
 
 
 ### Perl and executable paths:
