@@ -1,4 +1,7 @@
 services:
+  base:
+    build: ./base/
+    image: base:latest
   compile:
     build: ./compile/
     profiles:
