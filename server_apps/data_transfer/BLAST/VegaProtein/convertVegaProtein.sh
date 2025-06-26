@@ -12,7 +12,7 @@ rm xdformat_vegaprotein_zf.log
 
 echo "==| Format the file into blast db |== "
 
-@BLASTSERVER_XDFORMAT@ -p -e xdformat_vegaprotein_zf.log -t "Zebrafish VegaProtein Transcripts" -I -o vegaprotein_zf vegaprotein_zf.fa
+xdformat -p -e xdformat_vegaprotein_zf.log -t "Zebrafish VegaProtein Transcripts" -I -o vegaprotein_zf vegaprotein_zf.fa
 
 
 echo "==| Exit convertVegaProtein.sh |== "

@@ -1,8 +1,14 @@
 #!/bin/tcsh
 
-#echo "==| at @BLASTSERVER_FASTA_FILE_PATH@/fasta/VegaProteinProt |=="
+setenv BLASTSERVER_FASTA_FILE_PATH /tmp/fasta_file_path
+setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
 
-cd @TARGET_PATH@/VegaProtein/ 
+# Ensure directories exist
+mkdir -p $BLASTSERVER_FASTA_FILE_PATH/fasta/VegaProteinProt
+
+#echo "==| at $BLASTSERVER_FASTA_FILE_PATH/fasta/VegaProteinProt |=="
+
+cd $TARGET_PATH/VegaProtein/ 
 
 rm -f Danio*
 
@@ -21,7 +27,7 @@ gunzip downloaded.gz
 
 cp downloaded vegaprotein.fa ;
 
-@TARGET_PATH@/VegaProtein/deflineSwitch.pl vegaprotein.fa > vegaprotein_zf.fa
+$TARGET_PATH/VegaProtein/deflineSwitch.pl vegaprotein.fa > vegaprotein_zf.fa
 
 rm -f downloaded;
 rm vegaprotein.fa;
