@@ -171,20 +171,6 @@ if (exists($ENV{'FASTA_LEN_COMMAND'})) {
 }
 assertFileExistsAndNotEmpty($FASTA_LEN_COMMAND, "Could not find FASTA_LEN_COMMAND: $FASTA_LEN_COMMAND");
 
-our $SWISSPROT_EMAIL_ERR;
-if (exists($ENV{'SWISSPROT_EMAIL_ERR'})) {
-    $SWISSPROT_EMAIL_ERR = $ENV{'SWISSPROT_EMAIL_ERR'};
-} else {
-    $SWISSPROT_EMAIL_ERR = 'root@localhost';
-}
-
-our $SWISSPROT_EMAIL_REPORT;
-if (exists($ENV{'SWISSPROT_EMAIL_REPORT'})) {
-    $SWISSPROT_EMAIL_REPORT = $ENV{'SWISSPROT_EMAIL_REPORT'};
-} else {
-    $SWISSPROT_EMAIL_REPORT = 'root@localhost';
-}
-
 our $stepCount = 0;
 our $STEP_TIMESTAMP = 0;
 
@@ -198,7 +184,7 @@ our $STEP_TIMESTAMP = 0;
 ###########################
 sub main {
 
-    assertEnvironment('PGHOST', 'DB_NAME');
+    assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT', 'SOURCEROOT', 'TARGETROOT');
 
     assertExpectedFilesExist();
 
@@ -222,9 +208,6 @@ sub main {
     #-------------------------------------------------------------------------------------------------
     downloadNCBIFiles();
     printTimingInformation(2);
-
-    captureBeforeState();
-    printTimingInformation(201);
 
     prepareNCBIgeneLoadDatabaseQuery();
     printTimingInformation(3);
@@ -436,9 +419,6 @@ sub main {
     reportAllLoadStatistics();
     printTimingInformation(42);
 
-    captureAfterState();
-    printTimingInformation(4201);
-
     emailLoadReports();
     printTimingInformation(43);
 
@@ -447,7 +427,6 @@ sub main {
 
     system("/bin/date");
 
-    print "\nAll done!\n";
     print LOG "\n\nAll done! \n\n\n";
     close LOG;
 
@@ -484,14 +463,14 @@ sub doSystemCommand {
 
 sub reportErrAndExit {
   my $subjectError = $_[0];
-  ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subjectError","logNCBIgeneLoad");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subjectError","logNCBIgeneLoad");
   close LOG;
   exit -1;
 }
 
 sub sendLoadLogs {
   my $subject = "Auto from $instance: NCBI_gene_load.pl :: loadLog1 file";
-  ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","loadLog1");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","loadLog1");
 }
 
 sub assertExpectedFilesExist {
@@ -515,12 +494,7 @@ sub assertExpectedFilesExist {
 sub initializeDatabase {
     $dbname = $ENV{'DB_NAME'};
     $dbhost = $ENV{'PGHOST'};
-    if (exists($ENV{'INSTANCE'})) {
-        $instance = $ENV{'INSTANCE'};
-    } else {
-        $instance = "UNDEFINED_INSTANCE";
-    }
-
+    $instance = $ENV{'INSTANCE'};
     $username = "";
     $password = "";
     #open a handle on the db
@@ -683,43 +657,6 @@ sub downloadNCBIFilesForRelease {
     }
 }
 
-sub captureBeforeState {
-    try {
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'}  -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from db_link order by dblink_linked_recid, dblink_acc_num) to 'before_db_link.csv' with csv header \" >prepareLog1 2> prepareLog2");
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'}  -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from record_attribution order by recattrib_data_zdb_id, recattrib_source_zdb_id) to 'before_recattrib.csv' with csv header \" >prepareLog1 2> prepareLog2");
-    } catch {
-        chomp $_;
-        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at before capture - $_");
-    } ;
-
-    print LOG "Done with preparing the delete list and the list for mapping.\n\n";
-
-    my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog1");
-
-    $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog2");
-}
-
-
-sub captureAfterState {
-    try {
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from db_link order by dblink_linked_recid, dblink_acc_num) to 'after_db_link.csv' with csv header \" >prepareLog1 2> prepareLog2");
-        doSystemCommand("psql --echo-all -v ON_ERROR_STOP=1 -h $ENV{'PGHOST'} -d $ENV{'DB_NAME'} -a -c \"\\copy (select * from record_attribution order by recattrib_data_zdb_id, recattrib_source_zdb_id) to 'after_recattrib.csv' with csv header \" >prepareLog1 2> prepareLog2");
-    } catch {
-        chomp $_;
-        reportErrAndExit("Auto from $instance: NCBI_gene_load.pl :: failed at before capture - $_");
-    } ;
-
-    print LOG "Done with preparing the delete list and the list for mapping.\n\n";
-
-    my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog1");
-
-    $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog2");
-}
-
 sub prepareNCBIgeneLoadDatabaseQuery {
     # Global: $dbname
     #--------------------------------------------------------------------------------------------------------------------
@@ -738,10 +675,10 @@ sub prepareNCBIgeneLoadDatabaseQuery {
     print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
     my $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog1 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog1");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","prepareLog1");
 
     $subject = "Auto from $instance: NCBI_gene_load.pl :: prepareLog2 file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","prepareLog2");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","prepareLog2");
 }
 
 sub getMetricsOfDbLinksToDelete {
@@ -2438,7 +2375,7 @@ sub getNtoOneAndNtoNfromZFINtoNCBI {
     print STATS_PRIORITY2 "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
 
     my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of N to N";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_REPORT,"$subject","reportNtoN");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportNtoN");
 }
 
 sub reportOneToN {
@@ -2470,7 +2407,7 @@ sub reportOneToN {
     close ONETON;
 
     my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of 1 to N";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_REPORT,"$subject","reportOneToN");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportOneToN");
 }
 
 sub reportNtoOne {
@@ -2500,7 +2437,7 @@ sub reportNtoOne {
     close NTOONE;
 
     my $subject = "Auto from $instance: " . "NCBI_gene_load.pl :: List of N to 1";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_REPORT,"$subject","reportNtoOne");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportNtoOne");
 }
 
 sub buildVegaIDMappings {
@@ -3382,31 +3319,68 @@ sub reportAllLoadStatistics {
     $handle->disconnect();
 
     # NCBI Gene Id
-    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontNCBIgeneId);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontNCBIgeneId'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
+
     my $numNCBIgeneIdAfter = ZFINPerlModules->countData($sql);
 
     #RefSeq RNA
-    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefSeqRNA);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontRefSeqRNA'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
+
     my $numRefSeqRNAAfter = ZFINPerlModules->countData($sql);
 
     # RefPept
-    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefPept);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontRefPept'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
+
     my $numRefPeptAfter = ZFINPerlModules->countData($sql);
 
     #RefSeq DNA
-    $sql = getSqlForGeneAndRnagDbLinksFromFdbContId($fdcontRefSeqDNA);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontRefSeqDNA'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
+
     my $numRefSeqDNAAfter = ZFINPerlModules->countData($sql);
 
     # GenBank RNA (only those loaded - excluding curated ones)
-    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenBankRNA);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontGenBankRNA'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
+           and exists(select 1 from record_attribution
+                       where recattrib_data_zdb_id = dblink_zdb_id
+                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
+
     my $numGenBankRNAAfter = ZFINPerlModules->countData($sql);
 
     # GenPept (only those loaded - excluding curated ones)
-    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenPept);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontGenPept'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
+           and exists(select 1 from record_attribution
+                       where recattrib_data_zdb_id = dblink_zdb_id
+                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
+
     my $numGenPeptAfter = ZFINPerlModules->countData($sql);
 
     # GenBank DNA (only those loaded - excluding curated ones)
-    $sql = getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId($fdcontGenBankDNA);
+    $sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = '$fdcontGenBankDNA'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
+           and exists(select 1 from record_attribution
+                       where recattrib_data_zdb_id = dblink_zdb_id
+                         and recattrib_source_zdb_id in ('$pubMappedbasedOnRNA','$pubMappedbasedOnVega'));";
+
     my $numGenBankDNAAfter = ZFINPerlModules->countData($sql);
 
     # number of genes with RefSeq RNA
@@ -3577,10 +3551,10 @@ sub reportAllLoadStatistics {
 
 sub emailLoadReports {
     my $subject = "Auto from $instance: NCBI_gene_load.pl :: Statistics";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_REPORT,"$subject","reportStatistics");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportStatistics");
 
     $subject = "Auto from $instance: NCBI_gene_load.pl :: log file";
-    ZFINPerlModules->sendMailWithAttachedReport($SWISSPROT_EMAIL_ERR,"$subject","logNCBIgeneLoad");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","logNCBIgeneLoad");
 }
 
 sub writeHashOfArraysToFileForDebug {
