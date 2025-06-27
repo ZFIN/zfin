@@ -8,7 +8,7 @@
  
 echo "==| at EnsemblProt |=="
 
-rm xdformat_ensemblProt_zf.log ;
+rm -f xdformat_ensemblProt_zf.log ;
 
 echo "==| Format the file into blast db |== "
 
