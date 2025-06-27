@@ -1,0 +1,62 @@
+++++++++++++++++++++++++++++++++++++++++++++++++
+++ At time of a new release
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+== /Users/peirans/DbScripts/GenBank/processGB.sh
+
+  - make new dir GB under 
+  - at GB, run loadGBdiv.sh for each div to create div subdir
+  - delete the ftp dir 
+  - enter each dir, 
+      unzip 
+      gb2fa.pl parsing 
+      save .seq to dir origin  (directly delete?)
+      concat mrna, dna, oth for zf, hs, and ms; acc.unl for zf
+      delete unit files
+    return to GB dir
+  - concatination, give prefix gbk_.
+      zf_acc.unl
+      dna and mrna for zf, ms, hs
+      zf gss and htg (currently all are DNA, but hs, ms have both dna and mrna)
+      gb for zf, ms, hs
+  - move to GenBank dir
+      concatenated .fa 
+      copy over est/*.mrna  
+  - move over gbk_zf_acc.unl to /Users/peirans/accession_bank.unl 
+  - call wudbformat.sh 
+      set PATH, enter GenBank dir
+      format with index(-I,-Tgb1 which only index gb accession), title(-t), and log(-e):
+		change to -Tgi0 to not index gi numbers
+        gb set
+        dna set
+        mrna set
+        est set
+        zf gss and htg
+  - maually compare cooked files' size with current files 
+
+== /Users/peirans/DbScripts/GenBank/postGbRelease.sh
+     cp Current db dir into Backup
+     switch wu-db to link to Backup
+     move file to Current dir 
+     switch wu-db link back to Current
+     delete GB/
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++ Daily / weekly update
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+== at Embryonix, /research/zfin/central/www_home/junior/server_apps/data_transfer/GenBank/gbaccess.pl (the script is kept on embryonix since we need to use the daily file to update ZFIN db on a daily basis.)
+   - download a daily file
+   - parse it (parseDaily.pl is updated to include est_hs, and est_ms)
+   - use nc_zf_acc.unl to update accession_bank and db_link
+   - move other .fa files to /blastfiles/files/daily and create a flag file
+
+== ./weeklyGbUpdate.sh (for accumultive update to GB files between two releases)
+   scp one week's .fa files to /common/data/BLAST_files/GB_daily
+   non-redundantly concatenate daily files to nc_* files
+   copy Current db files to Backup dir
+   link wu-db to Backup
+   run xdformat in append mode (-a), formatting and linking nc_* to Current dbs
+   link wu-db back to Current 

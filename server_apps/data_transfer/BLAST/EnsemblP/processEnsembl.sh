@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 #
 # Usage:
 #       processEnsembl.sh remote_file_name
@@ -19,6 +19,7 @@
 
 
 ./downloadEnsembl.sh
+
 ./convertEnsembl.sh
 ./pushEnsembl.sh
 

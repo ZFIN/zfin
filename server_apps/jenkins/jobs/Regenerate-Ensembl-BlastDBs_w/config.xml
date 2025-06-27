@@ -41,7 +41,7 @@
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd server_apps/data_transfer/Ensembl/ &amp;&amp; ./processEnsembl.sh</command>
+      <command>cd server_apps/data_transfer/BLAST/Ensembl/ &amp;&amp; ./processEnsembl.sh</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
