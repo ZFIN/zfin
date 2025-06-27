@@ -300,7 +300,9 @@ task "server_apps;tokens;deployFiles" (type: SimpleDirectoryCopyTask) {
 
 task "server_apps;data_transfer;BLAST;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer/BLAST'
-    excludes = ['Danio_rerio.GRCz10.pep.all.fa.gz', 'Danio_rerio.GRCz11.pep.all.fa.gz', 'Danio_rerio.Zv9.pep.all.fa.gz']
+    excludes = ['Danio_rerio.GRCz10.pep.all.fa.gz', 'Danio_rerio.GRCz11.pep.all.fa.gz', 'Danio_rerio.Zv9.pep.all.fa.gz',
+        'zfin_genomic_dna_all.fa', 'GenomicDNA.xnt', 'GenomicDNA.xni', 'zfin_genomic_genbank_acc.unl', 'GenomicDNA.xnd',
+        'GenomicDNA.xns']
 }
 
 task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
@@ -336,7 +338,7 @@ task deployGitInfoFile() {
 task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/data_transfer'
     excludes = ['Makefile', 'build.gradle', '.gitignore', '.DS_Store']
-    excludeDirs = ['SangerMutants', 'Ensembl']
+    excludeDirs = ['SangerMutants', 'Ensembl', 'BLAST']
 }
 
 task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
