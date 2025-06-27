@@ -1,0 +1,82 @@
+Progression of files:
+--------------------------------------------------
+All files downloaded to: 
+/tmp/fasta_file_path/fasta/Ensembl
+
+Blastdbs and log files generated in:
+/tmp  and (depending on mode)
+/tmp/fasta_file_path/fasta/Ensembl
+
+Blastdbs moved to:
+/opt/zfin/blastdb/Current
+
+--------------------------------------------------
+Usage (from this directory):
+--------------------------------------------------
+% ./processEnsembl.sh : will run download, convert, push
+
+% ./revertEnsembl.sh :
+
+% ./downloadEnsembl.sh : 
+
+% ./convertEnsembl.sh : 
+
+% ./pushEnsembl.sh : 
+
+--------------------------------------------------
+Usage (from your checkout directory):
+--------------------------------------------------
+% ant processEnsembl
+
+% snt revertEnsembl
+
+% ant downloadEnsembl
+
+% ant convertEnsembl
+
+% ant pushEnsembl
+
+
+--------------------------------------------------
+Files created:
+--------------------------------------------------
+/tmp/fasta_file_path/fasta/Ensembl/ensembl_zf.fa
+/tmp/fasta_file_path/fasta/Ensembl/cdna.fa
+
+
+--------------------------------------------------
+Blast dbs created in the filesystem:
+--------------------------------------------------
+$BLASTSERVER_BLAST_DATABASE_PATH/Current/ensembl_zf.x*
+
+
+--------------------------------------------------
+informixdb.blast_database row:
+--------------------------------------------------
+blastdb_name = Ensembl Zebrafish Transcripts
+blastdb_abbrev = ensembl_zf
+
+
+------------------------------------------------------------
+Download info: 
+------------------------------------------------------------
+
+	 time: approximately 10 minutes.
+	 content: one file whose name changes on each release.
+	 	  This script is passed the recent version.
+		  
+------------------------------------------------------------
+Remaining Higgly-Piggly-ness:
+------------------------------------------------------------
+The Ensembl load gets its file name to download from
+blastdbupdate.pl right now.  This means you have to provide
+processEnsembl.sh and/or downloadEnsembl.sh with a name of the file to 
+download if you are going to run them without the blastdbupdate.pl script.
+
+There is a work-around in place right now, the perl script FindEnsembleFile.pl
+which will return the most recent version of this file name for you to pass
+to ./downloadEnsembl.sh and/or processEnsembl.sh.
+
+If you run processEnsembl.sh without a name, the script automatically runs
+the FindEnsemblFile.pl to find the name for you and use it in execution of 
+this target.
