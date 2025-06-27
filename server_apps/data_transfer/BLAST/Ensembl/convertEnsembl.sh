@@ -8,8 +8,8 @@
 
 echo "==| start convertEnsembl.sh |=="
 
-rm xdformat_ensembl_zf.log
-rm xdformat_ensembl_zf_only.log
+rm -f xdformat_ensembl_zf.log
+rm -f xdformat_ensembl_zf_only.log
 
 echo "==| Format the FASTA files into blast db files |== "
 
