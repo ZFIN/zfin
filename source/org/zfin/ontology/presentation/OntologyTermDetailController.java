@@ -1,5 +1,6 @@
 package org.zfin.ontology.presentation;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,22 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
-import org.zfin.marker.MarkerStatistic;
-import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
-import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.profile.Person;
@@ -161,17 +156,15 @@ public class OntologyTermDetailController {
             }
         } else {
             // check if it is an OBO ID
-            if (Ontology.isOboID(termID))
+            if (Ontology.isOboID(termID)) {
                 term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
+            }
         }
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
-
-        form.setTermRelationships(termRelationships);
         form.setTerm(term);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());

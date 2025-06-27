@@ -208,4 +208,28 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         return query.list();
     }
 
+    //TODO: This method would be better as an hql query. The reason we are using a native query is that the evidence code
+    // is not a simple string but an entity, which complicates the mapping of the composite key.
+    // See the OrthologEvidence class for more details.
+    // Also see ZFIN-9718 (and ZFIN-9780) for the issue with using an entity as part of a composite key.
+    @Override
+    public void saveEvidenceCode(OrthologEvidence evidence) {
+        String sql = """
+                    INSERT INTO ortholog_evidence (oev_ortho_zdb_id, oev_evidence_code, oev_pub_zdb_id, oev_evidence_term_zdb_id)
+                        VALUES (:oev_ortho_zdb_id, :code, :pub_zdb_id, :term_zdb_id)
+                    ON CONFLICT DO NOTHING
+                    """;
+        Query query = currentSession().createNativeQuery(sql);
+        query.setParameter("oev_ortho_zdb_id", evidence.getOrtholog().getZdbID());
+        query.setParameter("code", evidence.getEvidenceCode().getCode());
+        query.setParameter("pub_zdb_id", evidence.getPublication().getZdbID());
+        query.setParameter("term_zdb_id", evidence.getEvidenceTerm().getZdbID());
+        query.executeUpdate();
+    }
+
+    @Override
+    public void removeEvidenceCode(OrthologEvidence evidence) {
+        currentSession().delete(evidence);
+    }
+
 }

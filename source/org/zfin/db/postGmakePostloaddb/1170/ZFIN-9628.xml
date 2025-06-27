@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-9628">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1170/mart_export_transcripts.txt"
+                  tableName="transcript_ensembl_name" quotchar='"' separator=",">
+            <column header="Transcript stable ID" name="ten_ensdart_id" type="String"/>
+            <column header="Transcript name" name="ten_ensdart_name" type="String"/>
+            <column header="Transcript type" name="ten_ensdart_type" type="String"/>
+        </loadData>
+        <output target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+</databaseChangeLog>

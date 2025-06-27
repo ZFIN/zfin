@@ -41,7 +41,9 @@
                 </td>
                 <authz:authorize access="hasRole('root')">
                     <td>
-                        <zfin2:externalLink id="id" href="http://www.ensembl.org/id/${transcript.marker.ensdartId}">${transcript.marker.ensdartId}</zfin2:externalLink>
+                        <c:if test="${!empty transcript.marker.ensdartId}">
+                            <zfin2:externalLink id="id" href="http://www.ensembl.org/id/${transcript.marker.ensdartId}">${transcript.marker.ensdartId}</zfin2:externalLink>
+                        </c:if>
                     </td>
                 </authz:authorize>
                 <td>${transcript.marker.annotationMethod.name}</td>

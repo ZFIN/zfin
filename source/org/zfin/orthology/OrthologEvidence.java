@@ -83,6 +83,13 @@ public class OrthologEvidence implements Serializable {
         }
     }
 
+    //TODO: Refactor this to better address the issue from ZFIN-9718 (and ZFIN-9780)
+    // This class is used as a composite key for OrthologEvidence
+    // It contains the ortholog ID, evidence code, and publication ID.
+    // The problem is that the evidence code is not a simple string but an entity, which complicates the mapping.
+    // We try to sort out the issues of using an entity as part of a composite key.
+    // If that doesn't work, we could add a separate primary key field to OrthologEvidence and pair it with a unique constraint for the combination of ortholog, evidence code, and publication.
+    // Related code at HibernateOrthologyRepository::saveEvidenceCode
     @Embeddable
     @Getter
     @Setter
