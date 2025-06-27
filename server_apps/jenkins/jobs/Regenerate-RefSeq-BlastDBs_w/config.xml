@@ -38,7 +38,7 @@
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>$SOURCEROOT</customWorkspace>
+  <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command>cd server_apps/data_transfer/BLAST/SPTrEMBL/ &amp;&amp; ./processSPTrEMBL.sh</command>
