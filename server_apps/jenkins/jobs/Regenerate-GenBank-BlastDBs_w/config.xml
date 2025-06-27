@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Regenerate Ensembl BLAST databases</description>
+  <description>Regenerate all the GenBank blastdbs.  Takes over 48 hours to run.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -34,14 +34,16 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.TimerTrigger>
+      <!--      Old Value:-->
+      <!--      <spec>00 19 * * 5</spec>-->
       <spec></spec>
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>$SOURCEROOT</customWorkspace>
+  <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd server_apps/data_transfer/BLAST/Ensembl/ &amp;&amp; ./processEnsembl.sh</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/BLAST/ &amp;&amp; ./blastdbupdate.pl</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
@@ -90,6 +92,7 @@
       <compressBuildLog>false</compressBuildLog>
       <replyTo>${DB_OWNER}@zfin.org</replyTo>
       <saveOutput>false</saveOutput>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>  </publishers>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
   <buildWrappers/>
 </project>

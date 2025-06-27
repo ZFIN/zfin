@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Regenerate Ensembl BLAST databases</description>
+  <description>Regenerate sptr_zf, sptr_ms, sptr_hs blast dbs.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -41,12 +41,25 @@
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd server_apps/data_transfer/BLAST/Ensembl/ &amp;&amp; ./processEnsembl.sh</command>
+      <command>cd server_apps/data_transfer/BLAST/SPTrEMBL/ &amp;&amp; ./processSPTrEMBL.sh</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command></command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command></command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/BLAST/SPTrEMBL/*.log</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
       <recipientList></recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
@@ -90,6 +103,7 @@
       <compressBuildLog>false</compressBuildLog>
       <replyTo>${DB_OWNER}@zfin.org</replyTo>
       <saveOutput>false</saveOutput>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>  </publishers>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
   <buildWrappers/>
 </project>
