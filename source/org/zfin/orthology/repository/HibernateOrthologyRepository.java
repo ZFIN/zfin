@@ -47,6 +47,9 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
         }
 
         currentSession().save(ortholog);
+        for( OrthologExternalReference ref : ortholog.getExternalReferenceList()) {
+            currentSession().save(ref);
+        }
 
         Updates up = new Updates();
         up.setRecID(ortholog.getZebrafishGene().getZdbID());
