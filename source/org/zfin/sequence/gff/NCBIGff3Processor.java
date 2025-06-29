@@ -5,11 +5,15 @@ import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.marker.Marker;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
@@ -21,10 +25,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.sequence.gff.Gff3NcbiService.createBatch;
 
 @Log4j2
 public class NCBIGff3Processor {
@@ -37,7 +44,9 @@ public class NCBIGff3Processor {
 
     private ReportBuilder.SummaryTable summaryTableLoad;
     private ReportBuilder.SummaryTable summaryTableFeatureHisto;
+    private ReportBuilder.SummaryTable summaryTableGeneLocation;
     private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
+    private final AssemblyDAO assemblyDAO = new AssemblyDAO();
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
 
     public static void main(String[] args) throws IOException {
@@ -58,7 +67,76 @@ public class NCBIGff3Processor {
         processEnsemblGff3(fileName);
         markZfinGeneRecords();
         createFeatureTypeHistogram();
+        upsertSequenceFeatureChromosomeRecords();
         createReport(builder);
+    }
+
+    private void upsertSequenceFeatureChromosomeRecords() {
+        Assembly grcz12tu = assemblyDAO.find("1");
+        List<Gff3Ncbi> filteredResultSet = getZfinGeneRecords();
+        System.out.println("1-1 ZFIN-NCBI-Gene Records in ZFIN found: " + filteredResultSet.size());
+
+        Collection<List<Gff3Ncbi>> batchedFilteredResults = createBatch(filteredResultSet);
+
+        AtomicInteger newRecords = new AtomicInteger();
+        AtomicInteger updatedRecords = new AtomicInteger();
+        batchedFilteredResults.forEach(filteredResults -> {
+            HibernateUtil.createTransaction();
+            try {
+                List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
+                Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
+                    .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
+                filteredResults.forEach(gff3Ncbi -> {
+                    String geneID = gff3Ncbi.getGeneID();
+                    MarkerGenomeLocation genomeLocation;
+                    if (geneIDMap.containsKey(geneID)) {
+                        // update start, end or chromosome changes only
+                        genomeLocation = geneIDMap.get(geneID);
+                        boolean changesIncurred = false;
+                        if (!genomeLocation.getStart().equals(gff3Ncbi.getStart())) {
+                            genomeLocation.setStart(gff3Ncbi.getStart());
+                            changesIncurred = true;
+                        }
+                        if (!genomeLocation.getEnd().equals(gff3Ncbi.getEnd())) {
+                            genomeLocation.setEnd(gff3Ncbi.getStart());
+                            changesIncurred = true;
+                        }
+                        if (!genomeLocation.getChromosome().equals(gff3Ncbi.getChromosome())) {
+                            genomeLocation.setChromosome(gff3Ncbi.getChromosome());
+                            changesIncurred = true;
+                        }
+                        if (changesIncurred) {
+                            updatedRecords.incrementAndGet();
+                            getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
+                        }
+                    } else {
+                        newRecords.incrementAndGet();
+                        genomeLocation = new MarkerGenomeLocation();
+                        genomeLocation.setAccessionNumber(geneID);
+                        Marker gene = getMarkerRepository().getMarker(gff3Ncbi.getGeneZdbID());
+                        gene.getAssemblies().add(grcz12tu);
+                        genomeLocation.setMarker(gene);
+                        genomeLocation.setAssembly(grcz12tu.getName());
+                        genomeLocation.setChromosome(gff3Ncbi.getChromosome());
+                        genomeLocation.setStart(gff3Ncbi.getStart());
+                        genomeLocation.setEnd(gff3Ncbi.getEnd());
+                        genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER);
+                        getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
+                        if(newRecords.get() % 500 == 0) {
+                            log.error("Processed " + newRecords.get() + " new genome locations.");
+                        }
+                    }
+                });
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (Exception e) {
+                log.log(Level.ERROR, "Error saving genome location: ", e);
+            }
+        });
+
+        summaryTableGeneLocation.addSummaryRow(List.of(
+            String.valueOf(newRecords.get()),
+            String.valueOf(updatedRecords.get())
+        ));
     }
 
     private void createFeatureTypeHistogram() {
@@ -205,7 +283,7 @@ public class NCBIGff3Processor {
         pagination.setLimit(0);
         pagination.setPage(0);
         Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
-        summaryTableLoad.addSummaryRow(List.of("Gene", String.valueOf(totalRecords)));
+        summaryTableLoad.addSummaryRow(List.of("Total NCBI Gene records in file", getFormattedNumber(totalRecords.intValue())));
         System.out.println("Total NCBI Gene records found: " + totalRecords);
         pagination.setLimit(400000);
         pagination.setPage(0);
@@ -226,7 +304,7 @@ public class NCBIGff3Processor {
             .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
         summaryTableLoad.addSummaryRow(List.of(
             "ZFIN Gene Records matching NCBI Gene Records",
-            String.valueOf(genbankZFiNMap.size())
+            getFormattedNumber(genbankZFiNMap.size())
         ));
         List<Gff3Ncbi> filteredResults = results.stream()
             .filter(record -> record.getAttributePairs().stream()
@@ -248,6 +326,10 @@ public class NCBIGff3Processor {
         return filteredResults;
     }
 
+    private static String getFormattedNumber(int number) {
+        return String.format("%,d", number);
+    }
+
 
     private ReportBuilder prepareReports() {
         ReportBuilder builder = new ReportBuilder();
@@ -256,6 +338,8 @@ public class NCBIGff3Processor {
         summaryTableLoad.setHeaders(List.of("Record Type", "Count"));
         summaryTableFeatureHisto = builder.addSummaryTable("Feature Histogram");
         summaryTableFeatureHisto.setHeaders(List.of("Feature Type", "Count"));
+        summaryTableGeneLocation = builder.addSummaryTable("Genome Location Load (sequence_feature_chromosome_location_generated table)");
+        summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records"));
         return builder;
     }
 
@@ -289,6 +373,35 @@ public class NCBIGff3Processor {
         }
     }
 
+    private List<Gff3Ncbi> getZfinGeneRecords() {
+        HibernateUtil.createTransaction();
+        Map<String, Object> params = new HashMap<>();
+        params.put("feature", "gene");
+
+        Pagination pagination = new Pagination();
+        pagination.setLimit(0);
+        pagination.setPage(0);
+        Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
+        log.info("Total NCBI Gene records found: " + totalRecords);
+        pagination.setLimit(400000);
+        pagination.setPage(0);
+        List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
+        List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
+        // remove records without ZFIN gene association
+        // retrieve all MarkerDBLinks for zfin genes with genbank accession
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        System.out.println("Total GenBank Records in ZFIN found: " + genbankList.size());
+        Set<String> genBankIDsInZFIN = genbankList.stream()
+            .map(DBLink::getAccessionNumber)
+            .collect(Collectors.toSet());
+
+        // filter out those records that have a ZFIN Gene ID
+        List<Gff3Ncbi> filteredResults = results.stream()
+            .filter(record -> record.getGeneZdbID() != null)
+            .toList();
+        HibernateUtil.rollbackTransaction();
+        return filteredResults;
+    }
 }
 
 

@@ -27,20 +27,12 @@ create table gff3_ncbi_attribute
     gna_value     text
 );
 
+alter table sequence_feature_chromosome_location_generated
+add foreign key (sfclg_fdb_db_id) references foreign_db(fdb_db_pk_id);
 
-create table temp_gff3_ncbi
-(
-    gff_pk_id      serial,
-    gff_seqname    text not null,
-    gff_source     text,
-    gff_feature    text,
-    gff_start      int,
-    gff_end        int,
-    gff_score      text,
-    gff_strand     char(1),
-    gff_frame      char(1),
-    gff_attributes text,
-    gff_start_s    text,
-    gff_end_s      text
-);
+-- cannot create this as there are many accessions with version numbers on it on the sequence_feature_chromosome_location_generated table
+-- where db_link table does not contain versioned accessions.
+alter table sequence_feature_chromosome_location_generated
+add foreign key (sfclg_acc_num) references db_link(dblink_acc_num);
+
 
