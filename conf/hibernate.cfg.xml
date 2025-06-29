@@ -217,6 +217,7 @@
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
         <mapping class="org.zfin.ontology.TermDBLink"/>
         <mapping class="org.zfin.sequence.TranscriptDBLink"/>            
+        <mapping class="org.zfin.sequence.gff.Assembly"/>
         <mapping class="org.zfin.Species"/>
         <mapping class="org.zfin.zebrashare.FeatureCommunityContribution"/>
         <mapping class="org.zfin.zebrashare.ZebrashareEditor"/>
