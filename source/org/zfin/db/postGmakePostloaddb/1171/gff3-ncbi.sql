@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset cmpich:gff3_ncbi_pre
+--changeset cmpich:gff3_ncbi
 
 create table gff3_ncbi
 (
@@ -32,7 +32,5 @@ add foreign key (sfclg_fdb_db_id) references foreign_db(fdb_db_pk_id);
 
 -- cannot create this as there are many accessions with version numbers on it on the sequence_feature_chromosome_location_generated table
 -- where db_link table does not contain versioned accessions.
-alter table sequence_feature_chromosome_location_generated
-add foreign key (sfclg_acc_num) references db_link(dblink_acc_num);
 
 
