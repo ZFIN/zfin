@@ -248,6 +248,7 @@ task createGff3Files(type: JavaExec) {
 }
 
 task loadGff3NcbiFile(type: JavaExec) {
+    jvmArgs = ['-Xmx16g', '-Xms1g']
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3Processor'
 }
