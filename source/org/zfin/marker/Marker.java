@@ -25,6 +25,7 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.gff.Assembly;
 
 import java.io.Serializable;
 import java.util.*;
@@ -69,6 +70,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<MarkerGoTermEvidence> goTermEvidence;
     private Set<SecondaryMarker> secondaryMarkerSet;
 
+    private Set<Assembly> assemblies;
     // cashed attribute
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
@@ -111,10 +113,12 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
         return aliases;
     }
+
     @JsonView({View.ExpressedGeneAPI.class, View.API.class, View.ExpressionPublicationUI.class})
     public String getAbbreviation() {
         return abbreviation;
     }
+
     public void setAliases(Set<MarkerAlias> aliases) {
         this.aliases = aliases;
     }

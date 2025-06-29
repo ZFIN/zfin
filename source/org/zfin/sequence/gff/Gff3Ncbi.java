@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.framework.entity.BaseEntity;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Setter
@@ -59,9 +60,13 @@ public class Gff3Ncbi extends BaseEntity {
     private Set<Gff3NcbiAttributePair> attributePairs;
 
     public String getGeneID() {
-        String dbxrefEntry = attributePairs.stream()
+        Optional<Gff3NcbiAttributePair> any = attributePairs.stream()
             .filter(pair -> "Dbxref".equals(pair.getKey()))
-            .findAny().get().getValue();
+            .findAny();
+        String dbxrefEntry = any.map(Gff3NcbiAttributePair::getValue).orElse(null);
+        if (dbxrefEntry == null || dbxrefEntry.isEmpty()) {
+            return null;
+        }
         String[] xrefComponents = dbxrefEntry.split(",");
         for (String component : xrefComponents) {
             if (component.startsWith("GeneID:")) {
@@ -72,9 +77,10 @@ public class Gff3Ncbi extends BaseEntity {
     }
 
     public String getGeneZdbID() {
-        return attributePairs.stream()
+        Optional<Gff3NcbiAttributePair> any = attributePairs.stream()
             .filter(pair -> "gene_id".equals(pair.getKey()))
-            .findAny().get().getValue();
+            .findAny();
+        return any.map(Gff3NcbiAttributePair::getValue).orElse(null);
     }
 }
 

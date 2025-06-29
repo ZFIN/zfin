@@ -32,7 +32,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>ensembl-transcript-load-report.html</artifacts>
+            <artifacts>gff3_ncbi_report.*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -64,7 +64,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern>gff3_ncbi_report.*</attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
