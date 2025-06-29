@@ -105,6 +105,11 @@
                      foreign-key="mrkr_type" not-null="true"
                      class="org.zfin.marker.MarkerType"/>
 
+        <set name="assemblies" lazy="true" table="marker_assembly">
+            <key column="ma_mrkr_zdb_id"/>
+            <many-to-many column="ma_a_pk_id" class="org.zfin.sequence.gff.Assembly"/>
+        </set>
+
         <property name="abbreviationOrder">
             <column name="mrkr_abbrev_order"/>
         </property>
