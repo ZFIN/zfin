@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 #
 # Downloads sequence files from Ensembl
 #
@@ -20,10 +20,21 @@
 #      BLASTSERVER_FASTA_FILE_PATH/ensembl.ftp get time stamped
 #
 
-cd $SOURCEROOT
-gradle createEnsembTranscriptFastaFile
-# go back into original directory
-cd -
-pwd
+
+wget -Nq "ftp://ftp.ensembl.org/pub/current_fasta/danio_rerio/pep/Danio_rerio.GRCz11.pep.all.fa.gz"
+
+cp Danio_rerio.GRCz11.pep.all.fa.gz downloaded.gz;
+
+echo "== Unzip file == "
+gunzip downloaded.gz
+
+echo "==| Go over fasta file for defline adjustment |=="
+
+cp downloaded ensprot.fa;
+
+./deflineSwitch.pl ensprot.fa > ensemblProt_zf.fa
+
+rm -f downloaded;
+rm ensprot.fa;
 
 exit
