@@ -122,7 +122,7 @@ public class NCBIGff3Processor {
                         genomeLocation.setEnd(gff3Ncbi.getEnd());
                         genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER);
                         getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
-                        if(newRecords.get() % 500 == 0) {
+                        if (newRecords.get() % 500 == 0) {
                             log.error("Processed " + newRecords.get() + " new genome locations.");
                         }
                     }
@@ -141,11 +141,11 @@ public class NCBIGff3Processor {
 
     private void createFeatureTypeHistogram() {
         Map<String, Integer> histogram = dao.getFeatureTypeHistogram();
-        Map<String, Integer> sortedMap = histogram.entrySet().
+        LinkedHashMap<String, Integer> sortedMap = histogram.entrySet().
             stream().
             sorted(Map.Entry.comparingByValue()).
             collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        sortedMap.forEach((feature, count) -> summaryTableFeatureHisto.addSummaryRow(List.of(feature, String.valueOf(count))));
+        sortedMap.forEach((feature, count) -> summaryTableFeatureHisto.addSummaryRow(List.of(feature, getFormattedNumber(count))));
     }
 
     public static void init() {

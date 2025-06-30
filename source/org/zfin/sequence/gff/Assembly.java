@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.framework.entity.BaseEntity;
 
 @Setter
@@ -23,5 +24,9 @@ public class Assembly extends BaseEntity {
 
     @Column(name = "a_gcf_identifier")
     private String gcfIdentifier;
+
+    @Column(name = "a_order")
+    @SortNatural
+    private int order;
 }
 
