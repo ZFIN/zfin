@@ -19,6 +19,7 @@
     <permission>GROUP:hudson.model.Computer.Disconnect:systems</permission>
     <permission>GROUP:hudson.model.Computer.Provision:systems</permission>
     <permission>GROUP:hudson.model.Hudson.Administer:systems</permission>
+    <permission>GROUP:hudson.model.Hudson.Read:curators</permission>
     <permission>GROUP:hudson.model.Hudson.Read:systems</permission>
     <permission>GROUP:hudson.model.Item.Build:curators</permission>
     <permission>GROUP:hudson.model.Item.Build:systems</permission>
