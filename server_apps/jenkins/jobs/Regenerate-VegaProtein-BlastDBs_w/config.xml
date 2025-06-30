@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Regenerate Ensembl BLAST databases</description>
+  <description>Regenerate vegaprotein_zf and vegaprotein_zf blastdbs</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -34,6 +34,8 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.TimerTrigger>
+      <!--      Old Value:-->
+      <!--      <spec>00 12 * * 4</spec>-->
       <spec></spec>
     </hudson.triggers.TimerTrigger>
   </triggers>
@@ -41,7 +43,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd server_apps/data_transfer/BLAST/Ensembl/ &amp;&amp; ./processEnsembl.sh</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/BLAST/VegaProtein/ &amp;&amp; ./processVegaProtein.sh</command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>
   </builders>
@@ -90,6 +92,7 @@
       <compressBuildLog>false</compressBuildLog>
       <replyTo>${DB_OWNER}@zfin.org</replyTo>
       <saveOutput>false</saveOutput>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>  </publishers>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
   <buildWrappers/>
 </project>

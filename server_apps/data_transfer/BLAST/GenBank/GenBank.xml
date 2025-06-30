@@ -1,0 +1,45 @@
+<project name="GenBank">
+
+<target name="deployGenBank" depends="processGenBank" description="Fully redeploys GenBank.">
+   <echo message="deployGenBank"/>
+</target>
+
+<target name="downloadGenBank" description="Downloads files for GenBank to staging area.">
+   <echo message="downloadGenBank"/>
+   <exec executable="${basedir}/target/GenBank/downloadGenBank.sh">
+   </exec>
+</target>
+
+<target name="assembleGenBank"  description="Assembles files for GenBank into fasta files in the staging area.">
+   <echo message="assembleGenBank"/>
+   <exec executable="${basedir}/target/GenBank/assembleGenBank.sh">
+   </exec>
+</target>
+
+<target name="convertGenBank" description="Converts FASTA files for GenBank into blastable files in the staging area.">
+   <echo message="convertGenBank"/>
+   <exec executable="${basedir}/target/GenBank/convertGenBank.sh">
+   </exec>
+</target>
+
+<target name="revertGenBank" description="Pulls archived blast files from production to the staging area.">
+   <echo message="revertGenBank"/>
+   <exec executable="${basedir}/target/GenBank/revertGenBank.sh">
+   </exec>
+</target>
+
+<target name="processGenBank" depends="createTargetDir" description="deploys entire GenBank dbs">
+   <echo message="processGenBank"/>
+   <echo message="${basedir}/target"/>
+   <exec executable="${basedir}/target/GenBank/processGB.sh">
+   </exec>
+</target>
+
+<target name="devoGenBank" depends="createTargetDir" description="deploys entire GenBank dbs">
+   <echo message="devoGenBank"/>
+   <exec executable="${basedir}/target/GenBank/devoGenBank.sh">
+   </exec>
+</target>
+
+</project>
+
