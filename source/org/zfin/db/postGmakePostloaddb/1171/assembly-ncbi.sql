@@ -13,8 +13,8 @@ insert into assembly (a_pk_id, a_name, a_gcf_identifier, a_order)
 values (1, 'GRCz12tu', 'GCF_049306965.1_GRCz12tu', 10),
        (3, 'GRCz11', 'GCF_000002035.6_GRCz11', 20),
        (3, 'GRCz11 or older', null, 25),
-       (4, 'GRCz10', 'GCF_000002035.5_GRCz10', 30),
-       (5, 'Zv9', 'GCF_000002035.4_Zv9', 40);
+       (5, 'GRCz10', 'GCF_000002035.5_GRCz10', 30),
+       (6, 'Zv9', 'GCF_000002035.4_Zv9', 40);
 
 CREATE TABLE marker_assembly
 (
