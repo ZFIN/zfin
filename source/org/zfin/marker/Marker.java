@@ -717,4 +717,11 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
         return fluorescentMarkers;
     }
+
+    public Assembly getLatestAssembly() {
+        if (CollectionUtils.isEmpty(assemblies)) {
+            return null;
+        }
+        return assemblies.stream().min(Comparator.comparing(Assembly::getOrder)).get();
+    }
 }
