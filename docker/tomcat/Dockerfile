@@ -1,4 +1,4 @@
-FROM tomcat:10-jdk17
+FROM tomcat:10.1.40-jdk17
 
 #Add imagemagick for generating thumbnails
 RUN apt-get update && apt-get install -y \
