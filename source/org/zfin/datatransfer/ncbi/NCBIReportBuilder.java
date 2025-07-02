@@ -146,6 +146,13 @@ public class NCBIReportBuilder {
             if (headers.isEmpty()) {
                 throw new IllegalStateException("Headers must be set before adding rows");
             }
+            if (beforeCount == null) {
+                beforeCount = 0; // Default to 0 if null
+            }
+            if (afterCount == null) {
+                afterCount = 0; // Default to 0 if null
+            }
+
             Map<String, Object> row = new LinkedHashMap<>();
             row.put(headers.get(0).getKey(), title);
             row.put(headers.get(1).getKey(), beforeCount);

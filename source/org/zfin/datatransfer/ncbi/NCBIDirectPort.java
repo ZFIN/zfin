@@ -218,11 +218,20 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private Map<String, String> genesWithRefSeqAfterLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqAfter;
 
+    public static void _main(String[] args) {
+        NCBIDirectPort port = new NCBIDirectPort();
+        port.initAll();
+        port.run();
+        System.exit(0);
+    }
 
     public static void main(String[] args) {
         NCBIDirectPort port = new NCBIDirectPort();
         port.initAll();
-        port.run();
+        port.workingDir = new File("/tmp");
+        port.beforeFile = new File("/tmp/before_load.csv");
+        port.afterFile = new File("/tmp/after_load.csv");
+        port.writeHtmlReport();
         System.exit(0);
     }
 
