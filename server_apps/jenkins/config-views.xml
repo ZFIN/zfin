@@ -139,3 +139,24 @@
     </columns>
     <recurse>false</recurse>
     </listView>
+    <listView>
+    <name>BLAST</name>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames>
+        <comparator class="java.lang.String$CaseInsensitiveComparator"/>
+    </jobNames>
+    <jobFilters/>
+    <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+    </columns>
+    <includeRegex>(Push-Regenerated-Blastdbs_w)|(Regenerate-Ensembl-BlastDBs_w)|(Regenerate-EnsemblProtein-BlastDBs_w)|(Regenerate-GenBank-BlastDBs_w)|(Regenerate-miRBASE-BlastDBs_w)|(Regenerate-RefSeq-BlastDBs_w)|(Regenerate-SPTrEMBL-BlastDBs_w)|(Regenerate-VegaProtein-BlastDBs_w)|(Regenerate-ZFIN-BlastDBs_d)</includeRegex>
+    <recurse>false</recurse>
+    </listView>
