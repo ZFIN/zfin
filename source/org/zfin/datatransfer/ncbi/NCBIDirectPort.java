@@ -3121,7 +3121,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             table3.addSummaryRow(List.of("Number of db_link records deleted", beforeAfterSummary.get("deletedCount")));
         }
 
-
         builder.addActions(createActions(beforeAfterComparison));
 
         ObjectNode report = builder.build();
@@ -3141,18 +3140,69 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private List<LoadReportAction> createActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
         List<LoadReportAction> actions = new ArrayList<>();
+
+        actions.addAll(createDeleteActions(beforeAfterComparison));
+        actions.addAll(createLoadActions(beforeAfterComparison));
+        actions.addAll(createUpdateActions(beforeAfterComparison));
+
+        return actions;
+    }
+
+    private List<LoadReportAction> createLoadActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+        List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("added", Collections.emptyList());
+        for(CSVRecord record : deletedRecords) {
+            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.LOAD);
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private List<LoadReportAction> createDeleteActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
         List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("deleted", Collections.emptyList());
         for(CSVRecord record : deletedRecords) {
             LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.DELETE);
             actions.add(action);
         }
+        return actions;
+    }
 
-        List<CSVRecord> addedRecords = beforeAfterComparison.getOrDefault("added", Collections.emptyList());
-        for(CSVRecord record : addedRecords) {
-            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.LOAD);
+    private List<LoadReportAction> createUpdateActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<CSVRecord> updatedRecordsBefore = beforeAfterComparison.getOrDefault("updated1", Collections.emptyList());
+        List<CSVRecord> updatedRecordsAfter = beforeAfterComparison.getOrDefault("updated2", Collections.emptyList());
+        if (updatedRecordsBefore.isEmpty() && updatedRecordsAfter.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (updatedRecordsBefore.size() != updatedRecordsAfter.size()) {
+            print(LOG, "WARNING: Mismatched number of updated records before and after comparison.\n");
+            throw new IllegalStateException("Mismatched number of updated records before and after comparison.");
+        }
+        Iterator<CSVRecord> iterator1 = updatedRecordsBefore.iterator();
+        Iterator<CSVRecord> iterator2 = updatedRecordsAfter.iterator();
+        List<LoadReportAction> actions = new ArrayList<>();
+        while(iterator1.hasNext()) {
+            CSVRecord record1 = iterator1.next();
+            CSVRecord record2 = iterator2.next();
+            assertRecordsMatch(record1, record2);
+            LoadReportAction action = csvRecordToAction(record1, LoadReportAction.Type.UPDATE);
+            action.setDetails("Updated record from " + record1.get("dblink_zdb_id") + " to " + record2.get("dblink_zdb_id") + ", " +
+                              record1.get("dblink_length") + " to " + record2.get("dblink_length") + ", " +
+                              record1.get("recattrib_source_zdb_id") + " to " + record2.get("recattrib_source_zdb_id"));
             actions.add(action);
         }
         return actions;
+    }
+
+    private void assertRecordsMatch(CSVRecord record1, CSVRecord record2) {
+        if (record1.get("dblink_linked_recid").equals(record2.get("dblink_linked_recid")) &&
+            record1.get("dblink_acc_num").equals(record2.get("dblink_acc_num")) &&
+            record1.get("dblink_fdbcont_zdb_id").equals(record2.get("dblink_fdbcont_zdb_id"))) {
+            // Records match, proceed
+        } else {
+            print(LOG, "ERROR: Mismatched records in before-after comparison.\n");
+            throw new IllegalStateException("Mismatched records in before-after comparison.");
+        }
     }
 
     private LoadReportAction csvRecordToAction(CSVRecord record, LoadReportAction.Type type) {
