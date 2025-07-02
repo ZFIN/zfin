@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/tcsh
 
 cp @BLASTSERVER_BLAST_DATABASE_PATH@/Current/LoadedMicroRNAMature.xn* @BLASTSERVER_BLAST_DATABASE_PATH@/Backup 
 cp @BLASTSERVER_BLAST_DATABASE_PATH@/Current/LoadedMicroRNAStemLoop.xn* @BLASTSERVER_BLAST_DATABASE_PATH@/Backup 
