@@ -1,14 +1,12 @@
-#!/bin/tcsh
+#!/bin/bash -e
 #
 # Scp miRBASE sequence and
-# microRNA sequence from embryonix,
+# microRNA sequence
 # update blast db.
-# 
-setenv TARGET_PATH $TARGETROOT/server_apps/data_transfer/BLAST
+#
 
-cd $TARGET_PATH/miRBASE/
-
+source "config.sh"
 echo "cpmiRBASE.sh" ;
-$TARGET_PATH/miRBASE/cpmiRBASE.sh
+./cpmiRBASE.sh
 
 exit
