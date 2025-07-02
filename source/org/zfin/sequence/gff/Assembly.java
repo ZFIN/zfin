@@ -1,13 +1,13 @@
 package org.zfin.sequence.gff;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SortNatural;
 import org.zfin.framework.entity.BaseEntity;
+import org.zfin.marker.Marker;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -28,5 +28,8 @@ public class Assembly extends BaseEntity {
     @Column(name = "a_order")
     @SortNatural
     private int order;
+
+    @ManyToMany(mappedBy = "assemblies", fetch = FetchType.LAZY)
+    private List<Marker> marker;
 }
 

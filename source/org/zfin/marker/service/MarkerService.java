@@ -1,5 +1,6 @@
 package org.zfin.marker.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +65,7 @@ import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 /**
  * Service Class that deals with Marker related logic.
  */
+@Log4j2
 @Service
 public class MarkerService {
 
@@ -1557,6 +1560,28 @@ public class MarkerService {
                 .filter(Objects::nonNull)
                 .collect(toList());
     }
+
+    public Map<String, LinkDisplay> getVegaMarkerOnly() {
+        List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+        logger.info("Ensdarg records: " + ensdargList.size());
+        List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
+        logger.info("Vega records: " + vegaList.size());
+        List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
+        logger.info("Gen records: " + genbankList.size());
+        // vega gene list
+        List<String> ensdargGeneList = ensdargList.stream().map(markerDBLink -> markerDBLink.getMarker().getZdbID()).toList();
+        logger.info("ensdargGeneList records: " + ensdargGeneList.size());
+        vegaList.removeIf(markerDBLink -> ensdargGeneList.contains(markerDBLink.getAssociatedGeneID()));
+        logger.info("vegaList records after removing ensdarg: " + vegaList.size());
+
+        List<String> geneBankIDs = genbankList.stream().map(markerDB -> markerDB.getMarker().getZdbID()).toList();
+        vegaList.removeIf(markerDBLink -> geneBankIDs.contains(markerDBLink.getAssociatedGeneID()));
+        logger.info("Number of Genes that have only a Vega ID (no Ensembl and no NCBI): " + vegaList.size());
+        vegaList.forEach(linkDisplay -> logger.info(linkDisplay.getAssociatedGeneID()));
+        return vegaList.stream().collect(
+            Collectors.toMap(LinkDisplay::getAssociatedGeneID, Function.identity(), (existing, replacement) -> existing));
+    }
+
 }
 
 
