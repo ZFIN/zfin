@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/usr/bin/env perl
 
 use DBI;
 
