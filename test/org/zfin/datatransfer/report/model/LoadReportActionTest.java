@@ -26,7 +26,7 @@ public class LoadReportActionTest {
     public void testConstructorWithRequiredFields() {
         List<String> supplementalDataKeys = Arrays.asList("key1", "key2");
         
-        LoadReportAction action = new LoadReportAction("action123", "LOAD", "GENE", 
+        LoadReportAction action = new LoadReportAction("action123", LoadReportAction.Type.LOAD, "GENE",
                                                       "ACC123", "ZDB-GENE-123", 
                                                       "Loaded gene data", "1000", 
                                                       supplementalDataKeys);
@@ -55,7 +55,7 @@ public class LoadReportActionTest {
     public void testIdAsInteger() {
         List<String> supplementalDataKeys = Arrays.asList("key1");
         
-        LoadReportAction action = new LoadReportAction(12345, "LOAD", "GENE", 
+        LoadReportAction action = new LoadReportAction(12345, LoadReportAction.Type.LOAD, "GENE",
                                                       "ACC123", "ZDB-GENE-123", 
                                                       "Loaded gene data", "1000", 
                                                       supplementalDataKeys);
@@ -66,7 +66,7 @@ public class LoadReportActionTest {
     @Test
     public void testSerializationWithRequiredFieldsOnly() throws Exception {
         List<String> supplementalDataKeys = Arrays.asList("key1", "key2");
-        LoadReportAction action = new LoadReportAction("action123", "LOAD", "GENE", 
+        LoadReportAction action = new LoadReportAction("action123", LoadReportAction.Type.LOAD, "GENE",
                                                       "ACC123", "ZDB-GENE-123", 
                                                       "Loaded gene data", "1000", 
                                                       supplementalDataKeys);
@@ -195,7 +195,7 @@ public class LoadReportActionTest {
     
     private LoadReportAction createFullAction() {
         List<String> supplementalDataKeys = Arrays.asList("key1", "key2");
-        LoadReportAction action = new LoadReportAction("action123", "LOAD", "GENE", 
+        LoadReportAction action = new LoadReportAction("action123", LoadReportAction.Type.LOAD, "GENE",
                                                       "ACC123", "ZDB-GENE-123", 
                                                       "Loaded gene data", "1000", 
                                                       supplementalDataKeys);

@@ -10,8 +10,6 @@ import java.util.Map;
 
 /**
  * Represents an action performed during a ZFIN load process.
- * Contains required fields: id, type, subType, accession, geneZdbID, details, length, supplementalDataKeys
- * Contains optional fields: uniprotAccessions, relatedEntityID, dbName, md5, relatedEntityFields, relatedActionsKeys, links, tags
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -19,30 +17,32 @@ import java.util.Map;
                    "uniprotAccessions", "relatedEntityID", "dbName", "md5", "relatedEntityFields", 
                    "supplementalDataKeys", "relatedActionsKeys", "links", "tags"})
 public class LoadReportAction {
-    
+
+    public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
+
     // Required fields
     @JsonProperty(value = "id", required = true)
     private Object id; // Can be string or integer
     
     @JsonProperty(value = "type", required = true)
-    private String type;
+    private Type type;
     
     @JsonProperty(value = "subType", required = true)
     private String subType;
     
-    @JsonProperty(value = "accession", required = true)
+    @JsonProperty(value = "accession", required = false)
     private String accession;
     
-    @JsonProperty(value = "geneZdbID", required = true)
+    @JsonProperty(value = "geneZdbID", required = false)
     private String geneZdbID;
     
-    @JsonProperty(value = "details", required = true)
+    @JsonProperty(value = "details", required = false)
     private String details;
     
-    @JsonProperty(value = "length", required = true)
+    @JsonProperty(value = "length", required = false)
     private String length;
     
-    @JsonProperty(value = "supplementalDataKeys", required = true)
+    @JsonProperty(value = "supplementalDataKeys", required = false)
     private List<String> supplementalDataKeys;
     
     // Optional fields
@@ -73,7 +73,7 @@ public class LoadReportAction {
     public LoadReportAction() {
     }
     
-    public LoadReportAction(Object id, String type, String subType, String accession, 
+    public LoadReportAction(Object id, Type type, String subType, String accession,
                            String geneZdbID, String details, String length, 
                            List<String> supplementalDataKeys) {
         this.id = id;

@@ -328,7 +328,7 @@
                     <thead>
                     <tr>
                         <th>ZDB Gene ID</th>
-                        <th>UniProt Accession</th>
+                        <th>Accession</th>
                         <th>Tags
                                 <!-- ${tagFilter()} -->
                         </th>
@@ -381,6 +381,7 @@
                 );
             }
 
+            const relatedEntityFields = item.relatedEntityFields;
             return html`
                 <div>
                     <h2>Details for Accession</h2>
@@ -397,7 +398,16 @@
                     ${ relatedActions && relatedActions.length > 0 &&
                         html`<h4>Related Actions</h4>
                             <ul>
-                            ${relatedActions.map( i => html`<li><a href="#" onClick="${() => goToDetail(i.id)}" >${i.type}: ${i.subType}: <span class="hidden">${i.id}</span></a></li>`)}
+                            ${relatedActions.map( i => html`<li><a href="#" onClick="${() => goToDetail(i.id)}" >${i.type}: ${i.subType}: ${i.accession}<span class="hidden">${i.id}</span></a></li>`)}
+                            </ul>
+                        `
+                    }
+                    ${ relatedEntityFields && Object.keys(relatedEntityFields).length > 0 &&
+                        html`<h4>Related Entity Fields</h4>
+                            <ul>
+                            ${Object.keys(relatedEntityFields).map( key => html`
+                                <li>${key}: ${relatedEntityFields[key]}</li>
+                            `)}
                             </ul>
                         `
                     }
