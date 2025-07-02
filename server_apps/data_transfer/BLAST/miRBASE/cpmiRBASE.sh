@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/bash -e
 
 BLASTSERVER_BLAST_DATABASE_PATH=/opt/zfin/blastdb
 WEBHOST_BLAST_DATABASE_PATH=/opt/zfin/blastdb
