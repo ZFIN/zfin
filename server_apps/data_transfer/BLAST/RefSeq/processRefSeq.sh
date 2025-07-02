@@ -15,9 +15,9 @@ log_message "Convert RefSeq"
 log_message "Push RefSeq"
  ./pushRefSeq.sh
 
-#if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
+#if ($HOSTNAME == genomix.cs.uoregon.edu) then
 #    echo "==| distribute refseq to nodes ==|"
-#    @TARGET_PATH@/RefSeq/distributeToNodesRefSeq.sh
+#    $TARGET_PATH/RefSeq/distributeToNodesRefSeq.sh
 #endif 
 
 log_message "Finished RefSeq Load"

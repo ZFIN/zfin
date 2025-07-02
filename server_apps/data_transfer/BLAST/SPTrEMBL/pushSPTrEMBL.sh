@@ -7,8 +7,8 @@ echo "==| Cp to db dir SPTrEMBL |=="
 
 cp sptr_*.xp* $BLAST_PATH/Current/
 
-#/bin/chgrp zfishweb @WEBHOST_BLAST_DATABASE_PATH@/Current/sptr_*.x*
-#/bin/chmod 664 @WEBHOST_BLAST_DATABASE_PATH@/Current/sptr_*.x*
+#/bin/chgrp zfishweb $WEBHOST_BLAST_DATABASE_PATH/Current/sptr_*.x*
+#/bin/chmod 664 $WEBHOST_BLAST_DATABASE_PATH/Current/sptr_*.x*
 
 /bin/rm sptr_*.xp*
 
