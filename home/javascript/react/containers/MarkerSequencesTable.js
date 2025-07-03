@@ -10,7 +10,7 @@ import SequenceType from '../components/SequenceType';
 const MarkerSequencesTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
     const [showSequence, setShowSequence] = useState(false);
-    const [count, setCount] = useState({'countDirect':0,'countIncludingChildren':0});
+    const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
 
     const showSeq = () => {
         setShowSequence(true)
@@ -51,6 +51,12 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
                     multiPubAccessionID={markerId}
                 />
             ),
+            width: '150px',
+            filterName: 'accession',
+        },
+        {
+            label: 'Genome Assembly',
+            content: row => row.latestAssembly,
             width: '150px',
             filterName: 'accession',
         },
