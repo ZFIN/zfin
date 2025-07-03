@@ -1180,6 +1180,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return cachedMarkerDbLinks;
     }
 
+    public List<MarkerDBLink> getAllForeignDbGenes(ForeignDB.AvailableName foreignDB) {
+        String hql = """ 
+                  from MarkerDBLink
+                  where referenceDatabase.foreignDB.dbName = (:dbName)
+            """;
+        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
+        query.setParameter("dbName", foreignDB);
+        List<MarkerDBLink> markerDbLinks = query.list();
+        return markerDbLinks;
+    }
+
     public List<MarkerDBLink>
     getAllGenbankGenes() {
         String hql = """
