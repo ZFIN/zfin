@@ -721,6 +721,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return fluorescentMarkers;
     }
 
+    @JsonView(View.SequenceAPI.class)
     public Assembly getLatestAssembly() {
         if (CollectionUtils.isEmpty(assemblies)) {
             return null;
