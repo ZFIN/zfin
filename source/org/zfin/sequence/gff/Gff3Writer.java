@@ -78,8 +78,8 @@ public class Gff3Writer {
 
     private void createZfinGeneFile() throws IOException {
         List<Gff3Ncbi> filteredResults = getZfinGeneRecords();
-        writeGff3File("zfin_genes.GRCz12.gff3", filteredResults);
-        upsertSequenceFeatureChromosomeRecords(filteredResults);
+        writeGff3File("zfin_genes.grcz12.gff3", filteredResults);
+        //upsertSequenceFeatureChromosomeRecords(filteredResults);
     }
 
     private List<Gff3Ncbi> getZfinGeneRecords() {

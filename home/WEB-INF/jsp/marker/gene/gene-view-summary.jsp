@@ -24,7 +24,7 @@
         <zfin2:displayLocation entity="${formBean.marker}" longDetail="true"/>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Assembly or Genome Build">
+    <z:attributeListItem label="Genome Assembly">
         <c:choose>
             <c:when test="${ zfn:isRoot()}">
                 <ul class="comma-separated">

@@ -7,7 +7,6 @@ import htsjdk.tribble.gff.Gff3Feature;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * Utility class for reading GFF3 files using HTSJDK

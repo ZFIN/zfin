@@ -54,7 +54,7 @@ public class NCBIGff3PostProcessor extends AbstractScriptWrapper {
 
     }
 
-    private void start() throws IOException {
+    private void start() {
         ReportBuilder builder = prepareReports();
         generateGRCz11OrOlderAssemblies();
     }
