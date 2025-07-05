@@ -11,6 +11,7 @@ import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
@@ -71,6 +72,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<SecondaryMarker> secondaryMarkerSet;
 
     private Set<Assembly> assemblies;
+    private Set<VocabularyTerm> annotationStatusTerms;
     // cashed attribute
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
@@ -724,5 +726,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
         }
         return assemblies.stream().min(Comparator.comparing(Assembly::getOrder)).get();
+    }
+
+    @JsonView(View.SequenceAPI.class)
+    public String getLatestAnnotationStatus() {
+        if (CollectionUtils.isEmpty(annotationStatusTerms)) {
+            return null;
+        }
+        return annotationStatusTerms.stream().min(Comparator.comparing(VocabularyTerm::getName)).get().getName();
     }
 }

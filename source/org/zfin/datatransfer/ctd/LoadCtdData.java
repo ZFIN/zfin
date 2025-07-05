@@ -85,10 +85,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
     private List<MeshChebiMapping> getMeshChebiMappings() {
         Set<MeshCasChebiRelation> oneToOneRelations = mapping.getOneToOneRelations();
         List<MeshChebiMapping> newRecords = oneToOneRelations.stream().map(this::getMeshChebiMapping).toList();
-        newRecords.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm(VocabularyEnum.INFERENCE_METHOD_CHEBI_MESH.getName(), "chebi-cas-mesh")));
+        newRecords.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm("inference method chebi-mesh", "chebi-cas-mesh")));
         Set<MeshCasChebiRelation> oneToOneWithDCRelations = mapping.getOneToOneWithDCRelations();
         List<MeshChebiMapping> newRecordsDC = oneToOneWithDCRelations.stream().map(this::getMeshChebiMapping).toList();
-        newRecordsDC.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm(VocabularyEnum.INFERENCE_METHOD_CHEBI_MESH.getName(), "cas-chebi-cas-mesh")));
+        newRecordsDC.forEach(meshChebiMapping -> meshChebiMapping.setInferenceMethod(service.getVocabularyTerm("inference method chebi-mesh", "cas-chebi-cas-mesh")));
         List<MeshChebiMapping> allMappingRecords = new ArrayList<>(newRecords);
         allMappingRecords.addAll(newRecordsDC);
         return allMappingRecords;

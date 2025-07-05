@@ -39,6 +39,10 @@
         </c:choose>
     </z:attributeListItem>
 
+    <z:attributeListItem label="Annotation Status">
+        ${formBean.marker.latestAnnotationStatus}
+    </z:attributeListItem>
+
 
     <zfin2:geneDescriptionAttributeListItem geneDescription="${formBean.allianceGeneDesc}"/>
 

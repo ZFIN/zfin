@@ -23,10 +23,9 @@ public class Gff3NcbiService {
 
     int index = 0;
 
-    private void persistBatch(List<Gff3Ncbi> records) {
+    public void persistBatch(List<Gff3Ncbi> records) {
         HibernateUtil.createTransaction();
         try {
-            System.out.println("Insert batch number: " + index++ + " with size: " + records.size() + " records.");
             for (Gff3Ncbi record : records) {
                 Set<Gff3NcbiAttributePair> attributePairs = record.getAttributePairs();
                 record.setAttributePairs(attributePairs);
