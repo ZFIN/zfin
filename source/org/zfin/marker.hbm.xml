@@ -110,6 +110,11 @@
             <many-to-many column="ma_a_pk_id" class="org.zfin.sequence.gff.Assembly"/>
         </set>
 
+        <set name="annotationStatusTerms" lazy="true" table="marker_annotation_status">
+            <key column="mas_mrkr_zdb_id"/>
+            <many-to-many column="mas_vt_pk_id" class="org.zfin.framework.VocabularyTerm"/>
+        </set>
+
         <property name="abbreviationOrder">
             <column name="mrkr_abbrev_order"/>
         </property>
