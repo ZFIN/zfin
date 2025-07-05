@@ -11,10 +11,9 @@ import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Utility class for reading GFF3 files using HTSJDK
@@ -61,11 +60,26 @@ public class Gff3Reader {
         List<Gff3Feature> features = new ArrayList<>();
         Iterator<Gff3Feature> iterator = reader.iterator();
 
+        Spliterator<Gff3Feature>
+            spliterator = Spliterators
+            .spliteratorUnknownSize(iterator, 0);
+        StreamSupport.stream(spliterator, false);
+
         while (iterator.hasNext()) {
             features.add(iterator.next());
         }
 
         return features;
+    }
+
+    public Stream<Gff3Feature> getStream() throws IOException {
+        if (reader == null) {
+            initialize();
+        }
+        Spliterator<Gff3Feature>
+            spliterator = Spliterators
+            .spliterator(reader.iterator(), 20, 0 );
+        return StreamSupport.stream(spliterator, false);
     }
 
     /**

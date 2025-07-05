@@ -3,14 +3,15 @@ package org.zfin.sequence.gff;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.services.VocabularyService;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -27,8 +28,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
+import static org.zfin.framework.services.VocabularyEnum.NCBI_ANNOTATION_STATUS;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.gff.Gff3NcbiService.createBatch;
@@ -65,25 +68,29 @@ public class NCBIGff3Processor {
             downloadNcbiGff3File();
         }
         processEnsemblGff3(fileName);
-        markZfinGeneRecords();
+        addGeneIDToAttributes();
         createFeatureTypeHistogram();
         upsertSequenceFeatureChromosomeRecords();
         createReport(builder);
     }
+
+    private final VocabularyService vocabularyService = new VocabularyService();
 
     private void upsertSequenceFeatureChromosomeRecords() {
         Assembly grcz12tu = assemblyDAO.find("1");
         List<Gff3Ncbi> filteredResultSet = getZfinGeneRecords();
         System.out.println("1-1 ZFIN-NCBI-Gene Records in ZFIN found: " + filteredResultSet.size());
 
+        VocabularyTerm annotationStatusTerm = vocabularyService.getVocabularyTerm(NCBI_ANNOTATION_STATUS, "Current");
+
         Collection<List<Gff3Ncbi>> batchedFilteredResults = createBatch(filteredResultSet);
+        List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
 
         AtomicInteger newRecords = new AtomicInteger();
         AtomicInteger updatedRecords = new AtomicInteger();
         batchedFilteredResults.forEach(filteredResults -> {
             HibernateUtil.createTransaction();
             try {
-                List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
                 Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
                     .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
                 filteredResults.forEach(gff3Ncbi -> {
@@ -115,6 +122,7 @@ public class NCBIGff3Processor {
                         genomeLocation.setAccessionNumber(geneID);
                         Marker gene = getMarkerRepository().getMarker(gff3Ncbi.getGeneZdbID());
                         gene.getAssemblies().add(grcz12tu);
+                        gene.setAnnotationStatusTerms(Set.of(annotationStatusTerm));
                         genomeLocation.setMarker(gene);
                         genomeLocation.setAssembly(grcz12tu.getName());
                         genomeLocation.setChromosome(gff3Ncbi.getChromosome());
@@ -157,34 +165,38 @@ public class NCBIGff3Processor {
     }
 
     public void processEnsemblGff3(String gff3FilePath) throws IOException {
+        AtomicInteger index = new AtomicInteger(0);
         Gff3Reader reader = new Gff3Reader(gff3FilePath);
 
         // Get all gene features
-        List<Gff3Feature> allRecords = reader.readAllFeatures();
-        System.out.println("Total records: " + allRecords.size());
-        summaryTableLoad.addSummaryRow(List.of("All records in File", String.valueOf(allRecords.size())));
-
-        List<Gff3Ncbi> records = allRecords.stream()
-            .map(feature -> {
-                Gff3Ncbi ncbi = new Gff3Ncbi();
-                ncbi.setChromosome(chromoMap.get(feature.getContig()));
-                ncbi.setStart(feature.getStart());
-                ncbi.setEnd(feature.getEnd());
-                //ncbi.setAttributes(feature.);
-                ncbi.setSource(feature.getSource() != null ? feature.getSource() : "unknown");
-                ncbi.setFeature(feature.getType() != null ? feature.getType() : "unknown");
-                ncbi.setScore(String.valueOf(feature.getScore()));
-                ncbi.setFrame(String.valueOf(feature.getPhase()));
-                ncbi.setStrand(feature.getStrand() != null ? feature.getStrand().name() : "unknown");
-                ncbi.setAttributes(generateAttributes(feature.getAttributes()));
-                ncbi.setAttributePairs(generateAttributePairs(feature.getAttributes()));
-                return ncbi;
-            })
-            .toList();
-
-        Gff3NcbiService service = new Gff3NcbiService();
-        service.saveAll(records);
+        Stream<Gff3Feature> streamedRecords = reader.getStream();
+        BatchIterator.batchStreamOf(streamedRecords, 10000)
+            .forEach(batch -> {
+                index.addAndGet(batch.size());
+                System.out.println("Processing batch number: " + index.get() + " with size: " + batch.size());
+                List<Gff3Ncbi> records = batch.stream()
+                    .map(feature -> {
+                        Gff3Ncbi ncbi = new Gff3Ncbi();
+                        ncbi.setChromosome(chromoMap.get(feature.getContig()));
+                        ncbi.setStart(feature.getStart());
+                        ncbi.setEnd(feature.getEnd());
+                        //ncbi.setAttributes(feature.);
+                        ncbi.setSource(feature.getSource() != null ? feature.getSource() : "unknown");
+                        ncbi.setFeature(feature.getType() != null ? feature.getType() : "unknown");
+                        ncbi.setScore(String.valueOf(feature.getScore()));
+                        ncbi.setFrame(String.valueOf(feature.getPhase()).equals("-1") ? "." : String.valueOf(feature.getPhase()));
+                        ncbi.setStrand(feature.getStrand() != null ? feature.getStrand().name().equals("POSITIVE") ? "+" : "-" : "unknown");
+                        ncbi.setAttributes(generateAttributes(feature.getAttributes()));
+                        ncbi.setAttributePairs(generateAttributePairs(feature.getAttributes()));
+                        return ncbi;
+                    })
+                    .toList();
+                Gff3NcbiService service = new Gff3NcbiService();
+                service.persistBatch(records);
+            });
         reader.close();
+        System.out.println("Total records: " + index.get());
+        summaryTableLoad.addSummaryRow(List.of("All records in GFF3 File", String.valueOf(index.get())));
     }
 
     private String generateAttributes(Map<String, List<String>> attributes) {
@@ -274,7 +286,7 @@ public class NCBIGff3Processor {
         FileUtil.gunzipFile(zippedFileName);
     }
 
-    private List<Gff3Ncbi> markZfinGeneRecords() {
+    private void addGeneIDToAttributes() {
         HibernateUtil.createTransaction();
         Map<String, Object> params = new HashMap<>();
         params.put("feature", "gene");
@@ -288,7 +300,6 @@ public class NCBIGff3Processor {
         pagination.setLimit(400000);
         pagination.setPage(0);
         List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
-        List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
         // remove records without ZFIN gene association
         // retrieve all MarkerDBLinks for zfin genes with genbank accession
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
@@ -297,21 +308,18 @@ public class NCBIGff3Processor {
             .map(DBLink::getAccessionNumber)
             .collect(Collectors.toSet());
 
-        // Gene IDs not matching a ZFIN record
-        List<String> notFoundGeneIDs = (List<String>) CollectionUtils.removeAll(ncbiGeneIDs, new ArrayList<>(genBankIDsInZFIN));
-
-        Map<String, String> genbankZFiNMap = genbankList.stream()
+        Map<String, String> genbankZFINMap = genbankList.stream()
             .collect(Collectors.toMap(MarkerDBLink::getAccessionNumber, markerDBLink -> markerDBLink.getMarker().getZdbID(), (a, b) -> a, LinkedHashMap::new));
         summaryTableLoad.addSummaryRow(List.of(
             "ZFIN Gene Records matching NCBI Gene Records",
-            getFormattedNumber(genbankZFiNMap.size())
+            getFormattedNumber(genbankZFINMap.size())
         ));
         List<Gff3Ncbi> filteredResults = results.stream()
             .filter(record -> record.getAttributePairs().stream()
                 .anyMatch(pair -> genBankIDsInZFIN.contains(pair.getGeneID())))
             .peek(gff3NcbiRecord -> {
                 String geneID = gff3NcbiRecord.getGeneID();
-                String zfinID = genbankZFiNMap.get(geneID);
+                String zfinID = genbankZFINMap.get(geneID);
                 if (zfinID != null) {
                     Gff3NcbiAttributePair pair = new Gff3NcbiAttributePair();
                     pair.setKey("gene_id");
@@ -323,7 +331,6 @@ public class NCBIGff3Processor {
             })
             .toList();
         HibernateUtil.flushAndCommitCurrentSession();
-        return filteredResults;
     }
 
     private static String getFormattedNumber(int number) {
@@ -386,14 +393,10 @@ public class NCBIGff3Processor {
         pagination.setLimit(400000);
         pagination.setPage(0);
         List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
-        List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
         // remove records without ZFIN gene association
         // retrieve all MarkerDBLinks for zfin genes with genbank accession
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
         System.out.println("Total GenBank Records in ZFIN found: " + genbankList.size());
-        Set<String> genBankIDsInZFIN = genbankList.stream()
-            .map(DBLink::getAccessionNumber)
-            .collect(Collectors.toSet());
 
         // filter out those records that have a ZFIN Gene ID
         List<Gff3Ncbi> filteredResults = results.stream()
