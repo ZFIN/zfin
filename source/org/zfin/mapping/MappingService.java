@@ -8,8 +8,11 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.gff.Assembly;
+import org.zfin.sequence.gff.AssemblyDAO;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
@@ -139,8 +142,13 @@ public class MappingService {
         return sortAndFilterGenomeBrowserLocations(genomeLocationList);
     }
 
+    public static Map<String, Integer> assemblyOrder = (new AssemblyDAO()). findAllSortedAssemblies().stream()
+        .collect(Collectors.toMap(Assembly::getName, Assembly::getOrder));
+
     private static List<GenomeLocation> sortAndFilterGenomeBrowserLocations(List<? extends GenomeLocation> genomeLocationList) {
-        Collections.sort(genomeLocationList);
+        Collections.sort(genomeLocationList,
+            Comparator.comparing(location -> assemblyOrder.getOrDefault(((GenomeLocation) location).getAssembly(), Integer.MAX_VALUE))
+                .thenComparing(location -> ((GenomeLocation) location).getSource()));
         List<GenomeLocation> finalGenomeList = new ArrayList<>(genomeLocationList.size());
         for (GenomeLocation genomeLocation : genomeLocationList) {
             GenomeLocation.Source source = genomeLocation.getSource();
