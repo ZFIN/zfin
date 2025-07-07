@@ -6,6 +6,8 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.SearchResponse;
 import org.zfin.framework.dao.BaseSQLDAO;
 
+import java.util.List;
+
 public class AssemblyDAO extends BaseSQLDAO<Assembly> {
 
 //    protected Session entityManager;
@@ -33,5 +35,15 @@ public class AssemblyDAO extends BaseSQLDAO<Assembly> {
         response.setResults(query.getResultList());
         response.setTotalResults((long) response.getResults().size());
         return response;
+    }
+
+    public List<Assembly> findAllSortedAssemblies() {
+        String hql = """
+            from Assembly
+            where
+            order by order
+            """;
+        TypedQuery<Assembly> query = entityManager.createQuery(hql, Assembly.class);
+        return query.getResultList();
     }
 }
