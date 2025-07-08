@@ -12,9 +12,11 @@ import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
 import org.zfin.datatransfer.report.model.LoadReportAction;
 import org.zfin.datatransfer.report.model.LoadReportActionLink;
+import org.zfin.datatransfer.report.model.LoadReportActionTag;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
+import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -217,6 +219,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesGenBankAfter;
     private Map<String, String> genesWithRefSeqAfterLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqAfter;
+    private List<String> geneIDsNotInCurrentAnnotationRelease = null;
 
 
     public static void main(String[] args) {
@@ -482,22 +485,32 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private void removeOldFiles() {
         String filesToRemoveMessage = "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl";
         System.out.println(filesToRemoveMessage);
-        rmFile(workingDir, "prepareLog*", true);
-        rmFile(workingDir, "loadLog*", true);
-        rmFile(workingDir, "logNCBIgeneLoad", false);
-        rmFile(workingDir, "debug*", true);
-        rmFile(workingDir, "report*", true);
-
-        rmFile(workingDir, "*.html", true);
-        rmFile(workingDir, "*.csv", true);
-        rmFile(workingDir, "*.xlsx", true);
-        rmFile(workingDir, "*.json", true);
-
-        rmFile(workingDir, "toDelete.unl", false);
-        rmFile(workingDir, "toMap.unl", false);
-        rmFile(workingDir, "toLoad.unl", false);
-        rmFile(workingDir, "length.unl", false);
-        rmFile(workingDir, "noLength.unl", false);
+        rmFiles(workingDir, List.of(
+                "*.csv",
+                "*.danio.*",
+                "*.html",
+                "*.json",
+                "*.log",
+                "*.xlsx",
+                "*md5",
+                "*unl",
+                "after_db_link.csv",
+                "after_load*csv",
+                "after_recattrib.csv",
+                "before_db_link.csv",
+                "before_load*csv",
+                "before_recattrib.csv",
+                "debug*",
+                "java_debug_readZfinGeneInfoFile.json",
+                "length.unl",
+                "loadLog*",
+                "logNCBIgeneLoad",
+                "noLength.unl",
+                "prepareLog*",
+                "report*",
+                "toDelete.unl",
+                "toLoad.unl",
+                "toMap.unl"));
 
         if (!envTrue("SKIP_DOWNLOADS")) {
             if (!envTrue("NO_SLEEP")) {
@@ -1747,7 +1760,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
                     System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
                     print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
-                    task.runTask(new String[]{downloadFile.getAbsolutePath()});
+                    task.runTask(new String[]{"file://" + downloadFile.getAbsolutePath()});
                 } else {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
@@ -3145,6 +3158,52 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         beforeAfterComparison.clear();
     }
 
+    private List<LoadReportAction> postProcessActions(List<LoadReportAction> actions) {
+        return actions.stream().map(
+                action -> {
+                    if (action.getType().equals(LoadReportAction.Type.DELETE)) {
+                        action = modifyDeleteActionForNotInCurrentAnnotationRelease(action);
+                    }
+                    return action;
+                }
+        ).toList();
+    }
+
+    private LoadReportAction modifyDeleteActionForNotInCurrentAnnotationRelease(LoadReportAction action) {
+        if (this.geneIDsNotInCurrentAnnotationRelease == null) {
+            this.geneIDsNotInCurrentAnnotationRelease = this.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+        }
+        if (action.getDbName().equals("NCBI Gene")) {
+            String accession = action.getAccession();
+            if (this.geneIDsNotInCurrentAnnotationRelease.contains(accession)) {
+                action.setDetails("This NCBI Gene ID is not in the current annotation release.");
+                action.addTag(new LoadReportActionTag("NotInCurrentAnnotationRelease", "This NCBI Gene ID is not in the current annotation release."));
+            }
+        }
+        return action;
+    }
+
+    private List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        if (envTrue("SKIP_DOWNLOADS")) {
+            File cachedListOfGeneIDs = new File(workingDir, "geneIDsNotInCurrentAnnotationRelease.txt");
+            if (cachedListOfGeneIDs.exists()) {
+                try {
+                    return FileUtils.readLines(cachedListOfGeneIDs, StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    print(LOG, "ERROR: SKIP_DOWNLOADS set, yet failed to read cached gene IDs: " + e.getMessage());
+                    List<String> fetchedIDs = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+                    print(LOG, "Fetched " + fetchedIDs.size() + " gene IDs from NCBI: \n" + String.join("\n", fetchedIDs));
+                    return fetchedIDs;
+                }
+            } else {
+                print(LOG, "WARNING: Cached gene IDs file not found. Will skip fetch from NCBI as SKIP_DOWNLOADS is set.");
+                return Collections.emptyList();
+            }
+        } else {
+            return NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+        }
+    }
+
     private List<LoadReportAction> createActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
         List<LoadReportAction> actions = new ArrayList<>();
 
@@ -3152,7 +3211,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         actions.addAll(createLoadActions(beforeAfterComparison));
         actions.addAll(createUpdateActions(beforeAfterComparison));
 
-        return actions;
+        return postProcessActions(actions);
     }
 
     private List<LoadReportAction> createLoadActions(Map<String, List<CSVRecord>> beforeAfterComparison) {

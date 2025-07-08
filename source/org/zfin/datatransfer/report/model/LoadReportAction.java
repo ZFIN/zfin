@@ -18,6 +18,10 @@ import java.util.Map;
                    "supplementalDataKeys", "relatedActionsKeys", "links", "tags"})
 public class LoadReportAction {
 
+    public void addTag(LoadReportActionTag notInCurrentAnnotationRelease) {
+        this.tags.add(notInCurrentAnnotationRelease);
+    }
+
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
 
     // Required fields

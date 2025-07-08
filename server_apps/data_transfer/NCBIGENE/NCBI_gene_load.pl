@@ -579,6 +579,7 @@ sub removeOldFiles {
         system("/bin/rm -f gene2accession.gz");
         system("/bin/rm -f RefSeqCatalog.gz");
         system("/bin/rm -f RELEASE_NUMBER");
+        system("./clear-artifacts.sh");
     }
 }
 
