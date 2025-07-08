@@ -513,7 +513,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             System.out.println(filesToRemoveMessage);
             if (LOG != null) print(LOG, filesToRemoveMessage + "\n");
 
-            rmFile(workingDir, "seq.fasta", false);
+            if (!envTrue("SKIP_EFETCH")) {
+                rmFile(workingDir, "seq.fasta", false);
+            }
             rmFile(workingDir, "zf_gene_info.gz", false);
             rmFile(workingDir, "gene2vega.gz", false);
             rmFile(workingDir, "gene2accession.gz", false);
@@ -1741,7 +1743,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             inputFile = new File(sourceRoot, "ncbi_matches_through_ensembl.csv");
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
-                task.runTask(new String[]{});
+                File downloadFile = new File(workingDir, "zf_gene_info.gz");
+                if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
+                    System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
+                    print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
+                    task.runTask(new String[]{downloadFile.getAbsolutePath()});
+                } else {
+                    System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
+                    print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
+                    task.runTask(new String[]{});
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
@@ -2337,12 +2348,17 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             print(LOG, "\nRunning the job for efetch step.\n");
             System.out.println("\nRunning the job for efetch step.\n");
 
-            BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask(
-                    noLengthUnlFile.getAbsolutePath(),
-                    seqFastaFile.getAbsolutePath()
+            if (!envTrue("SKIP_EFETCH")) {
+                BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask(
+                        noLengthUnlFile.getAbsolutePath(),
+                        seqFastaFile.getAbsolutePath()
                 );
-            print(LOG, "\nExecuting BatchNCBIFastaFetchTask: " + task.toString() + "\n");
-            task.run();
+                print(LOG, "\nExecuting BatchNCBIFastaFetchTask: " + task.toString() + "\n");
+                task.run();
+            } else {
+                print(LOG, "\nSKIP_EFETCH is set, so skipping the efetch step.\n");
+                System.out.println("\nSKIP_EFETCH is set, so skipping the efetch step.\n");
+            }
         } else {
             print(LOG, "\nSKIP_DOWNLOADS is set and FORCE_EFETCH is not, so skipping the efetch step.\n\n");
             System.out.println("\nSKIP_DOWNLOADS is set and FORCE_EFETCH is not, so skipping the efetch step.\n\n");
@@ -3224,11 +3240,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             case UPDATE -> "Updated ";
             default -> "Unknown ";
         };
-        action.setSubType(subType + dbName + " Accession");
+        String dbLinkType = switch(fdbcontZdbId) {
+            case fdcontNCBIgeneId -> "GeneID";
+            default -> "Accession";
+        };
+
+        action.setSubType(subType + dbName + " " + dbLinkType);
         action.setAccession(accNum);
         action.setGeneZdbID(zdbId);
         action.setId(accNum + zdbId + fdbcontZdbId);
-        action.setDetails(String.format("Accession %s for gene %s in database %s (%s)",
+        action.setDetails(String.format(dbLinkType + " %s for gene %s in database %s (%s)",
                 accNum, zdbId, dbName, fdbcontZdbId));
         action.setSupplementalDataKeys(Collections.emptyList());
         action.setLinks(List.of(
@@ -3294,41 +3315,58 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private File findRefSeqCatalogFile() {
-        File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("RefSeqCatalog.danio.") && name.endsWith(".gz"));
-        if (danioFiles != null && danioFiles.length > 0) {
-            if (danioFiles.length > 1) {
-                Arrays.sort(danioFiles, Comparator.comparing(File::getName).reversed());
-                print(LOG, "WARN: Multiple RefSeqCatalog.danio.*.gz files found. Using the most recent one by name: " + danioFiles[0].getName() + "\n");
-            }
-            print(LOG, "Found filtered RefSeq catalog: " + danioFiles[0].getName() + "\n");
-            return danioFiles[0];
-        }
 
         File fullCatalog = new File(workingDir, "RefSeqCatalog.gz");
+        String fullCatalogMd5 = null;
         if (fullCatalog.exists()) {
+            fullCatalogMd5 = md5File(fullCatalog, LOG);
+
+            //now find a danioFile that matches the md5 of the full catalog
+            File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("RefSeqCatalog.danio.") && name.endsWith(".gz"));
+            if (danioFiles != null && danioFiles.length > 0) {
+                for (File danioFile : danioFiles) {
+                    if (danioFile.getName().endsWith("RefSeqCatalog.danio." + fullCatalogMd5 + ".gz")) {
+                        print(LOG, "Found filtered RefSeq catalog: " + danioFile.getName() + "\n");
+                        System.out.println("Found filtered RefSeq catalog: " + danioFile.getName());
+                        return danioFile;
+                    }
+                }
+            }
             print(LOG, "WARN: Filtered RefSeqCatalog.danio.*.gz not found. Processing full RefSeqCatalog.gz. This might be slow and consume more memory.\n");
             return fullCatalog;
         }
+
         print(LOG, "ERROR: No RefSeq catalog file found (RefSeqCatalog.danio.*.gz or RefSeqCatalog.gz). This may lead to missing sequence lengths.\n");
         return null;
     }
 
     private File findGene2AccessionFile() {
-        File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("gene2accession.danio.") && name.endsWith(".gz"));
-        if (danioFiles != null && danioFiles.length > 0) {
-            if (danioFiles.length > 1) {
-                Arrays.sort(danioFiles, Comparator.comparing(File::getName).reversed());
-                print(LOG, "WARN: Multiple gene2accession.danio.*.gz files found. Using the most recent one by name: " + danioFiles[0].getName() + "\n");
-            }
-            print(LOG, "Found filtered gene2accession file: " + danioFiles[0].getName() + "\n");
-            return danioFiles[0];
-        }
-
         File fullFile = new File(workingDir, "gene2accession.gz");
+        String fullFileMd5 = null;
         if (fullFile.exists()) {
-            print(LOG, "WARN: Filtered gene2accession.danio.*.gz not found. Processing full gene2accession.gz. This might be slow and consume more memory.\n");
+            File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("gene2accession.danio.") && name.endsWith(".gz"));
+            if (danioFiles != null && danioFiles.length > 0) {
+                fullFileMd5 = md5File(fullFile, LOG);
+
+                //now find a danioFile that matches the md5 of the full file
+                System.out.println("Looking for gene2accession.danio." + fullFileMd5 + ".gz");
+                for (File danioFile : danioFiles) {
+                    if (danioFile.getName().endsWith("gene2accession.danio." + fullFileMd5 + ".gz")) {
+                        print(LOG, "Found filtered gene2accession file: " + danioFile.getName() + "\n");
+                        System.out.println("Found filtered gene2accession file: " + danioFile.getName());
+                        return danioFile;
+                    } else {
+                        print(LOG, "Filtered gene2accession.danio.*.gz file found but does not match md5: " + danioFile.getName() + "\n");
+                        System.out.println("Filtered gene2accession.danio.*.gz file found but does not match md5: " + danioFile.getName());
+                    }
+                }
+            }
+
+            print(LOG, "Filtered gene2accession.danio.*.gz not found. Using full gene2accession.gz.\n");
+            System.out.println("Filtered gene2accession.danio.*.gz not found. Using full gene2accession.gz.\n");
             return fullFile;
         }
+
         print(LOG, "ERROR: No gene2accession file found (gene2accession.danio.*.gz or gene2accession.gz). This is critical for the load.\n");
         return null;
     }
@@ -3520,13 +3558,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 boolean filterNeeded = true;
                 if (expectedFilteredFile != null && expectedFilteredFile.getName().startsWith("RefSeqCatalog.danio.")) {
-                    // A filtered file exists. Check if its marker corresponds to the current full catalog's MD5.
-                    // This logic is slightly different from Perl's direct marker check, aims for correctness:
-                    // If a .danio.MD5_OF_DANIO.gz exists, we use it. The marker was to avoid re-filtering the *same full catalog*.
-                    if (refSeqDanioMarker.exists()) { // If marker for THIS full catalog exists, assume filtering was done or skipped.
-                        print(LOG, "Marker " + refSeqDanioMarker.getName() + " exists, implies filtering already processed for this RefSeqCatalog.gz version.\n");
-                        filterNeeded = false;
-                    }
+                    print(LOG, "RefSeqCatalog.danio...gz (" + expectedFilteredFile.getName() + ") exists, implies filtering already processed for this RefSeqCatalog.gz version.\n");
+                    System.out.println("RefSeqCatalog.danio...gz (" + expectedFilteredFile.getName() + ") exists, implies filtering already processed for this RefSeqCatalog.gz version.");
+
+                    filterNeeded = false;
                 }
 
 
@@ -3559,8 +3594,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (!envTrue("SKIP_DOWNLOADS") && gene2accessionGz.exists() && gene2accessionMd5 != null) {
                 File gene2accessionDanioMarker = new File(workingDir, "gene2accession.danio." + gene2accessionMd5 + ".md5");
                 boolean filterNeeded = true;
-                if (findGene2AccessionFile() != null && findGene2AccessionFile().getName().startsWith("gene2accession.danio.") && gene2accessionDanioMarker.exists()) {
-                    print(LOG, "Marker " + gene2accessionDanioMarker.getName() + " exists, implies filtering already processed for this gene2accession.gz version.\n");
+                if (findGene2AccessionFile() != null && findGene2AccessionFile().getName().startsWith("gene2accession.danio.")) {
+                    print(LOG, "gene2accession.danio...gz exists, implies filtering already processed for this gene2accession.gz version.\n");
                     filterNeeded = false;
                 }
 
