@@ -62,6 +62,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
         },
         {
             label: 'Sequence',
+            accessor: 'sequence',
             content: row => (
                 <>
                     {row.sequence && !showSequence && (
@@ -81,10 +82,10 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
                         </>
                     )}
                 </>
-            )
-            ,
+            ),
             width: '100px',
             align: 'right',
+            hideIfAllNull: true,
         },
         {
             label: 'Length (nt/aa)',
