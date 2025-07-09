@@ -1769,6 +1769,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
                 task.runTask(args);
                 String md5 = md5File(inputFile, LOG);
+                FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
             } catch (IOException e) {
                 throw new RuntimeException(e);
