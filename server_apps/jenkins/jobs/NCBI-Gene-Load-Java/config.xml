@@ -28,12 +28,21 @@
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>$TARGETROOT</customWorkspace>
+<!--  <customWorkspace>$TARGETROOT</customWorkspace>-->
   <builders>
     <hudson.tasks.Shell>
       <command><![CDATA[
-export WORKING_DIR=$TARGETROOT/server_apps/data_transfer/NCBIGENE/
+#export WORKING_DIR=$TARGETROOT/server_apps/data_transfer/NCBIGENE/
+export WORKING_DIR=$WORKSPACE
+
+# Some options to skip steps for troubleshooting
+#export SKIP_DOWNLOADS=1
+#export EARLY_EXIT=1
+#export SKIP_EFETCH=1
+
 cd $SOURCEROOT
+# Option for troubleshooting: load the database from a backup
+#gradle loaddb -DB=/research/zunloads/databases/zfindb/2025.07.06.1/2025.07.06.1.bak
 gradle ncbiPort
         ]]>
       </command>
@@ -41,7 +50,7 @@ gradle ncbiPort
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv,server_apps/data_transfer/NCBIGENE/*html,server_apps/data_transfer/NCBIGENE/*json,server_apps/data_transfer/NCBIGENE/*xlsx</artifacts>
+      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

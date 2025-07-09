@@ -40,6 +40,7 @@ import static org.zfin.datatransfer.ncbi.port.PortSqlHelper.getSqlForGeneAndRnag
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.properties.ZfinPropertiesEnum.SOURCEROOT;
 import static org.zfin.util.DateUtil.nowToString;
+import static org.zfin.util.FileUtil.writeToFileOrZip;
 
 
 public class NCBIDirectPort extends AbstractScriptWrapper {
@@ -1757,15 +1758,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
                 File downloadFile = new File(workingDir, "zf_gene_info.gz");
+                String[] args = new String[]{};
                 if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
                     System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
                     print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
-                    task.runTask(new String[]{"file://" + downloadFile.getAbsolutePath()});
+                    args = new String[]{"file://" + downloadFile.getAbsolutePath()};
                 } else {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
-                    task.runTask(new String[]{});
                 }
+                task.runTask(args);
+                String md5 = md5File(inputFile, LOG);
+                System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
@@ -3149,7 +3153,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String jsonString = builder.getJsonString(report);
 
             // Write to file
-            FileUtils.writeStringToFile(new File(workingDir, "ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
+            writeToFileOrZip(new File(workingDir, "ncbi_report.json.zip"), jsonString, "UTF-8");
             writeOutputReportFile(jsonString);
 
         } catch (IOException e) {
@@ -3334,12 +3338,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         if (sourceRoot == null) {
             sourceRoot = System.getenv("SOURCEROOT");
         }
-        File reportFile = new File(workingDir, "ncbi_report.html");
+        File reportFile = new File(workingDir, "ncbi_report.html.zip");
         try {
             String template = sourceRoot + "/home/uniprot/zfin-report-template.html";
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
             FileUtils.writeStringToFile(reportFile, filledTemplate);
+            writeToFileOrZip(reportFile, filledTemplate, "UTF-8");
         } catch (IOException e) {
             print(LOG, "ERROR: Could not write report file: " + e.getMessage());
         }
