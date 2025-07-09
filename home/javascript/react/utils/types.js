@@ -27,6 +27,8 @@ export const columnDefinitionType = shape({
     key: string,
     filterName: string,
     filterOptions: arrayOf(string),
+    accessor: string,
+    hideIfAllNull: bool,
 });
 
 export const resultResponseType = shape({
