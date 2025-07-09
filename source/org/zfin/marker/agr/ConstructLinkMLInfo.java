@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.associations.alleleAssociations.AlleleConstructAssociationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.associations.constructAssociations.ConstructGenomicEntityAssociationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.constructSlotAnnotations.ConstructComponentSlotAnnotationDTO;
@@ -63,9 +64,17 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
             out.print(jsonInString);
         }
 
+        IngestDTO ingestDTOAlleleConstructAssociations = getIngestDTO();
+        ingestDTOAlleleConstructAssociations.setAlleleConstructAssociationIngestSet(alleleConstructAssociationDTOList);
+        jsonInString = writer.writeValueAsString(ingestDTOAlleleConstructAssociations);
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_Allele_Construct_Association_ml.json"))) {
+            out.print(jsonInString);
+        }
+
     }
 
     private List<ConstructGenomicEntityAssociationDTO> genomicEntityAssociationDTOList = new ArrayList<>();
+    private List<AlleleConstructAssociationDTO> alleleConstructAssociationDTOList = new ArrayList<>();
 
     public List<org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO> getAllConstructInfo() {
         List<Marker> allConstructs = getConstructRepository().getAllConstructs();
@@ -102,6 +111,14 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
 
                     List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
                     List<ConstructComponentSlotAnnotationDTO> componentDTOs = new ArrayList<>();
+
+                    construct.getFeatureMarkerRelationships().forEach(featureMarkerRelationship -> {
+                        AlleleConstructAssociationDTO alleleConstructAssociationDTO = new AlleleConstructAssociationDTO();
+                        alleleConstructAssociationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
+                        alleleConstructAssociationDTO.setAlleleIdentifier("ZFIN:" + featureMarkerRelationship.getFeature().getZdbID());
+                        alleleConstructAssociationDTO.setRelationName("contains");
+                        alleleConstructAssociationDTOList.add(alleleConstructAssociationDTO);
+                    });
 
                     if (CollectionUtils.isNotEmpty(components)) {
                         for (ConstructComponent component : components) {
