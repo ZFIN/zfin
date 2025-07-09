@@ -192,10 +192,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  readZfinGeneInfoFile
     private Map<String, String> geneZDBidsSymbols = new HashMap<>(); // Value is String
 
-    private String FASTA_LEN_COMMAND="./fasta_len.pl"; // was fasta_len.awk
-
-//    assertFileExistsAndNotEmpty($FASTA_LEN_COMMAND, "Could not find FASTA_LEN_COMMAND: $FASTA_LEN_COMMAND");
-
     private Long stepCount = 0L;
     private Long STEP_TIMESTAMP = 0L;
     private String LOAD_TIMESTAMP = nowToString("yyyy-MM-dd_HH-mm-ss");
@@ -2398,15 +2394,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         System.out.println(seqFastaFile.getName() + " size: " + fileSize);
 
         File lengthUnlFile = new File(workingDir, "length.unl");
+        String fastaLenCommand = env("TARGETROOT") + "/server_apps/data_transfer/NCBIGENE/fasta_len.pl";
+        assertFileExistsAndNotEmpty(fastaLenCommand, "Could not find FASTA_LEN_COMMAND:" + fastaLenCommand);
+
         String cmdCalLengthString = String.format("%s %s > %s",
-                FASTA_LEN_COMMAND,
+                fastaLenCommand,
                 seqFastaFile.getAbsolutePath(),
                 lengthUnlFile.getAbsolutePath());
         doSystemCommand(List.of("bash", "-c", cmdCalLengthString), "len_calc_out.log", "len_calc_err.log");
 
         if (!lengthUnlFile.exists()) {
-            print(LOG, "\nError happened when execute " + FASTA_LEN_COMMAND + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with " + FASTA_LEN_COMMAND);
+            print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
+            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with " + fastaLenCommand);
             return;
         }
 
