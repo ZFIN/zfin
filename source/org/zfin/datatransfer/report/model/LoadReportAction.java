@@ -19,6 +19,9 @@ import java.util.Map;
 public class LoadReportAction {
 
     public void addTag(LoadReportActionTag notInCurrentAnnotationRelease) {
+        if (this.tags == null) {
+            this.tags = new java.util.ArrayList<>();
+        }
         this.tags.add(notInCurrentAnnotationRelease);
     }
 
