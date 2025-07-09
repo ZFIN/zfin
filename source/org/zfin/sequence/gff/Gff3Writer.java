@@ -126,7 +126,7 @@ public class Gff3Writer {
         pagination.setLimit(400000);
         pagination.setPage(0);
         List<Gff3Ncbi> results = dao.findRecordsBySource("BestRefSeq");
-        writeGff3File("zfin_refSeq.GRCz12.gff3", results);
+        writeGff3File("zfin_refseq.grcz12.gff3", results);
     }
 
     public static void init() {
