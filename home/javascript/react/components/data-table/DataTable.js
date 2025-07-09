@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {columnDefinitionType, downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import DataProvider from './DataProvider';
@@ -9,6 +9,21 @@ setAutoFreeze(false);
 
 import useTableState from '../../hooks/useTableState';
 import ShowDevInfo from '../ShowDevInfo';
+
+/**
+ * Checks if a column should be hidden based on its hideIfAllNull property
+ * and whether all values in the dataset are null, undefined, or empty string
+ */
+const shouldHideColumn = (data, column) => {
+    if (!column.hideIfAllNull) {
+        return false;
+    }
+    
+    return data.every(row => {
+        const value = row[column.accessor];
+        return value === null || value === undefined || value === '';
+    });
+};
 
 const DataTable = ({
     columns,
@@ -24,6 +39,7 @@ const DataTable = ({
     tableFixed = true,
 }) => {
     [tableState, setTableState] = useTableState(tableState, setTableState);
+    const [processedColumns, setProcessedColumns] = useState(columns);
 
     const handleFilterChange = (field, value) => {
         setTableState(produce(state => {
@@ -44,17 +60,30 @@ const DataTable = ({
         />
     );
 
-    const renderData = response => (
-        <Table
-            columnHeaderFormat={columnHeaderFormat}
-            columns={columns}
-            data={response.results}
-            rowKey={rowKey}
-            supplementalData={response.supplementalData}
-            total={response.total}
-            tableFixed={tableFixed}
-        />
-    );
+    const renderData = response => {
+        // Process columns to hide those marked with hideIfAllNull when all values are null
+        const updatedColumns = columns.map(column => ({
+            ...column,
+            hidden: column.hidden || shouldHideColumn(response.results, column)
+        }));
+        
+        // Update state if columns have changed
+        if (JSON.stringify(updatedColumns) !== JSON.stringify(processedColumns)) {
+            setProcessedColumns(updatedColumns);
+        }
+        
+        return (
+            <Table
+                columnHeaderFormat={columnHeaderFormat}
+                columns={updatedColumns}
+                data={response.results}
+                rowKey={rowKey}
+                supplementalData={response.supplementalData}
+                total={response.total}
+                tableFixed={tableFixed}
+            />
+        );
+    };
 
     return (
         <div className='data-table-container'>
