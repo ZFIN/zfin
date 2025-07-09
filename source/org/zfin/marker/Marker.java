@@ -501,10 +501,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         }
 
         public boolean isAntibody() {
-            for (Type markerType : values())
-                if (markerType.equals(Type.ATB))
-                    return true;
-            return false;
+            return this.equals(Type.ATB);
         }
 
         public List<Type> getConstructs() {
