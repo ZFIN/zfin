@@ -50,7 +50,7 @@ gradle ncbiPort
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz</artifacts>
+      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz,gene2vega.gz,zf_gene_info.gz</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
