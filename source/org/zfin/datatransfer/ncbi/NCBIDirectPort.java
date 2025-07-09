@@ -2395,7 +2395,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         File lengthUnlFile = new File(workingDir, "length.unl");
         String fastaLenCommand = env("TARGETROOT") + "/server_apps/data_transfer/NCBIGENE/fasta_len.pl";
-        assertFileExistsAndNotEmpty(fastaLenCommand, "Could not find FASTA_LEN_COMMAND:" + fastaLenCommand);
+        if (!new File(fastaLenCommand).exists()) {
+            System.out.println("FASTA_LEN_COMMAND not found at " + fastaLenCommand);
+            print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
+            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with fasta_len.pl command not found at " + fastaLenCommand);
+        }
 
         String cmdCalLengthString = String.format("%s %s > %s",
                 fastaLenCommand,
@@ -3551,6 +3555,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             reportErrAndExit(subjectLine); // This will call System.exit()
         }
     }
+
 
     public void assertFileExistsAndNotEmpty(String filename, String errorMessage) {
         PortHelper.assertFileExistsAndNotEmpty(workingDir, filename, errorMessage);
