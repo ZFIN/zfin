@@ -96,7 +96,7 @@ public class GPIFileVer2 extends AbstractScriptWrapper {
                     }
                 }
                 List<DBLink> relatedRNACentralIdDbLinks = TranscriptService.getRelatedRNACentralIDs(gene);
-                geneDbLinks.addAll(relatedRNACentralIdDbLinks.stream().map(id -> "RNAcentral:" + id.getAccessionNumber()).toList());
+                geneDbLinks.addAll(relatedRNACentralIdDbLinks.stream().map(id -> "RNAcentral:" + id.getAccessionNumber() + "_7955").toList()); //TODO: add taxon ID to GPI file version 1 also?
 
                 csvRow.add(String.join("|", geneDbLinks));
 
