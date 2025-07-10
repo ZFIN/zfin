@@ -203,6 +203,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("login", oldAccountInfo, newAccountInfo));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("role", oldAccountInfo, newAccountInfo));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("password", oldAccountInfo, newAccountInfo));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("student", oldAccountInfo, newAccountInfo));
         return fieldUpdateList;
     }
 
