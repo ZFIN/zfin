@@ -185,6 +185,7 @@ services:
       #- jenkins_data:/var/jenkins_home
       - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
       - www_data:/opt/zfin/www_homes/zfin.org
+      - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - downloads_data:/opt/zfin/download-files
       - solr_data:/var/solr
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
