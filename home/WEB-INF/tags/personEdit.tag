@@ -268,6 +268,14 @@
                             </c:if>
                         </c:otherwise>
                     </c:choose>
+                    <tr>
+                        <td>
+                            <form:label path="accountInfo.student">Student: </form:label>
+                        </td>
+                        <td>
+                            <form:checkbox size="50" path="accountInfo.student"/>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
 
