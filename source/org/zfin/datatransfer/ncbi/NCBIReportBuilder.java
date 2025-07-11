@@ -1,31 +1,38 @@
 package org.zfin.datatransfer.ncbi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.zfin.datatransfer.report.model.*;
+import org.zfin.datatransfer.report.util.ZfinReportSerializationUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO: replace this with a class that matches the new json schema in home/uniprot/zfin-report-schema.json
 public class NCBIReportBuilder {
 
-    private ObjectMapper objectMapper;
     private String title;
     private String releaseID;
-    private List<SummaryTable> summaryTables;
-    private ArrayNode actions;
+    private List<SummaryTableBuilder> summaryTables;
+    private List<LoadReportAction> actions;
 
     public NCBIReportBuilder() {
-        this.objectMapper = new ObjectMapper();
         this.title = "NCBI Load Report";
         this.releaseID = "";
         this.summaryTables = new ArrayList<>();
-        this.actions = objectMapper.createArrayNode();
+        this.actions = new ArrayList<>();
+    }
+
+    /**
+     * Factory method to create a new NCBIReportBuilder instance.
+     * Provides a fluent starting point for report construction.
+     */
+    public static NCBIReportBuilder create() {
+        return new NCBIReportBuilder();
     }
 
     public NCBIReportBuilder setTitle(String title) {
@@ -38,156 +45,162 @@ public class NCBIReportBuilder {
         return this;
     }
 
-    public SummaryTable addSummaryTable(String description) {
-        SummaryTable table = new SummaryTable(description);
+    public SummaryTableBuilder addSummaryTable(String description) {
+        SummaryTableBuilder table = new SummaryTableBuilder(description);
         summaryTables.add(table);
         return table;
     }
 
-    public ObjectNode build() {
-        // Create root object
-        ObjectNode jsonReportData = objectMapper.createObjectNode();
-
-        // Create meta section
-        ObjectNode meta = objectMapper.createObjectNode();
-        meta.put("title", title);
-        meta.put("releaseID", releaseID);
-        meta.put("creationDate", System.currentTimeMillis());
-        jsonReportData.set("meta", meta);
-
-        // Create summary section
-        ObjectNode summary = objectMapper.createObjectNode();
-        summary.put("description", "Summary of NCBI Load Report");
-
-        // Create tables array
-        ArrayNode tables = objectMapper.createArrayNode();
-        for (SummaryTable summaryTable : summaryTables) {
-            tables.add(summaryTable.build(objectMapper));
-        }
-
-        summary.set("tables", tables);
-        jsonReportData.set("summary", summary);
-
-        // Add actions
-        jsonReportData.set("actions", actions);
-
-        return jsonReportData;
+    public NCBIReportBuilder addAction(LoadReportAction action) {
+        actions.add(action);
+        return this;
     }
 
-    public class SummaryTable {
-        private String description;
-        private List<String> headerKeys;
-        private List<String> headerTitles;
-        private List<SummaryRow> rows;
+    public NCBIReportBuilder addActions(List<LoadReportAction> actions) {
+        this.actions.addAll(actions);
+        return this;
+    }
 
-        public SummaryTable(String description) {
+    /**
+     * Builds the complete ZfinReport and returns it as an ObjectNode for backward compatibility.
+     * This method creates a schema-compliant ZfinReport internally and serializes it to JSON.
+     */
+    public ObjectNode build() {
+        // Create ZfinReport using schema-compliant classes
+        ZfinReport report = buildZfinReport();
+        
+        try {
+            // Convert to JSON string then parse back to ObjectNode for compatibility
+            String jsonString = ZfinReportSerializationUtil.toJson(report);
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readTree(jsonString).deepCopy();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build NCBI report", e);
+        }
+    }
+
+    /**
+     * Builds and returns the complete ZfinReport object using schema-compliant classes.
+     * This method provides access to the strongly-typed report object.
+     */
+    public ZfinReport buildZfinReport() {
+        // Create metadata
+        LoadReportMeta meta = new LoadReportMeta(title, releaseID, System.currentTimeMillis());
+        
+        // Build summary tables
+        List<LoadReportSummaryTable> tables = new ArrayList<>();
+        for (SummaryTableBuilder tableBuilder : summaryTables) {
+            tables.add(tableBuilder.buildTable());
+        }
+        
+        // Create summary
+        LoadReportSummary summary = new LoadReportSummary("Summary of NCBI Load Report", tables);
+        
+        // Create supplemental data (empty for now, but required by schema)
+        Map<String, Object> supplementalData = new HashMap<>();
+        
+        // Build the complete report
+        ZfinReport report = new ZfinReport();
+        report.setMeta(meta);
+        report.setSummary(summary);
+        report.setSupplementalData(supplementalData);
+        report.setActions(actions);
+        
+        return report;
+    }
+
+    /**
+     * Builder class for creating LoadReportSummaryTable objects using the ZfinReport schema.
+     */
+    public class SummaryTableBuilder {
+        private String description;
+        private List<LoadReportTableHeader> headers;
+        private List<Map<String, Object>> rows;
+
+        public SummaryTableBuilder(String description) {
             this.description = description;
-            this.headerKeys = new ArrayList<>();
-            this.headerTitles = new ArrayList<>();
+            this.headers = new ArrayList<>();
             this.rows = new ArrayList<>();
-            
         }
 
-        public SummaryTable setHeaders(String[] keys, String[] titles) {
+        public SummaryTableBuilder setHeaders(String[] keys, String[] titles) {
             if (keys.length != titles.length) {
                 throw new IllegalArgumentException("Keys and titles arrays must have the same length");
             }
-            this.headerKeys.clear();
-            this.headerTitles.clear();
+            this.headers.clear();
             for (int i = 0; i < keys.length; i++) {
-                this.headerKeys.add(keys[i]);
-                this.headerTitles.add(titles[i]);
+                this.headers.add(new LoadReportTableHeader(keys[i], titles[i]));
             }
             return this;
         }
 
-        public SummaryTable setHeaders(List<String> keys) {
-            this.headerKeys.clear();
-            this.headerTitles.clear();
+        public SummaryTableBuilder setHeaders(List<String> keys) {
+            this.headers.clear();
             for (String key : keys) {
-                this.headerKeys.add(key);
-                this.headerTitles.add(key); // Default title is the same as key
+                this.headers.add(new LoadReportTableHeader(key, key)); // Default title is the same as key
             }
             return this;
         }
 
-        public SummaryTable addBeforeAfterCountSummaryRow(String title, int beforeCount, int afterCount) {
-            if (headerKeys.isEmpty()) {
+        public SummaryTableBuilder addBeforeAfterCountSummaryRow(String title, Integer beforeCount, Integer afterCount) {
+            if (headers.isEmpty()) {
                 throw new IllegalStateException("Headers must be set before adding rows");
             }
-            Map<String, String> row = new LinkedHashMap<>();
-            row.put(headerKeys.get(0), title);
-            row.put(headerKeys.get(1), String.valueOf(beforeCount));
-            row.put(headerKeys.get(2), String.valueOf(afterCount));
-            row.put(headerKeys.get(3), percentageDisplay(beforeCount, afterCount));
-            return addSummaryRow(row);
-
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put(headers.get(0).getKey(), title);
+            row.put(headers.get(1).getKey(), beforeCount);
+            row.put(headers.get(2).getKey(), afterCount);
+            row.put(headers.get(3).getKey(), percentageDisplay(beforeCount, afterCount));
+            return addObjectRow(row);
         }
-        public SummaryTable addSummaryRow(List<String> row) {
+
+        public SummaryTableBuilder addSummaryRow(List<String> row) {
             // Ensure the row matches the header size
-            if (row.size() != headerKeys.size()) {
+            if (row.size() != headers.size()) {
                 throw new IllegalArgumentException("Row size must match header size");
             }
-            Map<String, String> rowMap = new LinkedHashMap<>();
+            Map<String, Object> rowMap = new LinkedHashMap<>();
             for (int i = 0; i < row.size(); i++) {
-                rowMap.put(headerKeys.get(i), row.get(i));
+                rowMap.put(headers.get(i).getKey(), row.get(i));
             }
-            rows.add(new SummaryRow(rowMap));
+            rows.add(rowMap);
             return this;
         }
 
-        public SummaryTable addSummaryRow(Map<String, String> row) {
-            rows.add(new SummaryRow(row));
+        public SummaryTableBuilder addSummaryRow(Map<String, String> row) {
+            // Convert String values to Object for schema compatibility
+            Map<String, Object> objectRow = new LinkedHashMap<>();
+            for (Map.Entry<String, String> entry : row.entrySet()) {
+                objectRow.put(entry.getKey(), entry.getValue());
+            }
+            rows.add(objectRow);
             return this;
         }
 
-        public ObjectNode build(ObjectMapper objectMapper) {
-            ObjectNode table = objectMapper.createObjectNode();
-            table.put("description", description);
+        private SummaryTableBuilder addObjectRow(Map<String, Object> row) {
+            rows.add(row);
+            return this;
+        }
 
-            // Create headers array
-            ArrayNode headers = objectMapper.createArrayNode();
-            for (int i = 0; i < headerKeys.size(); i++) {
-                headers.add(createHeader(objectMapper, headerKeys.get(i), headerTitles.get(i)));
-            }
-            table.set("headers", headers);
-
-            // Create rows array
-            ArrayNode rowsArray = objectMapper.createArrayNode();
-            for (SummaryRow row : rows) {
-                rowsArray.add(row.build(objectMapper));
-            }
-            table.set("rows", rowsArray);
-
+        /**
+         * Builds a LoadReportSummaryTable using the ZfinReport schema-compliant classes.
+         */
+        LoadReportSummaryTable buildTable() {
+            LoadReportSummaryTable table = new LoadReportSummaryTable();
+            table.setDescription(description);
+            table.setHeaders(headers);
+            table.setRows(rows);
             return table;
         }
 
-        private ObjectNode createHeader(ObjectMapper objectMapper, String key, String title) {
-            ObjectNode header = objectMapper.createObjectNode();
-            header.put("key", key);
-            header.put("title", title);
-            return header;
-        }
-    }
-
-    public class SummaryRow {
-        private final Map<String, String> values = new LinkedHashMap<>();
-
-        public SummaryRow(Map<String, String> row) {
-            this.values.putAll(row);
-        }
-
-        public SummaryRow put(String key, String value) {
-            values.put(key, value);
-            return this;
-        }
-
         public ObjectNode build(ObjectMapper objectMapper) {
-            ObjectNode row = objectMapper.createObjectNode();
-            for (Map.Entry<String, String> entry : values.entrySet()) {
-                row.put(entry.getKey(), entry.getValue());
+            LoadReportSummaryTable table = buildTable();
+            try {
+                String json = ZfinReportSerializationUtil.toJson(table);
+                return (ObjectNode) objectMapper.readTree(json);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build table", e);
             }
-            return row;
         }
     }
 
@@ -200,11 +213,22 @@ public class NCBIReportBuilder {
     }
 
     public void writeJsonToFile(ObjectNode jsonData, File filePath) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writer().writeValue(filePath, jsonData);
     }
 
+    public void writeJsonToFile(ZfinReport report, File filePath) throws IOException {
+        String json = ZfinReportSerializationUtil.toPrettyJson(report);
+        java.nio.file.Files.write(filePath.toPath(), json.getBytes());
+    }
+
     public String getJsonString(ObjectNode jsonData) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonData);
+    }
+
+    public String getJsonString(ZfinReport report) throws IOException {
+        return ZfinReportSerializationUtil.toPrettyJson(report);
     }
 
 }

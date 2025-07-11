@@ -10,9 +10,13 @@ import org.apache.commons.text.StringSubstitutor;
 import org.hibernate.query.NativeQuery;
 import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
+import org.zfin.datatransfer.report.model.LoadReportAction;
+import org.zfin.datatransfer.report.model.LoadReportActionLink;
+import org.zfin.datatransfer.report.model.LoadReportActionTag;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
+import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -36,6 +40,7 @@ import static org.zfin.datatransfer.ncbi.port.PortSqlHelper.getSqlForGeneAndRnag
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.properties.ZfinPropertiesEnum.SOURCEROOT;
 import static org.zfin.util.DateUtil.nowToString;
+import static org.zfin.util.FileUtil.writeToFileOrZip;
 
 
 public class NCBIDirectPort extends AbstractScriptWrapper {
@@ -58,14 +63,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private String pubMappedbasedOnVega = "ZDB-PUB-130725-2";
     private String pubMappedbasedOnNCBISupplement = "ZDB-PUB-230516-87";
 
-    private String fdcontNCBIgeneId = "ZDB-FDBCONT-040412-1";
-    private String fdcontVega = "ZDB-FDBCONT-040412-14";
-    private String fdcontGenBankRNA = "ZDB-FDBCONT-040412-37";
-    private String fdcontGenPept = "ZDB-FDBCONT-040412-42";
-    private String fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
-    private String fdcontRefSeqRNA = "ZDB-FDBCONT-040412-38";
-    private String fdcontRefPept = "ZDB-FDBCONT-040412-39";
-    private String fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
+    private static final String fdcontNCBIgeneId = "ZDB-FDBCONT-040412-1";
+    private static final String fdcontVega = "ZDB-FDBCONT-040412-14";
+    private static final String fdcontGenBankRNA = "ZDB-FDBCONT-040412-37";
+    private static final String fdcontGenPept = "ZDB-FDBCONT-040412-42";
+    private static final String fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
+    private static final String fdcontRefSeqRNA = "ZDB-FDBCONT-040412-38";
+    private static final String fdcontRefPept = "ZDB-FDBCONT-040412-39";
+    private static final String fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 
     public File beforeFile;
     public File afterFile;
@@ -187,10 +192,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  readZfinGeneInfoFile
     private Map<String, String> geneZDBidsSymbols = new HashMap<>(); // Value is String
 
-    private String FASTA_LEN_COMMAND="./fasta_len.pl"; // was fasta_len.awk
-
-//    assertFileExistsAndNotEmpty($FASTA_LEN_COMMAND, "Could not find FASTA_LEN_COMMAND: $FASTA_LEN_COMMAND");
-
     private Long stepCount = 0L;
     private Long STEP_TIMESTAMP = 0L;
     private String LOAD_TIMESTAMP = nowToString("yyyy-MM-dd_HH-mm-ss");
@@ -215,11 +216,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesGenBankAfter;
     private Map<String, String> genesWithRefSeqAfterLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqAfter;
+    private List<String> geneIDsNotInCurrentAnnotationRelease = null;
 
 
     public static void main(String[] args) {
         NCBIDirectPort port = new NCBIDirectPort();
-        port.initAll(); // This will call initProperties() and initDatabase()
+        port.initAll();
         port.run();
         System.exit(0);
     }
@@ -480,22 +482,32 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private void removeOldFiles() {
         String filesToRemoveMessage = "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl";
         System.out.println(filesToRemoveMessage);
-        rmFile(workingDir, "prepareLog*", true);
-        rmFile(workingDir, "loadLog*", true);
-        rmFile(workingDir, "logNCBIgeneLoad", false);
-        rmFile(workingDir, "debug*", true);
-        rmFile(workingDir, "report*", true);
-
-        rmFile(workingDir, "*.html", true);
-        rmFile(workingDir, "*.csv", true);
-        rmFile(workingDir, "*.xlsx", true);
-        rmFile(workingDir, "*.json", true);
-
-        rmFile(workingDir, "toDelete.unl", false);
-        rmFile(workingDir, "toMap.unl", false);
-        rmFile(workingDir, "toLoad.unl", false);
-        rmFile(workingDir, "length.unl", false);
-        rmFile(workingDir, "noLength.unl", false);
+        rmFiles(workingDir, List.of(
+                "*.csv",
+                "*.danio.*",
+                "*.html",
+                "*.json",
+                "*.log",
+                "*.xlsx",
+                "*md5",
+                "*unl",
+                "after_db_link.csv",
+                "after_load*csv",
+                "after_recattrib.csv",
+                "before_db_link.csv",
+                "before_load*csv",
+                "before_recattrib.csv",
+                "debug*",
+                "java_debug_readZfinGeneInfoFile.json",
+                "length.unl",
+                "loadLog*",
+                "logNCBIgeneLoad",
+                "noLength.unl",
+                "prepareLog*",
+                "report*",
+                "toDelete.unl",
+                "toLoad.unl",
+                "toMap.unl"));
 
         if (!envTrue("SKIP_DOWNLOADS")) {
             if (!envTrue("NO_SLEEP")) {
@@ -511,7 +523,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             System.out.println(filesToRemoveMessage);
             if (LOG != null) print(LOG, filesToRemoveMessage + "\n");
 
-            rmFile(workingDir, "seq.fasta", false);
+            if (!envTrue("SKIP_EFETCH")) {
+                rmFile(workingDir, "seq.fasta", false);
+            }
             rmFile(workingDir, "zf_gene_info.gz", false);
             rmFile(workingDir, "gene2vega.gz", false);
             rmFile(workingDir, "gene2accession.gz", false);
@@ -1739,7 +1753,20 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             inputFile = new File(sourceRoot, "ncbi_matches_through_ensembl.csv");
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
-                task.runTask(new String[]{});
+                File downloadFile = new File(workingDir, "zf_gene_info.gz");
+                String[] args = new String[]{};
+                if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
+                    System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
+                    print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
+                    args = new String[]{"file://" + downloadFile.getAbsolutePath()};
+                } else {
+                    System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
+                    print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
+                }
+                task.runTask(args);
+                String md5 = md5File(inputFile, LOG);
+                FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
+                System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
@@ -2335,12 +2362,17 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             print(LOG, "\nRunning the job for efetch step.\n");
             System.out.println("\nRunning the job for efetch step.\n");
 
-            BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask(
-                    noLengthUnlFile.getAbsolutePath(),
-                    seqFastaFile.getAbsolutePath()
+            if (!envTrue("SKIP_EFETCH")) {
+                BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask(
+                        noLengthUnlFile.getAbsolutePath(),
+                        seqFastaFile.getAbsolutePath()
                 );
-            print(LOG, "\nExecuting BatchNCBIFastaFetchTask: " + task.toString() + "\n");
-            task.run();
+                print(LOG, "\nExecuting BatchNCBIFastaFetchTask: " + task.toString() + "\n");
+                task.run();
+            } else {
+                print(LOG, "\nSKIP_EFETCH is set, so skipping the efetch step.\n");
+                System.out.println("\nSKIP_EFETCH is set, so skipping the efetch step.\n");
+            }
         } else {
             print(LOG, "\nSKIP_DOWNLOADS is set and FORCE_EFETCH is not, so skipping the efetch step.\n\n");
             System.out.println("\nSKIP_DOWNLOADS is set and FORCE_EFETCH is not, so skipping the efetch step.\n\n");
@@ -2362,15 +2394,22 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         System.out.println(seqFastaFile.getName() + " size: " + fileSize);
 
         File lengthUnlFile = new File(workingDir, "length.unl");
+        String fastaLenCommand = env("TARGETROOT") + "/server_apps/data_transfer/NCBIGENE/fasta_len.pl";
+        if (!new File(fastaLenCommand).exists()) {
+            System.out.println("FASTA_LEN_COMMAND not found at " + fastaLenCommand);
+            print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
+            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with fasta_len.pl command not found at " + fastaLenCommand);
+        }
+
         String cmdCalLengthString = String.format("%s %s > %s",
-                FASTA_LEN_COMMAND,
+                fastaLenCommand,
                 seqFastaFile.getAbsolutePath(),
                 lengthUnlFile.getAbsolutePath());
         doSystemCommand(List.of("bash", "-c", cmdCalLengthString), "len_calc_out.log", "len_calc_err.log");
 
         if (!lengthUnlFile.exists()) {
-            print(LOG, "\nError happened when execute " + FASTA_LEN_COMMAND + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with " + FASTA_LEN_COMMAND);
+            print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
+            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with " + fastaLenCommand);
             return;
         }
 
@@ -3060,18 +3099,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         //break down changes into subsets using the provided before and after files
         String outputPrefix = new File(workingDir, "ncbi_compare_").toString();
         CSVDiff diff = new CSVDiff(outputPrefix,
-                new String[]{"dblink_linked_recid","dblink_acc_num","dblink_fdbcont_zdb_id","recattrib_source_zdb_id"},
-                new String[]{"dblink_info","dblink_zdb_id"});
+                new String[]{"dblink_linked_recid", "dblink_acc_num", "dblink_fdbcont_zdb_id", "recattrib_source_zdb_id"},
+                new String[]{"dblink_info", "dblink_zdb_id"});
         CSVRecord beforeAfterSummary = null;
+        Map<String, List<CSVRecord>> beforeAfterComparison = null;
         try {
-            Map<String, List<CSVRecord>> beforeAfterComparison = diff.processToMap(beforeFile.getAbsolutePath(), afterFile.getAbsolutePath());
+            beforeAfterComparison = diff.processToMap(beforeFile.getAbsolutePath(), afterFile.getAbsolutePath());
             System.out.println("Generated before-after comparison with " + beforeAfterComparison.size() + " categories.");
             System.out.println(beforeAfterComparison.keySet().stream().sorted().collect(Collectors.joining("; ")));
             List<File> csvs = diff.writeMapToCSVs(workingDir, "before_after_cmp_", beforeAfterComparison);
             System.out.println("Generated " + csvs.size() + " CSV files for before-after comparison.");
             List<CSVRecord> beforeAfterSummaryList = beforeAfterComparison.get("summary");
             beforeAfterSummary = beforeAfterSummaryList.remove(0);
-            beforeAfterComparison.clear();
             combineCsvsToExcelReport(csvs);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -3081,7 +3120,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         NCBIReportBuilder builder = new NCBIReportBuilder();
 
-        NCBIReportBuilder.SummaryTable table = builder.addSummaryTable("number of db_link records with gene");
+        NCBIReportBuilder.SummaryTableBuilder table = builder.addSummaryTable("number of db_link records with gene");
         table.setHeaders(List.of("Category", "Before Load", "After Load", "Percentage Change"));
         table.addBeforeAfterCountSummaryRow("NCBI gene Id", numNCBIgeneIdBefore, numNCBIgeneIdAfter);
         table.addBeforeAfterCountSummaryRow("RefSeq RNA", numRefSeqRNABefore, numRefSeqRNAAfter);
@@ -3091,7 +3130,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table.addBeforeAfterCountSummaryRow("GenPept", numGenPeptBefore, numGenPeptAfter);
         table.addBeforeAfterCountSummaryRow("GenBank DNA", numGenBankDNABefore, numGenBankDNAAfter);
 
-        NCBIReportBuilder.SummaryTable table2 = builder.addSummaryTable("number of genes");
+        NCBIReportBuilder.SummaryTableBuilder table2 = builder.addSummaryTable("number of genes");
         table2.setHeaders(List.of("Category", "Before Load", "After Load", "Percentage Change"));
         table2.addBeforeAfterCountSummaryRow("with RefSeq", ctGenesWithRefSeqBefore, ctGenesWithRefSeqAfter);
         table2.addBeforeAfterCountSummaryRow("with RefSeq NM", numGenesRefSeqRNABefore, numGenesRefSeqRNAAfter);
@@ -3099,7 +3138,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table2.addBeforeAfterCountSummaryRow("with GenBank", numGenesGenBankBefore, numGenesGenBankAfter);
 
         if (beforeAfterSummary != null) {
-            NCBIReportBuilder.SummaryTable table3 = builder.addSummaryTable("totals before and after load");
+            NCBIReportBuilder.SummaryTableBuilder table3 = builder.addSummaryTable("totals before and after load");
             table3.setHeaders(List.of("Category", "Count"));
             table3.addSummaryRow(List.of("Number of db_link records before load", beforeAfterSummary.get("beforeCount")));
             table3.addSummaryRow(List.of("Number of db_link records after load", beforeAfterSummary.get("afterCount")));
@@ -3110,18 +3149,182 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             table3.addSummaryRow(List.of("Number of db_link records deleted", beforeAfterSummary.get("deletedCount")));
         }
 
+        builder.addActions(createActions(beforeAfterComparison));
+
         ObjectNode report = builder.build();
 
         try {
             String jsonString = builder.getJsonString(report);
 
             // Write to file
-            FileUtils.writeStringToFile(new File(workingDir, "ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
+            writeToFileOrZip(new File(workingDir, "ncbi_report.json.zip"), jsonString, "UTF-8");
             writeOutputReportFile(jsonString);
 
         } catch (IOException e) {
             print(LOG, "ERROR: JSON reporting failed: " + e.getMessage());
         }
+        beforeAfterComparison.clear();
+    }
+
+    private List<LoadReportAction> postProcessActions(List<LoadReportAction> actions) {
+        return actions.stream().map(
+                action -> {
+                    if (action.getType().equals(LoadReportAction.Type.DELETE)) {
+                        action = modifyDeleteActionForNotInCurrentAnnotationRelease(action);
+                    }
+                    return action;
+                }
+        ).toList();
+    }
+
+    private LoadReportAction modifyDeleteActionForNotInCurrentAnnotationRelease(LoadReportAction action) {
+        if (this.geneIDsNotInCurrentAnnotationRelease == null) {
+            this.geneIDsNotInCurrentAnnotationRelease = this.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+        }
+        if (action.getDbName().equals("NCBI Gene")) {
+            String accession = action.getAccession();
+            if (this.geneIDsNotInCurrentAnnotationRelease.contains(accession)) {
+                action.setDetails("This NCBI Gene ID is not in the current annotation release.");
+                action.addTag(new LoadReportActionTag("NotInCurrentAnnotationRelease", "This NCBI Gene ID is not in the current annotation release."));
+            }
+        }
+        return action;
+    }
+
+    private List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        if (envTrue("SKIP_DOWNLOADS")) {
+            File cachedListOfGeneIDs = new File(workingDir, "geneIDsNotInCurrentAnnotationRelease.txt");
+            if (cachedListOfGeneIDs.exists()) {
+                try {
+                    return FileUtils.readLines(cachedListOfGeneIDs, StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    print(LOG, "ERROR: SKIP_DOWNLOADS set, yet failed to read cached gene IDs: " + e.getMessage());
+                    List<String> fetchedIDs = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+                    print(LOG, "Fetched " + fetchedIDs.size() + " gene IDs from NCBI: \n" + String.join("\n", fetchedIDs));
+                    return fetchedIDs;
+                }
+            } else {
+                print(LOG, "WARNING: Cached gene IDs file not found. Will skip fetch from NCBI as SKIP_DOWNLOADS is set.");
+                return Collections.emptyList();
+            }
+        } else {
+            return NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+        }
+    }
+
+    private List<LoadReportAction> createActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+
+        actions.addAll(createDeleteActions(beforeAfterComparison));
+        actions.addAll(createLoadActions(beforeAfterComparison));
+        actions.addAll(createUpdateActions(beforeAfterComparison));
+
+        return postProcessActions(actions);
+    }
+
+    private List<LoadReportAction> createLoadActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+        List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("added", Collections.emptyList());
+        for(CSVRecord record : deletedRecords) {
+            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.LOAD);
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private List<LoadReportAction> createDeleteActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<LoadReportAction> actions = new ArrayList<>();
+        List<CSVRecord> deletedRecords = beforeAfterComparison.getOrDefault("deleted", Collections.emptyList());
+        for(CSVRecord record : deletedRecords) {
+            LoadReportAction action = csvRecordToAction(record, LoadReportAction.Type.DELETE);
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private List<LoadReportAction> createUpdateActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
+        List<CSVRecord> updatedRecordsBefore = beforeAfterComparison.getOrDefault("updated1", Collections.emptyList());
+        List<CSVRecord> updatedRecordsAfter = beforeAfterComparison.getOrDefault("updated2", Collections.emptyList());
+        if (updatedRecordsBefore.isEmpty() && updatedRecordsAfter.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (updatedRecordsBefore.size() != updatedRecordsAfter.size()) {
+            print(LOG, "WARNING: Mismatched number of updated records before and after comparison.\n");
+            throw new IllegalStateException("Mismatched number of updated records before and after comparison.");
+        }
+        Iterator<CSVRecord> iterator1 = updatedRecordsBefore.iterator();
+        Iterator<CSVRecord> iterator2 = updatedRecordsAfter.iterator();
+        List<LoadReportAction> actions = new ArrayList<>();
+        while(iterator1.hasNext()) {
+            CSVRecord record1 = iterator1.next();
+            CSVRecord record2 = iterator2.next();
+            assertRecordsMatch(record1, record2);
+            LoadReportAction action = csvRecordToAction(record1, LoadReportAction.Type.UPDATE);
+            action.setDetails("Updated record from " + record1.get("dblink_zdb_id") + " to " + record2.get("dblink_zdb_id") + ", " +
+                              record1.get("dblink_length") + " to " + record2.get("dblink_length") + ", " +
+                              record1.get("recattrib_source_zdb_id") + " to " + record2.get("recattrib_source_zdb_id"));
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private void assertRecordsMatch(CSVRecord record1, CSVRecord record2) {
+        if (record1.get("dblink_linked_recid").equals(record2.get("dblink_linked_recid")) &&
+            record1.get("dblink_acc_num").equals(record2.get("dblink_acc_num")) &&
+            record1.get("dblink_fdbcont_zdb_id").equals(record2.get("dblink_fdbcont_zdb_id"))) {
+            // Records match, proceed
+        } else {
+            print(LOG, "ERROR: Mismatched records in before-after comparison.\n");
+            throw new IllegalStateException("Mismatched records in before-after comparison.");
+        }
+    }
+
+    private LoadReportAction csvRecordToAction(CSVRecord record, LoadReportAction.Type type) {
+        String zdbId = record.get("dblink_linked_recid");
+        String accNum = record.get("dblink_acc_num");
+        String fdbcontZdbId = record.get("dblink_fdbcont_zdb_id");
+
+        LoadReportAction action = new LoadReportAction();
+        action.setType(type);
+
+        String dbName = switch(fdbcontZdbId) {
+            case fdcontNCBIgeneId -> "NCBI Gene";
+            case fdcontVega -> "NCBI Vega";
+            case fdcontGenBankRNA -> "GenBank RNA";
+            case fdcontGenPept -> "GenPept";
+            case fdcontGenBankDNA -> "GenBank DNA";
+            case fdcontRefSeqRNA -> "RefSeq RNA";
+            case fdcontRefPept -> "RefSeq Peptide";
+            case fdcontRefSeqDNA -> "RefSeq DNA";
+            default -> "Unknown Database";
+        };
+        action.setDbName(dbName);
+        action.setRelatedEntityFields(Map.of("Database", dbName));
+
+        String subType = switch(type) {
+            case DELETE -> "Lost ";
+            case LOAD -> "New ";
+            case UPDATE -> "Updated ";
+            default -> "Unknown ";
+        };
+        String dbLinkType = switch(fdbcontZdbId) {
+            case fdcontNCBIgeneId -> "GeneID";
+            default -> "Accession";
+        };
+
+        action.setSubType(subType + dbName + " " + dbLinkType);
+        action.setAccession(accNum);
+        action.setGeneZdbID(zdbId);
+        action.setId(accNum + zdbId + fdbcontZdbId);
+        action.setDetails(String.format(dbLinkType + " %s for gene %s in database %s (%s)",
+                accNum, zdbId, dbName, fdbcontZdbId));
+        action.setSupplementalDataKeys(Collections.emptyList());
+        action.setLinks(List.of(
+                new LoadReportActionLink("ZFIN Gene", "https://zfin.org/" + zdbId),
+                new LoadReportActionLink("NCBI Gene", "https://www.ncbi.nlm.nih.gov/gene/" + accNum)
+        ));
+        action.setRelatedActionsKeys(List.of(zdbId));
+        return action;
     }
 
     private void combineCsvsToExcelReport(List<File> csvs) {
@@ -3139,12 +3342,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         if (sourceRoot == null) {
             sourceRoot = System.getenv("SOURCEROOT");
         }
-        File reportFile = new File(workingDir, "ncbi_report.html");
+        File reportFile = new File(workingDir, "ncbi_report.html.zip");
         try {
             String template = sourceRoot + "/home/uniprot/zfin-report-template.html";
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
             FileUtils.writeStringToFile(reportFile, filledTemplate);
+            writeToFileOrZip(reportFile, filledTemplate, "UTF-8");
         } catch (IOException e) {
             print(LOG, "ERROR: Could not write report file: " + e.getMessage());
         }
@@ -3179,41 +3383,58 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private File findRefSeqCatalogFile() {
-        File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("RefSeqCatalog.danio.") && name.endsWith(".gz"));
-        if (danioFiles != null && danioFiles.length > 0) {
-            if (danioFiles.length > 1) {
-                Arrays.sort(danioFiles, Comparator.comparing(File::getName).reversed());
-                print(LOG, "WARN: Multiple RefSeqCatalog.danio.*.gz files found. Using the most recent one by name: " + danioFiles[0].getName() + "\n");
-            }
-            print(LOG, "Found filtered RefSeq catalog: " + danioFiles[0].getName() + "\n");
-            return danioFiles[0];
-        }
 
         File fullCatalog = new File(workingDir, "RefSeqCatalog.gz");
+        String fullCatalogMd5 = null;
         if (fullCatalog.exists()) {
+            fullCatalogMd5 = md5File(fullCatalog, LOG);
+
+            //now find a danioFile that matches the md5 of the full catalog
+            File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("RefSeqCatalog.danio.") && name.endsWith(".gz"));
+            if (danioFiles != null && danioFiles.length > 0) {
+                for (File danioFile : danioFiles) {
+                    if (danioFile.getName().endsWith("RefSeqCatalog.danio." + fullCatalogMd5 + ".gz")) {
+                        print(LOG, "Found filtered RefSeq catalog: " + danioFile.getName() + "\n");
+                        System.out.println("Found filtered RefSeq catalog: " + danioFile.getName());
+                        return danioFile;
+                    }
+                }
+            }
             print(LOG, "WARN: Filtered RefSeqCatalog.danio.*.gz not found. Processing full RefSeqCatalog.gz. This might be slow and consume more memory.\n");
             return fullCatalog;
         }
+
         print(LOG, "ERROR: No RefSeq catalog file found (RefSeqCatalog.danio.*.gz or RefSeqCatalog.gz). This may lead to missing sequence lengths.\n");
         return null;
     }
 
     private File findGene2AccessionFile() {
-        File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("gene2accession.danio.") && name.endsWith(".gz"));
-        if (danioFiles != null && danioFiles.length > 0) {
-            if (danioFiles.length > 1) {
-                Arrays.sort(danioFiles, Comparator.comparing(File::getName).reversed());
-                print(LOG, "WARN: Multiple gene2accession.danio.*.gz files found. Using the most recent one by name: " + danioFiles[0].getName() + "\n");
-            }
-            print(LOG, "Found filtered gene2accession file: " + danioFiles[0].getName() + "\n");
-            return danioFiles[0];
-        }
-
         File fullFile = new File(workingDir, "gene2accession.gz");
+        String fullFileMd5 = null;
         if (fullFile.exists()) {
-            print(LOG, "WARN: Filtered gene2accession.danio.*.gz not found. Processing full gene2accession.gz. This might be slow and consume more memory.\n");
+            File[] danioFiles = workingDir.listFiles((dir, name) -> name.startsWith("gene2accession.danio.") && name.endsWith(".gz"));
+            if (danioFiles != null && danioFiles.length > 0) {
+                fullFileMd5 = md5File(fullFile, LOG);
+
+                //now find a danioFile that matches the md5 of the full file
+                System.out.println("Looking for gene2accession.danio." + fullFileMd5 + ".gz");
+                for (File danioFile : danioFiles) {
+                    if (danioFile.getName().endsWith("gene2accession.danio." + fullFileMd5 + ".gz")) {
+                        print(LOG, "Found filtered gene2accession file: " + danioFile.getName() + "\n");
+                        System.out.println("Found filtered gene2accession file: " + danioFile.getName());
+                        return danioFile;
+                    } else {
+                        print(LOG, "Filtered gene2accession.danio.*.gz file found but does not match md5: " + danioFile.getName() + "\n");
+                        System.out.println("Filtered gene2accession.danio.*.gz file found but does not match md5: " + danioFile.getName());
+                    }
+                }
+            }
+
+            print(LOG, "Filtered gene2accession.danio.*.gz not found. Using full gene2accession.gz.\n");
+            System.out.println("Filtered gene2accession.danio.*.gz not found. Using full gene2accession.gz.\n");
             return fullFile;
         }
+
         print(LOG, "ERROR: No gene2accession file found (gene2accession.danio.*.gz or gene2accession.gz). This is critical for the load.\n");
         return null;
     }
@@ -3335,6 +3556,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+
     public void assertFileExistsAndNotEmpty(String filename, String errorMessage) {
         PortHelper.assertFileExistsAndNotEmpty(workingDir, filename, errorMessage);
     }
@@ -3405,13 +3627,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 boolean filterNeeded = true;
                 if (expectedFilteredFile != null && expectedFilteredFile.getName().startsWith("RefSeqCatalog.danio.")) {
-                    // A filtered file exists. Check if its marker corresponds to the current full catalog's MD5.
-                    // This logic is slightly different from Perl's direct marker check, aims for correctness:
-                    // If a .danio.MD5_OF_DANIO.gz exists, we use it. The marker was to avoid re-filtering the *same full catalog*.
-                    if (refSeqDanioMarker.exists()) { // If marker for THIS full catalog exists, assume filtering was done or skipped.
-                        print(LOG, "Marker " + refSeqDanioMarker.getName() + " exists, implies filtering already processed for this RefSeqCatalog.gz version.\n");
-                        filterNeeded = false;
-                    }
+                    print(LOG, "RefSeqCatalog.danio...gz (" + expectedFilteredFile.getName() + ") exists, implies filtering already processed for this RefSeqCatalog.gz version.\n");
+                    System.out.println("RefSeqCatalog.danio...gz (" + expectedFilteredFile.getName() + ") exists, implies filtering already processed for this RefSeqCatalog.gz version.");
+
+                    filterNeeded = false;
                 }
 
 
@@ -3444,8 +3663,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (!envTrue("SKIP_DOWNLOADS") && gene2accessionGz.exists() && gene2accessionMd5 != null) {
                 File gene2accessionDanioMarker = new File(workingDir, "gene2accession.danio." + gene2accessionMd5 + ".md5");
                 boolean filterNeeded = true;
-                if (findGene2AccessionFile() != null && findGene2AccessionFile().getName().startsWith("gene2accession.danio.") && gene2accessionDanioMarker.exists()) {
-                    print(LOG, "Marker " + gene2accessionDanioMarker.getName() + " exists, implies filtering already processed for this gene2accession.gz version.\n");
+                if (findGene2AccessionFile() != null && findGene2AccessionFile().getName().startsWith("gene2accession.danio.")) {
+                    print(LOG, "gene2accession.danio...gz exists, implies filtering already processed for this gene2accession.gz version.\n");
                     filterNeeded = false;
                 }
 

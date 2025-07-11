@@ -1,11 +1,18 @@
 package org.zfin.datatransfer.webservice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.ListUtils;
+import org.zfin.datatransfer.ServiceConnectionException;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,13 +31,13 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     private BufferedReader reader;
 
     public static void main(String[] args) {
-        BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask();
+        BatchNCBIFastaFetchTask task = new BatchNCBIFastaFetchTask(args);
         task.run();
     }
 
-    public BatchNCBIFastaFetchTask() {
+    public BatchNCBIFastaFetchTask(String[] args) {
         initAll();
-        initInputs();
+        initInputs(args);
         initFiles();
     }
 
@@ -39,7 +46,7 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
         this.outputFilename = outputFilename;
 
         initAll();
-        initInputs();
+        initInputs(new String[]{});
         initFiles();
     }
 
@@ -69,31 +76,93 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     }
 
     private String fetchFasta(List<String> batch) throws IOException {
-        NCBIEfetch.Type type = NCBIEfetch.Type.NUCLEOTIDE;
-        String accession = String.join(",", batch);
-        LOG.debug("Fetching: " + accession);
-        return new NCBIRequest(NCBIRequest.Eutil.FETCH)
-                .with("db", type.getVal())
-                .with("id", accession)
+        Map<String, List<String>> batchTypes = splitBatchByDatabase(batch);
+
+        List<String> nucleotideAccessions = batchTypes.get(NCBIEfetch.Type.NUCLEOTIDE.getVal());
+        String nucleotideAccessionsString = String.join(",", nucleotideAccessions);
+
+        List<String> proteinAccessions = batchTypes.get(NCBIEfetch.Type.POLYPEPTIDE.getVal());
+        String proteinAccessionsString = String.join(",", proteinAccessions);
+
+        if (nucleotideAccessions.size() + proteinAccessions.size() != batch.size()) {
+            LOG.error("Batch size mismatch: " + batch.size() + " != " + (nucleotideAccessions.size() + proteinAccessions.size()));
+        }
+
+        LOG.debug("Fetching nucleotides: " + nucleotideAccessionsString);
+        String nucleotideFasta = "";
+        if (!nucleotideAccessions.isEmpty()) {
+            nucleotideFasta = new NCBIRequest(NCBIRequest.Eutil.FETCH)
+                    .with("db", NCBIEfetch.Type.NUCLEOTIDE.getVal())
+                    .with("id", nucleotideAccessionsString)
+                    .with("retmax", 5000)
+                    .getFasta();
+        }
+
+        LOG.debug("Fetching proteins: " + proteinAccessionsString);
+        String proteinFasta = "";
+        if (!proteinAccessions.isEmpty()) {
+            proteinFasta = new NCBIRequest(NCBIRequest.Eutil.FETCH)
+                .with("db", NCBIEfetch.Type.POLYPEPTIDE.getVal())
+                .with("id", proteinAccessionsString)
                 .with("retmax", 5000)
                 .getFasta();
+        }
+
+        return String.join("\n", List.of(nucleotideFasta, proteinFasta));
+    }
+
+    private Map<String, List<String>> splitBatchByDatabase(List<String> batch) {
+        String accessions = String.join(",", batch);
+        //hit the esearch endpoint to determine which database each accession belongs to
+        try {
+            String json = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                    .with("db", NCBIEfetch.Type.NUCLEOTIDE.getVal())
+                    .with("term", accessions)
+                    .with("retmax", 5000)
+                    .with("retmode", "json")
+                    .fetchRawText();
+            //parse out ".esearchresult.idlist" from response:
+            List<String> nucleotideIdList = parseIdListFromJson(json);
+
+            json = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                    .with("db", NCBIEfetch.Type.POLYPEPTIDE.getVal())
+                    .with("term", accessions)
+                    .with("retmax", 5000)
+                    .with("retmode", "json")
+                    .fetchRawText();
+            //parse out ".esearchresult.idlist" from response:
+            List<String> proteinIdList = parseIdListFromJson(json);
+
+            return Map.of(
+                    NCBIEfetch.Type.NUCLEOTIDE.getVal(), nucleotideIdList,
+                    NCBIEfetch.Type.POLYPEPTIDE.getVal(), proteinIdList
+            );
+        } catch (ServiceConnectionException e) {
+            System.out.println("Error fetching accession lines: " + accessions);
+            return new HashMap<>();
+        }
+    }
+
+    private List<String> parseIdListFromJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = null;
+        try {
+            root = mapper.readTree(json);
+            JsonNode idListNode = root.path("esearchresult").path("idlist");
+            List<String> idList = new ArrayList<>();
+            if (idListNode.isArray()) {
+                for (JsonNode idNode : idListNode) {
+                    idList.add(idNode.asText());
+                }
+            }
+            return idList;
+        } catch (JsonProcessingException e) {
+            return new ArrayList<>();
+        }
     }
 
     private List<List<String>> partitionInputs(List<String> accessionLines) {
-        int numBatches = (int)Math.ceil( ((double)accessionLines.size()) / ((double)BATCH_SIZE));
-        List<List<String>> resultSet = new ArrayList<>();
-
-        int count = 0;
-        for(int i = 0; i < numBatches; i++) {
-            List<String> batch = new ArrayList<>();
-            for(int j = 0; j < BATCH_SIZE && count < accessionLines.size(); j++) {
-                batch.add(accessionLines.get(count));
-                count++;
-            }
-            resultSet.add(batch);
-        }
-
-        return resultSet;
+        return ListUtils.partition(accessionLines, BATCH_SIZE);
     }
 
     public List<String> getInputLines() {
@@ -136,7 +205,7 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
         return null;
     }
 
-    private void initInputs() {
+    private void initInputs(String[] args) {
         if (inputFilename == null) {
             inputFilename = System.getProperty("ncbiLoadInput");
         }
@@ -145,8 +214,13 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
             outputFilename = System.getProperty("ncbiLoadOutput");
         }
 
+        if (null == inputFilename && null == outputFilename && args.length == 2) {
+            inputFilename = args[0];
+            outputFilename = args[1];
+        }
+
         if (null == inputFilename || null == outputFilename) {
-            LOG.error("Must provide system properties: ncbiLoadInput and ncbiLoadOutput");
+            LOG.error("Must provide system properties: ncbiLoadInput and ncbiLoadOutput, or the same as command line arguments 1 and 2");
             System.exit(1);
         }
 
