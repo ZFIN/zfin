@@ -94,6 +94,7 @@
                 <tr>
                     <th style="width: 10%">Chr</th>
                     <th>Accession</th>
+                    <th>Assembly</th>
                     <th style="width: 10%">Source</th>
                     <th>Subsource</th>
                     <th>Start</th>
@@ -103,6 +104,7 @@
                     <tr>
                         <td>${location.chromosome}</td>
                         <td>${location.accessionNumber}</td>
+                        <td>${location.assembly}</td>
                         <td>${location.source}</td>
                         <td>${location.detailedSource}</td>
                         <td>${location.start}</td>

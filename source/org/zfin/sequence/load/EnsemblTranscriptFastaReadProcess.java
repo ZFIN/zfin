@@ -621,7 +621,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         }
     }
 
-    private void createReportNoEnsembl(Map<String, MarkerDBLink> genbankMap, String fileName) throws IOException {
+    private static void createReportNoEnsembl(Map<String, MarkerDBLink> genbankMap, String fileName) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
 
         List<String> headerNames = List.of(
@@ -671,7 +671,17 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         return ensdargMap;
     }
 
-    private Map<String, MarkerDBLink> getMarkerDBLinksWithEnsemblAccessionsOnly() {
+    public static Map<String, MarkerDBLink> getMarkerDBLinksWithEnsemblAccessionsOnly() {
+        Map<String, MarkerDBLink> ensdargMap = getEnsemblMarkerOnly();
+        try {
+            createReportNoEnsembl(ensdargMap, "report-transcript-no-ensembl.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ensdargMap;
+    }
+
+    public static Map<String, MarkerDBLink> getEnsemblMarkerOnly() {
         List<MarkerDBLink> ensdargList = getSequenceRepository().getAllEnsemblGenes(ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
         List<LinkDisplay> vegaList = getMarkerRepository().getAllVegaGeneDBLinksTranscript();
         List<MarkerDBLink> genbankList = getSequenceRepository().getAllGenbankGenes();
@@ -684,11 +694,6 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         System.out.println("Number of Genes that have no Vega and no GenBank ID: " + ensdargList.size());
         Map<String, MarkerDBLink> ensdargMap = ensdargList.stream().collect(
             Collectors.toMap(DBLink::getAccessionNumber, Function.identity(), (existing, replacement) -> existing));
-        try {
-            createReportNoEnsembl(ensdargMap, "report-transcript-no-ensembl.txt");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return ensdargMap;
     }
 

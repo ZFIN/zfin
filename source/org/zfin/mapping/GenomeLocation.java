@@ -8,9 +8,14 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.gff.Assembly;
+import org.zfin.sequence.gff.AssemblyDAO;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.zfin.mapping.GenomeLocation.Source.*;
 
@@ -115,7 +120,11 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public String getUrl() {
         if (source.getDisplayName().contains("NCBI")) {
-            return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
+            if(source.equals(NCBI_LOADER)) {
+                return source.getUrl() + accessionNumber + "&assm=GCF_049306965.1&context=gene";
+            } else {
+                return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
+            }
         } else if (List.of(ZFIN, ZFIN_Zv9).contains(source)) {
             return "/action/jbrowse/byName?name=" + accessionNumber;
         } else {
@@ -205,15 +214,17 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public enum Source {
         DIRECT("DirectSubmission", true, "Direct Data Submission", null),
+        ZFIN_NCBI("ZFIN", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="),
         ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="),
+        ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
+        NCBI_LOADER("NCBILoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
+        NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
+        VEGA("VegaStartEndLoader", true, "Vega", "http://vega.sanger.ac.uk/Danio_rerio/Location/View?db=core;g="),
+        //NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
+        UCSC("UCSCStartEndLoader", true, "UCSC", "https://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer11&position="),
         ZFIN_Zv9("ZfinGbrowseZv9StartEndLoader", true, "ZFIN Zv9 GBrowse", "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name="),
 //        ZFIN_GRCz10("ZfinGbrowseGRCz10StartEndLoader", true, "ZFIN GRCz10 GBrowse", "/" + ZfinPropertiesEnum.GBROWSE_GRCZ10_PATH_FROM_ROOT + "?name="),
         AGP_LOAD("AGP Load", true, "AGP File Load", null),
-        ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
-        VEGA("VegaStartEndLoader", true, "Vega", "http://vega.sanger.ac.uk/Danio_rerio/Location/View?db=core;g="),
-        //NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
-        NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
-        UCSC("UCSCStartEndLoader", true, "UCSC", "https://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer11&position="),
         GENERAL_LOAD("General Load", false, "General Load", null),
         OTHER_MAPPING("other map location", false, "Other Mapping", null);
 
