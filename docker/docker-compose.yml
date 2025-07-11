@@ -58,7 +58,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   db:
     build: ./postgresql/
-    restart: always
     command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=US/Pacific' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
@@ -75,7 +74,6 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
   solr:
     build: ./solr/
-    restart: always
     environment:
       SOLR_HEAP: 10g
     ports:
@@ -85,7 +83,6 @@ services:
   httpd:
     hostname: zfin.org
     build: ./httpd/
-    restart: always
     environment:
       VIRTUAL_HOST: ${DOCKER_VIRTUAL_HOST}
       VIRTUAL_PROTO: https
@@ -115,7 +112,6 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
   tomcat:
     build: ./tomcat/
-    restart: always
     environment:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
@@ -160,7 +156,6 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
   mailhog:
     build: ./mailhog/
-    restart: always
     environment:
       MH_SMTP_BIND_ADDR: "0.0.0.0:25"
     ports:
@@ -168,7 +163,6 @@ services:
       - "8025:8025"
   jenkins:
     build: ./jenkins/
-    #restart: always
     ports:
       - "9499-9509:9499"
     environment:
@@ -204,7 +198,6 @@ services:
     volumes:
       - fail2ban_config:/config
       - httpd_log:/var/log/httpd:ro #optional
-    restart: unless-stopped
   elasticsearch:
     build:
       context: ./elasticsearch/
