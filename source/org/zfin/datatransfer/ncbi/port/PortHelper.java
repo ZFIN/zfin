@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.io.InputStream;
 import java.net.URL;
@@ -105,6 +106,18 @@ public class PortHelper {
         }
     }
 
+    public static void rmFiles(File workDir, List<String> filenamePatterns) {
+        for (String filename : filenamePatterns) {
+            rmFile(workDir, filename);
+        }
+    }
+    public static void rmFile(File workDir, String filenamePattern) {
+        if (filenamePattern.contains("*")) {
+            rmFile(workDir, filenamePattern, true);
+        } else {
+            rmFile(workDir, filenamePattern, false);
+        }
+    }
     public static void rmFile(File workDir, String filenamePattern, boolean isWildcard) {
         if (isWildcard) {
             try {

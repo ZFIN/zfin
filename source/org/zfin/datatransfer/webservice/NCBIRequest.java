@@ -121,11 +121,20 @@ public class NCBIRequest {
         for (Map.Entry<String, String> param : params.entrySet()) {
             nvps.add(new BasicNameValuePair(param.getKey(), param.getValue()));
         }
-        post.setEntity(new UrlEncodedFormEntity(nvps));
+        UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+        String formContentsString = IOUtils.toString(urlEncodedFormEntity.getContent(), "UTF-8");
+        post.setEntity(urlEncodedFormEntity);
         log.info("Posting to URI: " + post.getURI());
+        log.info("Form contents: " + formContentsString);
 
         HttpResponse response = client.execute(post);
         InputStream responseContent = response.getEntity().getContent();
+        if (response.getStatusLine().getStatusCode() != 200) {
+            String errorMessage = "Error response from NCBI: " + response.getStatusLine().getStatusCode() +
+                                  " - " + response.getStatusLine().getReasonPhrase();
+            log.error(errorMessage);
+            throw new IOException(errorMessage);
+        }
 
         //responseContent is a lazy decompressing stream, so we need to eager load the contents before closing connection
         InputStream eagerLoadedInputStream = new ByteArrayInputStream(responseContent.readAllBytes());

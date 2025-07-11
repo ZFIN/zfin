@@ -1,5 +1,7 @@
 package org.zfin.datatransfer.webservice;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -208,6 +210,113 @@ public class NCBIEfetch {
             logger.error(e);
         }
         return null;
+    }
+
+    /**
+     * Fetches all gene IDs that are not in the current annotation release set.
+     * Uses the endpoint:  'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&term=%22Danio%20rerio%22%5bOrganism%5d%20NOT%20%22annotated%20gene%22%5bProperties%5d%20AND%20alive%5bprop%5d&retmode=json&retmax=10'
+     *
+     * Results look like:
+     * {
+     *   "header": {
+     *     "type": "esearch",
+     *     "version": "0.3"
+     *   },
+     *   "esearchresult": {
+     *     "count": "5301",
+     *     "retmax": "10",
+     *     "retstart": "0",
+     *     "idlist": [
+     *       "559475",
+     *       "378762",
+     *       "30762",
+     *       "446139",
+     *       "100534776",
+     *       "562883",
+     *       "64886",
+     *       "619391",
+     *       "327274",
+     *       "566708"
+     *     ],
+     *     "translationset": [],
+     *     "translationstack": [
+     *       {
+     *         "term": "\"Danio rerio\"[Organism]",
+     *         "field": "Organism",
+     *         "count": "121374",
+     *         "explode": "Y"
+     *       },
+     *       {
+     *         "term": "\"annotated gene\"[Properties]",
+     *         "field": "Properties",
+     *         "count": "87034043",
+     *         "explode": "N"
+     *       },
+     *       "NOT",
+     *       {
+     *         "term": "alive[prop]",
+     *         "field": "prop",
+     *         "count": "61682922",
+     *         "explode": "N"
+     *       },
+     *       "AND"
+     *     ],...
+     * @return List of gene IDs that are not in the current annotation release set, empty list if error occurs
+     */
+    public static List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        return fetchGeneIDsNotInCurrentAnnotationReleaseSet(10000);
+    }
+
+    /**
+     * Fetches gene IDs that are not in the current annotation release set with specified maximum results.
+     * 
+     * @param retmax Maximum number of IDs to return (default: 10000)
+     * @return List of gene IDs that are not in the current annotation release set, empty list if error occurs
+     */
+    public static List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet(int retmax) {
+        List<String> geneIds = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        try {
+            String jsonResponse = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                    .with("db", "gene")
+                    .with("term", "\"Danio rerio\"[Organism] NOT \"annotated gene\"[Properties] AND alive[prop]")
+                    .with("retmode", "json")
+                    .with("retmax", retmax)
+                    .fetchRawText();
+            
+            // Parse JSON response using Jackson
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode esearchResult = rootNode.get("esearchresult");
+            
+            if (esearchResult == null) {
+                logger.warn("Could not find esearchresult in NCBI gene search response");
+                return Collections.emptyList();
+            }
+            
+            JsonNode idList = esearchResult.get("idlist");
+            if (idList == null || !idList.isArray()) {
+                logger.warn("Could not find idlist array in NCBI gene search response");
+                return Collections.emptyList();
+            }
+            
+            // Extract gene IDs from the JSON array
+            for (JsonNode idNode : idList) {
+                String geneId = idNode.asText();
+                if (!geneId.isEmpty()) {
+                    geneIds.add(geneId);
+                }
+            }
+            
+            logger.info("Fetched " + geneIds.size() + " gene IDs not in current annotation release set");
+            
+        } catch (ServiceConnectionException e) {
+            logger.error("Failed to fetch gene IDs not in current annotation release set", e);
+        } catch (Exception e) {
+            logger.error("Error parsing NCBI gene search response", e);
+        }
+        
+        return geneIds;
     }
 
     public static GeoMicorarrayEntriesBean getMicroarraySequences() throws Exception {
