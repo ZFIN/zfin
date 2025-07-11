@@ -570,12 +570,16 @@ sub removeOldFiles {
 
         print "Removing seq.fasta zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
 
-        system("/bin/rm -f seq.fasta");
+        if (!$ENV{"SKIP_EFETCH"}) {
+            system("/bin/rm -f seq.fasta");
+        }
+
         system("/bin/rm -f zf_gene_info.gz");
         system("/bin/rm -f gene2vega.gz");
         system("/bin/rm -f gene2accession.gz");
         system("/bin/rm -f RefSeqCatalog.gz");
         system("/bin/rm -f RELEASE_NUMBER");
+        system("./clear-artifacts.sh");
     }
 }
 
@@ -2181,14 +2185,13 @@ sub addReverseMappedGenesFromNCBItoZFINFromSupplementaryLoad {
             $ENV{'JAVA_HOME'} = $ENV{'OVERRIDE_JAVA_HOME'};
         }
 
-        my $cmdString = "cd " . $ENV{'SOURCEROOT'} . " ; " .
-            "gradle '-DncbiFileUrl=file://$currentDir/zf_gene_info.gz' " .
-            "         ncbiMatchThroughEnsemblTask ; " .
-            "cd $currentDir";
-        print "Executing $cmdString\n";
-        print LOG "Executing $cmdString\n";
-
-        doSystemCommand($cmdString);
+            my $cmdString = "cd " . $ENV{'SOURCEROOT'} . " ; " .
+                "gradle '-DncbiFileUrl=file://$currentDir/zf_gene_info.gz' " .
+                "         ncbiMatchThroughEnsemblTask ; " .
+                "cd $currentDir";
+            print "Executing $cmdString\n";
+            print LOG "Executing $cmdString\n";
+            doSystemCommand($cmdString);
     } else {
         $file = $ENV{'LOAD_NCBI_ONE_WAY_REPORT'};
         print "Skipping gradle and using provided $file through environment variable LOAD_NCBI_ONE_WAY_REPORT\n";
@@ -2794,15 +2797,22 @@ sub calculateLengthForAccessionsWithoutLength {
             $ENV{'JAVA_HOME'} = $ENV{'OVERRIDE_JAVA_HOME'};
         }
 
-        my $cmdEfetch = "cd " . $ENV{'SOURCEROOT'} . " ; " .
-            "gradle '-DncbiLoadInput=$currentDir/noLength.unl' " .
-            "       '-DncbiLoadOutput=$currentDir/seq.fasta' " .
-            "         BatchNCBIFastaFetchTask ; " .
-            "cd $currentDir";
-        print "Executing $cmdEfetch\n";
-        print LOG "Executing $cmdEfetch\n";
+        if (!$ENV{'SKIP_EFETCH'}) {
+            my $cmdEfetch = "cd " . $ENV{'SOURCEROOT'} . " ; " .
+                "gradle '-DncbiLoadInput=$currentDir/noLength.unl' " .
+                "       '-DncbiLoadOutput=$currentDir/seq.fasta' " .
+                "         BatchNCBIFastaFetchTask ; " .
+                "cd $currentDir";
+            print "Executing $cmdEfetch\n";
+            print LOG "Executing $cmdEfetch\n";
 
-        doSystemCommand($cmdEfetch);
+            doSystemCommand($cmdEfetch);
+        } else {
+            print "Skipping gradle task ncbiMatchThroughEnsemblTask due to SKIP_EFETCH environment variable\n";
+            print LOG "Skipping gradle task ncbiMatchThroughEnsemblTask due to SKIP_EFETCH environment variable\n";
+        }
+
+
     }
 
     print LOG "\nAfter efetching at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";

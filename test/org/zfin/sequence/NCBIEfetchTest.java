@@ -14,8 +14,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class NCBIEfetchTest {
 
@@ -94,6 +93,35 @@ public class NCBIEfetchTest {
         NCBIRefSeqFetch.NCBIRefSeqData xmData = details.get("XM_021480495");
         assertEquals("XM_021480495", xmData.caption());
         assertEquals("from cache", xmData.comment());
+    }
+
+    @Test
+    public void testFetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        // Test with small retmax to avoid long test runs
+        List<String> geneIds = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet(5);
+
+        // Should return a list (may be empty if no results, but not null)
+        assertNotNull("Gene IDs list should not be null", geneIds);
+
+        // If there are results, they should be numeric strings (gene IDs)
+        for (String geneId : geneIds) {
+            assertNotNull("Gene ID should not be null", geneId);
+            assertFalse("Gene ID should not be empty", geneId.trim().isEmpty());
+            assertTrue("Gene ID should be numeric", geneId.matches("\\d+"));
+        }
+
+        System.out.println("Fetched " + geneIds.size() + " gene IDs: " + geneIds);
+    }
+
+    @Test
+    public void testFetchGeneIDsNotInCurrentAnnotationReleaseSetDefaultRetmax() {
+        // Test the default method (retmax=10000)
+        List<String> geneIds = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+
+        // Should return a list (may be empty if no results, but not null)
+        assertNotNull("Gene IDs list should not be null", geneIds);
+
+        System.out.println("Fetched " + geneIds.size() + " gene IDs with default retmax");
     }
 
     private File createTempFixtureFileForRefSeqJson() throws IOException {
