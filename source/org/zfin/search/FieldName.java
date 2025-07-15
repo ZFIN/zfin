@@ -40,7 +40,7 @@ public enum FieldName {
     CATEGORY("category"),
     CELLULAR_COMPONENT("cellular_component"),
     CELLULAR_COMPONENT_TF("cellular_component_tf"),
-    CHROMOSOME("chromosome", "Location"),
+    CHROMOSOME("chromosome", "Chromosome"),
     CLONE_AUTOCOMPLETE("clone_ac", "Clone"),
     CODING_SEQUENCE("coding_sequence"),
     CODING_SEQUENCE_AC("coding_sequence_ac"),
