@@ -173,7 +173,7 @@ public class FacetBuilderService {
         geneOntology.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), true));
         facetGroups.add(geneOntology);
 
-        FacetGroup location = new FacetGroup("Location", false);
+        FacetGroup location = new FacetGroup("Chromosome", false);
         Facet locationFacet = buildFacet(CHROMOSOME.getName(), true);
         locationFacet.setAlwaysShowAllFacets(true);
         location.addFacet(locationFacet);
