@@ -25,6 +25,60 @@ public class LoadReportAction {
         this.tags.add(tag);
     }
 
+    public void addLink(LoadReportActionLink link) {
+        if (this.links == null) {
+            this.links = new java.util.ArrayList<>();
+        }
+        if (link == null || link.getTitle() == null || link.getTitle().isEmpty()) {
+            return;
+        }
+        if (this.links.stream().anyMatch(existingLink -> existingLink.getTitle().equals(link.getTitle()))) {
+            return; // Avoid adding duplicate links
+        }
+        this.links.add(link);
+    }
+
+    public void addLinks(List<LoadReportActionLink> links) {
+        if (this.links == null) {
+            this.links = new java.util.ArrayList<>();
+        }
+        this.links.addAll(links);
+    }
+
+    public void addRefSeqLink(String refseq) {
+        this.addLink(new LoadReportActionLink("RefSeq:" + refseq, "https://www.ncbi.nlm.nih.gov/nuccore/" + refseq));
+    }
+
+    public void addNcbiGeneIdLink(String ncbiId) {
+        this.addLink(new LoadReportActionLink("NCBI:" + ncbiId, "https://www.ncbi.nlm.nih.gov/gene/" + ncbiId));
+    }
+
+    public void addZdbIdLink(String zdbId) {
+        this.addLink(new LoadReportActionLink(zdbId, "https://zfin.org/" + zdbId));
+    }
+
+    public void addZdbIdLink(String zdbId, String abbreviation) {
+        this.addLink(new LoadReportActionLink(zdbId + " (" + abbreviation + ")", "https://zfin.org/" + zdbId));
+    }
+
+    public void addDetails(String details) {
+        if (this.details == null) {
+            this.details = details;
+        } else {
+            this.details += "\n" + details;
+        }
+    }
+
+    public void addRelatedActionsKeys(String key) {
+        if (this.relatedActionsKeys == null) {
+            this.relatedActionsKeys = new java.util.ArrayList<>();
+        }
+        if (!this.relatedActionsKeys.contains(key)) {
+            this.relatedActionsKeys.add(key);
+        }
+        this.relatedActionsKeys.add(key);
+    }
+
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
 
     // Required fields

@@ -511,7 +511,7 @@
 
             function countByType(type) {
                 const item = reportNavigation.find(item => item.type === type);
-                return item ? item.count : 0;
+                return item ? item.count.toLocaleString() : 0;
             }
 
             return html`
@@ -546,7 +546,7 @@
                 <ul>
                     ${titleSummary.map(item => html`
                         <li><a href="#" onClick=${() => onClick(item.type)}>
-                            ${item.type} (${item.count})
+                            ${item.type} (${item.count.toLocaleString()})
                         </a>
                         </li>
                     `)}
@@ -577,9 +577,23 @@
                 `;
             }
 
+            function updateSearchFilter(evt) {
+                const searchText = evt.target.value.toLowerCase();
+                const filteredItems = items.filter(item => {
+                    return itemText(item).includes(searchText);
+                });
+                const filteredItems2 = filteredItems.filter( item => item.type === type && item.subType === subtype);
+                setSubTypeItems(filteredItems2);
+            }
+
+            function itemText(item) {
+                const geneZdbID = item.geneZdbID || '';
+                const accession = item.accession || '';
+                return (geneZdbID + ' ' + accession).toLowerCase();
+            }
+
             useEffect(() => {
                 if (items) {
-                    let counts = {};
                     const filteredItems = items.filter( item => item.type === type && item.subType === subtype);
                     setSubTypeItems(filteredItems);
                 }
@@ -588,6 +602,9 @@
             return html`
                 <h2>${type} - ${subtype}</h2>
                 <p>Click on any of the records below for more details.</p>
+
+                <input type="text" className="search" placeholder="Search content..." onInput="${(evt) => updateSearchFilter(evt)}" />
+
                 <table className="detail-table">
                     <thead>
                     <tr>
@@ -629,7 +646,8 @@
                 }
             }
 
-            let supplementals = item.supplementalDataKeys.map(k => supplementalData[k])
+            const supplementalDataKeys = item.supplementalDataKeys || [];
+            let supplementals = supplementalDataKeys.map(k => supplementalData[k])
                 .filter(k => k !== null)
                 .join("\n======================\n");
 
@@ -645,24 +663,25 @@
                 );
             }
 
+            const links = item.links || [];
             const relatedEntityFields = item.relatedEntityFields;
             return html`
                 <div>
-                    <h2>Details for Accession</h2>
+                    <h2>Details for Action</h2>
                     <div><button href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
-                    <h3>${item.accession}</h3>
+                    <h3>${item.geneZdbID} - ${item.accession}</h3>
                     <p>${detailSummary(item)}</p>
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
                     <pre>${supplementals}</pre>
                     <h4>Links</h4>
                     <ul>
-                        ${item.links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
+                        ${links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
                     </ul>
                     ${ relatedActions && relatedActions.length > 0 &&
                         html`<h4>Related Actions</h4>
                             <ul>
-                            ${relatedActions.map( i => html`<li><a href="#" onClick="${() => goToDetail(i.id)}" >${i.type}: ${i.subType}: ${i.accession}<span class="hidden">${i.id}</span></a></li>`)}
+                                ${relatedActions.map( i => html`<li><a href="#" onClick="${() => goToDetail(i.id)}" >${i.type}: ${i.subType}: ${i.geneZdbID}/${i.accession}<span class="hidden">${i.id}</span></a></li>`)}
                             </ul>
                         `
                     }
