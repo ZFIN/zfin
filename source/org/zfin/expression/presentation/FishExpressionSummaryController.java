@@ -11,11 +11,13 @@ import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.zfin.expression.FigureService.getFigureSummaryDisplays;
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
@@ -118,5 +120,71 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureExpressionSummaryDisplayList);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
         return "expression/fish-expression-figure-summary";
+    }
+
+    //Example: /action/expression/fish-expression-figure-by-ids?fishID=ZDB-FISH-231110-1&geneID=ZDB-EFG-070117-1&conditionID=ZDB-EXP-240503-6&figIDs=ZDB-FIG-220810-54,ZDB-FIG-241002-43
+    @RequestMapping(value = {"/fish-expression-figure-by-ids"})
+    protected String getExpressionFiguresByIDs(@RequestParam String fishID,
+                                                       @RequestParam String geneID,
+                                                       @RequestParam String conditionID,
+                                                       @RequestParam String figIDs,
+                                                       Model model) {
+
+        Fish fish = getMutantRepository().getFish(fishID);
+
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneID);
+        if (gene == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, geneID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Experiment experiment = getExpressionRepository().getExperimentByID(conditionID);
+        if (experiment == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, conditionID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        if (figIDs == null || figIDs.isEmpty()) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        List<String> figureIDs = List.of(figIDs.split(","));
+        if (figureIDs.isEmpty()) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        List<ExpressionFigureStage> figureStages = getExpressionRepository().getExpressionFigureStagesByFish(fish);
+        List<ExpressionFigureStage> filteredFigureStages = figureStages
+                .stream()
+                .filter(efs -> figureIDs.contains(efs.getFigure().getZdbID()))
+//                .filter(efs -> efs.getExpressionExperiment().getFishExperiment().getExperiment().getZdbID().equals(conditionID))
+                .filter(efs -> efs.getExpressionExperiment().getGene().getZdbID().equals(geneID))
+                .toList();
+
+        List<Figure> figures = filteredFigureStages.stream().map(ExpressionFigureStage::getFigure).toList();
+
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(fish, gene, false);
+
+        GenericTerm zecoTerm = experiment.getExperimentConditions().stream().findFirst().get().getZecoTerm();
+        if (zecoTerm != null && "ZECO:0000238".equals(zecoTerm.getOboID())) {
+            expressionCriteria.setChemicalEnvironment(true);
+            expressionCriteria.setStandardEnvironment(false);
+        }
+
+        List<FigureSummaryDisplay> displays = getFigureSummaryDisplays(expressionCriteria, figures);
+
+        model.addAttribute("figureSummaryDisplayList", displays);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
+
+        model.addAttribute("expressionCriteria", expressionCriteria);
+
+        return "expression/genotype-figure-summary";
     }
 }
