@@ -39,12 +39,13 @@ const FishReporterExpressionTable = ({fishId}) => {
         },
         {
             label: 'Figures',
-            content: row => (
-                <FigureSummary
+            content: row => {
+                const figIDs = row.figures.map(figure => figure.zdbID).join(',');
+                return <FigureSummary
                     statistics={row}
-                    allFiguresUrl={`/action/expression/fish-expression-figure-summary-standard?fishZdbID=${fishId}&geneZdbID=${row.expressedGene.zdbID}&imagesOnly=false`}
+                    allFiguresUrl={`/action/expression/fish-expression-figure-by-ids?fishID=${fishId}&geneID=${row.expressedGene.zdbID}&conditionID=${row.experiment.zdbID}&figIDs=${figIDs}`}
                 />
-            ),
+            },
             width: '180px',
         },
     ];
