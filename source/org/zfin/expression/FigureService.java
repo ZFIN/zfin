@@ -147,8 +147,6 @@ public class FigureService {
     }
 
     public static List<FigureSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
-        // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureSummaryDisplay> map = new HashMap<>();
         List<Figure> figures;
 
         if (expressionCriteria.getSequenceTargetingReagent() != null) {
@@ -161,6 +159,13 @@ public class FigureService {
         } else {
             figures = expressionRepository.getFigures(expressionCriteria);
         }
+
+        return getFigureSummaryDisplays(expressionCriteria, figures);
+    }
+
+    public static List<FigureSummaryDisplay> getFigureSummaryDisplays(ExpressionSummaryCriteria expressionCriteria, List<Figure> figures) {
+        // a map of publicationID-FigureID as keys and figure summary display objects as values
+        Map<String, FigureSummaryDisplay> map = new HashMap<>();
 
         for (Figure figure : figures) {
 
