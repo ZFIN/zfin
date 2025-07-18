@@ -827,7 +827,7 @@
 /server_apps/data_transfer/AllianceGeneDesc/ZFIN_gene_desc_2018-11-26.json filter=lfs diff=lfs merge=lfs -text
 /server_apps/data_transfer/RNACentral/rnaCentral.json filter=lfs diff=lfs merge=lfs -text
 /server_apps/data_transfer/SangerMutants/InputFiles/Danio_rerio.Zv9.70.cdna.all.fa filter=lfs diff=lfs merge=lfs -text
-/server_apps/jenkins/jenkins-2.492.2.war filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/jenkins-2.504.3.war filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/antisamy-markup-formatter.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/apache-httpcomponents-client-4-api.jpi filter=lfs diff=lfs merge=lfs -text
@@ -867,6 +867,7 @@
 /server_apps/jenkins/plugins/jsch.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/json-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/json-path-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/jsoup.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/junit.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ldap.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/log-parser.jpi filter=lfs diff=lfs merge=lfs -text
@@ -888,6 +889,7 @@
 /server_apps/jenkins/plugins/ssh-credentials.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/sshd.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/structs.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/timestamper.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/token-macro.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/trilead-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/variant.jpi filter=lfs diff=lfs merge=lfs -text
