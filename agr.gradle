@@ -59,13 +59,6 @@ task createBasicResourceInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicResourceInfo'
 }
 
-
-task createGPIFile(type: JavaExec) {
-    description 'Generates tab delimited file for GO/Noctua'
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.GPIFile'
-}
-
 task createGPI2File(type: JavaExec) {
     description 'Generates tab delimited file for GO/Noctua(Ver 2.0)'
     classpath = sourceSets.main.runtimeClasspath
