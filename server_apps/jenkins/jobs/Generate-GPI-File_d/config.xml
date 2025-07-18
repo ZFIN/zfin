@@ -21,12 +21,12 @@
       <command>cd $SOURCEROOT &amp;&amp; gradle createGPIFile</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/GO &amp;&amp; cp zfin.gpi.gz $DOWNLOAD_DIRECTORY/current/</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/GO &amp;&amp; cp zfin_v1.gpi.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/GO/zfin.gpi.gz</artifacts>
+            <artifacts>server_apps/data_transfer/GO/zfin_v1.gpi.gz</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
@@ -64,7 +64,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/GO/zfin.gpi.gz&quot;}
+                            ${FILE,path=&quot;server_apps/data_transfer/GO/zfin_v1.gpi.gz&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
