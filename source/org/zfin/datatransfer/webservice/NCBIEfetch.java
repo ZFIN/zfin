@@ -264,6 +264,7 @@ public class NCBIEfetch {
      * @return List of gene IDs that are not in the current annotation release set, empty list if error occurs
      */
     public static List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        System.out.println("Fetching gene IDs not in current annotation release set...");
         return fetchGeneIDsNotInCurrentAnnotationReleaseSet(10000);
     }
 
