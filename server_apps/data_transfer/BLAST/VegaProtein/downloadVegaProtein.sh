@@ -17,7 +17,7 @@ wget -Nq "ftp://ftp.ensembl.org/pub/vega/zebrafish/pep/Danio_rerio.VEGA67.pep.al
 set count=`/bin/ls -l Danio* | /bin/wc -l`
 
 if ($count>1) then
-    rm `ls -t Danio* | awk 'NR>1'`;
+    rm -f `ls -t Danio* | awk 'NR>1'`;
 endif 
 
 cp *.pep.all.fa.gz downloaded.gz
@@ -30,7 +30,7 @@ cp downloaded vegaprotein.fa ;
 $TARGET_PATH/VegaProtein/deflineSwitch.pl vegaprotein.fa > vegaprotein_zf.fa
 
 rm -f downloaded;
-rm vegaprotein.fa;
+rm -f vegaprotein.fa;
 
 
 exit
