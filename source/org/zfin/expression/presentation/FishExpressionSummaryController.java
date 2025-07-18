@@ -164,7 +164,6 @@ public class FishExpressionSummaryController {
         List<ExpressionFigureStage> filteredFigureStages = figureStages
                 .stream()
                 .filter(efs -> figureIDs.contains(efs.getFigure().getZdbID()))
-//                .filter(efs -> efs.getExpressionExperiment().getFishExperiment().getExperiment().getZdbID().equals(conditionID))
                 .filter(efs -> efs.getExpressionExperiment().getGene().getZdbID().equals(geneID))
                 .toList();
 
