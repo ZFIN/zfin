@@ -8,7 +8,7 @@
  
 echo "==| at VegaProtein |=="
 
-rm xdformat_vegaprotein_zf.log
+rm -f xdformat_vegaprotein_zf.log
 
 echo "==| Format the file into blast db |== "
 
