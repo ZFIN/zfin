@@ -37,7 +37,7 @@ public class GPIFile extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi.gz");
+        File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin_v1.gpi.gz");
 
         try (OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
              OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
