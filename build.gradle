@@ -102,14 +102,6 @@ task loadDatabase() {
             ignoreExitValue = true
             commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql -v ON_ERROR_STOP=1 $dbname"
         }
-        exec {
-            // do an "upsert" in the developer_data table to record the time of the last loaddb
-            ignoreExitValue = true
-            commandLine "bash", "-c", "echo \$'insert into developer_data (dd_key, dd_value)" +
-                    " values (\\'loaddb completed\\', \\'$unloadPath\\') ON CONFLICT (dd_key) " +
-                    "DO UPDATE SET dd_value = EXCLUDED.dd_value;' | psql -v ON_ERROR_STOP=1 $dbname"
-        }
-
     }
 }
 
