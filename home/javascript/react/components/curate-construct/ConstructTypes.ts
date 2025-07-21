@@ -165,10 +165,14 @@ function normalizeConstructCassette(cassette: Cassette) {
     };
 }
 
-
 type MarkerLabelAndZdbId = {
     label: string;
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerLabelAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents, normalizeConstructCassette};
+type MarkerNameAndZdbId = {
+    name: string;
+    zdbID: string;
+}
+
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerLabelAndZdbId, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents, normalizeConstructCassette};
