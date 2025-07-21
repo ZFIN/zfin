@@ -67,7 +67,7 @@ public class NCBIGff3Processor {
         } else {
             downloadNcbiGff3File();
         }
-        processEnsemblGff3(fileName);
+        processNcbiGff3(fileName);
         addGeneIDToAttributes();
         createFeatureTypeHistogram();
         upsertSequenceFeatureChromosomeRecords();
@@ -164,7 +164,7 @@ public class NCBIGff3Processor {
         }
     }
 
-    public void processEnsemblGff3(String gff3FilePath) throws IOException {
+    public void processNcbiGff3(String gff3FilePath) throws IOException {
         AtomicInteger index = new AtomicInteger(0);
         Gff3Reader reader = new Gff3Reader(gff3FilePath);
 

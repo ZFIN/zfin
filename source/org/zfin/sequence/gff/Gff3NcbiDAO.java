@@ -22,13 +22,13 @@ public class Gff3NcbiDAO extends BaseSQLDAO<Gff3Ncbi> {
         super(Gff3Ncbi.class);
     }
 
-    public List<Gff3Ncbi> findRecordsBySource(String bestRefSeq) {
+    public List<Gff3Ncbi> findRecordsBySource(String sourceName) {
         TypedQuery<Gff3Ncbi> query = entityManager.createQuery("""
             from Gff3Ncbi gff3
             join fetch gff3.attributePairs
-                        where gff3.source = :bestRefSeq
+                        where gff3.source = :sourceName
             """, Gff3Ncbi.class);
-        query.setParameter("bestRefSeq", bestRefSeq);
+        query.setParameter("sourceName", sourceName);
         return query.getResultList();
     }
 
