@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CurateConstructForm from './CurateConstructForm';
 import {backendBaseUrl} from './DomainInfo';
-import {EditConstructFormDTO, MarkerLabelAndZdbId} from './ConstructTypes';
+import {EditConstructFormDTO, MarkerLabelAndZdbId, MarkerNameAndZdbId} from './ConstructTypes';
 
 const calculatedDomain = backendBaseUrl();
 
@@ -25,14 +25,26 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     async function loadConstructList() {
         const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
         const data = await response.json();
-        const constructIdNameList = data.map((row) : MarkerLabelAndZdbId => {
+        const constructIdLabelList : MarkerLabelAndZdbId[] = data.map((row : MarkerNameAndZdbId) : MarkerLabelAndZdbId => {
             return {
                 zdbID: row.zdbID,
                 label: row.name
             }
         });
-        const uniqueConstructIdNameList = constructIdNameList.filter((v, i, a) => a.findIndex(t => (t.zdbID === v.zdbID)) === i);
-        setConstructList(uniqueConstructIdNameList);
+        const uniqueConstructIdLabelList = uniqueByZdbID(constructIdLabelList);
+        setConstructList(uniqueConstructIdLabelList);
+    }
+
+    function uniqueByZdbID(constructIdLabelList: MarkerLabelAndZdbId[]) {
+        const seen = new Set<string>();
+        const uniqueConstructIdLabelList = constructIdLabelList.filter(row => {
+            if (seen.has(row.zdbID)) {
+                return false;
+            }
+            seen.add(row.zdbID);
+            return true;
+        });
+        return uniqueConstructIdLabelList;
     }
 
     async function submitForm(submissionObject : EditConstructFormDTO) {
@@ -90,7 +102,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </>}
 
             {displayMode === 'list' && <div className='mt-2'>
-                <span className='bold'>EDIT CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a> </span>
+                <span className='bold'>EDIT CONSTRUCT: </span>
                 <div>
                     <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
                         <option>Select a construct</option>
@@ -105,7 +117,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </div>}
 
             {displayMode === 'edit' && <div className='mt-2'>
-                <span className='bold'>EDIT CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
+                <span className='bold'>EDIT CONSTRUCT: </span>
                 <CurateConstructForm
                     key={selectedConstruct}
                     publicationId={publicationId}
@@ -121,7 +133,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             </div>}
 
             {displayMode === 'new' && <div className='mt-2'>
-                <span className='bold'>NEW CONSTRUCT: <a href='#' onClick={(e) => {e.preventDefault(); cancelEdit()}}>Back</a>  </span>
+                <span className='bold'>NEW CONSTRUCT: </span>
                 <CurateConstructForm
                     key={selectedConstruct}
                     publicationId={publicationId}
