@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {backendBaseUrl} from './DomainInfo';
-import {MarkerNameAndZdbId} from './ConstructTypes';
+import {MarkerLabelAndZdbId} from './ConstructTypes';
 
 interface ConstructRelationshipsTableProps {
     publicationId: string;
@@ -39,8 +39,8 @@ const calculatedDomain = backendBaseUrl();
 const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTableProps) => {
     const [loading, setLoading] = React.useState<boolean>(true);
     const [constructRelationshipRows, setConstructRelationshipRows] = React.useState<ConstructRelationshipRow[]>([]);
-    const [publicationConstructs, setPublicationConstructs] = React.useState<MarkerNameAndZdbId[]>([]);
-    const [regionsForRelation, setRegionsForRelation] = React.useState<MarkerNameAndZdbId[]>([]);
+    const [publicationConstructs, setPublicationConstructs] = React.useState<MarkerLabelAndZdbId[]>([]);
+    const [regionsForRelation, setRegionsForRelation] = React.useState<MarkerLabelAndZdbId[]>([]);
     const [selectedMarker, setSelectedMarker] = React.useState<string>('');
     const [selectedConstruct, setSelectedConstruct] = React.useState<string>('');
     const RELATIONSHIP_TO_ADD = 'contains region';

@@ -1,5 +1,5 @@
 import React, {createContext, useState, useEffect} from 'react';
-import {Cassette, MarkerNameAndZdbId} from './ConstructTypes';
+import {Cassette, MarkerLabelAndZdbId} from './ConstructTypes';
 import produce from 'immer';
 
 interface ConstructUnderEdit {
@@ -7,9 +7,9 @@ interface ConstructUnderEdit {
     prefix: string;
     publicNote: string;
     cassettes: Cassette[];
-    synonyms: MarkerNameAndZdbId[];
-    sequences: MarkerNameAndZdbId[];
-    notes: MarkerNameAndZdbId[];
+    synonyms: MarkerLabelAndZdbId[];
+    sequences: MarkerLabelAndZdbId[];
+    notes: MarkerLabelAndZdbId[];
     editCassetteMode: boolean;
     editCassetteIndex: number;
     addCassetteMode: boolean;
