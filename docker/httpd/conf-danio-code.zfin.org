@@ -1,0 +1,23 @@
+<VirtualHost *:80>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName danio-code.zfin.org
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://danio-code-dcc.genereg.net/ [R=301,L]
+</VirtualHost>
+<VirtualHost *:443>
+    <Location />
+        <RequireAll>
+          Require all granted
+          Require not env RejectRequest
+        </RequireAll>
+    </Location>
+    ServerName danio-code.zfin.org
+    SSLEngine on
+    RewriteEngine On
+    RewriteRule ^/(.*)$ https://danio-code-dcc.genereg.net/ [R=301,L]
+</VirtualHost>
