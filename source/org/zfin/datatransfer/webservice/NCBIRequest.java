@@ -125,7 +125,6 @@ public class NCBIRequest {
         String formContentsString = IOUtils.toString(urlEncodedFormEntity.getContent(), "UTF-8");
         post.setEntity(urlEncodedFormEntity);
         log.info("Posting to URI: " + post.getURI());
-        log.info("Form contents: " + formContentsString);
 
         HttpResponse response = client.execute(post);
         InputStream responseContent = response.getEntity().getContent();
