@@ -152,11 +152,6 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
 
         setSaving(true);
         onSubmit(submissionObject).then(() => {
-            if (!state.selectedConstructId) {
-                // Clear the form if we are creating a new construct
-                clearForm();
-            }
-
             setSaving(false);
         }).catch(() => {
             setSaving(false);

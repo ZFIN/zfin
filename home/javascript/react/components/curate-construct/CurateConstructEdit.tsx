@@ -12,13 +12,15 @@ interface CurateConstructEditProps {
 type DisplayMode = 'new' | 'edit' | 'list' | 'none';
 
 const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
-    const [selectedConstruct, setSelectedConstruct] = useState<string>('');
+    const [selectedConstructID, setSelectedConstructID] = useState<string>('');
     const [constructList, setConstructList] = useState<MarkerLabelAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
 
     function toggleDisplayMode(newMode: DisplayMode) {
+        setErrorMessage('');
+        setSuccessMessage('');
         setDisplayMode(newMode);
     }
 
@@ -52,8 +54,8 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         setErrorMessage('');
         try {
             let url = `${calculatedDomain}/action/construct/create-and-update`;
-            if (selectedConstruct) {
-                url = `${calculatedDomain}/action/construct/update/${selectedConstruct}`;
+            if (selectedConstructID) {
+                url = `${calculatedDomain}/action/construct/update/${selectedConstructID}`;
             }
             const result = await fetch(url, {
                 method: 'POST',
@@ -62,13 +64,14 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 },
                 body: JSON.stringify(submissionObject),
             });
-            loadConstructList();
             const bodyJson = await result.json();
             if (bodyJson.success === false) {
                 setErrorMessage('Error updating construct: ' + bodyJson.message);
             } else {
+                loadConstructList();
                 setSuccessMessage(bodyJson.message);
-                setSelectedConstruct(null);
+                setErrorMessage('');
+                resetSelectedConstruct();
             }
         } catch (error) {
             setErrorMessage('Error updating construct');
@@ -78,13 +81,31 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     async function handleConstructSelected(constructId: string) {
         setSuccessMessage('');
         setErrorMessage('');
-        setSelectedConstruct(constructId);
+        setSelectedConstructID(constructId);
         toggleDisplayMode('edit');
     }
 
     function cancelEdit() {
         toggleDisplayMode('none');
-        setSelectedConstruct('');
+        setSelectedConstructID('');
+        resetSelectedConstruct();
+    }
+
+    function resetSelectedConstruct() {
+        //force re-render of form by setting selectedConstruct to null (or empty string if already null)
+        if (selectedConstructID === '') {
+            setSelectedConstructID(null);
+        } else if (selectedConstructID === null) {
+            setSelectedConstructID('');
+        } else {
+            //this means we are updating an existing construct, so we should reset it to the same construct after re-rendering
+            const currentSelectedConstructID = selectedConstructID;
+            setSelectedConstructID('');
+            setTimeout(() => {
+                setSelectedConstructID(currentSelectedConstructID);
+            }, 0);
+        }
+
     }
 
     useEffect(() => {
@@ -104,7 +125,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             {displayMode === 'list' && <div className='mt-2'>
                 <span className='bold'>EDIT CONSTRUCT: </span>
                 <div>
-                    <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
+                    <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstructID}>
                         <option>Select a construct</option>
                         {constructList.map((row: MarkerLabelAndZdbId) => {
                             return <option key={row.zdbID} value={row.zdbID} >{row.label}</option>
@@ -119,9 +140,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             {displayMode === 'edit' && <div className='mt-2'>
                 <span className='bold'>EDIT CONSTRUCT: </span>
                 <CurateConstructForm
-                    key={selectedConstruct}
+                    key={selectedConstructID}
                     publicationId={publicationId}
-                    constructId={selectedConstruct}
+                    constructId={selectedConstructID}
                     submitButtonLabel='Update'
                     onCancel={cancelEdit}
                     onSubmit={submitForm}
@@ -135,9 +156,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             {displayMode === 'new' && <div className='mt-2'>
                 <span className='bold'>NEW CONSTRUCT: </span>
                 <CurateConstructForm
-                    key={selectedConstruct}
+                    key={selectedConstructID}
                     publicationId={publicationId}
-                    constructId={selectedConstruct}
+                    constructId={selectedConstructID}
                     submitButtonLabel='Save'
                     onCancel={cancelEdit}
                     onSubmit={submitForm}
