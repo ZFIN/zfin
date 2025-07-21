@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CurateConstructForm from './CurateConstructForm';
 import {backendBaseUrl} from './DomainInfo';
-import {EditConstructFormDTO, MarkerNameAndZdbId} from './ConstructTypes';
+import {EditConstructFormDTO, MarkerLabelAndZdbId} from './ConstructTypes';
 
 const calculatedDomain = backendBaseUrl();
 
@@ -13,7 +13,7 @@ type DisplayMode = 'new' | 'edit' | 'list' | 'none';
 
 const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [selectedConstruct, setSelectedConstruct] = useState<string>('');
-    const [constructList, setConstructList] = useState<MarkerNameAndZdbId[]>([]);
+    const [constructList, setConstructList] = useState<MarkerLabelAndZdbId[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
@@ -25,7 +25,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     async function loadConstructList() {
         const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
         const data = await response.json();
-        const constructIdNameList = data.map((row) : MarkerNameAndZdbId => {
+        const constructIdNameList = data.map((row) : MarkerLabelAndZdbId => {
             return {
                 zdbID: row.zdbID,
                 label: row.name
@@ -94,7 +94,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 <div>
                     <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstruct}>
                         <option>Select a construct</option>
-                        {constructList.map((row: MarkerNameAndZdbId) => {
+                        {constructList.map((row: MarkerLabelAndZdbId) => {
                             return <option key={row.zdbID} value={row.zdbID} >{row.label}</option>
                         })}
                     </select>

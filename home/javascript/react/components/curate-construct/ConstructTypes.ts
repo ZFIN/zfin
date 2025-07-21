@@ -23,9 +23,9 @@ type ConstructFormDTO = {
 
 type EditConstructFormDTO = {
     constructName: ConstructNameDTO;
-    synonyms: MarkerNameAndZdbId[];
-    sequences: MarkerNameAndZdbId[];
-    notes: MarkerNameAndZdbId[];
+    synonyms: MarkerLabelAndZdbId[];
+    sequences: MarkerLabelAndZdbId[];
+    notes: MarkerLabelAndZdbId[];
     publicNote: string;
     publicationZdbID: string;
 }
@@ -166,9 +166,9 @@ function normalizeConstructCassette(cassette: Cassette) {
 }
 
 
-type MarkerNameAndZdbId = {
+type MarkerLabelAndZdbId = {
     label: string;
     zdbID: string;
 }
 
-export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerNameAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents, normalizeConstructCassette};
+export {ConstructName, Cassette, ConstructComponent, SimplifiedCassette, cassettesToSimplifiedCassettes, typeAbbreviationToType, MarkerLabelAndZdbId, ConstructNameDTO, ConstructFormDTO, EditConstructFormDTO, simplifiedCassettesToCassettes, normalizeSimplifiedCassettes, normalizeConstructComponents, normalizeConstructCassette};
