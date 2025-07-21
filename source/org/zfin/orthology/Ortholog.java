@@ -8,6 +8,7 @@ import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import jakarta.persistence.*;
@@ -44,6 +45,13 @@ public class Ortholog implements Comparable, Serializable {
 
     @OneToMany(mappedBy = "ortholog", fetch = FetchType.EAGER)
     private SortedSet<OrthologExternalReference> externalReferenceList;
+
+    public SortedSet<OrthologExternalReference> getExternalReferenceList() {
+        if (externalReferenceList == null) {
+            return Collections.emptySortedSet();
+        }
+        return externalReferenceList;
+    }    
 
     @Column(name = "ortho_other_species_name")
     @JsonView(View.OrthologyAPI.class)
