@@ -17,7 +17,10 @@ mv $BLASTSERVER_BLAST_DATABASE_PATH/Current/vegaprotein_zf.x* $BLASTSERVER_BLAST
 cp vegaprotein_zf.x* $BLASTSERVER_BLAST_DATABASE_PATH/Current/
 
 rm -rf *.fa;
-rm -rf downloaded*;
+
+if ( `ls downloaded* >& /dev/null` ) then
+  rm -rf downloaded*;
+endif
 
 if ("$WEBHOST_BLAST_DATABASE_PATH" == "/research/zfin.org/blastdb") then
 
