@@ -40,7 +40,7 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Annotation Status">
-        ${formBean.marker.latestAnnotationStatus}
+        ${formBean.marker.annotationStatus}
     </z:attributeListItem>
 
 

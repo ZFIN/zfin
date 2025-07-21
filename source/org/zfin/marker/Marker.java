@@ -729,7 +729,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     }
 
     @JsonView(View.SequenceAPI.class)
-    public String getLatestAnnotationStatus() {
+    public String getAnnotationStatus() {
         if (CollectionUtils.isEmpty(annotationStatusTerms)) {
             return null;
         }
