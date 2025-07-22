@@ -183,7 +183,7 @@ public class NCBIGff3Processor {
                         //ncbi.setAttributes(feature.);
                         ncbi.setSource(feature.getSource() != null ? feature.getSource() : "unknown");
                         ncbi.setFeature(feature.getType() != null ? feature.getType() : "unknown");
-                        ncbi.setScore(String.valueOf(feature.getScore()));
+                        ncbi.setScore(String.valueOf(feature.getScore()).equals("-1") ? "." : String.valueOf(feature.getScore()));
                         ncbi.setFrame(String.valueOf(feature.getPhase()).equals("-1") ? "." : String.valueOf(feature.getPhase()));
                         ncbi.setStrand(feature.getStrand() != null ? feature.getStrand().name().equals("POSITIVE") ? "+" : "-" : "unknown");
                         ncbi.setAttributes(generateAttributes(feature.getAttributes()));
