@@ -113,7 +113,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     }, []);
 
     return <>
-        <div className={`mb-3 pub-${publicationId}`}>
+        <div className={`mb-3 pub-${publicationId} construct-mode-${displayMode}`}>
             {displayMode === 'none' && <>
                 <span className='bold'>NEW CONSTRUCT: </span>
                 <a onClick={() => toggleDisplayMode('new')} style={{textDecoration: 'underline'}}>Show</a>
