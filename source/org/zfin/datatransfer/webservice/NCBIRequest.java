@@ -124,7 +124,12 @@ public class NCBIRequest {
             .ifPresent(token -> nvps.add(new BasicNameValuePair("api_key", token)));
 
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+
         String formContentsString = IOUtils.toString(urlEncodedFormEntity.getContent(), "UTF-8");
+        //decoded form contents for logging
+        String decodedFormContents = java.net.URLDecoder.decode(formContentsString, "UTF-8");
+        log.debug("Form contents: " + decodedFormContents);
+
         post.setEntity(urlEncodedFormEntity);
         log.debug("Posting to URI: " + post.getURI());
 

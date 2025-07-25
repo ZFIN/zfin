@@ -32,25 +32,52 @@
   <builders>
     <hudson.tasks.Shell>
       <command><![CDATA[
-#export WORKING_DIR=$TARGETROOT/server_apps/data_transfer/NCBIGENE/
+# working dir can be set to old path with:
+# export WORKING_DIR=$TARGETROOT/server_apps/data_transfer/NCBIGENE/
+
+# set working dir to jenkins workspace
 export WORKING_DIR=$WORKSPACE
 
-# Some options to skip steps for troubleshooting
-#export SKIP_DOWNLOADS=1
-#export EARLY_EXIT=1
-#export SKIP_EFETCH=1
+# clear the working directory
+rm -f $WORKING_DIR/*
 
+# optionally, copy the stored load files instead of downloading them
+# cp /research/zarchive/load_files/NCBI-gene-load-archive/2025-07-30/* $WORKING_DIR
+
+# Some options to skip steps for troubleshooting
+# SKIP_DOWNLOADS means to use cached local files instead of downloading them
+# export SKIP_DOWNLOADS=1
+
+# EARLY_EXIT means quit the job before actually running the sql files against the DB (useful for checking expected results in .unl files)
+# export EARLY_EXIT=1
+
+# SKIP_EFETCH means do not run logic to "efetch" sequences from ncbi endpoint to build seq.fasta file for calculating sequence lengths
+# export SKIP_EFETCH=1
+
+# FORCE_EFETCH means to force run the efetch logic
+# export FORCE_EFETCH=1
+
+# Run the gradle task from source directory
 cd $SOURCEROOT
+
 # Option for troubleshooting: load the database from a backup
-#gradle loaddb -DB=/research/zunloads/databases/zfindb/2025.07.06.1/2025.07.06.1.bak
+# gradle loaddb -DB=/research/zunloads/databases/zfindb/2025.07.28.1/2025.07.28.1.bak
+
+# Optionally run liquibase (temporary for now until the DB is updated with the new tables marker_annotation_status, etc.)
+gradle liquibasePostBuild
+
+# Run the NCBI gene load
 gradle ncbiPort
+
+# compress the seq.fasta file since it gets large (~500MB)
+gzip -f -9 $WORKSPACE/seq.fasta || true
         ]]>
       </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz,gene2vega.gz,zf_gene_info.gz</artifacts>
+      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz,gene2vega.gz,zf_gene_info.gz,seq.fasta*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
