@@ -1,13 +1,10 @@
 package org.zfin.infrastructure.captcha;
 
-import org.apache.commons.lang3.StringUtils;
-import org.zfin.properties.ZfinPropertiesEnum;
+import lombok.extern.log4j.Log4j2;
+import org.zfin.infrastructure.TokenStorage;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
 import static org.zfin.infrastructure.captcha.CaptchaService.getCurrentVersion;
 
@@ -15,8 +12,8 @@ import static org.zfin.infrastructure.captcha.CaptchaService.getCurrentVersion;
  * Requires the existence of captchaSiteKey-V2.txt, captchaSiteKey-V3.txt, captchaSiteKey-hCaptcha.txt
  * to store keys for recaptcha v2, recaptcha v3, and hCaptcha respectively. Similar files for secret keys are needed too.
  */
+@Log4j2
 public class CaptchaKeys {
-    private static final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public enum Version {
         V2,
@@ -25,31 +22,24 @@ public class CaptchaKeys {
         altcha;
     }
 
-    public static String getSiteKey() throws IOException {
-        return getValue("captchaSiteKey-", getCurrentVersion());
+    public static Optional<String> getSiteKey() {
+        TokenStorage.ServiceKey serviceKey = switch (getCurrentVersion()) {
+            case V2 -> TokenStorage.ServiceKey.RECAPTCHA_V2_SITE_KEY;
+            case V3 -> TokenStorage.ServiceKey.RECAPTCHA_V3_SITE_KEY;
+            case hCaptcha -> TokenStorage.ServiceKey.HCAPTCHA_SITE_KEY;
+            case altcha -> TokenStorage.ServiceKey.ALTCHA_SITE_KEY;
+        };
+        return TokenStorage.getValue(serviceKey);
     }
 
-    public static String getSecretKey() throws IOException {
-        return getValue("captchaSecretKey-", getCurrentVersion());
+    public static Optional<String> getSecretKey() throws IOException {
+        TokenStorage.ServiceKey serviceKey = switch (getCurrentVersion()) {
+            case V2 -> TokenStorage.ServiceKey.RECAPTCHA_V2_SECRET_KEY;
+            case V3 -> TokenStorage.ServiceKey.RECAPTCHA_V3_SECRET_KEY;
+            case hCaptcha -> TokenStorage.ServiceKey.HCAPTCHA_SECRET_KEY;
+            case altcha -> TokenStorage.ServiceKey.ALTCHA_SECRET_KEY;
+        };
+        return TokenStorage.getValue(serviceKey);
     }
 
-    private static String getValue(String filenamePrefix, Version captchaVersion) throws IOException {
-        String filename = filenamePrefix + captchaVersion.name() + ".txt";
-        return cache.computeIfAbsent(filename, k -> {
-            try {
-                return getTokenFileValue(k);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private static String getTokenFileValue(String tokenFilename) throws IOException {
-        Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/tokens/" + tokenFilename);
-        String value = StringUtils.chomp(Files.readString(file));
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        return value;
-    }
 }

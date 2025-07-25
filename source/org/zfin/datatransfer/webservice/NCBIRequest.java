@@ -15,15 +15,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.zfin.datatransfer.ServiceConnectionException;
+import org.zfin.infrastructure.TokenStorage;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -121,6 +119,10 @@ public class NCBIRequest {
         for (Map.Entry<String, String> param : params.entrySet()) {
             nvps.add(new BasicNameValuePair(param.getKey(), param.getValue()));
         }
+
+        TokenStorage.getValue(TokenStorage.ServiceKey.NCBI_API_TOKEN)
+            .ifPresent(token -> nvps.add(new BasicNameValuePair("api_key", token)));
+
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
         String formContentsString = IOUtils.toString(urlEncodedFormEntity.getContent(), "UTF-8");
         post.setEntity(urlEncodedFormEntity);

@@ -142,7 +142,13 @@ public class CaptchaService {
 
     private static boolean verifyAltcha(String challengeResponse) throws IOException {
         try {
-            return Altcha.verifySolution(challengeResponse, CaptchaKeys.getSecretKey(), true);
+            Optional<String> secretKey = CaptchaKeys.getSecretKey();
+            if (secretKey.isEmpty()) {
+                log.error("Altcha secret key is not set. Please check your configuration.");
+                // just allow for now (better than breaking the site)
+                return true;
+            }
+            return Altcha.verifySolution(challengeResponse, secretKey.get(), true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,10 +165,16 @@ public class CaptchaService {
         if (StringUtils.isEmpty(userResponse)) {
             return false;
         }
-        String secretKey = CaptchaKeys.getSecretKey();
+        Optional<String> secretKey = CaptchaKeys.getSecretKey();
+        if (secretKey.isEmpty()) {
+            log.error("Captcha secret key is not set. Please check your configuration.");
+            // just allow for now (better than breaking the site)
+            return true;
+        }
+
         // Prepare the POST parameters
         List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.secret.name(), secretKey));
+        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.secret.name(), secretKey.get()));
         nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.response.name(), userResponse));
         if (remoteIp != null && !remoteIp.isEmpty()) {
             nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.remoteip.name(), remoteIp));
