@@ -268,7 +268,7 @@ public class MappingDetailController {
         }
         List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
-            if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
+            if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN_NCBI) {
                 model.addAttribute("gbrowseImage", genomeBrowserFactory.getImageBuilder()
                         .setLandmarkByGenomeLocation(genomeLocation)
                         .withCenteredRange(500000)

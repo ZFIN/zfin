@@ -46,7 +46,7 @@ public class Gff3Writer {
     public void start() {
         try {
             ReportBuilder builder = prepareReports();
-            createZfinGeneFile();
+       //     createZfinGeneFile();
             createRefSeqFile();
             createReport(builder);
         } catch (IOException e) {
@@ -155,9 +155,9 @@ public class Gff3Writer {
                     line[2] = record.getFeature();
                     line[3] = String.valueOf(record.getStart());
                     line[4] = String.valueOf(record.getEnd());
-                    line[5] = record.getScore();
+                    line[5] = (Objects.equals(record.getScore(), "-1.0"))? "." : record.getScore();
                     line[6] = record.getStrand();
-                    line[7] = String.valueOf(record.getFrame());
+                    line[7] =String.valueOf(record.getFrame());
                     line[8] = generateAttributeColumn(record.getAttributePairs());
                     return line;
                 }).collect(Collectors.toList());
@@ -196,7 +196,7 @@ public class Gff3Writer {
         persistKeySet.add("gene_id");
         persistKeySet.add("gene_name");
         persistKeySet.add("transcript");
-        //persistKeySet.add("Parent");
+        persistKeySet.add("Parent");
     }
 
     private Set<Gff3NcbiAttributePair> generateAttributePairs(Map<String, List<String>> attributes) {

@@ -13,7 +13,12 @@ public enum GenomeBrowserBuild {
             ZfinPropertiesEnum.GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT.toString(),
             ZfinPropertiesEnum.JBROWSE_GRCZ10_PATH_FROM_ROOT.toString()
     ),
-    CURRENT("GRCz11",
+    GRCZ11("GRCz11",
+            ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString(),
+            ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString(),
+            ZfinPropertiesEnum.JBROWSE_PATH_FROM_ROOT.toString()
+    ),
+    CURRENT("GRCz12tu",
             ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString(),
             ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString(),
             ZfinPropertiesEnum.JBROWSE_PATH_FROM_ROOT.toString()
