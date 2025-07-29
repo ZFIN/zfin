@@ -123,6 +123,11 @@ public class MarkerNotesController {
         return "marker/automated-gene-desc-note";
     }
 
+    @RequestMapping("/note/annotation-status-desc")
+    public String getAnnotationStatus() {
+        return "marker/annotation-status-desc-note";
+    }
+
     @RequestMapping("/note/disease-model")
     public String getDiseaseModelNote() {
         return "marker/disease-model-note";
