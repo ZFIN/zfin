@@ -46,7 +46,7 @@ public class Gff3Writer {
     public void start() {
         try {
             ReportBuilder builder = prepareReports();
-       //     createZfinGeneFile();
+            createZfinGeneFile();
             createRefSeqFile();
             createReport(builder);
         } catch (IOException e) {
