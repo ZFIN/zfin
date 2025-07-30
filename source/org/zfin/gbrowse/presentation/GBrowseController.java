@@ -20,6 +20,13 @@ public class GBrowseController {
         return "gbrowse/gbrowse-view";
     }
 
+    @RequestMapping("/gbrowse/GRCz11")
+    public String gbrowseGrcz11(Model model) {
+        model.addAttribute("requestParams", request.getQueryString());
+        model.addAttribute("urlPrefix","/gb2/gbrowse/zfin_ensembl_GRCz11");
+        return "gbrowse/gbrowse-view";
+    }
+
     @RequestMapping("/gbrowse/GRCz10")
     public String gbrowseGRCz10(Model model) {
         model.addAttribute("requestParams", request.getQueryString());
