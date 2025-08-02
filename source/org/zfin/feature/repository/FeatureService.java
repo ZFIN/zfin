@@ -327,18 +327,25 @@ public class FeatureService {
 
         GenomeLocation.Source source;
         GenomeBrowserTrack extraTrack = null;
-        if (featureLocation.getAssembly().equals("Zv9")) {
-            imageBuilder.genomeBuild(GenomeBrowserBuild.ZV9);
-            extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
-            source = GenomeLocation.Source.ZFIN_Zv9;
-        } else if (featureLocation.getAssembly().equals("GRCz10")) {
-            imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ10);
-            extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
-            source = GenomeLocation.Source.ZFIN_Zv9; //TODO: Should this be Zv10?
-        } else {
-            imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
-            source = GenomeLocation.Source.ZFIN;
+        switch (featureLocation.getAssembly()) {
+            case "Zv9" -> {
+                imageBuilder.genomeBuild(GenomeBrowserBuild.ZV9);
+                source = GenomeLocation.Source.ZFIN_Zv9;
+            }
+            case "GRCz10" -> {
+                imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ10);
+                source = GenomeLocation.Source.ZFIN_Zv9; //TODO: Should this be Zv10?
+            }
+            case "GRCz12tu" -> {
+                imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
+                source = GenomeLocation.Source.ZFIN_NCBI;
+            }
+            default -> {
+                imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ11);
+                source = GenomeLocation.Source.ZFIN;
+            }
         }
+        extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
 
         if (featureMarkerRelationships.size() == 1) {
             Marker related = featureMarkerRelationships.iterator().next().getMarker();

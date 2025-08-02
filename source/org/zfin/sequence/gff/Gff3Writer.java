@@ -46,7 +46,7 @@ public class Gff3Writer {
     public void start() {
         try {
             ReportBuilder builder = prepareReports();
-            createZfinGeneFile();
+      ////      createZfinGeneFile();
             createRefSeqFile();
             createReport(builder);
         } catch (IOException e) {
@@ -122,10 +122,14 @@ public class Gff3Writer {
         pagination.setPage(0);
         Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
         summaryTable.addSummaryRow(List.of("ZFIN RefSeq Accessions", String.valueOf(totalRecords)));
-        System.out.println("Total records found: " + totalRecords);
-        pagination.setLimit(400000);
+        pagination.setLimit(4_000_000);
         pagination.setPage(0);
         List<Gff3Ncbi> results = dao.findRecordsBySource("BestRefSeq");
+        List<Gff3Ncbi> results2 = dao.findRecordsBySource("BestRefSeq,Gnomon");
+        List<Gff3Ncbi> results3 = dao.findRecordsBySource("Gnomon");
+        results.addAll(results2);
+        results.addAll(results3);
+        System.out.println("Total records found: " + results.size());
         writeGff3File("zfin_refseq.grcz12.gff3", results);
     }
 

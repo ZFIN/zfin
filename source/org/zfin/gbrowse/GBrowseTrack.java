@@ -22,6 +22,7 @@ public enum GBrowseTrack {
     COMPLETE_CLONES("fullclone"),
     ALLZMP("allzmp"),
     ZFIN_FEATURES("mutants"),
+    REF_SEQ("Full RefSeq GFF"),
     ZMP("zmp");
 
     GBrowseTrack(String trackName) {
@@ -53,6 +54,7 @@ public enum GBrowseTrack {
             case ALLZMP -> GenomeBrowserTrack.ALLZMP;
             case ZFIN_FEATURES -> GenomeBrowserTrack.ZFIN_FEATURES;
             case ZMP -> GenomeBrowserTrack.ZMP;
+            case REF_SEQ -> GenomeBrowserTrack.REFSEQ;
         };
     }    
     

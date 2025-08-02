@@ -13,7 +13,9 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -52,10 +54,10 @@ public class CloneViewController {
 
     public CloneViewController() {
         ensemblDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.ENSEMBL_CLONE,
-                ForeignDBDataType.DataType.OTHER,
-                ForeignDBDataType.SuperType.SUMMARY_PAGE,
-                Species.Type.ZEBRAFISH
+            ForeignDB.AvailableName.ENSEMBL_CLONE,
+            ForeignDBDataType.DataType.OTHER,
+            ForeignDBDataType.SuperType.SUMMARY_PAGE,
+            Species.Type.ZEBRAFISH
         );
         HibernateUtil.closeSession();
     }
@@ -99,7 +101,9 @@ public class CloneViewController {
         // check whether we are a thisse probe
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
 
-        cloneBean.setImage(genomeBrowserFactory.getImageBuilder().buildForClone(clone));
+        GenomeBrowserImageBuilder imageBuilder = genomeBrowserFactory.getImageBuilder();
+        imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ11);
+        cloneBean.setImage(imageBuilder.buildForClone(clone));
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
@@ -114,10 +118,10 @@ public class CloneViewController {
 
     @RequestMapping(value = "/dbsnp", method = RequestMethod.GET)
     protected String getDbsnpView(
-            Model model
-            , @RequestParam("cloneId") String cloneId
-            , @ModelAttribute("formBean") MarkerBean formBean
-            , BindingResult result
+        Model model
+        , @RequestParam("cloneId") String cloneId
+        , @ModelAttribute("formBean") MarkerBean formBean
+        , BindingResult result
     ) {
 
         Marker clone = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneId);
