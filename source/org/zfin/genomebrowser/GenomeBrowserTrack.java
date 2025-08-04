@@ -26,7 +26,8 @@ public enum GenomeBrowserTrack {
     COMPLETE_CLONES("Complete Assembly Clones"),
     ALLZMP("allzmp"),
     ZFIN_FEATURES("ZFIN Features"),
-    ZMP("Zebrafish Mutation Project");
+    ZMP("Zebrafish Mutation Project"),
+    REFSEQ("Full RefSeq GFF");
 
     GenomeBrowserTrack(String trackName) {
         this.trackName = trackName;
@@ -77,6 +78,7 @@ public enum GenomeBrowserTrack {
             case ALLZMP -> GBrowseTrack.ALLZMP;
             case ZFIN_FEATURES -> GBrowseTrack.ZFIN_FEATURES;
             case ZMP -> GBrowseTrack.ZMP;
+            case REFSEQ -> GBrowseTrack.REF_SEQ;
         };
     }
 }

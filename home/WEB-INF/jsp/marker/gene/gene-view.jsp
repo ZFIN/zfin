@@ -34,7 +34,7 @@
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
-            <zfin2:markerDataPageHeader marker="${formBean.marker}" />
+            <zfin2:markerDataPageHeader marker="${formBean.marker}"/>
             <jsp:include page="gene-view-summary.jsp"/>
         </div>
 
@@ -63,10 +63,10 @@
 
         <z:section title="${DISEASES}">
             <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog" infoPopup="/action/marker/note/omim-phenotype">
-                <jsp:include page="gene-view-disease-via-ortholog.jsp" />
+                <jsp:include page="gene-view-disease-via-ortholog.jsp"/>
             </z:section>
             <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models" infoPopup="/action/marker/note/disease-model">
-                <jsp:include page="gene-view-disease-via-experiment.jsp" />
+                <jsp:include page="gene-view-disease-via-experiment.jsp"/>
             </z:section>
         </z:section>
 
@@ -108,11 +108,16 @@
         </z:section>
 
         <z:section title="${SEQUENCES}" infoPopup="/action/marker/note/sequences">
+            <z:attributeList>
+                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}"/>
+            </z:attributeList>
+            <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
+
             <div
-                class="__react-root"
-                id="MarkerSequencesTable"
-                data-marker-id="${formBean.marker.zdbID}"
-                data-show-summary="true"
+                    class="__react-root"
+                    id="MarkerSequencesTable"
+                    data-marker-id="${formBean.marker.zdbID}"
+                    data-show-summary="true"
             >
             </div>
         </z:section>
