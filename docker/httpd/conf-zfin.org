@@ -158,6 +158,10 @@
         AuthType openid-connect
         Require valid-user
     </Location>
+    <Location /cgi-bin/>
+        AuthType openid-connect
+        Require valid-user
+    </Location>
     <Location /jobs>
         AuthType openid-connect
         <RequireAll>
