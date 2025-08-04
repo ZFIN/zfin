@@ -2,18 +2,28 @@ package org.zfin.datatransfer.ncbi;
 
 
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.zfin.publication.Publication;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
 public class NCBIPortTest {
+
+    @Test
+    public void testLengthCalculation() throws IOException {
+        NCBIDirectPort port = new NCBIDirectPort();
+        port.workingDir = new File("/tmp");
+        File testFixtureRefSeqCatalog = new File("/tmp/RefSeqCatalog.gz");
+        org.zfin.util.FileUtil.writeToFileOrZip(testFixtureRefSeqCatalog, "7955\tDanio rerio\tXR_662331.5\tcomplete|vertebrate_other\tMODEL\t670", "utf-8");
+        Map<String, Integer> results = port.parseRefSeqCatalogFileForSequenceLength();
+        assertEquals(1, results.size());
+        assertEquals(Integer.valueOf(670), results.get("XR_662331"));
+    }
 
     @Test
     public void compare() {

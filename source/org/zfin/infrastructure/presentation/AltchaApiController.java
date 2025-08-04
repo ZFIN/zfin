@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.infrastructure.captcha.CaptchaKeys;
 
+import java.util.Optional;
+
 @Log4j2
 @RestController
 @RequestMapping("/altcha")
@@ -20,8 +22,12 @@ public class AltchaApiController {
         try {
             ChallengeOptions options = new ChallengeOptions();
             options.algorithm = Algorithm.SHA256;
-            options.hmacKey = CaptchaKeys.getSecretKey();
-
+            Optional<String> secretKey = CaptchaKeys.getSecretKey();
+            if (secretKey.isEmpty()) {
+                log.error("Altcha secret key is not set. Please check your configuration.");
+                throw new RuntimeException("Altcha secret key is not set. Please check your configuration.");
+            }
+            options.hmacKey = secretKey.get();
             return Altcha.createChallenge(options);
         } catch (Exception e) {
             e.printStackTrace();

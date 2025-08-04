@@ -302,7 +302,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         readZfinGeneInfoFile();
         printTimingInformation(6);
 
-
+        fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+        printTimingInformation(601);
         //----------------------------------------------------------------------------------------------------------------------
         // Step 5: Map ZFIN gene records to NCBI gene records based on GenBank RNA sequences
         //----------------------------------------------------------------------------------------------------------------------
@@ -527,7 +528,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 "*.log",
                 "*.xlsx",
                 "*md5",
-                "*unl",
                 "after_db_link.csv",
                 "after_load*csv",
                 "after_recattrib.csv",
@@ -536,12 +536,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 "before_recattrib.csv",
                 "debug*",
                 "java_debug_readZfinGeneInfoFile.json",
-                "length.unl",
                 "loadLog*",
                 "logNCBIgeneLoad",
-                "noLength.unl",
                 "prepareLog*",
                 "report*",
+                "length.unl",
+                "noLength.unl",
                 "toDelete.unl",
                 "toLoad.unl",
                 "toMap.unl"));
@@ -1158,11 +1158,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(LOG, "\nctGenBankSeqLengthAtZFIN = " + ctGenBankSeqLengthAtZFIN + "\n\n");
     }
 
-    private void parseRefSeqCatalogFileForSequenceLength() {
+    public Map<String, Integer> parseRefSeqCatalogFileForSequenceLength() {
         File catalogFile = findRefSeqCatalogFile();
         if (catalogFile == null) {
             print(LOG, "Skipping parsing of RefSeq catalog lengths as no suitable file was found.\n");
-            return;
+            return null;
         }
 
         print(LOG, "Parsing RefSeq catalog file: " + catalogFile.getName() + "\n");
@@ -1177,7 +1177,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] fields = line.split("\t");
-                if (fields.length >= 7) {
+                if (fields.length >= 6) {
                     String taxId = fields[0];
                     if (processingFullCatalog && !"7955".equals(taxId)) {
                         continue;
@@ -1191,7 +1191,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     String refSeqAcc = refSeqAccWithVersion.replaceFirst("\\.\\d+$", "");
 
                     try {
-                        int length = Integer.parseInt(fields[6]);
+                        int length = Integer.parseInt(fields[5]);
                         sequenceLength.put(refSeqAcc, length);
                         ctRefSeqLengthFromCatalog++;
                     } catch (NumberFormatException e) {
@@ -1208,6 +1208,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         print(LOG, "\nctRefSeqLengthFromCatalog = " + ctRefSeqLengthFromCatalog + "\n\n");
+        return sequenceLength;
     }
 
     private void printSequenceLengthsCount() {
@@ -2457,21 +2458,21 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private void calculateLengthForAccessionsWithoutLength()  {
         File noLengthUnlFile = new File(workingDir, "noLength.unl");
         int accessionsToWriteCount = 0;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(noLengthUnlFile))) {
-            List<String> sortedNoLengthKeys = noLength.keySet().stream().sorted().collect(Collectors.toList());
-            for (String accWithNoLength : sortedNoLengthKeys) {
-                String ncbiGeneId = noLength.get(accWithNoLength);
-                boolean isMapped = mappedReversed.containsKey(ncbiGeneId) || oneToOneViaVega.containsKey(ncbiGeneId);
-                if (isMapped) {
-                    writer.write(accWithNoLength + "\n");
-                    accessionsToWriteCount++;
-                }
-            }
+
+        //we only care about the accessions that are mapped to NCBI or ZFIN
+        Map<String, String> noLengthAccessionsFiltered = noLength.entrySet().stream().filter(
+                        entry -> mappedReversed.containsKey(entry.getValue()) || oneToOneViaVega.containsKey(entry.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
+        accessionsToWriteCount = noLengthAccessionsFiltered.size();
+        try {
+            FileUtils.writeLines(noLengthUnlFile, noLengthAccessionsFiltered.keySet());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         print(LOG, "Wrote " + accessionsToWriteCount + " accessions to " + noLengthUnlFile.getName() + "\n");
-
         outputDate(); // Corresponds to system("/bin/date");
 
         if (!noLengthUnlFile.exists()) { // Should not happen if previous step succeeded
@@ -2479,7 +2480,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: no input file for efetch.r");
             return;
         }
-        // Perl script exits if noLength.unl is not found. If it's empty, efetch might still run but produce an empty seq.fasta.
 
         print(LOG, "\nStart efetching at " + nowToString("yyyy-MM-dd HH:mm:ss") + " \n");
         System.out.println("\nStart efetching " + nowToString("yyyy-MM-dd HH:mm:ss") + " \n");
@@ -3311,7 +3311,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         if (this.geneIDsNotInCurrentAnnotationRelease == null) {
             System.out.println("Fetching gene IDs not in current annotation release...");
-            this.geneIDsNotInCurrentAnnotationRelease = this.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
+            this.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
             System.out.println(String.join(",", this.geneIDsNotInCurrentAnnotationRelease));
         }
 
@@ -3324,14 +3324,25 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return action;
     }
 
-    private List<String> fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
-        List<String> geneIDsNotInCurrentAnnotationRelease = new ArrayList<>();
+    private void appendToFile(File file, String line) {
+        try {
+            FileUtils.writeLines(file, Collections.singletonList(line), true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
+        if (this.geneIDsNotInCurrentAnnotationRelease != null) {
+            return;
+        }
+        geneIDsNotInCurrentAnnotationRelease = new ArrayList<>();
+        File cachedListOfNCBIGeneIDs = new File(workingDir, "notInCurrentReleaseGeneIDs.unl");
         if (envTrue("SKIP_DOWNLOADS")) {
-            File cachedListOfGeneIDs = new File(workingDir, "geneIDsNotInCurrentAnnotationRelease.txt");
-            if (cachedListOfGeneIDs.exists()) {
+            if (cachedListOfNCBIGeneIDs.exists()) {
                 try {
-                    System.out.println("Reading cached gene IDs from: " + cachedListOfGeneIDs.getAbsolutePath());
-                    geneIDsNotInCurrentAnnotationRelease = FileUtils.readLines(cachedListOfGeneIDs, StandardCharsets.UTF_8);
+                    System.out.println("Reading cached gene IDs from: " + cachedListOfNCBIGeneIDs.getAbsolutePath());
+                    geneIDsNotInCurrentAnnotationRelease = FileUtils.readLines(cachedListOfNCBIGeneIDs, StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     System.out.println("ERROR: SKIP_DOWNLOADS set, yet failed to read cached gene IDs: " + e.getMessage());
                     print(LOG, "ERROR: SKIP_DOWNLOADS set, yet failed to read cached gene IDs: " + e.getMessage());
@@ -3341,13 +3352,23 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
             } else {
                 System.out.println("WARNING: Cached gene IDs file not found. Will skip fetch from NCBI as SKIP_DOWNLOADS is set.");
+                System.out.println(cachedListOfNCBIGeneIDs.getAbsolutePath());
                 print(LOG, "WARNING: Cached gene IDs file not found. Will skip fetch from NCBI as SKIP_DOWNLOADS is set.");
             }
         } else {
             geneIDsNotInCurrentAnnotationRelease = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
         }
+
         System.out.println("Total of " + geneIDsNotInCurrentAnnotationRelease.size() + " gene IDs not in current annotation release.");
-        return geneIDsNotInCurrentAnnotationRelease;
+
+        try {
+            if (geneIDsNotInCurrentAnnotationRelease.size() > 0) {
+                //write the list of gene IDs not in current annotation release to a file
+                FileUtils.writeLines(cachedListOfNCBIGeneIDs, geneIDsNotInCurrentAnnotationRelease);
+            }
+        } catch (IOException e) {
+            //ignore (just caching)
+        }
     }
 
     private List<LoadReportAction> createActions(Map<String, List<CSVRecord>> beforeAfterComparison) {
@@ -3750,6 +3771,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         String catalogFolder = "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/";
         String catalogFileBase = "RefSeq-release" + releaseNum + ".catalog"; // without .gz for now
         String ftpNCBIRefSeqCatalog = catalogFolder + catalogFileBase + ".gz";
+        if (envExists("OVERRIDE_REFSEQ_CATALOG")) {
+            ftpNCBIRefSeqCatalog = env("OVERRIDE_REFSEQ_CATALOG");
+            System.out.println("Using overridden RefSeq catalog: " + ftpNCBIRefSeqCatalog);
+            print(LOG, "Using overridden RefSeq catalog: " + ftpNCBIRefSeqCatalog + "\n");
+        }
 
         File refSeqCatalogGz = new File(workingDir, "RefSeqCatalog.gz"); // e.g. RefSeq-releaseXXX.catalog.gz
         File gene2accessionGz = new File(workingDir, "gene2accession.gz");
@@ -3795,8 +3821,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
             }
 
-
-            downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz", gene2accessionGz, workingDir, LOG);
+            String gene2accessionUrl = "ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz";
+            if (envExists("OVERRIDE_GENE2ACCESSION")) {
+                gene2accessionUrl = env("OVERRIDE_GENE2ACCESSION");
+                System.out.println("Using overridden gene2accession URL: " + gene2accessionUrl);
+                print(LOG, "Using overridden gene2accession URL: " + gene2accessionUrl + "\n");
+            }
+            downloadOrUseLocalFile(gene2accessionUrl, gene2accessionGz, workingDir, LOG);
             String gene2accessionMd5 = md5File(gene2accessionGz, LOG);
             System.out.println("gene2accession.gz md5: " + (gene2accessionMd5 != null ? gene2accessionMd5 : "N/A") + " at " + nowToString("yyyy-MM-dd HH:mm:ss"));
 
