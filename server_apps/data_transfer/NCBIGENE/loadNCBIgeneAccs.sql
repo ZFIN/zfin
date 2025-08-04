@@ -53,6 +53,13 @@ select count(dblink_zdb_id) as noLengthBefore
 
 --!echo 'Delete from zdb_active_data table and cause delete cascades on db_link records'
 
+-- Delete from marker_annotation_status for (NCBI GeneID) dblinks. Must use join to get the mrkr_id from the db_link table.
+create temporary table dblink_to_ncbi_delete as (
+select delete_dblink_zdb_id as dblink_id, dblink_linked_recid as mrkr_id from ncbi_gene_delete
+    join db_link on delete_dblink_zdb_id = dblink_zdb_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' );
+
+delete from marker_annotation_status where mas_mrkr_zdb_id in (select mrkr_id from dblink_to_ncbi_delete);
+
 \echo 'Deleting from reference_protein';
 \copy (select * from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete)) to 'referenceProteinDeletes.unl' (delimiter '|');
 delete from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete);
@@ -70,19 +77,43 @@ delete from record_attribution
    and not exists (select 'x' from ncbi_dblink_to_preserve where prsv_dblink_zdb_id = recattrib_data_zdb_id);
 
 \echo 'Skipping duplicate entries in db_link table for the new records that would violate key:';
-select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id
-from ncbi_gene_load
-where exists(
-              select 'x' from db_link where (dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id)
-                                                = (mapped_zdb_gene_id, ncbi_accession, fdbcont_zdb_id)
-          );
-
 
 \echo 'Insert the new records into db_link table';
 insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
 select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
   from ncbi_gene_load
     ON CONFLICT (dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id) DO NOTHING;
+
+-- Add the "Current" flag to the db_link records that were just loaded (12 is the id for "Current" in vocabulary_term)
+-- First remove any existing flags for the same records
+delete from marker_annotation_status
+  where mas_mrkr_zdb_id in (select mapped_zdb_gene_id from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
+insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
+  select mapped_zdb_gene_id, 12 as vocab_term_id from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1';
+
+-- Handle "not in current annotation release" db_link records
+create temporary table ncbi_gene_not_in_current(
+  ncbi_gene_id    text not null
+);
+create temporary table ncbi_zdb_gene_not_in_current(
+  ncbi_gene_id    text not null,
+  mrkr_zdb_id    text not null
+);
+-- This will create an empty file if it doesn't exist
+\! touch notInCurrentReleaseGeneIDs.unl
+\copy ncbi_gene_not_in_current  from 'notInCurrentReleaseGeneIDs.unl';
+
+-- map the NCBI Gene IDs to ZFIN marker IDs
+insert into ncbi_zdb_gene_not_in_current (ncbi_gene_id, mrkr_zdb_id)
+select ncbi_gene_id, dblink_linked_recid
+  from db_link join ncbi_gene_not_in_current
+    on dblink_acc_num = ncbi_gene_id;
+
+-- 13 is the id for "Not in current annotation release" in vocabulary_term
+delete from marker_annotation_status
+ where mas_mrkr_zdb_id in (select mrkr_zdb_id from ncbi_zdb_gene_not_in_current);
+insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
+  select mrkr_zdb_id, 13 as vocab_term_id from ncbi_zdb_gene_not_in_current;
 
 --! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
 

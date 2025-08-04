@@ -644,6 +644,9 @@ sub downloadNCBIFilesForRelease {
     my $catlogFolder = "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/";
     my $catalogFile = "RefSeq-release" . $releaseNum . ".catalog.gz";
     my $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
+    if ($ENV{'OVERRIDE_REFSEQ_CATALOG'}) {
+        $ftpNCBIrefSeqCatalog = $ENV{'OVERRIDE_REFSEQ_CATALOG'};
+    }
 
     try {
         my $hash;
@@ -661,9 +664,16 @@ sub downloadNCBIFilesForRelease {
 
             #rename file to include original md5 hash
             rename("RefSeqCatalog.danio.gz", "RefSeqCatalog.danio.$hash.gz");
+
+            #copy file to overwrite RefSeqCatalog.gz
+            doSystemCommand("cp RefSeqCatalog.danio.$hash.gz RefSeqCatalog.gz");
         }
 
-        downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz", "gene2accession.gz");
+        my $gene2accessionFileUrl = "ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz";
+        if ($ENV{'OVERRIDE_GENE2ACCESSION'}) {
+            $gene2accessionFileUrl = $ENV{'OVERRIDE_GENE2ACCESSION'};
+        }
+        downloadOrUseLocalFile($gene2accessionFileUrl, "gene2accession.gz");
         $hash = md5File('gene2accession.gz');
         print "gene2accession.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
@@ -677,6 +687,9 @@ sub downloadNCBIFilesForRelease {
 
             #rename file to include original md5 hash
             rename("gene2accession.danio.gz", "gene2accession.danio.$hash.gz");
+
+            #copy file to overwrite gene2accession.gz
+            doSystemCommand("cp gene2accession.danio.$hash.gz gene2accession.gz");
         }
 
         downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", "gene2vega.gz");

@@ -258,3 +258,11 @@ task postLoadGff3NcbiFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3PostProcessor'
 }
+
+//example usage:
+// gradle tokenStorage --args="read NCBI_API_TOKEN"
+// gradle tokenStorage --args="write NCBI_API_TOKEN my_token_value"
+task tokenStorage(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.infrastructure.TokenStorage'
+}

@@ -31,12 +31,25 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/NCBIGENE &amp;&amp; ./NCBI_gene_load.pl</command>
+      <command><![CDATA[
+# Some options to skip steps for troubleshooting
+#export SKIP_DOWNLOADS=1
+#export EARLY_EXIT=1
+#export SKIP_EFETCH=1
+
+# Option for troubleshooting: load the database from a backup
+#cd $SOURCEROOT
+#gradle loaddb -DB=/research/zunloads/databases/zfindb/2025.07.28.1/2025.07.28.1.bak
+
+cd $TARGETROOT/server_apps/data_transfer/NCBIGENE
+./NCBI_gene_load.pl
+gzip -f -9 seq.fasta || true
+      ]]></command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv,server_apps/data_transfer/NCBIGENE/*html,server_apps/data_transfer/NCBIGENE/*json,server_apps/data_transfer/NCBIGENE/*xlsx</artifacts>
+      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv,server_apps/data_transfer/NCBIGENE/*html,server_apps/data_transfer/NCBIGENE/*json,server_apps/data_transfer/NCBIGENE/*xlsx,server_apps/data_transfer/NCBIGENE/*json,server_apps/data_transfer/NCBIGENE/*gz,server_apps/data_transfer/NCBIGENE/seq.fasta*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

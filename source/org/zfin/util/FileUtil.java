@@ -474,6 +474,13 @@ public final class FileUtil {
         }
     }
 
+    public static void stringToGzipFile(File gzipFile, String content, String encoding) throws IOException {
+        try (GZIPOutputStream gzipOS = new GZIPOutputStream(new FileOutputStream(gzipFile))) {
+            byte[] bytes = content.getBytes(encoding);
+            gzipOS.write(bytes, 0, bytes.length);
+        }
+    }
+
     /**
      * Writes the specified content to the given file, optionally compressing it into a ZIP format.
      *
@@ -488,6 +495,8 @@ public final class FileUtil {
     public static void writeToFileOrZip(File file, String content, String encoding) throws IOException {
         if (file.getName().endsWith(".zip")) {
             stringToZipFile(file, content, encoding);
+        } else if (file.getName().endsWith(".gz")) {
+            stringToGzipFile(file, content, encoding);
         } else {
             FileUtils.writeStringToFile(file, content, encoding);
         }

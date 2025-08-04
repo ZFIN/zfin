@@ -15,6 +15,9 @@ import org.zfin.infrastructure.captcha.CaptchaKeys;
 import org.zfin.infrastructure.captcha.CaptchaService;
 
 import java.io.IOException;
+import java.util.Optional;
+
+import static org.zfin.infrastructure.captcha.CaptchaService.setSuccessfulCaptchaToken;
 
 @Log4j2
 @Controller
@@ -26,17 +29,29 @@ public class CaptchaController {
             Model model,
             @RequestParam(name="redirect", required = false) String redirect
     ) throws IOException {
-        model.addAttribute("siteKey", CaptchaKeys.getSiteKey());
         model.addAttribute("redirect", redirect);
+        Optional<String> siteKey = CaptchaKeys.getSiteKey();
+        if (siteKey.isEmpty()) {
+            log.error("Captcha site key is not set. Please check your configuration.");
+            //just allow for now (better than breaking the site)
+            setSuccessfulCaptchaToken();
+            return redirectTo(redirect);
+        }
+
+        model.addAttribute("siteKey", siteKey.get());
 
         //if we somehow got to this challenge page without captcha's enabled, just redirect back
         if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
-            if (StringUtils.isEmpty(redirect)) {
-                return "redirect:/";
-            }
-            return "redirect:" + redirect;
+            return redirectTo(redirect);
         }
         return "infrastructure/captcha-" + CaptchaService.getCurrentVersion() + "-challenge";
+    }
+
+    private static String redirectTo(String redirect) {
+        if (StringUtils.isEmpty(redirect)) {
+            return "redirect:/";
+        }
+        return "redirect:" + redirect;
     }
 
     @PostMapping("/challenge")

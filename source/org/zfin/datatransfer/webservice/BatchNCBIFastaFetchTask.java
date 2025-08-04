@@ -60,6 +60,7 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     private void fetchAndWriteFastas(List<List<String>> batchesOfAccessions) {
         for(List<String> batch : batchesOfAccessions) {
             try {
+                log.debug("Fetching batch # " + (batchesOfAccessions.indexOf(batch) + 1) + " of " + batchesOfAccessions.size() + " with size: " + batch.size());
                 String fastaResult = fetchFasta(batch);
                 writer.write(fastaResult + "\n");
             } catch (IOException e) {
@@ -86,6 +87,12 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
 
         if (nucleotideAccessions.size() + proteinAccessions.size() != batch.size()) {
             LOG.error("Batch size mismatch: " + batch.size() + " != " + (nucleotideAccessions.size() + proteinAccessions.size()));
+            if (nucleotideAccessions.size() + proteinAccessions.size() > 0) {
+                LOG.error("The size of the batch (%s) does not match the number of accessions found at NCBI.".formatted(batch.size()));
+                LOG.error("Nucleotide accessions found: " + nucleotideAccessions.size());
+                LOG.error("Protein accessions found: " + proteinAccessions.size());
+            }
+            LOG.error("Accessions in batch: " + String.join(",", batch));
         }
 
         LOG.debug("Fetching nucleotides: " + nucleotideAccessionsString);
@@ -112,6 +119,10 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
     }
 
     private Map<String, List<String>> splitBatchByDatabase(List<String> batch) {
+        Map<String, List<String>> results = new HashMap<>();
+        results.put(NCBIEfetch.Type.NUCLEOTIDE.getVal(), new ArrayList<>());
+        results.put(NCBIEfetch.Type.POLYPEPTIDE.getVal(), new ArrayList<>());
+
         String accessions = String.join(",", batch);
         //hit the esearch endpoint to determine which database each accession belongs to
         try {
@@ -123,6 +134,7 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
                     .fetchRawText();
             //parse out ".esearchresult.idlist" from response:
             List<String> nucleotideIdList = parseIdListFromJson(json);
+            results.put(NCBIEfetch.Type.NUCLEOTIDE.getVal(), nucleotideIdList);
 
             json = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
                     .with("db", NCBIEfetch.Type.POLYPEPTIDE.getVal())
@@ -132,15 +144,13 @@ public class BatchNCBIFastaFetchTask extends AbstractScriptWrapper {
                     .fetchRawText();
             //parse out ".esearchresult.idlist" from response:
             List<String> proteinIdList = parseIdListFromJson(json);
-
-            return Map.of(
-                    NCBIEfetch.Type.NUCLEOTIDE.getVal(), nucleotideIdList,
-                    NCBIEfetch.Type.POLYPEPTIDE.getVal(), proteinIdList
-            );
+            results.put(NCBIEfetch.Type.POLYPEPTIDE.getVal(), proteinIdList);
         } catch (ServiceConnectionException e) {
+            e.printStackTrace();
+            log.error("Caught exception fetching accessions ", e);
             System.out.println("Error fetching accession lines: " + accessions);
-            return new HashMap<>();
         }
+        return results;
     }
 
     private List<String> parseIdListFromJson(String json) {
