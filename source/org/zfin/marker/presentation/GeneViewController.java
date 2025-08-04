@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -19,6 +21,9 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
@@ -42,8 +47,6 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.TranscriptService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -129,6 +132,11 @@ public class GeneViewController {
         geneBean.setProteinType(markerRepository.getProteinType(gene));
         geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean(gene));
 
+        // sequence section: if not empty
+        GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+            .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI).get(0))
+            .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
+        geneBean.setRefSeqLocations(refseqBuilder.build());
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));

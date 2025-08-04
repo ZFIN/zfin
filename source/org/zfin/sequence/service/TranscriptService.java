@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
+import static org.zfin.genomebrowser.GenomeBrowserBuild.GRCZ11;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName.RNA_CENTRAL;
 import static org.zfin.sequence.ForeignDBDataType.DataType.OTHER;
@@ -128,6 +129,7 @@ public class TranscriptService {
             && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
+                .genomeBuild(GRCZ11)
                 .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
