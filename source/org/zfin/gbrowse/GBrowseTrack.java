@@ -22,7 +22,7 @@ public enum GBrowseTrack {
     COMPLETE_CLONES("fullclone"),
     ALLZMP("allzmp"),
     ZFIN_FEATURES("mutants"),
-    REF_SEQ("Full RefSeq GFF"),
+    REF_SEQ("RefSeq"),
     ZMP("zmp");
 
     GBrowseTrack(String trackName) {

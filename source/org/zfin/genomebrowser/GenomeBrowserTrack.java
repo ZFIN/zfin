@@ -27,7 +27,7 @@ public enum GenomeBrowserTrack {
     ALLZMP("allzmp"),
     ZFIN_FEATURES("ZFIN Features"),
     ZMP("Zebrafish Mutation Project"),
-    REFSEQ("Full RefSeq GFF");
+    REFSEQ("RefSeq");
 
     GenomeBrowserTrack(String trackName) {
         this.trackName = trackName;
