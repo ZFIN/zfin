@@ -94,7 +94,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     return <div className='promoters' style={styles.rcUnitItems}>
         {rcUnitItems.map((part, index) => (
             <React.Fragment key={index}>
-                <span>{part.value}</span>
+                <span className={part.id === null ? 'construct-unit-no-id' : 'construct-unit-has-id'}>{part.value}</span>
                 <a href='#' onClick={(e) => {e.preventDefault(); handleItemRemoved(part)}}>
                     <i className='fa fa-trash' aria-hidden='true'/>
                     {/*&#10060;*/}

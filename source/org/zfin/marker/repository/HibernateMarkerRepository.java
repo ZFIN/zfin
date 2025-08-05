@@ -2681,12 +2681,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
         String sqlQuery = """
-            SELECT mrkr_abbrev AS abbrev, mrkr_type AS type FROM marker, record_attribution ra,marker_type_group_member m
+            SELECT mrkr_abbrev AS abbrev, mrkr_type AS type, mrkr_zdb_id as id FROM marker, record_attribution ra,marker_type_group_member m
             WHERE lower(mrkr_abbrev) LIKE :lookupString
             AND mrkr_type=m.mtgrpmem_mrkr_type AND m.mtgrpmem_mrkr_type_group IN ('CONSTRUCT_COMPONENTS')
             AND mrkr_zdb_id=ra.recattrib_data_zdb_id AND ra.recattrib_source_type = :standard AND ra.recattrib_source_zdb_id = :pubZdbID
             UNION
-            SELECT cv_term_name AS abbrev,cv_name_definition AS type FROM controlled_vocabulary
+            SELECT cv_term_name AS abbrev,cv_name_definition AS type, cv_zdb_id as id FROM controlled_vocabulary
             WHERE lower(cv_term_name) LIKE :lookupString
             """;
 
@@ -2703,6 +2703,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             LookupEntry probe = new LookupEntry();
             probe.setLabel(objects[0] + " (" + objects[1] + ")");
             probe.setValue((String) objects[0]);
+            probe.setId((String) objects[2]);
             targetGeneSuggestionList.add(probe);
         }
         return targetGeneSuggestionList;
