@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -78,7 +79,7 @@ public class Gff3Writer {
 
     private void createZfinGeneFile() throws IOException {
         List<Gff3Ncbi> filteredResults = getZfinGeneRecords();
-        writeGff3File("zfin_genes.grcz12.gff3", filteredResults);
+        writeGff3File("zfin_genes.grcz12.gff3", filteredResults, false);
         //upsertSequenceFeatureChromosomeRecords(filteredResults);
     }
 
@@ -114,23 +115,30 @@ public class Gff3Writer {
     }
 
     private void createRefSeqFile() throws IOException {
-        Map<String, Object> params = new HashMap<>();
-        params.put("source", "BestRefSeq");
+        String fileName = "zfin_refseq.grcz12.gff3";
+        File file = new File(fileName);
+        if (file.exists()) {
+            file.delete();
+        }
 
-        Pagination pagination = new Pagination();
-        pagination.setLimit(0);
-        pagination.setPage(0);
-        Long totalRecords = dao.findByParams(pagination, params).getTotalResults();
+        List<String> chromosomeList = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+            "21", "22", "23", "24", "25", "MT");
+
+        AtomicInteger totalRecords = new AtomicInteger();
+        chromosomeList.forEach(chromosome -> {
+            List<Gff3Ncbi> results = dao.findRecordsBySource(chromosome, List.of("BestRefSeq", "BestRefSeq,Gnomon", "Gnomon"));
+            writeToGff3File(fileName, results);
+            totalRecords.addAndGet(results.size());
+            System.out.println("Total records for chromosome: " + chromosome + ": " + results.size());
+        });
         summaryTable.addSummaryRow(List.of("ZFIN RefSeq Accessions", String.valueOf(totalRecords)));
-        pagination.setLimit(4_000_000);
-        pagination.setPage(0);
-        List<Gff3Ncbi> results = dao.findRecordsBySource("BestRefSeq");
-        List<Gff3Ncbi> results2 = dao.findRecordsBySource("BestRefSeq,Gnomon");
-        List<Gff3Ncbi> results3 = dao.findRecordsBySource("Gnomon");
-        results.addAll(results2);
-        results.addAll(results3);
-        System.out.println("Total records found: " + results.size());
-        writeGff3File("zfin_refseq.grcz12.gff3", results);
+        System.out.println("Total records BestRefseq: " + totalRecords);
+
+    }
+
+    private void writeToGff3File(String s, List<Gff3Ncbi> results) {
+        writeGff3File(s, results, true);
     }
 
     public static void init() {
@@ -141,37 +149,36 @@ public class Gff3Writer {
         }
     }
 
-    public void writeGff3File(String gff3FilePath, List<Gff3Ncbi> records) {
+    public void writeGff3File(String gff3FilePath, List<Gff3Ncbi> records, boolean addToFile) {
         File file = new File(gff3FilePath);
-
+        if (file.exists() && !addToFile) {
+            file.delete();
+        }
         try {
-            FileWriter outputfile = new FileWriter(file);
+            FileWriter outputfile = new FileWriter(file, addToFile);
             CSVWriter writer = new CSVWriter(outputfile, '\t', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
             String[] header = {"##gff-version 3"};
             writer.writeNext(header);
-            Collection<List<Gff3Ncbi>> batches = Gff3NcbiService.createBatch(records);
-            batches.forEach(batch -> {
-                List<String[]> collect = batch.stream().map(record -> {
-                    String[] line = new String[9];
-                    line[0] = record.getChromosome();
-                    line[1] = record.getSource();
-                    line[2] = record.getFeature();
-                    line[3] = String.valueOf(record.getStart());
-                    line[4] = String.valueOf(record.getEnd());
-                    line[5] = (Objects.equals(record.getScore(), "-1.0"))? "." : record.getScore();
-                    line[6] = record.getStrand();
-                    line[7] =String.valueOf(record.getFrame());
-                    line[8] = generateAttributeColumn(record.getAttributePairs());
-                    return line;
-                }).collect(Collectors.toList());
-                writer.writeAll(collect);
-                try {
-                    writer.flush();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            List<String[]> collect = records.stream().map(record -> {
+                String[] line = new String[9];
+                line[0] = record.getChromosome();
+                line[1] = record.getSource();
+                line[2] = record.getFeature();
+                line[3] = String.valueOf(record.getStart());
+                line[4] = String.valueOf(record.getEnd());
+                line[5] = record.getScore();
+                line[6] = record.getStrand();
+                line[7] = String.valueOf(record.getFrame());
+                line[8] = record.getAttributes();
+                return line;
+            }).collect(Collectors.toList());
+            writer.writeAll(collect);
+            try {
+                writer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -198,6 +205,7 @@ public class Gff3Writer {
         persistKeySet.add("ID");
         persistKeySet.add("Dbxref");
         persistKeySet.add("gene_id");
+        persistKeySet.add("gene");
         persistKeySet.add("gene_name");
         persistKeySet.add("transcript");
         persistKeySet.add("Parent");

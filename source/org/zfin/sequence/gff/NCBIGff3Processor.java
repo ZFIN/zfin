@@ -85,14 +85,14 @@ public class NCBIGff3Processor {
 
         Collection<List<Gff3Ncbi>> batchedFilteredResults = createBatch(filteredResultSet);
         List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
+        Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
+            .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
 
         AtomicInteger newRecords = new AtomicInteger();
         AtomicInteger updatedRecords = new AtomicInteger();
         batchedFilteredResults.forEach(filteredResults -> {
             HibernateUtil.createTransaction();
             try {
-                Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
-                    .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
                 filteredResults.forEach(gff3Ncbi -> {
                     String geneID = gff3Ncbi.getGeneID();
                     MarkerGenomeLocation genomeLocation;
@@ -183,7 +183,7 @@ public class NCBIGff3Processor {
                         //ncbi.setAttributes(feature.);
                         ncbi.setSource(feature.getSource() != null ? feature.getSource() : "unknown");
                         ncbi.setFeature(feature.getType() != null ? feature.getType() : "unknown");
-                        ncbi.setScore(String.valueOf(feature.getScore()).equals("-1") ? "." : String.valueOf(feature.getScore()));
+                        ncbi.setScore(String.valueOf(feature.getScore()).equals("-1.0") ? "." : String.valueOf(feature.getScore()));
                         ncbi.setFrame(String.valueOf(feature.getPhase()).equals("-1") ? "." : String.valueOf(feature.getPhase()));
                         ncbi.setStrand(feature.getStrand() != null ? feature.getStrand().name().equals("POSITIVE") ? "+" : "-" : "unknown");
                         ncbi.setAttributes(generateAttributes(feature.getAttributes()));
@@ -214,6 +214,7 @@ public class NCBIGff3Processor {
     static {
         persistKeySet.add("gene_id");
         persistKeySet.add("gene_name");
+        persistKeySet.add("gene");
         //persistKeySet.add("transcript");
         persistKeySet.add("Parent");
         persistKeySet.add("ID");

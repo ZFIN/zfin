@@ -22,13 +22,15 @@ public class Gff3NcbiDAO extends BaseSQLDAO<Gff3Ncbi> {
         super(Gff3Ncbi.class);
     }
 
-    public List<Gff3Ncbi> findRecordsBySource(String sourceName) {
+    public List<Gff3Ncbi> findRecordsBySource(String chromosome, List<String> sourceName) {
         TypedQuery<Gff3Ncbi> query = entityManager.createQuery("""
             from Gff3Ncbi gff3
-            join fetch gff3.attributePairs
-                        where gff3.source = :sourceName
+                        where gff3.source in :sourceName
+                        AND gff3.chromosome = :chromosome
+                        order by chromosome, start, end, gff3.id
             """, Gff3Ncbi.class);
         query.setParameter("sourceName", sourceName);
+        query.setParameter("chromosome", chromosome);
         return query.getResultList();
     }
 
@@ -47,10 +49,10 @@ public class Gff3NcbiDAO extends BaseSQLDAO<Gff3Ncbi> {
             select gff3.feature, count(gff3)  from Gff3Ncbi gff3
             group by gff3.feature
             """, Tuple.class);
-        List<Tuple> tuples =  query.getResultList();
+        List<Tuple> tuples = query.getResultList();
         return tuples.stream()
-                .collect(Collectors.toMap(
-                        tuple -> tuple.get(0, String.class),
-                        tuple -> tuple.get(1, Long.class).intValue()));
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(0, String.class),
+                tuple -> tuple.get(1, Long.class).intValue()));
     }
 }
