@@ -13,11 +13,20 @@ create table gff3_ncbi
     gff_strand       text,
     gff_frame        text,
     gff_attributes   text,
+    gff_is_in_zfin   boolean                  default false,
     gff_date_created timestamp with time zone default now()
 );
 
+/*update gff3_ncbi set gff_is_in_zfin = true where exists (
+select * from db_link where
+                                                     );
+
+*/--alter table gff3_ncbi add column gff_is_in_zfin boolean default false;
+
 CREATE SEQUENCE gff3_ncbi_seq START 100;
 CREATE SEQUENCE gff3_ncbi_attribute_seq START 100;
+CREATE INDEX gff3_ncbi_source_ind on gff3_ncbi (gff_source);
+CREATE INDEX gff3_ncbi_ind on gff3_ncbi (gff_source);
 
 create table gff3_ncbi_attribute
 (
