@@ -133,10 +133,13 @@ public class GeneViewController {
         geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean(gene));
 
         // sequence section: if not empty
-        GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-            .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI).get(0))
-            .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
-        geneBean.setRefSeqLocations(refseqBuilder.build());
+        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI);
+        if (genomeLocation.size() > 0) {
+            GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(genomeLocation.get(0))
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
+            geneBean.setRefSeqLocations(refseqBuilder.build());
+        }
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
