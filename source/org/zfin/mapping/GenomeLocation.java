@@ -10,8 +10,7 @@ import org.zfin.publication.Publication;
 import java.io.Serializable;
 import java.util.List;
 
-import static org.zfin.mapping.GenomeLocation.Source.ZFIN;
-import static org.zfin.mapping.GenomeLocation.Source.ZFIN_Zv9;
+import static org.zfin.mapping.GenomeLocation.Source.*;
 
 /**
  * Genome Location entity for NCBI, Vega, Ensembl and other sources for physical location.
@@ -112,7 +111,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     }
 
     public String getUrl() {
-        if (List.of(ZFIN, ZFIN_Zv9).contains(source)) {
+        if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
             return "/action/jbrowse/byName?name=" + accessionNumber;
         } else {
             return source.getUrl() + accessionNumber;
