@@ -7,10 +7,11 @@ my $username = "";
 my $password = "";
 my $dbhost = "<!--|HOSTDBSERVER|-->";
 my $dbport = "<!--|DBPORT|-->";
+my $BLASTSERVER_FASTA_FILE_PATH = "/tmp/fasta_file_path";
 
-cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/microRNA ;
+cd "$BLASTSERVER_FASTA_FILE_PATH/fasta/microRNA";
 
-mv *.txt @BLASTSERVER_FASTA_FILE_PATH@/fasta/Backup;
+mv *.txt "$BLASTSERVER_FASTA_FILE_PATH/fasta/Backup";
 
 my $dbh = DBI->connect ("DBI:Informix:$dbname:$dbhost:$dbport", 
 			$username, 

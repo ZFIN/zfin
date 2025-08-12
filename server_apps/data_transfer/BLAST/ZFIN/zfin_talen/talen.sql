@@ -1,4 +1,6 @@
-unload to @TARGET_PATH@/ZFIN/zfin_talen/zfin_talen.fa DELIMITER " " select ">lcl|",mrkr_zdb_id||" sequence1",mrkr_name||"|", "
+-- Keeping for historical purposes
+-- This file isn't used anymore (uses informix syntax)
+unload to /opt/zfin/www_homes/zfin.org/server_apps/data_transfer/BLAST/ZFIN/zfin_talen/zfin_talen.fa DELIMITER " " select ">lcl|",mrkr_zdb_id||" sequence1",mrkr_name||"|", "
 "||seq_sequence
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
