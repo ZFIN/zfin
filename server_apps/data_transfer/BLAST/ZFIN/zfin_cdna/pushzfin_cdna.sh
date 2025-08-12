@@ -17,8 +17,8 @@ mv -f zfin_gb_seq.x* $BLAST_PATH/Current
 cp -f $BLAST_PATH/Current/zfin_cdna_seq* $BLAST_PATH/Backup/
 mv -f zfin_cdna_seq.x* $BLAST_PATH/Current
 
-#if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
-# @TARGET_PATH@/ZFIN/zfin_cdna/distributeToNodeszfin_cdna.sh
+#if ($HOSTNAME == genomix.cs.uoregon.edu) then
+# $TARGET_PATH/ZFIN/zfin_cdna/distributeToNodeszfin_cdna.sh
 #endif
 
 log_message "done with pushzfin_cdna.sh" ;

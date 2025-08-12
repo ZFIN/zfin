@@ -16,7 +16,7 @@ mv $BLASTSERVER_BLAST_DATABASE_PATH/Current/GenomicDNA.* $BLASTSERVER_BLAST_DATA
 mv $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_genomicDNA/GenomicDNA.* $BLASTSERVER_BLAST_DATABASE_PATH/Current
 
 
-#if (@HOSTNAME@ == genomics.cs.uoregon.edu) then
+#if ($HOSTNAME == genomics.cs.uoregon.edu) then
 #    ./distributeToNodesGenomicDNA.sh
 #endif
 

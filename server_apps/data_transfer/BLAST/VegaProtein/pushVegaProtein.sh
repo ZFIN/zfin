@@ -4,7 +4,7 @@
 #
 
 setenv BLASTSERVER_BLAST_DATABASE_PATH /opt/zfin/blastdb
-setenv WEBHOST_BLAST_DATABASE_PATH /opt/zfin/blastdb
+ /opt/zfin/blastdb
 
 # Ensure directories exist
 mkdir -p $BLASTSERVER_BLAST_DATABASE_PATH/Current

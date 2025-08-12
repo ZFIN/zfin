@@ -14,6 +14,6 @@ cp -f publishedProtein.xps $BLAST_PATH/Current/
 cp -f publishedProtein.xpt $BLAST_PATH/Current/
 
 chmod g+w $BLAST_PATH/Current/*
-#@TARGET_PATH@/ZFIN/zfin_publishedProtein/distributeToNodeszfin_publishedProtein.sh 
+#$TARGET_PATH/ZFIN/zfin_publishedProtein/distributeToNodeszfin_publishedProtein.sh
 echo "done with cpzfin_publishedProtein.sh" ;
 exit
