@@ -112,7 +112,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public String getUrl() {
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
-            return "/action/jbrowse/byName?name=" + accessionNumber;
+            return "/action/jbrowse/byName?name=" + accessionNumber + "&source=" + source.name();
         } else {
             return source.getUrl() + accessionNumber;
         }
@@ -263,6 +263,5 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         public String getUrl() {
             return url;
         }
-
     }
 }
