@@ -2676,34 +2676,37 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return getMarkerSuggestionList(lookupString, Marker.TypeGroup.GENEDOM_AND_NTR, Marker.TypeGroup.SMALLSEG, Marker.TypeGroup.SMALLSEG_NO_ESTCDNA, Marker.TypeGroup.TRANSCRIPT);
     }
 
-
+    @Override
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
-
-        String sqlQuery = """
-            SELECT mrkr_abbrev AS abbrev, mrkr_type AS type, mrkr_zdb_id as id FROM marker, record_attribution ra,marker_type_group_member m
-            WHERE lower(mrkr_abbrev) LIKE :lookupString
-            AND mrkr_type=m.mtgrpmem_mrkr_type AND m.mtgrpmem_mrkr_type_group IN ('CONSTRUCT_COMPONENTS')
-            AND mrkr_zdb_id=ra.recattrib_data_zdb_id AND ra.recattrib_source_type = :standard AND ra.recattrib_source_zdb_id = :pubZdbID
+        String hqlQuery = """
+            SELECT m.abbreviation AS abbrev, m.markerType.name AS type, m.zdbID AS id
+            FROM Marker m
+            JOIN m.publications ra
+            JOIN m.markerType.mappedTypeGroups mtg
+            WHERE lower(m.abbreviation) LIKE :lookupString
+            AND mtg.name IN ('CONSTRUCT_COMPONENTS')
+            AND ra.sourceType = :standard
+            AND ra.sourceZdbID = :pubZdbID
             UNION
-            SELECT cv_term_name AS abbrev,cv_name_definition AS type, cv_zdb_id as id FROM controlled_vocabulary
-            WHERE lower(cv_term_name) LIKE :lookupString
+            SELECT cv.cvTermName AS abbrev, cv.cvNameDefinition AS type, cv.zdbID AS id
+            FROM ControlledVocab cv
+            WHERE lower(cv.cvTermName) LIKE :lookupString
             """;
 
-
         List<Object[]> results = currentSession()
-                .createNativeQuery(sqlQuery)
+                .createQuery(hqlQuery, Object[].class)
                 .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
                 .setParameter("pubZdbID", zdbId)
-                .setParameter("standard", RecordAttribution.SourceType.STANDARD.toString()) //NativeQuery so "standard" is a String
-                .list();
+                .setParameter("standard", RecordAttribution.SourceType.STANDARD) // HQL can handle enum directly
+                .getResultList();
 
         List<LookupEntry> targetGeneSuggestionList = new ArrayList<>();
-        for (Object[] objects : results) {
+        for (Object[] row : results) {
             LookupEntry probe = new LookupEntry();
-            probe.setLabel(objects[0] + " (" + objects[1] + ")");
-            probe.setValue((String) objects[0]);
-            probe.setId((String) objects[2]);
+            probe.setLabel(row[0] + " (" + row[1] + ")");
+            probe.setValue((String) row[0]);
+            probe.setId((String) row[2]);
             targetGeneSuggestionList.add(probe);
         }
         return targetGeneSuggestionList;
