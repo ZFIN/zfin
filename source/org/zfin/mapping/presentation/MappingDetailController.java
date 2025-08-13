@@ -20,6 +20,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
+import org.zfin.jbrowse.presentation.JBrowseImage;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -295,7 +296,47 @@ public class MappingDetailController {
 
         model.addAttribute("otherMappingDetail", isOtherMappingDetail);
 
+        //The "locations" attribute for the model need to be massaged a bit based on new GRCz12 data
+        setModelLocationBasedOnJbrowseImageLink(model);
+
         return "mapping/mapping-detail";
+    }
+
+    private void setModelLocationBasedOnJbrowseImageLink(Model model) {
+        List<MarkerGenomeLocation> locations = (List<MarkerGenomeLocation>)model.getAttribute("locations");
+        if (locations == null || locations.isEmpty()) {
+            return;
+        }
+
+        JBrowseImage gbrowseImage = (JBrowseImage)model.getAttribute("gbrowseImage");
+        if (gbrowseImage == null) {
+            return;
+        }
+        String linkUrl = gbrowseImage.getLinkUrl();
+        if (linkUrl == null || linkUrl.isEmpty()) {
+            return;
+        }
+
+        //If we have GRCz12tu location, we can omit GRCz11 locations
+        boolean hasGRCz12tu = locations.stream()
+                .anyMatch(location -> location.getSource() == GenomeLocation.Source.ZFIN_NCBI);
+
+        if (hasGRCz12tu) {
+            locations.removeIf(location -> location.getSource() == GenomeLocation.Source.ZFIN);
+        }
+
+        //modify the locations URL to use the JBrowse proxy (TODO: remove once we have the apache config set up)
+        for(MarkerGenomeLocation location : locations) {
+            if (location.getSource() == GenomeLocation.Source.ZFIN_NCBI ||
+                location.getSource() == GenomeLocation.Source.ZFIN) {
+                if (!linkUrl.contains("/action/api/jbrowse/proxy/jbrowse/")) {
+                    linkUrl = linkUrl.replace("/jbrowse/", "/action/api/jbrowse/proxy/jbrowse/");
+                }
+                location.setOverrideUrl(linkUrl);
+            }
+        }
+//
+//        System.out.println("locations: " + locations.size());
     }
 
     private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {

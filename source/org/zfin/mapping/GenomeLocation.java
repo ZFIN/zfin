@@ -1,5 +1,7 @@
 package org.zfin.mapping;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.gwt.root.util.StringUtils;
@@ -15,6 +17,8 @@ import static org.zfin.mapping.GenomeLocation.Source.*;
 /**
  * Genome Location entity for NCBI, Vega, Ensembl and other sources for physical location.
  */
+@Setter
+@Getter
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
 
     public static String GRCZ11 = "GRCz11";
@@ -36,81 +40,12 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected GBrowseTrack gbrowseTrack;
     protected String assembly;
     private GenericTerm evidence;
-
-
-    public long getID() {
-        return ID;
-    }
-
-    public GenericTerm getEvidence() {
-        return evidence;
-    }
-
-    public void setEvidence(GenericTerm evidence) {
-        this.evidence = evidence;
-    }
-
-    public void setID(long ID) {
-        this.ID = ID;
-    }
-
-    public String getChromosome() {
-        return chromosome;
-    }
-
-    public void setChromosome(String chromosome) {
-        this.chromosome = chromosome;
-    }
-
-    public Integer getEnd() {
-        return end;
-    }
-
-    public void setEnd(Integer end) {
-        this.end = end;
-    }
-
-    public Integer getStart() {
-        return start;
-    }
-
-    public void setStart(Integer start) {
-        this.start = start;
-    }
-
-    public GenomeBrowserMetaData getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(GenomeBrowserMetaData metaData) {
-        this.metaData = metaData;
-    }
-
-    public Source getSource() {
-        return source;
-    }
-
-    public void setSource(Source source) {
-        this.source = source;
-    }
-
-    public String getEntityID() {
-        return entityID;
-    }
-
-    public void setEntityID(String entityID) {
-        this.entityID = entityID;
-    }
-
-    public String getAccessionNumber() {
-        return accessionNumber;
-    }
-
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
+    private String overrideUrl;
 
     public String getUrl() {
+        if (overrideUrl != null && !overrideUrl.isEmpty()) {
+            return overrideUrl;
+        }
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
             return "/action/jbrowse/byName?name=" + accessionNumber + "&source=" + source.name();
         } else {
@@ -118,43 +53,11 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         }
     }
 
-    public String getDetailedSource() {
-        return detailedSource;
-    }
-
-    public void setDetailedSource(String detailedSource) {
-        this.detailedSource = detailedSource;
-    }
-
-    public Publication getAttribution() {
-        return attribution;
-    }
-
-    public void setAttribution(Publication attribution) {
-        this.attribution = attribution;
-    }
-
-    public GBrowseTrack getGbrowseTrack() {
-        return gbrowseTrack;
-    }
-
-    public void setGbrowseTrack(GBrowseTrack gbrowseTrack) {
-        this.gbrowseTrack = gbrowseTrack;
-    }
-
     public GenomeBrowserTrack getGenomeBrowserTrack() {
         if (gbrowseTrack == null) {
             return null;
         }
         return GBrowseTrack.convertGBrowseTrackToGenomeBrowserTrack(gbrowseTrack);
-    }
-
-    public String getAssembly() {
-        return assembly;
-    }
-
-    public void setAssembly(String assembly) {
-        this.assembly = assembly;
     }
 
     @Override
