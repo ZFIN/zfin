@@ -78,9 +78,7 @@ $(document).ready(function () {
             }, change: function (event, ui) {
                 // If a curator overrides the autocomplete, the background color of the input box chnages ot blue indicating that it was "free text"
                 if (ui.item == null) {
-                    $(this).css({"background-color": '#F0FFFF'});
-
-
+                    $(this).css({"background-color": '#C4FFFF'});
                 }
             }
 
