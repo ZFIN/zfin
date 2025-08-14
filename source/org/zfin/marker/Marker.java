@@ -735,7 +735,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     @JsonView(View.SequenceAPI.class)
     public String getAnnotationStatus() {
         if (CollectionUtils.isEmpty(annotationStatusTerms)) {
-            return null;
+            return "Unknown";
         }
         return annotationStatusTerms.stream().min(Comparator.comparing(VocabularyTerm::getName)).get().getName();
     }
