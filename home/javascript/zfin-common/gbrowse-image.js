@@ -92,7 +92,7 @@
             if (this.options.build) {
                 $('<span>')
                     .addClass('gbrowse-source-label')
-                    .text('Genome Build: ' + this.options.build)
+                    .text('Genome Assembly: ' + this.options.build)
                     .appendTo(target);
             }
 
