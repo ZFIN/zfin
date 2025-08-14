@@ -88,7 +88,7 @@ const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
     return (
         <div className='position-relative'>
             <div ref={containerRef}>
-                {build && <div><span className='gbrowse-source-label'>Genome Build: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
+                {build && <div><span className='gbrowse-source-label'>Genome Assembly: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
                 <JBrowseLinearGenomeView viewState={state} />
             </div>
         </div>
