@@ -7,7 +7,7 @@
         Description <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>
     </jsp:attribute>
     <jsp:body>
-        <z:ifHasData test="${!empty geneDescription}" noDataMessage="None">
+        <z:ifHasData test="${!empty geneDescription && !empty geneDescription.gdDesc && geneDescription.gdDesc != 'null'}" noDataMessage="None">
             ${geneDescription.gdDesc}
         </z:ifHasData>
     </jsp:body>
