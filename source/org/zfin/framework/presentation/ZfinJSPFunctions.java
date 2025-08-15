@@ -464,4 +464,22 @@ public class ZfinJSPFunctions {
     public static boolean isRoot() {
         return UserService.isRootUser();
     }
+
+    /**
+     * Check if a given array contains a specific value.
+     * @param array list of values to check
+     * @param value search item
+     * @return true if found, false if not
+     */
+    public static boolean arrayContains(String[] array, String value) {
+        if (array == null || value == null) {
+            return false;
+        }
+        for (String item : array) {
+            if (item.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

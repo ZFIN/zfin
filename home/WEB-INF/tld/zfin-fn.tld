@@ -384,4 +384,10 @@
         <function-signature>boolean isRoot()</function-signature>
     </function>
 
+    <function>
+        <name>arrayContains</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean arrayContains(java.lang.String[], java.lang.String)</function-signature>
+    </function>
+
 </taglib>
