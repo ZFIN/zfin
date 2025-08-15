@@ -335,8 +335,6 @@ public class MappingDetailController {
                 location.setOverrideUrl(linkUrl);
             }
         }
-//
-//        System.out.println("locations: " + locations.size());
     }
 
     private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {
