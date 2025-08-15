@@ -67,6 +67,7 @@
                             <li><a href="/action/jbrowse2">ZFIN</a></li>
                         </c:when>
                         <c:otherwise>
+<%--                        TODO: remove this once JBrowse with z12 is everywhere (or JBrowse2 is fully deployed)--%>
                             <li><a href="/action/api/jbrowse/proxy/jbrowse/?data=data/GRCz12tu">ZFIN</a></li>
                         </c:otherwise>
                     </c:choose>
