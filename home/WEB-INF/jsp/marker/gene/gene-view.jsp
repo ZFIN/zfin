@@ -109,7 +109,7 @@
 
         <z:section title="${SEQUENCES}" infoPopup="/action/marker/note/sequences">
             <z:attributeList>
-                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}"/>
+                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
             </z:attributeList>
             <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
 
