@@ -96,6 +96,9 @@ public class FlankSeqProcessor {
                 if (System.getenv("FORCE_FULL_UPDATE") != null || System.getProperty("FORCE_FULL_UPDATE") != null) {
                     forceFullUpdate = Boolean.parseBoolean(System.getenv("FORCE_FULL_UPDATE")) ||
                                       Boolean.parseBoolean(System.getProperty("FORCE_FULL_UPDATE"));
+                    if (forceFullUpdate) {
+                        System.out.println("FORCE_FULL_UPDATE is set to true. Updating all non-sa features with genomic mutation details.");
+                    }
                 }
                 List<Feature> nonSaFeaturesWithGenomicMutDets;
                 if (isItTuesday || forceFullUpdate) {
