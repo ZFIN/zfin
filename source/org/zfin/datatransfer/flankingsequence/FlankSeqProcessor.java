@@ -91,9 +91,14 @@ public class FlankSeqProcessor {
 
                 //Once a week, get all non-sa features with genomic mutation details and update their flanking sequences.
                 //Otherwise, just those that have a modified date in the last 48 hours (24 should be fine, but 48 for caution.
-                Boolean isItTuesday = (now().getDayOfWeek().getValue() == 2);
+                boolean isItTuesday = (now().getDayOfWeek().getValue() == 2);
+                boolean forceFullUpdate = false; // set to true to force a full update of all non-sa features with genomic mutation details
+                if (System.getenv("FORCE_FULL_UPDATE") != null || System.getProperty("FORCE_FULL_UPDATE") != null) {
+                    forceFullUpdate = Boolean.parseBoolean(System.getenv("FORCE_FULL_UPDATE")) ||
+                                      Boolean.parseBoolean(System.getProperty("FORCE_FULL_UPDATE"));
+                }
                 List<Feature> nonSaFeaturesWithGenomicMutDets;
-                if (isItTuesday) {
+                if (isItTuesday || forceFullUpdate) {
                     System.out.println("Updating all non-sa features with genomic mutation details");
                     nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets();
                 } else {
