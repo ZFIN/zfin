@@ -195,6 +195,7 @@
     </Location>
     <Location /jbrowse>
         ProxyPreserveHost Off
+        <!-- TODO: update this URL to match the dev one above -->
         ProxyPass https://main.d2rwmenofjuae7.amplifyapp.com
         ProxyPassReverse https://main.d2rwmenofjuae7.amplifyapp.com
     </Location>

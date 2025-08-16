@@ -31,7 +31,7 @@
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	watson_test
 <!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb/Current
-<!--|JBROWSE_PATH_FROM_ROOT|-->	jbrowse/?data=data/GRCz11
+<!--|JBROWSE_PATH_FROM_ROOT|-->	jbrowse/?data=data/GRCz12tu
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org

@@ -37,7 +37,7 @@
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	watson
 <!--|INTERNAL_BLAST_PATH|-->	/research/watson/blastdb/Current
-<!--|JBROWSE_PATH_FROM_ROOT|-->	jbrowse/?data=data/GRCz11
+<!--|JBROWSE_PATH_FROM_ROOT|-->	jbrowse/?data=data/GRCz12tu
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
