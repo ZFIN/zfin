@@ -1,3 +1,5 @@
 source /opt/zfin/source_roots/zfin.org/commons/env/${INSTANCE}.bash
 cd /opt/zfin/source_roots/zfin.org
 alias nano='nano -Ynone'
+alias restarttomcat='cd docker && docker compose down tomcat && docker compose up -d tomcat && cd ..'
+alias restarttomcatd='cd docker && docker compose down tomcatdebug && docker compose up -d tomcatdebug && cd ..'
