@@ -35,7 +35,7 @@ class WikiPostList extends Component {
                 <div className='wiki-list-controls'>
                     <span/>
                     <span>{showAll &&
-                    <a href={`https://zfin.atlassian.net/wiki${showAll}`}>See All <i className='fas fa-chevron-right'/></a>}</span>
+                    <a className='no-icon' href={`https://zfin.atlassian.net/wiki${showAll}`}>See All <i className='fas fa-chevron-right'/></a>}</span>
                 </div>
             </div>
         );

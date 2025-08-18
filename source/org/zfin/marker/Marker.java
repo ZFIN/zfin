@@ -728,10 +728,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return assemblies.stream().min(Comparator.comparing(Assembly::getOrder)).get();
     }
 
+    public List<Assembly> getAllAssemblies() {
+        return assemblies.stream().sorted(Comparator.comparing(Assembly::getOrder)).toList();
+    }
+
     @JsonView(View.SequenceAPI.class)
     public String getAnnotationStatus() {
         if (CollectionUtils.isEmpty(annotationStatusTerms)) {
-            return null;
+            return "Unknown";
         }
         return annotationStatusTerms.stream().min(Comparator.comparing(VocabularyTerm::getName)).get().getName();
     }

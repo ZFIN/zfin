@@ -46,10 +46,10 @@ public class GPIFileVer2 extends AbstractScriptWrapper {
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
             System.out.println("Total genes to return: " + genes.size());
 
-            bw.write("!gpi-version:2.0\n");
-            bw.write("!namespace:ZFIN\n");
-            bw.write("!generated-by:ZFIN\n");
-            bw.write("!date-generated:" + new SimpleDateFormat("MM/dd/yyyy").format(new Date()) + "\n\n");
+            bw.write("!gpi-version: 2.0\n");
+            bw.write("!namespace: ZFIN\n");
+            bw.write("!generated-by: ZFIN\n");
+            bw.write("!date-generated: " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\n\n");
 
             for (Marker gene : genes) {
                 List<String> csvRow = new ArrayList<>();

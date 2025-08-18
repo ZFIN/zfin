@@ -28,7 +28,7 @@
         <c:choose>
             <c:when test="${ zfn:isRoot()}">
                 <ul class="comma-separated">
-                    <c:forEach var="assembly" items="${formBean.marker.assemblies}" varStatus="loop">
+                    <c:forEach var="assembly" items="${formBean.marker.allAssemblies}" varStatus="loop">
                         <li id="previous-name-${loop.index}">${assembly.name}</li>
                     </c:forEach>
                 </ul>
