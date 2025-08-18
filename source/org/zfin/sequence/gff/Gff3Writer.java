@@ -34,6 +34,7 @@ public class Gff3Writer {
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
 
     Gff3NcbiDAO dao = new Gff3NcbiDAO();
+    Gff3NcbiAttributesDAO pairDo = new Gff3NcbiAttributesDAO();
     public Set<LoadAction> actions = new HashSet<>();
 
     public static void main(String[] args) {
@@ -154,6 +155,8 @@ public class Gff3Writer {
         if (file.exists() && !addToFile) {
             file.delete();
         }
+        // load all attributes with key: gene_id
+        Map<Long, String> geneIdPairsMap = pairDo.getGeneIDAttributePairsMap();
         try {
             FileWriter outputfile = new FileWriter(file, addToFile);
             CSVWriter writer = new CSVWriter(outputfile, '\t', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
@@ -171,6 +174,12 @@ public class Gff3Writer {
                 line[6] = record.getStrand();
                 line[7] = String.valueOf(record.getFrame());
                 line[8] = record.getAttributes();
+                if (geneIdPairsMap.get(record.getId()) != null) {
+                    String geneID = geneIdPairsMap.get(record.getId());
+                    if (geneID != null) {
+                        line[8] += ";gene_id=" + geneID;
+                    }
+                }
                 return line;
             }).collect(Collectors.toList());
             writer.writeAll(collect);
