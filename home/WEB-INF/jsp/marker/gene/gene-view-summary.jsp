@@ -26,6 +26,9 @@
 
     <z:attributeListItem label="Genome Assembly">
         <c:choose>
+            <c:when test="${empty formBean.marker.latestAssembly}">
+                Unknown
+            </c:when>
             <c:when test="${ zfn:isRoot()}">
                 <ul class="comma-separated">
                     <c:forEach var="assembly" items="${formBean.marker.allAssemblies}" varStatus="loop">
