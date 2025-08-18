@@ -28,7 +28,7 @@ jobs:
     - name: Setup Gradle 7
       uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-version: '7' # Quotes required to prevent YAML converting to number
+        gradle-version: '7.6.6' # Quotes required to prevent YAML converting to number
     - uses: wtfjoke/setup-groovy@v1
       with:
         groovy-version: '3.0.9'
