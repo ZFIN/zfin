@@ -27,6 +27,9 @@
     </jsp:attribute>
 
     <jsp:body>
+        <div style="background-color: yellow; text-align: center">
+            ZFIN is now using GRCz12tu for Genomic Data
+        </div>
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}"><i class="fas fa-edit"></i> Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}"><i class="fa-solid fa-code-merge"></i> Merge</a>
