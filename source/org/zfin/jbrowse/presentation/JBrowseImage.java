@@ -117,7 +117,8 @@ public class JBrowseImage implements GenomeBrowserImage {
                 url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
             }
 
-            linkUrl = "/" + url.getURL();
+            //for some reason, jbrowse doesn't like the "+" encoding
+            linkUrl = "/" + url.getURL().replace("+", "%20");
         }
         return linkUrl;
     }

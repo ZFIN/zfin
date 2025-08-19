@@ -53,12 +53,14 @@ public class JBrowseController {
             throw new RestErrorException(new RestErrorMessage(404));
         }
 
+        GenomeLocation.Source source = resolveSourceFromName(request.getParameter("source"));
+
         List<GenomeBrowserTrack> tracks = new ArrayList<>();
         tracks.add(GenomeBrowserTrack.TRANSCRIPTS);
 
         List<? extends GenomeLocation> locations = (name.startsWith("ZDB-")) ?
                 getLocationsByZDB(name, tracks) : //ZDB ID
-                getLocationsByAccession(name);    //ENSDARG ID
+                getLocationsByAccession(name, source);    //ENSDARG ID/NCBI ID, and the source
 
         GenomeLocation location = validateLocations(locations);
 
@@ -73,6 +75,21 @@ public class JBrowseController {
         return "redirect:" + url;
     }
 
+    private static GenomeLocation.Source resolveSourceFromName(String sourceName) {
+        GenomeLocation.Source source = null;
+        if (sourceName == null) {
+            source = GenomeLocation.Source.ZFIN;
+        } else {
+            try {
+                source = GenomeLocation.Source.valueOf(sourceName);
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid source parameter: " + sourceName, e);
+                throw new RestErrorException(new RestErrorMessage(400));
+            }
+        }
+        return source;
+    }
+
     private List<? extends GenomeLocation> getLocationsByZDB(String zdbID, List<GenomeBrowserTrack> tracks) {
         if (zdbID.startsWith("ZDB-ALT")) {
             //feature
@@ -85,10 +102,17 @@ public class JBrowseController {
         }
     }
 
-    private List<? extends GenomeLocation> getLocationsByMarkerID(String id) {
+    private List<? extends GenomeLocation> getLocationsByMarkerID(String id, GenomeLocation.Source source) {
+        if (source == null) {
+            source = GenomeLocation.Source.ZFIN;
+        }
         return getLinkageRepository()
                 .getGenomeLocation(
-                        getMarkerRepository().getMarkerByID(id), GenomeLocation.Source.ZFIN);
+                        getMarkerRepository().getMarkerByID(id), source);
+    }
+
+    private List<? extends GenomeLocation> getLocationsByMarkerID(String id) {
+        return getLocationsByMarkerID(id, GenomeLocation.Source.ZFIN);
     }
 
     private List<? extends GenomeLocation> getLocationsByFeatureID(String id) {
@@ -97,10 +121,10 @@ public class JBrowseController {
                         getFeatureRepository().getFeatureByID(id), GenomeLocation.Source.ZFIN);
     }
 
-    private List<? extends GenomeLocation> getLocationsByAccession(String name) {
+    private List<? extends GenomeLocation> getLocationsByAccession(String name, GenomeLocation.Source source) {
         List<DBLink> dblinks = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(name);
         validateDBLinks(dblinks, name);
-        return getLocationsByMarkerID(dblinks.get(0).getDataZdbID());
+        return getLocationsByMarkerID(dblinks.get(0).getDataZdbID(), source);
     }
 
     private void validateDBLinks(List<DBLink> dblinks, String name) {
