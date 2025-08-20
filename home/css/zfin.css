@@ -1324,11 +1324,11 @@ dt.col-sm-2.mb-sm-2.attribute-list-item-dt {
 }
 
 .construct-unit-no-id {
-    background-color: #c4ffff;
+    background-color: #eee8aa;
 }
 
 .construct-unit-has-id {
-    background-color: #eee8aa;
+    background-color: #c4ffff;
 }
 
 /* construct mode edit:
