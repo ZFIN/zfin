@@ -294,8 +294,24 @@ public class MappingDetailController {
         }
 
         model.addAttribute("otherMappingDetail", isOtherMappingDetail);
+        filterLocationsToRemoveOlderAssemblies(model);
 
         return "mapping/mapping-detail";
+    }
+
+    private void filterLocationsToRemoveOlderAssemblies(Model model) {
+        List<MarkerGenomeLocation> locations = (List<MarkerGenomeLocation>)model.getAttribute("locations");
+        if (locations == null || locations.isEmpty()) {
+            return;
+        }
+
+        //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
+        boolean hasGRCz12tu = locations.stream()
+                .anyMatch(location -> location.getSource() == GenomeLocation.Source.ZFIN_NCBI);
+
+        if (hasGRCz12tu) {
+            locations.removeIf(location -> location.getSource() == GenomeLocation.Source.ZFIN);
+        }
     }
 
     private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {
@@ -415,4 +431,7 @@ public class MappingDetailController {
             return o1.getEntityAbbreviation().compareTo(o2.getEntityAbbreviation());
         }
     }
+
+
+
 }
