@@ -34,7 +34,7 @@ import static org.zfin.construct.presentation.ConstructComponentService.getExist
 @RequestMapping("/construct")
 public class ConstructEditController {
 
-    public record ConstructUpdateResult(String message, boolean success) {}
+    public record ConstructUpdateResult(String message, String zdbID, boolean success) {}
 
     @Autowired
     private MarkerRepository mr;
@@ -243,7 +243,7 @@ public class ConstructEditController {
 
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), true);
+        return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), newMarker.getZdbID(), true);
     }
 
 //    /action/construct/create-and-update
@@ -274,7 +274,7 @@ public class ConstructEditController {
 
             String message = String.format("%s saved as <a target=\"_blank\" href=\"/%s\">%s</a>",
                     newMarker.getZdbID(), newMarker.getZdbID(), newMarker.getName());
-            return new ConstructUpdateResult(message, true);
+            return new ConstructUpdateResult(message, newMarker.getZdbID(), true);
 
             //catch both types of exceptions
         } catch (Exception e) {
@@ -285,9 +285,9 @@ public class ConstructEditController {
             }
             logger.error("Error in Transaction", e);
             if (e instanceof InvalidConstructNameException) {
-                return new ConstructUpdateResult(e.getMessage(), false);
+                return new ConstructUpdateResult(e.getMessage(),null, false);
             }
-            return new ConstructUpdateResult("Construct could not be created", false);
+            return new ConstructUpdateResult("Construct could not be created", null, false);
         }
     }
 
