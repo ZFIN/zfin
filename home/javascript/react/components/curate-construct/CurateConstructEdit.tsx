@@ -17,10 +17,19 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
+    const [lastCreatedConstructID, setLastCreatedConstructID] = useState<string>('');
 
     function toggleDisplayMode(newMode: DisplayMode) {
         setErrorMessage('');
         setSuccessMessage('');
+        if (newMode === 'new') {
+            setSelectedConstructID('');
+            resetSelectedConstruct();
+        }
+        // Clear the lastCreatedConstructID when changing modes
+        if (newMode !== 'new') {
+            setLastCreatedConstructID('');
+        }
         setDisplayMode(newMode);
     }
 
@@ -71,6 +80,12 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 loadConstructList();
                 setSuccessMessage(bodyJson.message);
                 setErrorMessage('');
+
+                // Store the newly created construct ID for the "Edit" link
+                if (bodyJson.zdbID) {
+                    setLastCreatedConstructID(bodyJson.zdbID);
+                }
+
                 resetSelectedConstruct();
             }
         } catch (error) {
@@ -91,6 +106,14 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         resetSelectedConstruct();
     }
 
+    function activateEditMode() {
+        if (lastCreatedConstructID) {
+            setSelectedConstructID(lastCreatedConstructID);
+            setDisplayMode('edit');
+            setSuccessMessage(''); // Clear success message when transitioning to edit mode
+        }
+    }
+
     function resetSelectedConstruct() {
         //force re-render of form by setting selectedConstruct to null (or empty string if already null)
         if (selectedConstructID === '') {
@@ -102,7 +125,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             const currentSelectedConstructID = selectedConstructID;
             setSelectedConstructID('');
             setTimeout(() => {
-                setSelectedConstructID(currentSelectedConstructID);
+                if (displayMode === 'edit') {
+                    setSelectedConstructID(currentSelectedConstructID);
+                }
             }, 0);
         }
 
@@ -165,6 +190,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 />
                 <div className='mt-2'>
                     {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
+                    {successMessage && lastCreatedConstructID && <div><a onClick={() => activateEditMode()} style={{textDecoration: 'underline'}}>Edit this construct</a></div>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}

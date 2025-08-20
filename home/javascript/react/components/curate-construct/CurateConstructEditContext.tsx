@@ -69,11 +69,12 @@ export const CurateConstructEditProvider = ({publicationId, selectedConstructId,
     const [state, setState] = useState<CurateConstructEditState>({...blank, publicationId, selectedConstructId});
 
     useEffect(() => {
-        setState(prevState => ({
-            ...prevState,
+        const blank = blankState();
+        setState({
+            ...blank,
             publicationId,
             selectedConstructId
-        }));
+        });
     }, [publicationId, selectedConstructId]);
 
     function setStateByProxy(fn) {
