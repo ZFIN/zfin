@@ -92,6 +92,19 @@ where mas_mrkr_zdb_id in (select mrkr_zdb_id from ncbi_zdb_gene_not_in_current);
 insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
 select mrkr_zdb_id, 13 as vocab_term_id from ncbi_zdb_gene_not_in_current;
 
+-- Anything in the to_delete table that matches the 13 vocab_term_id should be preserved
+-- This query removes them from the ncbi_gene_delete table, thus preserving them
+DELETE FROM ncbi_gene_delete
+WHERE EXISTS (
+    SELECT 1
+    FROM db_link
+    WHERE delete_dblink_zdb_id = dblink_zdb_id
+      AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+      AND (dblink_linked_recid, dblink_acc_num) IN (
+        SELECT mrkr_zdb_id, ncbi_gene_id
+        FROM ncbi_zdb_gene_not_in_current
+    )
+);
 
 \echo 'Deleting from reference_protein';
 \copy (select * from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete)) to 'referenceProteinDeletes.unl' (delimiter '|');
