@@ -55,7 +55,8 @@ select count(dblink_zdb_id) as noLengthBefore
 
 -- Delete from marker_annotation_status for (NCBI GeneID) dblinks. Must use join to get the mrkr_id from the db_link table.
 create temporary table dblink_to_ncbi_delete as (
-select delete_dblink_zdb_id as dblink_id, dblink_linked_recid as mrkr_id from ncbi_gene_delete
+select delete_dblink_zdb_id as dblink_id, dblink_linked_recid as mrkr_id, dblink_acc_num as ncbi_id
+    from ncbi_gene_delete
     join db_link on delete_dblink_zdb_id = dblink_zdb_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' );
 
 delete from marker_annotation_status where mas_mrkr_zdb_id in (select mrkr_id from dblink_to_ncbi_delete);
@@ -81,9 +82,9 @@ create temporary table ncbi_zdb_gene_not_in_current(
 
 -- map the NCBI Gene IDs to ZFIN marker IDs
 insert into ncbi_zdb_gene_not_in_current (ncbi_gene_id, mrkr_zdb_id)
-select ncbi_gene_id, dblink_linked_recid
-from db_link join ncbi_gene_not_in_current
-                  on dblink_acc_num = ncbi_gene_id;
+select ncbi_gene_id, mrkr_id
+from dblink_to_ncbi_delete join ncbi_gene_not_in_current
+                  on ncbi_id = ncbi_gene_id;
 
 -- 13 is the id for "Not in current annotation release" in vocabulary_term
 delete from marker_annotation_status
