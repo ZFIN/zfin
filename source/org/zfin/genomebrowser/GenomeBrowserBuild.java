@@ -1,5 +1,6 @@
 package org.zfin.genomebrowser;
 
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 public enum GenomeBrowserBuild {
@@ -16,7 +17,7 @@ public enum GenomeBrowserBuild {
     GRCZ11("GRCz11",
             ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString(),
             ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString(),
-            ZfinPropertiesEnum.JBROWSE_PATH_FROM_ROOT.toString()
+            ZfinPropertiesEnum.JBROWSE_GRCZ11_PATH_FROM_ROOT.toString()
     ),
     CURRENT("GRCz12tu",
             ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString(),
@@ -47,5 +48,14 @@ public enum GenomeBrowserBuild {
     }
 
     public String getJBrowsePath() {return jBrowsePath;}
+
+    public static GenomeBrowserBuild getBySource(GenomeLocation.Source source) {
+        return switch (source) {
+            case ZFIN_NCBI -> CURRENT;
+            case ZFIN -> GRCZ11;
+            case ZFIN_Zv9 -> ZV9;
+            default -> CURRENT;
+        };
+    }
 
 }
