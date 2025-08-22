@@ -14,7 +14,9 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
+import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
@@ -27,6 +29,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
+import static org.zfin.mapping.GenomeLocation.Source.ZFIN;
+import static org.zfin.mapping.GenomeLocation.Source.ZFIN_NCBI;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -268,16 +272,21 @@ public class MappingDetailController {
         }
         List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
-            if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN_NCBI) {
-                model.addAttribute("gbrowseImage", genomeBrowserFactory.getImageBuilder()
+            if (List.of(ZFIN_NCBI, ZFIN).contains(genomeLocation.getSource())) {
+                GenomeBrowserImage gbrowseImage = genomeBrowserFactory.getImageBuilder()
                         .setLandmarkByGenomeLocation(genomeLocation)
                         .withCenteredRange(500000)
                         .highlight(trackingGene) //ignored if using jbrowse for now
                         .highlightColor("pink")
                         .withHeight(200)
                         .tracks(GBrowseService.getGBrowseTracks(marker))
-                        .build()
-                );
+                        .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
+                                GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
+                        .build();
+                model.addAttribute("gbrowseImage", gbrowseImage);
+                if (genomeLocation.getSource() == ZFIN_NCBI) {
+                    break;
+                }
             }
         }
 
@@ -307,10 +316,10 @@ public class MappingDetailController {
 
         //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
         boolean hasGRCz12tu = locations.stream()
-                .anyMatch(location -> location.getSource() == GenomeLocation.Source.ZFIN_NCBI);
+                .anyMatch(location -> location.getSource() == ZFIN_NCBI);
 
         if (hasGRCz12tu) {
-            locations.removeIf(location -> location.getSource() == GenomeLocation.Source.ZFIN);
+            locations.removeIf(location -> location.getSource() == ZFIN);
         }
     }
 

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.api.RestErrorException;
 import org.zfin.framework.api.RestErrorMessage;
+import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
@@ -67,6 +68,7 @@ public class JBrowseController {
         GenomeBrowserImage image = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(location)
                 .tracks(tracks.toArray(new GenomeBrowserTrack[tracks.size()]))
+                .genomeBuild(GenomeBrowserBuild.getBySource(source))
                 .build();
 
         String url = image.getLinkUrl();
