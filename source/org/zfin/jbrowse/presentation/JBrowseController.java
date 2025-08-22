@@ -56,7 +56,7 @@ public class JBrowseController {
         GenomeLocation.Source source = resolveSourceFromName(request.getParameter("source"));
 
         List<GenomeBrowserTrack> tracks = new ArrayList<>();
-        tracks.add(GenomeBrowserTrack.TRANSCRIPTS);
+        tracks.add(GenomeBrowserTrack.GENES);
 
         List<? extends GenomeLocation> locations = (name.startsWith("ZDB-")) ?
                 getLocationsByZDB(name, tracks) : //ZDB ID

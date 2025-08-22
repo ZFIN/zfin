@@ -49,7 +49,7 @@ public class GPIFileVer2 extends AbstractScriptWrapper {
             bw.write("!gpi-version: 2.0\n");
             bw.write("!namespace: ZFIN\n");
             bw.write("!generated-by: ZFIN\n");
-            bw.write("!date-generated: " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\n\n");
+            bw.write("!date-generated: " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\n");
 
             for (Marker gene : genes) {
                 List<String> csvRow = new ArrayList<>();
