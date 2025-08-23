@@ -17,6 +17,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
+import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
@@ -285,6 +286,7 @@ public class SequenceTargetingReagentViewController {
                     .withRelativePadding(0.1)
                     .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                     .highlight(sequenceTargetingReagent)
+                    .genomeBuild(GenomeBrowserBuild.GRCZ11)
                     .build()
             );
         } else {
@@ -295,6 +297,7 @@ public class SequenceTargetingReagentViewController {
                         .withPadding(10000)
                         .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                         .highlight(sequenceTargetingReagent)
+                        .genomeBuild(GenomeBrowserBuild.GRCZ11)
                         .build()
                 );
             }
