@@ -78,7 +78,8 @@ select count(dblink_zdb_id) as noLengthBefore
     );
     create temporary table ncbi_zdb_gene_not_in_current(
       ncbi_gene_id    text not null,
-      mrkr_zdb_id    text not null
+      mrkr_zdb_id    text not null,
+      UNIQUE(ncbi_gene_id, mrkr_zdb_id)
     );
     -- This will create an empty file if it doesn't exist
     \! touch notInCurrentReleaseGeneIDs.unl
@@ -86,9 +87,15 @@ select count(dblink_zdb_id) as noLengthBefore
 
     -- map the NCBI Gene IDs to ZFIN marker IDs
     insert into ncbi_zdb_gene_not_in_current (ncbi_gene_id, mrkr_zdb_id)
-    select ncbi_gene_id, mrkr_id
+    select distinct ncbi_gene_id, mrkr_id
     from dblink_to_ncbi_delete join ncbi_gene_not_in_current
                       on ncbi_id = ncbi_gene_id;
+
+    -- Add extra mappings for genes that were not marked as "to be deleted" but are in the notInCurrentReleaseGeneIDs.unl file
+    INSERT INTO ncbi_zdb_gene_not_in_current
+        SELECT DISTINCT ncbi_gene_id, dblink_linked_recid
+        FROM ncbi_gene_not_in_current JOIN db_link ON dblink_acc_num = ncbi_gene_id AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+        ON CONFLICT DO NOTHING;
 
     -- 13 is the id for "Not in current annotation release" in vocabulary_term
     delete from marker_annotation_status

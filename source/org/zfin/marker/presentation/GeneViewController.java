@@ -137,6 +137,8 @@ public class GeneViewController {
         if (genomeLocation.size() > 0) {
             GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(genomeLocation.get(0))
+                // add 10% left padding
+                .withPadding((genomeLocation.get(0).getEnd() - genomeLocation.get(0).getStart()) / 10, 0)
                 .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
             geneBean.setRefSeqLocations(refseqBuilder.build());
         }
