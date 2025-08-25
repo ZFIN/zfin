@@ -8,7 +8,7 @@
                     <span id="marker-id">${formBean.zdbID}</span>
                 </z:attributeListItem>
 
-                <z:attributeListItem dtColSize="3" label="PI / Directory">
+                <z:attributeListItem dtColSize="3" label="PI / Director">
                     <zfin2:listMembers members="${members}" only="1" suppressTitle="true" suffix="<br>"/>
                 </z:attributeListItem>
 
