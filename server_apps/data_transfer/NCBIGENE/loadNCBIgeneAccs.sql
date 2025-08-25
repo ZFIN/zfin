@@ -105,6 +105,16 @@ select count(dblink_zdb_id) as noLengthBefore
 
     -- Anything in the to_delete table that matches the 13 vocab_term_id should be preserved
     -- This query removes them from the ncbi_gene_delete table, thus preserving them
+    -- But first, if there are new records coming in for the same gene (zdb_id), we want to keep those instead of the old ones
+    -- So we create a temp table of those deletes that should stay deletes (deletes_to_keep temp table)
+    SELECT dblink_zdb_id
+    into temp table deletes_to_keep
+    from ncbi_gene_load
+        inner join db_link on
+        mapped_zdb_gene_id = dblink_linked_recid
+        and fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+        and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' ;
+
     DELETE FROM ncbi_gene_delete
     WHERE EXISTS (
         SELECT 1
@@ -115,7 +125,12 @@ select count(dblink_zdb_id) as noLengthBefore
             SELECT mrkr_zdb_id, ncbi_gene_id
             FROM ncbi_zdb_gene_not_in_current
         )
-    );
+    )
+    AND delete_dblink_zdb_id NOT IN (SELECT * FROM deletes_to_keep);
+
+    -- Question: In testing this only preserves about 50 records. Previously we were preserving about 2890 records.
+    -- I think we want a report of all "not_in_current" genes
+
 -- } END LOGIC FOR NOT_IN_CURRENT_ANNOTATION_RELEASE
 
 \echo 'Deleting from reference_protein';
@@ -134,8 +149,52 @@ delete from record_attribution
               )
    and not exists (select 'x' from ncbi_dblink_to_preserve where prsv_dblink_zdb_id = recattrib_data_zdb_id);
 
-\echo 'Skipping duplicate entries in db_link table for the new records that would violate key:';
+-- NCBI Gene IDs that are in the load list, but already exist in db_link table for the same gene under a manually curated pub
+\echo 'Deleting from ncbi_gene_load for those NCBI GeneID records that are in the load list but already exist in db_link table for the same gene (with different ncbi id) under a manually curated pub';
+select * into temp table manual_conflict_warnings from ncbi_gene_load
+         inner join db_link on mapped_zdb_gene_id = dblink_linked_recid
+                                   and ncbi_accession <> dblink_acc_num
+                                   and fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+                                   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+ where TRUE
+   and exists (select 'x' from record_attribution
+                where recattrib_data_zdb_id = dblink_zdb_id
+                  and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2')
+              );
+-- \copy (select * from manual_conflict_warnings) to 'manual_conflict_warnings.csv' with header csv;
+delete from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+ and mapped_zdb_gene_id in (select mapped_zdb_gene_id from manual_conflict_warnings);
 
+-- NCBI Gene IDs that are in the load list, but already exist in db_link table for a different gene
+\echo 'Deleting from ncbi_gene_load for those NCBI GeneID records that are in the load list but already exist in db_link table for a different gene';
+select mapped_zdb_gene_id, ncbi_accession, zdb_id, load_pub_zdb_id, dblink_linked_recid as existing_zdb_id,
+        dblink_zdb_id as existing_dblink_id, dblink_info, recattrib_source_zdb_id as existing_load_pub_zdb_id
+       into temp table n_gene_1_ncbi_conflict_warnings  from ncbi_gene_load
+         inner join db_link on ncbi_accession = dblink_acc_num
+                                   and mapped_zdb_gene_id <> dblink_linked_recid
+                                   and fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+                                   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+        inner join record_attribution on recattrib_data_zdb_id = dblink_zdb_id;
+
+-- Get the right hand side of that join too
+select dblink_linked_recid as gene_id, dblink_acc_num as ncbi_id, dblink_zdb_id, recattrib_source_zdb_id as load_pub, true as existing
+ into temp table post_run_n_to_1_zdb_to_ncbi from db_link
+         inner join record_attribution on recattrib_data_zdb_id = dblink_zdb_id
+ where dblink_acc_num in (select ncbi_accession from n_gene_1_ncbi_conflict_warnings)
+   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+   and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2', 'ZDB-PUB-230516-87');
+
+insert into post_run_n_to_1_zdb_to_ncbi
+    (SELECT mapped_zdb_gene_id as gene_id, ncbi_accession as ncbi_id, zdb_id, load_pub_zdb_id as load_pub, false as existing
+       from n_gene_1_ncbi_conflict_warnings);
+
+\copy (select * from post_run_n_to_1_zdb_to_ncbi order by ncbi_id) to 'post_run_n_to_1_zdb_to_ncbi.csv' with header csv;
+delete from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+ and ncbi_accession in (select ncbi_id from post_run_n_to_1_zdb_to_ncbi);
+
+delete from zdb_active_data where zactvd_zdb_id in (select dblink_zdb_id from post_run_n_to_1_zdb_to_ncbi);
+
+\echo 'Skipping duplicate entries in db_link table for the new records that would violate key:';
 \echo 'Insert the new records into db_link table';
 insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
 select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
@@ -182,7 +241,47 @@ select count(dblink_zdb_id) as noLenLoadedGenBank
                where recattrib_data_zdb_id = dblink_zdb_id
                  and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-020723-3'));
 
---rollback work;
+
+
+-- Many to Many report:
+SELECT
+    unnest(array_agg(dblink_linked_recid)) AS zdb_id,
+    dblink_acc_num AS ncbi_id,
+    dblink_acc_num AS group_id,
+    'many genes to one ncbi id' as reason
+INTO temp TABLE ncbi_many
+FROM    db_link
+WHERE    dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+GROUP BY    dblink_acc_num
+HAVING    count(dblink_linked_recid) > 1;
+
+-- Now get all ZDB gene records that have more than one NCBI Gene ID
+INSERT INTO ncbi_many (
+    SELECT
+        dblink_linked_recid AS zdb_id,
+        unnest(array_agg(dblink_acc_num)) AS ncbi_id,
+        dblink_linked_recid AS group_id,
+        'one gene to many ncbi ids' as reason
+    FROM        db_link
+    WHERE        dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+    GROUP BY        dblink_linked_recid
+    HAVING        count(dblink_acc_num) > 1);
+
+-- Now delete the recent NCBI Gene IDs (from 8/29/25) for each ZDB gene record where there are issues
+-- Get these by joining to db_link table
+SELECT marker.mrkr_abbrev as symbol, nid.zdb_id, nid.ncbi_id, nid.group_id, nid.reason, db_link.dblink_info, db_link.dblink_zdb_id, db_link.dblink_fdbcont_zdb_id, string_agg(record_attribution.recattrib_source_zdb_id, ',') AS source_pubs
+INTO temp TABLE ncbi_many_full
+FROM
+    ncbi_many nid
+    LEFT JOIN db_link ON zdb_id = dblink_linked_recid
+    AND ncbi_id = dblink_acc_num
+    AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+    LEFT JOIN marker ON mrkr_zdb_id = dblink_linked_recid
+    LEFT JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
+GROUP BY marker.mrkr_abbrev, nid.zdb_id, nid.ncbi_id, nid.group_id, nid.reason, db_link.dblink_info, db_link.dblink_zdb_id, db_link.dblink_fdbcont_zdb_id;
+
+\copy (select * from ncbi_many_full order by group_id, dblink_zdb_id) to 'existing_many_to_many_report.csv' with header csv;
+-- End of Many to Many report
 
 commit work;
 

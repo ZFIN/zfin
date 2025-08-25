@@ -158,6 +158,15 @@ public class ZfinStringUtils {
         return null;
     }
 
+    public static String objectToPrettyJson(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+        }
+        return null;
+    }
+
     public static String getCamelCase(String text) {
         String[] words = text.split("[\\W_]+");
         StringBuilder builder = new StringBuilder();

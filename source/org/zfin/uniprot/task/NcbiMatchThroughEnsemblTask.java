@@ -231,6 +231,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             for (CSVRecord record : parser) {
                 recordCount++;
 
+                //equivalent to `\copy tmp_ncbi_zebrafish from 'zf_gene_info' WITH (DELIMITER E'\t', FORMAT 'text', HEADER true);
                 session.createNativeQuery("""
                         INSERT INTO tmp_ncbi_zebrafish 
                         (taxId, geneId, symbol, locusTag, synonyms, dbXrefs, chromosome, mapLocation, description, typeOfGene, symbolFromNomenclatureAuthority, fullNameFromNomenclatureAuthority, nomenclatureStatus, otherDesignations, modificationDate, featureType)
@@ -301,6 +302,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
+        //Intermediate table for debugging:
+        // select dblink_linked_recid as zdb_id, dblink_acc_num as ncbi_id into temp table tmp_zfin2ncbi from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' ;
+
         // Get semi-final report using the above mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
         // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
@@ -315,7 +319,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
-                    LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
+                    LEFT JOIN db_link dbl ON dbl.dblink_linked_recid = n2z.zdb_id
                         AND "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-1'
                     LEFT JOIN tmp_ncbi2ensembl n2e ON n2z.ncbi_id = n2e.ncbi_id
                     LEFT JOIN db_link dbl2 ON n2e.ensembl_id = dbl2.dblink_acc_num
