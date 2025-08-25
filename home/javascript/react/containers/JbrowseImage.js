@@ -44,7 +44,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) =>
     return (
         <div className='position-relative'>
             <div ref={containerRef}>
-                {build && <div><span className='gbrowse-source-label'>Genome Build: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
+                {build && <div><span className='gbrowse-source-label'>Genome Assembly: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
                 <a href={linkUrl}>
                     <object
                         type='text/html'
