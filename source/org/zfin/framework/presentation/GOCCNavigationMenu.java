@@ -16,6 +16,7 @@ public class GOCCNavigationMenu extends NavigationMenu {
         super(
             title(NavigationMenuOptions.SUMMARY).showCount(false),
             title(NavigationMenuOptions.RELATIONSHIPS).showCount(false),
+            title(NavigationMenuOptions.EXPRESSION).showCount(false),
             title(NavigationMenuOptions.PHENOTYPE).showCount(false)
         );
     }
