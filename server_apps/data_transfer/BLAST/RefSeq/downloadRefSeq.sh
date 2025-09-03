@@ -31,6 +31,10 @@ log_message "rename the fasta files from RefSeq to more familiar names at ZFIN"
 cp "downloadedProt" "refseq_zf_aa.fa"
 cp "downloadedRNA" "refseq_zf_rna.fa"
 
+# Add tpe| prefix to each fasta def line and clean up headers
+sed -i -e 's/>/>tpe|/g' refseq_zf_aa.fa
+sed -i -e 's/>/>tpe|/g' -e 's/\.[0-9] Danio/| Danio/g' -e 's/\.[0-9] PREDICTED/| PREDICTED/g'  refseq_zf_rna.fa
+
 rm -rf downloaded*
 
 exit
