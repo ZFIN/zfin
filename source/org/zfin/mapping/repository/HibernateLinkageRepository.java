@@ -20,7 +20,6 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
-import java.math.BigInteger;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -227,16 +226,16 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
     public List<FeatureGenomeLocation> getFeatureLocations(Marker marker) {
-        Query query1 = HibernateUtil.currentSession().createQuery(
-            "select  loc from FeatureGenomeLocation loc,FeatureMarkerRelationship fmrel " +
-            "where fmrel.marker = :marker and  " +
-            "fmrel.type  = :relation and " +
-            "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
+        String queryString = """
+            select  loc from FeatureGenomeLocation loc,FeatureMarkerRelationship fmrel
+            where fmrel.marker = :marker and
+            fmrel.type  = :relation and
+            loc.feature = fmrel.feature and loc.assembly in ('GRCz12tu','GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc
+            """;
+        Query<FeatureGenomeLocation> query1 = HibernateUtil.currentSession().createQuery(queryString, FeatureGenomeLocation.class);
         query1.setParameter("marker", marker);
         query1.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        List<FeatureGenomeLocation> list1 = (List<FeatureGenomeLocation>) query1.list();
-
-        return list1;
+        return query1.list();
     }
 
     /**
@@ -474,9 +473,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         }
         List<EntityZdbID> uniqueList = new ArrayList<>(list);
         uniqueList.sort(
-                Comparator.nullsLast(
-                        Comparator.comparing(EntityZdbID::getEntityType, Comparator.nullsLast(Comparator.naturalOrder()))
-                                .thenComparing(EntityZdbID::getAbbreviationOrder, Comparator.nullsLast(Comparator.naturalOrder())))
+            Comparator.nullsLast(
+                Comparator.comparing(EntityZdbID::getEntityType, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(EntityZdbID::getAbbreviationOrder, Comparator.nullsLast(Comparator.naturalOrder())))
         );
         return uniqueList;
     }
@@ -490,18 +489,18 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public List<PanelCount> getPanelCount(Panel panel) {
         if (panel.getAbbreviation().equals("ZMAP")) {
             String sql = """
-                          SELECT name,
-                                         panel_date,
-                                         ptype,
-                                         mtype,
-                                         target_abbrev,
-                                         zmap_chromosome,
-                                         count(*)
-                                 FROM  panels a,zmap_pub_pan_mark b
-                           WHERE a.abbrev = b.target_abbrev
-                           AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'
-                                 GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome
-                         """;
+                 SELECT name,
+                                panel_date,
+                                ptype,
+                                mtype,
+                                target_abbrev,
+                                zmap_chromosome,
+                                count(*)
+                        FROM  panels a,zmap_pub_pan_mark b
+                  WHERE a.abbrev = b.target_abbrev
+                  AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'
+                        GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome
+                """;
             List<Object[]> list = HibernateUtil.currentSession().createNativeQuery(sql).list();
             List<PanelCount> panelCountList = new ArrayList<>(list.size());
             for (Object[] row : list) {
@@ -509,7 +508,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 panelCount.setPanel(panel);
                 panelCount.setLg((String) row[5]);
                 panelCount.setMarkerType((String) row[3]);
-                panelCount.setCount((long)row[6]);
+                panelCount.setCount((long) row[6]);
                 panelCountList.add(panelCount);
             }
             return panelCountList;

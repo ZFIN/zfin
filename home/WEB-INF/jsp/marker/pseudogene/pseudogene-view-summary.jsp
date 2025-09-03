@@ -22,6 +22,26 @@
         <zfin2:displayLocation entity="${formBean.marker}" longDetail="true"/>
     </z:attributeListItem>
 
+    <z:attributeListItem label="Genome Assembly">
+        <c:choose>
+            <c:when test="${empty formBean.marker.latestAssembly}">
+                Unknown
+            </c:when>
+            <c:when test="${ zfn:isRoot()}">
+                <ul class="comma-separated">
+                    <c:forEach var="assembly" items="${formBean.marker.allAssemblies}" varStatus="loop">
+                        <li id="previous-name-${loop.index}">${assembly.name}</li>
+                    </c:forEach>
+                </ul>
+            </c:when>
+            <c:otherwise>
+                ${formBean.marker.latestAssembly.name}
+            </c:otherwise>
+        </c:choose>
+    </z:attributeListItem>
+
+    <zfin2:annotationStatusAttributeListItem annotationStatus="${formBean.marker.annotationStatus}"/>
+
     <zfin2:geneDescriptionAttributeListItem geneDescription="${formBean.allianceGeneDesc}" />
 
     <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />

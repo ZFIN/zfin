@@ -236,14 +236,13 @@ public class MappingDetailController {
         Marker marker = markerRepository.getMarkerByID(markerID);
 
         // genetic mapping Panels
-       // List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
+        // List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
 
 
-//        for (Feature featureL : featureList) {
-            List<FeatureGenomeLocation> featureLocationList = getLinkageRepository().getFeatureLocations(marker);
-         Collections.sort(featureLocationList);
-           model.addAttribute("allelicFeatures",featureLocationList);
-        
+        List<FeatureGenomeLocation> featureLocationList = getLinkageRepository().getFeatureLocations(marker);
+        Collections.sort(featureLocationList);
+        model.addAttribute("allelicFeatures", featureLocationList);
+
 
         List<MappedMarker> mappedMarkers = getLinkageRepository().getMappedMarkers(marker);
 
@@ -274,15 +273,15 @@ public class MappingDetailController {
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
             if (List.of(ZFIN_NCBI, ZFIN).contains(genomeLocation.getSource())) {
                 GenomeBrowserImage gbrowseImage = genomeBrowserFactory.getImageBuilder()
-                        .setLandmarkByGenomeLocation(genomeLocation)
-                        .withCenteredRange(500000)
-                        .highlight(trackingGene) //ignored if using jbrowse for now
-                        .highlightColor("pink")
-                        .withHeight(200)
-                        .tracks(GBrowseService.getGBrowseTracks(marker))
-                        .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
-                                GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
-                        .build();
+                    .setLandmarkByGenomeLocation(genomeLocation)
+                    .withCenteredRange(500000)
+                    .highlight(trackingGene) //ignored if using jbrowse for now
+                    .highlightColor("pink")
+                    .withHeight(200)
+                    .tracks(GBrowseService.getGBrowseTracks(marker))
+                    .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
+                        GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
+                    .build();
                 model.addAttribute("gbrowseImage", gbrowseImage);
                 if (genomeLocation.getSource() == ZFIN_NCBI) {
                     break;
@@ -309,14 +308,14 @@ public class MappingDetailController {
     }
 
     private void filterLocationsToRemoveOlderAssemblies(Model model) {
-        List<MarkerGenomeLocation> locations = (List<MarkerGenomeLocation>)model.getAttribute("locations");
+        List<MarkerGenomeLocation> locations = (List<MarkerGenomeLocation>) model.getAttribute("locations");
         if (locations == null || locations.isEmpty()) {
             return;
         }
 
         //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
         boolean hasGRCz12tu = locations.stream()
-                .anyMatch(location -> location.getSource() == ZFIN_NCBI);
+            .anyMatch(location -> location.getSource() == ZFIN_NCBI);
 
         if (hasGRCz12tu) {
             locations.removeIf(location -> location.getSource() == ZFIN);
@@ -440,7 +439,6 @@ public class MappingDetailController {
             return o1.getEntityAbbreviation().compareTo(o2.getEntityAbbreviation());
         }
     }
-
 
 
 }

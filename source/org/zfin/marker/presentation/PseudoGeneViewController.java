@@ -10,7 +10,12 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerNotFoundException;
@@ -23,6 +28,8 @@ import org.zfin.sequence.service.TranscriptService;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 /**
  */
@@ -86,6 +93,17 @@ public class PseudoGeneViewController {
         geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
                 gene, true, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENEP));
 
+
+        // sequence section: if not empty
+        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI);
+        if (genomeLocation.size() > 0) {
+            GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(genomeLocation.get(0))
+                // add 10% left padding
+                .withPadding((genomeLocation.get(0).getEnd() - genomeLocation.get(0).getStart()) / 10, 0)
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
+            geneBean.setRefSeqLocations(refseqBuilder.build());
+        }
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));

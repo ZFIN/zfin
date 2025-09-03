@@ -69,6 +69,10 @@
         </z:section>
 
         <z:section title="${SEQUENCES}">
+            <z:attributeList>
+                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
+            </z:attributeList>
+            <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
             <div
                 class="__react-root"
                 id="MarkerSequencesTable"
