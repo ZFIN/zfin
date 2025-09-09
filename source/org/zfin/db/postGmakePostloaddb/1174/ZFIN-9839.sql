@@ -59,3 +59,4 @@ where sfcl_assembly = 'GRCz12tu'
   AND sfcl_feature_zdb_id = feature_zdb_id and sfcl_start_position = position::integer
 ;
 
+drop table temp_zmp;
