@@ -1,14 +1,14 @@
 Progression of files:
 --------------------------------------------------
 All files downloaded to: 
-@BLASTSERVER_FASTA_FILE_PATH@/fasta/Ensembl
+$BLASTSERVER_FASTA_FILE_PATH/fasta/Ensembl
 
 Blastdbs and log files generated in:
 /tmp  and (depending on mode)
-@BLASTSERVER_FASTA_FILE_PATH@/fasta/Ensembl
+$BLASTSERVER_FASTA_FILE_PATH/fasta/Ensembl
 
 Blastdbs moved to:
-@BLASTSERVER_BLAST_DATABASE_PATH@/Current
+$BLASTSERVER_BLAST_DATABASE_PATH/Current
 
 --------------------------------------------------
 Usage (from this directory):
@@ -40,8 +40,8 @@ Usage (from your checkout directory):
 --------------------------------------------------
 Files created:
 --------------------------------------------------
-@BLASTSERVER_FASTA_FILE_PATH@/fasta/Ensembl/ensembl_zf.fa
-@BLASTSERVER_FASTA_FILE_PATH@/fasta/Ensembl/cdna.fa
+$BLASTSERVER_FASTA_FILE_PATH/fasta/Ensembl/ensembl_zf.fa
+$BLASTSERVER_FASTA_FILE_PATH/fasta/Ensembl/cdna.fa
 
 
 --------------------------------------------------

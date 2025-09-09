@@ -11,7 +11,7 @@ mv $BLAST_PATH/Current/GenomicDNA.* $BLAST_PATH/Backup/
 cp GenomicDNA.* $BLAST_PATH/Current/
 
 
-#if (@HOSTNAME@ == genomics.cs.uoregon.edu) then
+#if ($HOSTNAME == genomics.cs.uoregon.edu) then
 #    ./distributeToNodesGenomicDNA.sh
 #endif 
 
