@@ -7,5 +7,6 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1174/ZFIN-9839-pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1174/ZFIN-9839.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1174/ZFIN-9839.sql" />
 
 </databaseChangeLog>
