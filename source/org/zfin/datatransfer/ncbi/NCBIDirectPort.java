@@ -3601,7 +3601,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         String dbName = DBName.getDisplayNameForForeignDB(fdbcontZdbId);
         action.setDbName(dbName);
-        action.setRelatedEntityFields(Map.of("Database", dbName));
+        action.setRelatedEntityFields(Map.of("Database", dbName, "Pub", record.get("recattrib_source_zdb_id")));
 
         String subType = switch(type) {
             case DELETE -> "Lost ";
