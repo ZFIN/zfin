@@ -14,7 +14,7 @@ source "../config.sh"
 #========================
 
 #mv -f $BLAST_PATH/fasta/ZFIN/zfin_xpat_cdna/*.fa $BLAST_PATH/fasta/ZFIN/Backup
-#mv -f @BLASTSERVER_BLAST_DATABASE_PATH@/Current/ZFINGenesWithExpression.xn* @BLASTSERVER_BLAST_DATABASE_PATH@/Backup/
+#mv -f $BLASTSERVER_BLAST_DATABASE_PATH/Current/ZFINGenesWithExpression.xn* $BLASTSERVER_BLAST_DATABASE_PATH/Backup/
 
 #===============
 # Download files

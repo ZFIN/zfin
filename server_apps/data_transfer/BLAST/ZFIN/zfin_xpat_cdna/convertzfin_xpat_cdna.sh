@@ -6,7 +6,7 @@
 
 source "../config.sh"
 
-#cd @BLASTSERVER_FASTA_FILE_PATH@/fasta/ZFIN/zfin_xpat_cdna/
+#cd $BLASTSERVER_FASTA_FILE_PATH/fasta/ZFIN/zfin_xpat_cdna/
 
 
 xdformat -n -o ZFINGenesWithExpression -e xdformat_zfin_xpat_cdna.log -I -t "ZFIN cDNA Sequence Set" zfin_xpat_cdna_seq.fa
