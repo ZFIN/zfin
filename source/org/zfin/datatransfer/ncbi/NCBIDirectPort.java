@@ -1350,6 +1350,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 String ncbiGeneId = fields[1];
                 String status = fields[2];
+                if (!StringUtils.isEmpty(status) && "SUPPRESSED".equals(status)) {
+                    print(LOG, "WARN: Skipping line SUPPRESSED status: [" + line + "]\n");
+                    continue;
+                }
 
                 String rnaAccVersion = fields[3];
                 String proteinAccVersion = fields[5];
