@@ -105,6 +105,8 @@ public class NCBIReportBuilder {
         report.setSummary(summary);
         report.setSupplementalData(supplementalData);
         report.setActions(actions);
+
+        report.generateAllIds(); // Ensure all IDs are set
         
         return report;
     }
