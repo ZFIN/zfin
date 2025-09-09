@@ -2327,7 +2327,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
                 ntonWriter.write("\n");
                 addToWarningActionsIfNotDuplicate(warningActions, warningAction);
-                warningActions.add(warningAction);
             } else { // 1 to N (NCBI to ZFIN), which is N:1 (ZFIN to NCBI)
                 ctNtoOne++;
                 nToOne.put(geneNCBItoMultiZFIN, ref_hashZFINids);
