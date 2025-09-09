@@ -2326,6 +2326,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     }
                 }
                 ntonWriter.write("\n");
+                addToWarningActionsIfNotDuplicate(warningActions, warningAction);
                 warningActions.add(warningAction);
             } else { // 1 to N (NCBI to ZFIN), which is N:1 (ZFIN to NCBI)
                 ctNtoOne++;
@@ -2347,6 +2348,33 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         ntonWriter3.close();
         return warningActions;
+    }
+
+    private void addToWarningActionsIfNotDuplicate(List<LoadReportAction> warningActions, LoadReportAction warningAction) {
+        String geneZdbID = warningAction.getGeneZdbID();
+        String accession = warningAction.getAccession();
+
+        //Matching logic for N to N warnings means that there exists a warningAction in the list
+        // with the same geneZdbID and accession. In the case where a warningAction has multiple
+        // multiple geneZdbIDs or accessions (space separated), we need to check if the new
+        // warning action is a subset of an existing one.
+        for (LoadReportAction existingAction : warningActions) {
+            String existingGeneZdbID = existingAction.getGeneZdbID();
+            String existingAccession = existingAction.getAccession();
+
+            Set<String> existingGeneZdbIDSet = new HashSet<>(Arrays.asList(existingGeneZdbID.split(" ")));
+            Set<String> existingAccessionSet = new HashSet<>(Arrays.asList(existingAccession.split(" ")));
+
+            Set<String> newGeneZdbIDSet = new HashSet<>(Arrays.asList(geneZdbID.split(" ")));
+            Set<String> newAccessionSet = new HashSet<>(Arrays.asList(accession.split(" ")));
+
+            if (existingGeneZdbIDSet.containsAll(newGeneZdbIDSet) && existingAccessionSet.containsAll(newAccessionSet)) {
+                // The new warningAction is a subset of an existing one, so we do not add it.
+                return;
+            }
+        }
+        // If no duplicates found, add the new warningAction
+        warningActions.add(warningAction);
     }
 
 
