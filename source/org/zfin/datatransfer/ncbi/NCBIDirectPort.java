@@ -2188,7 +2188,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             // This part is generated in getNtoOneAndNtoNfromZFINtoNCBI() in Perl.
             // For Java, we'll call that method and let it append.
             List<LoadReportAction> moreActions = getNtoOneAndNtoNfromZFINtoNCBI(ntonWriter); // Pass the writer
-            loadReportActions.addAll(moreActions);
+            addToWarningActionsIfNotDuplicate(loadReportActions, moreActions);
         } catch (IOException e) {
             reportErrAndExit("Cannot open or write to reportNtoN: " + e.getMessage());
         }
@@ -2326,7 +2326,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     }
                 }
                 ntonWriter.write("\n");
-                addToWarningActionsIfNotDuplicate(warningActions, warningAction);
+                warningActions.add(warningAction);
             } else { // 1 to N (NCBI to ZFIN), which is N:1 (ZFIN to NCBI)
                 ctNtoOne++;
                 nToOne.put(geneNCBItoMultiZFIN, ref_hashZFINids);
@@ -2349,7 +2349,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return warningActions;
     }
 
-    private void addToWarningActionsIfNotDuplicate(List<LoadReportAction> warningActions, LoadReportAction warningAction) {
+    public static void addToWarningActionsIfNotDuplicate(List<LoadReportAction> warningActions, List<LoadReportAction> moreWarningAction) {
+        for(LoadReportAction action : moreWarningAction) {
+            addToWarningActionsIfNotDuplicate(warningActions, action);
+        }
+    }
+
+    public static void addToWarningActionsIfNotDuplicate(List<LoadReportAction> warningActions, LoadReportAction warningAction) {
         String geneZdbID = warningAction.getGeneZdbID();
         String accession = warningAction.getAccession();
 
