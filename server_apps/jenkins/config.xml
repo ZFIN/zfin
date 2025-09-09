@@ -56,7 +56,7 @@
     <disableSslVerification>false</disableSslVerification>
     <logoutFromOpenidProvider>false</logoutFromOpenidProvider>
     <escapeHatchEnabled>false</escapeHatchEnabled>
-    <escapeHatchSecret>{AQAAABAAAABA6RfWZ4tAeuOTh8KEHCJ6WOYyc7kVKS8wtKxjBFVbCUI5Yg4ZjQZkjJ39VmLggf0HXhlMD5JgLIq/DrHKU6B+9laHssOw58dTdyXS4D7tyoM=}</escapeHatchSecret>
+    <escapeHatchSecret></escapeHatchSecret>
     <serverConfiguration class="org.jenkinsci.plugins.oic.OicServerWellKnownConfiguration">
       <wellKnownOpenIDConfigurationUrl>https://bouncer.zfin.org/realms/ZFIN/.well-known/openid-configuration</wellKnownOpenIDConfigurationUrl>
     </serverConfiguration>
