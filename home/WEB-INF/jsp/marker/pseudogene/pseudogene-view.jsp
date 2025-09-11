@@ -26,6 +26,9 @@
     </jsp:attribute>
 
     <jsp:body>
+        <div style="background-color: yellow; text-align: center">
+            ZFIN is now using GRCz12tu for Genomic Data
+        </div>
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
@@ -66,6 +69,10 @@
         </z:section>
 
         <z:section title="${SEQUENCES}">
+            <z:attributeList>
+                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
+            </z:attributeList>
+            <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
             <div
                 class="__react-root"
                 id="MarkerSequencesTable"

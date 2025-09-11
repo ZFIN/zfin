@@ -12,9 +12,9 @@
 
 cp zfin_mrph.x* $BLAST_PATH/Current/
 
-#if (@HOSTNAME@ == genomix.cs.uoregon.edu) then
+#if ($HOSTNAME == genomix.cs.uoregon.edu) then
 #
-# @TARGET_PATH@/ZFIN/zfin_mrph/distributeToNodeszfin_mrph.sh
+# $TARGET_PATH/ZFIN/zfin_mrph/distributeToNodeszfin_mrph.sh
 #
 #endif
 

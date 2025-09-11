@@ -12,6 +12,8 @@
                 <th style="width: 7%">Chr</th>
                 <th style="width: 5%">Position</th>
                 <th style="width: 8%">Assembly</th>
+                <th style="width: 8%">Source</th>
+                <th style="width: 8%">DetailedSource</th>
                 <th style="width: 17%">Citations</th>
 
 
@@ -32,6 +34,8 @@
                         - <fmt:formatNumber value="${member.end}" pattern="##,###"/>
                     </c:if></td>
                     <td>${member.assembly}</td>
+                    <td>${member.source}</td>
+                    <td>${member.detailedSource}</td>
                     <td>
                         <zfin:link entity="${member.attribution}"/>
                     </td>

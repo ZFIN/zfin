@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>Load Flank Seq
+Set property FORCE_FULL_UPDATE to true to force a full update of the flank seq data.
+Otherwise, it will update only the new data each day.  Once per week, the job will run the full update.
+  </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -20,6 +23,7 @@
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>load-flank-seq -DjobName=Load-Flank-Seq_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <properties>FORCE_FULL_UPDATE=false</properties>
     </hudson.tasks.Ant>
   </builders>
   <publishers>

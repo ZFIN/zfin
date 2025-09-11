@@ -189,11 +189,6 @@ public class SearchPrototypeController {
 
         query.setRows(rows);
         int start = (page - 1) * rows;
-        //allow for not paginating beyond record number 10_000
-        if (start > 10000) {
-            start = 10000;
-        }
-
         model.addAttribute("start", start);
         query.setStart(start);
 
