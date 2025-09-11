@@ -282,6 +282,7 @@ public class MappingDetailController {
                     .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
                         GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
                     .build();
+
                 model.addAttribute("gbrowseImage", gbrowseImage);
                 if (genomeLocation.getSource() == ZFIN_NCBI) {
                     break;
@@ -316,6 +317,7 @@ public class MappingDetailController {
         //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
         boolean hasGRCz12tu = locations.stream()
             .anyMatch(location -> location.getSource() == ZFIN_NCBI);
+
 
         if (hasGRCz12tu) {
             locations.removeIf(location -> location.getSource() == ZFIN);
