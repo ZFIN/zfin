@@ -100,8 +100,12 @@ select count(dblink_zdb_id) as noLengthBefore
     -- 13 is the id for "Not in current annotation release" in vocabulary_term
     delete from marker_annotation_status
     where mas_mrkr_zdb_id in (select mrkr_zdb_id from ncbi_zdb_gene_not_in_current);
+
+-- if the gene_id in ncbi_zdb_gene_not_in_current is getting loaded in this batch (likely due to a history of multiple NCBI Gene IDs for one gene)
+-- then we want to preserve the "Current" status instead of changing it to "Not in current annotation release"
     insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
-    select mrkr_zdb_id, 13 as vocab_term_id from ncbi_zdb_gene_not_in_current;
+    select mrkr_zdb_id, 13 as vocab_term_id from ncbi_zdb_gene_not_in_current
+        WHERE mrkr_zdb_id NOT IN (SELECT mapped_zdb_gene_id FROM ncbi_gene_load WHERE fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
 
     -- Anything in the to_delete table that matches the 13 vocab_term_id should be preserved
     -- This query removes them from the ncbi_gene_delete table, thus preserving them
@@ -241,6 +245,24 @@ select count(dblink_zdb_id) as noLenLoadedGenBank
                where recattrib_data_zdb_id = dblink_zdb_id
                  and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-020723-3'));
 
+-- Mark any remaining Genes as "not in current annotation release" if they have a NCBI Gene ID that is in the notInCurrentReleaseGeneIDs.unl file
+WITH matched_not_in_current as (
+    select * from ncbi_zdb_gene_not_in_current left join db_link on dblink_linked_recid = mrkr_zdb_id and dblink_acc_num = ncbi_gene_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+)
+update marker_annotation_status
+ set mas_vt_pk_id = 12
+ from matched_not_in_current
+ where mas_mrkr_zdb_id = mrkr_zdb_id
+    and mas_vt_pk_id = 13;
+
+-- Do the same as above, but as an "insert" in case the gene doesn't already have a mas record
+WITH matched_not_in_current  as (
+    select * from ncbi_zdb_gene_not_in_current left join db_link on dblink_linked_recid = mrkr_zdb_id and dblink_acc_num = ncbi_gene_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+)
+insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
+ select mrkr_zdb_id, 12
+ from matched_not_in_current
+ where not exists (select 1 from marker_annotation_status where mas_mrkr_zdb_id = mrkr_zdb_id);
 
 
 -- Many to Many report:
