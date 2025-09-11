@@ -2,6 +2,7 @@
     ServerName	zfin.org
     ServerAlias     clone.zfin.org
     ServerAlias     watson.zfin.org
+    ServerAlias     franklin.zfin.org
     ServerAlias     crick.zfin.org
     ServerAlias     stage.zfin.org
     DocumentRoot	/srv/www/zfin.org/home
@@ -80,6 +81,7 @@
         ProxyPassReverse  http://zfin.org/jobs
         ProxyPassReverse  http://clone.zfin.org/jobs
         ProxyPassReverse  http://watson.zfin.org/jobs
+        ProxyPassReverse  http://franklin.zfin.org/jobs
         ProxyPassReverse  http://crick.zfin.org/jobs
         ProxyPassReverse  http://stage.zfin.org/jobs
     </Location>
@@ -103,6 +105,7 @@
     ServerName zfin.org
     ServerAlias clone.zfin.org
     ServerAlias watson.zfin.org
+    ServerAlias franklin.zfin.org
     ServerAlias crick.zfin.org
     ServerAlias stage.zfin.org
     SSLProxyEngine on
@@ -173,6 +176,7 @@
         ProxyPassReverse  http://zfin.org/jobs
         ProxyPassReverse  http://clone.zfin.org/jobs
         ProxyPassReverse  http://watson.zfin.org/jobs
+        ProxyPassReverse  http://franklin.zfin.org/jobs
         ProxyPassReverse  http://crick.zfin.org/jobs
         ProxyPassReverse  http://stage.zfin.org/jobs
     </Location>
