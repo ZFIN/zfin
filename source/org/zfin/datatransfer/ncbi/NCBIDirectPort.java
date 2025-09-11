@@ -40,12 +40,14 @@ import static org.zfin.datatransfer.ncbi.port.PortSqlHelper.getSqlForGeneAndRnag
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.properties.ZfinPropertiesEnum.SOURCEROOT;
 import static org.zfin.util.DateUtil.nowToString;
+import static org.zfin.util.FileUtil.createZipArchive;
 import static org.zfin.util.FileUtil.writeToFileOrZip;
 import static org.zfin.util.ZfinCollectionUtils.removeAndReturnDuplicateMapEntries;
 
 
 public class NCBIDirectPort extends AbstractScriptWrapper {
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
+    private static final long MAX_REPORT_FILE_SIZE = 50_000_000; // 50 MB
     public File workingDir;
 
 //    use DBI;
@@ -463,6 +465,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         outputDate(); // Corresponds to system("/bin/date");
 
+        cleanupForJenkins();
+        printTimingInformation(44);
+
         System.out.println("All done!");
         print(LOG, "\n\nAll done! \n\n\n");
 
@@ -476,6 +481,65 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void cleanupForJenkins() {
+        beforeFile = new File(workingDir, "before_load.csv");
+        afterFile = new File(workingDir, "after_load.csv");
+        File compressedBeforeFile = new File(workingDir, "before_load.csv.zip");
+        File compressedAfterFile = new File(workingDir, "after_load.csv.zip");
+        try {
+            createZipArchive(compressedBeforeFile, List.of(beforeFile));
+            beforeFile.delete();
+        } catch (IOException e) {
+            print(LOG, "Error while creating zip archive for before_load.csv.zip");
+        }
+        try {
+            createZipArchive(compressedAfterFile, List.of(afterFile));
+        } catch (IOException e) {
+            print(LOG, "Error while creating zip archive for after_load.csv.zip");
+        }
+
+        //zip debug files: debug1 debug10 debug12 debug13 debug14 debug15 debug16.json debug17
+        //debug2 debug3 debug4 debug5 debug5a debug6
+        List<File> debugFilesToZip = List.of("debug1", "debug10", "debug12", "debug13", "debug14", "debug15", "debug16.json", "debug17",
+                "debug2", "debug3", "debug4", "debug5", "debug5a", "debug6", "java_debug_readZfinGeneInfoFile.json").stream()
+                .map(filename -> new File(workingDir, filename))
+                .filter(File::exists)
+                .collect(Collectors.toList());
+        try {
+            createZipArchive(new File(workingDir, "debug_files.zip"), debugFilesToZip);
+            debugFilesToZip.forEach(File::delete);
+        } catch (IOException e) {
+            print(LOG, "Error while creating zip archive for debug_files.zip");
+        }
+
+        //zip log files
+        List<File> logFilesToZip = List.of("loadLog1.sql", "loadLog2.sql", "prepareLog1", "prepareLog2", "logNCBIgeneLoad").stream()
+                .map(filename -> new File(workingDir, filename))
+                .filter(File::exists)
+                .collect(Collectors.toList());
+        try {
+            createZipArchive(new File(workingDir, "log_files.zip"), logFilesToZip);
+            logFilesToZip.forEach(File::delete);
+        } catch (IOException e) {
+            print(LOG, "Error while creating zip archive for log_files.zip");
+        }
+
+        // zip unload files
+        //length.unl noLength.unl notInCurrentReleaseGeneIDs.unl referenceProteinDeletes.unl toDelete.unl toLoad.unl toMap.unl toPreserve.unl
+        List<File> unloadFilesToZip = List.of("length.unl", "noLength.unl", "notInCurrentReleaseGeneIDs.unl",
+                "referenceProteinDeletes.unl", "toDelete.unl", "toLoad.unl", "toMap.unl", "toPreserve.unl").stream()
+                .map(filename -> new File(workingDir, filename))
+                .filter(File::exists)
+                .collect(Collectors.toList());
+        try {
+            createZipArchive(new File(workingDir, "unload_files.zip"), unloadFilesToZip);
+            unloadFilesToZip.forEach(File::delete);
+        } catch (IOException e) {
+            print(LOG, "Error while creating zip archive for unload_files.zip");
+        }
+
     }
 
     /**
@@ -3685,13 +3749,20 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         if (sourceRoot == null) {
             sourceRoot = System.getenv("SOURCEROOT");
         }
-        File reportFile = new File(workingDir, "ncbi_report.html.zip");
+        File reportFile = new File(workingDir, "ncbi_report.html");
         try {
             String template = sourceRoot + "/home/uniprot/zfin-report-template.html";
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
             FileUtils.writeStringToFile(reportFile, filledTemplate);
-            writeToFileOrZip(reportFile, filledTemplate, "UTF-8");
+            //check report file size and compress if too big
+            if (reportFile.length() > MAX_REPORT_FILE_SIZE) {
+                print(LOG, "Report file size is " + reportFile.length() + " bytes, compressing into zip file.\n");
+                writeToFileOrZip(new File(workingDir, "ncbi_report.html.zip"), filledTemplate, "UTF-8");
+                if (!reportFile.delete()) {
+                    print(LOG, "WARNING: Failed to delete large report file after zipping: " + reportFile.getAbsolutePath() + "\n");
+                }
+            }
         } catch (IOException e) {
             print(LOG, "ERROR: Could not write report file: " + e.getMessage());
         }
