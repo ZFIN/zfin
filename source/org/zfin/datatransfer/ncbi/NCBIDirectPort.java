@@ -3491,6 +3491,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         NCBIReportBuilder builder = new NCBIReportBuilder();
+        builder.setInstance(ZfinPropertiesEnum.INSTANCE.toString());
 
         NCBIReportBuilder.SummaryTableBuilder table = builder.addSummaryTable("number of db_link records with gene");
         table.setHeaders(List.of("Category", "Before Load", "After Load", "Percentage Change"));
