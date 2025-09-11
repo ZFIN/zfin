@@ -105,7 +105,8 @@ select count(dblink_zdb_id) as noLengthBefore
 -- then we want to preserve the "Current" status instead of changing it to "Not in current annotation release"
     insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
     select mrkr_zdb_id, 13 as vocab_term_id from ncbi_zdb_gene_not_in_current
-        WHERE mrkr_zdb_id NOT IN (SELECT mapped_zdb_gene_id FROM ncbi_gene_load WHERE fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
+        WHERE mrkr_zdb_id NOT IN (SELECT mapped_zdb_gene_id FROM ncbi_gene_load WHERE fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')
+        on conflict (mas_mrkr_zdb_id) do update set mas_vt_pk_id = 13;
 
     -- Anything in the to_delete table that matches the 13 vocab_term_id should be preserved
     -- This query removes them from the ncbi_gene_delete table, thus preserving them
@@ -246,23 +247,14 @@ select count(dblink_zdb_id) as noLenLoadedGenBank
                  and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-020723-3'));
 
 -- Mark any remaining Genes as "not in current annotation release" if they have a NCBI Gene ID that is in the notInCurrentReleaseGeneIDs.unl file
-WITH matched_not_in_current as (
-    select * from ncbi_zdb_gene_not_in_current left join db_link on dblink_linked_recid = mrkr_zdb_id and dblink_acc_num = ncbi_gene_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
-)
-update marker_annotation_status
- set mas_vt_pk_id = 12
- from matched_not_in_current
- where mas_mrkr_zdb_id = mrkr_zdb_id
-    and mas_vt_pk_id = 13;
-
--- Do the same as above, but as an "insert" in case the gene doesn't already have a mas record
 WITH matched_not_in_current  as (
-    select * from ncbi_zdb_gene_not_in_current left join db_link on dblink_linked_recid = mrkr_zdb_id and dblink_acc_num = ncbi_gene_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+    select * from ncbi_zdb_gene_not_in_current join db_link on dblink_linked_recid = mrkr_zdb_id and dblink_acc_num = ncbi_gene_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
 )
 insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
- select mrkr_zdb_id, 12
+ select mrkr_zdb_id, 13
  from matched_not_in_current
- where not exists (select 1 from marker_annotation_status where mas_mrkr_zdb_id = mrkr_zdb_id);
+on conflict (mas_mrkr_zdb_id) do update
+ set mas_vt_pk_id = 13;
 
 
 -- Many to Many report:
