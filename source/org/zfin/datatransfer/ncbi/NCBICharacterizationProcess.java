@@ -26,7 +26,7 @@ class NCBICharacterizationProcess {
             System.err.println("Usage: NCBICharacterizationProcess <beforeFile> <afterFile>");
             System.err.println("Example: NCBICharacterizationProcess combined_before.csv combined_after.csv");
             System.err.println("Expect two CSV files that have already been combined with attribution data");
-            System.err.println("When finished, details are saved to before_after.zip in the current directory");
+            System.err.println("When finished, details are saved to before_after.xlsx in the current directory");
             System.exit(1);
         }
         

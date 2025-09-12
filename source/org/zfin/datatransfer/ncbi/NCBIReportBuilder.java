@@ -17,6 +17,7 @@ public class NCBIReportBuilder {
 
     private String title;
     private String releaseID;
+    private String instance;
     private List<SummaryTableBuilder> summaryTables;
     private List<LoadReportAction> actions;
 
@@ -42,6 +43,11 @@ public class NCBIReportBuilder {
 
     public NCBIReportBuilder setReleaseID(String releaseID) {
         this.releaseID = releaseID;
+        return this;
+    }
+
+    public NCBIReportBuilder setInstance(String instance) {
+        this.instance = instance;
         return this;
     }
 
@@ -94,7 +100,10 @@ public class NCBIReportBuilder {
         }
         
         // Create summary
-        LoadReportSummary summary = new LoadReportSummary("Summary of NCBI Load Report", tables);
+        String description = "This report summarizes the results of the NCBI data load process.\n";
+        description += (instance != null && !instance.isEmpty()) ? "Instance: " + instance + "\n" : "";
+
+        LoadReportSummary summary = new LoadReportSummary(description, tables);
         
         // Create supplemental data (empty for now, but required by schema)
         Map<String, Object> supplementalData = new HashMap<>();
@@ -105,6 +114,8 @@ public class NCBIReportBuilder {
         report.setSummary(summary);
         report.setSupplementalData(supplementalData);
         report.setActions(actions);
+
+        report.generateAllIds(); // Ensure all IDs are set
         
         return report;
     }
