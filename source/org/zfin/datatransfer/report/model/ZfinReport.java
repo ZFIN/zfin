@@ -46,4 +46,9 @@ public class ZfinReport {
         this.actions = actions;
     }
 
+    public void generateAllIds() {
+        for (LoadReportAction action : actions) {
+            action.generateId();
+        }
+    }
 }

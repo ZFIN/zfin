@@ -4,6 +4,7 @@ package org.zfin.datatransfer.ncbi;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.zfin.datatransfer.report.model.LoadReportAction;
 import org.zfin.publication.Publication;
 
 import java.io.File;
@@ -23,6 +24,25 @@ public class NCBIPortTest {
         Map<String, Integer> results = port.parseRefSeqCatalogFileForSequenceLength();
         assertEquals(1, results.size());
         assertEquals(Integer.valueOf(670), results.get("XR_662331"));
+    }
+
+    @Test
+    public void filterRedundantWarningsTest() {
+        List<LoadReportAction> existingWarnings = new ArrayList<>();
+        LoadReportAction warning1 = new LoadReportAction();
+        warning1.setType(LoadReportAction.Type.WARNING);
+        warning1.setSubType("N to 1");
+        warning1.setGeneZdbID("ZDB-GENE-030113-2 ZDB-GENE-030131-2083 ZDB-GENE-030616-413 ZDB-GENE-050208-245");
+        warning1.setAccession("100001684 317731");
+        existingWarnings.add(warning1);
+
+        LoadReportAction warning2 = new LoadReportAction();
+        warning2.setType(LoadReportAction.Type.WARNING);
+        warning2.setSubType("N to 1");
+        warning2.setGeneZdbID("ZDB-GENE-030616-413");
+        warning2.setAccession("317731");
+        NCBIDirectPort.addToWarningActionsIfNotDuplicate(existingWarnings, warning2);
+        assertEquals(1, existingWarnings.size());
     }
 
     @Test

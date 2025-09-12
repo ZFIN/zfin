@@ -26,6 +26,8 @@ public class MarkerHistoryDTO implements Serializable {
     @JsonView(View.API.class)
     private String date;
     @JsonView(View.API.class)
+    private String time;
+    @JsonView(View.API.class)
     private String comments;
     @JsonView(View.API.class)
     private List<String> attributions;
@@ -46,6 +48,7 @@ public class MarkerHistoryDTO implements Serializable {
         dto.setNewValue(history.getNewValue());
         dto.setOldSymbol(history.getOldSymbol());
         dto.setDate(new SimpleDateFormat("yyyy-MM-dd").format(history.getDate()));
+        dto.setTime(new SimpleDateFormat("HH:mm:ss").format(history.getDate()));
         dto.setComments(history.getComments());
         dto.setAttributionsSize(0);
         dto.setAttributions(history.getAttributions().stream().map(p -> p.getPublication().getZdbID()).toList());
