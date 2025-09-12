@@ -338,7 +338,7 @@ public class FeatureService {
             }
             case "GRCz12tu" -> {
                 imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
-                source = GenomeLocation.Source.ZFIN_NCBI;
+                source = GenomeLocation.Source.ZFIN_NCBI_Z12;
             }
             default -> {
                 imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ11);

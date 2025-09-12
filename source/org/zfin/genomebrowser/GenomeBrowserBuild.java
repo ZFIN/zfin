@@ -51,7 +51,7 @@ public enum GenomeBrowserBuild {
 
     public static GenomeBrowserBuild getBySource(GenomeLocation.Source source) {
         return switch (source) {
-            case ZFIN_NCBI -> CURRENT;
+            case ZFIN_NCBI_Z12 -> CURRENT;
             case ZFIN -> GRCZ11;
             case ZFIN_Zv9 -> ZV9;
             default -> CURRENT;

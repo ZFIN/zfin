@@ -84,7 +84,7 @@ public class NCBIGff3Processor {
         VocabularyTerm annotationStatusTerm = vocabularyService.getVocabularyTerm(NCBI_ANNOTATION_STATUS, "Current");
 
         Collection<List<Gff3Ncbi>> batchedFilteredResults = createBatch(filteredResultSet);
-        List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
+        List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER_Z12);
         Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
             .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
 
@@ -128,7 +128,7 @@ public class NCBIGff3Processor {
                         genomeLocation.setChromosome(gff3Ncbi.getChromosome());
                         genomeLocation.setStart(gff3Ncbi.getStart());
                         genomeLocation.setEnd(gff3Ncbi.getEnd());
-                        genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER);
+                        genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER_Z12);
                         getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
                         if (newRecords.get() % 500 == 0) {
                             log.error("Processed " + newRecords.get() + " new genome locations.");

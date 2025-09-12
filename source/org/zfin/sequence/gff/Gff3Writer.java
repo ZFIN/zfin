@@ -281,7 +281,7 @@ public class Gff3Writer {
         HibernateUtil.createTransaction();
         try {
 
-            List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
+            List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER_Z12);
             Map<String, MarkerGenomeLocation> geneIDMap = locationList.stream()
                 .collect(Collectors.toMap(MarkerGenomeLocation::getAccessionNumber, location -> location, (a, b) -> a, LinkedHashMap::new));
             filteredResults.forEach(gff3Ncbi -> {
@@ -298,7 +298,7 @@ public class Gff3Writer {
                 genomeLocation.setChromosome(gff3Ncbi.getChromosome());
                 genomeLocation.setStart(gff3Ncbi.getStart());
                 genomeLocation.setEnd(gff3Ncbi.getEnd());
-                genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER);
+                genomeLocation.setSource(GenomeLocation.Source.NCBI_LOADER_Z12);
                 getSequenceRepository().saveOrUpdateGenomeLocation(genomeLocation);
             });
         } catch (Exception e) {

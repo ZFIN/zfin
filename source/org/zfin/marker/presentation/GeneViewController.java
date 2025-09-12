@@ -133,7 +133,7 @@ public class GeneViewController {
         geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean(gene));
 
         // sequence section: if not empty
-        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI);
+        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI_Z12);
         if (genomeLocation.size() > 0) {
             GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(genomeLocation.get(0))
@@ -149,7 +149,7 @@ public class GeneViewController {
         TreeSet locations = new TreeSet<>();
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
-            if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ZFIN)) {
+            if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ZFIN_NCBI_Z12)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName("ZFIN");
                 location.setOrder(0);
@@ -157,7 +157,7 @@ public class GeneViewController {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName(genomeMarkerLocation.getSource().getDisplayName());
                 location.setOrder(1);
-            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.NCBI)) {
+            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.NCBI_LOADER_Z12)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName("NCBI");
                 location.setOrder(2);

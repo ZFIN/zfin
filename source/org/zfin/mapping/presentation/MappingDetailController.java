@@ -30,7 +30,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.mapping.GenomeLocation.Source.ZFIN;
-import static org.zfin.mapping.GenomeLocation.Source.ZFIN_NCBI;
+import static org.zfin.mapping.GenomeLocation.Source.ZFIN_NCBI_Z12;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -272,7 +272,7 @@ public class MappingDetailController {
         }
         List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
-            if (List.of(ZFIN_NCBI, ZFIN).contains(genomeLocation.getSource())) {
+            if (List.of(ZFIN_NCBI_Z12, ZFIN).contains(genomeLocation.getSource())) {
                 GenomeBrowserImage gbrowseImage = genomeBrowserFactory.getImageBuilder()
                         .setLandmarkByGenomeLocation(genomeLocation)
                         .withCenteredRange(500000)
@@ -280,11 +280,11 @@ public class MappingDetailController {
                         .highlightColor("pink")
                         .withHeight(200)
                         .tracks(GBrowseService.getGBrowseTracks(marker))
-                        .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
+                        .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI_Z12 ?
                                 GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
                         .build();
                 model.addAttribute("gbrowseImage", gbrowseImage);
-                if (genomeLocation.getSource() == ZFIN_NCBI) {
+                if (genomeLocation.getSource() == ZFIN_NCBI_Z12) {
                     break;
                 }
             }
@@ -316,7 +316,7 @@ public class MappingDetailController {
 
         //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
         boolean hasGRCz12tu = locations.stream()
-                .anyMatch(location -> location.getSource() == ZFIN_NCBI);
+                .anyMatch(location -> location.getSource() == ZFIN_NCBI_Z12);
 
         if (hasGRCz12tu) {
             locations.removeIf(location -> location.getSource() == ZFIN);
