@@ -79,6 +79,15 @@ public class LoadReportAction {
         this.relatedActionsKeys.add(key);
     }
 
+    public void generateId() {
+        Object id = getId();
+        String idString = (id != null) ? id.toString() : null;
+        if (idString == null || idString.isEmpty()) {
+            String randomId = java.util.UUID.randomUUID().toString();
+            this.setId(randomId);
+        }
+    }
+
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
 
     // Required fields
