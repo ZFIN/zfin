@@ -560,8 +560,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String loadPub = parts[3];
                 String existing = parts[4];
 
-                String message = String.format("N:1 Warning - ZFIN Gene %s mapped to NCBI Gene %s via DBLink %s (Load Pub: %s, Existing: %s)",
-                        zdbGeneId, ncbiId, dblinkZdbId, loadPub, existing);
+                String message = String.format("N:1 Warning - ZFIN Gene %s mapped to NCBI Gene %s\n" +
+                                "via DBLink %s\n" +
+                                "(Load Pub: %s)",
+                        zdbGeneId, ncbiId, dblinkZdbId, loadPub);
                 print(LOG, message);
                 records.add(Map.of(
                         "zdbGeneId", zdbGeneId,
