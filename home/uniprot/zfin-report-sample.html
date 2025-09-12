@@ -48,7 +48,8 @@
                         }
                     ],
                     "tags": [],
-                    "relatedActionsKeys": ["ZDB-GENE-030131-2956"]
+                    "relatedActionsKeys": ["ZDB-GENE-030131-2956"],
+                    "relatedEntityFields": {"Database": "Uniprot"}
                 },
                 {
                     "id": "fa70dc9a",
@@ -592,6 +593,18 @@
                 return (geneZdbID + ' ' + accession).toLowerCase();
             }
 
+            function getRelatedEntityFieldsHeaders(activeItems) {
+                let headers = new Set();
+                for (let item of activeItems) {
+                    if (item.relatedEntityFields) {
+                        for (let key of Object.keys(item.relatedEntityFields)) {
+                            headers.add(key);
+                        }
+                    }
+                }
+                return Array.from(headers);
+            }
+
             useEffect(() => {
                 if (items) {
                     const filteredItems = items.filter( item => item.type === type && item.subType === subtype);
@@ -599,6 +612,7 @@
                 }
             }, [items, type, subtype]);
 
+            const refHeaders = getRelatedEntityFieldsHeaders(subTypeItems);
             return html`
                 <h2>${type} - ${subtype}</h2>
                 <p>Click on any of the records below for more details.</p>
@@ -610,6 +624,7 @@
                     <tr>
                         <th>ZDB Gene ID</th>
                         <th>Accession</th>
+                        ${refHeaders.map( h => html`<th>${h}</th>`)}
                         <th>Tags
                                 <!-- ${tagFilter()} -->
                         </th>
@@ -626,6 +641,7 @@
                                     ${item.accession}
                                     </a>
                                 </td>
+                                ${refHeaders.map( h => html`<td>${item.relatedEntityFields ? item.relatedEntityFields[h] : ''}</td>`)}
                                 <td>${ item.tags && item.tags.map(tag => formatTag(tag)) }</td>
                             </tr>
                         `)}
