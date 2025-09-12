@@ -75,9 +75,6 @@ delete from pre_delete
                   and recattrib_source_zdb_id not in (
                                                       'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
                                                       'ZDB-PUB-130725-2' -- Curation of NCBI Gene Data Via Shared Vega Gene IDs
-
-                    -- should we also remove those attributed to 'ZDB-PUB-230516-87' ?
---                                                       ,'ZDB-PUB-230516-87' -- Curation of NCBI Gene Data Via Shared Ensembl IDs (Supplemental NCBI Load)
                                                      ));
 
 --!echo 'Analyze what kinds of data in pre_delete table'

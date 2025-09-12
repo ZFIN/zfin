@@ -440,6 +440,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         executeDeleteAndLoadSQLFile();
         printTimingInformation(40);
 
+        //Add call to Christian's script here for updating by the gff3_ncbi table
+
         sendLoadLogs(); // This was called if loadNCBIgeneAccs.sql failed, good to call after too.
         printTimingInformation(41);
 
