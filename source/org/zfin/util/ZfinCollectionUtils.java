@@ -55,6 +55,11 @@ public class ZfinCollectionUtils {
      * Removes entries from the input map that have duplicate values and returns a map of those duplicate values
      * along with the set of keys that had those values.
      *
+     * example:
+     * Input: {A=1, B=2, C=1, D=3, E=2}
+     * Output: {1={A, C}, 2={B, E}}
+     * The original map will be modified to: {D=3}
+     *
      * @param inputMap the original map from which to remove duplicates
      * @return a map where each key is a duplicate value from the original map, and the corresponding value is a set
      *         of all keys that had that duplicate value
