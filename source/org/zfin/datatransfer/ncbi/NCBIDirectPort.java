@@ -440,6 +440,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         executeDeleteAndLoadSQLFile();
         printTimingInformation(40);
 
+        executeMarkerAssemblyUpdate();
+        printTimingInformation(4001);
+
         //Add call to Christian's script here for updating by the gff3_ncbi table
 
         sendLoadLogs(); // This was called if loadNCBIgeneAccs.sql failed, good to call after too.
@@ -3250,6 +3253,36 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
         }
         print(LOG, "\nDone with the deletion and loading!\n\n");
+    }
+
+    private void executeMarkerAssemblyUpdate() {
+        String sqlFile = "markerAssemblyUpdate.sql";
+        File fullPathToSqlFile = new File(SOURCEROOT.value(), "server_apps/data_transfer/NCBIGENE/" + sqlFile);
+
+        if (!fullPathToSqlFile.exists()) {
+            reportErrAndExit("SQL file not found: " + fullPathToSqlFile.getAbsolutePath());
+            return;
+        }
+
+        try {
+            HibernateUtil.createTransaction(); // Assuming the SQL script manages its own transactionality or this is appropriate
+            doSystemCommand(
+                    List.of(
+                            "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
+                            "-U", env("PGUSER"),
+                            "-h", env("PGHOST"),
+                            "-d", env("DB_NAME"),
+                            "-a", "-f", fullPathToSqlFile.getAbsolutePath()
+                    ), "loadLogMarkerAssemblyUpdate.txt", "loadLogMarkerAssemblyUpdateErr.txt"
+            );
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) { // Catch general exception from doSystemCommand
+            HibernateUtil.rollbackTransaction();
+            // Perl script explicitly calls sendLoadLogs() on failure of this specific command.
+            sendLoadLogs(); // Send logs before exiting
+            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at markerAssemblyUpdate.sql");
+        }
+        print(LOG, "\nDone with the update of marker-assembly association!\n\n");
     }
 
     private void sendLoadLogs() {
