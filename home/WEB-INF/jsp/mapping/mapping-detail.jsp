@@ -38,7 +38,7 @@
         <zfin2:mappedClonesTable mappedClones="${mappedClones}" marker="${marker}"/>
     </zfin2:subsection>
 
-    <zfin2:subsection title="PHYSICAL MAPPING " test="${!empty allelicFeatures}" showNoData="true">
+    <zfin2:subsection title="PHYSICAL MAPPING " test="${!empty allelicFeatures}" showNoData="true" anchor="physicalMapping">
 
         <zfin2:displayFeatureLocations allelicFeatures="${allelicFeatures}"/>
     </zfin2:subsection>
@@ -119,6 +119,7 @@
                 jQuery('#' + showElement2).show();
                 jQuery('#' + hideElement).hide();
             }
+
             function toggleOf(showElement1, showElement2, hideElement) {
                 jQuery('#' + showElement1).hide();
                 jQuery('#' + showElement2).hide();
