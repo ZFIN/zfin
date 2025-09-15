@@ -491,18 +491,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private void cleanupForJenkins() {
         beforeFile = new File(workingDir, "before_load.csv");
         afterFile = new File(workingDir, "after_load.csv");
-        File compressedBeforeFile = new File(workingDir, "before_load.csv.zip");
-        File compressedAfterFile = new File(workingDir, "after_load.csv.zip");
+        File compressedBeforeAfterFile = new File(workingDir, "before_after_load_csvs.zip");
         try {
-            createZipArchive(compressedBeforeFile, List.of(beforeFile));
+            createZipArchive(compressedBeforeAfterFile, List.of(beforeFile, afterFile));
             beforeFile.delete();
+            afterFile.delete();
         } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for before_load.csv.zip");
-        }
-        try {
-            createZipArchive(compressedAfterFile, List.of(afterFile));
-        } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for after_load.csv.zip");
+            print(LOG, "Error while creating zip archive for before_after_load_csvs.zip");
         }
 
         //zip debug files: debug1 debug10 debug12 debug13 debug14 debug15 debug16.json debug17
@@ -774,12 +769,34 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         captureState(beforeFile);
     }
 
+    /**
+     * Captures the state of relevant tables before or after the load.
+     * The output is written to the specified outputFile in CSV format.
+     * The relevant tables are:
+     * - db_link
+     * - record_attribution
+     * - marker_assembly
+     * - marker_annotation_status
+     * @param outputFile
+     */
     private void captureState(File outputFile) {
         try {
-            String sqlQuery = "\\copy (select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id " +
-                    " from db_link d left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id " +
-                    " group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id " +
-                    " order by dblink_linked_recid, dblink_acc_num ) to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
+            String sqlQuery = "\\copy (" +
+                    """
+                    select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
+                    string_agg(ma_a_pk_id::varchar, '|' order by ma_a_pk_id) as marker_assemblies,
+                    string_agg(mas_vt_pk_id::varchar, '|') as marker_annotation_status
+                     from db_link d
+                     left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
+                     left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
+                     left join marker_annotation_status on d.dblink_linked_recid = mas_mrkr_zdb_id
+                     group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
+                     order by dblink_linked_recid, dblink_acc_num
+                    """ +
+                    ") to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
+
+            //remove newlines from sqlQuery
+            sqlQuery = sqlQuery.replaceAll("\\s+", " ");
 
             HibernateUtil.createTransaction();
             doSystemCommand(
