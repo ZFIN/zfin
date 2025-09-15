@@ -18,11 +18,13 @@ class PublicationServiceSpec  extends AbstractZfinIntegrationSpec{
     public static String CKIM = "ZDB-PERS-970429-23"
     public static String OZHAN = "ZDB-PERS-100120-1"
 
-    public def setupSpec() {
+    @Override
+    public void setupSpec() {
         publicationService = new PublicationService();
     }
 
-    public def cleanupSpec() {
+    @Override
+    public void cleanupSpec() {
         publicationService = null
     }
 

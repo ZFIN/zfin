@@ -35,11 +35,12 @@ class QuerySpec extends ZfinIntegrationSpec {
     SolrQuery secondQuery
 
     //sets up for all tests in class
-    public def setupSpec() {
+    @Override
+    public void setupSpec() {
         client = SolrService.getSolrClient()
     }
 
-    public def cleanSpec() {
+    public void cleanSpec() {
         client = null
     }
 

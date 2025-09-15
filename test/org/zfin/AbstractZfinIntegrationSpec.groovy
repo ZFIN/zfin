@@ -9,14 +9,14 @@ import org.zfin.framework.HibernateUtil
 * */
 abstract class AbstractZfinIntegrationSpec extends AbstractZfinSpec {
 
-    public def setupSpec() {
+    public void setupSpec() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator(false);
         }
     }
 
-    public def cleanupSpec() {
+    public void cleanupSpec() {
         HibernateUtil.closeSession();
     }
 

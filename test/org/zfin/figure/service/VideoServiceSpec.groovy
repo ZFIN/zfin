@@ -22,7 +22,8 @@ class VideoServiceSpec extends AbstractZfinIntegrationSpec {
     @ClassRule @Shared TemporaryFolder tempDir;
 
     //these runs once for the whole class
-    public def setupSpec() {
+    @Override
+    public void setupSpec() {
         originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
         videoLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.VIDEO_LOAD.toString())
@@ -39,7 +40,8 @@ class VideoServiceSpec extends AbstractZfinIntegrationSpec {
         HibernateUtil.closeSession()
     }
 
-    public def cleanupSpec() {
+    @Override
+    public void cleanupSpec() {
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
     }
 
