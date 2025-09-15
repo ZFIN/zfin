@@ -14,5 +14,5 @@ Chr ${location.chromosome}: ${location.start}
     (<a href="/${location.attribution.zdbID}">1</a>)
 </c:if>
 <c:if test="${!hideLink}">
-    <a href="/action/mapping/detail/${location.feature.zdbID}">Details</a>
+    <a href="/action/mapping/detail/${location.feature.zdbID}#physicalMapping">Details</a>
 </c:if>
