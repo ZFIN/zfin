@@ -31,6 +31,7 @@ FIGS_TO_LOAD = new File("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
+NON_OPEN_PUBS = new File("nonOpenAccessPubs.txt")
 
 def idsToGrab = [:]
 
@@ -150,7 +151,17 @@ def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
         def timeStop = new Date()
         TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
         println("Non open access download to filesystem duration:" + duration)
-        ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
+
+        //Check if the mimetype is actually a PDF
+        //eg. file -b --mime-type ZDB-PUB-250712-4.pdf
+        def mimetype = "/usr/bin/file -b --mime-type ${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf".execute().text.trim()
+        if (!mimetype.equals("application/pdf")) {
+            println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
+            new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf").delete()
+            NON_OPEN_PUBS.append([pmcId, zdbId].join('|') + "\n")
+        } else {
+            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
+        }
     }
 }
 
@@ -342,3 +353,11 @@ loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ER
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_pub_files.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadPubFiles.waitFor()
+
+if (NON_OPEN_PUBS.length() > 0) {
+    println("The following non-open access publications were not downloaded as PDFs:")
+    NON_OPEN_PUBS.eachLine { line ->
+        println(line)
+    }
+    System.exit(2)
+}
