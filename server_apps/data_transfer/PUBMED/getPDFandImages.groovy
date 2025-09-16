@@ -31,7 +31,7 @@ FIGS_TO_LOAD = new File("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
-NON_OPEN_PUBS = new File("nonOpenAccessPubs.txt")
+NON_OPEN_PUBS = new File("nonOpenAccessPubs.csv")
 
 def idsToGrab = [:]
 
@@ -144,7 +144,8 @@ def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
         def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" +".pdf")
         def out = new BufferedOutputStream(file)
 
-        URLConnection connection = new URL("https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/").openConnection()
+        String ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/"
+        URLConnection connection = new URL(ncbiUrl).openConnection()
         connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
         out << connection.getInputStream()
         out.close()
@@ -158,7 +159,10 @@ def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
         if (!mimetype.equals("application/pdf")) {
             println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
             new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf").delete()
-            NON_OPEN_PUBS.append([pmcId, zdbId].join('|') + "\n")
+            if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
+                NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl\n")
+            }
+            NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl].join(',') + "\n")
         } else {
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
         }
