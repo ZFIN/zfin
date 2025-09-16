@@ -44,6 +44,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; ./getPDFandImages.groovy</command>
+      <unstableReturn>2</unstableReturn>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
