@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>Used to grab the last 10 days of new publications from pubmed and load them into the publication table when the pubmedid (publication.accession_no)&#xd;
-does not yet exist in ZFIN).  Also adds new journnals if it can&apos;t find an existing journal in ZFIN that matches the name or ISO abbreviation &#xd;
+does not yet exist in ZFIN).  Also adds new journals if it can&apos;t find an existing journal in ZFIN that matches the name or ISO abbreviation &#xd;
 from Pubmed.&#xd;
 &#xd;
 See wiki project documentation:&#xd;
@@ -49,7 +49,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/PUBMED/*.log</artifacts>
+      <artifacts>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/PUBMED/*.log,server_apps/data_transfer/PUBMED/*.csv</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -66,7 +66,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/PUBMED/*.log</attachmentsPattern>
+            <attachmentsPattern>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/PUBMED/*.log,server_apps/data_transfer/PUBMED/*.csv</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
