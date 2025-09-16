@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.AgmFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
@@ -230,7 +232,13 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     private AffectedGenomicModel getAffectedGenomicModel(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
         model.setCurie("ZFIN:" + fish.getZdbID());
-        model.setName(fish.getDisplayName());
+        AgmFullNameSlotAnnotation agmFullName = new AgmFullNameSlotAnnotation();
+        agmFullName.setDisplayText(fish.getDisplayName());
+        agmFullName.setFormatText(fish.getDisplayName());
+        VocabularyTerm nameType = new VocabularyTerm();
+        nameType.setName("full_name");
+        agmFullName.setNameType(nameType);
+        model.setAgmFullName(agmFullName);
         return model;
     }
 

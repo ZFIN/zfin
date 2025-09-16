@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.associations.agmAssociations.AgmAlleleAssociationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.associations.AgmAlleleAssociationDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.GenotypeFeature;
 

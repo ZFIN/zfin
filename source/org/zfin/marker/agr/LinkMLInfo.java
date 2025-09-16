@@ -1,6 +1,8 @@
 package org.zfin.marker.agr;
 
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.AgmFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.zfin.expression.ExperimentCondition;
@@ -86,7 +88,13 @@ public class LinkMLInfo extends AbstractScriptWrapper {
     private AffectedGenomicModel getAffectedGenomicModel(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
         model.setCurie("ZFIN:" + fish.getZdbID());
-        model.setName(fish.getDisplayName());
+        AgmFullNameSlotAnnotation agmFullName = new AgmFullNameSlotAnnotation();
+        agmFullName.setDisplayText(fish.getDisplayName());
+        agmFullName.setFormatText(fish.getDisplayName());
+        VocabularyTerm nameType = new VocabularyTerm();
+        nameType.setName("full_name");
+        agmFullName.setNameType(nameType);
+        model.setAgmFullName(agmFullName);
         return model;
     }
 
