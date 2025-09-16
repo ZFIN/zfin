@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import CurateConstructForm from './CurateConstructForm';
 import {backendBaseUrl} from './DomainInfo';
 import {EditConstructFormDTO, MarkerLabelAndZdbId, MarkerNameAndZdbId} from './ConstructTypes';
+import useCurationTabLoadEvent from '../../hooks/useCurationTabLoadEvent';
 
 const calculatedDomain = backendBaseUrl();
 
@@ -18,6 +19,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
     const [lastCreatedConstructID, setLastCreatedConstructID] = useState<string>('');
+    const [pending, setPending] = useState<boolean>(true);
+
+    useCurationTabLoadEvent('CONSTRUCT', pending);
 
     function toggleDisplayMode(newMode: DisplayMode) {
         setErrorMessage('');
@@ -44,6 +48,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         });
         const uniqueConstructIdLabelList = uniqueByZdbID(constructIdLabelList);
         setConstructList(uniqueConstructIdLabelList);
+        setPending(false);
     }
 
     function uniqueByZdbID(constructIdLabelList: MarkerLabelAndZdbId[]) {
