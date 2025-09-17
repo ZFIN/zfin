@@ -27,6 +27,14 @@ where db.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
     )
 ;
 
+\echo Genes or Pseudogenes that exist in the original GFF3 file from NCBI
+\echo that got loaded and need post-load processing:
+\echo insert marker-assembly records to associate them to GRCz12tu
+\echo insert  sequence_feature_chromosome_location_generated records (official genome location info)
+\echo add gene_id records into gff3_ncbi_attribute table so the outgoing zfin_genes.grcz12.gff3 file
+\echo contains this attribute needed to link the glyph in jBrowse
+
+select * from temp_new_gene;
 
 insert into marker_assembly (ma_mrkr_zdb_id, ma_a_pk_id)
 select gene_zdb_id, 1
@@ -42,7 +50,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
                                                             sfclg_location_source)
 select gene_zdb_id,
        gff_seqname,
-       'GRCz12',
+       'GRCz12tu',
        gff_start,
        gff_end,
        accession,
@@ -51,7 +59,7 @@ from temp_new_gene,
      gff3_ncbi,
      gff3_ncbi_attribute
 where gna_key = 'Dbxref'
-  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value,'.*GeneID:' || accession || ','))
+  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene');
 
@@ -65,7 +73,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
                                                             sfclg_location_source)
 select gene_zdb_id,
        gff_seqname,
-       'GRCz12',
+       'GRCz12tu',
        gff_start,
        gff_end,
        accession,
@@ -74,6 +82,21 @@ from temp_new_gene,
      gff3_ncbi,
      gff3_ncbi_attribute
 where gna_key = 'Dbxref'
-  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value,'.*GeneID:' || accession || ','))
+  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene');
+
+-- insert gene_id into gff3_ncbi_attribute
+
+insert into gff3_ncbi_attribute (gna_gff_pk_id,gna_key, gna_value)
+select gff_pk_id,
+       'gene_id',
+       gene_zdb_id
+from temp_new_gene,
+     gff3_ncbi,
+     gff3_ncbi_attribute
+where gna_key = 'Dbxref'
+  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
+  and gna_gff_pk_id = gff_pk_id
+  and gff_feature in ('gene', 'pseudogene');
+
