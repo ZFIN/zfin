@@ -672,11 +672,7 @@ public class MarkerService {
         Iterator<String> referenceIDsIterator = referenceIDs.iterator();
         String pubId = referenceIDsIterator.next();
 
-        if (length == null) {
-            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
-        } else {
-            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, length);
-        }
+        link = markerRepository.addDBLinkWithLength(marker, accessionNo, refDB, pubId, length); //length may be null
 
         while (referenceIDsIterator.hasNext()) {
             Publication publication = publicationRepository.getPublication(referenceIDsIterator.next());

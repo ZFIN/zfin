@@ -24,7 +24,6 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationDbXref;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
@@ -529,7 +528,7 @@ public interface MarkerRepository {
     MarkerLocation saveMarkerLocation(MarkerLocation markerLocation);
     int deleteMarkerLocation(String zdbId);
 
-    DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
+    DBLink addDBLinkWithLength(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, Integer length);
 
 
 
