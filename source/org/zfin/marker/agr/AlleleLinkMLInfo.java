@@ -8,7 +8,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.SecondaryIdSlotAnnotationDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.alleleSlotAnnotations.AlleleMutationTypeSlotAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.AlleleMutationTypeSlotAnnotationDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.feature.Feature;

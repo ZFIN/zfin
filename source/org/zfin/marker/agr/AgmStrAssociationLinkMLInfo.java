@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.associations.agmAssociations.AgmSequenceTargetingReagentAssociationDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.alleleSlotAnnotations.AlleleMutationTypeSlotAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.associations.AgmSequenceTargetingReagentAssociationDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.Fish;
 

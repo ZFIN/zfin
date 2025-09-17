@@ -2,6 +2,7 @@ package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.*;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.AgmFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,13 @@ public class FishService extends AllianceService {
     public void submitFishToAlliance(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
         model.setPrimaryExternalId("ZFIN:" + fish.getZdbID());
-        model.setName(fish.getDisplayName());
+        AgmFullNameSlotAnnotation agmFullName = new AgmFullNameSlotAnnotation();
+        agmFullName.setDisplayText(fish.getDisplayName());
+        agmFullName.setFormatText(fish.getDisplayName());
+        VocabularyTerm nameType = new VocabularyTerm();
+        nameType.setName("full_name");
+        agmFullName.setNameType(nameType);
+        model.setAgmFullName(agmFullName);
         VocabularyTerm term = new VocabularyTerm();
         term.setName("fish");
         model.setSubtype(term);
