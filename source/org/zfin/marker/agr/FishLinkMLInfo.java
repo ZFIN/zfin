@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AffectedGenomicModelDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.Fish;
 
@@ -56,7 +57,12 @@ public class FishLinkMLInfo extends LinkMLInfo {
         return allFish.stream()
             .map(fish -> {
                 AffectedGenomicModelDTO dto = new AffectedGenomicModelDTO();
-                dto.setName(fish.getName());
+
+                NameSlotAnnotationDTO agmFullNameDto = new NameSlotAnnotationDTO();
+                agmFullNameDto.setDisplayText(fish.getName());
+                agmFullNameDto.setFormatText(fish.getName());
+                agmFullNameDto.setNameTypeName("full_name");
+                dto.setAgmFullNameDto(agmFullNameDto);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setSubtypeName("fish");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
