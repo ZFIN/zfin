@@ -3,7 +3,12 @@
 
 <z:page bootstrap="true">
     <div class="container-fluid">
-        <h3 class="page-header">Updates for ${zdbID}</h3>
+        <h3 class="page-header">
+            Updates for ${zdbID}
+            <z:dataManagerDropdown>
+                <a class="dropdown-item" href="/${zdbID}"><i class="fas fa-eye"></i> View</a>
+            </z:dataManagerDropdown>
+        </h3>
         <p class="lead">
             <a href="/${publication.zdbID}">${publication.title}</a>
             <c:if test="${!empty publication.fileName}"> <a
