@@ -7,5 +7,7 @@ psql -v ON_ERROR_STOP=1 -d $DBNAME -f E_zfin_ensembl_gene.sql -f E_expression_gf
 cd $SOURCEROOT
 gradle createGff3Files
 
-cp zfin_genes*.gff3 /opt/zfin//www_homes/zfin.org/home/data_transfer/Downloads/.
-cp zfin_ref*.gff3 /opt/zfin//www_homes/zfin.org/home/data_transfer/Downloads/.
+gzip -f zfin_genes.grcz12.gff3
+gzip -f zfin_refseq.grcz12.gff3
+cp zfin_genes*.gff3.* /opt/zfin/www_homes/zfin.org/home/data_transfer/Downloads/
+cp zfin_ref*.gff3.* /opt/zfin/www_homes/zfin.org/home/data_transfer/Downloads/
