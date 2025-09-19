@@ -37,8 +37,9 @@ import java.util.zip.GZIPInputStream;
 
 import static org.zfin.datatransfer.ncbi.port.PortHelper.*;
 import static org.zfin.datatransfer.ncbi.port.PortSqlHelper.getSqlForGeneAndRnagDbLinksFromFdbContId;
-import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.framework.HibernateUtil.*;
 import static org.zfin.properties.ZfinPropertiesEnum.SOURCEROOT;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.DateUtil.nowToString;
 import static org.zfin.util.FileUtil.createZipArchive;
 import static org.zfin.util.FileUtil.writeToFileOrZip;
@@ -49,16 +50,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private static final long MAX_REPORT_FILE_SIZE = 50_000_000; // 50 MB
     public File workingDir;
-
-//    use DBI;
-//    use Cwd;
-//    use POSIX;
-//    use Try::Tiny;
-//    use FindBin;
-
-//#relative path to library file(s) (ZFINPerlModules.pm)
-//    use lib "$FindBin::Bin/../../perl_lib/";
-//    use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File assertFileExistsAndNotEmpty) ;
 
     private Boolean debug = true;
 
@@ -259,6 +250,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
     private Set<String> loggedMessages = new HashSet<>(); // To avoid duplicate log messages
 
+    // Store the actions for changes that are made to the DB (really should be cudActions for create, update, delete)
+    private List<LoadReportAction> crudActions = new ArrayList<>();
 
     public static void main(String[] args) {
         NCBIDirectPort port = new NCBIDirectPort();
@@ -457,6 +450,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         reportAllLoadStatistics();
         printTimingInformation(42);
 
+        recordUpdatesHistory();
+        printTimingInformation(4201);
+
         emailLoadReports();
         printTimingInformation(43);
 
@@ -465,8 +461,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 "-o",
                 new File(workingDir, "noLength.unl").getAbsolutePath(),
                 new File(workingDir, "noLength.unl").getAbsolutePath()),
-                "prepareLog1",
-                "prepareLog2");
+                "prepareLog1.txt",
+                "prepareLog2.txt");
 
         outputDate(); // Corresponds to system("/bin/date");
 
@@ -488,63 +484,97 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
-    private void cleanupForJenkins() {
-        beforeFile = new File(workingDir, "before_load.csv");
-        afterFile = new File(workingDir, "after_load.csv");
-        File compressedBeforeFile = new File(workingDir, "before_load.csv.zip");
-        File compressedAfterFile = new File(workingDir, "after_load.csv.zip");
-        try {
-            createZipArchive(compressedBeforeFile, List.of(beforeFile));
-            beforeFile.delete();
-        } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for before_load.csv.zip");
-        }
-        try {
-            createZipArchive(compressedAfterFile, List.of(afterFile));
-        } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for after_load.csv.zip");
-        }
+    /**
+     * Iterate over all "CUD" operations and
+     * store a row in the updates table
+     */
+    private void recordUpdatesHistory() {
+        createTransaction();
+        for(LoadReportAction action : crudActions) {
+            String zdbId = action.getGeneZdbID();
+            String accession = action.getAccession();
+            String db = action.getDbName();
+            String pub = action.getRelatedEntityField("pub", "").toString();
 
-        //zip debug files: debug1 debug10 debug12 debug13 debug14 debug15 debug16.json debug17
-        //debug2 debug3 debug4 debug5 debug5a debug6
-        List<File> debugFilesToZip = List.of("debug1", "debug10", "debug12", "debug13", "debug14", "debug15", "debug16.json", "debug17",
-                "debug2", "debug3", "debug4", "debug5", "debug5a", "debug6", "java_debug_readZfinGeneInfoFile.json").stream()
+            if (action.getType() == LoadReportAction.Type.LOAD) {
+                String comment = "NCBI load added " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
+                getInfrastructureRepository().insertUpdatesTable(zdbId, null, "dblink", "", accession, comment);
+            }
+            else if (action.getType() == LoadReportAction.Type.DELETE) {
+                String comment = "NCBI load deleted " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
+                getInfrastructureRepository().insertUpdatesTable(zdbId, null, "dblink", accession, "", comment);
+            }
+        }
+        flushAndCommitCurrentSession();
+    }
+
+    private void cleanupForJenkins() {
+        //zip before_after captures
+        compressFilesForCleanup("before_after_load_csvs.zip", List.of("before_load.csv", "after_load.csv"), Collections.emptyList());
+
+        //zip debug files: debug1 ... debug10 ...
+        compressFilesForCleanup("debug_files.zip", List.of("debug1", "debug10", "debug12", "debug13", "debug14", "debug15", "debug16.json", "debug17",
+                "debug2", "debug3", "debug4", "debug5", "debug5a", "debug6", "debug9" , "java_debug_readZfinGeneInfoFile.json", "before_after_load_csvs.zip"),
+                Collections.emptyList());
+
+        //zip log files
+        compressFilesForCleanup("log_files.zip", List.of("loadLog1.txt", "loadLog2.txt", "prepareLog1.txt", "prepareLog2.txt",
+                "logNCBIgeneLoad.txt", "loadLogMarkerAssemblyUpdate.txt", "loadLogMarkerAssemblyUpdateErr.txt"), Collections.emptyList());
+
+        // zip unload files
+        compressFilesForCleanup("unload_files.zip",
+                List.of("length.unl", "noLength.unl", "notInCurrentReleaseGeneIDs.unl",
+                        "referenceProteinDeletes.unl", "toDelete.unl", "toLoad.unl", "toMap.unl", "toPreserve.unl"),
+                List.of("notInCurrentReleaseGeneIDs.unl"));
+
+        //zip downloaded files - gene2accession.gz, RefSeq-releaseXX.catalog, all downloaded files
+        File gene2accessionFile = findGene2AccessionFile();
+        File refSeqCatalogFile = findRefSeqCatalogFile();
+        renameFile(gene2accessionFile, "gene2accession.gz");
+        renameFile(refSeqCatalogFile, "refSeqCatalog.gz");
+        compressFilesForCleanup("downloaded_files.zip",
+                List.of("gene2accession.gz", "gene2vega.gz", "refSeqCatalog.gz", "seq.fasta", "RELEASE_NUMBER", "notInCurrentReleaseGeneIDs.unl", "ncbi_matches_through_ensembl.csv", "zf_gene_info.gz"),
+                Collections.emptyList());
+
+        //clean up legacy report files
+        compressFilesForCleanup("legacy_report_files.zip",
+                List.of("post_run_n_to_1_zdb_to_ncbi.csv",
+                "existing_many_to_many_report.csv",
+                "ncbi_report.json.zip",
+                "reportNtoN.2",
+                "reportNtoN.3"),
+                Collections.emptyList());
+
+    }
+
+    private File renameFile(File originalFile, String newName) {
+        File movedFile = new File(workingDir, newName);
+        if (originalFile != null && originalFile.exists()) {
+            try {
+                Files.move(originalFile.toPath(), movedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                print(LOG, "Error while renaming gene2accession file for zipping");
+            }
+        } else {
+            movedFile = originalFile;
+        }
+        return movedFile;
+    }
+
+    private void compressFilesForCleanup(String zipFileName, List<String> filesToZip, List<String> filesToSave) {
+        List<File> existingFiles = filesToZip.stream()
                 .map(filename -> new File(workingDir, filename))
                 .filter(File::exists)
                 .collect(Collectors.toList());
         try {
-            createZipArchive(new File(workingDir, "debug_files.zip"), debugFilesToZip);
-            debugFilesToZip.forEach(File::delete);
+            createZipArchive(new File(workingDir, zipFileName), existingFiles);
+            existingFiles
+                    .stream()
+                    .filter(file -> !filesToSave.contains(file.getName()))
+                    .forEach(File::delete);
         } catch (IOException e) {
             print(LOG, "Error while creating zip archive for debug_files.zip");
         }
-
-        //zip log files
-        List<File> logFilesToZip = List.of("loadLog1.sql", "loadLog2.sql", "prepareLog1", "prepareLog2", "logNCBIgeneLoad").stream()
-                .map(filename -> new File(workingDir, filename))
-                .filter(File::exists)
-                .collect(Collectors.toList());
-        try {
-            createZipArchive(new File(workingDir, "log_files.zip"), logFilesToZip);
-            logFilesToZip.forEach(File::delete);
-        } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for log_files.zip");
-        }
-
-        // zip unload files
-        //length.unl noLength.unl notInCurrentReleaseGeneIDs.unl referenceProteinDeletes.unl toDelete.unl toLoad.unl toMap.unl toPreserve.unl
-        List<File> unloadFilesToZip = List.of("length.unl", "noLength.unl", "notInCurrentReleaseGeneIDs.unl",
-                "referenceProteinDeletes.unl", "toDelete.unl", "toLoad.unl", "toMap.unl", "toPreserve.unl").stream()
-                .map(filename -> new File(workingDir, filename))
-                .filter(File::exists)
-                .collect(Collectors.toList());
-        try {
-            createZipArchive(new File(workingDir, "unload_files.zip"), unloadFilesToZip);
-            unloadFilesToZip.forEach(File::delete);
-        } catch (IOException e) {
-            print(LOG, "Error while creating zip archive for unload_files.zip");
-        }
-
     }
 
     /**
@@ -669,7 +699,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void removeOldFiles() {
-        String filesToRemoveMessage = "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl";
+        String filesToRemoveMessage = "Removing prepareLog* loadLog* logNCBIgeneLoad.txt debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl";
         System.out.println(filesToRemoveMessage);
         rmFiles(workingDir, List.of(
                 "*.csv",
@@ -688,7 +718,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 "debug*",
                 "java_debug_readZfinGeneInfoFile.json",
                 "loadLog*",
-                "logNCBIgeneLoad",
+                "logNCBIgeneLoad.txt",
                 "prepareLog*",
                 "report*",
                 "length.unl",
@@ -736,7 +766,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
             }
 
-            LOG = new BufferedWriter(new FileWriter(new File(workingDir, "logNCBIgeneLoad")));
+            LOG = new BufferedWriter(new FileWriter(new File(workingDir, "logNCBIgeneLoad.txt")));
             STATS_PRIORITY1 = new BufferedWriter(new FileWriter(new File(workingDir, "reportStatistics_p1")));
             STATS_PRIORITY2 = new BufferedWriter(new FileWriter(new File(workingDir, "reportStatistics_p2")));
             STATS = new BufferedWriter(new FileWriter(new File(workingDir, "reportStatistics")));
@@ -774,18 +804,40 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         captureState(beforeFile);
     }
 
+    /**
+     * Captures the state of relevant tables before or after the load.
+     * The output is written to the specified outputFile in CSV format.
+     * The relevant tables are:
+     * - db_link
+     * - record_attribution
+     * - marker_assembly
+     * - marker_annotation_status
+     * @param outputFile
+     */
     private void captureState(File outputFile) {
         try {
-            String sqlQuery = "\\copy (select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id " +
-                    " from db_link d left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id " +
-                    " group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id " +
-                    " order by dblink_linked_recid, dblink_acc_num ) to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
+            String sqlQuery = "\\copy (" +
+                    """
+                    select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
+                    string_agg(ma_a_pk_id::varchar, '|' order by ma_a_pk_id) as marker_assemblies,
+                    string_agg(mas_vt_pk_id::varchar, '|') as marker_annotation_status
+                     from db_link d
+                     left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
+                     left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
+                     left join marker_annotation_status on d.dblink_linked_recid = mas_mrkr_zdb_id
+                     group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
+                     order by dblink_linked_recid, dblink_acc_num
+                    """ +
+                    ") to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
+
+            //remove newlines from sqlQuery
+            sqlQuery = sqlQuery.replaceAll("\\s+", " ");
 
             HibernateUtil.createTransaction();
             doSystemCommand(
                     List.of(
                             "psql", "--echo-all", "-v", "ON_ERROR_STOP=1", "-U", env("PGUSER"), "-h", env("PGHOST"), "-d", env("DB_NAME"), "-a", "-c", sqlQuery
-                    ), "prepareLog1", "prepareLog2");
+                    ), "prepareLog1.txt", "prepareLog2.txt");
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
@@ -815,7 +867,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                             "-h", env("PGHOST"),
                             "-d", env("DB_NAME"),
                             "-a", "-f", sqlFilePath.getAbsolutePath()
-                    ), "prepareLog1", "prepareLog2"
+                    ), "prepareLog1.txt", "prepareLog2.txt"
             );
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
@@ -825,8 +877,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         print(LOG, "Done with preparing the delete list and the list for mapping.\n\n");
         String subjectPrefix = "Auto from " + instance + ": NCBI_gene_load.pl :: ";
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog1 file","prepareLog1", workingDir);
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog2 file","prepareLog2", workingDir);
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog1.txt file","prepareLog1.txt", workingDir);
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog2.txt file","prepareLog2.txt", workingDir);
     }
 
     private void getMetricsOfDbLinksToDelete() {
@@ -3243,7 +3295,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                             "-h", env("PGHOST"),
                             "-d", env("DB_NAME"),
                             "-a", "-f", fullPathToSqlFile.getAbsolutePath()
-                    ), "loadLog1.sql", "loadLog2.sql"
+                    ), "loadLog1.txt", "loadLog2.txt"
             );
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) { // Catch general exception from doSystemCommand
@@ -3287,10 +3339,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private void sendLoadLogs() {
         String subject = "Auto from " + instance + ": NCBI_gene_load.pl :: loadLog1 file";
-        // The Perl script attached "loadLog1". We might have "loadLog1.sql" and "loadLog2.sql".
+        // The Perl script attached "loadLog1". We might have "loadLog1.txt" and "loadLog2.txt".
         // Let's decide which one to send or if both. The original was just one.
-        // If loadNCBIgeneAccs.sql produces loadLog1.sql and loadLog2.sql:
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subject,"loadLog1.sql", workingDir);
+        // If loadNCBIgeneAccs.sql produces loadLog1.txt and loadLog2.txt:
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subject,"loadLog1.txt", workingDir);
         // If there's another loadLog1 from a different context, that needs to be clarified.
         // The Perl script seems to imply a generic "loadLog1" that might be overwritten.
         // For now, sending the one from loadNCBIgeneAccs.sql.
@@ -3496,12 +3548,42 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(STATS, getArtifactComparisonURLs());
         print(STATS, finalReportContent);
 
+        try {
+            STATS.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         writeHtmlReport();
 
 
         // Delete the two files
         new File(workingDir, "reportStatistics_p1").delete();
         new File(workingDir, "reportStatistics_p2").delete();
+    }
+
+    /**
+     * In order to squeeze the information from the traditional "reportStatistics" file
+     * that we generate during the load into the html report. We are copying the data
+     * into an "action" to be displayed by the standard html report format.
+     * @return
+     */
+    private LoadReportAction convertReportStatisticsToAction() {
+        try {
+            String statsAsString = Files.readString(new File(workingDir, "reportStatistics").toPath(), StandardCharsets.UTF_8);
+            LoadReportAction action = new LoadReportAction();
+            action.setType(LoadReportAction.Type.REPORTS);
+            action.setSubType("Legacy Report Statistics");
+            action.setId("reportStatistics");
+            action.setGeneZdbID("N/A");
+            action.setAccession("N/A");
+            action.setRelatedEntityFields(Map.of("Report Title", "reportStatistics"));
+            action.setDetails("This is a copy of the types of reports previously captured in a 'reportStatistics' file.\n\n\n");
+            action.addDetails(statsAsString);
+            return action;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void writeHtmlReport() {
@@ -3559,10 +3641,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             table3.addSummaryRow(List.of("Number of db_link records deleted", beforeAfterSummary.get("deletedCount")));
         }
 
-        builder.addActions(createActions(beforeAfterComparison));
+        crudActions = createActions(beforeAfterComparison);
+        builder.addActions(crudActions);
         builder.addActions(manyToManyWarningActions);
         builder.addActions(oneToManyWarningActions);
         builder.addActions(manyToOneWarningActions);
+
+        LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
+        builder.addAction(legacyStatsReport);
 
         ObjectNode report = builder.build();
 
@@ -3793,10 +3879,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
             FileUtils.writeStringToFile(reportFile, filledTemplate);
+            writeToFileOrZip(new File(workingDir, "ncbi_report.html.zip"), filledTemplate, "UTF-8");
             //check report file size and compress if too big
             if (reportFile.length() > MAX_REPORT_FILE_SIZE) {
-                print(LOG, "Report file size is " + reportFile.length() + " bytes, compressing into zip file.\n");
-                writeToFileOrZip(new File(workingDir, "ncbi_report.html.zip"), filledTemplate, "UTF-8");
+                print(LOG, "Report file size is " + reportFile.length() + " bytes, keeping only zip file.\n");
                 if (!reportFile.delete()) {
                     print(LOG, "WARNING: Failed to delete large report file after zipping: " + reportFile.getAbsolutePath() + "\n");
                 }
@@ -3814,7 +3900,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private void emailLoadReports() {
         String subjectPrefix = "Auto from " + instance + ": NCBI_gene_load.pl :: ";
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_REPORT"), subjectPrefix + "Statistics", "reportStatistics", workingDir);
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"), subjectPrefix + "log file", "logNCBIgeneLoad", workingDir);
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"), subjectPrefix + "log file", "logNCBIgeneLoad.txt", workingDir);
     }
 
     private String[] getZdbGeneIdAndAttributionByNCBIgeneId(String ncbiGeneId) {

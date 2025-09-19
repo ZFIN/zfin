@@ -376,7 +376,7 @@
                                     ${item.accession}
                                     </a>
                                 </td>
-                                ${refHeaders.map( h => html`<td>${item.relatedEntityFields ? item.relatedEntityFields[h] : ''}</td>`)}
+                                ${refHeaders.map( h => html`<td><a href="#" onClick=${() => onClick(item)}>${item.relatedEntityFields ? item.relatedEntityFields[h] : ''}</a></td>`)}
                                 <td>${ item.tags && item.tags.map(tag => formatTag(tag)) }</td>
                             </tr>
                         `)}

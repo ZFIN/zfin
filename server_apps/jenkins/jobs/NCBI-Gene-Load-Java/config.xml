@@ -68,16 +68,13 @@ cd $SOURCEROOT
 
 # Run the NCBI gene load
 gradle ncbiPort
-
-# compress the seq.fasta file since it gets large (~500MB)
-gzip -f -9 $WORKSPACE/seq.fasta || true
         ]]>
       </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz,gene2vega.gz,zf_gene_info.gz,seq.fasta*</artifacts>
+      <artifacts>report*,log*,*.unl,*Log*,debug*,*csv,*html,*json,*xlsx,*zip,*.danio.*.gz,gene2vega.gz,zf_gene_info.gz,seq.fasta*,*.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

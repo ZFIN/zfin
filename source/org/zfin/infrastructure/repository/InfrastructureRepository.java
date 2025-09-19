@@ -136,6 +136,8 @@ public interface InfrastructureRepository {
 
     DataAlias getDataAliasByID(String zdbID);
 
+    void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments);
+
     int deleteRecordAttributionForPub(String zdbID);
 
     int removeRecordAttributionForData(String datazdbID, String pubZdbID);

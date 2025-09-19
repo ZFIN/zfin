@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.zfin.marker.service.MarkerService.addMarkerLinkByAccession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 
 @Controller
@@ -369,7 +370,7 @@ public class MarkerLinkController {
 
         String publicationIDs = link.getPublicationIds();
         String updateComment = "Deleting dblink " + linkDisplay.getDisplayName() + (isEmpty(publicationIDs) ? "" : " with attributions " + publicationIDs);
-        InfrastructureService.insertUpdate(marker, updateComment);
+        getInfrastructureRepository().insertUpdatesTable(marker.getZdbID(), "dblink", linkDisplay.getAccession(), "", updateComment);
 
         HibernateUtil.flushAndCommitCurrentSession();
         return linkDisplay;

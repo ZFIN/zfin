@@ -515,7 +515,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         insertUpdatesTable(recID, beanFieldUpdate.getField(), from, to, comments);
     }
 
-    private void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
+    @Override
+    public void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
         Date when = new Date();
         if (submitter == null) {
             insertUpdatesTable(recId, null, null, fieldName, oldValue, newValue, comments, when);

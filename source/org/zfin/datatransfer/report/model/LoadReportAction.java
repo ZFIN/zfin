@@ -88,7 +88,7 @@ public class LoadReportAction {
         }
     }
 
-    public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE}
+    public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES, UPDATE, REPORTS}
 
     // Required fields
     @JsonProperty(value = "id", required = true)
@@ -154,5 +154,12 @@ public class LoadReportAction {
         this.details = details;
         this.length = length;
         this.supplementalDataKeys = supplementalDataKeys;
+    }
+
+    public Object getRelatedEntityField(String fieldName, Object defaultValue) {
+        if (relatedEntityFields != null && relatedEntityFields.containsKey(fieldName)) {
+            return relatedEntityFields.get(fieldName);
+        }
+        return defaultValue;
     }
 }
