@@ -10,6 +10,7 @@ RUN apt install -y postgresql-15
 RUN /etc/init.d/postgresql start && \
     su - postgres -c "createuser --superuser gradle" && \
     su - postgres -c "createuser --superuser informix" && \
+    su - postgres -c "createuser --superuser apache" && \
     su - postgres -c "createdb zfindb"
 
 RUN perl -i -pe 's/peer/trust/' /etc/postgresql/15/main/pg_hba.conf && \
