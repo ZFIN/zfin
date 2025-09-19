@@ -39,7 +39,6 @@
 export WORKING_DIR=$WORKSPACE
 
 # clear the working directory
-rm -rf $WORKING_DIR/legacy_reports
 rm -f $WORKING_DIR/*
 
 # optionally, copy the stored load files instead of downloading them

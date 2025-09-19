@@ -209,8 +209,6 @@ public class PortHelper {
             return ""; // No previous build to compare against or invalid build ID
         }
 
-        String artifactSubDirectory = "server_apps/data_transfer/NCBIGENE"; // As per Perl script context
-
         String[] artifacts = {
                 "reportNtoN", "reportNtoOne", "reportOneToN", "reportOneToZero",
                 "reportStatistics", "reportNonLoadPubGenPept", "reportZDBgeneIdWithMultipleVegaIds"
@@ -220,8 +218,8 @@ public class PortHelper {
         buffer.append("===========================================================================\n\n");
         for (String artifact : artifacts) {
             // Example URL: https://SITE.zfin.org/job/JOB_NAME/PREVIOUS_BUILD_ID/artifact-diff/CURRENT_BUILD_ID/path/to/artifact
-            buffer.append(String.format("%s%d/artifact-diff/%d/%s/%s\n",
-                    jobURL, previousBuildID, buildID, artifactSubDirectory, artifact));
+            buffer.append(String.format("%s%d/artifact-diff/%d/%s\n",
+                    jobURL, previousBuildID, buildID, artifact));
         }
         buffer.append("===========================================================================\n\n");
 

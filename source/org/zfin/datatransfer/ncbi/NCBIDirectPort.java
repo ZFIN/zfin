@@ -497,11 +497,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String pub = action.getRelatedEntityField("pub", "").toString();
 
             if (action.getType() == LoadReportAction.Type.LOAD) {
-                String comment = "NCBI load adding dblink " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
+                String comment = "NCBI load added " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
                 getInfrastructureRepository().insertUpdatesTable(zdbId, null, "dblink", "", accession, comment);
             }
             else if (action.getType() == LoadReportAction.Type.DELETE) {
-                String comment = "NCBI load deleting dblink " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
+                String comment = "NCBI load deleted " + db + ":" + accession + (StringUtils.isEmpty(pub) ? "" : " with attribution " + pub);
                 getInfrastructureRepository().insertUpdatesTable(zdbId, null, "dblink", accession, "", comment);
             }
         }
