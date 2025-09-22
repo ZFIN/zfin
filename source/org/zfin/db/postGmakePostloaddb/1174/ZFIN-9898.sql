@@ -28,7 +28,7 @@ ALTER table marker_assembly
     ADD UNIQUE (ma_a_pk_id, ma_mrkr_zdb_id);
 
 ALTER table marker_assembly
-    ADD COLUMN ma_a_date_created timestamp;
+    ADD COLUMN ma_a_date_created timestamp DEFAULT now();
 
 
 
