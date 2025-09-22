@@ -27,6 +27,9 @@ WHERE a.ma_a_pk_id = b.ma_a_pk_id
 ALTER table marker_assembly
     ADD UNIQUE (ma_a_pk_id, ma_mrkr_zdb_id);
 
+ALTER table marker_assembly
+    ADD COLUMN ma_a_date_created timestamp;
+
 
 
 -- marker gene as GRCz11 if they do not have a z12 association but have a sequence_feature_chromosome_location_generated record for ZFIN with GRCz11
