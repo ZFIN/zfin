@@ -84,7 +84,7 @@ if ($returnCode != 0) {
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
 print "Running parseDaily.pl on $newfile \n";
-$returnCode = system("./parseDaily.pl $newfile")
+$returnCode = system("./parseDaily.pl $newfile");
 if ($returnCode != 0) {
     &writeReport("parseDaily.pl failed.");
     exit $returnCode;
