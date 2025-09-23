@@ -23,7 +23,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     @ClassRule @Shared TemporaryFolder tempDir
 
     //these runs once for the whole class
-    def setupSpec() {
+    @Override
+    public void setupSpec() {
         def imageLoadPath = ZfinPropertiesEnum.IMAGE_LOAD.toString()
 
         // use relative path, otherwise tempDir throws IOException
@@ -49,7 +50,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         HibernateUtil.closeSession()
     }
 
-    def cleanupSpec() {
+    @Override
+    public void cleanupSpec() {
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
     }
 

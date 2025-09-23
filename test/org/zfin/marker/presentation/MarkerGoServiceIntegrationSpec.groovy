@@ -20,11 +20,13 @@ class MarkerGoServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Shared MarkerGoService markerGoService
 
     //todo: this should be autowired!
-    def setupSpec() {
+    @Override
+    public void setupSpec() {
         markerGoService = new MarkerGoService()
     }
 
-    def cleanupSpec() {
+    @Override
+    public void cleanupSpec() {
         markerGoService = null
     }
 

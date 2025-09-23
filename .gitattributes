@@ -739,6 +739,10 @@
 /lib/Java/cobertura.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/commons-lang3-3.12.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/commons-math-1.2.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/geb-core-6.0.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/geb-exceptions-6.0.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/geb-spock-6.0.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/geb-waiting-6.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/grand-1.8.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/groovycsv-1.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/gwt/gwt-api-checker-eclipse-transformed.jar filter=lfs diff=lfs merge=lfs -text
@@ -801,6 +805,9 @@
 /lib/Java/selenium-remote-driver-2.35.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/selenium-support-2.35.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/snakeyaml-1.12.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/spock-core-2.3-groovy-3.0.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/spock-junit4-2.3-groovy-3.0.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/spock-spring-2.3-groovy-3.0.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/spring-test-6.1.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/testInProgress-client-1.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/tomcat-jdbc.jar filter=lfs diff=lfs merge=lfs -text

@@ -30,7 +30,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
     SolrQuery query = new SolrQuery();
 
     //sets up for all tests in class
-    public def setupSpec() {
+    @Override
+    public void setupSpec() {
         client = SolrService.getSolrClient()
     }
 

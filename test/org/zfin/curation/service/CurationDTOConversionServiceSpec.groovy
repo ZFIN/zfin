@@ -58,7 +58,8 @@ class CurationDTOConversionServiceSpec extends AbstractZfinSpec {
             )
     ]
 
-    def setupSpec() {
+    @Override
+    public void setupSpec() {
         TestConfiguration.setAuthenticatedUser(person.patrick)
     }
 
