@@ -190,18 +190,17 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-#UNCOMMENT for ncbiload test container.
-#  ncbiload:
-#    build: ./ncbiload/
-#    environment:
-#      PGHOST: localhost
-#      PGUSER: postgres
-#      TZ: ${TZ}
-#      INSTANCE: ${DOCKER_INSTANCE}
-#    volumes:
-#      - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
-#      - ./ncbiload-inputs:/tmp/inputs
-#      - ${DOCKER_RESEARCH_PATH}:/mnt/research
+  ncbiload:
+    build: ./ncbiload/
+    environment:
+      PGHOST: localhost
+      PGUSER: postgres
+      TZ: ${TZ}
+      INSTANCE: ${DOCKER_INSTANCE}
+      IS_NCBI_LOAD_CONTAINER: "true"
+    volumes:
+      - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
+      - ${DOCKER_RESEARCH_PATH}:/mnt/research
   fail2ban:
     build: ./fail2ban/
     cap_add:
