@@ -21,6 +21,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/.*\.csv/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
@@ -160,9 +161,10 @@ def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
             println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
             new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf").delete()
             if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
-                NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl\n")
+                NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
             }
-            NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl].join(',') + "\n")
+            String zfinUrl = "https://zfin.org/action/publication/" + zdbId + "/edit#files";
+            NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
         } else {
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
         }
