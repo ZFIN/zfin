@@ -100,7 +100,7 @@ RUN adduser gradle solr
 #RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
 
 # install the file command for checking file types
-
+RUN apt install -y file
 USER gradle
 COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile
