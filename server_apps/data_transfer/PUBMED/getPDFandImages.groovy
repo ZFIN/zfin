@@ -16,6 +16,9 @@ import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.io.FilenameUtils
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
+import org.zfin.datatransfer.webservice.NCBIPMCLinkExtractor
+import org.zfin.datatransfer.webservice.NCBIPMCLinkExtractor.PMCLink
+import org.zfin.datatransfer.webservice.NCBIPMCLinkExtractor.PMCRecord
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -122,7 +125,7 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     println("extract file duration:" + duration2)
 }
 
-def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
+def downloadPDF (String pmcId, String zdbId, String pubYear) {
 
     def timeStart = new Date()
     def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
@@ -160,11 +163,20 @@ def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
         if (!mimetype.equals("application/pdf")) {
             println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
             new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf").delete()
-            if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
-                NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
+
+            println("Trying to download the PDF from the FTP site for $pmcId")
+            successfulDownload = downloadPdfFromFtp(pmcId, zdbId, pubYear)
+
+            if (successfulDownload) {
+                println("successfully downloaded the PDF from the FTP site for $pmcId")
+                ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
+            } else {
+                println("Could not download the PDF from the FTP site for $pmcId")
+                if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
+                    NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl\n")
+                }
+                NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl].join(',') + "\n")
             }
-            String zfinUrl = "https://zfin.org/action/publication/" + zdbId + "/edit#files";
-            NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
         } else {
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
         }
@@ -323,10 +335,56 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
 
             else {
                 println "found a PDF to try and download manually " + pmcId + "," + zdbId
-                downloadNonOpenAccessPDF(pmcId, zdbId, pubYear)
+                downloadPDF(pmcId, zdbId, pubYear)
             }
         }
     }
+}
+
+Boolean downloadPdfFromFtp(String pmcID, String zdbId, String pubYear) {
+    NCBIPMCLinkExtractor extractor = new NCBIPMCLinkExtractor();
+    List<PMCRecord> records = extractor.extractLinksFromPMC(pmcID);
+    List<PMCLink> pdfLinks = new ArrayList<>();
+    if (!records.isEmpty()) {
+        for (PMCRecord record : records) {
+            System.out.println("Record: " + record.getId());
+            for (PMCLink link : record.getLinks()) {
+                if (link.getFormat().equals("pdf") && link.getHref().contains("pdf")) {
+                    pdfLinks.add(link);
+                }
+            }
+        }
+    }
+    if (pdfLinks.size() == 0) {
+        return false;
+    }
+    if (pdfLinks.size() > 1) {
+        System.out.println("Multiple PDF links found for " + pmcID + ", using the first one: " + pdfLinks.get(0).getHttpsHref());
+    }
+    String pdfUrl = pdfLinks.get(0).getHttpsHref();
+    System.out.println("Downloading PDF from " + pdfUrl);
+
+    //do the download
+    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
+    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
+    if (!yearDirectory.exists()) {
+        yearDirectory.mkdir()
+    }
+    if (!directory.exists()) {
+        directory.mkdir()
+    }
+
+    def fileLocation = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" +".pdf"
+    def file = new FileOutputStream(fileLocation)
+    def out = new BufferedOutputStream(file)
+
+    URLConnection connection = new URL(pdfUrl).openConnection()
+    connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
+    out << connection.getInputStream()
+    out.close()
+
+    println "Downloaded PDF to " + fileLocation
+    return true;
 }
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
