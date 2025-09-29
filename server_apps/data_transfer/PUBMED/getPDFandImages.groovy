@@ -86,35 +86,27 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     def timeStart = new Date()
-    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
-    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
-    if (!yearDirectory.exists()) {
-        yearDirectory.mkdir()
-    }
-    if (!directory.exists()) {
-        directory.mkdir()
-    }
+    def directoryPath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId"
+    def filePrefix = "$directoryPath/$zdbId"
+    def directory = new File(directoryPath)
+    directory.mkdirs()
 
-    def tarOutputFile = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
+    def tarOutputFile = "${filePrefix}.tar.gz"
     println("Writing to $tarOutputFile")
-    def file = new FileOutputStream("$tarOutputFile")
-    def out = new BufferedOutputStream(file)
+    new File(tarOutputFile).withOutputStream { it << new URL(url).openStream() }
 
-    out << new URL(url).openStream()
-    out.close()
     def timeStop = new Date()
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
     println("download to filesystem duration:" + duration)
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar"
+    def unzipped_output = "${filePrefix}.tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()) {
-        PubmedUtils.gunzip(gziped_bundle, unzipped_output)
+        PubmedUtils.gunzip(tarOutputFile, unzipped_output)
     }
 
     def timeStart2 = new Date()
-    def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd $directoryPath && /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
     def timeStop2 = new Date()
@@ -125,13 +117,11 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
 def downloadPDF (String downloadUrl, String pmcId, String zdbId, String pubYear) {
 
     def timeStart = new Date()
-    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
-    def directory = new File("$yearDirectory/$zdbId")
+    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
     def filePath = "$directory/${zdbId}.pdf"
     def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC","")}/"
 
-    if (!yearDirectory.exists()) yearDirectory.mkdir();
-    if (!directory.exists()) directory.mkdir()
+    directory.mkdirs()
 
     def successfulDownload = downloadPdfFromFtp(downloadUrl, filePath)
     def timeStop = new Date()
