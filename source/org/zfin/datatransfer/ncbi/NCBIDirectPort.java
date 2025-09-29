@@ -3556,10 +3556,137 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         writeHtmlReport();
 
+        try {
+            writeAnnotationStatusConflictReport();
+        } catch (IOException e) {
+            System.err.println("Error writing annotation status conflict report: " + e.getMessage());
+        }
+
 
         // Delete the two files
         new File(workingDir, "reportStatistics_p1").delete();
         new File(workingDir, "reportStatistics_p2").delete();
+    }
+
+    private void writeAnnotationStatusConflictReport() throws IOException {
+        String sql = """
+                WITH tmp_csvs AS (
+                    SELECT
+                        mas_mrkr_zdb_id,
+                        mrkr_abbrev,
+                        mas_vt_pk_id,
+                        'Current' as status,
+                        string_agg(ma_a_pk_id::varchar, ',') as assembly_ids,
+                				string_agg(a_name, ',') as assembly_names,
+                        string_agg(distinct dblink_acc_num, ',') as gene_id
+                    FROM
+                        marker_annotation_status
+                            LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
+                            left join assembly on ma_a_pk_id = assembly.a_pk_id
+                            left join marker on mas_mrkr_zdb_id = mrkr_zdb_id
+                        left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
+                            and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
+                    group by mas_mrkr_zdb_id, mas_vt_pk_id, mrkr_abbrev )
+                select *, 'https://zfin.org/' || mas_mrkr_zdb_id as prod_url, 'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url, 'https://www.ncbi.nlm.nih.gov/gene?cmd=Retrieve&dopt=Graphics&list_uids=' || gene_id as ncbi_id
+                into temp tmprep1
+                from tmp_csvs
+                where assembly_ids not like '%1%' -- No GRCz12tu assembly
+                  and mas_vt_pk_id = 12           -- 12 is ""Current"" annotation status
+                ;
+                \\copy (select * from tmprep1) to 'current_status_without_z12.csv' with csv header;
+                """;
+        File tmpFile = new File(workingDir, "current_status_without_z12.sql");
+        Files.writeString(tmpFile.toPath(), sql);
+        tmpFile.deleteOnExit();
+
+        doSystemCommand(
+                List.of(
+                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
+                        "-U", env("PGUSER"),
+                        "-h", env("PGHOST"),
+                        "-d", env("DB_NAME"),
+                        "-a", "-f", tmpFile.getAbsolutePath()
+                ), "report1.txt", "report1.err.txt"
+        );
+
+        sql = """
+                SELECT
+                    marker_annotation_status.*, mrkr_abbrev,
+                		'not in current annotation release' as status,
+                		a_name as assembly_name,
+                       'https://zfin.org/' || mas_mrkr_zdb_id as prod_url,
+                       'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url,
+                       'https://www.ncbi.nlm.nih.gov/gene?cmd=Retrieve&dopt=Graphics&list_uids=' || dblink_acc_num as ncbi_url,
+                         dblink_acc_num as ncbi_id
+                INTO temp tmprep2
+                FROM
+                    marker_annotation_status
+                        LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
+                				left join assembly on ma_a_pk_id = a_pk_id
+                				left join marker on mas_mrkr_zdb_id = mrkr_zdb_id
+                        left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
+                            and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
+                WHERE
+                    ma_a_pk_id = 1          -- GRCz12tu
+                  AND mas_vt_pk_id = 13   -- not in current
+                  ;
+                \\copy (select * from tmprep2) to 'not_current_with_z12.csv' with csv header;                
+        """;
+        File tmpFile2 = new File(workingDir, "not_current_with_z12.sql");
+        Files.writeString(tmpFile2.toPath(), sql);
+        tmpFile2.deleteOnExit();
+
+        doSystemCommand(
+                List.of(
+                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
+                        "-U", env("PGUSER"),
+                        "-h", env("PGHOST"),
+                        "-d", env("DB_NAME"),
+                        "-a", "-f", tmpFile2.getAbsolutePath()
+                ), "report2.txt", "report2.err.txt"
+        );
+
+        sql = """
+                SELECT
+                	mrkr_zdb_id, mrkr_abbrev, ma_a_pk_id, a_name as assembly_name
+                INTO temp tmprep3
+                FROM
+                	marker left join marker_assembly on mrkr_zdb_id = ma_mrkr_zdb_id left join assembly on ma_a_pk_id = a_pk_id
+                WHERE
+                	mrkr_zdb_id NOT IN ( SELECT mas_mrkr_zdb_id FROM marker_annotation_status )
+                AND
+                	(mrkr_zdb_id like '%-GENE-%' or mrkr_zdb_id like '%-GENEP-%')
+                AND
+                  mrkr_zdb_id IN ( SELECT ma_mrkr_zdb_id from marker_assembly);
+                \\copy (select * from tmprep3) to 'unknown_status.csv' with csv header;
+        """;
+        File tmpFile3 = new File(workingDir, "unknown_status.sql");
+        Files.writeString(tmpFile3.toPath(), sql);
+        tmpFile3.deleteOnExit();
+
+        doSystemCommand(
+                List.of(
+                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
+                        "-U", env("PGUSER"),
+                        "-h", env("PGHOST"),
+                        "-d", env("DB_NAME"),
+                        "-a", "-f", tmpFile3.getAbsolutePath()
+                ), "report3.txt", "report3.err.txt"
+        );
+
+        // Now combine the three CSVs into one report
+        File report1 = new File(workingDir, "current_status_without_z12.csv");
+        File report2 = new File(workingDir, "not_current_with_z12.csv");
+        File report3 = new File(workingDir, "unknown_status.csv");
+        List<File> csvs = List.of(report1, report2, report3);
+
+        combineCsvsToExcelReport("annotation_status_conflicts.xlsx", csvs);
+
+        List<String> filesToDelete = List.of("report1.txt", "report1.err.txt", "report2.txt", "report2.err.txt",
+                "report3.txt", "report3.err.txt",
+                "current_status_without_z12.sql", "not_current_with_z12.sql", "unknown_status.sql");
+        filesToDelete.forEach(filename -> new File(workingDir, filename).delete());
+
     }
 
     /**
@@ -3602,7 +3729,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             System.out.println("Generated " + csvs.size() + " CSV files for before-after comparison.");
             List<CSVRecord> beforeAfterSummaryList = beforeAfterComparison.get("summary");
             beforeAfterSummary = beforeAfterSummaryList.remove(0);
-            combineCsvsToExcelReport(csvs);
+            combineCsvsToExcelReport("before_after.xlsx", csvs);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -3858,14 +3985,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return action;
     }
 
-    private void combineCsvsToExcelReport(List<File> csvs) {
+    private void combineCsvsToExcelReport(String xlsxName, List<File> csvs) {
         CSVToXLSXConverter converter = new CSVToXLSXConverter();
         List<String> sheetNames = csvs.stream().map(File::getName)
                 .map(name -> name.replace(".csv", ""))
                 .map(name -> name.replace("before_after_cmp_", ""))
                 .collect(Collectors.toList());
-        converter.run(new File(workingDir, "before_after.xlsx"), csvs, sheetNames, true);
-        print(LOG, "Combined CSVs into Excel report: before_after_cmp.xlsx\n");
+        converter.run(new File(workingDir, xlsxName), csvs, sheetNames, true);
+        print(LOG, "Combined CSVs into Excel report: xlsxName\n");
     }
 
     private void writeOutputReportFile(String jsonString) {
