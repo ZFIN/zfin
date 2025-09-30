@@ -120,6 +120,7 @@ def downloadPDF (String downloadUrl, String pmcId, String zdbId, String pubYear)
     def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
     def filePath = "$directory/${zdbId}.pdf"
     def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC","")}/"
+    def zfinUrl = "https://zfin.org/${zdbId}"
 
     directory.mkdirs()
 
@@ -130,9 +131,9 @@ def downloadPDF (String downloadUrl, String pmcId, String zdbId, String pubYear)
     if (!successfulDownload) {
         println("Could not download the PDF from the FTP site for $pmcId")
         if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
-            NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl\n")
+            NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
         }
-        NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl].join(',') + "\n")
+        NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
     }
     def mimetype = "/usr/bin/file -b --mime-type $filePath".execute().text.trim()
     if (!mimetype.equals("application/pdf")) {
