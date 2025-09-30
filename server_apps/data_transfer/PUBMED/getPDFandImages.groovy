@@ -310,14 +310,11 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
 }
 
 Boolean downloadPdfFromFtp(String pdfUrl, String fileLocation) {
-    def file = new FileOutputStream(fileLocation)
-    def out = new BufferedOutputStream(file)
-
-    URLConnection connection = new URL(pdfUrl).openConnection()
-    connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
-    out << connection.getInputStream()
-    out.close()
-
+    new File(fileLocation).withOutputStream { out ->
+        URLConnection connection = new URL(pdfUrl).openConnection()
+        connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
+        out << connection.getInputStream()
+    }
     println "Downloaded PDF to " + fileLocation
     return true;
 }
