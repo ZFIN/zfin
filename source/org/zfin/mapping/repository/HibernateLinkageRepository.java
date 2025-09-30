@@ -19,6 +19,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.gff.Assembly;
 
 import java.util.*;
 
@@ -271,6 +272,23 @@ public class HibernateLinkageRepository implements LinkageRepository {
             "from MarkerGenomeLocation where marker = :marker ");
         query.setParameter("marker", marker);
         return (List<MarkerGenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<MarkerGenomeLocation> getGenomeLocationByMarkerAndAssembly(Marker marker, Assembly assembly){
+        String queryString = """
+            from MarkerGenomeLocation
+            where marker = :marker
+               """;
+        if(assembly != null){
+            queryString += " AND assembly = :assembly";
+        }
+        Query<MarkerGenomeLocation> query = HibernateUtil.currentSession().createQuery(queryString, MarkerGenomeLocation.class);
+        query.setParameter("marker", marker);
+        if(assembly != null) {
+            query.setParameter("assembly", assembly.getName());
+        }
+        return query.list();
     }
 
     @Override
