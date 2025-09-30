@@ -99,7 +99,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public enum Source {
         DIRECT("DirectSubmission", true, "Direct Data Submission", null),
-        ZFIN_NCBI("ZFIN", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z12
+        ZFIN_NCBI("ZFIN", true, "ZFIN", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z12
         ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z11
         ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
         NCBI_LOADER("NCBILoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?assm=GCF_049306965.1&context=gene&id="),

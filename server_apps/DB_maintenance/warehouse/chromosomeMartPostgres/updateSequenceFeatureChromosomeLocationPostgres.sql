@@ -20,23 +20,26 @@ create temp table tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene 
        ender int
 ) ;
 
+CREATE INDEX tmp_gff_start_end_acc ON tmp_gff_start_end (accnum);
+CREATE INDEX tmp_gff_start_end_chrom ON tmp_gff_start_end (chrom);
+CREATE INDEX tmp_gff_start_end_gene ON tmp_gff_start_end (gene);
 
 insert into tmp_gff_start_end (accnum,chrom, gene)
-select distinct gff_name, gff_seqname, ensm_ensdarg_id
+select distinct gff_parent, gff_seqname, ensm_ensdarg_id
  from gff3, ensdar_mapping
- where gff_name like 'ENSDART%'
-and gff_name = ensm_ensdart_id;
+ where gff_parent like 'ENSDART%'
+and gff_parent = ensm_ensdart_id;
 
 update tmp_gff_start_end
   set start = (select min(gff_start)
       	      	      from gff3
-		      where gff_name = accnum
+		      where gff_parent = accnum
 		      and gff_seqname = chrom);
 
 update tmp_gff_start_end
   set ender = (select max(gff_end)
       	      	      from gff3
-		      where gff_name = accnum
+		      where gff_parent = accnum
 		      and gff_seqname = chrom);
 
 select count(*) from tmp_gff_start_end
@@ -141,7 +144,10 @@ select distinct dblink_linked_recid,
   and dblink_acc_num = accnum1
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and start is not null
- and ender is not null;
+ and ender is not null
+    -- don't include fdb_db_display_name = 'ExpressionAtlas'
+ and fdb_db_pk_id != 91
+;
 
 insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
        	    			       sfclg_chromosome,
@@ -150,7 +156,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
 				       sfclg_acc_num,
 				       sfclg_location_source,
 				       sfclg_fdb_db_id,sfclg_evidence_code)
-select distinct dblink_linked_recid,
+select dblink_linked_recid,
        		chrom1,
 		start,
 		ender,
@@ -163,7 +169,9 @@ select distinct dblink_linked_recid,
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and start is not null
  and ender is not null
- and exists (select 'x' from zfin_ensembl_gene where zeg_gene_zdb_id = dblink_linked_recid);
+ and exists (select 'x' from zfin_ensembl_gene where zeg_gene_zdb_id = dblink_linked_recid)
+ group by dblink_linked_recid, chrom1, start, ender, accnum1, fdb_db_pk_id
+;
 
 insert into sequence_feature_chromosome_location_generated (
   sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id, sfclg_evidence_code)
@@ -173,7 +181,7 @@ select sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_posit
 
 update sequence_feature_chromosome_location_generated
 set sfclg_gbrowse_track = 'zmp'
-where sfclg_pub_zdb_id = 'ZDB-PUB-130425-4';
+where sfclg_pub_zdb_id in ('ZDB-PUB-130425-4', 'ZDB-PUB-250905-18');
 
 insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
   sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_gbrowse_track, sfclg_evidence_code)
