@@ -47,7 +47,7 @@ select get_id_and_insert_active_data('SFCL'),
        position::integer,
        'GRCz12tu',
        chromosome,
-       'ZDB-TERM-170419-251'
+       'ZDB-TERM-170419-250'
 from temp_zmp_z12
 ;
 

@@ -7,6 +7,7 @@ import org.zfin.mapping.*;
 import org.zfin.mapping.importer.AGPEntry;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
+import org.zfin.sequence.gff.Assembly;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -122,6 +123,8 @@ public interface LinkageRepository {
      * @return
      */
     List<MarkerGenomeLocation> getGenomeLocation(Marker marker);
+
+    List<MarkerGenomeLocation> getGenomeLocationByMarkerAndAssembly(Marker marker, Assembly assembly);
 
     /**
      * Retrieves genome location information but only includes entries

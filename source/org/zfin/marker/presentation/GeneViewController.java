@@ -44,6 +44,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.presentation.SearchPrototypeController;
 import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.gff.Assembly;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.TranscriptService;
 
@@ -145,30 +146,56 @@ public class GeneViewController {
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
-        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocation(gene);
+        Assembly latestAssembly = gene.getLatestAssembly();
+        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocationByMarkerAndAssembly(gene, latestAssembly);
         TreeSet locations = new TreeSet<>();
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
-            if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ZFIN)) {
-                location.setUrl(genomeMarkerLocation.getUrl());
-                location.setName("ZFIN");
-                location.setOrder(0);
-            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ENSEMBL)) {
-                location.setUrl(genomeMarkerLocation.getUrl());
-                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                location.setOrder(1);
-            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.NCBI)) {
-                location.setUrl(genomeMarkerLocation.getUrl());
-                location.setName("NCBI");
-                location.setOrder(2);
-            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.UCSC)) {
-                location.setUrl(genomeMarkerLocation.getUrl());
-                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                location.setOrder(3);
-            } else {
-                continue;
+            location.setUrl(genomeMarkerLocation.getUrl());
+            if (latestAssembly != null) {
+                switch (latestAssembly.getName()) {
+                    case "GRCz12tu": {
+                        switch (genomeMarkerLocation.getSource()) {
+                            case ZFIN_NCBI -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(0);
+                            }
+                            case NCBI_LOADER -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(1);
+                            }
+                            default -> {
+                            }
+                        }
+                        break;
+                    }
+                    case "GRCz11": {
+                        switch (genomeMarkerLocation.getSource()) {
+                            case ZFIN -> {
+                                location.setName("ZFIN");
+                                location.setOrder(0);
+                            }
+                            case ENSEMBL -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(1);
+                            }
+                            case NCBI -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(2);
+                            }
+                            case UCSC -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(3);
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                    ;
+                    default:
+                }
+                locations.add(location);
             }
-            locations.add(location);
         }
         geneBean.setLocations(locations);
 
