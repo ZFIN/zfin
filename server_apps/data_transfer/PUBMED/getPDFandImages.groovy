@@ -86,35 +86,27 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     def timeStart = new Date()
-    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
-    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
-    if (!yearDirectory.exists()) {
-        yearDirectory.mkdir()
-    }
-    if (!directory.exists()) {
-        directory.mkdir()
-    }
+    def directoryPath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId"
+    def filePrefix = "$directoryPath/$zdbId"
+    def directory = new File(directoryPath)
+    directory.mkdirs()
 
-    def tarOutputFile = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
+    def tarOutputFile = "${filePrefix}.tar.gz"
     println("Writing to $tarOutputFile")
-    def file = new FileOutputStream("$tarOutputFile")
-    def out = new BufferedOutputStream(file)
+    new File(tarOutputFile).withOutputStream { it << new URL(url).openStream() }
 
-    out << new URL(url).openStream()
-    out.close()
     def timeStop = new Date()
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
     println("download to filesystem duration:" + duration)
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar"
+    def unzipped_output = "${filePrefix}.tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()) {
-        PubmedUtils.gunzip(gziped_bundle, unzipped_output)
+        PubmedUtils.gunzip(tarOutputFile, unzipped_output)
     }
 
     def timeStart2 = new Date()
-    def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd $directoryPath && /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
     def timeStop2 = new Date()
@@ -122,52 +114,34 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     println("extract file duration:" + duration2)
 }
 
-def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
+def downloadPDF (String downloadUrl, String pmcId, String zdbId, String pubYear) {
 
     def timeStart = new Date()
-    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
     def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
+    def filePath = "$directory/${zdbId}.pdf"
+    def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC","")}/"
+    def zfinUrl = "https://zfin.org/${zdbId}"
 
-    def code = new URL("https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/").openConnection().with {
-        requestMethod = 'HEAD'
-        addRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
-        connect()
-        responseCode
+    directory.mkdirs()
+
+    def successfulDownload = downloadPdfFromFtp(downloadUrl, filePath)
+    def timeStop = new Date()
+    TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
+    println("PDF download to filesystem duration:" + duration)
+    if (!successfulDownload) {
+        println("Could not download the PDF from the FTP site for $pmcId")
+        if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
+            NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
+        }
+        NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
     }
-
-    if (code.equals(200)) {
-        if (!yearDirectory.exists()) {
-            yearDirectory.mkdir()
-        }
-        if (!directory.exists()) {
-            directory.mkdir()
-        }
-        def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" +".pdf")
-        def out = new BufferedOutputStream(file)
-
-        String ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/"
-        URLConnection connection = new URL(ncbiUrl).openConnection()
-        connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
-        out << connection.getInputStream()
-        out.close()
-        def timeStop = new Date()
-        TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-        println("Non open access download to filesystem duration:" + duration)
-
-        //Check if the mimetype is actually a PDF
-        //eg. file -b --mime-type ZDB-PUB-250712-4.pdf
-        def mimetype = "/usr/bin/file -b --mime-type ${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf".execute().text.trim()
-        if (!mimetype.equals("application/pdf")) {
-            println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
-            new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/${zdbId}.pdf").delete()
-            if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
-                NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
-            }
-            String zfinUrl = "https://zfin.org/action/publication/" + zdbId + "/edit#files";
-            NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
-        } else {
-            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
-        }
+    def mimetype = "/usr/bin/file -b --mime-type $filePath".execute().text.trim()
+    if (!mimetype.equals("application/pdf")) {
+        println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
+        new File("$filePath").delete()
+    } else {
+        println("successfully downloaded the PDF from the FTP site for $pmcId")
+        ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
     }
 }
 
@@ -310,23 +284,39 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
             }
         }
         PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
-            if (rec.link.@format.text() == 'tgz') {
+            println("Processing " + pmcId + " for ZDB ID " + zdbId)
 
-                def pdfPath = rec.link.@href.text()
-                PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
-                downloadPMCFileBundle(pdfPath, zdbId, pubYear)
-                def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                println pmcId + "," + zdbId
-                println (pdfPath)
-                processPMCText(fullTxt, zdbId, pmcId, pubYear)
-            }
+            // Iterate over each link element in the record
+            rec.link.each { link ->
+                def format = link.@format.text()
+                def href = link.@href.text()
+                println("Found link to " + href)
+                println("Found format " + format)
 
-            else {
-                println "found a PDF to try and download manually " + pmcId + "," + zdbId
-                downloadNonOpenAccessPDF(pmcId, zdbId, pubYear)
+                if (format == 'tgz') {
+                    PUBS_WITH_PDFS_TO_UPDATE.append(href + "\n")
+                    downloadPMCFileBundle(href, zdbId, pubYear)
+                    def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
+                    println pmcId + "," + zdbId
+                    println(href)
+                    processPMCText(fullTxt, zdbId, pmcId, pubYear)
+                } else if (format == 'pdf') {
+                    println "found a PDF to try and download manually " + pmcId + "," + zdbId
+                    downloadPDF(href, pmcId, zdbId, pubYear)
+                }
             }
         }
     }
+}
+
+Boolean downloadPdfFromFtp(String pdfUrl, String fileLocation) {
+    new File(fileLocation).withOutputStream { out ->
+        URLConnection connection = new URL(pdfUrl).openConnection()
+        connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
+        out << connection.getInputStream()
+    }
+    println "Downloaded PDF to " + fileLocation
+    return true;
 }
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
@@ -338,6 +328,7 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 
 }
 
+println("Found " + idsToGrab.size() + " publications to check for PDFs and images.")
 fetchBundlesForExistingPubs(idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
 givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ERROR_STOP=1  " +
