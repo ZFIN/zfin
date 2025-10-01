@@ -296,6 +296,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         getRecordCounts();
         printTimingInformation(5);
 
+        //Do we want to remove all Ensembl matches before proceeding?
+//        removeEnsemblMatchesFromDB();
+
         readZfinGeneInfoFile();
         printTimingInformation(6);
 
@@ -482,6 +485,38 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Remove all Ensembl matches from the database. This includes anything in db_link with the recattrib source of
+     * pubMappedbasedOnNCBISupplement and the fdbcont of Vega, GenBank RNA, GenPept, GenBank DNA, RefSeq RNA, RefSeq Peptide (all the types we handle in this load)
+     */
+    private void removeEnsemblMatchesFromDB() {
+        createTransaction();
+        String sql = """
+            DELETE FROM zdb_active_data
+            WHERE zactvd_zdb_id IN (
+                SELECT
+                    dblink_zdb_id
+                FROM
+                    db_link
+                    JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
+                WHERE
+                    dblink_fdbcont_zdb_id in (?)
+                    AND recattrib_source_zdb_id = ?);
+                """;
+        List<String> contIDs = List.of(fdcontVega,
+                fdcontGenBankRNA,
+                fdcontGenPept,
+                fdcontGenBankDNA,
+                fdcontRefSeqRNA,
+                fdcontRefPept,
+                fdcontRefSeqDNA);
+
+        NativeQuery query = currentSession().createNativeQuery(sql);
+        query.setParameter(1, contIDs);
+        query.setParameter(2, pubMappedbasedOnNCBISupplement);
+        flushAndCommitCurrentSession();
     }
 
     /**
@@ -818,9 +853,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         try {
             String sqlQuery = "\\copy (" +
                     """
-                    select d.*, string_agg(r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
+                    select d.*, string_agg(distinct r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
                     string_agg(ma_a_pk_id::varchar, '|' order by ma_a_pk_id) as marker_assemblies,
-                    string_agg(mas_vt_pk_id::varchar, '|') as marker_annotation_status
+                    string_agg(distinct mas_vt_pk_id::varchar, '|') as marker_annotation_status
                      from db_link d
                      left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
                      left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id

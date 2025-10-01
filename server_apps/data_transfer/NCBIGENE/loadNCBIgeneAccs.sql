@@ -70,7 +70,7 @@ select count(dblink_zdb_id) as noLengthBefore
     delete from marker_annotation_status
     where mas_mrkr_zdb_id in (select mapped_zdb_gene_id from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
     insert into marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
-    select mapped_zdb_gene_id, 12 as vocab_term_id from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+    select distinct mapped_zdb_gene_id, 12 as vocab_term_id from ncbi_gene_load where fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
     on conflict (mas_mrkr_zdb_id) do update set mas_vt_pk_id = 12;
 
     -- Handle "not in current annotation release" db_link records
