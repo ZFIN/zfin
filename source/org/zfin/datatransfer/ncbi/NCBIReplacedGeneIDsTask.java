@@ -17,6 +17,7 @@ import java.util.Map;
 @Log4j2
 public class NCBIReplacedGeneIDsTask extends AbstractScriptWrapper {
 
+    public static final int BATCH_SIZE = 1000;
     private File deadIDsOutputFile;
     private File mappedIDsOutputFile;
     private Long fetchCount = 0L;
@@ -44,7 +45,7 @@ public class NCBIReplacedGeneIDsTask extends AbstractScriptWrapper {
     private void run() {
         //fetch all genes not alive at NCBI
         deadIDs = getDeadIDs();
-        List<List<String>> deadIDBatches = ListUtils.partition(deadIDs, 200);
+        List<List<String>> deadIDBatches = ListUtils.partition(deadIDs, BATCH_SIZE);
         System.out.println("Found " + deadIDs.size() + " dead gene IDs at NCBI");
         Files.writeString(deadIDsOutputFile.toPath(), String.join("\n", deadIDs));
 
@@ -91,7 +92,7 @@ public class NCBIReplacedGeneIDsTask extends AbstractScriptWrapper {
 
     /**
      * Fetch from endpoint unless the file already exists. In that case read from file.
-     * @return
+     * @return list of dead IDs
      */
     private List<String> getDeadIDs() {
         List<String> tmpIDs;
