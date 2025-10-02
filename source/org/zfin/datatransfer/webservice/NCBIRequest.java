@@ -120,7 +120,7 @@ public class NCBIRequest {
             nvps.add(new BasicNameValuePair(param.getKey(), param.getValue()));
         }
 
-        TokenStorage.getValue(TokenStorage.ServiceKey.NCBI_API_TOKEN)
+        (new TokenStorage()).getValue(TokenStorage.ServiceKey.NCBI_API_TOKEN)
             .ifPresent(token -> nvps.add(new BasicNameValuePair("api_key", token)));
 
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
