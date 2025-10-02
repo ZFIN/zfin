@@ -25,7 +25,8 @@ public class TokenStorage {
         ALTCHA_SITE_KEY("captchaSiteKey-altcha.txt"),
         ALTCHA_SECRET_KEY("captchaSecretKey-altcha.txt"),
         ALLIANCE_API_TOKEN("alliance-api-token.txt"),
-        NCBI_API_TOKEN("ncbi-token.txt");
+        NCBI_API_TOKEN("ncbi-token.txt"),
+        OMIM_API_TOKEN("omim-token.txt");
 
         private final String filename;
 
@@ -105,14 +106,16 @@ public class TokenStorage {
                         return;
                     }
                     System.out.println("Token file for " + serviceKey + "(" + getTokenFilePath(serviceKey) + ") does not exist.");
+                    System.exit(1);
                     return;
                 }
                 Optional<String> value = getValue(serviceKey);
                 if (value.isEmpty()) {
                     System.out.println("No value found for " + serviceKey);
+                    System.exit(2);
                     return;
                 }
-                System.out.println("Value for " + serviceKey + ": " + value.get());
+                System.out.println(value.get());
             } else if ("write".equalsIgnoreCase(action) && args.length == 3) {
                 String value = args[2];
                 Path file = Path.of(targetRoot() + "/server_apps/tokens/" + serviceKey.getFilename());
@@ -122,9 +125,11 @@ public class TokenStorage {
             } else {
                 System.out.println("Invalid action or missing value for write.");
                 printUsage();
+                System.exit(3);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(4);
         }
     }
 
