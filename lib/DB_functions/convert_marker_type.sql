@@ -102,6 +102,8 @@ BEGIN
                  ('gene_description', 'gd_gene_zdb_id'),
                  ('genedom_family_member', 'gfammem_mrkr_zdb_id'),
                  ('genotype_figure_fast_search', 'gffs_morph_zdb_id'),
+                 ('marker_annotation_status', 'mas_mrkr_zdb_id'),
+                 ('marker_assembly', 'ma_mrkr_zdb_id'),
                  ('marker_go_term_evidence', 'mrkrgoev_mrkr_zdb_id'),
                  ('marker_history', 'mhist_mrkr_zdb_id'),
                  ('marker_history_audit', 'mha_mrkr_zdb_id'),
