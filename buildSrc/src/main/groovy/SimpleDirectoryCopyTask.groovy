@@ -169,7 +169,7 @@ class SimpleDirectoryCopyTask extends DefaultTask {
             def sout = new StringBuilder(), serr = new StringBuilder()
             def proc = ["cp", source, destination].execute()
             proc.consumeProcessOutput(sout, serr)
-            proc.waitForOrKill(3600)
+            proc.waitForOrKill(30000)
             if (proc.exitValue() != 0) {
                 println "Error"
                 println "$serr"
