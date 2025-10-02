@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.System.getenv;
 
-public class TokenStorage {
+public class TokenStorage implements TokenStorageInterface {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public enum ServiceKey {
@@ -39,7 +39,8 @@ public class TokenStorage {
         }
     }
 
-    public static Optional<String> getValue(TokenStorage.ServiceKey serviceKey) {
+    @Override
+    public Optional<String> getValue(TokenStorage.ServiceKey serviceKey) {
         String filename = serviceKey.getFilename();
         String value = cache.computeIfAbsent(filename, k -> {
             Optional<String> val = getTokenFileValue(k);
@@ -51,7 +52,34 @@ public class TokenStorage {
         return Optional.of(value);
     }
 
-    private static Optional<String> getTokenFileValue(String tokenFilename) {
+    @Override
+    public void setValue(TokenStorage.ServiceKey serviceKey, String value) throws IOException {
+        Path file = Path.of(targetRoot() + "/server_apps/tokens/" + serviceKey.getFilename());
+        Files.writeString(file, value);
+        cache.put(serviceKey.getFilename(), value);
+    }
+
+    @Override
+    public void deleteValue(TokenStorage.ServiceKey serviceKey) {
+            cache.remove(serviceKey.getFilename());
+    }
+
+    private boolean tokenFileExists(TokenStorage.ServiceKey serviceKey) {
+        if (targetRoot() == null) {
+            return false;
+        }
+        Path file = Path.of(getTokenFilePath(serviceKey));
+        return Files.exists(file);
+    }
+
+    private String getTokenFilePath(TokenStorage.ServiceKey serviceKey) {
+        if (targetRoot() == null) {
+            return null;
+        }
+        return targetRoot() + "/server_apps/tokens/" + serviceKey.getFilename();
+    }
+
+    private Optional<String> getTokenFileValue(String tokenFilename) {
         if (targetRoot() == null) {
             return Optional.empty();
         }
@@ -66,22 +94,7 @@ public class TokenStorage {
         return Optional.of(value);
     }
 
-    public static String getTokenFilePath(TokenStorage.ServiceKey serviceKey) {
-        if (targetRoot() == null) {
-            return null;
-        }
-        return targetRoot() + "/server_apps/tokens/" + serviceKey.getFilename();
-    }
-
-    public static boolean tokenFileExists(TokenStorage.ServiceKey serviceKey) {
-        if (targetRoot() == null) {
-            return false;
-        }
-        Path file = Path.of(getTokenFilePath(serviceKey));
-        return Files.exists(file);
-    }
-
-    public static void printUsage() {
+    private void printUsage() {
         System.out.println("Usage: java TokenStorage read|write <serviceKey> [<value>]");
         System.out.println("  or : gradle tokenStorage --args='read|write <serviceKey> [<value>]'");
         System.out.println("Available service keys:");
@@ -90,7 +103,23 @@ public class TokenStorage {
         }
     }
 
-    public static void main(String[] args) {
+    private String targetRoot() {
+        String targetRoot = ZfinPropertiesEnum.TARGETROOT.value();
+        if (StringUtils.isEmpty(targetRoot)) {
+//            log.warn("TARGETROOT environment variable is not set, trying to get it from environment variables.");
+            targetRoot = getenv("TARGETROOT");
+        } else {
+            return targetRoot;
+        }
+        if (StringUtils.isEmpty(targetRoot)) {
+            return null;
+        } else {
+//            log.debug("Using TARGETROOT: " + targetRoot);
+            return targetRoot;
+        }
+    }
+
+    private void run(String[] args) {
         try {
             // Example usage: java TokenStorage read|write <serviceKey> [<value>]
             if (args.length < 2) {
@@ -118,9 +147,7 @@ public class TokenStorage {
                 System.out.println(value.get());
             } else if ("write".equalsIgnoreCase(action) && args.length == 3) {
                 String value = args[2];
-                Path file = Path.of(targetRoot() + "/server_apps/tokens/" + serviceKey.getFilename());
-                Files.writeString(file, value);
-                cache.put(serviceKey.getFilename(), value); // Update cache
+                setValue(serviceKey, value);
                 System.out.println("Written value for " + serviceKey + ": " + value);
             } else {
                 System.out.println("Invalid action or missing value for write.");
@@ -133,19 +160,7 @@ public class TokenStorage {
         }
     }
 
-    private static String targetRoot() {
-        String targetRoot = ZfinPropertiesEnum.TARGETROOT.value();
-        if (StringUtils.isEmpty(targetRoot)) {
-//            log.warn("TARGETROOT environment variable is not set, trying to get it from environment variables.");
-            targetRoot = getenv("TARGETROOT");
-        } else {
-            return targetRoot;
-        }
-        if (StringUtils.isEmpty(targetRoot)) {
-            return null;
-        } else {
-//            log.debug("Using TARGETROOT: " + targetRoot);
-            return targetRoot;
-        }
+    public static void main(String[] args) {
+        new TokenStorage().run(args);
     }
 }
