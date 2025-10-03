@@ -109,7 +109,7 @@ public class Gff3Writer {
 
         // filter out those records that have a ZFIN Gene ID
         List<Gff3Ncbi> filteredResults = results.stream()
-            .filter(record -> record.getGeneZdbID() != null)
+            .filter(record -> genBankIDsInZFIN.contains(record.getGeneID()))
             .toList();
         HibernateUtil.rollbackTransaction();
         return filteredResults;
