@@ -505,7 +505,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     dblink_fdbcont_zdb_id in (?)
                     AND recattrib_source_zdb_id = ?);
                 """;
-        List<String> contIDs = List.of(fdcontVega,
+        List<String> contIDs = List.of(
+            fdcontNCBIgeneId,
+            fdcontVega,
                 fdcontGenBankRNA,
                 fdcontGenPept,
                 fdcontGenBankDNA,
