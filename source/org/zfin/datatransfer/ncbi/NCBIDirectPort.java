@@ -518,6 +518,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         NativeQuery query = currentSession().createNativeQuery(sql);
         query.setParameter(1, contIDs);
         query.setParameter(2, pubMappedbasedOnNCBISupplement);
+        query.executeUpdate();
         flushAndCommitCurrentSession();
     }
 
