@@ -106,7 +106,6 @@ public class TokenStorage implements TokenStorageInterface {
     private String targetRoot() {
         String targetRoot = ZfinPropertiesEnum.TARGETROOT.value();
         if (StringUtils.isEmpty(targetRoot)) {
-//            log.warn("TARGETROOT environment variable is not set, trying to get it from environment variables.");
             targetRoot = getenv("TARGETROOT");
         } else {
             return targetRoot;
@@ -114,7 +113,6 @@ public class TokenStorage implements TokenStorageInterface {
         if (StringUtils.isEmpty(targetRoot)) {
             return null;
         } else {
-//            log.debug("Using TARGETROOT: " + targetRoot);
             return targetRoot;
         }
     }
