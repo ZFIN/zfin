@@ -3587,7 +3587,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
                             and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
                     group by mas_mrkr_zdb_id, mas_vt_pk_id, mrkr_abbrev )
-                select *, 'https://zfin.org/' || mas_mrkr_zdb_id as prod_url, 'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url, 'https://www.ncbi.nlm.nih.gov/gene?cmd=Retrieve&dopt=Graphics&list_uids=' || gene_id as ncbi_id
+                select *, 'https://zfin.org/' || mas_mrkr_zdb_id as prod_url, 'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url, 'https://www.ncbi.nlm.nih.gov/gene/' || gene_id as ncbi_id
                 into temp tmprep1
                 from tmp_csvs
                 where assembly_ids not like '%1%' -- No GRCz12tu assembly
