@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Business entity for Morpholinos, TALEN and CRISPR.
  */
-public class SequenceTargetingReagent extends Marker {
+public class markerSequenceTargetingReagent extends Marker {
 
     private List<Marker> targetGenes;
     private STRMarkerSequence sequence;
