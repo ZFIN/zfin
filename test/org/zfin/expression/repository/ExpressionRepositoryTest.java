@@ -399,6 +399,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 AND fish_zdb_id  = genox_fish_zdb_id
                 AND fish_genotype_zdb_id  = geno_zdb_id
                 AND geno_is_wildtype = :wildType
+                AND genox_is_standard = true
                 ORDER BY term_name asc
                 """;
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createNativeQuery(sql)
