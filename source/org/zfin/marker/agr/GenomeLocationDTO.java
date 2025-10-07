@@ -1,7 +1,11 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class GenomeLocationDTO {
 
     private String assembly;
@@ -10,34 +14,12 @@ public class GenomeLocationDTO {
     private Integer startPosition;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Integer endPosition;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String strand;
 
     public GenomeLocationDTO(String assemblyName, String chromosome) {
         this.assembly = assemblyName;
         this.chromosome = chromosome;
-    }
-
-    public String getAssembly() {
-        return assembly;
-    }
-
-    public String getChromosome() {
-        return chromosome;
-    }
-
-    public Integer getStartPosition() {
-        return startPosition;
-    }
-
-    public void setStartPosition(Integer startPosition) {
-        this.startPosition = startPosition;
-    }
-
-    public Integer getEndPosition() {
-        return endPosition;
-    }
-
-    public void setEndPosition(Integer endPosition) {
-        this.endPosition = endPosition;
     }
 
     @Override
