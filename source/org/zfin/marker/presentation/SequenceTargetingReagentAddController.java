@@ -43,6 +43,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+
 @Controller
 @RequestMapping("/marker")
 public class SequenceTargetingReagentAddController {
@@ -52,7 +54,7 @@ public class SequenceTargetingReagentAddController {
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static MutantRepository mur = RepositoryFactory.getMutantRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    private static InfrastructureRepository ir = getInfrastructureRepository();
     private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
@@ -188,7 +190,7 @@ public class SequenceTargetingReagentAddController {
                 String note = MarkerService.getSTRModificationNote(formBean.getReportedSequence2(), formBean.isReversed2(), formBean.isComplemented2());
                 mr.addMarkerDataNote(newSequenceTargetingReagent, note);
             }
-
+            getInfrastructureRepository().insertPublicAttribution(newSequenceTargetingReagent.getZdbID(), pubZdbID);
             HibernateUtil.flushAndCommitCurrentSession();
 
             markerSolrService.addMarkerStub(newSequenceTargetingReagent, Category.SEQUENCE_TARGETING_REAGENT);
