@@ -320,6 +320,143 @@ public class NCBIEfetch {
         return geneIds;
     }
 
+    /**
+     * Fetches gene IDs that are not "alive" with specified maximum results.
+     *
+     * @param retmax Maximum number of IDs to return
+     * @return List of gene IDs that are not "alive", empty list if error occurs
+     */
+    public static List<String> fetchGeneIDsNotAlive(int retmax) {
+        List<String> geneIds = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            String jsonResponse = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                    .with("db", "gene")
+                    .with("term", "\"Danio rerio\"[Organism] NOT alive[prop]")
+                    .with("retmode", "json")
+                    .with("retmax", retmax)
+                    .fetchRawText();
+
+            // Parse JSON response using Jackson
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode esearchResult = rootNode.get("esearchresult");
+
+            if (esearchResult == null) {
+                logger.warn("Could not find esearchresult in NCBI gene search response");
+                return Collections.emptyList();
+            }
+
+            JsonNode idList = esearchResult.get("idlist");
+            if (idList == null || !idList.isArray()) {
+                logger.warn("Could not find idlist array in NCBI gene search response");
+                return Collections.emptyList();
+            }
+
+            // Extract gene IDs from the JSON array
+            for (JsonNode idNode : idList) {
+                String geneId = idNode.asText();
+                if (!geneId.isEmpty()) {
+                    geneIds.add(geneId);
+                }
+            }
+
+            logger.info("Fetched " + geneIds.size() + " gene IDs not in current annotation release set");
+
+        } catch (ServiceConnectionException e) {
+            logger.error("Failed to fetch gene IDs not in current annotation release set", e);
+        } catch (Exception e) {
+            logger.error("Error parsing NCBI gene search response", e);
+        }
+
+        return geneIds;
+    }
+
+    /**
+     * Queries NCBI Gene database to find if gene IDs have been replaced with new IDs.
+     * Checks if genes have status "secondary" and returns a map of old ID to new ID for any replacements found.
+     *
+     * @param geneIDs List of gene IDs to check for replacements
+     * @return Map of old gene ID to replacement gene ID for any genes that have been replaced
+     */
+    public static Map<String, String> getReplacedGeneID(List<String> geneIDs) {
+        Map<String, String> replacements = new HashMap<>();
+
+        if (geneIDs == null || geneIDs.isEmpty()) {
+            return replacements;
+        }
+
+        try {
+            // Join gene IDs with commas for batch request
+            String ids = String.join(",", geneIDs);
+
+            Document result = new NCBIRequest(NCBIRequest.Eutil.FETCH)
+                    .with("db", "gene")
+                    .with("id", ids)
+                    .with("retmode", "xml")
+                    .go();
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+
+            // Process each Entrezgene record in the response
+            NodeList entrezgeneList = result.getElementsByTagName("Entrezgene");
+
+            for (int i = 0; i < entrezgeneList.getLength(); i++) {
+                Element entrezgene = (Element) entrezgeneList.item(i);
+
+                // Get the original gene ID
+                NodeList geneIdNodes = entrezgene.getElementsByTagName("Gene-track_geneid");
+                if (geneIdNodes.getLength() == 0) {
+                    continue;
+                }
+                String originalGeneId = geneIdNodes.item(0).getTextContent();
+
+                // Check if the gene has secondary status
+                NodeList statusNodes = entrezgene.getElementsByTagName("Gene-track_status");
+                if (statusNodes.getLength() == 0) {
+                    continue;
+                }
+                Element statusElement = (Element) statusNodes.item(0);
+                String status = statusElement.getAttribute("value");
+
+                if ("secondary".equals(status)) {
+                    // Look for the current GeneID in the Gene-track_current-id section
+                    NodeList currentIds = entrezgene.getElementsByTagName("Gene-track_current-id");
+                    if (currentIds.getLength() > 0) {
+                        Element currentIdElement = (Element) currentIds.item(0);
+                        NodeList dbtags = currentIdElement.getElementsByTagName("Dbtag");
+
+                        for (int j = 0; j < dbtags.getLength(); j++) {
+                            Element dbtag = (Element) dbtags.item(j);
+                            NodeList dbNameNodes = dbtag.getElementsByTagName("Dbtag_db");
+                            if (dbNameNodes.getLength() == 0) {
+                                continue;
+                            }
+                            String dbName = dbNameNodes.item(0).getTextContent();
+
+                            if ("GeneID".equals(dbName)) {
+                                NodeList objectIdNodes = dbtag.getElementsByTagName("Object-id_id");
+                                if (objectIdNodes.getLength() > 0) {
+                                    String replacementId = objectIdNodes.item(0).getTextContent();
+                                    replacements.put(originalGeneId, replacementId);
+                                    logger.info("Gene ID " + originalGeneId + " has been replaced with " + replacementId);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (ServiceConnectionException e) {
+            logger.error("Failed to fetch gene replacement info for gene IDs: " + geneIDs, e);
+        } catch (Exception e) {
+            logger.error("Error parsing XML response for gene IDs: " + geneIDs, e);
+        }
+
+        return replacements;
+    }
+
     public static GeoMicorarrayEntriesBean getMicroarraySequences() throws Exception {
         GeoMicorarrayEntriesBean bean = new GeoMicorarrayEntriesBean();
         XPath xPath = XPathFactory.newInstance().newXPath();
