@@ -135,6 +135,7 @@
         <property name="source" column="sfclg_location_source" type="genomeLocationSource"/>
         <property name="start" column="sfclg_start" type="java.lang.Integer"/>
         <property name="end" column="sfclg_end" type="java.lang.Integer"/>
+        <property name="strand" column="sfclg_strand" type="java.lang.Character"/>
         <property name="detailedSource" column="sfclg_location_subsource" type="string"/>
         <property name="accessionNumber" column="sfclg_acc_num" type="string"/>
         <many-to-one name="attribution" column="sfclg_pub_zdb_id" class="org.zfin.publication.Publication" insert="false" update="false"/>

@@ -31,6 +31,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected String entityID;
     protected String chromosome;
     protected Source source;
+    protected Character strand;
     protected String detailedSource;
     protected String accessionNumber;
     protected GenomeBrowserMetaData metaData;
