@@ -81,8 +81,11 @@ open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 print LOG "\nDownloading OMIM files ... \n\n";
 
 try {
+  my $sourceRoot = $ENV{'SOURCEROOT'};
+  my $omimToken = `cd $sourceRoot && gradle -q tokenStorage --args="read OMIM_API_TOKEN"`;
+    $omimToken =~ s/\s+$//;
   ZFINPerlModules->doSystemCommand("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
-  ZFINPerlModules->doSystemCommand("/local/bin/wget https://data.omim.org/downloads/TsbrMAQ1T76RqganEcUayA/genemap2.txt");
+  ZFINPerlModules->doSystemCommand("/local/bin/wget https://data.omim.org/downloads/$omimToken/genemap2.txt");
 } catch {
   warn "Downloading from OMIM failed - $_";
   exit -1;

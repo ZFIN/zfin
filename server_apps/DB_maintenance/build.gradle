@@ -136,9 +136,7 @@ task microarrayUpdate(type: JavaExec) {
 }
 task validateDataReportSimple(type: JavaExec) {
 
-println "Create Validation Report"
     //how do you specify "jobName" here...It will get passed as a parameter in Jenkisn config.xml
-    println "Use database: ${dbname}"
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
     args = [
@@ -146,7 +144,6 @@ println "Create Validation Report"
             "${cmdargs}",
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
-
     ]
 }
 
