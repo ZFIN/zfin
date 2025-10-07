@@ -29,7 +29,7 @@ public class CaptchaKeys {
             case hCaptcha -> TokenStorage.ServiceKey.HCAPTCHA_SITE_KEY;
             case altcha -> TokenStorage.ServiceKey.ALTCHA_SITE_KEY;
         };
-        return TokenStorage.getValue(serviceKey);
+        return (new TokenStorage()).getValue(serviceKey);
     }
 
     public static Optional<String> getSecretKey() throws IOException {
@@ -39,7 +39,7 @@ public class CaptchaKeys {
             case hCaptcha -> TokenStorage.ServiceKey.HCAPTCHA_SECRET_KEY;
             case altcha -> TokenStorage.ServiceKey.ALTCHA_SECRET_KEY;
         };
-        return TokenStorage.getValue(serviceKey);
+        return (new TokenStorage()).getValue(serviceKey);
     }
 
 }
