@@ -536,6 +536,23 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             throw new RuntimeException(e);
         }
 
+        String referenceProteinDeleteSql = """
+            DELETE FROM reference_protein
+            WHERE rp_dblink_zdb_id IN (
+                SELECT
+                    dblink_zdb_id
+                FROM
+                    db_link
+                    JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
+                WHERE
+                    dblink_fdbcont_zdb_id in (?)
+                    AND recattrib_source_zdb_id = ?);
+                """;
+        NativeQuery rpQuery = currentSession().createNativeQuery(referenceProteinDeleteSql);
+        rpQuery.setParameter(1, contIDs);
+        rpQuery.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        rpQuery.executeUpdate();
+
         String sql = """
             DELETE FROM zdb_active_data
             WHERE zactvd_zdb_id IN (
