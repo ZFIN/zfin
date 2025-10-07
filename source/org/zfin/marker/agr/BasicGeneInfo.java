@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.zfin.mapping.GenomeLocation.Source.ENSEMBL;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @Log4j2
@@ -146,12 +147,15 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
                                         continue;
                                     if (loc.getAssembly().equals("GRCz11")) {
-                                        if (loc.getSource().toString().equals("ZFIN")) {
+                                        if (loc.getSource().equals(ENSEMBL)) {
                                             GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
                                             if (loc.getStart() != null)
                                                 genomeDto.setStartPosition(loc.getStart());
                                             if (loc.getEnd() != null)
                                                 genomeDto.setEndPosition(loc.getEnd());
+                                            if (loc.getStrand() != null) {
+                                                genomeDto.setStrand(String.valueOf(loc.getStrand()));
+                                            }
                                             locationDTOList.add(genomeDto);
                                         }
                                     }
