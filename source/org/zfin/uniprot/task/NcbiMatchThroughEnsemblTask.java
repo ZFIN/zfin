@@ -104,7 +104,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         SequenceService sequenceService = new SequenceService();
         sequenceService.setMarkerRepository(markerRepository);
-        List<MarkerDBLink> results = sequenceService.getMarkerDBLinkResultsForMarkerZdbID(zdbId, false, null, false);
+        List<MarkerDBLink> results = sequenceService.getMarkerDBLinkResultsForMarkerZdbID(zdbId, false, null, false, true);
         return results.stream()
                 .filter(markerDBLink -> ForeignDBDataType.DataType.RNA.equals(markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType()))
                 .map(DBLink::getAccessionNumber)
