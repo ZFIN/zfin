@@ -381,6 +381,7 @@ public class NCBILoadIntegrationTestHelper {
     }
 
     public static class BeforeStateBuilder {
+        private static final String DANIO_RERIO_TAX_ID = "7955";
         private final NCBILoadIntegrationTestHelper helper;
         private final List<GeneData> genes = new ArrayList<>();
         private final List<DBLinkData> dbLinks = new ArrayList<>();
@@ -405,7 +406,22 @@ public class NCBILoadIntegrationTestHelper {
             return this;
         }
 
-        public BeforeStateBuilder withZfGeneInfoFile(String line) {
+        public BeforeStateBuilder withZfGeneInfoFile(String ncbiGeneId, String symbol, List<String> dbXrefs) {
+            // Indices for zf_gene_info file (use "-" for ignored fields)
+            //                String taxId = fields[0];
+            //                String ncbiGeneId = fields[1];
+            //                String symbol = fields[2];
+            //                String dbXrefs = fields[5];
+
+            String line = String.join("\t",
+                    DANIO_RERIO_TAX_ID,
+                    ncbiGeneId,
+                    symbol,
+                    "-",
+                    "-",
+                    String.join("|", dbXrefs),
+                    "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"
+            );
             zfGeneInfoLines.add(line);
             return this;
         }
@@ -415,8 +431,58 @@ public class NCBILoadIntegrationTestHelper {
             return this;
         }
 
-        public BeforeStateBuilder withGene2VegaFile(String line) {
-            gene2VegaLines.add(line);
+        public BeforeStateBuilder withGene2AccessionFile(String ncbiGeneId, String status, String rnaAccVersion) {
+            return withGene2AccessionFile(
+                    DANIO_RERIO_TAX_ID, ncbiGeneId, status, rnaAccVersion, "-", "-"
+            );
+        }
+
+        public BeforeStateBuilder withGene2AccessionFile(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion) {
+            return withGene2AccessionFile(new Gene2AccessionData(
+                    taxId, ncbiGeneId, status, rnaAccVersion, proteinAccVersion, dnaAccVersion
+            ));
+        }
+
+        private BeforeStateBuilder withGene2AccessionFile(Gene2AccessionData data) {
+            // Indices for gene2accession file (use "-" for ignored fields)
+            //                String taxId = fields[0];
+            //                String ncbiGeneId = fields[1];
+            //                String status = fields[2];
+            //                String rnaAccVersion = fields[3];
+            //                String proteinAccVersion = fields[5];
+            //                String dnaAccVersion = fields[7];
+            String line = String.join("\t",
+                    data.taxId,
+                    data.ncbiGeneId,
+                    data.status,
+                    data.rnaAccVersion,
+                    "-", // rna gi
+                    data.proteinAccVersion,
+                    "-", // protein gi
+                    data.dnaAccVersion,
+                    "-", // dna gi
+                    "-", // start pos
+                    "-", // end pos
+                    "-", // orientation
+                    "-", // assembly
+                    "-", // mature peptide acc
+                    "-", // mature peptide gi
+                    "-"  // symbol
+            );
+            gene2AccessionLines.add(line);
+            return this;
+        }
+
+        public BeforeStateBuilder withGene2VegaFile(String ncbiGeneId, String vegaId) {
+            //Indices for gene2vega file
+//            String taxId = fields[0];
+//            String ncbiGeneId = fields[1];
+//            String vegaId = fields[2];
+            gene2VegaLines.add(String.join("\t",
+                    DANIO_RERIO_TAX_ID,
+                    ncbiGeneId,
+                    vegaId
+            ));
             return this;
         }
 
@@ -480,6 +546,17 @@ public class NCBILoadIntegrationTestHelper {
         private record GeneData(String geneId, String geneAbbrev) {}
         private record DBLinkData(String geneId, String accNum, String fdbcontId, String pubId) {}
         private record VegaData(String geneId, String ottdargId, String ottdargAbbrev) {}
+
+        /*
+        // Indices for gene2accession file
+                String taxId = fields[0];
+                String ncbiGeneId = fields[1];
+                String status = fields[2];
+                String rnaAccVersion = fields[3];
+                String proteinAccVersion = fields[5];
+                String dnaAccVersion = fields[7];
+         */
+        private record Gene2AccessionData(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion) {}
     }
 
     public static class AfterState {

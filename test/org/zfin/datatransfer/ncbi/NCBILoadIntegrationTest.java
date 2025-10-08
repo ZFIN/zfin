@@ -40,8 +40,8 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         helper.beforeStateBuilder()
                 .withGene("ZDB-GENE-010319-10", "id:ibd2600")
                 .withDBLink("ZDB-GENE-010319-10", "BG985726", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
-                .withGene2AccessionFile("7955\t80928\t-\tBG985726.1\t14389806\t-\t-\t-\t-\t-\t-\t?\t-\t-\t-\tid:ibd2600")
-                .withZfGeneInfoFile("7955\t80928\tid:ibd2600\t-\t-\tZFIN:ZDB-GENE-010319-10|AllianceGenome:ZFIN:ZDB-GENE-010319-10\t5\t-\tid:ibd2600\tprotein-coding\tid:ibd2600\tid:ibd2600\tO\tuncharacterized protein LOC80928\t20250705\t-")
+                .withGene2AccessionFile("80928", "-", "BG985726.1")
+                .withZfGeneInfoFile("80928", "id:ibd2600", List.of("ZFIN:ZDB-GENE-010319-10", "AllianceGenome:ZFIN:ZDB-GENE-010319-10"))
                 .build();
 
         helper.runNCBILoad();
@@ -79,8 +79,10 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
                 .withGene("ZDB-GENE-120709-33", "si:ch211-209j12.2")
                 .withDBLink("ZDB-GENE-120709-33", "103910949", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT)
                 .withDBLink("ZDB-GENE-120709-33", "ENSDARG00000099337", FDCONT_ENSDARG, "ZDB-PUB-200123-1")
-                .withGene2AccessionFile("7955\t108183900\t-\tGDQQ01002583.1\t-\t-\t-\t-\t-\t-\t-\t?\t-\t-\t-\tsi:ch211-209j12.2")
-                .withZfGeneInfoFile("7955\t108183900\tsi:ch211-209j12.2\t-\t-\tZFIN:ZDB-GENE-120709-33|Ensembl:ENSDARG00000099337|AllianceGenome:ZFIN:ZDB-GENE-120709-33\t4\t-\tsi:ch211-209j12.2\tncRNA\tsi:ch211-209j12.2\tsi:ch211-209j12.2\tO\tuncharacterized protein LOC108183900\t20250909\t-")
+                .withGene2AccessionFile("108183900","-", "GDQQ01002583.1")
+                .withZfGeneInfoFile("108183900", "si:ch211-209j12.2",
+                        List.of("ZFIN:ZDB-GENE-120709-33", "Ensembl:ENSDARG00000099337", "AllianceGenome:ZFIN:ZDB-GENE-120709-33")
+                )
                 .build();
 
         helper.runNCBILoad();
@@ -101,7 +103,7 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         helper.beforeStateBuilder()
                 .withGene("ZDB-GENE-040724-74", "si:dkey-192d15.2")
                 .withVega("ZDB-GENE-040724-74", "OTTDARG00000004288", "si:dkey-192d15.2-201")
-                .withGene2VegaFile("7955\t107980443\tOTTDARG00000004288\tNM_001327832.1\tOTTDART00000004513\tNP_001314761.1\tOTTDARP00000004104")
+                .withGene2VegaFile("107980443", "OTTDARG00000004288")
                 .build();
 
         helper.runNCBILoad();
@@ -171,10 +173,10 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
                 .withDBLink("ZDB-GENE-030131-3603", "324880", FDCONT_NCBI_GENE_ID, "ZDB-PUB-020723-3")
                 .withDBLink("ZDB-GENE-030131-3603", "AI794605", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
                 .withDBLink("ZDB-GENE-030131-3603", "AI883911", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
-                .withGene2AccessionFile("7955\t324880\t-\tAI883911.1\t5589086\t-\t-\t-\t-\t-\t-\t?\t-\t-\t-\twu:fc46e01")
-                .withGene2AccessionFile("7955\t101885800\t-\tAI794605.1\t5342321\t-\t-\t-\t-\t-\t-\t?\t-\t-\t-\tLOC101885800")
-                .withZfGeneInfoFile("7955\t324880\twu:fc46e01\t-\tfc46e01\tZFIN:ZDB-GENE-030131-3603|AllianceGenome:ZFIN:ZDB-GENE-030131-3603\t4\t-\twu:fc46e01\tunknown\twu:fc46e01\twu:fc46e01\tO\t-\t20250519\t-")
-                .withZfGeneInfoFile("7955\t101885800\tLOC101885800\t-\t-\t-\t4\t-\tuncharacterized LOC101885800\tprotein-coding\t-\t-\t-\tuncharacterized protein LOC101885800\t20250909\t-")
+                .withGene2AccessionFile("324880", "-", "AI883911.1")
+                .withGene2AccessionFile("101885800", "-", "AI794605.1")
+                .withZfGeneInfoFile("324880", "wu:fc46e01a", List.of("ZFIN:ZDB-GENE-030131-3603", "AllianceGenome:ZFIN:ZDB-GENE-030131-3603"))
+                .withZfGeneInfoFile("101885800", "LOC101885800", List.of())
                 .build();
 
         assertNcbiDBLinkExists("ZDB-GENE-030131-3603", "324880");
