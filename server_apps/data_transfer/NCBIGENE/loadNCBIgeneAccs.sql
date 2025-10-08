@@ -63,6 +63,9 @@ select count(dblink_zdb_id) as noLengthBefore
         from ncbi_gene_delete
         join db_link on delete_dblink_zdb_id = dblink_zdb_id and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' );
 
+    delete from  marker_assembly where ma_mrkr_zdb_id in (select mrkr_id from dblink_to_ncbi_delete)
+                                   and ma_a_pk_id = (select a_pk_id from assembly where a_name = 'GRCz12tu');
+
     delete from marker_annotation_status where mas_mrkr_zdb_id in (select mrkr_id from dblink_to_ncbi_delete);
 
     -- Add the "Current" flag to the db_link records that were just loaded (12 is the id for "Current" in vocabulary_term)
