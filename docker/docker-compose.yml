@@ -89,6 +89,7 @@ services:
     hostname: zfin.org
     build: ./httpd/
     environment:
+      LETSENCRYPT_HOST: ${DOCKER_VIRTUAL_HOST}
       VIRTUAL_HOST: ${DOCKER_VIRTUAL_HOST}
       VIRTUAL_PROTO: https
       VIRTUAL_PORT: 443
