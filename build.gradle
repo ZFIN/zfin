@@ -755,15 +755,19 @@ sourceSets {
 test {
     maxHeapSize = "2048m"
     useJUnitPlatform()
-    jvmArgs('--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.lang.invoke=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-            '--add-opens', 'java.prefs/java.util.prefs=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.nio.charset=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.net=ALL-UNNAMED',
-            '--add-opens', 'java.base/java.util.concurrent.atomic=ALL-UNNAMED')
+    def jvmArgsList = ['--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.lang.invoke=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                       '--add-opens', 'java.prefs/java.util.prefs=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.nio.charset=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.net=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util.concurrent.atomic=ALL-UNNAMED']
+    if (project.hasProperty('gradleDebug')) {
+        jvmArgsList.add('-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005')
+    }
+    jvmArgs(jvmArgsList)
     testLogging {
         //showStandardStreams = true
     }
@@ -775,9 +779,15 @@ test {
         includeSmokeTests = true
         includeNonSmokeTests = true
     }
+    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
+    println "Include smoke tests: " + includeSmokeTests
+    println "Include non-smoke tests: " + includeNonSmokeTests
+    println "Include NCBI load tests: " + includeNcbiLoadTests
 
     filter {
-
+        if (includeNcbiLoadTests) {
+            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
+        }
         if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
             //spock tests

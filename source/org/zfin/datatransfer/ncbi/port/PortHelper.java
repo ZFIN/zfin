@@ -36,6 +36,14 @@ public class PortHelper {
         System.exit(4);
     }
 
+    public static void reportErr(String msg) {
+        // Ensure environment variables are substituted if the pattern ${VAR_NAME} is used
+        Map<String, String> envMap = System.getenv();
+        StringSubstitutor sub = new StringSubstitutor(envMap);
+        String resolvedMsg = sub.replace(msg);
+        System.err.println(resolvedMsg);
+    }
+
 
     public static void sendMailWithAttachedReport(String to, String subject, String attachmentFilename, File workingDir) {
         sendMailWithAttachedReport(to, subject, new File(workingDir, attachmentFilename).getAbsolutePath());
@@ -144,7 +152,11 @@ public class PortHelper {
 
 
     public static String env(String key) {
-        return System.getenv(key);
+        String value = System.getenv(key);
+        if (value == null) {
+            value = System.getProperty(key);
+        }
+        return value;
     }
 
     public static Boolean envTrue(String key) {
@@ -166,7 +178,8 @@ public class PortHelper {
     }
 
     public static boolean envExists(String key) {
-        return System.getenv(key) != null;
+        String value = env(key);
+        return value != null && !value.isEmpty();
     }
 
     public static boolean stringStartsWithLetter(String s) {

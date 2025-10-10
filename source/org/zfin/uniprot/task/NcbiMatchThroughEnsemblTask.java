@@ -308,6 +308,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         // Get semi-final report using the above mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
         // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
+        session.createNativeQuery("DROP TABLE IF EXISTS ncbi_match_report").executeUpdate();
         query = """
                 SELECT
                     n2z.ncbi_id,
