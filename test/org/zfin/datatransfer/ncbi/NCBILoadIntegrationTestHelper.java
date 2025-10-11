@@ -2,7 +2,6 @@ package org.zfin.datatransfer.ncbi;
 
 import org.hibernate.Session;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -21,7 +20,7 @@ public class NCBILoadIntegrationTestHelper {
 
     public static final String ZF_GENE_INFO_HEADER = "#tax_id\tGeneID\tSymbol\tLocusTag\tSynonyms\tdbXrefs\tchromosome\tmap_location\tdescription\ttype_of_gene\tSymbol_from_nomenclature_authority\tFull_name_from_nomenclature_authority\tNomenclature_status\tOther_designations\tModification_date\tFeature_type\n";
     public static final String GENE_2_ACCESSION_HEADER = "#tax_id\tGeneID\tstatus\tRNA_nucleotide_accession.version\tRNA_nucleotide_gi\tprotein_accession.version\tprotein_gi\tgenomic_nucleotide_accession.version\tgenomic_nucleotide_gi\tstart_position_on_the_genomic_accession\tend_position_on_the_genomic_accession\torientation\tassembly\tmature_peptide_accession.version\tmature_peptide_gi\tSymbol\n";
-    private static final String REFSEQ_CATALOG_ARCHIVE = "/research/zarchive/load_files/NCBI-gene-load-archive/2025-09-23/RefSeqCatalog.gz";
+//    private static final String REFSEQ_CATALOG_ARCHIVE = "/research/zarchive/load_files/NCBI-gene-load-archive/2025-09-23/RefSeqCatalog.gz";
 
     private final Path tempDir;
 
@@ -157,7 +156,9 @@ public class NCBILoadIntegrationTestHelper {
         gzipFile(tempDir.resolve("zf_gene_info"));
         gzipFile(tempDir.resolve("gene2vega"));
 
-        Files.copy(Path.of(REFSEQ_CATALOG_ARCHIVE), tempDir.resolve("RefSeqCatalog.gz"));
+        //touch RefSeqCatalog
+        Files.writeString(tempDir.resolve("RefSeqCatalog"), "");
+        gzipFile(tempDir.resolve("RefSeqCatalog"));
     }
 
     public void fillTestFiles(String gene2AccessionContents, String zfGeneInfoContents) throws IOException {
@@ -328,6 +329,25 @@ public class NCBILoadIntegrationTestHelper {
                 .list();
     }
 
+
+    public Integer getDBLinkLengthIfExists(String geneZdbID, String accessionNumber, String fdcontID) {
+        String sql = """
+            SELECT dblink_length FROM db_link dl
+            WHERE dl.dblink_linked_recid = ?
+            AND dl.dblink_fdbcont_zdb_id = ?
+            AND dl.dblink_acc_num = ?
+            ORDER BY dl.dblink_acc_num
+            """;
+
+        return (Integer)HibernateUtil.currentSession()
+                .createNativeQuery(sql)
+                .setParameter(1, geneZdbID)
+                .setParameter(2, fdcontID)
+                .setParameter(3, accessionNumber)
+                .uniqueResult();
+    }
+
+
     public int getAttributionCount(String geneId) {
         String sql = """
             SELECT COUNT(*) FROM db_link dl
@@ -391,6 +411,7 @@ public class NCBILoadIntegrationTestHelper {
         private final List<String> gene2VegaLines = new ArrayList<>();
         private final List<String> notInCurrentReleaseLines = new ArrayList<>();
         private final Map<String, String> markerStatuses = new HashMap<>();
+        private final Map<String, String> refSeqEntries = new HashMap<>();
 
         public BeforeStateBuilder(NCBILoadIntegrationTestHelper helper) {
             this.helper = helper;
@@ -526,6 +547,22 @@ public class NCBILoadIntegrationTestHelper {
                 String notInCurrentRelease = String.join("\n", notInCurrentReleaseLines);
                 helper.fillTestFile("notInCurrentReleaseGeneIDs.unl", notInCurrentRelease);
             }
+            if (!refSeqEntries.isEmpty()) {
+                List<String> refSeqLines = new ArrayList<>();
+                for (Map.Entry<String, String> entry : refSeqEntries.entrySet()) {
+                    refSeqLines.add(String.join("\t",
+                            DANIO_RERIO_TAX_ID,
+                            "IGNORED", // <-- ignored when parsing, should be "Danio rerio"
+                            entry.getKey(), // accession
+                            "IGNORED", // <-- ignored when parsing, should be "complete|vertebrate_other"
+                            "IGNORED", // <-- ignored when parsing, should be "INFERRED", "MODEL", "na", "PREDICTED", "PROVISIONAL", "REVIEWED", or "VALIDATED"
+                            entry.getValue() // length
+                    ));
+                }
+                String refSeqContent = String.join("\n", refSeqLines);
+                helper.fillTestFile("RefSeqCatalog", refSeqContent);
+                helper.gzipFile(helper.tempDir.resolve("RefSeqCatalog"));
+            }
         }
 
         public BeforeStateBuilder withVega(String geneZdbID, String ottdargID, String ottdargAbbrev) {
@@ -540,6 +577,11 @@ public class NCBILoadIntegrationTestHelper {
 
         public BeforeStateBuilder withMarkerAnnotationStatus(String geneId, String status) {
             this.markerStatuses.put(geneId, status);
+            return this;
+        }
+
+        public BeforeStateBuilder withRefSeqCatalogFile(String accession, String length) {
+            this.refSeqEntries.put(accession, length);
             return this;
         }
 

@@ -60,12 +60,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public static final String FDCONT_ENSDARG = "ZDB-FDBCONT-200123-1";
     public static final String FDCONT_NCBI_GENE_ID = "ZDB-FDBCONT-040412-1";
     public static final String FDCONT_VEGA = "ZDB-FDBCONT-040412-14";
-    public static final String FDCONT_GEN_BANK_RNA = "ZDB-FDBCONT-040412-37";
-    public static final String fdcontGenPept = "ZDB-FDBCONT-040412-42";
-    public static final String fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
-    public static final String fdcontRefSeqRNA = "ZDB-FDBCONT-040412-38";
-    public static final String fdcontRefPept = "ZDB-FDBCONT-040412-39";
-    public static final String fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
+    public static final String FDCONT_GENBANK_RNA = "ZDB-FDBCONT-040412-37";
+    public static final String FDCONT_GENPEPT = "ZDB-FDBCONT-040412-42";
+    public static final String FDCONT_GENBANK_DNA = "ZDB-FDBCONT-040412-36";
+    public static final String FDCONT_REFSEQ_RNA = "ZDB-FDBCONT-040412-38";
+    public static final String FDCONT_REFPEPT = "ZDB-FDBCONT-040412-39";
+    public static final String FDCONT_REFSEQ_DNA = "ZDB-FDBCONT-040527-1";
 
     //enum to wrap these values
     public enum DBName {
@@ -90,12 +90,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             return switch (fdbcontId) {
                 case FDCONT_NCBI_GENE_ID -> NCBI.getDisplayName();
                 case FDCONT_VEGA -> NCBI_VEGA.getDisplayName();
-                case FDCONT_GEN_BANK_RNA -> GENBANK_RNA.getDisplayName();
-                case fdcontGenPept -> GENPEPT.getDisplayName();
-                case fdcontGenBankDNA -> GENBANK_DNA.getDisplayName();
-                case fdcontRefSeqRNA -> REFSEQ_RNA.getDisplayName();
-                case fdcontRefPept -> REFSEQ_PEPTIDE.getDisplayName();
-                case fdcontRefSeqDNA -> REFSEQ_DNA.getDisplayName();
+                case FDCONT_GENBANK_RNA -> GENBANK_RNA.getDisplayName();
+                case FDCONT_GENPEPT -> GENPEPT.getDisplayName();
+                case FDCONT_GENBANK_DNA -> GENBANK_DNA.getDisplayName();
+                case FDCONT_REFSEQ_RNA -> REFSEQ_RNA.getDisplayName();
+                case FDCONT_REFPEPT -> REFSEQ_PEPTIDE.getDisplayName();
+                case FDCONT_REFSEQ_DNA -> REFSEQ_DNA.getDisplayName();
                 default -> "Unknown Foreign DB";
             };
         }
@@ -370,7 +370,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         printTimingInformation(23);
 
 //    #------------------------ get N:1 list and N:N from ZFIN to NCBI -----------------------------
-        getNtoOneAndNtoNfromZFINtoNCBI();
+//        getNtoOneAndNtoNfromZFINtoNCBI(); //this is called within getOneToNNCBItoZFINgeneIds
         printTimingInformation(24);
 
 //    #--------------------- report 1:N ---------------------------------------------
@@ -381,6 +381,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         manyToOneWarningActions = reportNtoOne();
         printTimingInformation(26);
 
+        cleanupReportNtoAllFile();
+        printTimingInformation(261);
 
 //    ##-----------------------------------------------------------------------------------
 //    ## Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
@@ -487,6 +489,23 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     /**
+     * Clean up the reportNtoAll file by removing duplicate lines and sorting the entries.
+     */
+    private void cleanupReportNtoAllFile() {
+        File reportFile = new File(workingDir, "reportNtoAll.unl");
+        if (!reportFile.exists()) {
+            return;
+        }
+        try {
+            List<String> lines = Files.readAllLines(reportFile.toPath());
+            Set<String> sortedUniqueLines = new TreeSet<>(lines);
+            Files.writeString(reportFile.toPath(), String.join("\n", sortedUniqueLines));
+        } catch (IOException e) {
+            System.out.println("Could not read/write reportNtoAll.unl file for cleanup: " + e.getMessage());
+        }
+    }
+
+    /**
      * Remove all Ensembl matches from the database. This includes anything in db_link with the recattrib source of
      * pubMappedbasedOnNCBISupplement and the fdbcont of Vega, GenBank RNA, GenPept, GenBank DNA, RefSeq RNA, RefSeq Peptide (all the types we handle in this load)
      */
@@ -494,12 +513,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         List<String> contIDs = List.of(
                 FDCONT_NCBI_GENE_ID,
                 FDCONT_VEGA,
-                FDCONT_GEN_BANK_RNA,
-                fdcontGenPept,
-                fdcontGenBankDNA,
-                fdcontRefSeqRNA,
-                fdcontRefPept,
-                fdcontRefSeqDNA);
+                FDCONT_GENBANK_RNA,
+                FDCONT_GENPEPT,
+                FDCONT_GENBANK_DNA,
+                FDCONT_REFSEQ_RNA,
+                FDCONT_REFPEPT,
+                FDCONT_REFSEQ_DNA);
 
         createTransaction();
 
@@ -685,11 +704,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String dblinkZdbId = parts[2];
                 String loadPub = parts[3];
                 String existing = parts[4];
+                String source = parts[5];
 
                 String message = String.format("N:1 Warning - ZFIN Gene %s mapped to NCBI Gene %s\n" +
                                 "via DBLink %s\n" +
-                                "(Load Pub: %s)",
-                        zdbGeneId, ncbiId, dblinkZdbId, loadPub);
+                                "(Load Pub: %s)\n" +
+                                "Source: %s\n",
+                        zdbGeneId, ncbiId, dblinkZdbId, loadPub, source);
                 print(LOG, message);
                 records.add(Map.of(
                         "zdbGeneId", zdbGeneId,
@@ -697,7 +718,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         "dblinkZdbId", dblinkZdbId,
                         "loadPub", loadPub,
                         "existing", existing,
-                        "message", message
+                        "message", message,
+                        "source", source
                 ));
             }
 
@@ -711,7 +733,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     String combinedMessage = "N:1 Warning - NCBI Gene " + ncbiId + " mapped to multiple ZFIN Genes: " +
                             recs.stream()
                                     .map(r -> r.get("zdbGeneId") + " via DBLink " + r.get("dblinkZdbId") +
-                                            " (Load Pub: " + r.get("loadPub") + ", Existing: " + r.get("existing") + ")")
+                                            " (Load Pub: " + r.get("loadPub") + ", Existing: " + r.get("existing") + ", Source: " + r.get("source") + ")")
                                     .collect(Collectors.joining("; "));
                     print(LOG, combinedMessage);
                     LoadReportAction action = new LoadReportAction();
@@ -911,14 +933,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String sqlQuery = "\\copy (" +
                     """
                     select d.*, string_agg(distinct r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
-                    string_agg(ma_a_pk_id::varchar, '|' order by ma_a_pk_id) as marker_assemblies,
-                    string_agg(distinct mas_vt_pk_id::varchar, '|') as marker_annotation_status
-                     from db_link d
-                     left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
-                     left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
-                     left join marker_annotation_status on d.dblink_linked_recid = mas_mrkr_zdb_id
-                     group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
-                     order by dblink_linked_recid, dblink_acc_num
+                        string_agg(distinct a_name, '|' order by a_name) as marker_assemblies,
+                        string_agg(distinct vt_name, '|' order by vt_name) as marker_annotation_status
+                    from db_link d
+                        left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
+                        left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
+                        left join assembly on ma_a_pk_id = a_pk_id
+                        left join marker_annotation_status on d.dblink_linked_recid = mas_mrkr_zdb_id
+                        left join vocabulary_term on mas_vt_pk_id = vt_id
+                    group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
+                    order by dblink_linked_recid, dblink_acc_num
                     """ +
                     ") to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
 
@@ -1033,9 +1057,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         and dblink_fdbcont_zdb_id in (:fdcontRefSeqRNA,:fdcontRefPept,:fdcontRefSeqDNA))
         """;
         NativeQuery<Tuple> query = currentSession().createNativeQuery(sql, Tuple.class);
-        query.setParameter("fdcontRefSeqRNA", fdcontRefSeqRNA);
-        query.setParameter("fdcontRefPept", fdcontRefPept);
-        query.setParameter("fdcontRefSeqDNA", fdcontRefSeqDNA);
+        query.setParameter("fdcontRefSeqRNA", FDCONT_REFSEQ_RNA);
+        query.setParameter("fdcontRefPept", FDCONT_REFPEPT);
+        query.setParameter("fdcontRefSeqDNA", FDCONT_REFSEQ_DNA);
         List<Tuple> curGenesWithRefSeq = query.list();
         for(Tuple tuple : curGenesWithRefSeq) {
             String geneId = (String) tuple.get(0);
@@ -1050,32 +1074,32 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         numNCBIgeneIdBefore = PortSqlHelper.countData(currentSession(), sql);
 
         //RefSeq RNA
-        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefSeqRNA);
+        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_RNA);
         numRefSeqRNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // RefPept
-        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefPept);
+        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFPEPT);
         numRefPeptBefore = PortSqlHelper.countData(currentSession(), sql);
 
         //RefSeq DNA
-        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefSeqDNA);
+        sql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_DNA);
         numRefSeqDNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenBank RNA (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GEN_BANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
         );
         numGenBankRNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenPept (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                fdcontGenPept, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
         );
         numGenPeptBefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenBank DNA (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                fdcontGenBankDNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
         );
         numGenBankDNABefore = PortSqlHelper.countData(currentSession(), sql);
 
@@ -1087,7 +1111,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             where dblink_fdbcont_zdb_id = '${fdcontRefSeqRNA}'
             and dblink_acc_num like 'NM_%'
             and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
-            """,  Map.of("fdcontRefSeqRNA", fdcontRefSeqRNA));
+            """,  Map.of("fdcontRefSeqRNA", FDCONT_REFSEQ_RNA));
         numGenesRefSeqRNABefore = PortSqlHelper.countData(currentSession(), sql);
 
 
@@ -1098,7 +1122,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             where dblink_fdbcont_zdb_id = '${fdcontRefPept}'
             and dblink_acc_num like 'NP_%'
             and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
-            """, Map.of("fdcontRefPept", fdcontRefPept));
+            """, Map.of("fdcontRefPept", FDCONT_REFPEPT));
         numGenesRefSeqPeptBefore = PortSqlHelper.countData(currentSession(), sql);
 
         // number of genes with GenBank
@@ -1434,9 +1458,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             """; //
 
         NativeQuery<Tuple> query = currentSession().createNativeQuery(sqlGenBankAccessionLength, Tuple.class);
-        query.setParameter("fdcontGenBankRNA", FDCONT_GEN_BANK_RNA);
-        query.setParameter("fdcontGenPept", fdcontGenPept);
-        query.setParameter("fdcontGenBankDNA", fdcontGenBankDNA);
+        query.setParameter("fdcontGenBankRNA", FDCONT_GENBANK_RNA);
+        query.setParameter("fdcontGenPept", FDCONT_GENPEPT);
+        query.setParameter("fdcontGenBankDNA", FDCONT_GENBANK_DNA);
 
         List<Tuple> results = query.list();
 
@@ -2289,8 +2313,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         File ntonFile = new File(workingDir, "reportNtoN");
         File ntonFile2 = new File(workingDir, "reportNtoN.2");
+        File ntoAllFile = new File(workingDir, "reportNtoAll.unl");
         try (BufferedWriter ntonWriter = new BufferedWriter(new FileWriter(ntonFile));
-             BufferedWriter ntonWriter2 = new BufferedWriter(new FileWriter(ntonFile2))) {
+             BufferedWriter ntonWriter2 = new BufferedWriter(new FileWriter(ntonFile2));
+             BufferedWriter ntoAllWriter = new BufferedWriter(new FileWriter(ntoAllFile));
+             ) {
             ntonWriter.write(getArtifactComparisonURLs());
 
             long ctOneToNCount = 0;
@@ -2355,6 +2382,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                             problem.addAssociatedDataByNcbiGeneID(ncbiId, ncbiSymbol, refArrayAccsNCBI);
                             ntonWriter.write(String.format("\t%s (%s) [%s]\n", ncbiId, ncbiSymbol, String.join(" ", refArrayAccsNCBI)));
+                            writeNtoAll(ntoAllWriter, zdbIdNtoN, ncbiId);
 
 //                            warningAction.addDetails(String.format("\t%s (%s) [%s]\n", ncbiId, ncbiSymbol, String.join(" ", refArrayAccsNCBI)));
                             warningAction.addNcbiGeneIdLink(ncbiId);
@@ -2387,6 +2415,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                             String zfinSymbol = geneZDBidsSymbols.getOrDefault(zdbId, "<no symbol>");
                             problem.addAssociatedDataByZdbID(zdbId, zfinSymbol, refArrayAccsZFIN);
                             ntonWriter.write(String.format("\t%s (%s) [%s]\n", zdbId, zfinSymbol, String.join(" ", refArrayAccsZFIN)));
+                            writeNtoAll(ntoAllWriter, zdbId, ncbiGene);
 //                            warningAction.addDetails(String.format("\t%s (%s) [%s]\n", zdbId, zfinSymbol, String.join(" ", refArrayAccsZFIN)));
                             warningAction.addZdbIdLink(zdbId, zfinSymbol);
                         }
@@ -2415,6 +2444,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             reportErrAndExit("Cannot open or write to reportNtoN: " + e.getMessage());
         }
         return loadReportActions;
+    }
+
+    private void writeNtoAll(BufferedWriter ntoAllWriter, String zdbGeneID, String ncbiGeneID) {
+        try {
+            ntoAllWriter.write(String.join("|", List.of(zdbGeneID, ncbiGeneID)) + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing to reportNtoAll.unl in writeNtoAll for ZDB ID " + zdbGeneID, e);
+        }
     }
 
     private void getNtoOneAndNtoNfromZFINtoNCBI() {
@@ -2609,8 +2646,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private List<LoadReportAction> reportOneToN() {
         File reportFile = new File(workingDir, "reportOneToN");
+        File reportFileAll = new File(workingDir, "reportNtoAll.unl");
         List<LoadReportAction> warningActions = new ArrayList<>();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile));
+            BufferedWriter writerAll = new BufferedWriter(new FileWriter(reportFileAll, true))) {
             writer.write(getArtifactComparisonURLs());
             long ct = 0;
 
@@ -2645,6 +2684,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     Set<String> ncbiAccessions = supportedGeneNCBI.getOrDefault(ncbiId, Collections.emptySet());
                     String ncbiSymbol = NCBIidsGeneSymbols.getOrDefault(ncbiId, "<no gene symbol>"); // Perl used <no gene symbol>
                     writer.write(String.format("   %s (%s) [%s]\n\n", ncbiId, ncbiSymbol, String.join(" ", ncbiAccessions)));
+                    writeNtoAll(writerAll, zdbId, ncbiId);
 //                    warningAction.addDetails(String.format("   %s (%s) [%s]\n\n", ncbiId, ncbiSymbol, String.join(" ", ncbiAccessions)));
                     problem.addAssociatedDataByNcbiGeneID(ncbiId, ncbiSymbol, ncbiAccessions);
                     warningAction.addNcbiGeneIdLink(ncbiId);
@@ -2669,8 +2709,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private List<LoadReportAction> reportNtoOne() {
         File reportFile = new File(workingDir, "reportNtoOne");
+        File reportFileAll = new File(workingDir, "reportNtoAll.unl");
         List<LoadReportAction> warningActions = new ArrayList<>();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile));
+            BufferedWriter writerAll = new BufferedWriter(new FileWriter(reportFileAll, true))) {
             writer.write(getArtifactComparisonURLs());
             long ct = 0;
 
@@ -2702,6 +2744,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     List<String> zfinAccessions = supportedGeneZFIN.getOrDefault(zdbId, Collections.emptyList());
                     String zfinSymbol = geneZDBidsSymbols.getOrDefault(zdbId, "<unknown ZFIN symbol>");
                     writer.write(String.format("   %s (%s) [%s]\n\n", zdbId, zfinSymbol, String.join(" ", zfinAccessions)));
+                    writeNtoAll(writerAll, zdbId, ncbiId);
 //                    warningAction.addDetails(String.format("   %s (%s) [%s]\n\n", zdbId, zfinSymbol, String.join(" ", zfinAccessions)));
                     problem.addAssociatedDataByZdbID(zdbId, zfinSymbol, zfinAccessions);
                     warningAction.addZdbIdLink(zdbId);
@@ -2981,8 +3024,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 where (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
                   and dblink_fdbcont_zdb_id in ('%s','%s','%s','%s','%s','%s')
                 """,
-                FDCONT_GEN_BANK_RNA, fdcontGenPept, fdcontGenBankDNA,
-                fdcontRefSeqRNA, fdcontRefPept, fdcontRefSeqDNA
+                FDCONT_GENBANK_RNA, FDCONT_GENPEPT, FDCONT_GENBANK_DNA,
+                FDCONT_REFSEQ_RNA, FDCONT_REFPEPT, FDCONT_REFSEQ_DNA
         );
 
         System.out.println("DEBUGGING: sqlGetGenBankAndRefSeqAccs:\n" + sqlGetGenBankAndRefSeqAccs);
@@ -3018,7 +3061,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + genBankRNA + FDCONT_GEN_BANK_RNA;
+                String hashKey = zdbGeneId + genBankRNA + FDCONT_GENBANK_RNA;
                 if (geneAccFdbcont.containsKey(hashKey)) continue;
 
                 Integer lengthVal = sequenceLength.get(genBankRNA);
@@ -3026,7 +3069,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 // Format: zdbGeneId|GenBankRNA||length|fdcontGenBankRNA|attributionPub
                 TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, genBankRNA, lengthStr, FDCONT_GEN_BANK_RNA, attributionPub));
+                        zdbGeneId, genBankRNA, lengthStr, FDCONT_GENBANK_RNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding
                 this.ctToLoad++;
             }
@@ -3046,7 +3089,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
               and dblink_fdbcont_zdb_id = '%s'
               and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
               and recattrib_source_zdb_id not in ('%s','%s','%s')
-            """, fdcontGenPept, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+            """, FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
         //Note: Perl had pubMappedbasedOnNCBISupplement missing in the IN clause in the original file for this query.
         //Kept it as is to match original. If this was an omission, it should be added.
         //Looking again, the Perl code for this specific query `sqlGenPeptAttributedToNonLoadPub`
@@ -3060,7 +3103,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
               and dblink_fdbcont_zdb_id = '%s'
               and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
               and recattrib_source_zdb_id not in ('%s','%s')
-            """, fdcontGenPept, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA);
+            """, FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA);
 
 
         NativeQuery<Tuple> query = currentSession().createNativeQuery(sqlGenPeptAttributedToNonLoadPub, Tuple.class);
@@ -3101,13 +3144,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + genPept + fdcontGenPept;
+                String hashKey = zdbGeneId + genPept + FDCONT_GENPEPT;
                 Integer lengthVal = sequenceLength.get(genPept);
                 String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 if (!geneAccFdbcont.containsKey(hashKey)) {
                     TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, fdcontGenPept, attributionPub));
+                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
                     geneAccFdbcont.put(hashKey, "1"); // Mark as added
                     this.ctToLoad++;
                     GenPeptsToLoad.put(genPept, zdbGeneId);
@@ -3118,7 +3161,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     toDelete.put(moreToDeleteDblinkId, 1); // Add to the main toDelete map
 
                     TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, fdcontGenPept, attributionPub));
+                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
                     // geneAccFdbcont already contains this key, so we are essentially replacing its attribution
                     // No need to increment ctToLoad again if it was already counted, but the logic here implies
                     // it might be a new load line if the attribution changes.
@@ -3148,7 +3191,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             from db_link
             where dblink_fdbcont_zdb_id = '%s'
               and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
-            """, fdcontGenPept);
+            """, FDCONT_GENPEPT);
 
         NativeQuery<Tuple> query = currentSession().createNativeQuery(sqlAllGenPeptWithGeneZFIN, Tuple.class);
         List<Tuple> results = query.list();
@@ -3224,19 +3267,20 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                         if (zdbGeneId == null) continue;
 
-                        String hashKey = zdbGeneId + genBankDNA + fdcontGenBankDNA;
+                        String hashKey = zdbGeneId + genBankDNA + FDCONT_GENBANK_DNA;
                         Integer lengthVal = sequenceLength.get(genBankDNA);
                         String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                         if (!geneAccFdbcont.containsKey(hashKey)) {
                             TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                                    zdbGeneId, genBankDNA, lengthStr, fdcontGenBankDNA, attributionPub));
+                                    zdbGeneId, genBankDNA, lengthStr, FDCONT_GENBANK_DNA, attributionPub));
                             geneAccFdbcont.put(hashKey, "1"); // Mark as added
                             this.ctToLoad++;
                         } else {
                             // In Perl, this existing dblink_zdb_id is retrieved from geneAccFdbcont
                             String dbLinkToPreserve = geneAccFdbcont.get(hashKey);
-                            TO_PRESERVE.write(dbLinkToPreserve + "\n");
+                            TO_PRESERVE.write(String.format("%s|%s|%s|%s|%s|%s\n",
+                                    dbLinkToPreserve, zdbGeneId, genBankDNA, lengthStr, FDCONT_GENBANK_DNA, attributionPub));
                             print(LOG, "_DUPE<" + dbLinkToPreserve + ">");
                         }
                     }
@@ -3260,14 +3304,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refSeqRNA + fdcontRefSeqRNA;
+                String hashKey = zdbGeneId + refSeqRNA + FDCONT_REFSEQ_RNA;
                 if (geneAccFdbcont.containsKey(hashKey)) continue;
 
                 Integer lengthVal = sequenceLength.get(refSeqRNA);
                 String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqRNA, lengthStr, fdcontRefSeqRNA, attributionPub));
+                        zdbGeneId, refSeqRNA, lengthStr, FDCONT_REFSEQ_RNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1");
                 this.ctToLoad++;
             }
@@ -3288,14 +3332,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refPept + fdcontRefPept;
+                String hashKey = zdbGeneId + refPept + FDCONT_REFPEPT;
                 if (geneAccFdbcont.containsKey(hashKey)) continue;
 
                 Integer lengthVal = sequenceLength.get(refPept);
                 String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refPept, lengthStr, fdcontRefPept, attributionPub));
+                        zdbGeneId, refPept, lengthStr, FDCONT_REFPEPT, attributionPub));
                 geneAccFdbcont.put(hashKey, "1");
                 this.ctToLoad++;
             }
@@ -3318,7 +3362,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     continue; // Skip if no ZFIN gene ID found
                 }
 
-                String hashKey = zdbGeneId + refSeqDNA + fdcontRefSeqDNA;
+                String hashKey = zdbGeneId + refSeqDNA + FDCONT_REFSEQ_DNA;
                 if (geneAccFdbcont.containsKey(hashKey)) {
                     continue; // Skip if already in the hash (i.e., exists in DB and not in toDelete)
                 }
@@ -3328,7 +3372,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub
                 TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqDNA, lengthStr, fdcontRefSeqDNA, attributionPub));
+                        zdbGeneId, refSeqDNA, lengthStr, FDCONT_REFSEQ_DNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding in this run for other types if logic allows
                 this.ctToLoad++;
             }
@@ -3461,7 +3505,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             from db_link
             where dblink_fdbcont_zdb_id = '%s'
               and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
-            """, fdcontGenPept);
+            """, FDCONT_GENPEPT);
 
         NativeQuery<Tuple> queryAfterLoad = currentSession().createNativeQuery(sqlAllGenPeptWithGeneAfterLoad, Tuple.class);
         List<Tuple> resultsAfterLoad = queryAfterLoad.list();
@@ -3522,7 +3566,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
               and exists (select 1 from db_link
                           where dblink_linked_recid = mrkr_zdb_id
                             and dblink_fdbcont_zdb_id in ('%s','%s','%s'))
-            """, fdcontRefSeqRNA, fdcontRefPept, fdcontRefSeqDNA);
+            """, FDCONT_REFSEQ_RNA, FDCONT_REFPEPT, FDCONT_REFSEQ_DNA);
 
         NativeQuery<Tuple> queryGenesAfter = currentSession().createNativeQuery(sqlGenesWithRefSeqAfter, Tuple.class);
         List<Tuple> resultsGenesAfter = queryGenesAfter.list();
@@ -3537,28 +3581,28 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_NCBI_GENE_ID);
         numNCBIgeneIdAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefSeqRNA);
+        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_RNA);
         numRefSeqRNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefPept);
+        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFPEPT);
         numRefPeptAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdcontRefSeqDNA);
+        tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_DNA);
         numRefSeqDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GEN_BANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
         numGenBankRNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(fdcontGenPept, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
         numGenPeptAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(fdcontGenBankDNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
         numGenBankDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NM_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", fdcontRefSeqRNA);
+        tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NM_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", FDCONT_REFSEQ_RNA);
         numGenesRefSeqRNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NP_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", fdcontRefPept);
+        tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NP_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", FDCONT_REFPEPT);
         numGenesRefSeqPeptAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
         tempSql = "select distinct dblink_linked_recid from db_link, foreign_db_contains, foreign_db where dblink_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_id = fdb_db_pk_id and fdb_db_name = 'GenBank' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%RNAG%')";
@@ -3736,7 +3780,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     ma_a_pk_id = 1          -- GRCz12tu
                   AND mas_vt_pk_id = 13   -- not in current
                   ;
-                \\copy (select * from tmprep2) to 'not_current_with_z12.csv' with csv header;                
+                \\copy (select * from tmprep2) to 'not_current_with_z12.csv' with csv header;
         """;
         File tmpFile2 = new File(workingDir, "not_current_with_z12.sql");
         Files.writeString(tmpFile2.toPath(), sql);
@@ -4026,12 +4070,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     DBLink ID       : %s -> %s
                     Length          : %s -> %s
                     Pub ZDB ID      : %s -> %s
+                    Assemblies      : %s -> %s
+                    Annotation Stat : %s -> %s
                     """.formatted(
                     record1.get("dblink_linked_recid"),
                     record1.get("dblink_acc_num"),
                     record1.get("dblink_zdb_id"), record2.get("dblink_zdb_id"),
                     record1.get("dblink_length"), record2.get("dblink_length"),
-                    record1.get("recattrib_source_zdb_id"), record2.get("recattrib_source_zdb_id"));
+                    record1.get("recattrib_source_zdb_id"), record2.get("recattrib_source_zdb_id"),
+                    record1.get("marker_assemblies"), record2.get("marker_assemblies"),
+                    record1.get("marker_annotation_status"), record2.get("marker_annotation_status"));
             action.setDetails(details);
             actions.add(action);
         }
