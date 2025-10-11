@@ -39,7 +39,7 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         // Create database state before the load
         helper.beforeStateBuilder()
                 .withGene("ZDB-GENE-010319-10", "id:ibd2600")
-                .withDBLink("ZDB-GENE-010319-10", "BG985726", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
+                .withDBLink("ZDB-GENE-010319-10", "BG985726", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5")
                 .withGene2AccessionFile("80928", "-", "BG985726.1")
                 .withZfGeneInfoFile("80928", "id:ibd2600", List.of("ZFIN:ZDB-GENE-010319-10", "AllianceGenome:ZFIN:ZDB-GENE-010319-10"))
                 .build();
@@ -64,7 +64,32 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         assertEquals(2, afterState.getFile("after_load.csv").getDataLines().size());
 
         assertDBLinkExists("ZDB-GENE-010319-10", "80928", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA);
+    }
 
+    @Test
+    public void testLoadGeneWithDownstreamRefSeq() throws IOException {
+        // Create database state before the load
+        helper.beforeStateBuilder()
+                .withGene("ZDB-GENE-030131-1238", "gmpr2")
+                .withDBLink("ZDB-GENE-030131-1238", "GFIL01011600", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5")
+                .withGene2AccessionFile("678545", "-", "GFIL01011600.1")
+                .withGene2AccessionFile("678545", "VALIDATED", "NM_001040304.2")
+                .withZfGeneInfoFile("678545", "gmpr2", List.of("ZFIN:ZDB-GENE-030131-1238"))
+                .withRefSeqCatalogFile("NM_001040304.2", "2135")
+                .build();
+
+        helper.runNCBILoad();
+        assertEquals("Should create exactly 1 NCBI link", 1, helper.getNCBILinkCount("ZDB-GENE-030131-1238"));
+
+        assertDBLinkExists("ZDB-GENE-030131-1238", "678545", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA);
+        assertDBLinkExists("ZDB-GENE-030131-1238", "NM_001040304", FDCONT_REFSEQ_RNA, PUB_MAPPED_BASED_ON_RNA);
+        assertDBLinkExists("ZDB-GENE-030131-1238", "GFIL01011600", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5");
+
+        List<String> newlinkAsList = helper.getDBLinksWithAttributions("ZDB-GENE-030131-1238", "NM_001040304", FDCONT_REFSEQ_RNA, PUB_MAPPED_BASED_ON_RNA);
+        assertEquals(1, newlinkAsList.size());
+
+        Integer linkLength = helper.getDBLinkLengthIfExists("ZDB-GENE-030131-1238", "NM_001040304", FDCONT_REFSEQ_RNA);
+        assertEquals(Integer.valueOf(2135), linkLength);
     }
 
     /**
@@ -94,7 +119,7 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         //Check that the old NCBI Gene ID was replaced with the new one
         assertNcbiDBLinkDoesNotExist("ZDB-GENE-120709-33", "103910949");
         assertNcbiDBLinkExists("ZDB-GENE-120709-33", "108183900");
-        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GEN_BANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
     }
 
     @Test
@@ -171,8 +196,8 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         helper.beforeStateBuilder()
                 .withGene("ZDB-GENE-030131-3603", "wu:fc46e01a")
                 .withDBLink("ZDB-GENE-030131-3603", "324880", FDCONT_NCBI_GENE_ID, "ZDB-PUB-020723-3")
-                .withDBLink("ZDB-GENE-030131-3603", "AI794605", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
-                .withDBLink("ZDB-GENE-030131-3603", "AI883911", FDCONT_GEN_BANK_RNA, "ZDB-PUB-020723-5")
+                .withDBLink("ZDB-GENE-030131-3603", "AI794605", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5")
+                .withDBLink("ZDB-GENE-030131-3603", "AI883911", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5")
                 .withGene2AccessionFile("324880", "-", "AI883911.1")
                 .withGene2AccessionFile("101885800", "-", "AI794605.1")
                 .withZfGeneInfoFile("324880", "wu:fc46e01a", List.of("ZFIN:ZDB-GENE-030131-3603", "AllianceGenome:ZFIN:ZDB-GENE-030131-3603"))
