@@ -6,7 +6,7 @@ FROM base:latest
 # Needs a dbdump (named zfindbdump.bak in place in order to build)
 # Copy the db dump to the same directory as this Dockerfile
 USER root
-RUN apt install -y postgresql-15
+RUN apt update && apt install -y postgresql-15
 RUN /etc/init.d/postgresql start && \
     su - postgres -c "createuser --superuser gradle" && \
     su - postgres -c "createuser --superuser informix" && \
