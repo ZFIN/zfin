@@ -6,7 +6,7 @@ FROM base:latest
 # Needs a dbdump (named zfindbdump.bak in place in order to build)
 # Copy the db dump to the same directory as this Dockerfile
 USER root
-RUN apt install -y postgresql-15
+RUN apt update && apt install -y postgresql-15
 RUN /etc/init.d/postgresql start && \
     su - postgres -c "createuser --superuser gradle" && \
     su - postgres -c "createuser --superuser informix" && \
@@ -28,7 +28,8 @@ RUN mkdir /tmp/inputs
 USER gradle
 RUN echo "export PGHOST=localhost" >> /home/gradle/.profile
 RUN echo "sudo /etc/init.d/postgresql start" >> /home/gradle/.profile
-RUN echo 'echo try this command: "OVERRIDE_JAVA_HOME=$JAVA_HOME NO_SLEEP=1 SKIP_DOWNLOADS=1 LOAD_NCBI_ONE_WAY_GENES=true DB_NAME=zfindb perl NCBI_gene_load.pl"' >> /home/gradle/.profile
+
+#Override the db host to point to localhost so we don't accidentally connect to another db
 RUN echo 'echo 127.0.0.1 db | sudo tee -a /etc/hosts' >> /home/gradle/.profile
 
 CMD /bin/bash -l -c "/etc/init.d/postgresql start ; while true; do sleep 100; done"
