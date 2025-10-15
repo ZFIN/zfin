@@ -15,6 +15,10 @@ filebeat.inputs:
   paths:
     - /var/log/httpd/zfin_access.json
   processors:
+  - drop_event:
+      when:
+        regexp:
+          message: '"/logs/'
   - decode_json_fields:
       fields: ['message']
       target: httpd
