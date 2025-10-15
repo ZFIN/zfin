@@ -193,7 +193,11 @@
     </Location>
     <Location /logs>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
+        AuthType openid-connect
+        <RequireAll>
+          Require env ZfinRestrictedHosts
+          Require valid-user
+        </RequireAll>
         ProxyPass          http://kibana:5601/logs
         ProxyPassReverse   http://kibana:5601/logs
     </Location>
