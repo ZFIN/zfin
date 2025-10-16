@@ -3,6 +3,7 @@ package org.zfin.datatransfer.ncbi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.Tuple;
+import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1137,6 +1138,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         numGenesGenBankBefore = PortSqlHelper.countData(currentSession(), sql);
     }
 
+    /**
+     * TODO: Use LoadFileReader to parse the zf_gene_info.gz file
+     * Then, introduce a VegaToNCBIGeneBidirectionalMapper class to encapsulate the mapping logic.
+     * It can use BidirectionalMap from Apache Commons Collections under the hood (BidiMap<String, String>).
+     * This class would provide methods to get NCBI ID by Vega ID and vice versa.
+     * This would simplify the logic in this main class and improve maintainability.
+     */
     private void readZfinGeneInfoFile() {
         int ctLines = 0;
         vegaIdsNCBIids = new HashMap<>();

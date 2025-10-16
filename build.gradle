@@ -754,7 +754,8 @@ sourceSets {
 }
 
 test {
-    maxHeapSize = "2048m"
+//    maxHeapSize = "2048m"
+    maxHeapSize = "8g"
     useJUnitPlatform()
     def jvmArgsList = ['--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
                        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
@@ -788,6 +789,9 @@ test {
     filter {
         if (includeNcbiLoadTests) {
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
+
+//   UNCOMMENT BELOW TO RUN CHARACTERIZATION TEST (DANGEROUS)
+            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
         }
         if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
