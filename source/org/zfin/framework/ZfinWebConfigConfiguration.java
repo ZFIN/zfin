@@ -37,7 +37,11 @@ public class ZfinWebConfigConfiguration implements WebMvcConfigurer {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer contentNegotiationConfigurer) {
-
+        contentNegotiationConfigurer
+            .favorParameter(false)
+            .favorPathExtension(false)
+            .ignoreAcceptHeader(false)
+            .defaultContentType(org.springframework.http.MediaType.APPLICATION_JSON);
     }
 
     @Override

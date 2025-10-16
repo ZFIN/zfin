@@ -1,13 +1,12 @@
 package org.zfin.framework;
 
-import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 public class ZfinSimpleTokenizer implements Iterator<String> {
 
     private String text;
-    private List<Token> tokenList = new ArrayList<Token>();
     private List<String> stringList = new ArrayList<String>();
     private int index;
 
@@ -41,14 +39,16 @@ public class ZfinSimpleTokenizer implements Iterator<String> {
         Analyzer analyzer = new WhitespaceAnalyzer();
         TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
         try {
-            Token token;
-            while ((token = tokenStream.next()) != null) {
-                tokenList.add(token);
-                String tokenString = token.termText();
+            CharTermAttribute termAtt = tokenStream.getAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while (tokenStream.incrementToken()) {
+                String tokenString = termAtt.toString();
                 String replacedCharacters = replaceSpecialCharactersWithWhiteSpaces(tokenString);
                 if (!stringList.contains(replacedCharacters) && StringUtils.isNotEmpty(tokenString))
                     Collections.addAll(stringList, getWhiteSpaceTokens(replacedCharacters));
             }
+            tokenStream.end();
+            tokenStream.close();
         } catch (IOException e) {
             logger.error("Error while getting next token from token stream!");
         }
