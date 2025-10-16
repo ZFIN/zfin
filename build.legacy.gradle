@@ -1,0 +1,906 @@
+buildscript {
+    dependencies {
+        classpath 'org.postgresql:postgresql:42.2.18'
+    }
+}
+
+plugins {
+    id "org.liquibase.gradle" version "2.1.1"
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply from: 'agr.gradle'
+apply from: 'console.gradle'
+
+
+//apply from: file('setupTestsReports.gradle')
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+//apply from : '../zfinGradle/build.gradle'
+
+def env = System.getenv()
+def dbname = env['DBNAME']
+def sourceroot = env['SOURCEROOT']
+def pgbindir = env['PGBINDIR']
+def pgdata = env['PGDATA']
+def pghost = env['PGHOST']
+def dbunloadspath = env['DB_UNLOADS_PATH']
+def solrunloadspath = env['SOLR_UNLOADS_PATH']
+def downloaddirectory = env['DOWNLOAD_DIRECTORY']
+String targetroot = env['TARGETROOT']
+
+/*
+dependencies {
+    implementation 'org.liquibase:liquibase-core:3.4.1'
+    implementation "org.liquibase:liquibase-gradle-plugin:1.1.1"
+    implementation gradleApi()
+    implementation localGroovy()
+}
+*/
+
+task deployPostgres(dependsOn: ['deployPostgresFunctions',
+                                'deployPostgresTrigger']) {
+    description "Deploy all postgres code"
+}
+
+defaultTasks 'make'
+
+project.ext.set("dbname", dbname)
+project.ext.set("sourceroot", sourceroot)
+project.ext.set("pgdata", pgdata)
+project.ext.set("pgbindir", pgbindir)
+project.ext.set("targetroot", targetroot)
+
+task loadDatabase() {
+    doLast {
+        File unloads = file(dbunloadspath)
+        String unloadPath
+        if (unloads.exists()) {
+            def files = unloads.listFiles()
+            Arrays.sort(files, new Comparator<File>() {
+                int compare(File f1, File f2) {
+                    return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+                }
+            })
+            File latest = files[0]
+            File latestBakDump = latest.listFiles().last()
+            unloadPath = latestBakDump.getPath()
+        }
+
+        //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
+        //rather than -Ddb=...
+        if (System.getProperty("B")) {
+            unloadPath = System.getProperty("B")
+        }
+
+        //might as well support -Dunload also
+        if (System.getProperty("unload")) {
+            unloadPath = System.getProperty("unload")
+        }
+
+        println "Loading $unloadPath into $dbname"
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql -v ON_ERROR_STOP=1 $dbname"
+        }
+        exec {
+            ignoreExitValue = true
+            commandLine 'dropdb', dbname
+        }
+        exec {
+            ignoreExitValue = true
+            commandLine 'createdb', dbname
+        }
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "pg_restore -j 8 -d $dbname $unloadPath"
+        }
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql -v ON_ERROR_STOP=1 $dbname"
+        }
+    }
+}
+
+task loadDb(type: GradleBuild) {
+    tasks = ['loadDatabase']
+}
+
+task downloadDB(type: GradleBuild) {
+    tasks = ['getLatestDatabaseUnload']
+}
+
+task downloadSolrIndex(type: GradleBuild) {
+    tasks = ['getLatestSolrUnload']
+}
+
+task loadSolrIndex(type: GradleBuild) {
+    tasks = ['getLatestSolrIndex']
+}
+
+task getdb(dependsOn: downloadDB) //alias for downloadDB (aka getLatestDatabaseUnload)
+task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
+
+
+task buildDatabase(type: GradleBuild) {
+    tasks = ['liquibasePreBuild']
+}
+
+task buildPostGmakeDatabase(type: GradleBuild) {
+    tasks = ['liquibasePostBuild']
+}
+
+task reload(type: GradleBuild) {
+    tasks = ['loadDatabase', 'liquibasePreBuild', 'liquibasePostBuild']
+}
+
+String preChangeLog = "source/org/zfin/db/load/db.changelog.master.xml"
+
+task liquibasePreBuild() {
+    doLast {
+        liquibase {
+            activities {
+                main {
+                    println preChangeLog
+                    changeLogFile preChangeLog
+                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
+                }
+            }
+        }
+    }
+}
+
+liquibasePreBuild.finalizedBy(update)
+
+String postChangeLog = "source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
+task liquibasePostBuild() {
+    doLast {
+
+        liquibase {
+            activities {
+                main {
+                    changeLogFile preChangeLog
+                    Properties properties = new Properties()
+                    properties.setProperty("SOURCEROOT", ".")
+                    changeLogFile postChangeLog
+                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
+                }
+            }
+        }
+    }
+}
+
+liquibasePostBuild.finalizedBy(update)
+
+// variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
+def translateVariableSet = [
+        'CATALINA_HOME',
+        'CGI_BIN_DIR_NAME',
+        'DB_NAME',
+        'PGHOST',
+        'DEFAULT_EMAIL',
+        'ENVIRONMENT',
+        'FTP_ROOT',
+        'GBROWSE_PATH_FROM_ROOT',
+        'GENBANK_DAILY_EMAIL',
+        'GO_EMAIL_ERR',
+        'GO_EMAIL_CURATOR',
+        'GROOVY_CLASSPATH',
+        'INSTANCE',
+        'JAVA_HOME',
+        'JBROWSE_PATH_FROM_ROOT',
+        'LOADUP_FULL_PATH',
+        'MOVE_BLAST_FILES_TO_DEVELOPMENT',
+        'MUTANT_NAME',
+        'PARTNER_DBNAME',
+        'PARTNER_INTERNAL_INSTANCE',
+        'ROOT_PATH',
+        'SHARED_DOMAIN_NAME',
+        'SOURCEROOT',
+        'SQLHOSTS_FILE',
+        'SWISSPROT_EMAIL_REPORT',
+        'SWISSPROT_EMAIL_CURATOR',
+        'SWISSPROT_EMAIL_ERR',
+        'TARGETROOT',
+        'USER',
+        'VALIDATION_EMAIL_DBA',
+        'WEBHOST_BLASTDB_TO_COPY',
+        'WEBHOST_FASTA_FILE_PATH',
+]
+
+// load properties into gradle
+task setup {
+    project.ext.ttNameMap = new Properties()
+    file("home/WEB-INF/zfin.properties").withInputStream {
+        ttNameMap.load(it)
+    }
+    Map filteredMap = new HashMap()
+    project.ext.ttNameMap.each { name, value ->
+        if (translateVariableSet.contains(name)) {
+            filteredMap.put(name, value)
+        }
+    }
+    project.ext.ttNameMap = filteredMap
+}
+
+/*
+    allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
+        println p.path
+    }
+*/
+
+task printProp() {
+    doLast {
+        println 'All Properties'
+        ttNameMap.each { name, value ->
+            println name + ' = ' + value
+        }
+    }
+}
+
+project(':home') {
+    task deployFiles {
+        doLast {
+            def sourceFiles = [file('robots.txt'), file('favicon.ico')]
+            def targetDir = file("${targetroot}/home")
+
+            if (!targetDir.exists()) {
+                targetDir.mkdirs()
+            }
+
+            sourceFiles.each { sourceFile ->
+                def targetFile = new File(targetDir, sourceFile.name)
+                targetFile.bytes = sourceFile.bytes
+            }
+
+            println "Copied ${sourceFiles.size()} files to ${targetDir}"
+        }
+    }
+}
+
+task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'home/zf_info'
+    excludes = ['Makefile']
+}
+
+task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'home/ZFIN'
+    excludes = ['Makefile']
+}
+
+task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/sysexecs'
+    excludes = ['Makefile', 'build.gradle']
+}
+
+task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/apache'
+    excludes = ['Makefile', 'build.gradle']
+}
+
+task "server_apps;Reports;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/Reports'
+    excludes = ['Makefile', 'build.gradle']
+}
+
+task "server_apps;tokens;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/tokens'
+}
+
+task "server_apps;data_transfer;BLAST;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/BLAST'
+    excludes = ['Danio_rerio.GRCz10.pep.all.fa.gz', 'Danio_rerio.GRCz11.pep.all.fa.gz', 'Danio_rerio.Zv9.pep.all.fa.gz',
+        'zfin_genomic_dna_all.fa', 'GenomicDNA.xnt', 'GenomicDNA.xni', 'zfin_genomic_genbank_acc.unl', 'GenomicDNA.xnd',
+        'GenomicDNA.xns']
+}
+
+task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/DB_maintenance'
+    excludes = ['Makefile', 'build.gradle']
+    excludeDirs = ['postgres/liquibase']
+}
+
+task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'cgi-bin'
+    excludes = ['Makefile', 'build.gradle']
+}
+
+task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/perl_lib'
+}
+
+task deployGitInfoFile() {
+    description 'Deploy git-info.txt file into TARGETROOT'
+    group 'ZFIN Deployment'
+    def packageFiles = 'git-info.txt'
+    doLast {
+        exec {
+            commandLine 'bash', './generate-git-info.sh'
+        }
+        copy {
+            from(packageFiles)
+            into(targetroot + "/home/WEB-INF/classes")
+        }
+    }
+}
+
+task "server_apps;data_transfer;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer'
+    excludes = ['Makefile', 'build.gradle', '.gitignore', '.DS_Store']
+    excludeDirs = ['SangerMutants', 'Ensembl', 'BLAST']
+}
+
+task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'server_apps/data_transfer/Ensembl'
+    includes = ['sh', 'sql', 'groovy']
+}
+
+project(':server_apps:data_transfer:Downloads') {
+    task "createSymlink"() {
+        doLast {
+            if (!file(downloaddirectory).exists()) {
+                exec {
+                    commandLine "mkdir", "-p", downloaddirectory
+                }
+            }
+            String datatransferpath = targetroot + "/home/data-transfer"
+            if (!file(datatransferpath).exists()) {
+                exec {
+                    commandLine "ln", "-s", downloaddirectory, datatransferpath
+                }
+            }
+        }
+    }
+}
+
+task make(type: GradleBuild) {
+    tasks = ['deployPostgresFunctions',
+             'deployPostgresTriggers',
+             'createEmptyDirsIfNotExists',
+             'home:deployFiles',
+             'home;zf_info;deployFiles',
+             'home;ZFIN;deployFiles',
+             'server_apps;apache;deployFiles',
+             'server_apps;sysexecs;deployFiles',
+             'server_apps;DB_maintenance;deployFiles',
+             'server_apps;data_transfer;deployFiles',
+             ':server_apps:data_transfer:Downloads:createSymlink',
+             'server_apps;data_transfer;Ensembl;deployFiles',
+             'server_apps;Reports;deployFiles',
+             'server_apps;tokens;deployFiles',
+             'server_apps;data_transfer;BLAST;deployFiles',
+             'deployGitInfoFile',
+             'cgi-bin;deployFiles',
+             'server_apps;perl_lib;deployFiles',
+    ]
+}
+
+task createEmptyDirsIfNotExists() {
+    doLast {
+        exec {
+            commandLine "mkdir", "-p", targetroot + "/home/data_transfer/Downloads/"
+        }
+        exec {
+            commandLine "mkdir", "-p", targetroot + "/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/"
+        }
+        exec {
+            commandLine "mkdir", "-p", downloaddirectory + "/current/"
+        }
+    }
+}
+
+task getLatestSolrUnload() {
+    doLast {
+        if (solrunloadspath != '/research/zunloads/solr/zfindb') {
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
+            def filepath = command.execute().text.trim()
+            println "Getting " + filepath
+            exec {
+                ignoreExitValue = true
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":" + filepath, solrunloadspath
+            }
+        } else {
+            println 'SOLR_UNLOADS_PATH is set to ' + solrunloadspath + '. Please change before attempting to copy.'
+        }
+    }
+}
+
+task getLatestSolrIndexFilesTrunk() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp -r " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/solr/trunkdb/current current.solr.dump"
+        }
+    }
+}
+
+task getLatestDatabaseUnload() {
+    doLast {
+        if (dbunloadspath != '/research/zunloads/databases/zfindb') {
+            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
+            def filepath = command.execute().text.trim()
+            println "Getting " + filepath
+            exec {
+                ignoreExitValue = true
+                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":"  + filepath, dbunloadspath
+            }
+        } else {
+            println 'DB_UNLOADS_PATH is set to ' + dbunloadspath + '. Please change before attempting to copy.'
+        }
+    }
+}
+
+task getLatestPostgresFilesTrunk() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/databases/trunkdb/current current.postgres.dump"
+        }
+    }
+}
+
+task getLatestSolrIndex() {
+    doLast {
+        println 'Upgrade Solr index to the latest production one...'
+        println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
+
+        def folder = solrunloadspath
+        def baseDir = new File(folder)
+        def files = baseDir.listFiles()
+        Arrays.sort(files, new Comparator<File>() {
+            int compare(File f1, File f2) {
+                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+            }
+        })
+        def latestIndex = files[0]
+        println latestIndex
+        def sout = new StringBuilder(), serr = new StringBuilder()
+        def procString = "ant restore-solr-core -DRESTORE_FROM=" + latestIndex.getAbsolutePath()
+        def proc = procString.execute()
+        def b = new StringBuffer()
+        proc.consumeProcessErrorStream(b)
+
+        println proc.text
+        println b.toString()
+
+    }
+}
+
+//getsolr as alias for getLatestSolrUnload
+task getsolr(dependsOn: getLatestSolrUnload)
+
+//loadsolr as alias for getLatestSolrIndex
+task loadsolr(dependsOn: getLatestSolrIndex)
+
+task getBlastAllDatabases() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlastSmallDatabases() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlastBinaries() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/opt/ab-blast", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlast(type: GradleBuild) {
+    tasks = ['getBlastSmallDatabases',
+             'getBlastBinaries'
+    ]
+}
+
+task createSchemaSpy() {
+    doLast {
+        println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
+        javaexec {
+            main = "-jar"
+            args = [
+                    "lib/Java/schemaSpy_5.0.0.jar",
+                    "-t",
+                    "pgsql",
+                    "-db",
+                    ttNameMap.get('DB_NAME'),
+                    "-u",
+                    ttNameMap.get('USER'),
+                    "-host",
+                    pghost,
+                    "-dp",
+                    "lib/Java/postgresql-42.2.18.jar",
+                    "-s",
+                    "public",
+                    "-o",
+                    ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
+            ]
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    liquibaseRuntime("org.liquibase:liquibase-core:4.7.1")
+    liquibaseRuntime("info.picocli:picocli:4.6.3")
+    liquibaseRuntime("org.postgresql:postgresql:42.2.18")
+
+    //for generating xlsx in NCBI load
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11'
+    implementation group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+    implementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.7'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.4.4.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.13.Final'
+    implementation group: 'org.hibernate.search', name: 'hibernate-search-engine', version: '6.1.1.Final'
+    implementation group: 'org.hibernate.search', name: 'hibernate-search-mapper-pojo-base', version: '6.1.1.Final'
+    implementation group: 'org.springframework', name: 'spring-orm', version: '6.1.1'
+    implementation group: 'org.springframework', name: 'spring-core', version: '6.1.1'
+    implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.1'
+    implementation group: 'org.springframework.security', name: 'spring-security-config', version: '6.1.1'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '6.1.1'
+    implementation group: 'org.springframework', name: 'spring-web', version: '6.1.1'
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '6.1.1'
+    implementation group: 'org.springframework.security', name: 'spring-security-web', version: '6.1.1'
+    implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.1'
+    implementation group: 'org.springframework.integration', name: 'spring-integration-core', version: '6.1.1'
+
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
+    //runtimeOnly group: 'com.google.gwt', name: 'gwt-servlet', version: '2.9.0'
+//    implementation('org.gwtproject:gwt-user:2.11.0')
+    implementation files("lib/Java/gwt/gwt-user-2.11.0.jar")
+
+    implementation group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.9.1.Final'
+    implementation group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.9.1.Final'
+    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '3.9.1.Final'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.15.2'
+    implementation files("home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar")
+    implementation 'jakarta.transaction:jakarta.transaction-api:2.0.0'
+
+
+
+
+//Thanks for using https://jar-download.com
+
+    /*
+    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson-provider', version: '3.15.2.Final'
+    implementation group: 'org.codehaus.jackson', name: 'jackson-core-asl', version: '1.9.13'
+    implementation group: 'org.codehaus.jackson', name: 'jackson-xc', version: '1.9.13'
+    implementation group: 'org.codehaus.jackson', name: 'jackson-jaxrs', version: '1.9.13'
+    implementation group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
+*/
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+/*
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
+     //implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.13.0'
+*/
+    //implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.13.0'
+    implementation group: 'org.eclipse.microprofile.openapi', name: 'microprofile-openapi-api', version: '2.0.1-RC1'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.1'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+    implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.1'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.4.1'
+    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.0.0'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
+//    implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.7'
+    implementation files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar')
+    implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
+    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.6.3'
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.20'
+    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '2.3.1'
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+//    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
+    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
+    implementation group: 'com.sun.activation', name: 'jakarta.activation', version: '2.0.1'
+    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
+    implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
+    implementation group: 'taglibs', name: 'standard', version: '1.1.2'
+
+    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.2.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
+    implementation files('home/WEB-INF/lib/agr_curation_api.jar')
+    implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
+    implementation files('home/WEB-INF/lib/cvu.jar')
+    implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
+    implementation files('home/WEB-INF/lib/obo.jar')
+    implementation files('home/WEB-INF/lib/bbop.jar')
+    implementation files('home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar')
+    implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
+    implementation files('home/WEB-INF/lib/commons-collections4-4.4.jar')
+    implementation files('home/WEB-INF/lib/commons-lang3-3.1.jar')
+    // maven reference does not have version 1.0, so using the plain jar file
+    //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
+    implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
+    implementation files('home/WEB-INF/lib/jakarta.persistence-api-3.1.0.jar')
+    implementation files('home/WEB-INF/lib/jakarta.annotation-api-2.0.0.jar')
+
+    implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
+    implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
+    implementation files('home/WEB-INF/lib/log4j-slf4j-impl-2.13.3.jar')
+
+    implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.6'
+    implementation group: 'commons-net', name: 'commons-net', version: '1.4.1'
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
+    implementation group: 'com.github.samtools', name: 'htsjdk', version: '2.20.3'
+    implementation group: 'org.jdom', name: 'jdom', version: '1.1'
+    implementation group: 'org.springframework.ws', name: 'spring-ws-core', version: '4.0.10'
+
+    implementation group: 'org.codehaus.castor', name: 'castor-xml', version: '1.3'
+    implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20200713.1'
+    implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+    implementation group: 'org.biojava', name: 'core', version: '1.9.4'
+    //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
+    implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.17.1'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+    implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+    implementation group: 'org.apache.cxf', name: 'cxf-rt-rs-client', version: '3.4.2'
+    implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.12.2'
+    implementation group: 'org.json', name: 'json', version: '20210307'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    //implementation group: 'log4j', name: 'log4j', version: '1.2.15'
+
+//Thanks for using https://jar-download.com
+
+
+    //implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4")
+    implementation 'junit:junit:4.11'
+    implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.6.5.Final'
+    testImplementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.7.0'
+    testImplementation group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
+    testImplementation group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
+    implementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+
+//    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testImplementation group: 'net.sourceforge.jwebunit', name: 'jwebunit-core', version: '2.4'
+
+    testImplementation group: 'org.gebish', name: 'geb-ast', version: '6.0'
+    testImplementation group: 'org.gebish', name: 'geb-core', version: '6.0'
+    testImplementation group: 'org.gebish', name: 'geb-spock', version: '6.0'
+    testImplementation group: 'org.gebish', name: 'geb-waiting', version: '6.0'
+    testImplementation group: 'oauth.signpost', name: 'signpost-core', version: '2.1.1'
+
+
+//    testCompile group: 'org.openqa.selenium', name: 'selenium', version: '0.8.1'
+    implementation("com.github.samtools:htsjdk:4.3.0")
+    //testImplementation('org.codehaus.groovy:groovy-all:3.0.6')
+    testImplementation group: 'org.spockframework', name: 'spock-junit4', version: '2.3-groovy-3.0'
+    testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.3-groovy-3.0'
+    //changed this from groovy-2.4
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+    testImplementation group: 'org.gwtproject', name: 'gwt-servlet-jakarta', version: '2.11.0'
+
+
+    testImplementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
+    testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
+    testImplementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
+
+    implementation group: 'org.apache.commons', name: 'commons-math', version: '2.2'
+
+    // not working: odd
+    //testCompile group: 'org.jenkins-ci.plugins', name: 'testInProgress-client', version: '1.1'
+    implementation files('lib/Java/opencsv-2.1.jar')
+    implementation files('lib/Java/testInProgress-client-1.1.jar')
+    implementation files('lib/Java/selenium-api-2.35.0.jar')
+    implementation files('lib/Java/selenium-htmlunit-driver-2.35.0.jar')
+    implementation files('lib/Java/selenium-remote-driver-2.35.0.jar')
+    implementation files('lib/Java/spring-test-6.1.1.jar')
+    implementation files('lib/Java/servlet-api-5.0.0.jar')
+    implementation files('lib/Java/jakarta.servlet.jsp-api-3.1.1.jar')
+    implementation files('lib/Java/jakarta.servlet.jsp.jstl-api-3.0.0.jar')
+    implementation files('home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar')
+    // not working :(
+    //testImplementation group: 'org.seleniumhq.selenium', name: 'htmlunit-driver', version: '2.35'
+//    implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+
+
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    implementation 'org.jooq:jool:0.9.15'
+
+    implementation files('home/WEB-INF/lib/altcha-1.1.2.jar')
+
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['source']
+        resources.srcDirs = ['home']
+    }
+
+    test {
+        //java.srcDirs = ['test']
+        groovy.srcDirs = ['test']
+        resources.srcDirs = ['test']
+    }
+}
+
+test {
+//    maxHeapSize = "2048m"
+    maxHeapSize = "8g"
+    useJUnitPlatform()
+    def jvmArgsList = ['--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.lang.invoke=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+                       '--add-opens', 'java.prefs/java.util.prefs=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.nio.charset=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.net=ALL-UNNAMED',
+                       '--add-opens', 'java.base/java.util.concurrent.atomic=ALL-UNNAMED']
+    if (project.hasProperty('gradleDebug')) {
+        jvmArgsList.add('-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005')
+    }
+    jvmArgs(jvmArgsList)
+    testLogging {
+        //showStandardStreams = true
+    }
+
+    def includeSmokeTests = project.hasProperty('smokeTests')
+    def includeNonSmokeTests = project.hasProperty('nonSmokeTests')
+    if (!includeSmokeTests && !includeNonSmokeTests) {
+        //if neither flag is set, run all tests
+        includeSmokeTests = true
+        includeNonSmokeTests = true
+    }
+    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
+    println "Include smoke tests: " + includeSmokeTests
+    println "Include non-smoke tests: " + includeNonSmokeTests
+    println "Include NCBI load tests: " + includeNcbiLoadTests
+
+    filter {
+        if (includeNcbiLoadTests) {
+            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
+
+//   UNCOMMENT BELOW TO RUN CHARACTERIZATION TEST (DANGEROUS)
+            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
+        }
+        if (includeNonSmokeTests) {
+            includeTestsMatching "org.zfin.UnitTests"
+            //spock tests
+
+            includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
+
+            includeTestsMatching "org.zfin.publication.presentation.PublicationValidatorSpec"
+            includeTestsMatching "org.zfin.publication.repository.PublicationRepositorySpec"
+            includeTestsMatching "org.zfin.feature.service.MutationDetailsConversionServiceSpec"
+            includeTestsMatching "org.zfin.util.ReportGeneratorSpec"
+            includeTestsMatching "org.zfin.search.service.SolrServiceSpec"
+            includeTestsMatching "org.zfin.search.service.SolrQueryFacadeSpec"
+            includeTestsMatching "org.zfin.search.service.MarkerSearchServiceSpec"
+            includeTestsMatching "org.zfin.search.service.SearchSuggestionServiceSpec"
+
+            includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"
+            includeTestsMatching "org.zfin.uniquery.RelatedLinksSpec"
+
+//      Failing tests that we may want to bring back: (ZFIN-8271)
+//        includeTestsMatching "org.zfin.uniquery.CategoriesAndFacetsSpec"
+//        includeTestsMatching "org.zfin.uniquery.QuerySpec"
+//        includeTestsMatching "org.zfin.uniquery.ResultAttributesSpec"
+
+            includeTestsMatching "org.zfin.sequence.repository.SequenceRepositorySpec"
+            includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
+            includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"
+            includeTestsMatching "org.zfin.expression.ExpressionSearchSpec"
+            includeTestsMatching "org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec"
+            includeTestsMatching "org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec"
+            includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
+            includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
+            includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
+            includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+
+            /*need to figure out ..all tests fail here
+        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"*/
+
+            //includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
+            // PublicationServiceSpec > #authorString should bring back #author FAILED
+            //org.spockframework.runtime.SpockAssertionError at UnrollIterationNameProvider.java:80
+
+
+            /*includeTestsMatching "org.zfin.figure.service.ImageServiceSpec" (needs fixing..null pointer here:  tempDir.newFolder(ZfinPropertiesEnum.IMAGE_LOAD.toString(), "medium"))
+        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"*/
+
+            /*//following use geb..likely not to fix
+
+        includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec" (geb test)
+        includeTestsMatching "org.zfin.marker.MarkerselectWebSpec" (geb test)
+        includeTestsMatching "org.zfin.framework.GroovyWebSpec"(geb test)
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"(geb test)*/
+
+            // db unit tests
+            includeTestsMatching "org.zfin.DbUnitTests"
+            includeTestsMatching "org.zfin.infrastructure.EnumValidationTest"
+            includeTestsMatching "org.zfin.DbControllerTests"
+            includeTestsMatching "org.zfin.ThirdPartyServiceTests"
+        }
+
+        if (includeSmokeTests) {
+            includeTestsMatching "org.zfin.anatomy.AnatomySmokeTest"
+            includeTestsMatching "org.zfin.antibody.smoketest.AntibodySmokeTest"
+            includeTestsMatching "org.zfin.sequence.blast.smoketest.BlastSmokeTest"
+            includeTestsMatching "org.zfin.datatransfer.smoketests.DownloadSmokeTest"
+            includeTestsMatching "org.zfin.feature.presentation.FeatureDetailSmokeTest"
+            includeTestsMatching "org.zfin.feature.presentation.GenotypeDetailSmokeTest"
+            includeTestsMatching "org.zfin.expression.presentation.FigureSummarySmokeTest"
+            includeTestsMatching "org.zfin.fish.smoketest.FishSmokeTest"
+            includeTestsMatching "org.zfin.fish.smoketest.PhenotypeSummarySmokeTest"
+            includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
+            includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
+            //include specific method in any of the tests
+    //        includeTestsMatching "*ActiveDataTest"
+        }
+    }
+
+    reports {
+        junitXml.required = true
+        html.required = true
+    }
+}
+tasks.withType(Test) {
+    testLogging {
+        // set options for log level LIFECYCLE
+        showExceptions true
+        showCauses true
+        showStackTraces true
+
+        info.events = debug.events
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+reporting.baseDir = "reports/gradle"
+testResultsDirName = "reports/test-results"
+
+task showDirs {
+    doLast {
+        logger.quiet(rootDir.toPath().relativize(project.reportsDir.toPath()).toString())
+        logger.quiet(rootDir.toPath().relativize(project.testResultsDir.toPath()).toString())
+    }
+}
+
