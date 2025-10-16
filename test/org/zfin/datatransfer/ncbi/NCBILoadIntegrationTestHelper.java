@@ -245,7 +245,6 @@ public class NCBILoadIntegrationTestHelper {
     }
 
     public void runNCBILoad() {
-        File ncbiMatchFile = tempDir.resolve("ncbi_matches_through_ensembl.csv").toFile();
 
         // Set environment variables
         System.setProperty("WORKING_DIR", tempDir.toString());
