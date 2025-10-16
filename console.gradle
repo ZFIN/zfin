@@ -216,7 +216,7 @@ task csvDiff(type: JavaExec) {
 
     // Get arguments from the command line
     // So this can be called like so:
-    // gradle csvDiffTask --args="dblink_cmp_ before_combined.csv after_combined.csv dblink_linked_recid,dblink_acc_num,dblink_fdbcont_zdb_id,recattrib_source_zdb_id dblink_info,dblink_zdb_id"
+    // gradle csvDiff --args="dblink_cmp_ before_combined.csv after_combined.csv dblink_linked_recid,dblink_acc_num,dblink_fdbcont_zdb_id,recattrib_source_zdb_id dblink_info,dblink_zdb_id"
 }
 
 task ncbiCharacterize(type: JavaExec) {
