@@ -266,3 +266,10 @@ task tokenStorage(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.infrastructure.TokenStorage'
 }
+
+//example usage:
+// gradle fetchNcbiReplacedGeneIDs --args="<deadIDsOutputFile> <mappedIDsOutputFile>"
+task fetchNcbiReplacedGeneIDs(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ncbi.NCBIReplacedGeneIDsTask'
+}
