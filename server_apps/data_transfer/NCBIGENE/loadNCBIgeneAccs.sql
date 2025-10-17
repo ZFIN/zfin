@@ -414,6 +414,11 @@ SELECT dblink_linked_recid, annotation_status
 FROM eligible_records
 WHERE annotation_status IS NOT NULL;
 
+DELETE FROM marker_assembly
+WHERE ma_a_pk_id = (SELECT a_pk_id FROM assembly WHERE a_name = 'GRCz12tu')
+AND ma_mrkr_zdb_id IN ( SELECT dblink_linked_recid FROM ncbi_gene_delete JOIN db_link
+            ON delete_dblink_zdb_id = dblink_zdb_id AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
+
 \echo 'Marker annotation status update complete';
 -- ▄▖▖ ▖▄   ▄▖▖ ▖▖ ▖▄▖▄▖▄▖▄▖▄▖▄▖▖ ▖  ▄▖▄▖▄▖▄▖▖▖▄▖
 -- ▙▖▛▖▌▌▌  ▌▌▛▖▌▛▖▌▌▌▐ ▌▌▐ ▐ ▌▌▛▖▌  ▚ ▐ ▌▌▐ ▌▌▚
