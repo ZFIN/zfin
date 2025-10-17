@@ -119,6 +119,10 @@ public class NCBIReplacedGeneIDsTask extends AbstractScriptWrapper {
                 -- INSERT NEW ROWS OR UPDATE EXISTING ONES
                 insert into ncbi_replaced_id (nri_old_id, nri_new_id) select old_id, new_id from tmp_ncbi_replaced_id 
                 on conflict (nri_old_id) do update set nri_new_id = excluded.nri_new_id;
+                
+                -- Are we referencing any old ids in db_link
+                \\echo 'THE FOLLOWING GENE IDS HAVE BEEN REPLACED AT NCBI AND ARE REFERENCED IN DB_LINK:';
+                copy (SELECT dblink_linked_recid AS gene, dblink_acc_num AS old_ncbi_id, nri_new_id AS new_ncbi_id FROM db_link JOIN ncbi_replaced_id ON dblink_acc_num = nri_old_id WHERE dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1') to stdout with csv header;
                 """;
         sql = String.format(sql, mappedIDsOutputFile.getAbsolutePath());
         File sqlFile = Files.createTempFile("ncbi_replaced_gene_id_store", ".sql").toFile();
