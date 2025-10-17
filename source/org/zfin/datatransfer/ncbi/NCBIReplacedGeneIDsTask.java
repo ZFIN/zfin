@@ -87,9 +87,9 @@ public class NCBIReplacedGeneIDsTask extends AbstractScriptWrapper {
                 printProgress(filteredBatch.size());
                 Map<String, String> replacedIDs = NCBIEfetch.getReplacedGeneID(filteredBatch);
                 for(String id : filteredBatch) {
-                    writer.write(id);
+                    writer.write(id + ",");
                     if (replacedIDs.containsKey(id)) {
-                        writer.write("," + replacedIDs.get(id));
+                        writer.write(replacedIDs.get(id));
                     }
                     writer.write("\n");
                 }
