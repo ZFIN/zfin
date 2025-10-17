@@ -61,6 +61,8 @@ services:
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
+      - maven_cache:/home/gradle/.m2
+      - gradle_cache:/home/gradle/.gradle
   db:
     build: ./postgresql/
     command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=PST8PDT' -c 'shared_preload_libraries="pg_stat_statements"'
@@ -191,6 +193,8 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+      - maven_cache:/home/gradle/.m2
+      - gradle_cache:/home/gradle/.gradle
   ncbiload:
     build: ./ncbiload/
     environment:
@@ -202,6 +206,8 @@ services:
     volumes:
       - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
+      - maven_cache:/home/gradle/.m2
+      - gradle_cache:/home/gradle/.gradle
   fail2ban:
     build: ./fail2ban/
     cap_add:
@@ -275,6 +281,8 @@ services:
       - jbrowse_data:/data
 
 volumes:
+  gradle_cache:
+  maven_cache:
   www_data:
   httpd_log:
   tls_certs:
