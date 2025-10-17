@@ -1,5 +1,6 @@
 package org.zfin.feature.repository;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -18,8 +19,8 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -39,12 +40,12 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
 
@@ -90,8 +91,7 @@ public class FeatureService {
     public static Set<FeatureDBLink> getGenbankDbLinks(Feature feature) {
         Set<FeatureDBLink> genbankLinks = new HashSet<>();
         for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
-            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)&&(!featureDBLink.getAccessionNumber().contains("pdf"))) {
-
+            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE) && (!featureDBLink.getAccessionNumber().contains("pdf"))) {
 
 
                 genbankLinks.add(featureDBLink);
@@ -113,9 +113,6 @@ public class FeatureService {
         return null;
 
 
-
-
-
     }
 
     public static Set<FeatureMarkerRelationship> getCreatedByRelationship(Feature feature) {
@@ -127,7 +124,7 @@ public class FeatureService {
         for (FeatureMarkerRelationship ftrmrkrRelationship : fmrelationships) {
             if (ftrmrkrRelationship != null) {
                 if (ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.CRISPR
-                        || ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.TALEN) {
+                    || ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.TALEN) {
                     createdByRelationship.add(ftrmrkrRelationship);
 
                 }
@@ -137,15 +134,11 @@ public class FeatureService {
 
     }
 
-    public static List<FeatureGenomeLocation> getFeatureGenomeLocationsInGbrowse(Feature feature) {
-        List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
-        Collections.sort(locations);
-        CollectionUtils.filter(locations, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return (o instanceof FeatureGenomeLocation);
-            }
-        });
+    public static List<FeatureGenomeLocation> getFeatureGenomeLocations(Feature feature) {
+        List<FeatureGenomeLocation> locations1 = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
+        List<FeatureGenomeLocation> locations = locations1.stream()
+            .filter(featureGenomeLocation -> (featureGenomeLocation.getStart() != null && featureGenomeLocation.getEnd() != null)).toList();
+        CollectionUtils.filter(locations, (Predicate) o -> (o instanceof FeatureGenomeLocation));
         return locations;
     }
 
@@ -178,7 +171,7 @@ public class FeatureService {
 
     public static List<PublicationAttribution> getFeatureTypeAttributions(Feature feature) {
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-                feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+            feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
     }
 
     public static List<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
@@ -186,9 +179,9 @@ public class FeatureService {
             return null;
         }
 
-            return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-                feature.getFeatureDnaMutationDetail().getZdbID(),
-                RecordAttribution.SourceType.STANDARD);
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+            feature.getFeatureDnaMutationDetail().getZdbID(),
+            RecordAttribution.SourceType.STANDARD);
     }
 
     public static List<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
@@ -199,7 +192,7 @@ public class FeatureService {
         SortedSet<PublicationAttribution> attributions = new TreeSet<>();
         for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
             attributions.addAll(RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-                    detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
+                detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
         }
         return new ArrayList<>(attributions);
     }
@@ -210,8 +203,8 @@ public class FeatureService {
         }
 
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-                feature.getFeatureProteinMutationDetail().getZdbID(),
-                RecordAttribution.SourceType.STANDARD);
+            feature.getFeatureProteinMutationDetail().getZdbID(),
+            RecordAttribution.SourceType.STANDARD);
     }
 
     public static List<PublicationAttribution> getFlankSeqAttr(Feature feature) {
@@ -220,8 +213,8 @@ public class FeatureService {
             return null;
         }
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-                varSeq.getZdbID(),
-                RecordAttribution.SourceType.STANDARD);
+            varSeq.getZdbID(),
+            RecordAttribution.SourceType.STANDARD);
     }
 
 
@@ -234,15 +227,15 @@ public class FeatureService {
         return aaLink;
     }
 
-    public static String getVarType(Feature feature){
-        String varType=feature.getType().getDisplay();
-        if (feature.getType().getDisplay().contains("Indel")){
-             varType="Delins";
+    public static String getVarType(Feature feature) {
+        String varType = feature.getType().getDisplay();
+        if (feature.getType().getDisplay().contains("Indel")) {
+            varType = "Delins";
         }
-        if (feature.getType().getDisplay().contains("Complex")||feature.getType().getDisplay().contains("Translocation")||feature.getType().getDisplay().contains("Deficiency")){
-             varType="";
+        if (feature.getType().getDisplay().contains("Complex") || feature.getType().getDisplay().contains("Translocation") || feature.getType().getDisplay().contains("Deficiency")) {
+            varType = "";
         }
-  return varType;
+        return varType;
 
     }
 
@@ -255,7 +248,7 @@ public class FeatureService {
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null) {
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
-                        || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
+                    || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
                 ) {
                     constructMarkers.add(ftrmrkrRelation);
                 }
@@ -308,22 +301,18 @@ public class FeatureService {
 
     public static GenomeBrowserImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
-        List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
-        Collections.sort(locations, new GenomeVersionComparator<>());
+        List<FeatureGenomeLocation> locations1 = getFeatureGenomeLocations(feature);
+        List<FeatureGenomeLocation> locations = locations1.stream().sorted(new GenomeVersionComparator<>()).toList();
         if (CollectionUtils.isEmpty(locations)) {
             return null;
         }
         FeatureGenomeLocation featureLocation = locations.get(0);
 
-        if (featureLocation.getStart() == null || featureLocation.getEnd() == null) {
-            return null;
-        }
-
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
         // some appropriate amount of padding.
         GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                .highlight(feature);
+            .highlight(feature);
 
         GenomeLocation.Source source;
         GenomeBrowserTrack extraTrack = null;
@@ -372,9 +361,9 @@ public class FeatureService {
         ForeignDBDataType.DataType[] dataTypes = {DataType.GENOMIC, DataType.RNA};
 
         List<ReferenceDatabase> refDatabaseList = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
-                Arrays.asList(dataTypes),
-                ForeignDBDataType.SuperType.SEQUENCE,
-                Species.Type.ZEBRAFISH);
+            Arrays.asList(dataTypes),
+            ForeignDBDataType.SuperType.SEQUENCE,
+            Species.Type.ZEBRAFISH);
 
         ReferenceDatabase databaseMatch = checkRefDatabase(accessionNumber, refDatabaseList);
         if (databaseMatch != null) {
@@ -408,9 +397,9 @@ public class FeatureService {
         ForeignDBDataType.DataType[] dataTypes = {DataType.POLYPEPTIDE};
 
         List<ReferenceDatabase> genBankRefDB = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
-                Arrays.asList(dataTypes),
-                ForeignDBDataType.SuperType.SEQUENCE,
-                Species.Type.ZEBRAFISH);
+            Arrays.asList(dataTypes),
+            ForeignDBDataType.SuperType.SEQUENCE,
+            Species.Type.ZEBRAFISH);
         for (ReferenceDatabase referenceDatabase : genBankRefDB) {
             List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
             if (CollectionUtils.isNotEmpty(links)) {
@@ -434,8 +423,8 @@ public class FeatureService {
 
     public static String getFeatureGenomeLocationEvidenceCodeTerm(String evidenceCode) {
         Optional<Map.Entry<String, String>> entry = featureGenomeLocationEvidenceCodeMap.entrySet().stream()
-                .filter(evidenceEntry -> evidenceEntry.getValue().equals(evidenceCode))
-                .findAny();
+            .filter(evidenceEntry -> evidenceEntry.getValue().equals(evidenceCode))
+            .findAny();
         return entry.map(Map.Entry::getKey).orElse(null);
     }
 
@@ -447,28 +436,28 @@ public class FeatureService {
         }
 
         List<GenotypeFishResult> fishSummaryList = feature.getGenotypeFeatures().stream()
-                .map(genotypeFeature -> FishService.getFishExperimentSummaryForGenotype(genotypeFeature.getGenotype()))
-                .flatMap(Collection::stream)
+            .map(genotypeFeature -> FishService.getFishExperimentSummaryForGenotype(genotypeFeature.getGenotype()))
+            .flatMap(Collection::stream)
 //                .filter(genotypeFishResult -> genotypeFishResult.getFish().isClean())
-                .sorted(Comparator.comparing(genotypeFishResult -> genotypeFishResult.getFish().getDisplayName()))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(genotypeFishResult -> genotypeFishResult.getFish().getDisplayName()))
+            .collect(Collectors.toList());
         PhenotypeOnMarkerBean phenotypeOnMarkerBean = new PhenotypeOnMarkerBean();
 
         Set<Figure> figures = fishSummaryList.stream()
-                .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
-                .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
-                .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getFigures() != null)
-                .map(FishGenotypePhenotypeStatistics::getFigures)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+            .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
+            .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
+            .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getFigures() != null)
+            .map(FishGenotypePhenotypeStatistics::getFigures)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
         Set<Publication> publications = fishSummaryList.stream()
-                .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
-                .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
-                .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getPublicationPaginationResult().getTotalCount() > 0)
-                .map(FishGenotypePhenotypeStatistics::getPublicationPaginationResult)
-                .map(PaginationResult::getPopulatedResults)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+            .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
+            .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
+            .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getPublicationPaginationResult().getTotalCount() > 0)
+            .map(FishGenotypePhenotypeStatistics::getPublicationPaginationResult)
+            .map(PaginationResult::getPopulatedResults)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
 
         // add the EaPs now
         List<ExpressionResult2> expressionExperiment2s = getExpressionRepository().getPhenotypeFromExpressionsByFeature(feature.getZdbID());
@@ -488,29 +477,28 @@ public class FeatureService {
         PaginationResult<FishGenotypeFeature> fishByFeature = mutantRepository.getFishByFeature(featureZdbID, excludeFishWithSTR, pagination);
 
         List<GenotypeFishResult> results = fishByFeature.getPopulatedResults().stream()
-                .map(fishGenotypeFeature -> {
-                    Fish fish = fishGenotypeFeature.getFish();
-                    GenotypeFishResult result = FishService.getFishExperimentSummaryForFish(fish);
-                    GenotypeFeature genotypeFeature = fishGenotypeFeature.getGenotypeFeature();
-                    GenotypeDisplay genotypeDisplay = new GenotypeDisplay();
-                    genotypeDisplay.setGenotype(genotypeFeature.getGenotype());
-                    genotypeDisplay.setDadZygosity(genotypeFeature.getDadZygosity());
-                    genotypeDisplay.setMomZygosity(genotypeFeature.getMomZygosity());
-                    if (CollectionUtils.isNotEmpty(fish.getStrList())) {
-                        result.setZygosity(GenotypeDisplay.COMPLEX);
-                    } else {
-                        result.setZygosity(genotypeDisplay.getZygosity());
-                    }
-                    if (result.getZygosity().equals(GenotypeDisplay.COMPLEX)){
-                        result.setParentalZygosity("");
-                    }
-                    else {
-                        result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
-                    }
-                    result.setAffectedMarkers(new TreeSet<>(FishService.getAffectedGenes(fish)));
-                    return result;
-                })
-                .collect(Collectors.toList());
+            .map(fishGenotypeFeature -> {
+                Fish fish = fishGenotypeFeature.getFish();
+                GenotypeFishResult result = FishService.getFishExperimentSummaryForFish(fish);
+                GenotypeFeature genotypeFeature = fishGenotypeFeature.getGenotypeFeature();
+                GenotypeDisplay genotypeDisplay = new GenotypeDisplay();
+                genotypeDisplay.setGenotype(genotypeFeature.getGenotype());
+                genotypeDisplay.setDadZygosity(genotypeFeature.getDadZygosity());
+                genotypeDisplay.setMomZygosity(genotypeFeature.getMomZygosity());
+                if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+                    result.setZygosity(GenotypeDisplay.COMPLEX);
+                } else {
+                    result.setZygosity(genotypeDisplay.getZygosity());
+                }
+                if (result.getZygosity().equals(GenotypeDisplay.COMPLEX)) {
+                    result.setParentalZygosity("");
+                } else {
+                    result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
+                }
+                result.setAffectedMarkers(new TreeSet<>(FishService.getAffectedGenes(fish)));
+                return result;
+            })
+            .collect(Collectors.toList());
 
         JsonResultResponse<GenotypeFishResult> response = new JsonResultResponse<>();
         response.setResults(results);
