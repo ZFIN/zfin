@@ -46,6 +46,22 @@ alter table ncbi_gene_load
 
 update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
+-- If there are any duplicates in the load file but with different load_pub_zdb_id, we want to keep the one with the highest priority load pub
+-- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87 > > ZDB-PUB-130725-2
+create temporary table ncbi_gene_load_dedup as
+ select distinct on (mapped_zdb_gene_id, ncbi_accession) *
+   from ncbi_gene_load
+  order by mapped_zdb_gene_id, ncbi_accession,
+           case load_pub_zdb_id
+             when 'ZDB-PUB-020723-3' then 1
+             when 'ZDB-PUB-230516-87' then 2
+             when 'ZDB-PUB-130725-2' then 3
+             else 4
+           end;
+drop table ncbi_gene_load;
+alter table ncbi_gene_load_dedup rename to ncbi_gene_load;
+
+
 --!echo 'CHECK: how many RefSeq and GenBank accessions missing length before the load'
 
 select count(dblink_zdb_id) as noLengthBefore

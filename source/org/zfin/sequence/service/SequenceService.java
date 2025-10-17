@@ -142,6 +142,10 @@ public class SequenceService {
     }
 
     public List<MarkerDBLink> getMarkerDBLinkResultsForMarkerZdbID(String markerZdbID, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean getAllRecords) {
+        return getMarkerDBLinkResultsForMarkerZdbID(markerZdbID, summary, response, getAllRecords, false);
+    }
+
+    public List<MarkerDBLink> getMarkerDBLinkResultsForMarkerZdbID(String markerZdbID, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean getAllRecords, boolean skipBlastRetrieval) {
         Marker marker = markerRepository.getMarker(markerZdbID);
         if (marker == null) {
             String errorMessage = "No marker found for ID: " + markerZdbID;
@@ -153,10 +157,10 @@ public class SequenceService {
         if(getAllRecords){
             return getAllMarkerDBLinkResultsForMarker(marker, summary, response);
         }
-        return getMarkerDBLinkResultsForMarker(marker, summary, response);
+        return getMarkerDBLinkResultsForMarker(marker, summary, response, skipBlastRetrieval);
     }
 
-    public List<MarkerDBLink> getMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response) {
+    public List<MarkerDBLink> getMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean skipBlastRetrieval) {
         List<MarkerDBLink> allDBLinks = new ArrayList<>();
 
         if (marker.getType().equals(Marker.Type.TSCRIPT)) {
@@ -171,21 +175,16 @@ public class SequenceService {
             }
         } else {
             List<MarkerDBLink> dbLinks = sequenceRepository
-                .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
-                .stream()
-                .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
-                .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                .toList();
+                    .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
+                    .stream()
+                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
+                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                    .toList();
             allDBLinks.addAll(dbLinks);
-            // populate FishMiRNA sequence info
-            dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
-                .forEach(fishMiRnaDBLink -> {
-                    List<Sequence> sequences = MountedWublastBlastService.getInstance().
-                        getSequencesFromSource(fishMiRnaDBLink);
-                    if (CollectionUtils.isNotEmpty(sequences)) {
-                        fishMiRnaDBLink.setSequence(sequences.get(0));
-                    }
-                });
+            if (!skipBlastRetrieval) {
+                // populate FishMiRNA sequence info
+                populateFishMiRNASequenceInfo(dbLinks);
+            }
         }
 
         if (marker.isGenedom()) {
@@ -239,6 +238,18 @@ public class SequenceService {
         return displayedLinks;
     }
 
+    private static void populateFishMiRNASequenceInfo(List<MarkerDBLink> dbLinks) {
+        // populate FishMiRNA sequence info
+        dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
+            .forEach(fishMiRnaDBLink -> {
+                List<Sequence> sequences = MountedWublastBlastService.getInstance().
+                    getSequencesFromSource(fishMiRnaDBLink);
+                if (CollectionUtils.isNotEmpty(sequences)) {
+                    fishMiRnaDBLink.setSequence(sequences.get(0));
+                }
+            });
+    }
+
     public List<MarkerDBLink> getAllMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response) {
         List<MarkerDBLink> allDBLinks = new ArrayList<>();
 
@@ -260,14 +271,7 @@ public class SequenceService {
                 .toList();
             allDBLinks.addAll(dbLinks);
             // populate FishMiRNA sequence info
-            dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
-                .forEach(fishMiRnaDBLink -> {
-                    List<Sequence> sequences = MountedWublastBlastService.getInstance().
-                        getSequencesFromSource(fishMiRnaDBLink);
-                    if (CollectionUtils.isNotEmpty(sequences)) {
-                        fishMiRnaDBLink.setSequence(sequences.get(0));
-                    }
-                });
+            populateFishMiRNASequenceInfo(dbLinks);
         }
 
         if (marker.isGenedom()) {
