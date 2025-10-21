@@ -91,7 +91,6 @@ BEGIN
                  ('data_alias', 'dalias_data_zdb_id'),
                  ('db_link', 'dblink_acc_num'),
                  ('db_link', 'dblink_linked_recid'),
-                 ('expression_experiment', 'xpatex_gene_zdb_id'),
                  ('expression_experiment2', 'xpatex_gene_zdb_id'),
                  ('expression_experiment2', 'xpatex_probe_feature_zdb_id'),
                  ('feature_marker_relationship', 'fmrel_mrkr_zdb_id'),

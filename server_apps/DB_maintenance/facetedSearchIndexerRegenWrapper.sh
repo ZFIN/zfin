@@ -7,7 +7,6 @@ set -o pipefail
 
 main() {
   cd $TARGETROOT/server_apps/DB_maintenance/warehouse && ./regenPhenotypeMart.sh
-  cd $TARGETROOT/server_apps/DB_maintenance/warehouse && ./regenExpressionMart.sh
   cd $TARGETROOT/server_apps/DB_maintenance && ./regen.sh
 }
 
