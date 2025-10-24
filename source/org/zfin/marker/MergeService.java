@@ -155,8 +155,8 @@ public class MergeService {
      * if EEa not contained in antibody B: then
      * update the antibody on EEa to point to antibody B
      * else
-     * for all expression_results in EEa: ERa
-     * if ERa not contained in expresion_results on EEb (ERb): then
+     * for all expression_results2 in EEa: ERa
+     * if ERa not contained in expresion_result2s on EEb (ERb): then
      * update ERa to point to EEb
      * else
      * for all expresion_result_figures in ERa: ERFa

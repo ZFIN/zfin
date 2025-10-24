@@ -8,7 +8,7 @@ returns void as $$
 --table_zdb_ids should slways be attributed to pubs.
 --table_zdb_ids are specific ids generated on entry to tables (like
 --mrkrgoev_zdb_id in marker_go_Term_evidence, or xpatex_zdb_id
---in expression_experiment.)
+--in expression_experiment2.)
 --  
 --These mrkrgoev, environment, xpatex 
 --in particular, have 'source' in each record.  
