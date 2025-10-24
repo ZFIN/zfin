@@ -12,5 +12,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1175/ZFIN-9966b.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1175/ZFIN-9927.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1175/ZFIN-9951.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1175/ZFIN-remove-expression-tables.sql" />
 
 </databaseChangeLog>

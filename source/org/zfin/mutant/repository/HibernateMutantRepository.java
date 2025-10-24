@@ -485,7 +485,7 @@ public class HibernateMutantRepository implements MutantRepository {
         session.delete(phenoExperiment);
 
         // delete genotype experiment if it has no more phenotypes associated
-        // and if it is not used in FX (expression_experiment)
+        // and if it is not used in FX (expression_experiment2)
         if (fishExperiment.getExpressionExperiments() == null) {
             session.delete(fishExperiment);
         }

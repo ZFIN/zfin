@@ -129,8 +129,6 @@ public enum Table {
     MEMBER_LINKAGE("MEMBER_LINKAGE", "linkage_member", "lnkgmem_member_zdb_id,lnkgmem_linkage_zdb_id", MARKER, LINKAGE),
     TERM_SUBSET("TERM_SUBSET", "term_subset", "termsub_term_zdb_id,termsub_subset_id", TERM, ONTOLOGY_SUBSET),
     SUBSET_TERM("SUBSET_TERM", "term_subset", "termsub_subset_id,termsub_term_zdb_id", ONTOLOGY_SUBSET, TERM),
-    FIGURE_XPATRES("FIGURE_EXPRESSION", "expression_pattern_figure", "xpatfig_fig_zdb_id,xpatfig_xpatres_zdb_id", FIGURE, EXPRESSION_RESULT2),
-    XPATRES_FIGURE("EXPRESSION_FIGURE", "expression_pattern_figure", "xpatfig_xpatres_zdb_id,xpatfig_fig_zdb_id", EXPRESSION_RESULT2, FIGURE),
     FISH_STR("FISH_STR", "fish_STR", "fishstr_fish_zdb_id,fishstr_str_zdb_id", FISH, MORPHOLINO),
     FDBCONT_BLAST_DB("FDBCONT_BLAST_DB", "int_fdbcont_analysis_tool", "ifat_fdbcont_zdb_id,ifat_blastdb_zdb_id", FDBCONT, BLAST_DB),
     BLAST_DB_FDBCONT("BLAST_DB_FDBCONT", "int_fdbcont_analysis_tool", "ifat_blastdb_zdb_id,ifat_fdbcont_zdb_id", BLAST_DB, FDBCONT),

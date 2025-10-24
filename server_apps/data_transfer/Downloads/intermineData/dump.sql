@@ -193,7 +193,6 @@ create view xpatres as
 drop view xpatres;
 
 --\copy (select * from xpatfig) to './intermineData/zfin_expression/3xpatfig.txt' with delimiter as '|' null as '';
--- select * from expression_pattern_figure;
 
 create view figs as
  select fig_zdb_id,regexp_replace(fig_label,E'(^[\\n\\r]+)|([\\n\\r]+$)', '', 'g' ),fig_caption,fig_source_zdb_id from figure;

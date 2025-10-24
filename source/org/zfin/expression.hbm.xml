@@ -212,15 +212,6 @@
     </class>
 
 
-    <!-- This object should exist in the database -->
-    <!--
-        <class name="ExperimentFigureStage" >
-            <composite-id>
-                <key-property name="expressionExperiment" />
-            </composite-id>
-        </class>
-    -->
-
     <class name="org.zfin.expression.ExpressionAssay" mutable="false" table="expression_pattern_assay">
         <cache usage="read-only"/>
         <id name="name" column="xpatassay_name">
@@ -264,16 +255,6 @@
         <property name="originalAnnotation" column="etfs_is_xpatres_term"/>
     </class>
 
-
-    <!--<class name="org.zfin.expression.WildtypeExpressionExperiment" table="wildtype_expression_experiment" mutable="false">-->
-    <!--<id name="id" column="id" type="java.lang.Long"/>-->
-
-    <!--<many-to-one name="gene" column="wee_marker_zdb_id" class="org.zfin.marker.Marker"/>-->
-    <!--<many-to-one name="superTerm" column="wee_super_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
-    <!--<many-to-one name="subTerm" column="wee_sub_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
-    <!--<many-to-one name="startStage" column="wee_start_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
-    <!--<many-to-one name="endStage" column="wee_end_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
-    <!--</class>-->
 
     <sql-query name="antibodyAOFastSearchUpdate" callable="true">
         {call add_ab_ao_fast_search(:expressionZdbID)}
