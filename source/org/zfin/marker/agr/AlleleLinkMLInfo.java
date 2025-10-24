@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.SecondaryIdSlotAnnotationDTO;
@@ -61,6 +62,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
         return features.stream()
             .map(feature -> {
                 AlleleDTO dto = new AlleleDTO();
+                String primaryExternalId = "ZFIN:" + feature.getZdbID();
                 dto.setAlleleSymbolDto(GeneLinkMLInfo.getNameSlotAnnotationDTOAbbrev(feature.getAbbreviation()));
                 dto.setAlleleFullNameDto(GeneLinkMLInfo.getNameSlotAnnotationDTOName(feature.getName()));
                 dto.setAlleleSynonymDtos(GeneLinkMLInfo.getSynonymSlotAnnotationDTOs(feature.getAliases().stream().map(DataAlias::getAlias).toList()));
@@ -84,11 +86,18 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 }
                 org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new CrossReferenceDTO();
+                crossReferenceDTO.setDisplayName(feature.getZdbID());
+                crossReferenceDTO.setReferencedCurie(primaryExternalId);
+                crossReferenceDTO.setPageArea("allele/references");
+                crossReferenceDTO.setPrefix("ZFIN");
+                dataProvider.setCrossReferenceDto(crossReferenceDTO);
+
                 dto.setDataProviderDto(dataProvider);
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setPrimaryExternalId("ZFIN:" + feature.getZdbID());
+                dto.setPrimaryExternalId(primaryExternalId);
                 if (feature.getFtrEntryDate() != null) {
                     dto.setDateCreated(format(feature.getFtrEntryDate()));
                 } else {
