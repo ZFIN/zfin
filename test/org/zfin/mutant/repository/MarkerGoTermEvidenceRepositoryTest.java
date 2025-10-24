@@ -154,9 +154,11 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void addEvidenceWithInference() {
         MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) currentSession()
-                .createQuery("from MarkerGoTermEvidence where zdbID = :mrkrID")
-                .setParameter("mrkrID", "ZDB-MRKRGOEV-211013-1353")
+                .createQuery("from MarkerGoTermEvidence mgte where mgte.marker.zdbID = :mrkrID")
+                .setParameter("mrkrID", "ZDB-GENE-041014-55")
+                .setMaxResults(1)
                 .uniqueResult();
+
         MarkerGoTermEvidence evidence = new MarkerGoTermEvidence();
         evidence.setMarker(existingEvidence.getMarker());
         evidence.setSource(existingEvidence.getSource());
