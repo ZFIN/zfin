@@ -603,8 +603,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <sequential>
             <exec executable="gradle" failonerror="true">
                 <arg value="test" />
-                <arg value="--tests" />
-                <arg value="@{task}" />
+                <arg value="-Psuite=@{task}" />
             </exec>
         </sequential>
     </macrodef>

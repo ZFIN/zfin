@@ -585,8 +585,8 @@ dependencies {
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
     compileOnly 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
     compileOnly 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
-    testCompileOnly 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
-    testCompileOnly 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
+    testImplementation 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
+    testImplementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
 
     //runtimeOnly group: 'com.google.gwt', name: 'gwt-servlet', version: '2.9.0'
 //    implementation('org.gwtproject:gwt-user:2.11.0')
@@ -960,24 +960,75 @@ test {
         showStandardStreams = false
     }
 
+    // Check if a specific test suite is requested (from Ant)
+    def testSuite = project.hasProperty('suite') ? project.property('suite') : null
+
+    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
     def includeSmokeTests = project.hasProperty('smokeTests')
     def includeNonSmokeTests = project.hasProperty('nonSmokeTests')
-    if (!includeSmokeTests && !includeNonSmokeTests) {
+
+    // If a specific suite is requested, ignore other flags
+    if (testSuite != null) {
+        println "Running test suite: " + testSuite
+        includeSmokeTests = false
+        includeNonSmokeTests = false
+        includeNcbiLoadTests = false
+    } else if (!includeSmokeTests && !includeNonSmokeTests) {
         //if neither flag is set, run all tests
         includeSmokeTests = true
         includeNonSmokeTests = true
     }
-    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
+
     println "Include smoke tests: " + includeSmokeTests
     println "Include non-smoke tests: " + includeNonSmokeTests
     println "Include NCBI load tests: " + includeNcbiLoadTests
 
     filter {
-        if (includeNcbiLoadTests) {
+        if (testSuite != null) {
+            // Run specific test suite requested from Ant
+            // Note: UnitTests.java and DbUnitTests.java are test suite classes that are excluded from compilation
+            // because they use unavailable test runners. Instead, we run the individual tests within each suite.
+            if (testSuite == "UnitTests") {
+                // Run all non-database unit tests (the tests listed in UnitTests.java @Suite.SuiteClasses)
+                // These are the same tests included in the includeNonSmokeTests filter below
+                includeTestsMatching "org.zfin.anatomy.presentation.AnatomyPresentationTest"
+                includeTestsMatching "org.zfin.antibody.presentation.AntibodySearchCriteriaTest"
+                includeTestsMatching "org.zfin.database.DatabaseServiceTest"
+                includeTestsMatching "org.zfin.database.presentation.TableTest"
+                includeTestsMatching "org.zfin.datatransfer.microarray.MicroarrayParseTest"
+                includeTestsMatching "org.zfin.expression.CurationExperimentTest"
+                includeTestsMatching "org.zfin.expression.ExpressionExperimentTest"
+                includeTestsMatching "org.zfin.framework.ExecProcessTest"
+                includeTestsMatching "org.zfin.framework.mail.MailTest"
+                includeTestsMatching "org.zfin.framework.presentation.*Test"
+                includeTestsMatching "org.zfin.framework.search.SearchCriterionTest"
+                includeTestsMatching "org.zfin.gwt.*Test"
+                includeTestsMatching "org.zfin.infrastructure.*Test"
+                includeTestsMatching "org.zfin.marker.*Test"
+                includeTestsMatching "org.zfin.mutant.*Test"
+                includeTestsMatching "org.zfin.ontology.*Test"
+                includeTestsMatching "org.zfin.profile.*Test"
+                includeTestsMatching "org.zfin.properties.ZfinPropertiesTest"
+                includeTestsMatching "org.zfin.publication.PublicationTest"
+                includeTestsMatching "org.zfin.sequence.blast.SequenceTest"
+                includeTestsMatching "org.zfin.sequence.blast.presentation.BlastPresentationServiceTest"
+                includeTestsMatching "org.zfin.sequence.reno.presentation.*Test"
+                includeTestsMatching "org.zfin.util.*Test"
+            } else if (testSuite == "DbUnitTests") {
+                // Run all database unit tests
+                includeTestsMatching "org.zfin.DbUnitTests"
+            } else {
+                // Default: match the suite class name directly
+                includeTestsMatching "org.zfin." + testSuite
+            }
+        } else if (includeNcbiLoadTests) {
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
 
 //   UNCOMMENT BELOW TO RUN CHARACTERIZATION TEST (DANGEROUS)
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
+            //don't run other tests
+            includeNonSmokeTests = false
+            includeSmokeTests = false
         }
         if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
