@@ -395,24 +395,10 @@
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
-        <copy todir="${classbin.dir}">
-            <fileset dir="${source.dir}">
-                <include name="**/*.xml"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-        <javac srcdir="source"
-               destdir="${classbin.dir}"
-               classpathref="extended.classpath"
-               fork="true"
-               encoding="${encoding}"
-               includeAntRuntime="no"
-               memoryMaximumSize="556m"
-               debug="true"
-               >
-            <compilerarg line="-parameters"/>
-        </javac>
-        <echo message=":JAVA COMPILE SUCCESSFUL:"/>
+        <!-- Delegate to Gradle for compilation (handles Lombok, annotation processing, etc.) -->
+        <exec executable="gradle" failonerror="true">
+            <arg value="antCompile"/>
+        </exec>
     </target>
 
     <target name="remove-pre-and-post-targets"
