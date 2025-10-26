@@ -923,7 +923,6 @@ sourceSets {
             // Exclude test suite files that use unavailable test runners
             exclude '**/SolrUnitTests.java'
             exclude '**/SmokeTestsReadWrite.java'
-            exclude '**/UnitTests.java'
         }
         resources {
             srcDirs = ['test']
@@ -986,41 +985,8 @@ test {
     filter {
         if (testSuite != null) {
             // Run specific test suite requested from Ant
-            // Note: UnitTests.java and DbUnitTests.java are test suite classes that are excluded from compilation
-            // because they use unavailable test runners. Instead, we run the individual tests within each suite.
-            if (testSuite == "UnitTests") {
-                // Run all non-database unit tests (the tests listed in UnitTests.java @Suite.SuiteClasses)
-                // These are the same tests included in the includeNonSmokeTests filter below
-                includeTestsMatching "org.zfin.anatomy.presentation.AnatomyPresentationTest"
-                includeTestsMatching "org.zfin.antibody.presentation.AntibodySearchCriteriaTest"
-                includeTestsMatching "org.zfin.database.DatabaseServiceTest"
-                includeTestsMatching "org.zfin.database.presentation.TableTest"
-                includeTestsMatching "org.zfin.datatransfer.microarray.MicroarrayParseTest"
-                includeTestsMatching "org.zfin.expression.CurationExperimentTest"
-                includeTestsMatching "org.zfin.expression.ExpressionExperimentTest"
-                includeTestsMatching "org.zfin.framework.ExecProcessTest"
-                includeTestsMatching "org.zfin.framework.mail.MailTest"
-                includeTestsMatching "org.zfin.framework.presentation.*Test"
-                includeTestsMatching "org.zfin.framework.search.SearchCriterionTest"
-                includeTestsMatching "org.zfin.gwt.*Test"
-                includeTestsMatching "org.zfin.infrastructure.*Test"
-                includeTestsMatching "org.zfin.marker.*Test"
-                includeTestsMatching "org.zfin.mutant.*Test"
-                includeTestsMatching "org.zfin.ontology.*Test"
-                includeTestsMatching "org.zfin.profile.*Test"
-                includeTestsMatching "org.zfin.properties.ZfinPropertiesTest"
-                includeTestsMatching "org.zfin.publication.PublicationTest"
-                includeTestsMatching "org.zfin.sequence.blast.SequenceTest"
-                includeTestsMatching "org.zfin.sequence.blast.presentation.BlastPresentationServiceTest"
-                includeTestsMatching "org.zfin.sequence.reno.presentation.*Test"
-                includeTestsMatching "org.zfin.util.*Test"
-            } else if (testSuite == "DbUnitTests") {
-                // Run all database unit tests
-                includeTestsMatching "org.zfin.DbUnitTests"
-            } else {
-                // Default: match the suite class name directly
-                includeTestsMatching "org.zfin." + testSuite
-            }
+            // Suite classes use standard JUnit 4 @RunWith(Suite.class) and can be run directly
+            includeTestsMatching "org.zfin." + testSuite
         } else if (includeNcbiLoadTests) {
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
 
