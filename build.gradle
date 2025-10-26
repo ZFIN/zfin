@@ -920,9 +920,6 @@ sourceSets {
     test {
         java {
             srcDirs = ['test']
-            // Exclude test suite files that use unavailable test runners
-            exclude '**/SolrUnitTests.java'
-            exclude '**/SmokeTestsReadWrite.java'
         }
         resources {
             srcDirs = ['test']
