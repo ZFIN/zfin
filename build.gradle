@@ -1174,9 +1174,10 @@ war {
         into 'WEB-INF/classes'
     }
 
-    // Include Hibernate mapping files from source directory
+    // Include Hibernate mapping files and properties files from source directory
     from('source') {
         include '**/*.hbm.xml'
+        include '**/*.properties'
         into 'WEB-INF/classes'
     }
 
