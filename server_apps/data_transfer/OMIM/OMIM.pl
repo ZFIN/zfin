@@ -84,6 +84,16 @@ try {
   my $sourceRoot = $ENV{'SOURCEROOT'};
   my $omimToken = `cd $sourceRoot && gradle -q tokenStorage --args="read OMIM_API_TOKEN"`;
     $omimToken =~ s/\s+$//;
+
+  #We need to make sure the omimToken is a single line (less than 100 characters)
+  #Otherwise, exit with error message
+  if ( length($omimToken) > 0 && length($omimToken) < 100 && $omimToken !~ m/\n/ ) {
+      print "OMIM token read successfully.\n";
+      print LOG "OMIM token read successfully.\n";
+  } else {
+      die "OMIM token is invalid. Please check the token storage. Perhaps the gradle command is outputting noise\n";
+  }
+
   ZFINPerlModules->doSystemCommand("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
   ZFINPerlModules->doSystemCommand("/local/bin/wget https://data.omim.org/downloads/$omimToken/genemap2.txt");
 } catch {
