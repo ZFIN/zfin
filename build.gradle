@@ -65,6 +65,16 @@ project.ext.set("jacksonVersion", '2.18.2')
 project.ext.set("slf4jVersion", '2.0.12')
 project.ext.set("log4jVersion", '2.17.1')
 
+// Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group.startsWith("com.fasterxml.jackson")) {
+            details.useVersion(jacksonVersion)
+            details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+        }
+    }
+}
+
 task loadDatabase() {
     doLast {
         File unloads = file(dbunloadspath)
@@ -548,6 +558,7 @@ task createSchemaSpy() {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
 configurations {
@@ -639,7 +650,7 @@ dependencies {
     implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
 
-    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.2.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
+    implementation 'com.github.rtaylorzfin:google-analytics-reporting-app:1.0.4'
     implementation files('home/WEB-INF/lib/agr_curation_api.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')
     implementation files('home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar')
@@ -740,9 +751,9 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:1.4.14"
     implementation "ch.qos.logback:logback-core:1.4.14"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:${jacksonVersion}"  // Required by robot.jar
     implementation "com.fasterxml.woodstox:woodstox-core:6.5.1"
     implementation "com.fasterxml:classmate:1.5.1"
