@@ -782,9 +782,12 @@ test {
         includeNonSmokeTests = true
     }
     def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
-    println "Include smoke tests: " + includeSmokeTests
-    println "Include non-smoke tests: " + includeNonSmokeTests
-    println "Include NCBI load tests: " + includeNcbiLoadTests
+
+    doFirst {
+        println "Include smoke tests: " + includeSmokeTests
+        println "Include non-smoke tests: " + includeNonSmokeTests
+        println "Include NCBI load tests: " + includeNcbiLoadTests
+    }
 
     filter {
         if (includeNcbiLoadTests) {
