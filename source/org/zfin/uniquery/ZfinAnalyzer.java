@@ -7,17 +7,13 @@
  */
 package org.zfin.uniquery;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.StopFilter;
-import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.*;
 
-import java.io.Reader;
-import java.util.Set;
+import java.util.Arrays;
 
 
 public class ZfinAnalyzer extends Analyzer {
-    private static Set stopWords;
+    private static CharArraySet stopWords;
 
     public static final String[] STOP_WORDS =
             {
@@ -60,17 +56,20 @@ public class ZfinAnalyzer extends Analyzer {
 
 
     public ZfinAnalyzer(String[] words) {
-        stopWords = StopFilter.makeStopSet(words);
+        stopWords = new CharArraySet(Arrays.asList(words), true);
     }
 
-
-    public final TokenStream tokenStream(String fieldName, Reader reader) {
-        return new StopFilter(new LowerCaseFilter(new ZfinTokenizer(reader)), stopWords);
+    @Override
+    protected TokenStreamComponents createComponents(String fieldName) {
+        ZfinTokenizer tokenizer = new ZfinTokenizer();
+        TokenStream filter = new LowerCaseFilter(tokenizer);
+        filter = new StopFilter(filter, stopWords);
+        return new TokenStreamComponents(tokenizer, filter);
     }
 
-
-    public final TokenStream nonStoppedTokenStream(String fieldName, Reader reader) {
-        return new LowerCaseFilter(new ZfinTokenizer(reader));
+    public final TokenStream nonStoppedTokenStream(String fieldName) {
+        ZfinTokenizer tokenizer = new ZfinTokenizer();
+        return new LowerCaseFilter(tokenizer);
     }
 
 }
