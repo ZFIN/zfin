@@ -1,5 +1,6 @@
 package org.zfin.profile.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
+import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.profile.OrganizationSubmission;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
 import static java.net.URLEncoder.encode;
 
 @Controller
@@ -24,7 +28,12 @@ public class OrganizationSubmissionController {
     ProfileRepository profileRepository;
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
-    public String newPersonForm(Model model) {
+    public String newPersonForm(Model model, HttpServletRequest request) {
+        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
 
         OrganizationSubmission submission = new OrganizationSubmission();
         model.addAttribute("submission", submission);
