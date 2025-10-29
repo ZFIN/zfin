@@ -98,6 +98,8 @@ public class Gff3Writer {
         pagination.setLimit(400000);
         pagination.setPage(0);
         List<Gff3Ncbi> results = dao.findRecordsByFeature("gene");
+        List<Gff3Ncbi> resultsPseudo = dao.findRecordsByFeature("pseudogene");
+        results.addAll(resultsPseudo);
         List<String> ncbiGeneIDs = results.stream().map(Gff3Ncbi::getGeneID).toList();
         // remove records without ZFIN gene association
         // retrieve all MarkerDBLinks for zfin genes with genbank accession
