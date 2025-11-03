@@ -1,6 +1,7 @@
 package org.zfin.alliancegenome;
 
 import org.zfin.alliancegenome.presentation.FishRESTInterfaceAlliance;
+import org.zfin.alliancegenome.presentation.PriorityRESTInterface;
 import org.zfin.properties.ZfinPropertiesEnum;
 import si.mazi.rescu.ClientConfig;
 import si.mazi.rescu.RestProxyFactory;
@@ -17,6 +18,10 @@ public class AllianceRestManager {
 
     public static DiseaseAnnotationRESTInterfaceAlliance getDiseaseAnnotationEndpoints() {
         return RestProxyFactory.createProxy(DiseaseAnnotationRESTInterfaceAlliance.class, path, config);
+    }
+
+    public static PriorityRESTInterface getPriorityEndpoint() {
+        return RestProxyFactory.createProxy(PriorityRESTInterface.class, "https://literature-rest.alliancegenome.org", config);
     }
 
     public static AgmRESTInterfaceAlliance getAgmEndpoints() {

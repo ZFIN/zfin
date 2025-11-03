@@ -572,4 +572,8 @@ public class PublicationService {
             return imRes;
         }).collect(Collectors.toList());
     }
+
+    public void updatePublicationStatus(DashboardPublicationBean dashboardPublications) {
+
+    }
 }

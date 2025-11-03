@@ -1,37 +1,6 @@
 [
     {
         "type": "FeatureTrack",
-        "trackId": "GRCz11_all_genes",
-        "name": "All Genes",
-        "assemblyNames": [
-            "GRCz11"
-        ],
-        "adapter": {
-            "type": "NCListAdapter",
-            "rootUrlTemplate": {
-                "locationType": "UriLocation",
-                "uri": "https://s3.amazonaws.com/agrjbrowse/docker/7.1.0/zfin/zebrafish-11/tracks/All_Genes/{refseq}/trackData.jsonz"
-            }
-        },
-        "displays": [
-            {
-                "type": "LinearBasicDisplay",
-                "displayId": "GRCz11_all_genes-LinearBasicDisplay",
-                "renderer": {
-                    "maxHeight": 5000,
-                    "type": "SvgFeatureRenderer",
-                    "color3": "#30332E",
-                    "color1": "jexl:get(feature,'strand')<0?'teal':'darkviolet'"
-                }
-            },
-            {
-                "type": "LinearArcDisplay",
-                "displayId": "GRCz11_all_genes-LinearArcDisplay"
-            }
-        ]
-    },
-    {
-        "type": "FeatureTrack",
         "trackId": "zfin_gene",
         "name": "ZFIN Gene",
         "assemblyNames": [
