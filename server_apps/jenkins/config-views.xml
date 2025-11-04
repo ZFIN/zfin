@@ -140,6 +140,7 @@
     <recurse>false</recurse>
     </listView>
     <listView>
+    <owner class="hudson" reference="../../.."/>        
     <name>BLAST</name>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
