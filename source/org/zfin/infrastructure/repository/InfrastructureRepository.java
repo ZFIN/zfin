@@ -8,6 +8,7 @@ import org.zfin.ExternalNote;
 import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
+import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.featureflag.FeatureFlag;
 import org.zfin.framework.featureflag.PersonalFeatureFlag;
@@ -433,8 +434,9 @@ public interface InfrastructureRepository {
 
     UniProtRelease getUniProtReleaseByDate(Date date);
     UniProtRelease getLatestUnprocessedUniProtRelease();
-
     UniProtRelease getLatestProcessedUniProtRelease();
+
+    LoadFileLog getLoadFileLog(String loadName, String releaseNumber);
 
     List<UniProtRelease> getAllUniProtReleases();
 
