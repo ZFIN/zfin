@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>ant -f $TARGETROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
+      <command>SKIP_DOWNLOAD_IF_UNCHANGED=true ant -f $TARGETROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
       <unstableReturn>2</unstableReturn>
     </hudson.tasks.Shell>
   </builders>

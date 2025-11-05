@@ -16,6 +16,7 @@ import org.zfin.database.DbSystemUtil;
 import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
+import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -1863,6 +1864,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public void upsertUniProtRelease(UniProtRelease release) {
         currentSession().saveOrUpdate(release);
+    }
+
+    @Override
+    public LoadFileLog getLoadFileLog(String loadName, String releaseNumber) {
+        String hql = "from LoadFileLog where loadName = :loadName and releaseNumber = :releaseNumber";
+        Query<LoadFileLog> query = currentSession().createQuery(hql, LoadFileLog.class);
+        query.setParameter("loadName", loadName);
+        query.setParameter("releaseNumber", releaseNumber);
+        return query.uniqueResult();
     }
 
 }
