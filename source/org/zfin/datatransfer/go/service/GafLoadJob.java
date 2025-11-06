@@ -14,7 +14,6 @@ import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
@@ -29,6 +28,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
 
 /**
@@ -81,9 +81,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile3;
     protected String organization;
     protected Boolean skipDownloadIfUnchanged; //default to false
-
-    @Autowired
-    private HibernateInfrastructureRepository hibernateInfrastructureRepository;
 
     public int execute() {
         int exitCode = 0;
@@ -264,7 +261,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
         String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
-        LoadFileLog loadFileLog = hibernateInfrastructureRepository.getLoadFileLog(organizationEnum.toString(), dateAsString);
+        LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
         return loadFileLog != null;
     }
 
