@@ -95,7 +95,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             lastModified = downloadService.getLastModifiedOnServer(new URL(downloadUrl));
             boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, organizationEnum, lastModified);
             if (skipDownloadIfUnchanged != null && skipDownloadIfUnchanged && alreadyProcessed) {
-                logger.info("Download has already been processed and skipDownloadIfUnchanged is true.  Exiting load for " + organizationEnum.name());
+                logger.info("Download for " + new SimpleDateFormat("yyyy-MM-dd").format(lastModified)
+                        + " has already been processed and skipDownloadIfUnchanged is true.  " +
+                        "Exiting load for " + organizationEnum.name());
                 return exitCode;
             }
 
