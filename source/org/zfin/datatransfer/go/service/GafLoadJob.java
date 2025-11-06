@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 import org.zfin.datatransfer.go.*;
+import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
@@ -21,10 +22,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.util.ZfinSystemUtils.envTrue;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -75,6 +80,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile2;
     protected String localDownloadFile3;
     protected String organization;
+    protected Boolean skipDownloadIfUnchanged; //default to false
 
     public int execute() {
         int exitCode = 0;
@@ -84,7 +90,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
+        Date lastModified = null;
         try {
+            lastModified = downloadService.getLastModifiedOnServer(new URL(downloadUrl));
+            boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, organizationEnum, lastModified);
+            if (skipDownloadIfUnchanged != null && skipDownloadIfUnchanged && alreadyProcessed) {
+                logger.info("Download for " + new SimpleDateFormat("yyyy-MM-dd").format(lastModified)
+                        + " has already been processed and skipDownloadIfUnchanged is true.  " +
+                        "Exiting load for " + organizationEnum.name());
+                return exitCode;
+            }
 
             localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
 
@@ -225,7 +240,31 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = null;
             HibernateUtil.closeSession();
         }
+        if (exitCode == 0) {
+            logValidationReport(organizationEnum.toString(), "GAF Load Job completed successfully.", lastModified);
+        }
         return exitCode;
+    }
+
+    private void logValidationReport(String loadName, String notes, Date lastModified) {
+        HibernateUtil.createTransaction();
+
+        LoadFileLog loadFileLog = new LoadFileLog();
+        loadFileLog.setLoadName(loadName);
+        loadFileLog.setNotes(notes);
+        loadFileLog.setDate(lastModified);
+        loadFileLog.setProcessedDate(new Date());
+        loadFileLog.setReleaseNumber(new SimpleDateFormat("yyyy-MM-dd").format(lastModified));
+
+        HibernateUtil.currentSession().save(loadFileLog);
+
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
+        String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
+        LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
+        return loadFileLog != null;
     }
 
     private void addAnnotations(GafJobData gafJobData) {
@@ -370,6 +409,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             job.downloadUrl3 = args[7];
         }
         String parserClassName = args[5];
+
+        job.skipDownloadIfUnchanged = envTrue("SKIP_DOWNLOAD_IF_UNCHANGED");
+
         try {
             job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
 
@@ -382,6 +424,12 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             System.exit(1);
         }
         job.initDatabase();
-        System.exit(job.execute());
+        int exitCode = job.execute();
+        if (exitCode == 0) {
+            logger.info("GAF Load Job completed successfully.");
+        } else {
+            logger.error("GAF Load Job completed with errors.  Exit code: " + exitCode);
+        }
+        System.exit(exitCode);
     }
 }
