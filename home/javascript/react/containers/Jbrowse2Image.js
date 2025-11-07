@@ -6,12 +6,37 @@ import assembly from '../constants/GRCz11_assembly.json';
 import tracks from '../constants/GRCz11_tracks.json';
 import {createViewState, JBrowseLinearGenomeView} from '@jbrowse/react-linear-genome-view';
 
+function getTrackConfigFromImageUrl(imageUrl) {
+    const parsedImageUrl = new URL(imageUrl, window.location.href);
+    const requestedTracks = parsedImageUrl.searchParams.get('tracks');
+    const configuredTracks = [];
+    for (const trackName of requestedTracks.split(',')) {
+        const track = tracks.find(t => t.name === trackName);
+        if (track) {
+            const configuredTrack = {
+                type: 'FeatureTrack',
+                configuration: track.trackId,
+                displays: [
+                    {
+                        type: 'LinearBasicDisplay',
+                        configuration: track.displays.filter(d => d.type === 'LinearBasicDisplay')[0].displayId,
+                    }
+                ]
+            }
+            configuredTracks.push(configuredTrack);
+        }
+    }
+    return configuredTracks;
+}
+
 const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
     const containerRef = useRef(null);
 
     if (!imageUrl) {
         return <NoData/>;
     }
+
+    const configuredTracks = getTrackConfigFromImageUrl(imageUrl);
 
     const state = new createViewState({
         assembly,
@@ -39,48 +64,7 @@ const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
             name: 'zfin embedded session',
             view: {
                 type: 'LinearGenomeView',
-                tracks: [
-                    {
-                        type: 'FeatureTrack',
-                        configuration: 'zfin_transcript',
-                        displays: [
-                            {
-                                type: 'LinearBasicDisplay',
-                                configuration: 'transcript-1687907635485-LinearBasicDisplay',
-                            },
-                        ],
-                    },
-                    {
-                        type: 'FeatureTrack',
-                        configuration: 'zfin_features',
-                        displays: [
-                            {
-                                type: 'LinearBasicDisplay',
-                                configuration: 'zfin_features-1687908884139-LinearBasicDisplay'
-                            }
-                        ]
-                    },
-                    {
-                        type: 'FeatureTrack',
-                        configuration: 'zfin_gene',
-                        displays: [
-                            {
-                                type: 'LinearBasicDisplay',
-                                configuration: 'zfin_gene-1687907419159-LinearBasicDisplay'
-                            }
-                        ]
-                    },
-                    {
-                        type: 'FeatureTrack',
-                        configuration: 'zfin_knockdown_reagent',
-                        displays: [
-                            {
-                                type: 'LinearBasicDisplay',
-                                configuration: 'knockdown_reagent-1687908500113-LinearBasicDisplay'
-                            }
-                        ]
-                    }
-                ],
+                tracks: configuredTracks,
             },
         },
     });
