@@ -2,20 +2,21 @@ package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.zfin.framework.api.View;
+import org.zfin.framework.entity.BaseEntity;
 
-import jakarta.persistence.*;
 import java.util.Arrays;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "pub_tracking_location")
-public class PublicationTrackingLocation {
+public class PublicationTrackingLocation extends BaseEntity {
 
     public enum Role {
         CURATOR,
@@ -73,12 +74,12 @@ public class PublicationTrackingLocation {
     private long id;
 
     @Column(name = "ptl_location_display")
-    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Name")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationTrackingLocation$Name")})
     @JsonView(View.API.class)
     private Name name;
 
     @Column(name = "ptl_role")
-    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Role")})
+    @Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationTrackingLocation$Role")})
     @JsonView(View.API.class)
     private Role role;
 

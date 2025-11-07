@@ -273,3 +273,8 @@ task fetchNcbiReplacedGeneIDs(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.ncbi.NCBIReplacedGeneIDsTask'
 }
+
+task runPriorityPipeline(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.PriorityPipelineTask'
+}
