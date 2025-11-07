@@ -51,7 +51,7 @@ const SequenceTargetingReagentEditSequence = ({ strId }) => {
                 // notify the un-related marker notes component
                 document.dispatchEvent(new Event('UpdateMarkerNotesList'));
             } catch (error) {
-                setMeta({ serverError: error });
+                setMeta({ serverError: error.responseJSON || error });
                 throw error;
             }
         },
@@ -119,7 +119,18 @@ const SequenceTargetingReagentEditSequence = ({ strId }) => {
                     {isSubmitted && isPristine &&
                     <span className='text-success'><i className='fas fa-check' /> Saved</span>}
 
-                    {serverError && <span className='text-danger'>Update not saved. Try again later.</span>}
+                    {serverError && (
+                        <span className='text-danger'>
+                            {serverError.message && <div className='mt-1'>{serverError.message}</div>}
+                            {serverError.fieldErrors && serverError.fieldErrors.length > 0 && (
+                                <ul className='mb-0 mt-1'>
+                                    {serverError.fieldErrors.map((error, index) => (
+                                        <li key={index}>{error.message}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </span>
+                    )}
                 </div>
             </div>
         </Form>
