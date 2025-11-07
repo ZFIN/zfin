@@ -85,9 +85,11 @@ public class JBrowse2Image implements GenomeBrowserImage {
     }
 
     public static String calculateBaseUrl() {
-        String url = ZfinPropertiesEnum.JBROWSE_BASE_URL.value();
+//        String url = ZfinPropertiesEnum.JBROWSE_BASE_URL.value();
+        String url = "https://dev.d2u241g26l748k.amplifyapp.com";
 
-        boolean useProxy = "true".equals(ZfinPropertiesEnum.JBROWSE_USE_LOCAL_PROXY.value());
+//        boolean useProxy = "true".equals(ZfinPropertiesEnum.JBROWSE_USE_LOCAL_PROXY.value());
+        boolean useProxy = false;
         if (useProxy) {
             url = ZfinPropertiesEnum.JBROWSE_PROXY_BASE_URL.value();
         }
