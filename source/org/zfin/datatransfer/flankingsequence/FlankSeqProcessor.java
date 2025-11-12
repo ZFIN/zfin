@@ -86,7 +86,7 @@ public class FlankSeqProcessor {
                             InsertFeatureGenomeRecord(feature, refSeq);
                         }
                     } else {
-                        System.out.println("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
+                        logger.debug("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
                         //This means that we may need to delete variant sequences for this feature if they exist.
                         VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
                         if (vrSeq != null) {
@@ -175,7 +175,7 @@ public class FlankSeqProcessor {
                             insertFlankSeq(feature, seq1, seq2, offset);
                         }
                         else {
-                            System.out.println("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
+                            logger.debug("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
                             //This means that we may need to delete variant sequences for this feature if they exist.
                             VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
                             if (vrSeq != null) {
