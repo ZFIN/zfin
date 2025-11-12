@@ -85,6 +85,15 @@ public class FlankSeqProcessor {
                             System.out.print(".");
                             InsertFeatureGenomeRecord(feature, refSeq);
                         }
+                    } else {
+                        System.out.println("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
+                        //This means that we may need to delete variant sequences for this feature if they exist.
+                        VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
+                        if (vrSeq != null) {
+                            HibernateUtil.currentSession().delete(vrSeq);
+                            System.out.println("Deleted variant sequence for feature " + feature.getZdbID());
+                            this.updated.add(List.of("Deleted variant sequence for feature " + feature.getZdbID(), "", ""));
+                        }
                     }
                 }
                 System.out.println("");
@@ -165,7 +174,16 @@ public class FlankSeqProcessor {
 
                             insertFlankSeq(feature, seq1, seq2, offset);
                         }
-
+                        else {
+                            System.out.println("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
+                            //This means that we may need to delete variant sequences for this feature if they exist.
+                            VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
+                            if (vrSeq != null) {
+                                HibernateUtil.currentSession().delete(vrSeq);
+                                System.out.println("Deleted variant sequence for feature " + feature.getZdbID());
+                                this.updated.add(List.of("Deleted variant sequence for feature " + feature.getZdbID(), "", ""));
+                            }
+                        }
                     }
                 }
                 HibernateUtil.flushAndCommitCurrentSession();
