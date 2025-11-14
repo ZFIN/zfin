@@ -2,7 +2,8 @@
 <project>
   <actions/>
   <description>Load Flank Seq
-Set property FORCE_FULL_UPDATE to true to force a full update of the flank seq data.
+Set environment variable FORCE_FULL_UPDATE to true to force a full update of the flank seq data.
+Set FEATURE_ZDBID to a feature ID to run for a single feature only.
 Otherwise, it will update only the new data each day.  Once per week, the job will run the full update.
   </description>
   <keepDependencies>false</keepDependencies>

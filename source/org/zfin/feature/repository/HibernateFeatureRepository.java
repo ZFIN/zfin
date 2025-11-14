@@ -184,30 +184,66 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets() {
-        return getNonSaFeaturesWithGenomicMutDets(null);
+        return getNonSaFeaturesWithGenomicMutDets(null, null);
     }
 
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate) {
+        return getNonSaFeaturesWithGenomicMutDets(startDate, null);
+    }
+
+    /**
+     * Get non-sa features with genomic mutation details modified after startDate and/or with given featureID
+     * If startDate is null, ignore that filter
+     * If featureID is null or empty, ignore that filter
+     * @param startDate The start date to begin filtering
+     * @param featureID The feature ID to filter
+     * @return List of features
+     */
+    @Override
+    public List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureID) {
         Boolean startDateIsNull = startDate == null;
+        Boolean featureIDIsNull = featureID == null || featureID.isEmpty();
         String hql = """
             select distinct fs.feature
             from FeatureGenomicMutationDetail fs
             where fs.feature.abbreviation not like 'sa%'
             and (:startDateIsNull = true OR fs.fgmdModifiedAt >= :startDate)
+            and (:featureIDIsNull = true OR fs.feature.zdbID = :featureID)
             """;
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         query.setParameter("startDate", startDate);
         query.setParameter("startDateIsNull", startDateIsNull);
+        query.setParameter("featureID", featureID);
+        query.setParameter("featureIDIsNull", featureIDIsNull);
+
         return query.list().stream().sorted(Comparator.comparing(Feature::getAbbreviation)).collect(Collectors.toList());
     }
 
     @Override
     public List<Feature> getDeletionFeatures() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select feat from Feature feat  where feat.type = :type order by feat.abbreviationOrder";
+        String hql = "from Feature where type = :type order by abbreviationOrder";
         Query<Feature> query = session.createQuery(hql, Feature.class);
         query.setParameter("type", FeatureTypeEnum.DELETION);
+        return query.list();
+    }
+
+    /**
+     * Get deletion features, optionally filtered by featureID
+     * @param featureID featureID to filter by
+     * @return list of deletion features
+     */
+    @Override
+    public List<Feature> getDeletionFeatures(String featureID) {
+        if (featureID == null || featureID.isEmpty()) {
+            return getDeletionFeatures();
+        }
+        Session session = HibernateUtil.currentSession();
+        String hql = "from Feature where type = :type and zdbID = :featureID order by abbreviationOrder";
+        Query<Feature> query = session.createQuery(hql, Feature.class);
+        query.setParameter("type", FeatureTypeEnum.DELETION);
+        query.setParameter("featureID", featureID);
         return query.list();
     }
 
