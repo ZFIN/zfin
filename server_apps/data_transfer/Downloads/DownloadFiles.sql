@@ -2275,94 +2275,125 @@ drop view zfinpubs;
 create temp table tmp_features (feature_id text, term_o_id text, f_abbrev text,
                                f_name text,ftypedisp text, mutagen text,
                                mutagee text, construct_id text, construct_name text, construct_so_id text,
-                               created_by_zdb_id text, created_by_name text)
+                               created_by_zdb_id text, created_by_name text, step text)
 ;
 
 -- a list of all features ordered by abbreviation (case insensitive)
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee
-from feature, feature_type, feature_assay, so_zfin_mapping
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
-and feature_Type not in ('TRANSGENIC_INSERTION')
-and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+-- step 1
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, 'step1'
+from
+    feature join feature_type on feature_type = ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+where
+    feature_Type not in ('TRANSGENIC_INSERTION')
+  and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
 order by lower(feature_abbrev);
 
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, created_by_zdb_id, created_by_name)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee,fmrel_mrkr_zdb_id,mrkr_name
-from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
-and feature_Type not in ('TRANSGENIC_INSERTION')
-and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
-and fmrel_type = 'created by'
-and feature_zdb_id = fmrel_ftr_zdb_id
-and mrkr_zdb_id = fmrel_mrkr_zdb_id
+-- step 2
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, created_by_zdb_id, created_by_name, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee,fmrel_mrkr_zdb_id,mrkr_name, 'step2'
+from
+    feature join feature_type on feature_type =ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+            join feature_marker_relationship on feature_zdb_id = fmrel_ftr_zdb_id
+            join marker on mrkr_zdb_id = fmrel_mrkr_zdb_id
+where
+    feature_Type not in ('TRANSGENIC_INSERTION')
+  and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+  and fmrel_type = 'created by'
 order by lower(feature_abbrev);
 
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name
-from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
- and feature_zdb_id = fmrel_ftr_zdb_id
- and fmrel_mrkr_zdb_id = mrkr_zdb_id
- and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION')
-and fmrel_type != 'is allele of'
-and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+-- step 3
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name, 'step3'
+from
+    feature join feature_type on feature_type =ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+            join feature_marker_relationship on feature_zdb_id = fmrel_ftr_zdb_id
+            join marker on mrkr_zdb_id = fmrel_mrkr_zdb_id
+where
+    feature_Type in ('TRANSGENIC_INSERTION')
+  and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+  and fmrel_type != 'is allele of'
+  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 order by lower(feature_abbrev);
 
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name
-from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
- and feature_zdb_id = cst.fmrel_ftr_zdb_id
- and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
- and construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION')
-and cst.fmrel_type != 'is allele of'
-and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
-and createdby.fmrel_type = 'created by'
-and feature_zdb_id = createdby.fmrel_ftr_zdb_id
-and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
+-- step 4
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name, 'step4'
+from
+    feature join feature_type on feature_type =ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+            join feature_marker_relationship cst on feature_zdb_id = cst.fmrel_ftr_zdb_id
+            join marker construct on construct.mrkr_zdb_id = cst.fmrel_mrkr_zdb_id
+            join feature_marker_relationship createdby on feature_zdb_id = createdby.fmrel_ftr_zdb_id
+            join marker str on str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
+where
+    construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+  and feature_Type in ('TRANSGENIC_INSERTION')
+  and cst.fmrel_type != 'is allele of'
+  and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+  and createdby.fmrel_type = 'created by'
 order by lower(feature_abbrev);
 
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name
-from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
- and feature_zdb_id = fmrel_ftr_zdb_id
- and fmrel_mrkr_zdb_id = mrkr_zdb_id
- and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION')
-and fmrel_type = 'is allele of'
-and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+-- step 5
+-- Gives an empty set as of 11/12/2025.
+-- Also, logic overlaps with step 3 -- step3 having the condition fmrel_type != 'is allele of' and step 5 having fmrel_type = 'is allele of'
+-- which combined should always be true so it's an unnecessary condition. Perhaps it was there to give an implicit sort, but
+-- ordering by insertion order is not guaranteed without an explicit order by clause. It would be better to have an explicit order by clause if a specific order is desired.
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name, 'step5'
+from
+    feature join feature_type on feature_type =ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+            join feature_marker_relationship on feature_zdb_id = fmrel_ftr_zdb_id
+            join marker on mrkr_zdb_id = fmrel_mrkr_zdb_id
+where
+    feature_Type in ('TRANSGENIC_INSERTION')
+  and featassay_mutagen not in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+  and fmrel_type = 'is allele of'
+  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 order by lower(feature_abbrev);
 
-insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name)
-select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name
-from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship cst, marker construct, feature_marker_relationship createdby, marker str
-where feature_type =ftrtype_name
- and szm_object_type = feature_type
- and feature_zdb_id = featassay_feature_zdb_id
- and feature_zdb_id = cst.fmrel_ftr_zdb_id
- and cst.fmrel_mrkr_zdb_id = construct.mrkr_zdb_id
- and construct.mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION')
-and cst.fmrel_type = 'is allele of'
-and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
-and createdby.fmrel_type = 'created by'
-and feature_zdb_id = createdby.fmrel_ftr_zdb_id
-and str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
+-- step 6
+-- Gives an empty set as of 11/12/2025.
+-- Also, logic overlaps with step 4 -- step4 having the condition cst.fmrel_type != 'is allele of' and step 6 having cst.fmrel_type = 'is allele of'.
+-- See comments for step 5 about this.
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name, created_by_zdb_id, created_by_name, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, construct.mrkr_zdb_id, construct.mrkr_name, createdby.fmrel_mrkr_zdb_id, str.mrkr_name, 'step6'
+from
+    feature join feature_type on feature_type =ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+            join feature_marker_relationship cst on feature_zdb_id = cst.fmrel_ftr_zdb_id
+            join marker construct on construct.mrkr_zdb_id = cst.fmrel_mrkr_zdb_id
+            join feature_marker_relationship createdby on feature_zdb_id = createdby.fmrel_ftr_zdb_id
+            join marker str on str.mrkr_zdb_id = createdby.fmrel_mrkr_zdb_id
+where
+    construct.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+  and feature_Type in ('TRANSGENIC_INSERTION')
+  and cst.fmrel_type = 'is allele of'
+  and featassay_mutagen in ('TALEN', 'CRISPR', 'DNA and TALEN', 'DNA and CRISPR')
+  and createdby.fmrel_type = 'created by'
 order by lower(feature_abbrev);
+
+-- step 7 (Add any features that are not already included)
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, step)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, 'step7'
+from
+    feature join feature_type on feature_type = ftrtype_name
+            join feature_assay on feature_zdb_id = featassay_feature_zdb_id
+            join so_zfin_mapping on szm_object_type = feature_type
+where
+    feature_zdb_id not in (select feature_id from tmp_features)
+order by lower(feature_abbrev);
+
 
 update tmp_features
   set construct_so_id = (select szm_term_ont_id from so_zfin_mapping
@@ -2376,7 +2407,7 @@ update tmp_features set ftypedisp=(case when ftypedisp in ('Point Mutation','Sma
                            end);
 
 \echo ''./downloadsStaging/features.txt' with delimiter as '	' null as '';'
-\copy (select * from tmp_features) to './downloadsStaging/features.txt' with delimiter as '	' null as '';
+\copy (select feature_id,term_o_id,f_abbrev,f_name,ftypedisp,mutagen,mutagee,construct_id,construct_name,construct_so_id,created_by_zdb_id,created_by_name from tmp_features order by step, lower(f_abbrev)) to './downloadsStaging/features.txt' with delimiter as '	' null as '';
 
 \echo ''./downloadsStaging/snpData.txt' with delimiter as '	' null as '';'
 create view snpData as
