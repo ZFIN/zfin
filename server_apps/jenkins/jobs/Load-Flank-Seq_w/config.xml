@@ -7,7 +7,23 @@ Set FEATURE_ZDBID to a feature ID to run for a single feature only.
 Otherwise, it will update only the new data each day.  Once per week, the job will run the full update.
   </description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+      <hudson.model.ParametersDefinitionProperty>
+          <parameterDefinitions>
+              <hudson.model.StringParameterDefinition>
+                  <name>FEATURE_ZDBID</name>
+                  <description>Leave blank for default logic. If specified, will only apply changes to the given feature</description>
+                  <defaultValue></defaultValue>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.BooleanParameterDefinition>
+                  <name>FORCE_FULL_UPDATE</name>
+                  <description>Check this option to run a full update. Otherwise, it only runs through changes from the last 48 hours.</description>
+                  <defaultValue>false</defaultValue>
+                  <trim>true</trim>
+              </hudson.model.BooleanParameterDefinition>
+          </parameterDefinitions>
+      </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
