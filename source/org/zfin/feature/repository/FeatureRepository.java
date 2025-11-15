@@ -39,6 +39,8 @@ public interface FeatureRepository {
      */
     List<Feature> getFeaturesByPublication(String publicationID);
 
+    List<Feature> getDeletionFeatures(String featureID);
+
     List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID);
 
     List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum);
@@ -71,6 +73,8 @@ public interface FeatureRepository {
     List<Feature> getNonSaFeaturesWithGenomicMutDets();
 
     List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate);
+
+    List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureZdbID);
 
     List<Feature> getDeletionFeatures();
 
