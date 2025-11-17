@@ -19,7 +19,7 @@ import static org.zfin.datatransfer.ncbi.NCBIDirectPort.*;
  * Run tests against a database that only has test data in it.
  * Not to be run on prod or any other important database.
  * Can be invoked with:
- * docker compose run --rm -p 5005:5005 ncbiload bash -lc 'gradle -PgradleDebug -PncbiLoadTests test --tests org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest '
+ * docker compose run --rm -p 5005:5005 ncbiload bash -lc 'gradle -PgradleDebug -PncbiLoadTests test --tests org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest'
  * The gradleDebug property will start the JVM in debug mode and listen on port 5005 for a debugger to attach. (optional)
  */
 public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
@@ -139,6 +139,47 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
 
         // Expect to now have a NCBI Gene ID link of 107980443 based on the Vega mapping
         assertDBLinkExists("ZDB-GENE-040724-74", "107980443", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA);
+    }
+
+    @Test
+    public void testGeneWithConflictingVegaLinks() throws IOException {
+        // Create database state before the load
+        helper.beforeStateBuilder()
+                .withGene("ZDB-GENE-141212-233", "znf1086")
+                .withGene("ZDB-GENE-110913-77", "znf1084")
+                .withVega("ZDB-GENE-141212-233", "OTTDARG00000036079", "znf1086-201")
+                .withVega("ZDB-GENE-110913-77", "OTTDARG00000036098", "znf1084-202")
+                .withGene2VegaFile("101882544", "OTTDARG00000036079")
+                .withGene2VegaFile("101882544", "OTTDARG00000036098")
+                .build();
+
+        helper.runNCBILoad();
+
+        NCBILoadIntegrationTestHelper.AfterState afterState = helper.getAfterState();
+
+        //The before load and after load files should both have 2 entries, since no links should be created due to the conflict
+        assertEquals(2, afterState.getFile("before_load.csv").getDataLines().size());
+        assertEquals(2, afterState.getFile("after_load.csv").getDataLines().size());
+    }
+
+    @Test
+    public void testGeneWithConflictBetweenVegaAndRNA() throws IOException {
+        // Create database state before the load
+        helper.beforeStateBuilder()
+                .withGene("ZDB-GENE-120703-25", "si:dkey-71l4.3")
+                .withDBLink("ZDB-GENE-120703-25", "BG119214", FDCONT_GENBANK_RNA, "ZDB-PUB-030703-1")
+                .withGene2AccessionFile("108183518", "-", "BG119214.1")
+                .withGene2VegaFile("108183519", "OTTDARG00000039000")
+                .withVega("ZDB-GENE-120703-25", "OTTDARG00000039000", "si:dkey-71l4.3-201")
+                .build();
+
+        helper.runNCBILoad();
+
+        NCBILoadIntegrationTestHelper.AfterState afterState = helper.getAfterState();
+        assertEquals(2, afterState.getFile("before_load.csv").getDataLines().size());
+        assertEquals(3, afterState.getFile("after_load.csv").getDataLines().size());
+
+        assertDBLinkExists("ZDB-GENE-120703-25", "108183518", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA);
     }
 
     /**
