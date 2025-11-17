@@ -697,6 +697,7 @@ dependencies {
     testImplementation group: 'org.gebish', name: 'geb-core', version: '6.0'
     testImplementation group: 'org.gebish', name: 'geb-spock', version: '6.0'
     testImplementation group: 'org.gebish', name: 'geb-waiting', version: '6.0'
+    implementation group: 'oauth.signpost', name: 'signpost-core', version: '2.1.1'
     testImplementation group: 'oauth.signpost', name: 'signpost-core', version: '2.1.1'
 
 

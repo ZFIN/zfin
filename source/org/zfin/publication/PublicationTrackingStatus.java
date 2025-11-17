@@ -7,13 +7,15 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 
 import jakarta.persistence.*;
+import org.zfin.framework.entity.BaseEntity;
+
 import java.util.Arrays;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "pub_tracking_status")
-public class PublicationTrackingStatus {
+public class PublicationTrackingStatus extends BaseEntity {
 
     public enum Type {
         NEW,
