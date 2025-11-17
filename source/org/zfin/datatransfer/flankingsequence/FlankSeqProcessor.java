@@ -38,6 +38,10 @@ public class FlankSeqProcessor {
 
     public static final String FASTA_URL = "/research/zprodmore/gff3/Danio_rerio.fa";
 
+    //Add option to check for inconsistencies between .fa file and sequence of reference
+    //Can set environment variable CHECK_FOR_INCONSISTENCIES to true to enable
+    private static boolean CHECK_FOR_INCONSISTENCIES = false;
+
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
     private Logger logger = LogManager.getLogger(FlankSeqProcessor.class);
@@ -52,7 +56,7 @@ public class FlankSeqProcessor {
 
     public void updateFlankingSequences() {
         try {
-
+            CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
             File fasta = new File(FASTA_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
@@ -87,6 +91,7 @@ public class FlankSeqProcessor {
                             System.out.print(".");
                             InsertFeatureGenomeRecord(feature, refSeq);
                         }
+                        checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
                     } else {
                         logger.debug("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
                         //This means that we may need to delete variant sequences for this feature if they exist.
@@ -125,8 +130,9 @@ public class FlankSeqProcessor {
                             String ftrChrom = ftrLoc.getChromosome();
                             locStart = ftrLoc.getStartLocation();
                             locEnd = ftrLoc.getEndLocation();
+                            checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
                             switch (feature.getType()) {
-                                case POINT_MUTATION:
+                                case POINT_MUTATION -> {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
@@ -134,17 +140,16 @@ public class FlankSeqProcessor {
                                     }
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart + 1, locStart + offset).getBases());
-
-                                    break;
-                                case DELETION:
+                                }
+                                case DELETION, MNV -> {
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    break;
-                                case INSERTION:
+                                }
+                                case INSERTION -> {
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
-                                    break;
-                                case INDEL:
+                                }
+                                case INDEL -> {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
@@ -153,12 +158,7 @@ public class FlankSeqProcessor {
 
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-
-                                    break;
-                                case MNV:
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    break;
+                                }
                             }
 
                             //progress output
@@ -183,6 +183,32 @@ public class FlankSeqProcessor {
         } catch (Exception e) {
             logger.error(e);
             errors.add(ExceptionUtils.getFullStackTrace(e));
+        }
+    }
+
+    private void checkForInconsistentBetweenFgmdAndReferenceFA(Feature feature, IndexedFastaSequenceFile ref, String ftrChrom, int locStart, int locEnd) {
+        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
+        if (fgmd == null || StringUtils.isEmpty(fgmd.getFgmdSeqRef())) {
+            return;
+        }
+        if (CHECK_FOR_INCONSISTENCIES) {
+            String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+            if (!refSeq.equals(fgmd.getFgmdSeqRef())) {
+                boolean caseOnlyMismatch = refSeq.equalsIgnoreCase(fgmd.getFgmdSeqRef());
+                String caseOnlyMessage = caseOnlyMismatch ? " (case-only mismatch)" : "";
+
+                boolean separatorOnlyMismatch = false;
+                if (fgmd.getFgmdSeqRef().replaceAll("\\s+", "").equals(refSeq.replaceAll("\\s+", ""))) {
+                    separatorOnlyMismatch = true;
+                }
+                if (!separatorOnlyMismatch) {
+                    String message = "\nInconsistency," + feature.getType() + "," + feature.getZdbID() +
+                            "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
+                            ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
+                    System.out.println(message);
+                    logger.warn(message);
+                }
+            }
         }
     }
 
