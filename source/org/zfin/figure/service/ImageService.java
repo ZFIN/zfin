@@ -164,7 +164,7 @@ public class ImageService {
             }
         }
         String[] makeThumbCommand = {convertBinary, "-thumbnail", dimensions, imageFilename, thumbnailFilename};
-        log.info("running makeThumb command: " + makeThumbCommand);
+        log.info("running makeThumb command: " + String.join(" ", makeThumbCommand));
         if (!previewCommandOnly) {
             Runtime.getRuntime().exec(makeThumbCommand);
         }
