@@ -1,6 +1,7 @@
 package org.zfin.publication.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,6 @@ import org.zfin.curation.PublicationNote;
 import org.zfin.curation.presentation.*;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
-import org.zfin.database.InformixUtil;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -25,7 +25,6 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -41,11 +40,8 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 
 @Controller
@@ -208,11 +204,12 @@ public class PublicationTrackingController {
     public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,
                                                   @RequestParam(required = false, defaultValue = "false") Boolean checkOwner,
                                                   @RequestParam(required = false, defaultValue = "false") Boolean resetTopics,
+                                                  String pipelinePersonName,
                                                   @RequestBody CurationStatusDTO dto) throws InvalidWebRequestException {
         Publication publication = publicationRepository.getPublication(zdbID);
         PublicationTrackingHistory pth = publicationRepository.currentTrackingStatus(publication);
 
-        if (checkOwner && pth.getOwner() != null && dto.getOwner() != null && !Objects.equals(pth.getOwner().getZdbID(), dto.getOwner().getZdbID())) {
+        if (checkOwner != null && checkOwner && pth.getOwner() != null && dto.getOwner() != null && !Objects.equals(pth.getOwner().getZdbID(), dto.getOwner().getZdbID())) {
             throw new InvalidWebRequestException("Pub already claimed");
         }
 
@@ -221,7 +218,13 @@ public class PublicationTrackingController {
         newStatus.setStatus(dto.getStatus());
         newStatus.setLocation(dto.getLocation());
         newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
-        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+        if (pipelinePersonName != null) {
+            List<Person> peopleByFullName = profileRepository.getPeopleByFullName(pipelinePersonName);
+            assert peopleByFullName!= null && peopleByFullName.size() == 1;
+            newStatus.setUpdater(peopleByFullName.get(0));
+        } else {
+            newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+        }
         newStatus.setDate(new GregorianCalendar());
 
         Session session = HibernateUtil.currentSession();
