@@ -112,6 +112,7 @@ BEGIN
                  ('marker_to_protein', 'mtp_mrkr_zdb_id'),
                  ('ortholog', 'ortho_zebrafish_gene_zdb_id'),
                  ('paneled_markers', 'zdb_id'),
+                 ('phenotype_observation_generated', 'psg_mrkr_zdb_id'),
                  ('primer_set', 'marker_id'),
                  ('reference_protein', 'rp_gene_zdb_id'),
                  ('sequence_feature_chromosome_location_generated', 'sfclg_data_zdb_id'),
