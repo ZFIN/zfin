@@ -1,17 +1,20 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import NoData from '../components/NoData';
 
-import assembly from '../constants/GRCz11_assembly.json';
-import tracks from '../constants/GRCz11_tracks.json';
+import configJbrowse from '../constants/config-jbrowse2.json';
 import {createViewState, JBrowseLinearGenomeView} from '@jbrowse/react-linear-genome-view';
 
-function getTrackConfigFromImageUrl(imageUrl) {
+function getTrackConfigFromImageUrl(imageUrl, assembly) {
     const parsedImageUrl = new URL(imageUrl, window.location.href);
     const requestedTracks = parsedImageUrl.searchParams.get('tracks');
     const configuredTracks = [];
+    
+    // Use tracks from the local config file
+    const tracks = configJbrowse.tracks || [];
+
     for (const trackName of requestedTracks.split(',')) {
-        const track = tracks.find(t => t.name === trackName);
+        const track = tracks.find(t => t.name === trackName && t.assemblyNames && t.assemblyNames.includes(assembly.name));
         if (track) {
             const configuredTrack = {
                 type: 'FeatureTrack',
@@ -31,14 +34,59 @@ function getTrackConfigFromImageUrl(imageUrl) {
 
 const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
     const containerRef = useRef(null);
+    const [assembly, setAssembly] = useState(null);
+    const [tracks, setTracks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadConfig = async () => {
+            try {
+                setLoading(true);
+                
+                // Load assembly and tracks from local config file
+                if (configJbrowse.assemblies && configJbrowse.assemblies.length > 0) {
+                    const assemblyConfig = configJbrowse.assemblies.find(a => a.name === build) || configJbrowse.assemblies[0];
+                    setAssembly(assemblyConfig);
+                } else {
+                    throw new Error('No assembly configuration found in local config');
+                }
+                
+                if (configJbrowse.tracks) {
+                    setTracks(configJbrowse.tracks);
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.warn('No tracks found in config, using empty array');
+                    setTracks([]);
+                }
+                
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error('Error loading JBrowse config:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadConfig();
+    }, []);
 
     if (!imageUrl) {
         return <NoData/>;
     }
 
-    const configuredTracks = getTrackConfigFromImageUrl(imageUrl);
+    if (loading) {
+        return <div className='alert alert-info'>Loading JBrowse configuration...</div>;
+    }
 
-    const state = new createViewState({
+    if (!assembly) {
+        return <div className='alert alert-danger'>Failed to load JBrowse configuration: {error}</div>;
+    }
+
+    const configuredTracks = getTrackConfigFromImageUrl(imageUrl, assembly);
+
+    const state = createViewState({
         assembly,
         tracks,
         location: landmark,

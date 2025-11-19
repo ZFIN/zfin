@@ -140,7 +140,7 @@ public class GeneViewController {
                 .setLandmarkByGenomeLocation(genomeLocation.get(0))
                 // add 10% left padding
                 .withPadding((genomeLocation.get(0).getEnd() - genomeLocation.get(0).getStart()) / 10, 0)
-                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
+                .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
             geneBean.setRefSeqLocations(refseqBuilder.build());
         }
 
@@ -151,7 +151,8 @@ public class GeneViewController {
         TreeSet locations = new TreeSet<>();
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
-            location.setUrl(genomeMarkerLocation.getUrl());
+            location.setGenomeBrowserImage(geneBean.getRefSeqLocations());
+            location.setUrl(genomeMarkerLocation.getUrl(geneBean.getRefSeqLocations()));
             if (latestAssembly != null) {
                 switch (latestAssembly.getName()) {
                     case "GRCz12tu": {

@@ -315,7 +315,6 @@ public class FeatureService {
             .highlight(feature);
 
         GenomeLocation.Source source;
-        GenomeBrowserTrack extraTrack = null;
         switch (featureLocation.getAssembly()) {
             case "Zv9" -> {
                 imageBuilder.genomeBuild(GenomeBrowserBuild.ZV9);
@@ -334,8 +333,6 @@ public class FeatureService {
                 source = GenomeLocation.Source.ZFIN;
             }
         }
-        extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
-
         if (featureMarkerRelationships.size() == 1) {
             Marker related = featureMarkerRelationships.iterator().next().getMarker();
             List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, source);
@@ -347,11 +344,7 @@ public class FeatureService {
         } else {
             imageBuilder.setLandmarkByGenomeLocation(featureLocation).withPadding(10000);
         }
-        //currently only ZMP features on previous builds need anything other than the ZFIN_FEATURES track
-        GenomeBrowserTrack featureTrack = featureLocation.getGenomeBrowserTrack() == null ? GenomeBrowserTrack.ZFIN_FEATURES : featureLocation.getGenomeBrowserTrack();
-
-        imageBuilder.tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, featureTrack, GenomeBrowserTrack.TRANSCRIPTS, extraTrack});
-
+        imageBuilder.tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.FEATURE));
         return imageBuilder.build();
     }
 
