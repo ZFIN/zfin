@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.associations.AlleleConstructAssociationDTO;
@@ -84,6 +85,8 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
             .map(
                 construct -> {
 
+                    String primaryExternalId = "ZFIN:" + construct.getZdbID();
+
                     ConstructDTO dto = new ConstructDTO();
                     NameSlotAnnotationDTO name = new NameSlotAnnotationDTO();
                     name.setDisplayText(construct.getName());
@@ -100,9 +103,15 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                     DataProviderDTO dataProvider = new DataProviderDTO();
                     dataProvider.setSourceOrganizationAbbreviation("ZFIN");
                     dto.setDataProviderDto(dataProvider);
+                    CrossReferenceDTO crossReferenceDTO = new CrossReferenceDTO();
+                    crossReferenceDTO.setDisplayName(construct.getZdbID());
+                    crossReferenceDTO.setReferencedCurie(primaryExternalId);
+                    crossReferenceDTO.setPageArea("construct");
+                    crossReferenceDTO.setPrefix("ZFIN");
+                    dataProvider.setCrossReferenceDto(crossReferenceDTO);
                     dto.setCreatedByCurie("ZFIN:CURATOR");
                     //dto.setTaxonCurie(ZfinDTO.taxonId);
-                    dto.setPrimaryExternalId("ZFIN:" + construct.getZdbID());
+                    dto.setPrimaryExternalId(primaryExternalId);
                     GregorianCalendar date = ActiveData.getDateFromId(construct.getZdbID());
                     dto.setDateCreated(format(date));
                     List<PublicationAttribution> attributions = getInfrastructureRepository().getPublicationAttributions(construct.zdbID);

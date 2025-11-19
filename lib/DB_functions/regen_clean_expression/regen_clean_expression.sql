@@ -42,7 +42,7 @@ DECLARE clean_expression_fast_search_rename_to text;
     -- -------------------------------------------------------------------
 
      insert into regen_ce_input_zdb_id_temp ( rggz_mrkr_zdb_id, rggz_genox_zdb_id )
-      select mrkr_zdb_id, genox_Zdb_id from marker, expression_Experiment, fish_experiment 
+      select mrkr_zdb_id, genox_Zdb_id from marker, expression_experiment2, fish_experiment 
        where mrkr_type in ('GENE','GENEP')
         and  xpatex_gene_Zdb_id = mrkr_Zdb_id
 			   and xpatex_genox_zdb_id = genox_zdb_id
@@ -54,7 +54,7 @@ DECLARE clean_expression_fast_search_rename_to text;
 
 
     insert into regen_ce_input_zdb_id_temp ( rggz_mrkr_zdb_id, rggz_genox_zdb_id )
-      select mrkr_zdb_id, genox_Zdb_id from marker,fish_str, fish_experiment, expression_experiment 
+      select mrkr_zdb_id, genox_Zdb_id from marker,fish_str, fish_experiment, expression_experiment2 
         where mrkr_type in ('MRPHLNO','CRISPR','TALEN')
           and fishstr_fish_Zdb_id = genox_fish_zdb_id
 	  and genox_zdb_id = xpatex_genox_zdb_id

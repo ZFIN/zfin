@@ -1047,6 +1047,7 @@ test {
         includeSmokeTests = true
         includeNonSmokeTests = true
     }
+    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
 
     doFirst {
         println "Include smoke tests: " + includeSmokeTests

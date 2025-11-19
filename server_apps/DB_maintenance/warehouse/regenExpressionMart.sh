@@ -34,16 +34,8 @@ fi
 
 #echo "done with ant tests" ;
 
-# move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME < "$ROOT_PATH/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartRegen.sql"
-
-if [ $? -ne 0 ]; then
- echo "refresh expression mart (the public tables) failed and was rolled back";
- exit 1;
-fi
-
-echo "select regen_expression_term_fast_search()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
+echo "select regen_expression_1term_fast_search()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
 echo "select regen_feature_term_fast_search()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
 echo "success" ;
 
