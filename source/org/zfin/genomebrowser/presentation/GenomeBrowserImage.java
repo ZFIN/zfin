@@ -26,4 +26,8 @@ public interface GenomeBrowserImage {
     @Override
     int hashCode();
 
+    String calculateBaseUrl();
+
+    String getFullLinkUrl(String assembly);
+
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -21,6 +22,7 @@ import static org.zfin.mapping.GenomeLocation.Source.*;
 @Getter
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
 
+    public static String GRCZ12TU = "GRCz12tu";
     public static String GRCZ11 = "GRCz11";
     public static String GRCZ10 = "GRCz10";
     public static String ZV9 = "Zv9";
@@ -42,9 +44,9 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected String assembly;
     private GenericTerm evidence;
 
-    public String getUrl() {
+    public String getUrl(GenomeBrowserImage genomeBrowserImage) {
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
-            return "/action/jbrowse/byName?name=" + accessionNumber + "&source=" + source.name();
+            return genomeBrowserImage.getFullLinkUrl(assembly);
         } else {
             return source.getUrl() + accessionNumber;
         }

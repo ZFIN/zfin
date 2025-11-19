@@ -3,6 +3,7 @@ package org.zfin.genomebrowser;
 import org.zfin.gbrowse.GBrowseTrack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -53,10 +54,10 @@ public enum GenomeBrowserTrack {
             return new ArrayList<>();
         }
         return tracks
-                .stream()
-                .filter(track -> track != null)
-                .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(track -> track != null)
+            .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
+            .collect(Collectors.toList());
     }
 
     public static GBrowseTrack convertGenomeBrowserTrackToGBrowse(GenomeBrowserTrack genomeBrowserTrack) {
@@ -81,4 +82,29 @@ public enum GenomeBrowserTrack {
             case REFSEQ -> GBrowseTrack.REF_SEQ;
         };
     }
+
+    public enum Page {
+        GENE_SEQUENCE(GENES, REFSEQ),
+        GENE_TRANSCRIPTS(GENES, TRANSCRIPTS),
+        MAPPING_DETAIL_GENES(GENES),
+        CLONES(COMPLETE_CLONES, GENES, TRANSCRIPTS),
+        GENE_STRS(GENES, KNOCKDOWN_REAGENT, TRANSCRIPTS),
+        FEATURE(GENES, ZFIN_FEATURES, TRANSCRIPTS, ZFIN_MUTANT),
+        ;
+        private GenomeBrowserTrack[] tracks;
+
+        Page(GenomeBrowserTrack... tracks) {
+            this.tracks = tracks;
+        }
+
+        public GenomeBrowserTrack[] getTracks() {
+            return tracks;
+        }
+
+    }
+
+    public static GenomeBrowserTrack[] getGenomeBrowserTracks(Page page) {
+        return Arrays.stream(Page.values()).filter(page1 -> page1 == page).findFirst().get().getTracks();
+    }
 }
+
