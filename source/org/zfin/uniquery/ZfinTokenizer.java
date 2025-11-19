@@ -1,10 +1,7 @@
 package org.zfin.uniquery;
 
 
-import org.apache.lucene.analysis.CharTokenizer;
-
-import java.io.Reader;
-
+import org.apache.lucene.analysis.util.CharTokenizer;
 
 /**
  * Implements custom tokenization. LetterTokenizer is too strict and
@@ -13,11 +10,12 @@ import java.io.Reader;
  * NOTE: This tokenizer will probably only work well for ascii English text.
  */
 public class ZfinTokenizer extends CharTokenizer {
-    public ZfinTokenizer(Reader in) {
-        super(in);
+    public ZfinTokenizer() {
+        super();
     }
 
-    protected boolean isTokenChar(char c) {
+    @Override
+    protected boolean isTokenChar(int c) {
         if (Character.isWhitespace(c)) {
             return false;
         }
