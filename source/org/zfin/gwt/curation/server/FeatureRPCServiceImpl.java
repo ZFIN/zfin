@@ -341,8 +341,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 fgmd.setFeature(feature);
                 feature.setFeatureGenomicMutationDetail(fgmd);
             }
-            FeatureGenomicMutationDetail oldDetail = fgmd.clone();
-
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
             if (fgmd.getZdbID() == null) {

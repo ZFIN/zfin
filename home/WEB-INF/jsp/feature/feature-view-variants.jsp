@@ -25,7 +25,7 @@
 
     </z:attributeListItem>
 
-    <z:attributeListItem label="Nucleotide change">
+    <z:attributeListItem label="Nucleotide Change">
         <span style="word-wrap: break-word;">${formBean.varSequence.vfsVariation}</span>
     </z:attributeListItem>
 

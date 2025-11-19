@@ -18,4 +18,13 @@ public class FeatureLocation extends Location {
     @JoinColumn(name = "sfcl_feature_zdb_id")
     private Feature feature;
 
+    public boolean containsLocationData() {
+        return this.getStartLocation() != null && !this.getStartLocation().toString().isEmpty()
+                && this.getEndLocation() != null && !this.getEndLocation().toString().isEmpty()
+                && this.getAssembly() != null;
+    }
+
+    public boolean emptyLocationData() {
+        return !containsLocationData();
+    }
 }

@@ -10,7 +10,6 @@ import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.FeatureLocation;
@@ -26,6 +25,10 @@ import java.util.Objects;
 
 import static java.time.LocalDate.now;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
+import static org.zfin.util.ZfinCollectionUtils.isIn;
+import static org.zfin.util.ZfinSystemUtils.env;
+import static org.zfin.util.ZfinSystemUtils.envTrue;
 
 
 /**
@@ -34,6 +37,10 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class FlankSeqProcessor {
 
     public static final String FASTA_URL = "/research/zprodmore/gff3/Danio_rerio.fa";
+
+    //Add option to check for inconsistencies between .fa file and sequence of reference
+    //Can set environment variable CHECK_FOR_INCONSISTENCIES to true to enable
+    private static boolean CHECK_FOR_INCONSISTENCIES = false;
 
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
@@ -49,7 +56,7 @@ public class FlankSeqProcessor {
 
     public void updateFlankingSequences() {
         try {
-
+            CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
             File fasta = new File(FASTA_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
@@ -57,13 +64,17 @@ public class FlankSeqProcessor {
             int offset = 500;
             String seq1 = "";
             String seq2 = "";
-
+            String singleFeatureZdbID = env("FEATURE_ZDBID");
+            Boolean processSingleFeature = StringUtils.isNotBlank(singleFeatureZdbID);
+            if (processSingleFeature) {
+                System.out.println("Processing single feature: " + singleFeatureZdbID);
+            }
 
             try {
                 HibernateUtil.createTransaction();
 
                 //We are not loading flanking sequences for sa alleles. They have already been loaded via a one time SQL script.
-                List<Feature> deletionFeatures = featureRepository.getDeletionFeatures();
+                List<Feature> deletionFeatures = featureRepository.getDeletionFeatures(singleFeatureZdbID);
                 System.out.println("deletionFeatures.size() = " + deletionFeatures.size());
 
                 for (Feature feature : deletionFeatures) {
@@ -71,12 +82,7 @@ public class FlankSeqProcessor {
                     //get Optional
                     FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
 
-                    if (ftrLoc != null
-                            && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
-                            && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
-                            && ftrLoc.getAssembly() != null
-
-                    ) {
+                    if (featureLocationIsNotEmpty(ftrLoc)) {
                         String ftrChrom = ftrLoc.getChromosome();
                         locStart = ftrLoc.getStartLocation();
                         locEnd = ftrLoc.getEndLocation();
@@ -85,6 +91,18 @@ public class FlankSeqProcessor {
                             System.out.print(".");
                             InsertFeatureGenomeRecord(feature, refSeq);
                         }
+                        checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
+                    } else {
+                        logger.debug("Feature " + feature.getZdbID() + " has no valid location on GRCz11");
+                        //This means that we may need to delete variant sequences for this feature if they exist.
+                        VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
+                        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
+                        if (fgmd == null && vrSeq != null) {
+                            //We need to delete the variant sequence as there is no genomic mutation detail associated with this feature.
+                            HibernateUtil.currentSession().delete(vrSeq);
+                            System.out.println("Deleted variant sequence for feature " + feature.getZdbID());
+                            this.updated.add(List.of("Deleted variant sequence for feature " + feature.getZdbID(), "", ""));
+                        }
                     }
                 }
                 System.out.println("");
@@ -92,15 +110,11 @@ public class FlankSeqProcessor {
                 //Once a week, get all non-sa features with genomic mutation details and update their flanking sequences.
                 //Otherwise, just those that have a modified date in the last 48 hours (24 should be fine, but 48 for caution.
                 boolean isItTuesday = (now().getDayOfWeek().getValue() == 2);
-                boolean forceFullUpdate = false; // set to true to force a full update of all non-sa features with genomic mutation details
-                if (System.getenv("FORCE_FULL_UPDATE") != null || System.getProperty("FORCE_FULL_UPDATE") != null) {
-                    forceFullUpdate = Boolean.parseBoolean(System.getenv("FORCE_FULL_UPDATE")) ||
-                                      Boolean.parseBoolean(System.getProperty("FORCE_FULL_UPDATE"));
-                }
+                boolean forceFullUpdate = envTrue("FORCE_FULL_UPDATE"); // set to true to force a full update of all non-sa features with genomic mutation details
                 List<Feature> nonSaFeaturesWithGenomicMutDets;
-                if (isItTuesday || forceFullUpdate) {
+                if (isItTuesday || forceFullUpdate || processSingleFeature) {
                     System.out.println("Updating all non-sa features with genomic mutation details");
-                    nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets();
+                    nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets(null, singleFeatureZdbID);
                 } else {
                     System.out.println("Updating non-sa features with genomic mutation details modified in the last 48 hours");
                     nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets(Date.valueOf(now().minusDays(2)));
@@ -109,19 +123,16 @@ public class FlankSeqProcessor {
 
                 int i = 0;
                 for (Feature feature : nonSaFeaturesWithGenomicMutDets) {
-                    if (feature.getType() == FeatureTypeEnum.INDEL || feature.getType() == FeatureTypeEnum.DELETION || feature.getType() == FeatureTypeEnum.INSERTION || feature.getType() == FeatureTypeEnum.MNV || feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
+                    if (isIn(feature.getType(), INDEL, DELETION, INSERTION, MNV, POINT_MUTATION)) {
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
-                        if (ftrLoc != null
-                                && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
-                                && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
-                                && ftrLoc.getAssembly() != null
-                        ) {
+                        if (featureLocationIsNotEmpty(ftrLoc)) {
                             i++;
                             String ftrChrom = ftrLoc.getChromosome();
                             locStart = ftrLoc.getStartLocation();
                             locEnd = ftrLoc.getEndLocation();
+                            checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
                             switch (feature.getType()) {
-                                case POINT_MUTATION:
+                                case POINT_MUTATION -> {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
@@ -129,17 +140,16 @@ public class FlankSeqProcessor {
                                     }
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart + 1, locStart + offset).getBases());
-
-                                    break;
-                                case DELETION:
+                                }
+                                case DELETION, MNV -> {
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    break;
-                                case INSERTION:
+                                }
+                                case INSERTION -> {
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
-                                    break;
-                                case INDEL:
+                                }
+                                case INDEL -> {
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
@@ -148,12 +158,7 @@ public class FlankSeqProcessor {
 
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-
-                                    break;
-                                case MNV:
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    break;
+                                }
                             }
 
                             //progress output
@@ -163,9 +168,8 @@ public class FlankSeqProcessor {
                                 System.out.println("\n " + i + " / " + nonSaFeaturesWithGenomicMutDets.size() + " features processed");
                             }
 
-                            insertFlankSeq(feature, seq1, seq2, offset);
+                            insertOrUpdateFlankSeq(feature, seq1, seq2, offset);
                         }
-
                     }
                 }
                 HibernateUtil.flushAndCommitCurrentSession();
@@ -180,6 +184,36 @@ public class FlankSeqProcessor {
             logger.error(e);
             errors.add(ExceptionUtils.getFullStackTrace(e));
         }
+    }
+
+    private void checkForInconsistentBetweenFgmdAndReferenceFA(Feature feature, IndexedFastaSequenceFile ref, String ftrChrom, int locStart, int locEnd) {
+        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
+        if (fgmd == null || StringUtils.isEmpty(fgmd.getFgmdSeqRef())) {
+            return;
+        }
+        if (CHECK_FOR_INCONSISTENCIES) {
+            String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+            if (!refSeq.equals(fgmd.getFgmdSeqRef())) {
+                boolean caseOnlyMismatch = refSeq.equalsIgnoreCase(fgmd.getFgmdSeqRef());
+                String caseOnlyMessage = caseOnlyMismatch ? " (case-only mismatch)" : "";
+
+                boolean separatorOnlyMismatch = false;
+                if (fgmd.getFgmdSeqRef().replaceAll("\\s+", "").equals(refSeq.replaceAll("\\s+", ""))) {
+                    separatorOnlyMismatch = true;
+                }
+                if (!separatorOnlyMismatch) {
+                    String message = "\nInconsistency," + feature.getType() + "," + feature.getZdbID() +
+                            "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
+                            ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
+                    System.out.println(message);
+                    logger.warn(message);
+                }
+            }
+        }
+    }
+
+    private static boolean featureLocationIsNotEmpty(FeatureLocation ftrLoc) {
+        return ftrLoc != null && ftrLoc.containsLocationData();
     }
 
 
@@ -207,14 +241,13 @@ public class FlankSeqProcessor {
         this.updated.add(List.of("New FGMD: " +ftr.getZdbID(), seqRef, "+"));
     }
 
-    private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
-        boolean newSequence = featureRepository.getFeatureVariant(ftr) == null;
-        VariantSequence vrSeq;
+    private void insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
+        VariantSequence vrSeq = featureRepository.getFeatureVariant(ftr);
+        boolean newSequence = vrSeq == null;
         if (newSequence) {
             vrSeq = new VariantSequence();
-        } else {
-            vrSeq = featureRepository.getFeatureVariant(ftr);
         }
+
         String vfsTargetSequence = null;
         String vfsVariation = null;
         switch (ftr.getType()) {
