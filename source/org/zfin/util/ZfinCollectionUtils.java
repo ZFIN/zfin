@@ -99,6 +99,11 @@ public class ZfinCollectionUtils {
         return duplicates;
     }
 
+    @SafeVarargs
+    public static <T> boolean isIn(T value, T... options) {
+        return Arrays.asList(options).contains(value);
+    }
+
 }
 
 
