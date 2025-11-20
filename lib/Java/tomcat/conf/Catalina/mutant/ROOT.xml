@@ -5,7 +5,7 @@
 
 
 <Context path="/" docBase="@TARGETROOT@/home"
-         antiResourceLocking="false" antiJARLocking="false" swallowOutput="true" 
+         antiResourceLocking="false" antiJARLocking="false" swallowOutput="true"
          allowLinking="true" privileged="true">
 
 <!-- check every 20 min (=1200sec) if the connection is healthy by running the 
@@ -22,7 +22,7 @@ jdbcUrl="jdbc:postgresql://@PGHOST@:5432/@DBNAME@"
 
 <Valve className="org.apache.catalina.valves.AccessLogValve"
                  fileDateFormat="yyyy-MM"
-                 directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log." 
+                 directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log."
                  suffix=".txt"
                  pattern="combined" resolveHosts="false"/>
 

@@ -1,6 +1,6 @@
 package org.zfin.feature.repair;
 
-import org.apache.log4j.*;
+import lombok.extern.log4j.Log4j2;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -22,11 +22,10 @@ import static org.zfin.marker.service.MarkerAttributionService.getTargetedGenes;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
+@Log4j2
 public class FeatureAttributionRepair extends AbstractScriptWrapper {
 
-    private static final Level logLevel = Level.INFO;
     private BufferedWriter outputWriter;
-    private Logger logger;
     private static final String DEFAULT_OUTPUT_PATH = "FeatureAttributionRepairReport.log";
     private static final String DEFAULT_SQL_OUTPUT_PATH = "FeatureAttributionRepairReport.sql";
     private HashMap<String, Boolean> cachedEntries;
@@ -43,7 +42,6 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
 
     public FeatureAttributionRepair() {
         initAll();
-        initLogger();
         initCache();
         initSqlWriter();
     }
@@ -88,7 +86,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         publications = filterToPublicationsBefore(publications);
         publications = filterToPublicationsAfter(publications);
 
-        logger.info("Processing " + publications.size() + " publications");
+        log.info("Processing " + publications.size() + " publications");
 
         int count = 0;
         for(Publication publication : publications) {
@@ -96,7 +94,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
             //one update per percent
             if (count % (publications.size() / 100) == 0) {
                 String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                logger.info("" + ((count * 100) / publications.size()) + "% (" + publication.getZdbID() + ") at " + timestamp );
+                log.info("" + ((count * 100) / publications.size()) + "% (" + publication.getZdbID() + ") at " + timestamp );
             }
 
             // get all alleles for the publication
@@ -108,7 +106,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
                     if (relationship.getType() == FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF) {
                         attributeGenesToPublication(publication, Collections.singleton(relationship.getMarker()), feature.getAbbreviation(), feature.getZdbID(), "through is_allele_of relationship");
                     } else {
-                        logger.debug("Skipping attribution due to relationship being: " + relationship.getType() + " " + relationship.getMarker().getZdbID() + " and " + feature.getDisplayAbbreviation());
+                        log.debug("Skipping attribution due to relationship being: " + relationship.getType() + " " + relationship.getMarker().getZdbID() + " and " + feature.getDisplayAbbreviation());
                     }
                 }
             }
@@ -121,9 +119,9 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
                 if (targetedGenes.size() == 1) {
                     attributeGenesToPublication(publication, targetedGenes, marker.getAbbreviation(), marker.getZdbID(), " is STR with one targeted gene");
                 } else if (targetedGenes.size() > 1) {
-                    logger.debug("Skipping attribution due to STR targeting multiple genes: " + marker.getAbbreviation() );
+                    log.debug("Skipping attribution due to STR targeting multiple genes: " + marker.getAbbreviation() );
                 } else {
-                    logger.debug("Skipping attribution due to STR targeting zero genes?  " + marker.getAbbreviation() );
+                    log.debug("Skipping attribution due to STR targeting zero genes?  " + marker.getAbbreviation() );
                 }
             }
 
@@ -139,7 +137,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         //check for filter
         String cutoff = System.getProperty("publicationsBefore", "");
         if (cutoff.equals("")) {
-            logger.info("No filter for publicationsBefore");
+            log.info("No filter for publicationsBefore");
             return publications;
         }
 
@@ -148,11 +146,11 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         Pattern pattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(cutoff);
         if (!matcher.find()) {
-            logger.error("Bad pattern for publicationsBefore. Expected ZDB-PUB-... , got: " + cutoff + ". Running without filter");
+            log.error("Bad pattern for publicationsBefore. Expected ZDB-PUB-... , got: " + cutoff + ". Running without filter");
             return publications;
         }
 
-        logger.info("Filtering on publications before or equal to " + cutoff + ".");
+        log.info("Filtering on publications before or equal to " + cutoff + ".");
         List<Publication> filteredPublications = new ArrayList<>();
         for(Publication publication : publications) {
             if (publication.getZdbID().compareToIgnoreCase(cutoff) <= 0) {
@@ -168,7 +166,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         //check for filter
         String cutoff = System.getProperty("publicationsAfter", "");
         if (cutoff.equals("")) {
-            logger.info("No filter for publicationsAfter");
+            log.info("No filter for publicationsAfter");
             return publications;
         }
 
@@ -177,11 +175,11 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         Pattern pattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(cutoff);
         if (!matcher.find()) {
-            logger.error("Bad pattern for publicationsAfter. Expected ZDB-PUB-... , got: " + cutoff + ". Running without filter");
+            log.error("Bad pattern for publicationsAfter. Expected ZDB-PUB-... , got: " + cutoff + ". Running without filter");
             return publications;
         }
 
-        logger.info("Filtering on publications after or equal to " + cutoff + ".");
+        log.info("Filtering on publications after or equal to " + cutoff + ".");
         List<Publication> filteredPublications = new ArrayList<>();
         for(Publication publication : publications) {
             if (publication.getZdbID().compareToIgnoreCase(cutoff) >= 0) {
@@ -200,7 +198,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
             }
             cachedEntries.put(hashKey, true);
             if (getInfrastructureRepository().getRecordAttribution(gene.zdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
-                logger.info("Add to publication " + publication.getZdbID() + " direct attribution of " + gene.getZdbID() + " through intermediary " + intermediaryAbbreviation + "(" + intermediaryID + "): " + reason );
+                log.info("Add to publication " + publication.getZdbID() + " direct attribution of " + gene.getZdbID() + " through intermediary " + intermediaryAbbreviation + "(" + intermediaryID + "): " + reason );
                 outputWriter.write("INSERT INTO updates (submitter_id,rec_id,field_name,new_value,comments,submitter_name) " +
                                 "SELECT 'ZDB-PERS-210917-1',pg_temp.id_or_replaced_id('" + gene.getZdbID() + "'),'record attribution','" + publication.getZdbID() + "'," + "'Added direct attribution by intermediary " + intermediaryID + " " + reason + "','Ryan Taylor (ZFIN-7704)' WHERE NOT EXISTS ( select 'x' from updates where " +
                                 "submitter_id='ZDB-PERS-210917-1' and ( rec_id='" + gene.getZdbID() + "' or rec_id=pg_temp.id_or_replaced_id('" + gene.getZdbID() + "') ) and field_name='record attribution' and new_value = '" + publication.getZdbID() + "' );\n"
@@ -209,32 +207,6 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
                 outputWriter.flush();
             }
         }
-    }
-
-    //TODO: replace this with proper xml configuration
-    private void initLogger() {
-        logger = Logger.getLogger(FeatureAttributionRepair.class);
-
-        String pattern = "%d [%p] %m%n";
-
-        ConsoleAppender console = new ConsoleAppender(); //create appender
-        //configure the appender
-        console.setLayout(new PatternLayout(pattern));
-        console.setThreshold(logLevel);
-        console.activateOptions();
-        //add appender to any Logger (here is root)
-        logger.addAppender(console);
-
-        FileAppender fa = new FileAppender();
-        fa.setName("FileLogger");
-        fa.setFile(DEFAULT_OUTPUT_PATH);
-        fa.setLayout(new PatternLayout(pattern));
-        fa.setThreshold(logLevel);
-        fa.setAppend(true);
-        fa.activateOptions();
-
-        //add appender to any Logger (here is root)
-        logger.addAppender(fa);
     }
 
 }
