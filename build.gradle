@@ -776,7 +776,6 @@ dependencies {
     implementation "com.thoughtworks.xstream:xstream:1.4.20"
     implementation "com.xlson.groovycsv:groovycsv:1.0"
     implementation "com.zaxxer:HikariCP:5.1.0"
-    implementation "commons-codec:commons-codec:1.6"
     implementation "commons-digester:commons-digester:1.6"
     implementation "commons-discovery:commons-discovery:0.2"
     implementation "commons-fileupload:commons-fileupload:1.5"
@@ -941,7 +940,6 @@ configurations.all {
         force 'org.apache.httpcomponents:httpclient:4.5.10'
         force 'org.apache.httpcomponents:httpmime:4.5.10'
         force 'org.apache.httpcomponents:httpcore:4.4.13'
-        force 'commons-codec:commons-codec:1.15'
         force 'commons-io:commons-io:2.16.1'
 
         // Align Spring Security versions
@@ -1282,7 +1280,6 @@ dependencies {
     pushLibs "com.fasterxml:classmate:1.5.1"
     pushLibs "commons-beanutils:commons-beanutils:1.9.1"
     pushLibs "commons-cli:commons-cli:1.4"
-    pushLibs "commons-codec:commons-codec:1.6"
     pushLibs "commons-collections:commons-collections:3.2.1"
     pushLibs "org.apache.commons:commons-collections4:4.4"
     pushLibs "commons-configuration:commons-configuration:1.6"
