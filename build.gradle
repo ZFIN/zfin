@@ -1380,7 +1380,7 @@ task pushLibraries {
             }
         }
 
-        println "Library push complete. ${configurations.pushLibs.files.size() + localJars.size()} files copied to ${targetLibDir}"
+        println "Library push complete. ${configurations.pushLibs.files.size() + localFileDependencies.size()} files copied to ${targetLibDir}"
     }
 }
 
