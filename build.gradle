@@ -1452,7 +1452,6 @@ task pushLibraries {
             'home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar',
             'home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar',
             'home/WEB-INF/lib/text-table-formatter-1.0.jar',
-            'home/WEB-INF/lib/xsdlib.jar',
             'home/WEB-INF/lib/patricia-trie-0.2.jar',
         ]
 
