@@ -645,7 +645,7 @@ dependencies {
     implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.0.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
 //    implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.7'
-    implementation files('lib/Java/gwt/restygwt-2.2.7-eclipse-transformed.jar')
+    implementation files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar')
     implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
     implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.11.3'
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
@@ -1618,6 +1618,7 @@ task gwtCompile {
                 // Match the working command line classpath: home/WEB-INF/classes:lib/Java/gwt/*:source
                 classpath = files('home/WEB-INF/classes') +
                             fileTree(dir: 'lib/Java/gwt', include: '*.jar') +
+                            files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar') +
                             files('source')
 
                 args = [
