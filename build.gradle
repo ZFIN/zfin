@@ -1450,7 +1450,6 @@ task pushLibraries {
             'home/WEB-INF/lib/obo.jar',
             'home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar',
             'home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar',
-            'home/WEB-INF/lib/spring-xml-2.0.0-RC2.jar',
             'home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar',
             'home/WEB-INF/lib/text-table-formatter-1.0.jar',
             'home/WEB-INF/lib/xsdlib.jar',
