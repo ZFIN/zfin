@@ -77,7 +77,6 @@ def localFileDependencies = [
         "home/WEB-INF/lib/patricia-trie-0.2.jar",  // Not in Maven Central (0.6 version maybe "org.ardverk:patricia-trie:0.6",
         "home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar",
-        "home/WEB-INF/lib/spring-xml-2.0.0-RC2.jar",
         "home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar",
         "home/WEB-INF/lib/text-table-formatter-1.0.jar",
         "lib/Java/gwt/gwt-user-2.11.0.jar",
@@ -809,6 +808,7 @@ dependencies {
     implementation "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
     implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
     implementation "org.springframework.ws:spring-ws-core:4.0.10"
+    implementation "org.springframework.ws:spring-xml:2.0.5.RELEASE"
     implementation "org.yaml:snakeyaml:2.2"
     implementation "oro:oro:2.0.8"
     implementation "relaxngDatatype:relaxngDatatype:20020414"
