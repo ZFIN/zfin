@@ -6,7 +6,8 @@ plugins {
 }
 
 gradleLint {
-    rules = ['unused-dependency']
+//    rules = ['unused-dependency']
+    rules = []
 }
 
 apply plugin: 'java'
@@ -590,17 +591,11 @@ dependencies {
     compileOnly "org.gwtproject:gwt-dev:2.11.0"
     compileOnly "org.projectlombok:lombok:1.18.20"
     compileOnly "xalan:xalan:2.7.0"
-    compileOnly "xerces:xercesImpl:2.10.0"
+//    compileOnly "xerces:xercesImpl:2.10.0"
     compileOnly "xerces:xercesImpl:2.12.2"
-    compileOnly "xerces:xercesImpl:2.9.1"
+//    compileOnly "xerces:xercesImpl:2.9.1"
     compileOnly "xml-apis:xml-apis:1.4.01"
-    implementation "antlr:antlr:2.7.7"
-    implementation "aopalliance:aopalliance:1.0"
-    implementation "backport-util-concurrent:backport-util-concurrent:3.1"
-    implementation "cglib:cglib:3.3.0"
     implementation "ch.qos.logback:logback-classic:1.4.14"
-    implementation "ch.qos.logback:logback-core:1.4.14"
-    implementation "com.fasterxml:classmate:1.5.1"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
     implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
@@ -818,7 +813,6 @@ dependencies {
     liquibaseRuntime "org.liquibase:liquibase-core:4.7.1"
     liquibaseRuntime "org.postgresql:postgresql:42.2.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
     testImplementation "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
     testImplementation "junit:junit:4.11"
     testImplementation "net.sourceforge.htmlunit:htmlunit-core-js:2.70.0"
@@ -1274,7 +1268,6 @@ dependencies {
     pushLibs "org.apache.logging.log4j:log4j-jakarta-web:2.17.1"
     pushLibs "org.apache.logging.log4j:log4j-slf4j-impl:2.13.3"
     pushLibs "org.postgresql:postgresql:42.2.20"
-    pushLibs "org.projectlombok:lombok:1.18.20"
     pushLibs "com.mchange:mchange-commons-java:0.2.15"
     pushLibs "io.micrometer:micrometer-commons:1.12.1"
     pushLibs "io.micrometer:micrometer-observation:1.12.1"
