@@ -2,6 +2,12 @@
 plugins {
     id 'war'
     id 'org.liquibase.gradle' version '2.1.1'
+    id "com.autonomousapps.dependency-analysis" version "1.32.0"
+    id "nebula.lint" version "18.1.0"
+}
+
+gradleLint {
+    rules = ['unused-dependency']
 }
 
 apply plugin: 'java'
@@ -31,14 +37,6 @@ def solrunloadspath = env['SOLR_UNLOADS_PATH']
 def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 String targetroot = env['TARGETROOT']
 
-/*
-dependencies {
-    implementation 'org.liquibase:liquibase-core:3.4.1'
-    implementation "org.liquibase:liquibase-gradle-plugin:1.1.1"
-    implementation gradleApi()
-    implementation localGroovy()
-}
-*/
 
 task deployPostgres(dependsOn: ['deployPostgresFunctions',
                                 'deployPostgresTrigger']) {
