@@ -1449,7 +1449,6 @@ task pushLibraries {
             'home/WEB-INF/lib/bbop.jar',
             'home/WEB-INF/lib/biojava.1.7.1.jar',
             'home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar',
-            'home/WEB-INF/lib/bytecode.jar',
             'home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar',
             'home/WEB-INF/lib/cvu.jar',
             'home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar',
