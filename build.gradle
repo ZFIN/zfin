@@ -697,12 +697,12 @@ dependencies {
     implementation "org.hibernate.validator:hibernate-validator:8.0.1.Final"
     implementation "org.hibernate.validator:hibernate-validator:8.0.1.Final"
     implementation "org.imgscalr:imgscalr-lib:4.2"
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+    implementation "org.javassist:javassist:3.24.1-GA"
     implementation "org.jdom:jdom:1.1"
     
     implementation "org.jooq:jool:0.9.15"
@@ -1206,6 +1206,7 @@ dependencies {
     
     
     pushLibs "org.slf4j:jcl-over-slf4j:1.7.26"
+    pushLibs "org.javassist:javassist:3.24.1-GA"
     pushLibs "org.jdom:jdom:1.1"
     pushLibs "org.json:json:20210307"
 //    
@@ -1219,7 +1220,7 @@ dependencies {
     pushLibs "com.mchange:mchange-commons-java:0.2.15"
     pushLibs "io.micrometer:micrometer-observation:1.12.1"
     pushLibs "org.eclipse.microprofile.openapi:microprofile-openapi-api:3.1.1"
-    
+
     pushLibs "org.noggit:noggit:0.7"
     pushLibs "oro:oro:2.0.8"
     pushLibs "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1"
