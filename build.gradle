@@ -809,6 +809,7 @@ dependencies {
     liquibaseRuntime "org.liquibase:liquibase-core:4.7.1"
     liquibaseRuntime "org.postgresql:postgresql:42.2.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.20"
     testImplementation "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
     testImplementation "junit:junit:4.11"
     testImplementation "net.sourceforge.htmlunit:htmlunit-core-js:2.70.0"
