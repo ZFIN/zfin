@@ -1446,7 +1446,6 @@ task pushLibraries {
             'home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar',
             'home/WEB-INF/lib/cvu.jar',
             'home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar',
-            'home/WEB-INF/lib/highlighter.jar',
             'home/WEB-INF/lib/jaxb-libs.jar',
             'jakarta.servlet.jsp.jstl-api-1.2.7-eclipse-transformed.jar',
             'home/WEB-INF/lib/jdbc-listener.jar',
