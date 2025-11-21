@@ -644,8 +644,10 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
     implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.0.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
+
 //    implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.7'
     implementation files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar')
+
     implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
     implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.11.3'
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
@@ -653,7 +655,6 @@ dependencies {
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.20'
     implementation group: 'org.apache.lucene', name: 'lucene-core', version: '9.4.2'
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
-//    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
     implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
     implementation group: 'com.sun.activation', name: 'jakarta.activation', version: '2.0.1'
     implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
@@ -752,7 +753,9 @@ dependencies {
     implementation 'org.jooq:jool:0.9.15'
 
     implementation 'org.altcha:altcha:1.1.2'
+
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')  // Not in Maven Central (0.6 version maybe)
+//    implementation "org.ardverk:patricia-trie:0.6"
 
     implementation "aopalliance:aopalliance:1.0"
     implementation "backport-util-concurrent:backport-util-concurrent:3.1"
@@ -1446,7 +1449,6 @@ task pushLibraries {
             'home/WEB-INF/lib/cvu.jar',
             'home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar',
             'home/WEB-INF/lib/jakarta.servlet.jsp.jstl-api-1.2.7-eclipse-transformed.jar',
-            'home/WEB-INF/lib/jta-1.1.jar',
             'home/WEB-INF/lib/obo.jar',
             'home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar',
             'home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar',
