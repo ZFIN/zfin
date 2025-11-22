@@ -2,13 +2,13 @@
 plugins {
     id 'war'
     id 'org.liquibase.gradle' version '2.1.1'
-    id "nebula.lint" version "18.1.0"
+//    id "nebula.lint" version "18.1.0"
 }
 
-gradleLint {
-//    rules = ['unused-dependency']
-    rules = []
-}
+//gradleLint {
+////    rules = ['unused-dependency']
+//    rules = []
+//}
 
 apply plugin: 'java'
 apply plugin: 'groovy'
