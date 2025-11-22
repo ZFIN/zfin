@@ -591,7 +591,8 @@ dependencies {
     compileOnly "xerces:xercesImpl:2.12.2"
     compileOnly "xml-apis:xml-apis:1.4.01"
 
-    implementation "ch.qos.logback:logback-classic:1.4.14"
+    implementation "backport-util-concurrent:backport-util-concurrent:3.1"
+    implementation "com.fasterxml:classmate:1.5.1"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
     implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
@@ -607,17 +608,21 @@ dependencies {
     implementation "com.google.guava:guava:27.1-jre"
     implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1"
     implementation "com.mchange:c3p0:0.9.5.5"
+    implementation "com.mchange:mchange-commons-java:0.2.15"
     implementation "com.sun.activation:jakarta.activation:2.0.1"
     implementation "com.sun.istack:istack-commons-runtime:3.0.7"
     implementation "com.sun.mail:jakarta.mail:2.0.1"
     implementation "com.sun.xml.fastinfoset:FastInfoset:1.2.15"
     implementation "com.sun.xml.messaging.saaj:saaj-impl:3.0.3"
     implementation "com.sun.xml.stream.buffer:streambuffer:1.5.6"
+    implementation "com.sun.xml.ws:policy:2.3.1"
     implementation "com.xlson.groovycsv:groovycsv:1.0"
     implementation "commons-beanutils:commons-beanutils:1.9.1"
     implementation "commons-cli:commons-cli:1.4"
     implementation "commons-collections:commons-collections:3.2.1"
     implementation "commons-configuration:commons-configuration:1.6"
+    implementation "commons-digester:commons-digester:1.6"
+    implementation "commons-discovery:commons-discovery:0.2"
     implementation "commons-lang:commons-lang:2.6"
     implementation "commons-math:commons-math:1.2"
     implementation "commons-net:commons-net:1.4.1"
@@ -694,6 +699,7 @@ dependencies {
     implementation "org.glassfish.jaxb:jaxb-core:4.0.3"
     implementation "org.glassfish.jaxb:jaxb-runtime:4.0.3"
     implementation "org.glassfish.jaxb:jaxb-xjc:4.0.1"
+    implementation "org.glassfish.jaxb:txw2:4.0.3"
     implementation "org.hibernate.common:hibernate-commons-annotations:6.0.6.Final"
     implementation "org.hibernate.orm:hibernate-c3p0:6.4.4.Final"
     implementation "org.hibernate.orm:hibernate-core:6.4.4.Final"
@@ -1188,7 +1194,6 @@ dependencies {
     pushLibs "javax.xml.ws:jaxws-api:2.2"
     pushLibs "jaxen:jaxen:1.1.1"
     pushLibs "junit:junit:4.11"
-    pushLibs "log4j:log4j:1.2.15"
     pushLibs "net.bytebuddy:byte-buddy:1.12.7"
     pushLibs "net.logstash.log4j:jsonevent-layout:1.0"
     pushLibs "net.minidev:json-smart:1.1.1"
@@ -1363,13 +1368,30 @@ task pushLibraries {
     }
 }
 
+// Push specific libraries to TARGETROOT
 task pushLibrariesFromImplementationConfiguration {
+    description = 'Copy specific jar files from Maven cache and local source to TARGETROOT/home/WEB-INF/lib (or -Pdestination=path/to/dir)'
+    group = 'deployment'
+
     doLast {
-        def targetLibDir = file("${buildDir}/libs/direct-deps")
+        // Use destination property if provided, otherwise default to ${targetroot}/home
+        def baseDir = project.hasProperty('destination') ? project.property('destination') : "${targetroot}/home"
+        def targetLibDir = file("${baseDir}/WEB-INF/lib")
+
+        // Create target directory if it doesn't exist
         targetLibDir.mkdirs()
 
-        configurations.runtimeClasspath.resolvedConfiguration
+        println "Pushing libraries to: ${targetLibDir}"
+
+        // Copy jars from Maven cache
+        println "Copying jars from Maven cache..."
+
+        def mavenCentralDependenciesNonTransitive = configurations
+                .runtimeClasspath
+                .resolvedConfiguration
                 .firstLevelModuleDependencies
+
+        mavenCentralDependenciesNonTransitive
                 .each { resolvedDep ->
                     resolvedDep.moduleArtifacts.each { artifact ->
                         def jarFile = artifact.file
@@ -1380,9 +1402,26 @@ task pushLibrariesFromImplementationConfiguration {
                         }
                     }
                 }
+
+        // Copy local jar files
+        println "Copying local jar files..."
+        localFileDependencies.each { jarPath ->
+            def jarFile = file(jarPath)
+            if (jarFile.exists()) {
+                println "  Copying ${jarFile.name} to ${targetLibDir}"
+                copy {
+                    from jarFile
+                    into targetLibDir
+                }
+            } else {
+                println "  WARNING: ${jarPath} not found, skipping"
+            }
+        }
+
+        println "Library push complete. Copied ${mavenCentralDependenciesNonTransitive.size()} Maven jars and ${localFileDependencies.size()} local jars."
+
     }
 }
-
 
 // Show dependency tree
 task showDependencies {
