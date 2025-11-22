@@ -1369,6 +1369,11 @@ task pushLibraries {
 }
 
 // Push specific libraries to TARGETROOT
+// Below is still failing?!!!
+// Try running this in container:
+//   rm -rf $TARGETROOT/home/WEB-INF/lib/* ; gradle pushLibrariesFromImplementationConfiguration ; ant tomcat-restart ; sleep 2; curl -s -k -o /dev/null -D - 'https://httpd/action/api/marker/ZDB-GENE-030909-1/sequences' | head -1
+// It should succeed without 500 error. Meanwhile, this command does succeed:
+//   rm -rf $TARGETROOT/home/WEB-INF/lib/* ; gradle pushLibraries ; ant tomcat-restart ; sleep 2; curl -s -k -o /dev/null -D - 'https://httpd/action/api/marker/ZDB-GENE-030909-1/sequences' | head -
 task pushLibrariesFromImplementationConfiguration {
     description = 'Copy specific jar files from Maven cache and local source to TARGETROOT/home/WEB-INF/lib (or -Pdestination=path/to/dir)'
     group = 'deployment'
