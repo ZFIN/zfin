@@ -1317,6 +1317,33 @@ task pushLibraries {
             }
         }
 
+        //calculate the difference between runtimeClasspath files and pushLibs files
+        def pushLibsSet = configurations.pushLibs.files.collect { it.name }.toSet()
+        def runtimeClasspathSet = configurations.runtimeClasspath.files.collect { it.name }.toSet()
+        def difference = runtimeClasspathSet - pushLibsSet
+
+
+        //print the coordinates of the jars that are in runtimeClasspath but not in pushLibs
+        println "\nThe following jars are in runtimeClasspath but NOT in pushLibs configuration (with coordinates):"
+        def messageLines = []
+        difference.each { jarName ->
+            def dep = configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.find { it.file.name == jarName }
+            if (dep != null) {
+                messageLines.add("  - ${dep.moduleVersion.id.group}:${dep.moduleVersion.id.name}:${dep.moduleVersion.id.version} (${jarName})")
+            } else {
+                messageLines.add("  - ${jarName} (not found in resolved artifacts)")
+            }
+        }
+
+        //try again but sorted
+        println "\nThe following jars are in pushLibs configuration but NOT in runtimeClasspath:"
+        messageLines.sort().each { line ->
+            println line
+        }
+
+        println "\nTotal jars in runtimeClasspath: ${runtimeClasspathSet.size()}"
+        println "Total jars in pushLibs configuration: ${pushLibsSet.size()}"
+
         // Copy local jar files
         println "Copying local jar files..."
         localFileDependencies.each { jarPath ->
@@ -1335,6 +1362,27 @@ task pushLibraries {
         println "Library push complete. ${configurations.pushLibs.files.size() + localFileDependencies.size()} files copied to ${targetLibDir}"
     }
 }
+
+task pushLibrariesFromImplementationConfiguration {
+    doLast {
+        def targetLibDir = file("${buildDir}/libs/direct-deps")
+        targetLibDir.mkdirs()
+
+        configurations.runtimeClasspath.resolvedConfiguration
+                .firstLevelModuleDependencies
+                .each { resolvedDep ->
+                    resolvedDep.moduleArtifacts.each { artifact ->
+                        def jarFile = artifact.file
+                        println "  Copying ${jarFile.name} to ${targetLibDir}"
+                        copy {
+                            from jarFile
+                            into targetLibDir
+                        }
+                    }
+                }
+    }
+}
+
 
 // Show dependency tree
 task showDependencies {
