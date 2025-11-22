@@ -597,7 +597,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2"
+
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.15.2"  // Required by robot.jar
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
@@ -1324,12 +1324,21 @@ task pushLibraries {
 
         //calculate the difference between runtimeClasspath files and pushLibs files
         def pushLibsSet = configurations.pushLibs.files.collect { it.name }.toSet()
-        def runtimeClasspathSet = configurations.runtimeClasspath.files.collect { it.name }.toSet()
-        def difference = runtimeClasspathSet - pushLibsSet
+//        def runtimeClasspathSet = configurations.runtimeClasspath.files.collect { it.name }.toSet()
+        def mavenCentralDependenciesNonTransitive = configurations
+                .runtimeClasspath
+                .resolvedConfiguration
+                .firstLevelModuleDependencies
+        def runtimeClasspathSet = mavenCentralDependenciesNonTransitive.collectMany { resolvedDep ->
+            resolvedDep.moduleArtifacts.collect { artifact ->
+                artifact.file.name
+            }
+        }.toSet()
 
+        def difference = runtimeClasspathSet - pushLibsSet
+        def reverseDifference = pushLibsSet - runtimeClasspathSet
 
         //print the coordinates of the jars that are in runtimeClasspath but not in pushLibs
-        println "\nThe following jars are in runtimeClasspath but NOT in pushLibs configuration (with coordinates):"
         def messageLines = []
         difference.each { jarName ->
             def dep = configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.find { it.file.name == jarName }
@@ -1340,10 +1349,18 @@ task pushLibraries {
             }
         }
 
-        //try again but sorted
-        println "\nThe following jars are in pushLibs configuration but NOT in runtimeClasspath:"
+        //sorted
+        println "\nThe following jars are in runtimeClasspath but not pushLibs:"
         messageLines.sort().each { line ->
             println line
+        }
+
+        println "\nThe following jars are in pushLibs configuration but NOT in runtimeClasspath: (${reverseDifference.size()})"
+        reverseDifference.each { jarName ->
+            def dep = configurations.pushLibs.resolvedConfiguration.resolvedArtifacts.find { it.file.name == jarName }
+            if (dep != null) {
+                println "  - ${dep.moduleVersion.id.group}:${dep.moduleVersion.id.name}:${dep.moduleVersion.id.version} (${jarName})"
+            }
         }
 
         println "\nTotal jars in runtimeClasspath: ${runtimeClasspathSet.size()}"
@@ -1363,6 +1380,7 @@ task pushLibraries {
                 println "  WARNING: ${jarPath} not found, skipping"
             }
         }
+        println "Total local jar files copied: ${localFileDependencies.size()}"
 
         println "Library push complete. ${configurations.pushLibs.files.size() + localFileDependencies.size()} files copied to ${targetLibDir}"
     }
