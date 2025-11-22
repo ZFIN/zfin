@@ -865,7 +865,7 @@ sourceSets {
     main {
         java {
             srcDirs = ['source']
-            outputDir = file('home/WEB-INF/classes')
+            destinationDirectory = file('home/WEB-INF/classes')
         }
         resources {
             srcDirs = ['source']
@@ -1270,6 +1270,7 @@ dependencies {
     pushLibs "org.springframework.security:spring-security-taglibs:6.1.8"
     pushLibs "org.springframework.security:spring-security-web:6.1.1"
     pushLibs "org.springframework.ws:spring-ws-core:4.0.10"
+    pushLibs "org.springframework.ws:spring-xml:2.0.5.RELEASE"
     pushLibs "org.springframework:spring-aop:6.1.1"
     pushLibs "org.springframework:spring-aspects:6.1.1"
     pushLibs "org.springframework:spring-beans:6.1.1"
