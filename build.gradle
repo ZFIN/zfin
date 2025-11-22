@@ -278,23 +278,21 @@ task printProp() {
     }
 }
 
-project(':home') {
-    task deployFiles {
-        doLast {
-            def sourceFiles = [file('robots.txt'), file('favicon.ico')]
-            def targetDir = file("${targetroot}/home")
+task 'home;root;deployFiles' {
+    doLast {
+        def sourceFiles = [file('home/robots.txt'), file('home/favicon.ico')]
+        def targetDir = file("${targetroot}/home")
 
-            if (!targetDir.exists()) {
-                targetDir.mkdirs()
-            }
-
-            sourceFiles.each { sourceFile ->
-                def targetFile = new File(targetDir, sourceFile.name)
-                targetFile.bytes = sourceFile.bytes
-            }
-
-            println "Copied ${sourceFiles.size()} files to ${targetDir}"
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
         }
+
+        sourceFiles.each { sourceFile ->
+            def targetFile = new File(targetDir, sourceFile.name)
+            targetFile.bytes = sourceFile.bytes
+        }
+
+        println "Copied ${sourceFiles.size()} files to ${targetDir}"
     }
 }
 
@@ -375,19 +373,18 @@ task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyT
     includes = ['sh', 'sql', 'groovy']
 }
 
-project(':server_apps:data_transfer:Downloads') {
-    task "createSymlink"() {
-        doLast {
-            if (!file(downloaddirectory).exists()) {
-                exec {
-                    commandLine "mkdir", "-p", downloaddirectory
-                }
+task "server_apps;data_transfer;Downloads;createSymlink"() {
+    doLast {
+        if (!file(downloaddirectory).exists()) {
+            exec {
+                commandLine "mkdir", "-p", downloaddirectory
             }
-            String datatransferpath = targetroot + "/home/data-transfer"
-            if (!file(datatransferpath).exists()) {
-                exec {
-                    commandLine "ln", "-s", downloaddirectory, datatransferpath
-                }
+        }
+        String datatransferpath = targetroot + "/home/data-transfer"
+        println "Creating symlink from " + downloaddirectory + " to " + datatransferpath
+        if (!file(datatransferpath).exists()) {
+            exec {
+                commandLine "ln", "-s", downloaddirectory, datatransferpath
             }
         }
     }
@@ -397,14 +394,14 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
-             'home:deployFiles',
+             'home;root;deployFiles',
              'home;zf_info;deployFiles',
              'home;ZFIN;deployFiles',
              'server_apps;apache;deployFiles',
              'server_apps;sysexecs;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
-             ':server_apps:data_transfer:Downloads:createSymlink',
+             'server_apps;data_transfer;Downloads;createSymlink',
              'server_apps;data_transfer;Ensembl;deployFiles',
              'server_apps;Reports;deployFiles',
              'server_apps;tokens;deployFiles',
@@ -1310,7 +1307,9 @@ task pushLibraries {
 
         // Copy jars from Maven cache
         println "Copying jars from Maven cache..."
-        configurations.pushLibs.each { jarFile ->
+        configurations
+                .pushLibs
+                .each { jarFile ->
             println "  Copying ${jarFile.name} to ${targetLibDir}"
             copy {
                 from jarFile
