@@ -28,6 +28,6 @@ public interface GenomeBrowserImage {
 
     String calculateBaseUrl();
 
-    String getFullLinkUrl(String assembly);
+    String getFullLinkUrl();
 
 }

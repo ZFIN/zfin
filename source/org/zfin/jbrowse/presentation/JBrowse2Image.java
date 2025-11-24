@@ -10,6 +10,7 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.util.URLCreator;
 
 import java.util.Collection;
+import java.util.List;
 
 public class JBrowse2Image implements GenomeBrowserImage {
 
@@ -98,7 +99,7 @@ public class JBrowse2Image implements GenomeBrowserImage {
     }
 
     @Override
-    public String getFullLinkUrl(String assembly) {
+    public String getFullLinkUrl() {
         URLCreator url = new URLCreator(calculateBaseUrl());
         if (StringUtils.isNotBlank(landmark)) {
             url.addNameValuePair("loc", landmark);
@@ -109,9 +110,11 @@ public class JBrowse2Image implements GenomeBrowserImage {
         }
 
         if (CollectionUtils.isNotEmpty(tracks)) {
-            url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
+            List<String> trackIds = tracks.stream().map(track -> track.getTrackId(build.getValue())).toList();
+            url.addNameValuePair("tracks", StringUtils.join(trackIds, ","));
         }
-        url.addNameValuePair("assembly", assembly);
+        url.addNameValuePair("assembly", build.getValue());
+        url.addNameValuePair("tracklist", "true");
 
 
         return url.getURL();

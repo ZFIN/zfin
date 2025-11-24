@@ -46,7 +46,15 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public String getUrl(GenomeBrowserImage genomeBrowserImage) {
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
-            return genomeBrowserImage.getFullLinkUrl(assembly);
+            return genomeBrowserImage.getFullLinkUrl();
+        } else {
+            return source.getUrl() + accessionNumber;
+        }
+    }
+
+    public String getUrl() {
+        if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
+            return null;
         } else {
             return source.getUrl() + accessionNumber;
         }
@@ -103,7 +111,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     public enum Source {
         DIRECT("DirectSubmission", true, "Direct Data Submission", null),
         ZFIN_NCBI("ZFIN", true, "ZFIN", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z12
-        ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z11
+        ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z11
         ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
         NCBI_LOADER("NCBILoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?assm=GCF_049306965.1&context=gene&id="),
         NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?assm=GCF_000002035.6&context=gene&id="),

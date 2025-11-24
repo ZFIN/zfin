@@ -97,7 +97,7 @@ public class JBrowseImage implements GenomeBrowserImage {
 
 
     @Override
-    public String getFullLinkUrl(String assembly) {
+    public String getFullLinkUrl() {
         URLCreator url = new URLCreator(calculateBaseUrl());
 
         if (StringUtils.isNotBlank(landmark)) {
@@ -112,7 +112,7 @@ public class JBrowseImage implements GenomeBrowserImage {
         if (CollectionUtils.isNotEmpty(tracks)) {
             url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
         }
-        url.addNameValuePair("data", "data/" + assembly);
+        url.addNameValuePair("data", "data/" + build.getValue());
         return url.getURL().replace("+", "%20");
     }
 

@@ -20,6 +20,8 @@ import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
+import org.zfin.mapping.MappingService;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
@@ -84,6 +86,7 @@ public class FeatureDetailController {
         form.setZdbID(zdbID);
         form.setFeature(feature);
         form.setGBrowseImage(FeatureService.getGbrowseImage(feature));
+        form.setLocations(FeatureService.getGenomeBrowserLinks(feature));
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
