@@ -104,11 +104,20 @@ configurations.all {
         // Hibernate alignment
         force "org.hibernate.orm:hibernate-core:6.4.4.Final"
 
-        // Log4j alignment - force all Log4j modules to same version
-        force "org.apache.logging.log4j:log4j-api:2.17.1"
-        force "org.apache.logging.log4j:log4j-core:2.17.1"
-        force "org.apache.logging.log4j:log4j-slf4j-impl:2.17.1"
-        force "org.apache.logging.log4j:log4j-web:2.17.1"
+        // Log4j alignment - use 2.21.1 for Jakarta EE (Tomcat 10+) compatibility
+        force "org.apache.logging.log4j:log4j-api:2.21.1"
+        force "org.apache.logging.log4j:log4j-core:2.21.1"
+        force "org.apache.logging.log4j:log4j-slf4j-impl:2.21.1"
+        force "org.apache.logging.log4j:log4j-jakarta-web:2.21.1"
+
+        // Jackson alignment - force all Jackson modules to same version
+        // CRITICAL: robot.jar bundles old Jackson 2.x classes - force our version to override them
+        force "com.fasterxml.jackson.core:jackson-core:2.15.2"
+        force "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+        force "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
+        force "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
+        force "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
+        force "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"        
     }
 }
 
@@ -654,8 +663,8 @@ dependencies {
     implementation "jakarta.annotation:jakarta.annotation-api:2.0.0"
 
     implementation "jakarta.persistence:jakarta.persistence-api:3.1.0"
-    implementation "jakarta.servlet:jakarta.servlet-api:6.0.0"
-    implementation "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0"
+    compileOnly "jakarta.servlet:jakarta.servlet-api:6.0.0"
+    compileOnly "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0"
     implementation "jakarta.transaction:jakarta.transaction-api:2.0.0"
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"
@@ -688,8 +697,7 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-core:2.21.1"
     implementation "org.apache.logging.log4j:log4j-jakarta-web:2.21.1"
     implementation "org.apache.logging.log4j:log4j-jcl:2.21.1"
-    implementation "org.apache.logging.log4j:log4j-slf4j-impl:2.13.3"
-    implementation "org.apache.logging.log4j:log4j-web:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:2.21.1"
     implementation "org.apache.lucene:lucene-analyzers-common:8.11.2"
     implementation "org.apache.lucene:lucene-core:9.4.2"
     implementation "org.apache.neethi:neethi:2.0.4"
