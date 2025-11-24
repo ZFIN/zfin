@@ -27,7 +27,7 @@ public class PriorityRESTAllianceService extends RestAllianceService {
     public PriorityTag findPriority(String publicationID) {
         PriorityTag priorityTag = null;
         try {
-            priorityTag = api.search(token, "ZFIN:" + publicationID);
+            priorityTag = api.search(token, "ZFIN:" + publicationID + "/ZFIN");
         } catch (Exception e) {
             String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
             log.error("Error while connecting to Priority Pipeline at Alliance: " + message);
