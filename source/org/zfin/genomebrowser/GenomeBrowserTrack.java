@@ -2,9 +2,7 @@ package org.zfin.genomebrowser;
 
 import org.zfin.gbrowse.GBrowseTrack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,9 +33,31 @@ public enum GenomeBrowserTrack {
     }
 
     private String trackName;
+    private String trackId;
 
     public String toString() {
         return trackName;
+    }
+
+    public String getTrackId(String assembly) {
+        //return trackName.replace(" ", "_") + "_" + assembly.toLowerCase();
+        return trackMap.get(assembly).get(this);
+    }
+
+    static Map<String, Map<GenomeBrowserTrack, String>> trackMap = new HashMap<>();
+
+    static {
+        Map<GenomeBrowserTrack, String> trackIDMap12 = new HashMap<>();
+        trackIDMap12.put(GENES, "zfin-gene12");
+        trackIDMap12.put(REFSEQ, "refseq12");
+        trackMap.put("GRCz12tu", trackIDMap12);
+        Map<GenomeBrowserTrack, String> trackIDMap11 = new HashMap<>();
+        trackIDMap11.put(GENES, "zfin_gene");
+        trackIDMap11.put(TRANSCRIPTS, "zfin_additional_transcripts");
+        trackIDMap11.put(ZFIN_FEATURES, "zfin_features");
+        trackIDMap11.put(ZFIN_MUTANT, "zfin_zebrafish_mutation_project");
+        trackIDMap11.put(COMPLETE_CLONES, "zfin_complete_assembly_clones");
+        trackMap.put("GRCz11", trackIDMap11);
     }
 
     public static GenomeBrowserTrack fromString(String trackName) {

@@ -26,6 +26,7 @@ import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.*;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
@@ -309,7 +310,7 @@ public class FeatureService {
         FeatureGenomeLocation featureLocation = locations.get(0);
 
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
-        // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
+        // that marker is, show the feature in the context of the marker. Otherwise, just show the feature with
         // some appropriate amount of padding.
         GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
             .highlight(feature);
@@ -333,8 +334,9 @@ public class FeatureService {
                 source = GenomeLocation.Source.ZFIN;
             }
         }
-        if (featureMarkerRelationships.size() == 1) {
-            Marker related = featureMarkerRelationships.iterator().next().getMarker();
+        Set<Marker> affectedGenes = feature.getAffectedGenes();
+        if (CollectionUtils.isNotEmpty(affectedGenes)) {
+            Marker related = affectedGenes.iterator().next();
             List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, source);
             if (CollectionUtils.isNotEmpty(markerLocations)) {
                 imageBuilder.setLandmarkByGenomeLocation(markerLocations.get(0)).withRelativePadding(0.1);
@@ -346,6 +348,20 @@ public class FeatureService {
         }
         imageBuilder.tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.FEATURE));
         return imageBuilder.build();
+    }
+
+    public static TreeSet<BrowserLink> getGenomeBrowserLinks(Feature feature) {
+        GenomeBrowserImage genomeBrowserImage = getGbrowseImage(feature);
+        if (genomeBrowserImage != null) {
+            BrowserLink link = new BrowserLink();
+            link.setUrl(genomeBrowserImage.getFullLinkUrl());
+            link.setName("ZFIN");
+            link.setOrder(1);
+            TreeSet<BrowserLink> links = new TreeSet<>();
+            links.add(link);
+            return links;
+        }
+        return null;
     }
 
     public static ReferenceDatabase getForeignDbMutationDetailDna(String accessionNumber) {

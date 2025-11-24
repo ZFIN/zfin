@@ -5,14 +5,14 @@
 </div>
 <div class="popup-body">
     <p>
-        The Transcript section on the gene page provides a GBrowse image and a table of transcripts produced by the
+        The Transcript section on the gene page provides a JBrowse image and a table of transcripts produced by the
         gene. The transcript table lists the type of transcript, the name which links to the more detailed transcript
         page, an external link to the corresponding transcript page in Ensembl, the length and a sequence analysis
         button that populates BLAST searches at ZFIN, NCBI, Ensembl and UCSC.
     </p>
     <p>
         A GBrowse image showing all the transcripts of the gene in a genomic context is presented when available. Links
-        to Genome Browsers at UCSC, NCBI, Ensembl and ZFIN are available at the top of the GBrowse image in the
+        to Genome Browsers at UCSC, NCBI, Ensembl and ZFIN are available at the top of the JBrowse image in the
         transcript section.
     </p>
     <p>
