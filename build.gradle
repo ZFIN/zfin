@@ -606,12 +606,6 @@ repositories {
     maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
-configurations {
-    // Provided scope for container-provided dependencies
-    providedCompile
-    providedRuntime
-}
-
 dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.20"
     compileOnly "com.github.nmorel.gwtjackson:gwt-jackson:0.15.4"
@@ -857,9 +851,6 @@ sourceSets {
             srcDirs = ['source']
             exclude '**/*.java'
         }
-
-        compileClasspath += configurations.providedCompile
-        runtimeClasspath += configurations.providedRuntime
     }
     test {
         java {
@@ -872,9 +863,6 @@ sourceSets {
             srcDirs = ['test']
             exclude '**/*.java'
         }
-
-        compileClasspath += configurations.providedCompile
-        runtimeClasspath += configurations.providedRuntime
     }
 }
 
