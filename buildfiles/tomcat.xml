@@ -284,12 +284,4 @@
         <antcall target="deploy-catalina-base"/>
     </target>
 
-    <target name="gradle-war-and-deploy">
-<!--        <gradle task="war"/>-->
-
-<!--        &lt;!&ndash;        copy war file to webapps directory&ndash;&gt;-->
-<!--        <copy file="build/libs/zfin.war" tofile="${CATALINA_BASE}/webapps/ROOT.war" overwrite="true"/>-->
-    </target>
-
-
 </project>
