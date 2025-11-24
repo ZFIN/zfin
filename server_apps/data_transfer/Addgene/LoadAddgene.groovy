@@ -4,7 +4,7 @@
 import groovy.json.JsonSlurper
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
-
+import org.zfin.infrastructure.TokenStorage
 
 cli = new CliBuilder(usage: 'LoadAddgene')
 cli.jobName(args: 1, 'Name of the job to be displayed in report')
@@ -18,10 +18,20 @@ if (!options) {
 
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
-DOWNLOAD_URL = "https://www.addgene.org/download/2cae1f5eb19075da8ba8de3ac954e4d5/plasmids/"
-def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
+
+def tokenStorage = new TokenStorage()
+Optional<String> token = tokenStorage.getValue(TokenStorage.ServiceKey.ADDGENE_API_TOKEN);
+def devToken = token.orElseThrow(() -> new RuntimeException("AddGene API token not found in TokenStorage"));
+
+//DOWNLOAD_URL = "https://api.developers.addgene.org/download/plasmids_with_sequences/" //optional endpoint if we need sequences
+DOWNLOAD_URL = "https://api.developers.addgene.org/download/plasmids/"
+def connection = new URL(DOWNLOAD_URL).openConnection()
+connection.setRequestProperty("Authorization", "Token ${devToken}")
+connection.setInstanceFollowRedirects(true)
+
+def file = new FileOutputStream("plasmids")
 def out = new BufferedOutputStream(file)
-out << new URL(DOWNLOAD_URL).openStream()
+out << connection.inputStream
 out.close()
 
 def proc1 = "rm -rf addgeneDesc.csv".execute()
