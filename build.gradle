@@ -1,14 +1,13 @@
+buildscript {
+    dependencies {
+        classpath 'org.postgresql:postgresql:42.2.20'
+    }
+}
 
 plugins {
     id 'war'
     id 'org.liquibase.gradle' version '2.2.2'
-//    id "nebula.lint" version "18.1.0"
 }
-
-//gradleLint {
-////    rules = ['unused-dependency']
-//    rules = []
-//}
 
 apply plugin: 'java'
 apply plugin: 'groovy'
@@ -52,13 +51,7 @@ project.ext.set("pgbindir", pgbindir)
 project.ext.set("targetroot", targetroot)
 
 // Define version variables for consistency
-project.ext.set("springVersion", '6.1.1')
-project.ext.set("springSecurityVersion", '6.1.8')
-project.ext.set("hibernateVersion", '6.4.4.Final')
 project.ext.set("jacksonVersion", '2.15.2')
-project.ext.set("slf4jVersion", '2.0.12')
-project.ext.set("log4jVersion", '2.17.1')
-project.ext.set("poiVersion", '5.2.5')
 
 def localFileDependencies = [
         "home/WEB-INF/lib/agr_curation_api.jar",
@@ -79,7 +72,6 @@ def localFileDependencies = [
         "lib/Java/gwt/gwt-user-2.11.0.jar",
         "lib/Java/gwt/jsinterop-annotations-2.0.0.jar"
 ];
-
 
 // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
 configurations.all {
@@ -663,8 +655,8 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:3.12.0"
     implementation "org.apache.commons:commons-text:1.11.0"
     implementation "org.apache.geronimo.specs:geronimo-validation_1.0_spec:1.0-CR5"
-    implementation "org.apache.groovy:groovy-all:4.0.18"
-    implementation "org.apache.groovy:groovy:4.0.18"
+    implementation "org.apache.groovy:groovy-all:4.0.29"
+    implementation "org.apache.groovy:groovy:4.0.29"
     implementation "org.apache.httpcomponents:httpclient:4.5.10"
     implementation "org.apache.httpcomponents:httpcore:4.4.13"
     implementation "org.apache.httpcomponents:httpmime:4.4.1"
@@ -1150,6 +1142,15 @@ war {
 // HELPFUL TASKS
 // ============================================================================
 
+/**
+ *
+ * This task copies specific jar files from the Maven cache and local source
+ * to the TARGETROOT/home/WEB-INF/lib directory (or to a specified destination).
+ * The jars from the Maven cache are determined by the runtimeClasspath configuration (ie. those that are explicitly
+ * declared with implementation "..." in dependencies). It does not include transitive dependencies.
+ * Local jar files specified in the localFileDependencies list are also copied.
+ *
+**/
 task pushLibraries {
     description = 'Copy specific jar files from Maven cache and local source to TARGETROOT/home/WEB-INF/lib (or -Pdestination=path/to/dir)'
     group = 'deployment'
@@ -1167,6 +1168,7 @@ task pushLibraries {
         // Copy jars from Maven cache
         println "Copying jars from Maven cache..."
 
+        // Only gets first-level (non-transitive) dependencies
         def mavenCentralDependenciesNonTransitive = configurations
                 .runtimeClasspath
                 .resolvedConfiguration
