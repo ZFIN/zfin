@@ -73,13 +73,48 @@ def localFileDependencies = [
         "lib/Java/gwt/jsinterop-annotations-2.0.0.jar"
 ];
 
-// Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+// ============================================================================
+// DEPENDENCY RESOLUTION STRATEGY (Conflict Resolution)
+// ============================================================================
 configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        if (details.requested.group.startsWith("com.fasterxml.jackson")) {
-            details.useVersion(jacksonVersion)
-            details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+    // Exclude XML parsers provided by Tomcat from all dependencies
+    exclude group: 'xpp3', module: 'xpp3'
+    exclude group: 'pull-parser', module: 'pull-parser'
+    exclude group: 'xerces', module: 'xercesImpl'
+    exclude group: 'xalan', module: 'xalan'
+    exclude group: 'xml-apis', module: 'xml-apis'
+
+    resolutionStrategy {
+        // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+        eachDependency { details ->
+            if (details.requested.group.startsWith("com.fasterxml.jackson")) {
+                details.useVersion(jacksonVersion)
+                details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+            }
         }
+
+        // Force specific versions to resolve conflicts
+        force 'org.apache.commons:commons-lang3:3.12.0'
+        force 'org.apache.httpcomponents:httpclient:4.5.10'
+        force 'org.apache.httpcomponents:httpmime:4.5.10'
+        force 'org.apache.httpcomponents:httpcore:4.4.13'
+
+        // Align Spring Security versions
+        force "org.springframework.security:spring-security-core:6.1.1"
+        force "org.springframework.security:spring-security-web:6.1.1"
+        force "org.springframework.security:spring-security-config:6.1.1"
+        force "org.springframework.security:spring-security-taglibs:6.1.8"
+        force "org.springframework.security:spring-security-ldap:6.1.1"
+        force "org.springframework.security:spring-security-crypto:6.1.1"
+
+        // Hibernate alignment
+        force "org.hibernate.orm:hibernate-core:6.4.4.Final"
+
+        // Log4j alignment - force all Log4j modules to same version
+        force "org.apache.logging.log4j:log4j-api:2.17.1"
+        force "org.apache.logging.log4j:log4j-core:2.17.1"
+        force "org.apache.logging.log4j:log4j-slf4j-impl:2.17.1"
+        force "org.apache.logging.log4j:log4j-web:2.17.1"
     }
 }
 
@@ -811,54 +846,6 @@ dependencies {
     testImplementation "org.spockframework:spock-core:2.3-groovy-4.0"
     testImplementation "org.spockframework:spock-junit4:2.3-groovy-4.0"
     testImplementation "org.spockframework:spock-spring:2.3-groovy-4.0"
-}
-
-
-// ============================================================================
-// DEPENDENCY RESOLUTION STRATEGY (Conflict Resolution)
-// ============================================================================
-
-configurations.all {
-    // Exclude XML parsers provided by Tomcat from all dependencies
-    exclude group: 'xpp3', module: 'xpp3'
-    exclude group: 'pull-parser', module: 'pull-parser'
-    exclude group: 'xerces', module: 'xercesImpl'
-    exclude group: 'xalan', module: 'xalan'
-    exclude group: 'xml-apis', module: 'xml-apis'
-
-    resolutionStrategy {
-        // Force specific versions to resolve conflicts
-        force 'org.apache.commons:commons-lang3:3.12.0'
-        force 'org.apache.httpcomponents:httpclient:4.5.10'
-        force 'org.apache.httpcomponents:httpmime:4.5.10'
-        force 'org.apache.httpcomponents:httpcore:4.4.13'
-
-        // Align Spring Security versions
-        force "org.springframework.security:spring-security-core:6.1.1"
-        force "org.springframework.security:spring-security-web:6.1.1"
-        force "org.springframework.security:spring-security-config:6.1.1"
-        force "org.springframework.security:spring-security-taglibs:6.1.8"
-        force "org.springframework.security:spring-security-ldap:6.1.1"
-        force "org.springframework.security:spring-security-crypto:6.1.1"
-
-        // Hibernate alignment - force Hibernate 6.4.4
-        force "org.hibernate.orm:hibernate-core:6.4.4.Final"
-
-        // Log4j alignment - force all Log4j modules to same version
-        force "org.apache.logging.log4j:log4j-api:2.17.1"
-        force "org.apache.logging.log4j:log4j-core:2.17.1"
-        force "org.apache.logging.log4j:log4j-slf4j-impl:2.17.1"
-        force "org.apache.logging.log4j:log4j-web:2.17.1"
-
-        // Jackson alignment - force all Jackson modules to same version
-        // CRITICAL: robot.jar bundles old Jackson 2.x classes - force our version to override them
-        force "com.fasterxml.jackson.core:jackson-core:2.15.2"
-        force "com.fasterxml.jackson.core:jackson-databind:2.15.2"
-        force "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
-        force "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
-        force "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
-        force "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
-    }
 }
 
 sourceSets {
