@@ -4,7 +4,7 @@ package org.zfin.framework.featureflag;
 import java.util.NoSuchElementException;
 
 public enum FeatureFlagEnum {
-    JBROWSE2("jBrowse2", false),
+    JBROWSE2("jBrowse2", true),
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
