@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.go.service;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -10,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 import org.zfin.datatransfer.go.*;
+import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
@@ -21,10 +23,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.util.ZfinSystemUtils.envTrue;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -74,7 +80,11 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile;
     protected String localDownloadFile2;
     protected String localDownloadFile3;
+    protected File downloadedFile;
+    protected File downloadedFile2;
+    protected File downloadedFile3;
     protected String organization;
+    protected Boolean skipDownloadIfUnchanged; //default to false
 
     public int execute() {
         int exitCode = 0;
@@ -84,26 +94,35 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
+        Date lastModified = null;
         try {
+            lastModified = downloadService.getLastModifiedOnServer(new URL(downloadUrl));
+            boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, organizationEnum, lastModified);
+            if (skipDownloadIfUnchanged != null && skipDownloadIfUnchanged && alreadyProcessed) {
+                logger.info("Download for " + new SimpleDateFormat("yyyy-MM-dd").format(lastModified)
+                        + " has already been processed and skipDownloadIfUnchanged is true.  " +
+                        "Exiting load for " + organizationEnum.name());
+                return exitCode;
+            }
 
             localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
 
             gafService = new GafService(organizationEnum);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
-            File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+            downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                 , new URL(downloadUrl)
                 , false);
 
             if (organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
-                File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
+                downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
                     , new URL(downloadUrl2)
                     , false);
                 String downloadFile2Str = FileUtils.readFileToString(downloadedFile2);
                 FileUtils.write(downloadedFile, downloadFile2Str, true); // true for append
                 localDownloadFile3 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association3";
-                File downloadedFile3 = downloadService.downloadFile(new File(localDownloadFile3)
+                downloadedFile3 = downloadService.downloadFile(new File(localDownloadFile3)
                     , new URL(downloadUrl3)
                     , false);
                 String downloadFile3Str = FileUtils.readFileToString(downloadedFile3);
@@ -111,8 +130,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
 
             // 2. parse file
-
-
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
             System.out.print("Gaf Entries: ");
@@ -225,7 +242,77 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = null;
             HibernateUtil.closeSession();
         }
+        if (exitCode == 0) {
+            logValidationReport(organizationEnum.toString(), "GAF Load Job completed successfully.", lastModified);
+        }
         return exitCode;
+    }
+
+    private void logValidationReport(String loadName, String notes, Date lastModified) {
+        HibernateUtil.createTransaction();
+
+        LoadFileLog loadFileLog = new LoadFileLog();
+        loadFileLog.setLoadName(loadName);
+        loadFileLog.setFilename(downloadedFile.getName());
+        loadFileLog.setSource(downloadUrl);
+        loadFileLog.setSize(downloadedFile.length());
+        loadFileLog.setPath(downloadedFile.getAbsolutePath());
+        loadFileLog.setNotes(notes);
+        loadFileLog.setDate(lastModified);
+        loadFileLog.setProcessedDate(new Date());
+        loadFileLog.setReleaseNumber(new SimpleDateFormat("yyyy-MM-dd").format(lastModified));
+        try {
+            loadFileLog.setMd5(DigestUtils.md5Hex(FileUtils.openInputStream(downloadedFile)));
+        } catch (IOException e) {
+            logger.error("Could not calculate md5 for file: " + downloadedFile.getAbsolutePath(), e);
+        }
+
+        HibernateUtil.currentSession().save(loadFileLog);
+
+        if (organization.equals("GOA")) {
+            //log second and third parts of GOA load as well
+            LoadFileLog loadFileLog2 = new LoadFileLog();
+            loadFileLog2.setLoadName(loadName);
+            loadFileLog2.setFilename(downloadedFile2.getName());
+            loadFileLog2.setSource(downloadUrl2);
+            loadFileLog2.setSize(downloadedFile2.length());
+            loadFileLog2.setPath(downloadedFile2.getAbsolutePath());
+            loadFileLog2.setNotes("Part 2 of GOA load. " + notes);
+            loadFileLog2.setDate(lastModified);
+            loadFileLog2.setProcessedDate(new Date());
+            loadFileLog2.setReleaseNumber(new SimpleDateFormat("yyyy-MM-dd").format(lastModified));
+            try {
+                loadFileLog2.setMd5(DigestUtils.md5Hex(FileUtils.openInputStream(downloadedFile2)));
+            } catch (IOException e) {
+                logger.error("Could not calculate md5 for file: " + downloadedFile2.getAbsolutePath(), e);
+            }
+            HibernateUtil.currentSession().save(loadFileLog2);
+
+            LoadFileLog loadFileLog3 = new LoadFileLog();
+            loadFileLog3.setLoadName(loadName);
+            loadFileLog3.setFilename(downloadedFile3.getName());
+            loadFileLog3.setSource(downloadUrl3);
+            loadFileLog3.setSize(downloadedFile3.length());
+            loadFileLog3.setPath(downloadedFile3.getAbsolutePath());
+            loadFileLog3.setNotes("Part 3 of GOA load. " + notes);
+            loadFileLog3.setDate(lastModified);
+            loadFileLog3.setProcessedDate(new Date());
+            loadFileLog3.setReleaseNumber(new SimpleDateFormat("yyyy-MM-dd").format(lastModified));
+            try {
+                loadFileLog3.setMd5(DigestUtils.md5Hex(FileUtils.openInputStream(downloadedFile3)));
+            } catch (IOException e) {
+                logger.error("Could not calculate md5 for file: " + downloadedFile3.getAbsolutePath(), e);
+            }
+            HibernateUtil.currentSession().save(loadFileLog3);
+        }
+
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
+        String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
+        LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
+        return loadFileLog != null;
     }
 
     private void addAnnotations(GafJobData gafJobData) {
@@ -370,6 +457,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             job.downloadUrl3 = args[7];
         }
         String parserClassName = args[5];
+
+        job.skipDownloadIfUnchanged = envTrue("SKIP_DOWNLOAD_IF_UNCHANGED");
+
         try {
             job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
 
@@ -382,6 +472,12 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             System.exit(1);
         }
         job.initDatabase();
-        System.exit(job.execute());
+        int exitCode = job.execute();
+        if (exitCode == 0) {
+            logger.info("GAF Load Job completed successfully.");
+        } else {
+            logger.error("GAF Load Job completed with errors.  Exit code: " + exitCode);
+        }
+        System.exit(exitCode);
     }
 }
