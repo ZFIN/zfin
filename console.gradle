@@ -278,3 +278,8 @@ task runPriorityPipeline(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.PriorityPipelineTask'
 }
+
+task checkFeatureGeneAttributionTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.task.CheckFeatureGeneAttributionTask'
+}
