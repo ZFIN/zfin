@@ -60,7 +60,7 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
                 dto.setStatus(trackingStatus);
                 dto.setCurrent(true);
                 dto.setPubZdbID(pubID);
-                String indexingPriority = tag.getCurrentPriorityTag().get(0).getIndexingPriority();
+                String indexingPriority = tag.getCurrentPriorityTag().getIndexingPriority();
                 String priority = indexingPriority.substring(indexingPriority.length() - 1);
                 dto.setLocation(trackingService.getLocation(priority));
                 controller.updateCurationStatus(pubID, false, false, "ABC-Indexing Priority Classifier", dto);
