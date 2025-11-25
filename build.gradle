@@ -1036,6 +1036,7 @@ task pushLibraries {
                 .resolvedConfiguration
                 .firstLevelModuleDependencies
 
+        // Copy first-level dependencies
         mavenCentralDependenciesNonTransitive
                 .each { resolvedDep ->
                     resolvedDep.moduleArtifacts.each { artifact ->
