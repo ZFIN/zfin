@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import static org.zfin.publication.PublicationType.JOURNAL;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
 
@@ -71,6 +72,10 @@ public class CheckFeatureGeneAttributionTask extends AbstractScriptWrapper {
 
     private void addAttributionIfNeeded(Marker gene, Publication pub, Feature feature) {
         InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
+        if (!JOURNAL.equals(pub.getType())) {
+            System.out.println("Skipping publication " + pub.getZdbID() + " of type " + pub.getType() + " for gene " + gene.getAbbreviation());
+            return;
+        }
         if (infrastructureRepository.getRecordAttribution(gene.zdbID, pub.getZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
             System.out.println("Adding attribution for gene " + gene.getAbbreviation() + " for publication " + pub.getZdbID() + " based on feature " + feature.getAbbreviation());
             writeCsvLine(gene, pub, feature, csvWriter);
