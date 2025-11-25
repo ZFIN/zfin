@@ -20,10 +20,7 @@ import org.zfin.profile.OrganizationFeaturePrefix;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 
 public interface FeatureRepository {
@@ -38,8 +35,6 @@ public interface FeatureRepository {
      * @return list of features
      */
     List<Feature> getFeaturesByPublication(String publicationID);
-
-    List<Feature> getDeletionFeatures(String featureID);
 
     List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID);
 
@@ -77,6 +72,10 @@ public interface FeatureRepository {
     List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureZdbID);
 
     List<Feature> getDeletionFeatures();
+
+    List<Feature> getDeletionFeatures(String featureID);
+
+    List<Feature> getFeaturesByType(FeatureTypeEnum featureTypeEnum);
 
     String getNextZFLineNum();
 
@@ -238,6 +237,4 @@ public interface FeatureRepository {
     int getNumberOfFeaturesForConstruct(Marker construct);
 
     List<Feature> getAllFeatureList(int i);
-
-
 }

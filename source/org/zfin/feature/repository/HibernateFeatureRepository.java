@@ -43,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Repository
@@ -220,13 +221,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.list().stream().sorted(Comparator.comparing(Feature::getAbbreviation)).collect(Collectors.toList());
     }
 
+
     @Override
     public List<Feature> getDeletionFeatures() {
-        Session session = HibernateUtil.currentSession();
-        String hql = "from Feature where type = :type order by abbreviationOrder";
-        Query<Feature> query = session.createQuery(hql, Feature.class);
-        query.setParameter("type", FeatureTypeEnum.DELETION);
-        return query.list();
+        return getFeaturesByType(FeatureTypeEnum.DELETION, null);
     }
 
     /**
@@ -236,17 +234,35 @@ public class HibernateFeatureRepository implements FeatureRepository {
      */
     @Override
     public List<Feature> getDeletionFeatures(String featureID) {
-        if (featureID == null || featureID.isEmpty()) {
-            return getDeletionFeatures();
-        }
+        return getFeaturesByType(FeatureTypeEnum.DELETION, featureID);
+    }
+
+    @Override
+    public List<Feature> getFeaturesByType(FeatureTypeEnum type) {
+        return getFeaturesByType(type, null);
+    }
+
+
+    /**
+     * Get features by type, optionally filtered by featureID
+     * @param type
+     * @param featureID
+     * @return
+     */
+    private List<Feature> getFeaturesByType(FeatureTypeEnum type, String featureID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "from Feature where type = :type and zdbID = :featureID order by abbreviationOrder";
+        String hql = """
+                from Feature
+                where type = :type
+                and (:allFeatureIDs or zdbID = :featureID)
+                order by abbreviationOrder
+                """;
         Query<Feature> query = session.createQuery(hql, Feature.class);
-        query.setParameter("type", FeatureTypeEnum.DELETION);
+        query.setParameter("type", type);
+        query.setParameter("allFeatureIDs", isEmpty(featureID));
         query.setParameter("featureID", featureID);
         return query.list();
     }
-
 
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
