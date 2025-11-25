@@ -254,7 +254,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = """
                 from Feature
                 where type = :type
-                and (:allFeatureIDs or zdbID = :featureID)
+                and (:allFeatureIDs = true or zdbID = :featureID)
                 order by abbreviationOrder
                 """;
         Query<Feature> query = session.createQuery(hql, Feature.class);
