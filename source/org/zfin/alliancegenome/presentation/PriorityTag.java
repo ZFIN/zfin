@@ -14,7 +14,7 @@ import java.util.List;
 public class PriorityTag {
 
     @JsonProperty("current_priority_tag")
-    private List<CurrentPriorityTag> currentPriorityTag;
+    private CurrentPriorityTag currentPriorityTag;
 
 /*
     @JsonProperty("all_priority_tags")
