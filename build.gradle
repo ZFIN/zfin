@@ -264,12 +264,6 @@ task setup {
     project.ext.ttNameMap = filteredMap
 }
 
-/*
-    allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
-        println p.path
-    }
-*/
-
 task printProp() {
     doLast {
         println 'All Properties'
