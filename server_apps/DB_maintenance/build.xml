@@ -120,7 +120,7 @@
     <target name="load-noctua-gpad" description="">
         <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
         <property environment="env"/>
-        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="https://snapshot.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz">
+        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="https://current.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz">
             <isset property="env.NOCTUA_GPAD_URL" />
         </condition>
 
