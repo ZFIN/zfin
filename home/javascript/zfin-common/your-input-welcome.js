@@ -5,6 +5,7 @@ $(function () {
         $triggerButton = jQuery("#input-welcome-button"),
         $form = jQuery("#input-welcome-form"),
         $formInputs = jQuery(":input", $form),
+        $submitButton = jQuery("#input-welcome-submit", $form),
         $formValidate = jQuery("#input-welcome-validate"),
         url = "/action/user-comment",
         stringNotEmpty = function (str) {
@@ -35,6 +36,7 @@ $(function () {
         $errorMessage.hide();
         $form.show();
         $formInputs.attr("disabled", false);
+        $submitButton.attr("disabled", true);
         $formValidate.hide();
         $formInputs.removeClass("invalid");
     });
@@ -75,6 +77,7 @@ $(function () {
                 $form.hide();
                 $form[0].reset();
                 $successMessage.show();
+                $submitButton.attr("disabled", true);
             },
             error: function() {
                 $form.hide();
