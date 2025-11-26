@@ -72,7 +72,7 @@ public class CaptchaService {
      * @param request Check if this request object has the needed cookie
      * @return true if verified human
      */
-    private static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
+    public static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, CAPTCHA_COOKIE_NAME);
         if (cookie != null && CAPTCHA_COOKIE_VALUE.equals(cookie.getValue())) {
             return true;
