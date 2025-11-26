@@ -26,7 +26,8 @@ public class TokenStorage implements TokenStorageInterface {
         ALTCHA_SECRET_KEY("captchaSecretKey-altcha.txt"),
         ALLIANCE_API_TOKEN("alliance-api-token.txt"),
         NCBI_API_TOKEN("ncbi-token.txt"),
-        OMIM_API_TOKEN("omim-token.txt");
+        OMIM_API_TOKEN("omim-token.txt"),
+        ADDGENE_API_TOKEN("addgene-token.txt");
 
         private final String filename;
 
