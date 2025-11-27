@@ -395,24 +395,10 @@
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
-        <copy todir="${classbin.dir}">
-            <fileset dir="${source.dir}">
-                <include name="**/*.xml"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-        <javac srcdir="source"
-               destdir="${classbin.dir}"
-               classpathref="extended.classpath"
-               fork="true"
-               encoding="${encoding}"
-               includeAntRuntime="no"
-               memoryMaximumSize="556m"
-               debug="true"
-               >
-            <compilerarg line="-parameters"/>
-        </javac>
-        <echo message=":JAVA COMPILE SUCCESSFUL:"/>
+        <!-- Delegate to Gradle for compilation (handles Lombok, annotation processing, etc.) -->
+        <exec executable="gradle" failonerror="true">
+            <arg value="antCompile"/>
+        </exec>
     </target>
 
     <target name="remove-pre-and-post-targets"
@@ -612,12 +598,12 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,restart,deploy-solr,deployGitInfoFile"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,restart,deploy-solr"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild"
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
     </target>
