@@ -1,6 +1,6 @@
 package org.zfin.uniprot.task;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.biojava.bio.BioException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -39,7 +39,7 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
  * There is also an html report that is generated for viewing the json blob.  It will be named OUTPUT_FILE.report.html.
  *
  */
-@Log4j
+@Log4j2
 public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     private String inputFilenameSet1;
     private String inputFilenameSet2;

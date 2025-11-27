@@ -419,7 +419,8 @@ public class ZfinJSPFunctions {
 
     public static String getAssetPath(String name) {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream stream = ZfinJSPFunctions.class.getResourceAsStream("../../../../../../asset-manifest.json");
+        // Path relative to org/zfin/framework/presentation/ → up 4 levels to WEB-INF/classes/
+        InputStream stream = ZfinJSPFunctions.class.getResourceAsStream("../../../../asset-manifest.json");
         try {
             Map manifest = mapper.readValue(stream, Map.class);
             return String.valueOf(manifest.get(name));

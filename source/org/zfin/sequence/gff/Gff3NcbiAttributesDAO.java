@@ -35,7 +35,9 @@ public class Gff3NcbiAttributesDAO extends BaseSQLDAO<Gff3NcbiAttributePair> {
             """, Tuple.class);
         List<Tuple> list = query.getResultList();
         return list.stream().collect(Collectors.toMap(
-            tuple -> (Long) tuple.get(0), tuple -> (String) tuple.get(1)
+            tuple -> (Long) tuple.get(0), 
+            tuple -> (String) tuple.get(1),
+            (existing, replacement) -> existing // Keep the first value when there are duplicates
         ));
     }
 }

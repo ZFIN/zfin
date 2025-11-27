@@ -26,6 +26,6 @@ public class RequestService {
 
     public static String getRequestedForwardedUrl() {
         HttpServletRequest request = getCurrentRequest();
-        return request.getAttribute("javax.servlet.forward.request_uri").toString();
+        return request.getAttribute("jakarta.servlet.forward.request_uri").toString();
     }
 }

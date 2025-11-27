@@ -10,13 +10,23 @@
         </parallel>
     </target>
 
-    <target name="gwt" description="Compiles all gwt targets">
+    <target name="gwt" depends="gradle-gwt" description="Compiles all gwt targets">
+    </target>
+
+    <target name="legacy-gwt" description="Compiles all gwt targets">
         <!--TODO: when we go to zygotix full-time, this can go back into parallel mode-->
         <parallel>
             <pre-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
             <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
             <pre-gwt-compile module="org.zfin.gwt.curation.Curation"/>
         </parallel>
+    </target>
+
+    <target name="gradle-gwt" description="Compiles all gwt targets">
+        <!-- Delegate to Gradle for proper classpath handling -->
+        <exec executable="gradle" failonerror="true">
+            <arg value="gwtCompile"/>
+        </exec>
     </target>
 
     <target name="lookup-gwt" description="Compiles lookup gwt">
@@ -94,10 +104,12 @@
             <echo>
                 <![CDATA[
 Compiling GWT module @{module} to @{target}, equivalent to command:
-    java -cp $(cat /tmp/extended.classpath.txt) com.google.gwt.dev.Compiler [-logLevel DEBUG] -war @{target} -style DETAILED @{module}
+    java -cp $(cat /tmp/extended.classpath.txt):${source.dir} com.google.gwt.dev.Compiler [-logLevel DEBUG] -war @{target} -style DETAILED @{module}
     where extended.classpath.txt can be generated with `ant writeClassPath`
                 ]]>
             </echo>
+
+            <echo>Source Dir: source.dir=${source.dir}</echo>
 
             <java fork="true" className="com.google.gwt.dev.Compiler" classpathref="extended.classpath">
                 <classpath>

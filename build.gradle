@@ -1,25 +1,32 @@
 buildscript {
     dependencies {
-        classpath 'org.postgresql:postgresql:42.2.18'
+        classpath 'org.postgresql:postgresql:42.2.20'
     }
 }
 
 plugins {
-    id "org.liquibase.gradle" version "2.1.1"
+    id 'war'
+    id 'application'
+    id 'org.liquibase.gradle' version '2.2.2'
 }
+
+group = 'org.zfin'
+version = '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply from: 'agr.gradle'
 apply from: 'console.gradle'
 
-
-//apply from: file('setupTestsReports.gradle')
-
 sourceCompatibility = 17
 targetCompatibility = 17
 
-//apply from : '../zfinGradle/build.gradle'
+// Application plugin configuration for command-line utilities
+application {
+    mainClass = 'org.zfin.util.commandline.CommandLineUtilityRunner'
+    applicationName = 'zfin-util'
+    applicationDefaultJvmArgs = ['-Xmx512m']
+}
 
 def env = System.getenv()
 def dbname = env['DBNAME']
@@ -32,14 +39,6 @@ def solrunloadspath = env['SOLR_UNLOADS_PATH']
 def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 String targetroot = env['TARGETROOT']
 
-/*
-dependencies {
-    implementation 'org.liquibase:liquibase-core:3.4.1'
-    implementation "org.liquibase:liquibase-gradle-plugin:1.1.1"
-    implementation gradleApi()
-    implementation localGroovy()
-}
-*/
 
 task deployPostgres(dependsOn: ['deployPostgresFunctions',
                                 'deployPostgresTrigger']) {
@@ -53,6 +52,50 @@ project.ext.set("sourceroot", sourceroot)
 project.ext.set("pgdata", pgdata)
 project.ext.set("pgbindir", pgbindir)
 project.ext.set("targetroot", targetroot)
+
+// Define version variables for consistency
+project.ext.set("jacksonVersion", '2.15.2')
+
+def localFileDependencies = [
+        "home/WEB-INF/lib/agr_curation_api.jar",
+        "home/WEB-INF/lib/bbop.jar",
+        "home/WEB-INF/lib/biojava.1.7.1.jar",
+        "home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar",
+        "home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar",
+        "home/WEB-INF/lib/cvu.jar",
+        "home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar",
+        "home/WEB-INF/lib/jakarta.servlet.jsp.jstl-api-1.2.7-eclipse-transformed.jar",
+        "home/WEB-INF/lib/obo.jar",
+        "home/WEB-INF/lib/patricia-trie-0.2.jar",  // Not in Maven Central (0.6 version maybe "org.ardverk:patricia-trie:0.6",
+        "home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar",
+        "home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar",
+        "home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar",
+        "home/WEB-INF/lib/text-table-formatter-1.0.jar",
+        "lib/Java/gwt/gwt-user-2.11.0.jar",
+        "lib/Java/gwt/jsinterop-annotations-2.0.0.jar"
+];
+
+// ============================================================================
+// DEPENDENCY RESOLUTION STRATEGY (Conflict Resolution)
+// ============================================================================
+configurations.all {
+    // Exclude XML parsers provided by Tomcat from all dependencies
+    exclude group: 'xpp3', module: 'xpp3'
+    exclude group: 'pull-parser', module: 'pull-parser'
+    exclude group: 'xerces', module: 'xercesImpl'
+    exclude group: 'xalan', module: 'xalan'
+    exclude group: 'xml-apis', module: 'xml-apis'
+
+    resolutionStrategy {
+        // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+        eachDependency { details ->
+            if (details.requested.group.startsWith("com.fasterxml.jackson")) {
+                details.useVersion(jacksonVersion)
+                details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+            }
+        }
+    }
+}
 
 task loadDatabase() {
     doLast {
@@ -138,42 +181,48 @@ task reload(type: GradleBuild) {
 }
 
 String preChangeLog = "source/org/zfin/db/load/db.changelog.master.xml"
-
-task liquibasePreBuild() {
-    doLast {
-        liquibase {
-            activities {
-                main {
-                    println preChangeLog
-                    changeLogFile preChangeLog
-                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
-                }
-            }
-        }
-    }
-}
-
-liquibasePreBuild.finalizedBy(update)
-
 String postChangeLog = "source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
-task liquibasePostBuild() {
-    doLast {
 
-        liquibase {
-            activities {
-                main {
-                    changeLogFile preChangeLog
-                    Properties properties = new Properties()
-                    properties.setProperty("SOURCEROOT", ".")
-                    changeLogFile postChangeLog
-                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
-                }
-            }
+// Configure liquibase activities at configuration time (required for Gradle 8+)
+liquibase {
+    activities {
+        preBuild {
+            changelogFile preChangeLog
+            url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
+        }
+        postBuild {
+            changelogFile postChangeLog
+            url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
         }
     }
 }
 
-liquibasePostBuild.finalizedBy(update)
+// Create custom tasks that configure and run liquibase update
+task liquibasePreBuild {
+    group = 'liquibase'
+    description = 'Run liquibase update for pre-build changesets'
+
+    doFirst {
+        println "Running liquibase preBuild activity with changelog: ${preChangeLog}"
+        // Set the runList before update task executes
+        project.liquibase.runList = 'preBuild'
+    }
+}
+
+task liquibasePostBuild {
+    group = 'liquibase'
+    description = 'Run liquibase update for post-build changesets'
+
+    doFirst {
+        println "Running liquibase postBuild activity with changelog: ${postChangeLog}"
+        // Set the runList before update task executes
+        project.liquibase.runList = 'postBuild'
+    }
+}
+
+// Make the update task run after configuration
+liquibasePreBuild.finalizedBy('update')
+liquibasePostBuild.finalizedBy('update')
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
@@ -226,12 +275,6 @@ task setup {
     project.ext.ttNameMap = filteredMap
 }
 
-/*
-    allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
-        println p.path
-    }
-*/
-
 task printProp() {
     doLast {
         println 'All Properties'
@@ -241,23 +284,21 @@ task printProp() {
     }
 }
 
-project(':home') {
-    task deployFiles {
-        doLast {
-            def sourceFiles = [file('robots.txt'), file('favicon.ico')]
-            def targetDir = file("${targetroot}/home")
+task 'home;root;deployFiles' {
+    doLast {
+        def sourceFiles = [file('home/robots.txt'), file('home/favicon.ico')]
+        def targetDir = file("${targetroot}/home")
 
-            if (!targetDir.exists()) {
-                targetDir.mkdirs()
-            }
-
-            sourceFiles.each { sourceFile ->
-                def targetFile = new File(targetDir, sourceFile.name)
-                targetFile.bytes = sourceFile.bytes
-            }
-
-            println "Copied ${sourceFiles.size()} files to ${targetDir}"
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
         }
+
+        sourceFiles.each { sourceFile ->
+            def targetFile = new File(targetDir, sourceFile.name)
+            targetFile.bytes = sourceFile.bytes
+        }
+
+        println "Copied ${sourceFiles.size()} files to ${targetDir}"
     }
 }
 
@@ -338,19 +379,18 @@ task "server_apps;data_transfer;Ensembl;deployFiles" (type: SimpleDirectoryCopyT
     includes = ['sh', 'sql', 'groovy']
 }
 
-project(':server_apps:data_transfer:Downloads') {
-    task "createSymlink"() {
-        doLast {
-            if (!file(downloaddirectory).exists()) {
-                exec {
-                    commandLine "mkdir", "-p", downloaddirectory
-                }
+task "server_apps;data_transfer;Downloads;createSymlink"() {
+    doLast {
+        if (!file(downloaddirectory).exists()) {
+            exec {
+                commandLine "mkdir", "-p", downloaddirectory
             }
-            String datatransferpath = targetroot + "/home/data-transfer"
-            if (!file(datatransferpath).exists()) {
-                exec {
-                    commandLine "ln", "-s", downloaddirectory, datatransferpath
-                }
+        }
+        String datatransferpath = targetroot + "/home/data-transfer"
+        println "Creating symlink from " + downloaddirectory + " to " + datatransferpath
+        if (!file(datatransferpath).exists()) {
+            exec {
+                commandLine "ln", "-s", downloaddirectory, datatransferpath
             }
         }
     }
@@ -360,14 +400,14 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
-             'home:deployFiles',
+             'home;root;deployFiles',
              'home;zf_info;deployFiles',
              'home;ZFIN;deployFiles',
              'server_apps;apache;deployFiles',
              'server_apps;sysexecs;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
-             ':server_apps:data_transfer:Downloads:createSymlink',
+             'server_apps;data_transfer;Downloads;createSymlink',
              'server_apps;data_transfer;Ensembl;deployFiles',
              'server_apps;Reports;deployFiles',
              'server_apps;tokens;deployFiles',
@@ -537,227 +577,270 @@ task createSchemaSpy() {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
 dependencies {
-    liquibaseRuntime("org.liquibase:liquibase-core:4.7.1")
-    liquibaseRuntime("info.picocli:picocli:4.6.3")
-    liquibaseRuntime("org.postgresql:postgresql:42.2.18")
+    annotationProcessor "org.projectlombok:lombok:1.18.20"
+    compileOnly "com.github.nmorel.gwtjackson:gwt-jackson:0.15.4"
+    compileOnly "com.google.jsinterop:jsinterop-annotations:2.0.0"
+    compileOnly "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
+    compileOnly "org.gwtproject:gwt-dev:2.11.0"
+    compileOnly "org.projectlombok:lombok:1.18.20"
+    compileOnly "xalan:xalan:2.7.0"
+    compileOnly "xerces:xercesImpl:2.12.2"
+    compileOnly "xml-apis:xml-apis:1.4.01"
 
-    //for generating xlsx in NCBI load
-    implementation 'org.apache.poi:poi:5.2.5'
-    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation "backport-util-concurrent:backport-util-concurrent:3.1"
+    implementation "com.fasterxml:classmate:1.5.1"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.15.2"  // Required by robot.jar
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
+    implementation "com.fasterxml.woodstox:woodstox-core:6.5.1"
+    implementation "com.github.rtaylorzfin:google-analytics-reporting-app:1.0.4"
+    implementation "com.github.samtools:htsjdk:4.3.0"
+    implementation "com.google.code.gson:gson:2.2.4"
+    implementation "com.google.guava:guava:27.1-jre"
+    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1"
+    implementation "com.mchange:c3p0:0.9.5.5"
+    implementation "com.mchange:mchange-commons-java:0.2.15"
+    implementation "com.sun.activation:jakarta.activation:2.0.1"
+    implementation "com.sun.istack:istack-commons-runtime:3.0.7"
+    implementation "com.sun.mail:jakarta.mail:2.0.1"
+    implementation "com.sun.xml.fastinfoset:FastInfoset:1.2.15"
+    implementation "com.sun.xml.messaging.saaj:saaj-impl:3.0.3"
+    implementation "com.sun.xml.stream.buffer:streambuffer:1.5.6"
+    implementation "com.sun.xml.ws:policy:2.3.1"
+    implementation "com.xlson.groovycsv:groovycsv:1.0"
+    implementation "commons-beanutils:commons-beanutils:1.9.1"
+    implementation "commons-cli:commons-cli:1.4"
+    implementation "commons-collections:commons-collections:3.2.1"
+    implementation "commons-configuration:commons-configuration:1.6"
+    implementation "commons-digester:commons-digester:1.6"
+    implementation "commons-discovery:commons-discovery:0.2"
+    implementation "commons-lang:commons-lang:2.6"
+    implementation "commons-math:commons-math:1.2"
+    implementation "commons-net:commons-net:1.4.1"
+    implementation "commons-validator:commons-validator:1.1.4"
+    implementation "io.micrometer:micrometer-commons:1.12.1"
+    implementation "io.micrometer:micrometer-observation"
+    implementation "io.netty:netty-all:4.1.106.Final"
+    implementation "io.projectreactor:reactor-core:3.6.1"
+    implementation "jakarta.annotation:jakarta.annotation-api:2.0.0"
 
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11'
-    implementation group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
-    implementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.12.7'
-    implementation group: 'org.hibernate', name: 'hibernate-core', version: '6.4.4.Final'
-    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.13.Final'
-    implementation group: 'org.hibernate.search', name: 'hibernate-search-engine', version: '6.1.1.Final'
-    implementation group: 'org.hibernate.search', name: 'hibernate-search-mapper-pojo-base', version: '6.1.1.Final'
-    implementation group: 'org.springframework', name: 'spring-orm', version: '6.1.1'
-    implementation group: 'org.springframework', name: 'spring-core', version: '6.1.1'
-    implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.1'
-    implementation group: 'org.springframework.security', name: 'spring-security-config', version: '6.1.1'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '6.1.1'
-    implementation group: 'org.springframework', name: 'spring-web', version: '6.1.1'
-    implementation group: 'org.springframework', name: 'spring-context-support', version: '6.1.1'
-    implementation group: 'org.springframework.security', name: 'spring-security-web', version: '6.1.1'
-    implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.1'
-    implementation group: 'org.springframework.integration', name: 'spring-integration-core', version: '6.1.1'
+    implementation "jakarta.persistence:jakarta.persistence-api:3.1.0"
+    compileOnly "jakarta.servlet:jakarta.servlet-api:6.0.0"
+    compileOnly "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0"
+    implementation "jakarta.transaction:jakarta.transaction-api:2.0.0"
+    implementation "jakarta.validation:jakarta.validation-api:3.0.2"
+    implementation "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1"
+    implementation "javax.jws:jsr181-api:1.0-MR1"
+    implementation "javax.validation:validation-api:1.0.0.GA"
+    implementation "javax.xml.soap:javax.xml.soap-api:1.4.0"
+    implementation "javax.xml.ws:jaxws-api:2.2"
+    implementation "jaxen:jaxen:1.1.1"
+    implementation "net.bytebuddy:byte-buddy:1.12.7"
+    implementation "net.logstash.log4j:jsonevent-layout:1.0"
+    implementation "net.minidev:json-smart:1.1.1"
+    implementation "oauth.signpost:signpost-core:1.2.1.2"
+    implementation "org.altcha:altcha:1.1.2"
+    implementation "org.antlr:antlr4-runtime:4.13.0"
+    implementation "org.apache.ant:ant:1.8.1"
+    implementation "org.apache.commons:commons-collections4:4.4"
+    implementation "org.apache.commons:commons-csv:1.11.0"
+    implementation "org.apache.commons:commons-exec:1.0"
+    implementation "org.apache.commons:commons-lang3:3.14.0"
+    implementation "org.apache.commons:commons-text:1.11.0"
+    implementation "org.apache.geronimo.specs:geronimo-validation_1.0_spec:1.0-CR5"
+    implementation "org.apache.groovy:groovy-all:4.0.29"
+    implementation "org.apache.groovy:groovy:4.0.29"
+    implementation "org.apache.httpcomponents:httpclient:4.5.10"
+    implementation "org.apache.httpcomponents:httpcore:4.4.16"
+    implementation "org.apache.httpcomponents:httpmime:4.5.10"
+    implementation "org.apache.logging.log4j:log4j-1.2-api:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-api:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-core:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-jakarta-web:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-jcl:2.21.1"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:2.21.1"
+    implementation "org.apache.lucene:lucene-analyzers-common:8.11.2"
+    implementation "org.apache.lucene:lucene-core:9.4.2"
+    implementation "org.apache.neethi:neethi:2.0.4"
+    implementation "org.apache.poi:poi-ooxml:5.2.5"
+    implementation "org.apache.poi:poi:5.2.5"
+    implementation "org.apache.solr:solr-solrj:8.11.3"
+    implementation "org.apache.ws.commons.axiom:axiom-api:1.2.7"
+    implementation "org.apache.ws.commons.axiom:axiom-impl:1.2.7"
+    implementation "org.apache.ws.commons.schema:XmlSchema:1.4.2"
+    implementation "org.apache.xmlbeans:xmlbeans:2.4.0"
+    implementation "org.apache.zookeeper:zookeeper:3.4.6"
+    implementation "org.codehaus.castor:castor-core:1.3"
+    implementation "org.codehaus.castor:castor-xml:1.3"
+    implementation "org.codehaus.woodstox:stax2-api:3.1.4"
+    implementation "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+    implementation "org.codehaus.woodstox:wstx-asl:3.2.7"
 
-    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
-    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
-    implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
-    //runtimeOnly group: 'com.google.gwt', name: 'gwt-servlet', version: '2.9.0'
-//    implementation('org.gwtproject:gwt-user:2.11.0')
-    implementation files("lib/Java/gwt/gwt-user-2.11.0.jar")
+    implementation("org.dom4j:dom4j:2.1.3") {
+        // Exclude xpp3 XML parser - conflicts with Tomcat's built-in parsers
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'pull-parser', module: 'pull-parser'
+    }
 
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.9.1.Final'
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.9.1.Final'
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '3.9.1.Final'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
-    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.15.2'
-    implementation files("home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar")
-    implementation 'jakarta.transaction:jakarta.transaction-api:2.0.0'
+    implementation "org.eclipse.microprofile.openapi:microprofile-openapi-api:3.1.1"
+    implementation "org.freemarker:freemarker:2.3.20"
+    implementation "org.glassfish.gmbal:gmbal-api-only:3.2.0-b003"
+    implementation "org.glassfish.jaxb:jaxb-core:4.0.3"
+    implementation "org.glassfish.jaxb:jaxb-runtime:4.0.3"
+    implementation "org.glassfish.jaxb:jaxb-xjc:4.0.1"
+    implementation "org.glassfish.jaxb:txw2:4.0.3"
+    implementation "org.hibernate.common:hibernate-commons-annotations:6.0.6.Final"
+    implementation "org.hibernate.orm:hibernate-c3p0:6.4.4.Final"
+    implementation "org.hibernate.orm:hibernate-core:6.4.4.Final"
+    implementation "org.hibernate.search:hibernate-search-engine:6.1.1.Final"
+    implementation "org.hibernate.search:hibernate-search-mapper-pojo-base:6.1.1.Final"
+    implementation "org.hibernate.validator:hibernate-validator:8.0.1.Final"
+    implementation "org.imgscalr:imgscalr-lib:4.2"
+    implementation "org.javassist:javassist:3.24.1-GA"
+    implementation "org.jboss:jandex:2.4.2.Final"
+    implementation "org.jboss.logging:jboss-logging-annotations:1.2.0.Beta1"
+    implementation "org.jboss.logging:jboss-logging:3.4.3.Final"
+    implementation "org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final"
+    implementation "org.jdom:jdom:1.1"
+    implementation "org.jooq:jool:0.9.15"
+    implementation "org.json:json:20210307"
+    implementation "org.jvnet.staxex:stax-ex:1.8"
+    implementation "org.liquibase:liquibase-core:4.7.1"
+    implementation "org.noggit:noggit:0.7"
+    implementation "org.ow2.asm:asm-analysis:5.0.3"
+    implementation "org.ow2.asm:asm-commons:5.0.3"
+    implementation "org.ow2.asm:asm-tree:5.0.3"
+    implementation "org.ow2.asm:asm-util:5.0.3"
+    implementation "org.ow2.asm:asm-xml:5.0.3"
+    implementation "org.ow2.asm:asm:5.0.3"
+    implementation "org.postgresql:postgresql:42.2.20"
+    implementation "org.projectlombok:lombok:1.18.20"
+    implementation "org.reactivestreams:reactive-streams:1.0.4"
+    implementation "org.slf4j:jcl-over-slf4j:1.7.26"
+    implementation "org.slf4j:jul-to-slf4j:2.0.12"
+    implementation "org.slf4j:slf4j-api:1.7.26"
+    implementation "org.springframework:spring-aop:6.1.1"
+    implementation "org.springframework:spring-aspects:6.1.1"
+    implementation "org.springframework:spring-beans:6.1.1"
+    implementation "org.springframework:spring-context-support:6.1.1"
+    implementation "org.springframework:spring-context:6.1.1"
+    implementation "org.springframework:spring-core:6.1.1"
+    implementation "org.springframework:spring-expression:6.1.1"
+    implementation "org.springframework:spring-jcl:6.1.1"
+    implementation "org.springframework:spring-jdbc:6.1.1"
+    implementation "org.springframework:spring-jms:6.1.1"
+    implementation "org.springframework:spring-messaging:6.1.1"
+    implementation "org.springframework:spring-orm:6.1.1"
+    implementation "org.springframework:spring-oxm:6.1.1"
+    implementation "org.springframework:spring-test:6.1.1"
+    implementation "org.springframework:spring-tx:6.1.1"
+    implementation "org.springframework:spring-web:6.1.1"
+    implementation "org.springframework:spring-webflux:6.1.1"
+    implementation "org.springframework:spring-webmvc:6.1.1"
+    implementation "org.springframework.batch:spring-batch-core:5.1.1"
+    implementation "org.springframework.batch:spring-batch-infrastructure:5.1.1"
+    implementation "org.springframework.data:spring-data-commons:3.2.2"
+    implementation "org.springframework.data:spring-data-jpa:3.2.2"
+    implementation "org.springframework.integration:spring-integration-core:6.2.1"
+    implementation "org.springframework.ldap:spring-ldap-core:3.1.1"
+    implementation "org.springframework.retry:spring-retry:2.0.5"
+    implementation "org.springframework.security:spring-security-acl:6.1.8"
+    implementation "org.springframework.security:spring-security-aspects:6.1.8"
+    implementation "org.springframework.security:spring-security-cas:6.1.8"
+    implementation "org.springframework.security:spring-security-config:6.1.8"
+    implementation "org.springframework.security:spring-security-core:6.1.8"
+    implementation "org.springframework.security:spring-security-crypto:6.1.8"
+    implementation "org.springframework.security:spring-security-ldap:6.1.8"
+    implementation "org.springframework.security:spring-security-messaging:6.1.8"
+    implementation "org.springframework.security:spring-security-oauth2-client:6.1.8"
+    implementation "org.springframework.security:spring-security-oauth2-jose:6.1.8"
+    implementation "org.springframework.security:spring-security-taglibs:6.1.8"
+    implementation "org.springframework.security:spring-security-web:6.1.8"
+    implementation "org.springframework.ws:spring-ws-core:4.0.10"
+    implementation "org.springframework.ws:spring-xml:2.0.5.RELEASE"
+    implementation "org.yaml:snakeyaml:2.2"
+    implementation "oro:oro:2.0.8"
+    implementation "relaxngDatatype:relaxngDatatype:20020414"
+    implementation "velocity:velocity:1.5"
+    implementation "wsdl4j:wsdl4j:1.6.2"
+    implementation "xalan:serializer:2.7.1"
 
+    implementation files(localFileDependencies)
 
-
-
-//Thanks for using https://jar-download.com
-
-    /*
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson-provider', version: '3.15.2.Final'
-    implementation group: 'org.codehaus.jackson', name: 'jackson-core-asl', version: '1.9.13'
-    implementation group: 'org.codehaus.jackson', name: 'jackson-xc', version: '1.9.13'
-    implementation group: 'org.codehaus.jackson', name: 'jackson-jaxrs', version: '1.9.13'
-    implementation group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
-*/
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-/*
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
-     //implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.13.0'
-*/
-    //implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.13.0'
-    implementation group: 'org.eclipse.microprofile.openapi', name: 'microprofile-openapi-api', version: '2.0.1-RC1'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.1'
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
-    implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.1'
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.4.1'
-    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.0.0'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
-//    implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.7'
-    implementation files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar')
-    implementation group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '3.1.0'
-    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.6.3'
-    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
-    implementation group: 'commons-cli', name: 'commons-cli', version: '1.2'
-    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.20'
-    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '2.3.1'
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
-//    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
-    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
-    implementation group: 'com.sun.activation', name: 'jakarta.activation', version: '2.0.1'
-    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
-    implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
-    implementation group: 'taglibs', name: 'standard', version: '1.1.2'
-
-    implementation files('home/WEB-INF/lib/AnalyticsReportingApp-1.0.2.jar') //From repo: https://github.com/rtaylorzfin/google-analytics-reporting-app/
-    implementation files('home/WEB-INF/lib/agr_curation_api.jar')
-    implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
-    implementation files('home/WEB-INF/lib/cvu.jar')
-    implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
-    implementation files('home/WEB-INF/lib/obo.jar')
-    implementation files('home/WEB-INF/lib/bbop.jar')
-    implementation files('home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar')
-    implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
-    implementation files('home/WEB-INF/lib/commons-collections4-4.4.jar')
-    implementation files('home/WEB-INF/lib/commons-lang3-3.1.jar')
-    // maven reference does not have version 1.0, so using the plain jar file
-    //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
-    implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
-    implementation files('home/WEB-INF/lib/jakarta.persistence-api-3.1.0.jar')
-    implementation files('home/WEB-INF/lib/jakarta.annotation-api-2.0.0.jar')
-
-    implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
-    implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
-    implementation files('home/WEB-INF/lib/log4j-slf4j-impl-2.13.3.jar')
-
-    implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
-    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.6'
-    implementation group: 'commons-net', name: 'commons-net', version: '1.4.1'
-    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
-    implementation group: 'com.github.samtools', name: 'htsjdk', version: '2.20.3'
-    implementation group: 'org.jdom', name: 'jdom', version: '1.1'
-    implementation group: 'org.springframework.ws', name: 'spring-ws-core', version: '4.0.10'
-
-    implementation group: 'org.codehaus.castor', name: 'castor-xml', version: '1.3'
-    implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20200713.1'
-    implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
-    implementation group: 'org.biojava', name: 'core', version: '1.9.4'
-    //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
-    implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.17.1'
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
-    implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
-    implementation group: 'org.apache.cxf', name: 'cxf-rt-rs-client', version: '3.4.2'
-    implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.12.2'
-    implementation group: 'org.json', name: 'json', version: '20210307'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    //implementation group: 'log4j', name: 'log4j', version: '1.2.15'
-
-//Thanks for using https://jar-download.com
-
-
-    //implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4")
-    implementation 'junit:junit:4.11'
-    implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.6.5.Final'
-    testImplementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.7.0'
-    testImplementation group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
-    testImplementation group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
-    implementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
-    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
-
-//    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
-    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-    testImplementation group: 'net.sourceforge.jwebunit', name: 'jwebunit-core', version: '2.4'
-
-    testImplementation group: 'org.gebish', name: 'geb-ast', version: '6.0'
-    testImplementation group: 'org.gebish', name: 'geb-core', version: '6.0'
-    testImplementation group: 'org.gebish', name: 'geb-spock', version: '6.0'
-    testImplementation group: 'org.gebish', name: 'geb-waiting', version: '6.0'
-    implementation group: 'oauth.signpost', name: 'signpost-core', version: '2.1.1'
-    testImplementation group: 'oauth.signpost', name: 'signpost-core', version: '2.1.1'
-
-
-//    testCompile group: 'org.openqa.selenium', name: 'selenium', version: '0.8.1'
-    implementation("com.github.samtools:htsjdk:4.3.0")
-    //testImplementation('org.codehaus.groovy:groovy-all:3.0.6')
-    testImplementation group: 'org.spockframework', name: 'spock-junit4', version: '2.3-groovy-3.0'
-    testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.3-groovy-3.0'
-    //changed this from groovy-2.4
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
-    testImplementation group: 'org.gwtproject', name: 'gwt-servlet-jakarta', version: '2.11.0'
-
-
-    testImplementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
-    testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
-    testImplementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
-
-    implementation group: 'org.apache.commons', name: 'commons-math', version: '2.2'
-
-    // not working: odd
-    //testCompile group: 'org.jenkins-ci.plugins', name: 'testInProgress-client', version: '1.1'
-    implementation files('lib/Java/opencsv-2.1.jar')
-    implementation files('lib/Java/testInProgress-client-1.1.jar')
-    implementation files('lib/Java/selenium-api-2.35.0.jar')
-    implementation files('lib/Java/selenium-htmlunit-driver-2.35.0.jar')
-    implementation files('lib/Java/selenium-remote-driver-2.35.0.jar')
-    implementation files('lib/Java/spring-test-6.1.1.jar')
-    implementation files('lib/Java/servlet-api-5.0.0.jar')
-    implementation files('lib/Java/jakarta.servlet.jsp-api-3.1.1.jar')
-    implementation files('lib/Java/jakarta.servlet.jsp.jstl-api-3.0.0.jar')
-    implementation files('home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar')
-    // not working :(
-    //testImplementation group: 'org.seleniumhq.selenium', name: 'htmlunit-driver', version: '2.35'
-//    implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
-
+    liquibaseRuntime "org.liquibase:liquibase-core:4.7.1"
+    liquibaseRuntime "info.picocli:picocli:4.6.3"
+    liquibaseRuntime "org.postgresql:postgresql:42.2.20"
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
-    implementation 'org.jooq:jool:0.9.15'
-
-    implementation files('home/WEB-INF/lib/altcha-1.1.2.jar')
-
+    testCompileOnly "org.projectlombok:lombok:1.18.20"
+    testImplementation "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
+    testImplementation "junit:junit:4.11"
+    testImplementation "net.sourceforge.htmlunit:htmlunit-core-js:2.70.0"
+    testImplementation "net.sourceforge.htmlunit:htmlunit-cssparser:1.14.0"
+    testImplementation "net.sourceforge.htmlunit:htmlunit:2.70.0"
+    testImplementation "net.sourceforge.htmlunit:neko-htmlunit:2.70.0"
+    testImplementation "net.sourceforge.jwebunit:jwebunit-core:2.4"
+    testImplementation "net.sourceforge.jwebunit:jwebunit-core:3.3"
+    testImplementation "net.sourceforge.jwebunit:jwebunit-htmlunit-plugin:3.3"
+    testImplementation "org.eclipse.jetty:jetty-server:11.0.19"
+    testImplementation "org.eclipse.jetty:jetty-servlet:11.0.19"
+    testImplementation "org.eclipse.jetty:jetty-util:11.0.19"
+    testImplementation "org.eclipse.jetty:jetty-webapp:11.0.19"
+    testImplementation "org.gebish:geb-core:7.0"
+    testImplementation "org.gebish:geb-junit4:7.0"
+    testImplementation "org.gebish:geb-spock:7.0"
+    testImplementation "org.gebish:geb-testng:7.0"
+    testImplementation "org.hamcrest:hamcrest:2.2"
+    testImplementation "org.mockito:mockito-core:5.0.0"
+    testImplementation "org.seleniumhq.selenium:selenium-api:4.16.1"
+    testImplementation "org.seleniumhq.selenium:selenium-chrome-driver:4.16.1"
+    testImplementation "org.seleniumhq.selenium:selenium-firefox-driver:4.16.1"
+    testImplementation "org.seleniumhq.selenium:selenium-support:4.16.1"
+    testImplementation "org.spockframework:spock-core:2.3-groovy-4.0"
+    testImplementation "org.spockframework:spock-junit4:2.3-groovy-4.0"
+    testImplementation "org.spockframework:spock-spring:2.3-groovy-4.0"
 }
 
 sourceSets {
     main {
-        java.srcDirs = ['source']
-        resources.srcDirs = ['home']
+        java {
+            srcDirs = ['source']
+            destinationDirectory = file('home/WEB-INF/classes')
+        }
+        resources {
+            srcDirs = ['source']
+            exclude '**/*.java'
+        }
     }
-
     test {
-        //java.srcDirs = ['test']
-        groovy.srcDirs = ['test']
-        resources.srcDirs = ['test']
+        java {
+            srcDirs = ['test']
+            // Exclude test suite files that use unavailable test runners
+            exclude '**/SolrUnitTests.java'
+            exclude '**/SmokeTestsReadWrite.java'
+        }
+        resources {
+            srcDirs = ['test']
+            exclude '**/*.java'
+        }
     }
 }
 
 test {
 //    maxHeapSize = "2048m"
     maxHeapSize = "8g"
-    useJUnitPlatform()
+
+//    useJUnitPlatform() //do we want this (junit 4 specific)
+
     def jvmArgsList = ['--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
                        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
                        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
@@ -772,17 +855,29 @@ test {
     }
     jvmArgs(jvmArgsList)
     testLogging {
-        //showStandardStreams = true
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
     }
 
+    // Check if a specific test suite is requested (from Ant)
+    def testSuite = project.hasProperty('suite') ? project.property('suite') : null
+
+    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
     def includeSmokeTests = project.hasProperty('smokeTests')
     def includeNonSmokeTests = project.hasProperty('nonSmokeTests')
-    if (!includeSmokeTests && !includeNonSmokeTests) {
+
+    // If a specific suite is requested, ignore other flags
+    if (testSuite != null) {
+        println "Running test suite: " + testSuite
+        includeSmokeTests = false
+        includeNonSmokeTests = false
+        includeNcbiLoadTests = false
+    } else if (!includeSmokeTests && !includeNonSmokeTests) {
         //if neither flag is set, run all tests
         includeSmokeTests = true
         includeNonSmokeTests = true
     }
-    def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
 
     doFirst {
         println "Include smoke tests: " + includeSmokeTests
@@ -791,11 +886,19 @@ test {
     }
 
     filter {
-        if (includeNcbiLoadTests) {
+        if (testSuite != null) {
+            // Run specific test suite requested from Ant
+            // Suite classes use standard JUnit 4 @RunWith(Suite.class) and can be run directly
+            includeTestsMatching "org.zfin." + testSuite
+        } else if (includeNcbiLoadTests) {
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
 
 //   UNCOMMENT BELOW TO RUN CHARACTERIZATION TEST (DANGEROUS)
-            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
+//            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
+
+            //don't run other tests
+            includeNonSmokeTests = false
+            includeSmokeTests = false
         }
         if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
@@ -869,7 +972,7 @@ test {
             includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
             includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
             //include specific method in any of the tests
-    //        includeTestsMatching "*ActiveDataTest"
+            //        includeTestsMatching "*ActiveDataTest"
         }
     }
 
@@ -908,3 +1011,224 @@ task showDirs {
     }
 }
 
+// ============================================================================
+// HELPFUL TASKS
+// ============================================================================
+
+// Task to install command-line utilities to TARGETROOT
+task installUtilities(type: Copy) {
+    dependsOn installDist
+    description = 'Install command-line utility scripts to $TARGETROOT/utilities'
+    group = 'deployment'
+
+    from layout.buildDirectory.dir('install/zfin-util')
+    into "${targetroot}/utilities"
+
+    doLast {
+        // Create symlink for easier access
+        def binDir = file("${targetroot}/bin")
+        binDir.mkdirs()
+
+        println "\n========================================"
+        println "Utilities installed successfully!"
+        println "========================================"
+        println "Location: ${targetroot}/utilities/bin/zfin-util"
+        println ""
+        println "Usage:"
+        println "  zfin-util list              - List available utilities"
+        println "  zfin-util help <utility>    - Show help for a utility"
+        println "  zfin-util <utility> [args]  - Run a utility"
+        println "========================================"
+    }
+}
+
+// Quick rebuild and reinstall
+task reinstallUtilities {
+    dependsOn 'classes', 'installUtilities'
+    description = 'Rebuild and reinstall command-line utilities'
+    group = 'deployment'
+}
+
+war {
+    archiveFileName = 'zfin.war'
+
+    // Handle duplicates by excluding them (prefer Gradle dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    // Set the web application directory (contains WEB-INF, JSPs, static files)
+    webAppDirectory = file('home')
+
+    // Include web resources from home directory
+    from('home') {
+        include 'gwt/**'
+        include 'images/**'
+        include 'robots.txt'
+        include 'templates/**'
+        include 'server_apps/**'
+        include 'ZFIN/**'
+        include 'zf_info/**'
+        include 'WEB-INF/**'
+        include 'favicon.ico'
+
+        into '/'
+    }
+
+    // Include Hibernate configuration and other conf files in classpath
+    from('conf') {
+        include 'hibernate.cfg.xml'
+        include 'log4j2.xml'
+        into 'WEB-INF/classes'
+    }
+
+    // Include Hibernate mapping files and properties files from source directory
+    from('source') {
+        include '**/*.hbm.xml'
+        include '**/*.properties'
+        into 'WEB-INF/classes'
+    }
+
+    // Include asset manifest generated by webpack from TARGETROOT
+    from(targetroot + '/home') {
+        include 'asset-manifest.json'
+        into 'WEB-INF/classes'
+    }
+
+    // Compiled classes go into WEB-INF/classes
+    // Note: We use pre-compiled classes from home/WEB-INF/classes
+    // Source is in 'source/' directory (2,438 Java files + 1,654 resources)
+    // To compile from source: gradle compileJava (outputs to home/WEB-INF/classes)
+    classpath = configurations.runtimeClasspath
+
+    // Dependencies go into WEB-INF/lib
+    // Gradle will automatically package all runtime dependencies
+}
+
+// Show dependency tree
+task showDependencies {
+    doLast {
+        configurations.runtimeClasspath.each { println it.name }
+    }
+}
+
+// Check for conflicts
+task checkConflicts {
+    doLast {
+        println "Checking for dependency conflicts..."
+        configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each {
+            println "${it.moduleVersion.id}"
+        }
+    }
+}
+
+// Clean task
+clean {
+    delete 'build'
+}
+
+
+
+// ============================================================================
+// ANT COMPILE BRIDGE
+// ============================================================================
+
+// Custom compile task that mimics Ant's compile target
+// This allows 'ant compile' to delegate to Gradle for compilation
+task antCompile {
+    description = 'Compile Java sources and copy resources (called by ant compile)'
+
+    dependsOn compileJava
+
+    doLast {
+        // Copy XML files from source to classes directory (mimics Ant behavior)
+        copy {
+            from 'source'
+            into 'home/WEB-INF/classes'
+            include '**/*.xml'
+            exclude '**/.svn'
+        }
+        println ':JAVA COMPILE SUCCESSFUL:'
+    }
+}
+
+// Configure compileJava task to output to Ant-compatible location
+compileJava {
+    destinationDirectory.set(file('home/WEB-INF/classes'))
+
+    // Ensure annotation processing (Lombok) works correctly
+    options.annotationProcessorPath = configurations.compileClasspath
+
+    // Java compiler options matching Ant configuration
+    options.encoding = 'UTF-8'
+    options.debug = true
+    options.compilerArgs << '-parameters'
+    options.fork = true
+    options.forkOptions.memoryMaximumSize = '556m'
+}
+
+// ============================================================================
+// GWT COMPILATION TASKS
+// ============================================================================
+
+// Task to compile a single GWT module
+task compileGwtModule(type: JavaExec) {
+    description = 'Compile a GWT module (specify with -Pmodule=...)'
+    group = 'build'
+
+    def gwtModule = project.hasProperty('module') ? project.property('module') : 'org.zfin.gwt.lookup.Lookup'
+    def gwtTarget = project.hasProperty('gwtTarget') ? project.property('gwtTarget') : targetroot + '/home/gwt'
+
+    mainClass = 'com.google.gwt.dev.Compiler'
+    classpath = configurations.compileClasspath + files('source')
+    args = [
+        '-war', gwtTarget,
+        '-style', 'DETAILED',
+        gwtModule
+    ]
+    jvmArgs = ['-Xms256m', '-Xmx512m']
+
+    doFirst {
+        delete "${gwtTarget}/${gwtModule}"
+        println "Compiling GWT module ${gwtModule} to ${gwtTarget}"
+    }
+}
+
+// Task to compile all GWT modules
+task gwtCompile {
+    description = 'Compile all GWT modules'
+    group = 'build'
+
+    dependsOn 'compileJava'
+
+    doLast {
+        def modules = [
+            'org.zfin.gwt.lookup.Lookup',
+            'org.zfin.gwt.marker.Marker',
+            'org.zfin.gwt.curation.Curation'
+        ]
+
+        def gwtTarget = targetroot + '/pre-home/gwt'
+
+        // Compile modules sequentially
+        modules.each { module ->
+            delete "${gwtTarget}/${module}"
+            println "Compiling GWT module ${module} to ${gwtTarget}"
+            javaexec {
+                mainClass = 'com.google.gwt.dev.Compiler'
+
+                // Match the working command line classpath: home/WEB-INF/classes:lib/Java/gwt/*:source
+                classpath = files('home/WEB-INF/classes') +
+                            fileTree(dir: 'lib/Java/gwt', include: '*.jar') +
+                            files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar') +
+                            files('source')
+
+                args = [
+                    '-war', gwtTarget,
+                    '-strict',
+                    '-style', 'DETAILED',
+                    module
+                ]
+                jvmArgs = ['-Xms256m', '-Xmx512m']
+            }
+        }
+    }
+}
