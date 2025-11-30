@@ -1,5 +1,6 @@
 package org.zfin.jbrowse.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,6 @@ import org.zfin.mapping.GenomeLocation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class JBrowseController {
     @RequestMapping("/jbrowse")
     public String jbrowse(Model model) {
         model.addAttribute("requestParams", request.getQueryString());
-        model.addAttribute("urlPrefix",JBrowseImage.calculateBaseUrl());
+        model.addAttribute("urlPrefix", null);
         return "jbrowse/jbrowse-view";
     }
 
@@ -40,9 +40,9 @@ public class JBrowseController {
      * This method is used to redirect to a JBrowse image page for a given accession.
      * It can accept a ZFIN gene or feature ID, or an ENSDARG ID.
      * Example request:
-     *  https://zfin.org/action/jbrowse/byName?name=ENSDARG00000104430
-     *  which will redirect to:
-     *  https://zfin.org/jbrowse/?data=data%2FGRCz11&name=18%3A33009828..33013057
+     * https://zfin.org/action/jbrowse/byName?name=ENSDARG00000104430
+     * which will redirect to:
+     * https://zfin.org/jbrowse/?data=data%2FGRCz11&name=18%3A33009828..33013057
      *
      * @param model
      * @return
@@ -60,16 +60,16 @@ public class JBrowseController {
         tracks.add(GenomeBrowserTrack.GENES);
 
         List<? extends GenomeLocation> locations = (name.startsWith("ZDB-")) ?
-                getLocationsByZDB(name, tracks) : //ZDB ID
-                getLocationsByAccession(name, source);    //ENSDARG ID/NCBI ID, and the source
+            getLocationsByZDB(name, tracks) : //ZDB ID
+            getLocationsByAccession(name, source);    //ENSDARG ID/NCBI ID, and the source
 
         GenomeLocation location = validateLocations(locations);
 
         GenomeBrowserImage image = GenomeBrowserFactory.getStaticImageBuilder()
-                .setLandmarkByGenomeLocation(location)
-                .tracks(tracks.toArray(new GenomeBrowserTrack[tracks.size()]))
-                .genomeBuild(GenomeBrowserBuild.getBySource(source))
-                .build();
+            .setLandmarkByGenomeLocation(location)
+            .tracks(tracks.toArray(new GenomeBrowserTrack[tracks.size()]))
+            .genomeBuild(GenomeBrowserBuild.getBySource(source))
+            .build();
 
         String url = image.getLinkUrl();
 
@@ -109,8 +109,8 @@ public class JBrowseController {
             source = GenomeLocation.Source.ZFIN;
         }
         return getLinkageRepository()
-                .getGenomeLocation(
-                        getMarkerRepository().getMarkerByID(id), source);
+            .getGenomeLocation(
+                getMarkerRepository().getMarkerByID(id), source);
     }
 
     private List<? extends GenomeLocation> getLocationsByMarkerID(String id) {
@@ -119,8 +119,8 @@ public class JBrowseController {
 
     private List<? extends GenomeLocation> getLocationsByFeatureID(String id) {
         return getLinkageRepository()
-                .getGenomeLocation(
-                        getFeatureRepository().getFeatureByID(id), GenomeLocation.Source.ZFIN);
+            .getGenomeLocation(
+                getFeatureRepository().getFeatureByID(id), GenomeLocation.Source.ZFIN);
     }
 
     private List<? extends GenomeLocation> getLocationsByAccession(String name, GenomeLocation.Source source) {

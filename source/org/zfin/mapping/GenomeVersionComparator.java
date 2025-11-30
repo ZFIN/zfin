@@ -15,6 +15,7 @@ public class GenomeVersionComparator <T extends GenomeLocation> implements Compa
         Map<String, String> map = new HashMap<>();
         Integer i = 1;
 
+        map.put(GenomeLocation.GRCZ12TU, pad(i++));
         map.put(GenomeLocation.GRCZ11, pad(i++));
         map.put(GenomeLocation.GRCZ10, pad(i++));
         map.put(GenomeLocation.ZV9, pad(i++));

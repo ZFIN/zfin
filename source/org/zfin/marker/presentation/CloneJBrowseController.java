@@ -33,7 +33,8 @@ public class CloneJBrowseController {
                 "" :
                 "?" + request.getQueryString();
 
-        String proxyDestinationUri = ZfinPropertiesEnum.JBROWSE_BASE_URL.value() +
+
+        String proxyDestinationUri = "https://dev.d2u241g26l748k.amplifyapp.com" +
                 "/" +
                 relativePath +
                 queryString;
