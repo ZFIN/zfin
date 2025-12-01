@@ -16,13 +16,6 @@ public class TokenStorage implements TokenStorageInterface {
     private static final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public enum ServiceKey {
-        RECAPTCHA_V2_SITE_KEY("captchaSiteKey-V2.txt"),
-        RECAPTCHA_V2_SECRET_KEY("captchaSecretKey-V2.txt"),
-        RECAPTCHA_V3_SITE_KEY("captchaSiteKey-V3.txt"),
-        RECAPTCHA_V3_SECRET_KEY("captchaSecretKey-V3.txt"),
-        HCAPTCHA_SITE_KEY("captchaSiteKey-hCaptcha.txt"),
-        HCAPTCHA_SECRET_KEY("captchaSecretKey-hCaptcha.txt"),
-        ALTCHA_SITE_KEY("captchaSiteKey-altcha.txt"),
         ALTCHA_SECRET_KEY("captchaSecretKey-altcha.txt"),
         ALLIANCE_API_TOKEN("alliance-api-token.txt"),
         NCBI_API_TOKEN("ncbi-token.txt"),
