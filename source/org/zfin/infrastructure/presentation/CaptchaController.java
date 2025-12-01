@@ -30,21 +30,19 @@ public class CaptchaController {
             @RequestParam(name="redirect", required = false) String redirect
     ) throws IOException {
         model.addAttribute("redirect", redirect);
-        Optional<String> siteKey = CaptchaKeys.getSiteKey();
-        if (siteKey.isEmpty()) {
-            log.error("Captcha site key is not set. Please check your configuration.");
+        Optional<String> secretKey = CaptchaKeys.getSecretKey();
+        if (secretKey.isEmpty()) {
+            log.error("Captcha key is not set. Please check your configuration.");
             //just allow for now (better than breaking the site)
             setSuccessfulCaptchaToken();
             return redirectTo(redirect);
         }
 
-        model.addAttribute("siteKey", siteKey.get());
-
         //if we somehow got to this challenge page without captcha's enabled, just redirect back
         if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
             return redirectTo(redirect);
         }
-        return "infrastructure/captcha-" + CaptchaService.getCurrentVersion() + "-challenge";
+        return "infrastructure/captcha-altcha-challenge";
     }
 
     private static String redirectTo(String redirect) {
@@ -59,10 +57,7 @@ public class CaptchaController {
             HttpServletRequest request
     ) throws IOException {
         String redirect = request.getParameter("redirect");
-        String challengeResponse = request.getParameter("g-recaptcha-response");
-        if (CaptchaService.getCurrentVersion().equals(CaptchaKeys.Version.altcha)) {
-            challengeResponse = request.getParameter("altcha");
-        }
+        String challengeResponse = request.getParameter("altcha");
         if (CaptchaService.verifyCaptcha(challengeResponse)) {
             if (StringUtils.isEmpty(redirect)) {
                 return "infrastructure/captcha-response";
