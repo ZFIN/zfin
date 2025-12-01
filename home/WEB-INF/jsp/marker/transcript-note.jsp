@@ -11,7 +11,7 @@
         button that populates BLAST searches at ZFIN, NCBI, Ensembl and UCSC.
     </p>
     <p>
-        A GBrowse image showing all the transcripts of the gene in a genomic context is presented when available. Links
+        A JBrowse image showing all the transcripts of the gene in a genomic context is presented when available. Links
         to Genome Browsers at UCSC, NCBI, Ensembl and ZFIN are available at the top of the JBrowse image in the
         transcript section.
     </p>

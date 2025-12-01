@@ -128,11 +128,13 @@ public class TranscriptService {
             && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
             && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             MarkerGenomeLocation landmark = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0);
+            int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
+            int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(landmark)
                 .genomeBuild(GRCZ11)
                 // add 10% left padding
-                .withPadding((landmark.getEnd() - landmark.getStart()) / 10, 0)
+                .withPadding(startPadding, endPadding)
                 .tracks(GenomeBrowserTrack.Page.GENE_TRANSCRIPTS.getTracks());
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
