@@ -133,7 +133,7 @@ public class TranscriptService {
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(landmark)
                 .genomeBuild(GRCZ11)
-                // add 10% left padding
+                // add 10% left padding and 5% right padding
                 .withPadding(startPadding, endPadding)
                 .tracks(GenomeBrowserTrack.Page.GENE_TRANSCRIPTS.getTracks());
             if (highlightedTranscript != null) {
