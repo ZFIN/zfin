@@ -143,12 +143,14 @@ public class GeneViewController {
             .filter(markerGenomeLocation -> markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN_NCBI) ||
                                             markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN)).toList();
         if (latestAssembly != null && CollectionUtils.isNotEmpty(markerGenomeLocations) && markerGenomeLocations.size() == 1) {
-            MarkerGenomeLocation zfinLocation = markerGenomeLocations.get(0);
+            MarkerGenomeLocation landmark = markerGenomeLocations.get(0);
+            int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
+            int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
             GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                .setLandmarkByGenomeLocation(zfinLocation)
                 .setBuild(latestAssembly)
-                // add 10% left padding
-                .withPadding((zfinLocation.getEnd() - zfinLocation.getStart()) / 10, 0)
+                .setLandmarkByGenomeLocation(landmark)
+                // add 10% left padding and 5% right padding
+                .withPadding(startPadding, endPadding)
                 .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
             GenomeBrowserImage genomeBrowserImageSequence = refseqBuilder.build();
             // if GRCz12 then show jBrowse image
