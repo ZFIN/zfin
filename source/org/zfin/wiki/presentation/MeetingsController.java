@@ -3,6 +3,7 @@ package org.zfin.wiki.presentation;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,17 +18,21 @@ import org.zfin.wiki.WikiLoginException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 @Log4j2
 public class MeetingsController {
+
+    private static final long RESULTS_LIMIT = 5;
 
     public MeetingsController() throws WikiLoginException {
     }
@@ -40,16 +45,11 @@ public class MeetingsController {
 
     @RequestMapping(value = "/wiki/{wikiSpaceName}")
     public JsonResultResponse<WikiPage> getMeetingsWikiPages(@PathVariable String wikiSpaceName,
-                                                             @Version Pagination pagination) throws IOException {
+                                                             @Version Pagination pagination) throws IOException, URISyntaxException {
         final String note = "Retrieving wiki pages from space: " + wikiSpaceName;
         log.info(note);
         long start = System.currentTimeMillis();
-        String url1 = "https://zfin.atlassian.net/wiki/rest/api/content/search?cql=space%3D";
-        url1 += wikiSpaceName;
-        if (wikiSpaceName.equals("jobs") || wikiSpaceName.equals("news"))
-            url1 += "%20AND%20type%3Dblogpost%20AND%20created%20%3E%3D%20now%28%22-120d%22%29%20ORDER%20BY%20created%20desc&limit=5&expand=history";
-        else
-            url1 += "%20AND%20type%3Dpage%20AND%20created%20%3E%3D%20now%28%22-120d%22%29%20ORDER%20BY%20created%20desc&limit=5&expand=history";
+        String url1 = buildConfluenceAPIEndpoint(wikiSpaceName);
         JSONObject json = readJsonFromUrl(url1);
         List<WikiPage> list = ((JSONArray) json.get("results")).toList().stream()
                 .map(o -> {
@@ -70,6 +70,26 @@ public class MeetingsController {
         response.setNote(note);
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
         return response;
+    }
+
+    private static String buildConfluenceAPIEndpoint(String wikiSpaceName) throws URISyntaxException {
+        // Validate wikiSpaceName
+        Set<String> allowedSpaces = Set.of("jobs", "news", "meetings");
+        if (!allowedSpaces.contains(wikiSpaceName)) {
+            throw new IllegalArgumentException("Invalid wiki space: " + wikiSpaceName);
+        }
+
+        String pageType = Set.of("jobs", "news").contains(wikiSpaceName) ? "blogpost" : "page";
+
+        String cql = String.format("space=%s AND type=%s AND created >= now(\"-120d\") ORDER BY created desc",
+                wikiSpaceName, pageType);
+
+        URIBuilder builder = new URIBuilder("https://zfin.atlassian.net/wiki/rest/api/content/search")
+                .addParameter("cql", cql)
+                .addParameter("limit", String.valueOf(RESULTS_LIMIT))
+                .addParameter("expand", "history");
+
+        return builder.build().toString().replaceAll("\\+", "%20");
     }
 
     @Setter
