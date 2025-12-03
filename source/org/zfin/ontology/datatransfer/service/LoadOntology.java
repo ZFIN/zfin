@@ -29,7 +29,6 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
-import org.zfin.ontology.datatransfer.InvalidOBOFileException;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
@@ -901,7 +900,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     if (!ontology.containsTerm(term.getID()))
                         continue;
                     numberOfTerms++;
-                    pushToParsedTerms(term);
+                    if (!pushToParsedTerms(term)) {
+                        continue;
+                    }
                     if (term.isObsolete()) {
                         appendFormattedRecord(UnloadFile.TERM_OBSOLETE, term.getID());
                     }
@@ -1077,12 +1078,14 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         appendFormattedRecord(unloadFile, convertFirstId, idTwo, relationshipName);
     }
 
-    private void pushToParsedTerms(OBOClass term) {
+    private boolean pushToParsedTerms(OBOClass term) {
         String obsolete = "";
         if (term.isObsolete())
             obsolete = "t";
         if (StringUtils.isEmpty(term.getName())) {
-            throw new InvalidOBOFileException("Term with id [" + term.getID() + "] has no name attribute");
+            String message = "Term with id [" + term.getID() + "] has no name attribute";
+            LOG.error(message);
+            return false;
         }
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),
             term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
@@ -1097,6 +1100,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), databaseID);
             }
         }
+        return true;
     }
 
     private void createOboSession() throws OBOParseException, IOException {
