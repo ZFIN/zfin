@@ -10,4 +10,5 @@ monitoring.ui.container.elasticsearch.enabled: true
 elasticsearch.username: kibana_system
 elasticsearch.password: ${KIBANA_SYSTEM_PASSWORD}
 xpack.encryptedSavedObjects:
-  encryptionKey: "iHNSfownsdfuyusef7348sdfnns8Hdhslyu&@7dshlnsdfu9ujsdfl"
+  keyRotation:
+    decryptionOnlyKeys: ["iHNSfownsdfuyusef7348sdfnns8Hdhslyu&@7dshlnsdfu9ujsdfl"]
