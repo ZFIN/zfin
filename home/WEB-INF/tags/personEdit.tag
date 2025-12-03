@@ -255,10 +255,21 @@
                                     </form:select>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <form:label path="accountInfo.student">ZFIN Student: </form:label>
+                                </td>
+                                <td>
+                                    <form:checkbox size="50" path="accountInfo.student"/>
+                                </td>
+                            </tr>
                         </c:when>
                         <c:otherwise>
                             <tr>
-                                <td colspan="2"><form:hidden path="accountInfo.role"/></td>
+                                <td colspan="2">
+                                    <form:hidden path="accountInfo.role"/>
+                                    <form:hidden path="accountInfo.student"/>
+                                </td>
                             </tr>
                             <c:if test="${person.accountInfo.root}">
                             <tr>
@@ -268,14 +279,6 @@
                             </c:if>
                         </c:otherwise>
                     </c:choose>
-                    <tr>
-                        <td>
-                            <form:label path="accountInfo.student">Student: </form:label>
-                        </td>
-                        <td>
-                            <form:checkbox size="50" path="accountInfo.student"/>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
 
