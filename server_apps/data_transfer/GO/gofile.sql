@@ -1,7 +1,7 @@
 begin work ;
 		 
 create temporary table tmp_identifiers (id text, id2 text);
-\copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
+\copy tmp_identifiers from './ids.unl' (delimiter '|');
 
 create index tmpidentifiers_index on tmp_identifiers (id);
 
@@ -110,6 +110,6 @@ update tmp_go
 update tmp_go
     set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 
-\copy (select * from tmp_go order by m_zdb_id, mv_zdb_id, m_abbrev, m_name, t_ont_id, mv_source_id, ac_no, mv_ev_code, if_from, mv_flag, t_ont, mv_date_modified, mv_created_by, mv_annoextn, gene_type, geneproduct_id,doi_id,goref_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
+\copy (select * from tmp_go order by m_zdb_id, mv_zdb_id, m_abbrev, m_name, t_ont_id, mv_source_id, ac_no, mv_ev_code, if_from, mv_flag, t_ont, mv_date_modified, mv_created_by, mv_annoextn, gene_type, geneproduct_id,doi_id,goref_id) to './go.zfin' with delimiter as '	' null as '';
 
 commit work;
