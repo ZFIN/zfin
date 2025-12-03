@@ -67,7 +67,6 @@ public class StrDetailsValidator implements Validator {
                 Object[] args = new Object[]{existing.getName()};
                 String defaultMessage = "Sequence is already used";
                 errors.rejectValue("sequence1", "str.sequence.inuse", args, defaultMessage);
-                errors.rejectValue("sequence2", "str.sequence.inuse", args, defaultMessage);
             }
         }
     }
