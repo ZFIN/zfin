@@ -36,20 +36,11 @@ import static org.zfin.profile.service.ProfileService.isLoggedIn;
 @Log4j2
 public class CaptchaService {
 
-    private static final String RECAPTCHA_BASE_URL = "https://www.google.com/recaptcha/api/siteverify";
-    private static final String HCAPTCHA_BASE_URL = "https://api.hcaptcha.com/siteverify";
-    private static final double CONFIDENCE_THRESHOLD = 0.5;
-
     //TODO: should we compute this algorithmically? If we see bots setting this without going through captcha,
     //      we should use some cryptography to set it in a way that prevents tampering.
     private static final String CAPTCHA_COOKIE_NAME = "grcptv";
     private static final String CAPTCHA_COOKIE_VALUE = "rcv_true";
     private static final int CAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week
-
-    //These are the json keys we use to communicate with recaptcha API
-    private enum RecaptchaApiRequestKeys {secret, response, remoteip;}
-
-    private enum RecaptchaApiResponseKeys {success, score;}
 
     /**
      * Set the current session as having been successfully verified using captcha
@@ -128,12 +119,7 @@ public class CaptchaService {
         if (StringUtils.isEmpty(challengeResponse)) {
             return false;
         }
-        if (getCurrentVersion().equals(CaptchaKeys.Version.altcha)) {
-            if (verifyAltcha(challengeResponse)) {
-                setSuccessfulCaptchaToken();
-                return true;
-            }
-        } else if (verifyCaptchaWithAPI(challengeResponse, null)) {
+        if (verifyAltcha(challengeResponse)) {
             setSuccessfulCaptchaToken();
             return true;
         }
@@ -152,89 +138,5 @@ public class CaptchaService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Verifies the reCAPTCHA response token.
-     *
-     * @param userResponse The user response token from the frontend.
-     * @param remoteIp     Optional: The IP address of the user (can be null).
-     * @return true if the verification is successful, false otherwise.
-     */
-    private static boolean verifyCaptchaWithAPI(String userResponse, String remoteIp) throws IOException {
-        if (StringUtils.isEmpty(userResponse)) {
-            return false;
-        }
-        Optional<String> secretKey = CaptchaKeys.getSecretKey();
-        if (secretKey.isEmpty()) {
-            log.error("Captcha secret key is not set. Please check your configuration.");
-            // just allow for now (better than breaking the site)
-            return true;
-        }
-
-        // Prepare the POST parameters
-        List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.secret.name(), secretKey.get()));
-        nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.response.name(), userResponse));
-        if (remoteIp != null && !remoteIp.isEmpty()) {
-            nvps.add(new BasicNameValuePair(RecaptchaApiRequestKeys.remoteip.name(), remoteIp));
-        }
-
-        log.info("Verifying recaptcha with google challenge");
-        try (CloseableHttpClient client = HttpClientBuilder.create()
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES).build())
-                .build()) {
-
-            HttpPost post = new HttpPost(verifyUrl());
-            post.setEntity(new UrlEncodedFormEntity(nvps));
-
-            HttpResponse response = client.execute(post);
-
-            String responseString = EntityUtils.toString(response.getEntity());
-            JsonNode jsonResponse = new ObjectMapper().readTree(responseString);
-
-            log.info("IP Address: " + getCurrentRequest().getRemoteAddr());
-
-            boolean isHuman = true;
-            if (jsonResponse.has(RecaptchaApiResponseKeys.score.name())) {
-                double score = jsonResponse.get(RecaptchaApiResponseKeys.score.name()).asDouble();
-                log.info("Score: " + score);
-                if (score < CONFIDENCE_THRESHOLD) {
-                    isHuman = false;
-                }
-            }
-            if (isHuman && jsonResponse.get(RecaptchaApiResponseKeys.success.name()).asBoolean()) {
-                log.info("Success Verifying captcha");
-            } else {
-                log.info("Failure Verifying captcha");
-                log.info("UserResponse: " + userResponse);
-                log.info("Details: " + responseString);
-                isHuman = false;
-            }
-            return isHuman;
-        } catch (Exception e) {
-            log.info("Failure Verifying captcha due to exception: ", e);
-            return true;
-        }
-    }
-
-    private static String verifyUrl() {
-        if (getCurrentVersion().equals(CaptchaKeys.Version.hCaptcha)) {
-            return HCAPTCHA_BASE_URL;
-        }
-        return RECAPTCHA_BASE_URL;
-    }
-
-    public static CaptchaKeys.Version getCurrentVersion() {
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.H_CAPTCHA)) {
-            return CaptchaKeys.Version.hCaptcha;
-        }
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.RECAPTCHA_V2)) {
-            return CaptchaKeys.Version.V2;
-        }
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.ALTCHA)) {
-            return CaptchaKeys.Version.altcha;
-        }
-        return CaptchaKeys.Version.V3;
     }
 }
