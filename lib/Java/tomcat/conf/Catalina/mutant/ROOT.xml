@@ -3,7 +3,7 @@
 -->
 
 
-<Context path="/"
+<Context docBase="/opt/zfin/catalina_bases/zfin.org/wars/zfin.war"
          swallowOutput="true" privileged="true">
 
 <!-- check every 20 min (=1200sec) if the connection is healthy by running the 
