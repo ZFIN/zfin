@@ -1,5 +1,6 @@
 package org.zfin.infrastructure.presentation;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.properties.ZfinPropertiesEnum;
+
+import java.io.IOException;
+
+import static org.zfin.infrastructure.captcha.CaptchaService.isSuccessfulCaptchaToken;
+import static org.zfin.infrastructure.captcha.CaptchaService.verifyCaptcha;
 
 
 @Controller
@@ -35,8 +41,11 @@ public class UserCommentController {
                                                             @RequestParam("yiw-email") String email,
                                                             @RequestParam("yiw-subject") String subject,
                                                             @RequestParam("yiw-comments") String comments,
+                                                            @RequestParam("altcha") String altcha,
                                                             @RequestParam("email") String hiddenEmail,
-                                                            @RequestHeader(value = "referer", defaultValue = "<none>") String referer) {
+                                                            @RequestHeader(value = "referer", defaultValue = "<none>") String referer,
+                                                            HttpServletRequest request
+                                                            ) {
         MailSender mailer = AbstractZfinMailSender.getInstance();
 
         // none of the regular fields should be blank. client-side validation should have prevented that. if any of them
@@ -49,6 +58,16 @@ public class UserCommentController {
                 StringUtils.isEmpty(comments) ||
                 !StringUtils.isEmpty(hiddenEmail)) {
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid field"), HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isCaptchaValid = true; //default to true if exception occurs
+        try {
+            boolean alreadyCaptchaValidated = isSuccessfulCaptchaToken(request);
+            isCaptchaValid = (!StringUtils.isEmpty(altcha) && verifyCaptcha(altcha)) || alreadyCaptchaValidated;
+        } catch (IOException e) {}
+
+        if (!isCaptchaValid) {
+            return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Captcha Response"), HttpStatus.BAD_REQUEST);
         }
 
         // send mail to admin
