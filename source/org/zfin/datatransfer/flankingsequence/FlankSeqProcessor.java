@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.flankingsequence;
 
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,8 +205,8 @@ public class FlankSeqProcessor {
                 }
                 if (!separatorOnlyMismatch) {
                     String message = "\nInconsistency," + feature.getType() + "," + feature.getZdbID() +
-                            "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
-                            ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
+                                     "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
+                                     ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
                     System.out.println(message);
                     logger.warn(message);
                 }
@@ -238,7 +240,7 @@ public class FlankSeqProcessor {
         HibernateUtil.currentSession().refresh(fgmd);
         HibernateUtil.currentSession().update(ftr);
         HibernateUtil.currentSession().refresh(ftr);
-        this.updated.add(List.of("New FGMD: " +ftr.getZdbID(), seqRef, "+"));
+        this.updated.add(List.of("New FGMD: " + ftr.getZdbID(), seqRef, "+"));
     }
 
     private void insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
@@ -271,16 +273,16 @@ public class FlankSeqProcessor {
             }
         }
         boolean updateMade = this.setFlankSeqIfChanged(vrSeq,
-                ftr.getZdbID(),
-                seq1,
-                seq2,
-                offset,
-                offset,
-                "genomic",
-                "directly sequenced",
-                "Genomic",
-                vfsTargetSequence,
-                vfsVariation);
+            ftr.getZdbID(),
+            seq1,
+            seq2,
+            offset,
+            offset,
+            "genomic",
+            "directly sequenced",
+            "Genomic",
+            vfsTargetSequence,
+            vfsVariation);
         boolean changed = newSequence || updateMade;
 
         try {
@@ -317,7 +319,7 @@ public class FlankSeqProcessor {
         if (vrSeq.getVseqDataZDB() == null) {
             System.out.println("vseqDataZDB is null");
         }
-        if (!Objects.equals(vrSeq.getVseqDataZDB(),zdbID)) {
+        if (!Objects.equals(vrSeq.getVseqDataZDB(), zdbID)) {
             vrSeq.setVseqDataZDB(zdbID);
             changed = true;
         }
@@ -372,7 +374,12 @@ public class FlankSeqProcessor {
         return updated;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
+        File fasta = new File("GCF_049306965.1_GRCz12tu_genomic.fna");
+        IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
+        ReferenceSequence referenceSequence = ref.getSubsequenceAt("3", 2, 30);
+        String n = null;
         try {
             FlankSeqProcessor driver = new FlankSeqProcessor();
             driver.updateFlankingSequences();

@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.genomebrowser.GenomeBrowserBuild.CURRENT;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
@@ -245,6 +246,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             if (featureLocationNeedsUpdate(featureDTO, fgl)) {
                 updateFeatureLocation(fgl, featureDTO);
+                // calculate and save flanking sequences for GRCz12tu
+                if(fgl.getAssembly().equals(CURRENT.getValue())){
+                    String n = null;
+                }
             }
         }
 
