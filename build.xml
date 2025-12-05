@@ -585,6 +585,17 @@
         <!--        <jsp-compile/> -->
     </target>
 
+    <target name="dirtydeploy" depends="npmBuild">
+        <gradle task="devCompile"/>
+    </target>
+
+    <target name="dirtydeploy-watch" depends="npmBuild">
+        <exec executable="gradle" dir="." failonerror="true">
+            <arg value="devWatch" />
+            <arg value="--continuous" />
+        </exec>
+    </target>
+
     <macrodef name="removeWebAppLocation">
         <attribute name="location"/>
         <sequential>

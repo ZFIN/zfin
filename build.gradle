@@ -782,6 +782,7 @@ dependencies {
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
     testCompileOnly "org.projectlombok:lombok:1.18.20"
+    testImplementation "jakarta.servlet:jakarta.servlet-api:6.0.0"
     testImplementation "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
     testImplementation "junit:junit:4.11"
     testImplementation "net.sourceforge.htmlunit:htmlunit-core-js:2.70.0"
@@ -814,7 +815,7 @@ sourceSets {
     main {
         java {
             srcDirs = ['source']
-            destinationDirectory = file('home/WEB-INF/classes')
+            destinationDirectory.set(file('home/WEB-INF/classes'))
         }
         resources {
             srcDirs = ['source']
@@ -1125,8 +1126,6 @@ clean {
     delete 'build'
 }
 
-
-
 // ============================================================================
 // ANT COMPILE BRIDGE
 // ============================================================================
@@ -1231,4 +1230,46 @@ task gwtCompile {
             }
         }
     }
+}
+
+
+// ============================================================================
+// DEVELOPMENT HOT-RELOAD TASKS
+// ============================================================================
+
+// Directory where Tomcat unpacks the WAR
+def catalinaBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
+def deployedClassesDir = catalinaBase + '/webapps/ROOT/WEB-INF/classes'
+
+// Compile and deploy classes to running Tomcat (triggers reload via reloadable="true")
+task devCompile {
+    description = 'Compile Java and sync to deployed Tomcat for hot reload'
+    group = 'development'
+
+    dependsOn compileJava
+
+    doLast {
+        // Copy compiled classes to deployed location
+        copy {
+            from 'home/WEB-INF/classes'
+            into deployedClassesDir
+            include '**/*.class'
+        }
+        // Copy resources (XML, properties, etc.)
+        copy {
+            from 'source'
+            into deployedClassesDir
+            include '**/*.xml'
+            include '**/*.properties'
+            exclude '**/*.java'
+        }
+        println "Classes synced to ${deployedClassesDir} - Tomcat will reload"
+    }
+}
+
+// Watch for changes and auto-compile (use with: gradle devWatch --continuous)
+task devWatch {
+    description = 'Watch for source changes and sync to Tomcat (run with --continuous)'
+    group = 'development'
+    dependsOn devCompile
 }
