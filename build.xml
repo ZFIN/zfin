@@ -510,27 +510,6 @@
         </delete>
     </target>
 
-    <target name="revert" depends="revert-build,restart" description="Reverts the build and restarts"/>
-
-    <target name="revert-build"
-            description="Moves the last successful build to the current build and this build to the previous build directly (which will get clobbered on a subsequent build).">
-        <fail message=":FAIL TO REVERT BUILD.  POST DIRECTORIES DO NOT EXIST TO MOVE:">
-            <condition>
-                <not>
-                    <and>
-                        <available file="${post-web-inf}"/>
-                        <available file="${gwt.post-target}"/>
-                    </and>
-                </not>
-            </condition>
-        </fail>
-
-        <moveWebApp to="${post-home.target" from="${home.target}"/>
-        <moveWebApp to="${home.target" from="${pre-home.target}" failonerror="true"/>
-
-        <echo message=":REVERTED BUILD SUCCESSFULY:"/>
-    </target>
-
     <macrodef name="moveWebApp">
         <attribute name="from"/>
         <attribute name="to"/>
@@ -559,9 +538,7 @@
             <condition>
                 <not>
                     <and>
-                        <available file="${pre-web-inf}"/>
                         <available file="${gwt.pre-target}"/>
-                        <!-- <available file="${pre.version.file}"/> -->
                     </and>
                 </not>
             </condition>
@@ -603,7 +580,7 @@
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
     </target>
@@ -633,80 +610,10 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="removeWebAppDir">
-        <attribute name="dir"/>
-        <sequential>
-            <echo message="removing webapp from @{dir}"/>
-            <delete dir="@{dir}"/>
-        </sequential>
-    </macrodef>
-
-
-    <macrodef name="copyWebApp">
-        <attribute name="from"/>
-        <attribute name="to"/>
-        <attribute name="overwrite" default="false"/>
-        <sequential>
-            <echo message="copying the webapp from @{from} to @{to}"/>
-            <copy todir="@{to}" overwrite="@{overwrite}">
-                <fileset dir="@{from}">
-                    <include name="WEB-INF/**"/>
-                    <exclude name="images/**"/>
-                    <exclude name="templates/**"/>
-                    <exclude name="**/*.jar"/>
-                    <exclude name="**/*.zip"/>
-                    <exclude name="**/*.class"/>
-                    <exclude name="**/*.ser"/>
-                    <exclude name="**/*.svn"/>
-                </fileset>
-                <filterset refid="allfilters"/>
-            </copy>
-
-            <copy todir="@{to}" overwrite="@{overwrite}">
-                <fileset dir="@{from}">
-                    <include name="images/**"/>
-                    <include name="templates/**"/>
-                    <include name="WEB-INF/**/*.jar"/>
-                    <include name="WEB-INF/**/*.zip"/>
-                    <include name="WEB-INF/**/*.class"/>
-                    <include name="WEB-INF/**/*.ser"/>
-                    <include name="slides/**"/>
-                    <exclude name="**/*.svn"/>
-                </fileset>
-            </copy>
-        </sequential>
-    </macrodef>
-
-    <target name="cleandeploy" depends="do"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
-        <removeWebAppDir dir="${home.target}"/>
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-    </target>
-
-    <target name="dirtydeploy" depends="compile"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-        <antcall target="npmBuild"/>
-        <antcall target="deploy-solr"/>
-    </target>
-
-    <target name="dirtycopy" depends="compile"
-            description="Like dirtydeploy, but without npmBuild or deploy-solr">
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-    </target>
-
-    <target name="copy-to-pre-release" description="Copies built files to pre-release area">
-        <!-- move non-binary files in order to not replace any characters in Binary files -->
-        <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
-    </target>
-
     <target name="prepareDeploy" description="Remove existing pre-release folder">
-        <delete dir="${pre-web-inf}"/>
         <delete dir="${gwt.pre-target}"/>
-        <mkdir dir="${pre-web-inf}"/>
         <mkdir dir="${gwt.pre-target}"/>
     </target>
-
 
     <target name="build-properties" description="Describes build properties for environment">
         <echo>If properties are defined as true, they will show up that way, otherwise will just produce string
