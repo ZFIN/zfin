@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -21,6 +22,7 @@ import static org.zfin.mapping.GenomeLocation.Source.*;
 @Getter
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
 
+    public static String GRCZ12TU = "GRCz12tu";
     public static String GRCZ11 = "GRCz11";
     public static String GRCZ10 = "GRCz10";
     public static String ZV9 = "Zv9";
@@ -42,9 +44,17 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected String assembly;
     private GenericTerm evidence;
 
+    public String getUrl(GenomeBrowserImage genomeBrowserImage) {
+        if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
+            return genomeBrowserImage.getFullLinkUrl();
+        } else {
+            return source.getUrl() + accessionNumber;
+        }
+    }
+
     public String getUrl() {
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
-            return "/action/jbrowse/byName?name=" + accessionNumber + "&source=" + source.name();
+            return null;
         } else {
             return source.getUrl() + accessionNumber;
         }
@@ -101,7 +111,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     public enum Source {
         DIRECT("DirectSubmission", true, "Direct Data Submission", null),
         ZFIN_NCBI("ZFIN", true, "ZFIN", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z12
-        ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z11
+        ZFIN("ZfinGbrowseStartEndLoader", true, "ZFIN", "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name="), //z11
         ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
         NCBI_LOADER("NCBILoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?assm=GCF_049306965.1&context=gene&id="),
         NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?assm=GCF_000002035.6&context=gene&id="),

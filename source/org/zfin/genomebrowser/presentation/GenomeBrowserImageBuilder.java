@@ -6,6 +6,7 @@ import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.gff.Assembly;
 
 import java.util.Collection;
 
@@ -57,4 +58,6 @@ public interface GenomeBrowserImageBuilder {
     GenomeBrowserImage buildForClone(Clone clone);
 
     Integer getHeight();
+
+    GenomeBrowserImageBuilder setBuild(Assembly assembly);
 }

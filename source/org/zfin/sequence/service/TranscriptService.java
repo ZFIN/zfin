@@ -127,10 +127,15 @@ public class TranscriptService {
         if (displayGBrowseImage
             && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
             && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
+            MarkerGenomeLocation landmark = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0);
+            int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
+            int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
+                .setLandmarkByGenomeLocation(landmark)
                 .genomeBuild(GRCZ11)
-                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
+                // add 10% left padding and 5% right padding
+                .withPadding(startPadding, endPadding)
+                .tracks(GenomeBrowserTrack.Page.GENE_TRANSCRIPTS.getTracks());
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
             }
