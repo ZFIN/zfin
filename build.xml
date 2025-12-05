@@ -479,14 +479,6 @@
     <!-- Generate WAR.                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="simple-war" description="Creates war file with no depends targets">
-        <war warfile="${zfin.war}" webxml="${web-inf.dir}/web.xml" duplicate="preserve" index="true">
-            <fileset dir="${web.dir}"/>
-            <lib dir="${web-inf.dir}/lib"/>
-        </war>
-    </target>
-
-
     <target name="schemaVersion" description="Prints schema version">
         <java fork="yes" classname="org.zfin.database.SchemaManager" taskname="junit" failonerror="true">
             <arg value="-checkSchema"/>

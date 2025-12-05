@@ -363,7 +363,7 @@ task deployGitInfoFile() {
         }
         copy {
             from(packageFiles)
-            into(targetroot + "/home/WEB-INF/classes")
+            into("home/WEB-INF/classes")
         }
     }
 }
@@ -1056,23 +1056,24 @@ war {
     // Handle duplicates by excluding them (prefer Gradle dependencies)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
+    // Exclude static files served by Apache (not needed in WAR)
+    // These files exist in home/ but should not be packaged
+    rootSpec.exclude 'robots.txt'
+    rootSpec.exclude 'sitemap.xml'
+    rootSpec.exclude 'favicon.ico'
+    rootSpec.exclude 'zfin_is_down.html'
+    rootSpec.exclude 'images/**'
+    rootSpec.exclude 'css/**'
+    rootSpec.exclude 'javascript/**'
+    rootSpec.exclude 'ZFIN/**'
+    rootSpec.exclude 'zf_info/**'
+    rootSpec.exclude 'ensembl/**'
+    rootSpec.exclude 'uniprot/**'
+    rootSpec.exclude 'unavailable/**'
+    rootSpec.exclude '.DS_Store'
+
     // Set the web application directory (contains WEB-INF, JSPs, static files)
     webAppDirectory = file('home')
-
-    // Include web resources from home directory
-    from('home') {
-        include 'gwt/**'
-        include 'images/**'
-        include 'robots.txt'
-        include 'templates/**'
-        include 'server_apps/**'
-        include 'ZFIN/**'
-        include 'zf_info/**'
-        include 'WEB-INF/**'
-        include 'favicon.ico'
-
-        into '/'
-    }
 
     // Include Hibernate configuration and other conf files in classpath
     from('conf') {
@@ -1098,6 +1099,7 @@ war {
     // Note: We use pre-compiled classes from home/WEB-INF/classes
     // Source is in 'source/' directory (2,438 Java files + 1,654 resources)
     // To compile from source: gradle compileJava (outputs to home/WEB-INF/classes)
+
     classpath = configurations.runtimeClasspath
 
     // Dependencies go into WEB-INF/lib
