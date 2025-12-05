@@ -18,7 +18,6 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.UpdatesDTO;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.infrastructure.service.UpdatesService;
-import org.zfin.infrastructure.service.VersionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -27,7 +26,6 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
 import org.zfin.profile.UserService;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
@@ -43,7 +41,6 @@ import java.util.*;
 
 import static org.zfin.infrastructure.seo.CanonicalLinkConfig.getCanonicalIfFound;
 import static org.zfin.infrastructure.service.RequestService.getRequestedForwardedUrl;
-import static org.zfin.infrastructure.service.RequestService.getRequestedUrlPath;
 
 /**
  * Class that is called from JSP through a function call.
@@ -452,14 +449,6 @@ public class ZfinJSPFunctions {
         if(name.length() < length)
             return name;
         return name.substring(0,length) + "...";
-    }
-
-    public static String getSoftwareBranch() {
-        String softwareVersion = VersionService.getSoftwareVersion();
-        if (softwareVersion.startsWith("release-")) {
-            return softwareVersion.substring(softwareVersion.indexOf("-") + 1);
-        }
-        return softwareVersion;
     }
 
     public static boolean isRoot() {

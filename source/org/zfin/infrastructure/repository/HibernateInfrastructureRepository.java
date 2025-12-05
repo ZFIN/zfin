@@ -35,6 +35,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinDatabaseProperty;
 import org.zfin.publication.Publication;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
@@ -1875,6 +1876,44 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return query.uniqueResult();
     }
 
+    @Override
+    public void setZfinDatabaseProperty(ZfinDatabaseProperty.KeyName keyName, String value) {
+        ZfinDatabaseProperty property = getZfinDatabasePropertyObject(keyName);
+        if (property == null) {
+            property = new ZfinDatabaseProperty();
+            property.setName(keyName.name());
+        }
+        property.setValue(value);
+        currentSession().saveOrUpdate(property);
+    }
+
+    @Override
+    public String getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName keyName) {
+        ZfinDatabaseProperty property = getZfinDatabasePropertyObject(keyName);
+        if (property != null) {
+            return property.getValue();
+        }
+        return null;
+    }
+
+    private ZfinDatabaseProperty getZfinDatabasePropertyObject(ZfinDatabaseProperty.KeyName keyName) {
+        String hql = "from ZfinDatabaseProperty where name = :name";
+        Query<ZfinDatabaseProperty> query = currentSession().createQuery(hql, ZfinDatabaseProperty.class);
+        query.setParameter("name", keyName.name());
+        return query.uniqueResult();
+    }
+
+    @Override
+    public String getReleaseNumber() {
+        String release = getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName.RELEASE_NUMBER);
+        return release != null ? release : "unknown";
+    }
+
+    @Override
+    public String getReleaseCommit() {
+        String release = getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName.RELEASE_COMMIT_HASH);
+        return release != null ? release : "unknown";
+    }
 }
 
 

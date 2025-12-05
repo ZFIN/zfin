@@ -354,16 +354,19 @@ task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
 }
 
 task deployGitInfoFile() {
-    description 'Deploy git-info.txt file into TARGETROOT'
-    group 'ZFIN Deployment'
-    def packageFiles = 'git-info.txt'
     doLast {
+        def commitNumber = 'git rev-parse HEAD'.execute().text.trim()
+        def releaseNumber = 'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
+        println "Deploying release commit number: " + commitNumber + " and release number: " + releaseNumber + " into zdb_property table."
+
+        def sqlCommandCommit = "INSERT INTO zdb_property (zprop_name, zprop_value) VALUES ('RELEASE_COMMIT_HASH', '" + commitNumber + "') ON CONFLICT (zprop_name) DO UPDATE SET zprop_value = EXCLUDED.zprop_value;"
+        def sqlCommandRelease = "INSERT INTO zdb_property (zprop_name, zprop_value) VALUES ('RELEASE_NUMBER', '" + releaseNumber + "') ON CONFLICT (zprop_name) DO UPDATE SET zprop_value = EXCLUDED.zprop_value;"
+
         exec {
-            commandLine 'bash', './generate-git-info.sh'
+            commandLine "bash", "-c", "echo \"" + sqlCommandCommit + "\" | psql -v ON_ERROR_STOP=1 " + dbname
         }
-        copy {
-            from(packageFiles)
-            into("home/WEB-INF/classes")
+        exec {
+            commandLine "bash", "-c", "echo \"" + sqlCommandRelease + "\" | psql -v ON_ERROR_STOP=1 " + dbname
         }
     }
 }
