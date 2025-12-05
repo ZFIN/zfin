@@ -134,7 +134,7 @@
                             <form:label path="emailList">Email List:</form:label>
                         </td>
                         <td>
-                            <form:checkbox size="50" path="emailList"/>
+                            <form:checkbox path="emailList"/>
                         </td>
                     </tr>
                     <tr>
@@ -142,7 +142,7 @@
                             <form:label path="deceased">Deceased:</form:label>
                         </td>
                         <td>
-                            <form:checkbox size="50" path="deceased"/>
+                            <form:checkbox path="deceased"/>
                         </td>
                     </tr>
                 </table>
@@ -260,7 +260,7 @@
                                     <form:label path="accountInfo.student">ZFIN Student: </form:label>
                                 </td>
                                 <td>
-                                    <form:checkbox size="50" path="accountInfo.student"/>
+                                    <form:checkbox path="accountInfo.student"/>
                                 </td>
                             </tr>
                         </c:when>
