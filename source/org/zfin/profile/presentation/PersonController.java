@@ -165,18 +165,25 @@ public class PersonController {
     public String submitAccountInfoDetails(@PathVariable String zdbID, Model model, Person newPerson, Errors errors) throws Exception {
         final String securityPersonZdbId = profileService.isEditableBySecurityPerson(zdbID);
         final Person person = profileRepository.getPerson(zdbID);
+        boolean loggedInUserIsRoot = profileService.isCurrentSecurityUserRoot();
         AccountInfo newAccountInfo = newPerson.getAccountInfo();
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.LOGIN.getLabel());
 
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute(LookupStrings.ERRORS, errors);
-
         AccountInfo oldAccountInfo = person.getAccountInfo();
+
         // TODO: this should already be there . . . maybe remove if we do a join sub-class
         oldAccountInfo.setZdbID(person.getZdbID());
 
         if (StringUtils.isEmpty(newAccountInfo.getLogin()) || newAccountInfo.getLogin().length() < 2) {
             errors.reject("", "Login must not be empty and must be greater than 2 characters.");
+        }
+        if (!loggedInUserIsRoot && (oldAccountInfo.getRoot() != newAccountInfo.getRoot())) {
+            errors.reject("", "You are not authorized to change access.");
+        }
+        if (!loggedInUserIsRoot && (oldAccountInfo.isStudent() != newAccountInfo.isStudent())) {
+            errors.reject("", "You are not authorized to change student status.");
         }
 
         if (StringUtils.isNotEmpty(newAccountInfo.getPass1())) {
