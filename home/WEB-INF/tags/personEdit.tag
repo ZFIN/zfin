@@ -134,7 +134,7 @@
                             <form:label path="emailList">Email List:</form:label>
                         </td>
                         <td>
-                            <form:checkbox size="50" path="emailList"/>
+                            <form:checkbox path="emailList"/>
                         </td>
                     </tr>
                     <tr>
@@ -142,7 +142,7 @@
                             <form:label path="deceased">Deceased:</form:label>
                         </td>
                         <td>
-                            <form:checkbox size="50" path="deceased"/>
+                            <form:checkbox path="deceased"/>
                         </td>
                     </tr>
                 </table>
@@ -255,10 +255,21 @@
                                     </form:select>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <form:label path="accountInfo.student">ZFIN Student: </form:label>
+                                </td>
+                                <td>
+                                    <form:checkbox path="accountInfo.student"/>
+                                </td>
+                            </tr>
                         </c:when>
                         <c:otherwise>
                             <tr>
-                                <td colspan="2"><form:hidden path="accountInfo.role"/></td>
+                                <td colspan="2">
+                                    <form:hidden path="accountInfo.role"/>
+                                    <form:hidden path="accountInfo.student"/>
+                                </td>
                             </tr>
                             <c:if test="${person.accountInfo.root}">
                             <tr>
@@ -268,14 +279,6 @@
                             </c:if>
                         </c:otherwise>
                     </c:choose>
-                    <tr>
-                        <td>
-                            <form:label path="accountInfo.student">Student: </form:label>
-                        </td>
-                        <td>
-                            <form:checkbox size="50" path="accountInfo.student"/>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
 
