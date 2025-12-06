@@ -122,9 +122,80 @@ DELETE FROM marker_go_term_evidence WHERE mrkrgoev_zdb_id IN (SELECT old_mrkrgoe
 ---- END OF Part 2.                                                            ---------------
 ----------------------------------------------------------------------------------------------
 
+----------------------------------------------------------------------------------------------
+---- Part 3. Full duplicates in marker_go_term_evidence                        ---------------
+----------------------------------------------------------------------------------------------
+-- Identify any full duplicates in marker_go_term_evidence + inference_group_member
+-- i.e. rows where every column matches (minus metadata columns of date_entered and data_modified)
+-- We should keep one row of each set of duplicates, but we need to identify them first
+
+drop table if exists tmp_mgte_duplicates;
+
+create temp table tmp_mgte_duplicates as
+select '' as _hash, * from marker_go_term_evidence join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id;
+
+update tmp_mgte_duplicates set _hash =
+                                   md5(row(
+                                       mrkrgoev_mrkr_zdb_id,
+                                       mrkrgoev_source_zdb_id,
+                                       mrkrgoev_evidence_code,
+                                       mrkrgoev_notes,
+                                       mrkrgoev_contributed_by,
+                                       mrkrgoev_modified_by,
+                                       mrkrgoev_gflag_name,
+                                       mrkrgoev_term_zdb_id,
+                                       mrkrgoev_annotation_organization,
+                                       mrkrgoev_annotation_organization_created_by,
+                                       mrkrgoev_external_load_date,
+                                       mrkrgoev_protein_dblink_zdb_id,
+                                       mrkrgoev_relation_term_zdb_id,
+                                       mrkrgoev_relation_qualifier,
+                                       mrkrgoev_tag_submit_format,
+                                       mrkrgoev_protein_accession,
+                                       infgrmem_inferred_from,
+                                       infgrmem_notes)::text);
+
+
+delete from tmp_mgte_duplicates where _hash not in (
+    select _hash from tmp_mgte_duplicates group by _hash having count(*) > 1
+);
+
+-- Now we have a table of only duplicates.  We need to delete all but one of each set of duplicates.
+-- We can keep the row with the min value for mrkrgoev_zdb_id
+-- Let's start with inference_group_member
+delete from inference_group_member
+    where infgrmem_mrkrgoev_zdb_id in (
+        select mrkrgoev_zdb_id from tmp_mgte_duplicates tmd
+        where mrkrgoev_zdb_id not in (
+            select min(mrkrgoev_zdb_id) from tmp_mgte_duplicates tmd2
+            where tmd._hash = tmd2._hash
+            group by _hash
+        )
+    );
+
+-- Now delete from marker_go_term_evidence (this time we can use the ID instead of the compound key)
+delete from marker_go_term_evidence
+where mrkrgoev_zdb_id in (
+    select mrkrgoev_zdb_id from tmp_mgte_duplicates tmd
+    where mrkrgoev_zdb_id not in (
+        select min(mrkrgoev_zdb_id) from tmp_mgte_duplicates tmd2
+        where tmd._hash = tmd2._hash
+        group by _hash
+    )
+);
+
+-- Export the results to CSV files for record-keeping
+select 'Copying log files to: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv';
+\copy (select * from tmp_dbg_clean_marker_go_term_evidence) to 'clean_marker_go_term_evidence.csv' with csv header;
+\copy (select * from tmp_to_delete_marker_go_term_evidence) to 'to_delete_marker_go_term_evidence.csv' with csv header;
+\copy (select * from tmp_inference_group_member_updates) to 'tmp_inference_group_member_updates.csv' with csv header;
+\copy (select * from tmp_mgte_duplicates order by _hash) to 'tmp_mgte_duplicates.csv' with csv header;
+
+-- Clean up temporary tables
 DROP TABLE IF EXISTS tmp_dbg_clean_marker_go_term_evidence;
 DROP TABLE IF EXISTS tmp_to_delete_marker_go_term_evidence;
 DROP TABLE IF EXISTS tmp_inference_group_member_updates;
+DROP TABLE IF EXISTS tmp_mgte_duplicates;
 
 
 commit work;
