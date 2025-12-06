@@ -3,7 +3,7 @@ begin work ;
 
 
 create temporary table tmp_identifiers (id text, id2 text);
-\copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
+\copy tmp_identifiers from './ids.unl' (delimiter '|');
 
 create index tmpidentifiers_index on tmp_identifiers (id);
 
@@ -144,7 +144,7 @@ set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 update tmp_go
 set mv_qualifier=replace(mv_qualifier,',_','_') where mv_qualifier like '%,_%';
 
-\copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin2_all' with delimiter as '	' null as '';
+\copy (select * from tmp_go) to './go.zfin2_all' with delimiter as '	' null as '';
 
 commit work;
 

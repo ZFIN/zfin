@@ -1,25 +1,30 @@
 #!/opt/zfin/bin/perl
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
-use ZFINPerlModules;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('PGHOST', 'DB_NAME', 'ROOT_PATH');
 
-$dbname = "<!--|DB_NAME|-->";
+
+
+my $rootpath = $ENV{'ROOT_PATH'};
+my $dbname = $ENV{'DB_NAME'};
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
+my $dbhost = $ENV{'PGHOST'};
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
+chdir "$rootpath/server_apps/data_transfer/GO";
 
-system("/local/bin/gunzip gpad2.0.zfin.gz");
+system("gunzip gpad2.0.zfin.gz");
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gpad2.0.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f gpad2.0.sql");
 } catch {
   warn "Failed at gpad2.0.sql - $_";
   exit -1;

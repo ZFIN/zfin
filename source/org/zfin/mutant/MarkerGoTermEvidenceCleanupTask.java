@@ -19,10 +19,8 @@ public class MarkerGoTermEvidenceCleanupTask extends AbstractScriptWrapper {
 
     public void exec() throws IOException, InterruptedException {
         String dbQueryFile1 = ZfinPropertiesEnum.SOURCEROOT.value() + "/server_apps/data_transfer/GO/clean_marker_go_term_evidence.sql";
-        String dbQueryFile2 = ZfinPropertiesEnum.SOURCEROOT.value() + "/server_apps/data_transfer/GO/clean_marker_go_term_evidence_results.sql";
 
         runSqlFile(dbQueryFile1);
-        runSqlFile(dbQueryFile2);
     }
 
     public void runSqlFile(String dbQueryFile) {

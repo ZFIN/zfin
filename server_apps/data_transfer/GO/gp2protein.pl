@@ -5,18 +5,24 @@
 #  email, containing the path to the file, is sent to a member of ZFIN.
 
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
-#set environment variables
-$dbname = "<!--|DB_NAME|-->";
+# set environment variables
+my $rootpath = $ENV{'ROOT_PATH'};
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
+
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
-$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
+$dir = "$rootpath/server_apps/data_transfer/GO/";
 chdir "$dir";
 $outFile = "gp2protein.zfin";
 
