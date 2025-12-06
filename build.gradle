@@ -1210,7 +1210,7 @@ task gwtCompile {
             'org.zfin.gwt.curation.Curation'
         ]
 
-        def gwtTarget = targetroot + '/pre-home/gwt'
+        def gwtTarget = targetroot + '/home/gwt'
 
         // Compile modules sequentially
         modules.each { module ->

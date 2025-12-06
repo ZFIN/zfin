@@ -6,23 +6,15 @@
 <!-- The destination directory for all the compiled classes. -->
     <!-- home targets -->
     <property name="home.target" value="${TARGETROOT}/home"/>
-    <property name="pre-home.target" value="${TARGETROOT}/pre-home"/>
-    <property name="post-home.target" value="${TARGETROOT}/post-home"/>
 
     <!-- gwt targets -->
     <property name="gwt.target" value="${home.target}/gwt"/>
-    <property name="gwt.pre-target" value="${pre-home.target}/gwt"/>
-    <property name="gwt.post-target" value="${post-home.target}/gwt"/>
 
     <!-- web-inf targets -->
     <property name="web-inf.target" value="${home.target}/WEB-INF"/>
-    <property name="pre-web-inf" value="${pre-home.target}/WEB-INF"/>
-    <property name="post-web-inf" value="${post-home.target}/WEB-INF"/>
 
     <property name="tomcat-temp" value="${CATALINA_BASE}/temp"/>
     <property name="tomcat-work" value="${CATALINA_BASE}/work/Catalina/${DOMAIN_NAME}/_"/>
-    <property name="pre.jsp-compile" value="${pre-web-inf}/classes/jsp-compile"/>
-    <property name="jsp-compile" value="${web-inf.target}/classes/jsp-compile"/>
 
     <!-- The destination directory for tagunit web root -->
     <property name="tagunit-root.dir" value="${TAGUNIT_HOME}"/>
@@ -169,22 +161,8 @@
     <!-- javadoc diectory -->
     <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
 
-    <condition property="has.pre-directories">
-        <and>
-            <available file="${pre-web-inf}"/>
-            <available file="${gwt.pre-target}"/>
-        </and>
-    </condition>
-
     <condition property="has.web-inf">
         <available file="${web-inf.dir}"/>
-    </condition>
-
-    <condition property="has.post-directories">
-        <and>
-            <available file="${post-web-inf}"/>
-            <available file="${gwt.post-target}"/>
-        </and>
     </condition>
 
     <condition property="has.tomcat.symlink">

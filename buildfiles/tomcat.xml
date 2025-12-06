@@ -211,50 +211,6 @@
         <mkdir dir="${CATALINA_BASE}/lib"/>
     </target>
 
-    <macrodef name="jsp-compile" description="Compiles jsp files using jspc">
-        <sequential>
-            <delete dir="${pre.jsp-compile}" includes="**/*"/>
-            <mkdir dir="${pre.jsp-compile}"/>
-            <taskdef classname="org.apache.jasper.JspC" name="jasper2">
-                <classpath id="jspc.classpath">
-                    <path refid="log4j"/>
-                    <path refid="classpath"/>
-                    <pathelement location="${pre-web-inf}"/>
-                    <fileset dir="${CATALINA_HOME}/bin">
-                        <include name="*.jar"/>
-                    </fileset>
-                    <fileset dir="${CATALINA_HOME}/lib">
-                        <include name="*.jar"/>
-                    </fileset>
-                    <fileset dir="${CATALINA_HOME}/endorsed">
-                        <include name="*.jar"/>
-                    </fileset>
-                </classpath>
-            </taskdef>
-            <jasper2 validateXml="false"
-                     uriroot="${pre-home.target}"
-                     outputDir="${pre.jsp-compile}"
-                     classpath="${jspc.classpath}"
-                     failOnError="false"
-                     verbose="0"
-                     listErrors="true"
-                     compile="false"
-                     compilerSourceVM="1.11"
-                     compilerTargetVM="1.11"
-            />
-            <javac srcdir="${pre.jsp-compile}"
-                   destdir="${pre.jsp-compile}"
-                   classpathref="jspc.classpath"
-                   fork="true"
-                   includeAntRuntime="no"
-                   memoryMaximumSize="256m"
-                   debug="true"
-                   target="1.11"/>
-            <echo message=":JSP COMPILE SUCCESSFUL:"/>
-        </sequential>
-    </macrodef>
-
-
     <!--
         <target name="has-tomcat-symlink">
             <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
