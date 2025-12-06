@@ -86,6 +86,6 @@ update gpad_format_without_grouping
                       where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
                       group by mrkrgoev_zdb_id);
 
-\copy (select objectId, negation, relation, ontology_class_id, reference, evidence_type, with_from, interacting_taxon, date_entered::date, assigned_by, annotation_extention, annotation_properties from gpad_format_without_grouping) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/gpad.zfin' with delimiter as '	' null as '';
+\copy (select objectId, negation, relation, ontology_class_id, reference, evidence_type, with_from, interacting_taxon, date_entered::date, assigned_by, annotation_extention, annotation_properties from gpad_format_without_grouping) to './gpad.zfin' with delimiter as '	' null as '';
 
 

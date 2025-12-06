@@ -14,6 +14,16 @@
 
 use MIME::Lite;
 use DBI;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME'); #Not GO_EMAIL_ERR since that comes from properties instead of env vars
+
+# set environment variables (DB_NAME ROOT_PATH PGHOST)
+my $dbname = $ENV{'DB_NAME'};
+my $rootpath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
+
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -125,10 +135,10 @@ sub sendInvalidIDs {
 print "\nRunning validation script ...\n\n";
 
 # set environment variables
-$ENV{"DATABASE"}="<!--|DB_NAME|-->";
+$ENV{"DATABASE"}=$dbname;
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
-$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
+$dir = "$rootpath/server_apps/data_transfer/GO/";
 chdir "$dir";
 print "$dir\n";
 
@@ -136,12 +146,10 @@ print "$dir\n";
 system("/bin/rm -f *.plain") and die "can not rm old plain data files";
 
 ### open a handle on the db
-$dbname = "<!--|DB_NAME|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
   
