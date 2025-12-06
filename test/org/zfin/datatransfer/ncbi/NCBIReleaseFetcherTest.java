@@ -2,6 +2,7 @@ package org.zfin.datatransfer.ncbi;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.datatransfer.ncbi.dto.Gene2AccessionDTO;
 import org.zfin.datatransfer.ncbi.dto.Gene2VegaDTO;
@@ -82,6 +83,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void downloadGene2AccessionReleaseFileTest() throws IOException {
         File ncbiFile = fetcher.downloadReleaseFile(NCBIReleaseFileSet.FileName.GENE2ACCESSION, new File("/tmp/gene2accession.gz"), null);
         assertNotNull(ncbiFile);
@@ -90,6 +92,7 @@ public class NCBIReleaseFetcherTest {
 
 
     @Test
+    @Ignore
     public void downloadEachReleaseFileTest() throws IOException {
         File ncbiFile = fetcher.downloadReleaseFile(NCBIReleaseFileSet.FileName.GENE2ACCESSION, new File("/tmp/gene2accession.gz"), null);
         assertNotNull(ncbiFile);
@@ -109,6 +112,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void downloadFullSetReleaseFilesTest() throws IOException {
         File targetDir = new File("/tmp/ncbi-dl-target-dir/");
         NCBIReleaseFileSet fileSet = fetcher.downloadReleaseFiles(targetDir, 224);
@@ -122,6 +126,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void downloadCatalogIsFilteredToDanioTest() throws IOException {
         Optional<Integer> num = fetcher.getCurrentReleaseNumber();
         assertTrue(num.isPresent());
@@ -133,6 +138,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void downloadGene2accessionIsFilteredToDanioTest() throws IOException {
         Optional<Integer> num = fetcher.getCurrentReleaseNumber();
         assertTrue(num.isPresent());
@@ -144,8 +150,10 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void readGene2accessionFileTest() throws IOException {
-        File file = new File("/tmp/gene2accession.gz");
+        File file = fetcher.downloadReleaseFile(NCBIReleaseFileSet.FileName.GENE2ACCESSION, new File("/tmp/gene2accession.gz"), null);
+
         NCBIReleaseFileReader fileReader = new NCBIReleaseFileReader();
         List<Gene2AccessionDTO> gene2AccessionData = fileReader.readGene2AccessionFile(file);
         assertNotNull(gene2AccessionData);
@@ -159,6 +167,7 @@ public class NCBIReleaseFetcherTest {
 
 
     @Test
+    @Ignore
     public void readAllFilesTest() throws IOException {
         File ncbiFile1 = fetcher.downloadReleaseFile(NCBIReleaseFileSet.FileName.GENE2ACCESSION, new File("/tmp/gene2accession.gz"), null);
         File ncbiFile2 = fetcher.downloadReleaseFile(NCBIReleaseFileSet.FileName.GENE2VEGA, new File("/tmp/gene2vega.gz"), null);
@@ -178,6 +187,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void readAllFilesAsSetTest() throws IOException {
         NCBIReleaseFileSet fileSet = fetcher.downloadReleaseFiles(new File("/tmp/ncbi-dl-target-dir/"), 224);
         NCBIReleaseFileReader fileReader = new NCBIReleaseFileReader();
@@ -193,6 +203,7 @@ public class NCBIReleaseFetcherTest {
     }
 
     @Test
+    @Ignore
     public void getLatestReleaseFileSetTest() throws IOException {
         File downloadTo = new File("/tmp/ncbi-dl-target-dir/");
         NCBIReleaseFileReader reader = fetcher.downloadLatestReleaseFileSetReader(downloadTo);

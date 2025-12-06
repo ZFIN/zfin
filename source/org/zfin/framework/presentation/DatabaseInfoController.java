@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.service.VersionService;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -109,8 +108,8 @@ public class DatabaseInfoController {
 
     @RequestMapping("/deployed-version")
     public String viewDeployedVersion(Model model) throws IOException {
-        model.addAttribute("commit", VersionService.getSoftwareCommit());
-        model.addAttribute("branch", VersionService.getSoftwareVersion());
+        model.addAttribute("commit", getInfrastructureRepository().getReleaseCommit());
+        model.addAttribute("branch", getInfrastructureRepository().getReleaseNumber());
         model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
         return "dev-tools/deployed-version";
     }
