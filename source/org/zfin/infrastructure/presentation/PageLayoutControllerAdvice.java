@@ -36,7 +36,7 @@ public class PageLayoutControllerAdvice {
     }
 
     @ModelAttribute("releaseNumber")
-    public String populateReleaseVersion() {
+    public String populateReleaseNumber() {
         return getInfrastructureRepository().getReleaseNumber();
     }
 
@@ -45,6 +45,6 @@ public class PageLayoutControllerAdvice {
         model.addAttribute("currentUser", populateCurrentUser());
         model.addAttribute("currentUserHasZebraShareSubmissions", populateCurrentUserHasZebraShareSubmissions());
         model.addAttribute("copyrightYear", populateCopyrightYear());
-        model.addAttribute("releaseNumber", populateReleaseVersion());
+        model.addAttribute("releaseNumber", populateReleaseNumber());
     }
 }
