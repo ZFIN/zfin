@@ -63,7 +63,7 @@ public class FeatureDetailController {
         if (feature == null) {
             String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
             if (repldFtr != null) {
-                feature = featureRepository.getFeatureByID(repldFtr);
+                return "redirect:/" + repldFtr;
             } else {
                 // check if there exists a feature_tracking record for the given ID and if found and the feature is
                 // one of the two Burgess / Linn feature types redirect to pub otherwise display: feature not found.
