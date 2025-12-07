@@ -5,7 +5,7 @@
 
 <c:choose>
     <c:when test="${empty locations}">
-        <!-- no locations -->kjhhh
+        <!-- no locations -->
     </c:when>
     <c:otherwise>
 
