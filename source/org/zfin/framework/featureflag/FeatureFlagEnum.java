@@ -8,11 +8,7 @@ public enum FeatureFlagEnum {
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
-    ENABLE_CAPTCHA("Enable Captcha", false),
-    RECAPTCHA_V3("Use Recaptcha V3", false),
-    RECAPTCHA_V2("Use Recaptcha V2", false),
-    H_CAPTCHA("Use hCaptcha", false),
-    ALTCHA("Use altcha", false);
+    ENABLE_CAPTCHA("Enable Captcha", false);
 
 
     private final String name;

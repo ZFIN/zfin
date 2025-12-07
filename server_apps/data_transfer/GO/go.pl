@@ -8,24 +8,27 @@
 #  gene_association.zfin file and gp2protein.zfin file in email attachment.
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
-use ZFINPerlModules;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
-#set environment variables
+# set environment variables
+my $dbname = $ENV{'DB_NAME'};
+my $rootpath = $ENV{'ROOT_PATH'};
+my $dbhost = $ENV{'PGHOST'};
 
 system("/bin/rm -f ids.unl");
 
-$dbname = "<!--|DB_NAME|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
+chdir "$rootpath/server_apps/data_transfer/GO";
 
 $cur = $dbh->prepare("select dalias_data_zdb_id, dalias_alias from data_alias where dalias_data_zdb_id like 'ZDB-GENE%' order by dalias_alias;");
 $cur->execute();
@@ -51,18 +54,19 @@ foreach $id (keys %identifiers) {
 close IDS;
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f gofile.sql");
 } catch {
   warn "Failed at gofile.sql - $_";
   exit -1;
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gpad2.0.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f gpad2.0.sql");
 } catch {
   warn "Failed at gpad2.0.sql - $_";
   exit -1;
 };
+
 try {
   ZFINPerlModules->doSystemCommand("./goparser.pl");
 } catch {
@@ -91,19 +95,18 @@ try {
   exit -1;
 };
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile2.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f gofile2.sql");
 } catch {
   warn "Failed at gofile2.sql - $_";
   exit -1;
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile2_all.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f gofile2_all.sql");
 } catch {
   warn "Failed at gofile2_all.sql - $_";
   exit -1;
 };
-
 
 try {
   ZFINPerlModules->doSystemCommand("./goparser2.2.pl");
