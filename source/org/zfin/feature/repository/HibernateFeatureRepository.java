@@ -36,6 +36,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
+import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -759,6 +760,20 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
         query.setMaxResults(1);
         query.setParameter("assembly", "GRCz11");
+        query.setParameter("feature", feature);
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public FeatureLocation getAllFeatureLocationsForAssembly(AssemblyEnum assembly, Feature feature) {
+        String hql = """
+            select fl from FeatureLocation fl
+            where fl.assembly = :assembly
+            AND fl.feature = :feature
+            """;
+        Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
+        query.setMaxResults(1);
+        query.setParameter("assembly", assembly.getName());
         query.setParameter("feature", feature);
         return query.getResultList().stream().findFirst().orElse(null);
     }

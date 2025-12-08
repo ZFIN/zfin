@@ -28,6 +28,7 @@ import java.util.Objects;
 import static java.time.LocalDate.now;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
+import static org.zfin.mapping.GenomicLocationService.FASTA_GENOMIC_Z11_URL;
 import static org.zfin.util.ZfinCollectionUtils.isIn;
 import static org.zfin.util.ZfinSystemUtils.env;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
@@ -38,7 +39,6 @@ import static org.zfin.util.ZfinSystemUtils.envTrue;
  */
 public class FlankSeqProcessor {
 
-    public static final String FASTA_URL = "/research/zprodmore/gff3/Danio_rerio.fa";
 
     //Add option to check for inconsistencies between .fa file and sequence of reference
     //Can set environment variable CHECK_FOR_INCONSISTENCIES to true to enable
@@ -59,7 +59,7 @@ public class FlankSeqProcessor {
     public void updateFlankingSequences() {
         try {
             CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
-            File fasta = new File(FASTA_URL);
+            File fasta = new File(FASTA_GENOMIC_Z11_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
             int locEnd = 0;
@@ -91,7 +91,7 @@ public class FlankSeqProcessor {
                         if (feature.getFeatureGenomicMutationDetail() == null) {
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                             System.out.print(".");
-                            InsertFeatureGenomeRecord(feature, refSeq);
+                            insertFeatureGenomeRecord(feature, refSeq);
                         }
                         checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
                     } else {
@@ -225,7 +225,7 @@ public class FlankSeqProcessor {
 
     }
 
-    private void InsertFeatureGenomeRecord(Feature ftr, String seqRef) {
+    private void insertFeatureGenomeRecord(Feature ftr, String seqRef) {
 
         FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
         fgmd.setFeature(ftr);
@@ -376,10 +376,6 @@ public class FlankSeqProcessor {
 
     public static void main(String[] args) throws FileNotFoundException {
         CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
-        File fasta = new File("GCF_049306965.1_GRCz12tu_genomic.fna");
-        IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
-        ReferenceSequence referenceSequence = ref.getSubsequenceAt("3", 2, 30);
-        String n = null;
         try {
             FlankSeqProcessor driver = new FlankSeqProcessor();
             driver.updateFlankingSequences();

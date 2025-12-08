@@ -24,6 +24,7 @@ import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.mapping.GenomicLocationService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
@@ -40,6 +41,7 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 import org.zfin.sequence.*;
+import org.zfin.sequence.gff.AssemblyEnum;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
@@ -237,20 +239,37 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 //update FeatureLocation information
         FeatureLocation fgl = featureRepository.getLocationByFeature(feature);
+        boolean locationUpdated = false;
+        boolean locationDeleted = false;
+        String previousAssembly = fgl != null ? fgl.getAssembly() : null;
         if (fgl == null) {
             fgl = new FeatureLocation();
             fgl.setFeature(feature);
             if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
                 updateFeatureLocation(fgl, featureDTO);
+                locationUpdated = true;
             }
         } else {
             if (featureLocationNeedsUpdate(featureDTO, fgl)) {
+                // check if this is a deletion (all fields empty)
+                locationDeleted = StringUtils.isEmpty(featureDTO.getFeatureChromosome()) &&
+                    StringUtils.isEmpty(featureDTO.getFeatureAssembly()) &&
+                    StringUtils.isEmpty(featureDTO.getEvidence()) &&
+                    featureDTO.getFeatureStartLoc() == null &&
+                    featureDTO.getFeatureEndLoc() == null;
                 updateFeatureLocation(fgl, featureDTO);
-                // calculate and save flanking sequences for GRCz12tu
-                if(fgl.getAssembly().equals(CURRENT.getValue())){
-                    String n = null;
-                }
+                locationUpdated = !locationDeleted;
             }
+        }
+        // calculate and save flanking sequences for GRCz12tu
+        if (locationUpdated && fgl.getAssembly() != null && fgl.getAssembly().equals(CURRENT.getValue())) {
+            GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
+            service.updateFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        }
+        // clean up flanking sequences when location is deleted
+        if (locationDeleted && previousAssembly != null && previousAssembly.equals(CURRENT.getValue())) {
+            GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
+            service.updateFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
         }
 
 

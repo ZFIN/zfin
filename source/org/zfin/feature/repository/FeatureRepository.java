@@ -19,6 +19,7 @@ import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
+import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.util.*;
 
@@ -112,6 +113,7 @@ public interface FeatureRepository {
     String getAALink(Feature feature);
 
     FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature);
+    FeatureLocation getAllFeatureLocationsForAssembly(AssemblyEnum assembly, Feature feature);
 
     List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails();
 
