@@ -3,7 +3,7 @@ package org.zfin.datatransfer.ncbi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.Tuple;
-import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.BidiMap; //TODO: use this to simplify mappings
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -2124,16 +2124,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
                 File downloadFile = new File(workingDir, "zf_gene_info.gz");
-                String[] args = new String[]{};
+                String ncbiInputFileUrl = null;
                 if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
                     System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
                     print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
-                    args = new String[]{"file://" + downloadFile.getAbsolutePath()};
+                    ncbiInputFileUrl = "file://" + downloadFile.getAbsolutePath();
                 } else {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
                 }
-                task.runTask(args);
+                task.runTask(ncbiInputFileUrl, toDelete);
                 String md5 = md5File(inputFile, LOG);
                 FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
@@ -2196,10 +2196,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                  SELECT COUNT(*) FROM db_link
                  WHERE dblink_linked_recid = :zdbId
                  AND dblink_fdbcont_zdb_id = :fdcontNCBIgeneId
+                 AND dblink_zdb_id not in (:excludedDbLinks)
                  """;
                 NativeQuery<Long> checkQuery = currentSession().createNativeQuery(sqlCheckExistingNCBILink, Long.class);
                 checkQuery.setParameter("zdbId", zdbId);
                 checkQuery.setParameter("fdcontNCBIgeneId", FDCONT_NCBI_GENE_ID);
+                checkQuery.setParameter("excludedDbLinks", toDelete.keySet());
                 Long existingLinkCount = checkQuery.uniqueResult();
 
                 if (existingLinkCount != null && existingLinkCount > 0) {
