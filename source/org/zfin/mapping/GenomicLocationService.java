@@ -25,7 +25,7 @@ import static org.zfin.util.ZfinCollectionUtils.isIn;
 
 public class GenomicLocationService {
 
-    public static final String FASTA_URL_BASE_DIR = "/research/zprodmore/gff3/";
+    public static final String FASTA_URL_BASE_DIR = "/opt/zfin/gff3/";
     public static final String FASTA_GENOMIC_Z11_URL = FASTA_URL_BASE_DIR + "Danio_rerio.fa";
     public static final String FASTA_GENOMIC_Z12_FILE = "GCF_049306965.1_GRCz12tu_genomic.fna";
 
@@ -64,7 +64,7 @@ public class GenomicLocationService {
 
     // create a new FeatureGenomicMutationDetail object if not exists
     // remove variant sequence if FeatureGenomicMutationDetail is null or empty (cleanup)
-    public void updateFlankingSequence(Feature feature, AssemblyEnum assembly) {
+    public void upsertFlankingSequence(Feature feature, AssemblyEnum assembly) {
         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsForAssembly(assembly, feature);
 
         // there is a sequence_feature_chromosome_location record / landmark
@@ -129,7 +129,6 @@ public class GenomicLocationService {
                 }
             }
         }
-
     }
 
     private void insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {

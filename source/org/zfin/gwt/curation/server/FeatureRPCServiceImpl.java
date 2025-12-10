@@ -118,7 +118,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             throw new DuplicateEntryException(
-                    "Feature exists in the tracking table for this abbreviation: " + featureAbbreviation + ". " + helpfulTip);
+                "Feature exists in the tracking table for this abbreviation: " + featureAbbreviation + ". " + helpfulTip);
         }
     }
 
@@ -253,23 +253,58 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (featureLocationNeedsUpdate(featureDTO, fgl)) {
                 // check if this is a deletion (all fields empty)
                 locationDeleted = StringUtils.isEmpty(featureDTO.getFeatureChromosome()) &&
-                    StringUtils.isEmpty(featureDTO.getFeatureAssembly()) &&
-                    StringUtils.isEmpty(featureDTO.getEvidence()) &&
-                    featureDTO.getFeatureStartLoc() == null &&
-                    featureDTO.getFeatureEndLoc() == null;
+                                  StringUtils.isEmpty(featureDTO.getFeatureAssembly()) &&
+                                  StringUtils.isEmpty(featureDTO.getEvidence()) &&
+                                  featureDTO.getFeatureStartLoc() == null &&
+                                  featureDTO.getFeatureEndLoc() == null;
                 updateFeatureLocation(fgl, featureDTO);
                 locationUpdated = !locationDeleted;
             }
         }
+        // this needs to come first before updating the flanking sequence info
+        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
+        if (featureDTO.getFgmdChangeDTO() != null) {
+
+            if (fgmd == null) {
+                fgmd = new FeatureGenomicMutationDetail();
+                fgmd.setFeature(feature);
+                feature.setFeatureGenomicMutationDetail(fgmd);
+            }
+
+            DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            if (fgmd.getZdbID() == null) {
+                HibernateUtil.currentSession().save(fgmd);
+            }
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
+                if (feature.getFeatureGenomicMutationDetail() != null) {
+                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
+                        if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
+                            if (fgmd.getFgmdSeqRef().length() > 1) {
+                                feature.setType(FeatureTypeEnum.MNV);
+                            }
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // remove existing record
+            if (fgmd != null) {
+                featureRepository.deleteFeatureGenomicMutationDetail(fgmd);
+            }
+
+        }
+
+        boolean variationExists = featureDTO.getFgmdChangeDTO() != null;
         // calculate and save flanking sequences for GRCz12tu
-        if (locationUpdated && fgl.getAssembly() != null && fgl.getAssembly().equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
-            service.updateFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        if ((variationExists || locationUpdated) && fgl.getAssembly() != null && fgl.getAssembly().equals(CURRENT.getValue())) {
+            GenomicLocationService service = new GenomicLocationService();
+            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
         }
         // clean up flanking sequences when location is deleted
         if (locationDeleted && previousAssembly != null && previousAssembly.equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
-            service.updateFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+            GenomicLocationService service = new GenomicLocationService();
+            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
         }
 
 
@@ -357,40 +392,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         }
 
-        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
-        if (featureDTO.getFgmdChangeDTO() != null) {
-
-            if (fgmd == null) {
-                fgmd = new FeatureGenomicMutationDetail();
-                fgmd.setFeature(feature);
-                feature.setFeatureGenomicMutationDetail(fgmd);
-            }
-
-            DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
-            if (fgmd.getZdbID() == null) {
-                HibernateUtil.currentSession().save(fgmd);
-            }
-            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
-                if (feature.getFeatureGenomicMutationDetail() != null) {
-                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
-                        if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
-                            if (fgmd.getFgmdSeqRef().length() > 1) {
-                                feature.setType(FeatureTypeEnum.MNV);
-                            }
-                        }
-                    }
-                }
-            }
-
-        } else {
-            // remove existing record
-            if (fgmd != null) {
-                featureRepository.deleteFeatureGenomicMutationDetail(fgmd);
-            }
-
-        }
-
-
         Set<FeatureTranscriptMutationDetail> addTranscriptAttribution = new HashSet<>();
         if (featureDTO.getTranscriptChangeDTOSet() != null) {
             Set<FeatureTranscriptMutationDetail> detailSet = feature.getFeatureTranscriptMutationDetailSet();
@@ -453,11 +454,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         //null safe
         return !(
             StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getChromosome()) &&
-                StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
-                Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
-                Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation()) &&
-                Objects.equals(featureDTO.getEvidence(), fgl.getLocationEvidence() != null ?
-                    FeatureService.getFeatureGenomeLocationEvidenceCode(fgl.getLocationEvidence().getZdbID()) : null)
+            StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
+            Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
+            Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation()) &&
+            Objects.equals(featureDTO.getEvidence(), fgl.getLocationEvidence() != null ?
+                FeatureService.getFeatureGenomeLocationEvidenceCode(fgl.getLocationEvidence().getZdbID()) : null)
         );
     }
 
@@ -706,6 +707,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
                 currentSession().save(pa);
 
+                if (fgl.getAssembly() != null && fgl.getAssembly().equals(AssemblyEnum.GRCZ12TU.getName())) {
+                    GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
+                    service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+                }
+
 
             }
 
@@ -863,17 +869,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(featureDTO.getOptionalName());
             if (m == null) {
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] not found.  "
-                    + MESSAGE_UNSPECIFIED_FEATURE
+                                              + MESSAGE_UNSPECIFIED_FEATURE
                 );
             } else if (false == m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] must be a gene.  "
-                    + MESSAGE_UNSPECIFIED_FEATURE
+                                              + MESSAGE_UNSPECIFIED_FEATURE
                 );
             }
             if (getInfrastructureRepository().getRecordAttribution(m.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
                 == null) {
                 throw new ValidationException("The gene [" + featureDTO.getOptionalName() + "] must be attributed to this pub [" + featureDTO.getPublicationZdbID() + "]. "
-                    + MESSAGE_UNSPECIFIED_FEATURE);
+                                              + MESSAGE_UNSPECIFIED_FEATURE);
             }
         }
     }
@@ -884,11 +890,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         String zdbID = featureMarkerRelationshipDTO.getZdbID();
         infrastructureRepository.insertUpdatesTable(zdbID, "Feature", zdbID, "",
             "deleted feature/marker relationship between: "
-                + featureMarkerRelationshipDTO.getFeatureDTO().getAbbreviation()
-                + " and "
-                + featureMarkerRelationshipDTO.getMarkerDTO().getName()
-                + " of type "
-                + featureMarkerRelationshipDTO.getRelationshipType()
+            + featureMarkerRelationshipDTO.getFeatureDTO().getAbbreviation()
+            + " and "
+            + featureMarkerRelationshipDTO.getMarkerDTO().getName()
+            + " of type "
+            + featureMarkerRelationshipDTO.getRelationshipType()
         );
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
         HibernateUtil.flushAndCommitCurrentSession();
@@ -1170,8 +1176,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 Deleting this relationship will influence all of them. 
                 Are you sure you want to delete the relationship?
                 """,
-                genotypes.size(), genotypes.size() == 1 ? "" : "s",
-                pubs.size(), pubs.size() == 1 ? "" : "s");
+            genotypes.size(), genotypes.size() == 1 ? "" : "s",
+            pubs.size(), pubs.size() == 1 ? "" : "s");
     }
 
 

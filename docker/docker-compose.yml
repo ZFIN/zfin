@@ -133,6 +133,7 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
   tomcatdebug:
     hostname: tomcat
     build: ./tomcat/
@@ -156,6 +157,7 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
   blast:
     build: ./blast/
     platform: linux/amd64

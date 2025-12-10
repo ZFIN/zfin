@@ -739,7 +739,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hqlSeq = " select vs from  VariantSequence vs where vs.vseqDataZDB =:ftrID";
         Query<VariantSequence> queryLab = session.createQuery(hqlSeq, VariantSequence.class);
         queryLab.setParameter("ftrID", feature.getZdbID());
-        return (VariantSequence) queryLab.uniqueResult();
+        return queryLab.uniqueResult();
     }
 
     public String getAALink(Feature feature) {
