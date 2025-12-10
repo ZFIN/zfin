@@ -1,8 +1,10 @@
 package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
@@ -10,7 +12,6 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -28,6 +30,8 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.uniprot.NcbiMatchReportRow;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 
 /**
@@ -56,7 +60,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
 
         try {
-            task.runTask(args);
+            String inputFileUrl = null;
+            if (args.length > 0) {
+                inputFileUrl = args[0];
+            }
+            task.runTask(inputFileUrl);
         } catch (IOException | SQLException e) {
             log.error("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
@@ -67,37 +75,56 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         log.info("Task completed successfully.");
         System.exit(0);
     }
+    public void runTask(String inputFileUrl) throws IOException, SQLException {
+        runTask(inputFileUrl, null);
+    }
 
-    public void runTask(String[] args) throws IOException, SQLException {
+    public void runTask(String inputFileUrl, Map<String, Integer> toDelete) throws IOException, SQLException {
         initAll();
 
-        setInputFileUrlFromEnvironment(args);
+        setInputFileUrlFromEnvironment(inputFileUrl);
         File extractedCsvFile = downloadAndExtract();
         createTemporaryNcbiTable();
         copyFromNcbiFileIntoDatabase(extractedCsvFile);
-        List<Object[]> results = getReportOfPotentialNcbiGenes();
+        List<Object[]> results = getReportOfPotentialNcbiGenes(toDelete);
         List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
 
-        addRnaAccessionsToReportRows(ncbiMatchReportRows);
+        addRnaAccessionsToReportRows(ncbiMatchReportRows, toDelete);
 
         writeResultsToCsv(ncbiMatchReportRows);
         dropTemporaryTables();
         extractedCsvFile.delete();
     }
 
-    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows) {
+    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows, Map<String, Integer> toDelete) {
         HibernateUtil.createTransaction();
+
+        List<String> rnaAccessionsToDelete = getRnaAccessionsToDelete(toDelete);
 
         for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
             List<String> rnaAccessions = getRnaAccessions(ncbiMatchReportRow.getZdbId());
+            List<String> remainingRnaAccessions = ListUtils.subtract(rnaAccessions, rnaAccessionsToDelete);
 
             //progress
             System.out.print(".");
 
-            ncbiMatchReportRow.setRnaAccessions(String.join(";", rnaAccessions));
+            ncbiMatchReportRow.setRnaAccessions(String.join(";", remainingRnaAccessions));
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private List<String> getRnaAccessionsToDelete(Map<String, Integer> toDelete) {
+        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+        String query = """
+            SELECT dblink_acc_num
+            FROM db_link
+            LEFT JOIN foreign_db_contains ON dblink_fdbcont_zdb_id = fdbcont_zdb_id
+            WHERE fdbcont_fdbdt_id = 3
+            AND dblink_zdb_id IN (select dblink_zdb_id from dblinks_to_delete)
+            """;
+        List<String> results = currentSession().createNativeQuery(query, String.class).list();
+        return results;
     }
 
     private List<String> getRnaAccessions(String zdbId) {
@@ -131,24 +158,21 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *  the first command line argument,
      *  or the environment variable NCBI_FILE_URL,
      *  or it uses the default URL.
-     * @param args command line arguments
+     * @param inputFileUrl The input file url from the command line argument.
      */
-    private void setInputFileUrlFromEnvironment(String[] args) {
-        String inputFile = null;
-        if (args.length > 0) {
-            inputFile = args[0];
-        } else {
-            inputFile = System.getenv("NCBI_FILE_URL");
-            if (inputFile == null) {
-                inputFile = System.getProperty("ncbiFileUrl");
-                if (inputFile == null) {
+    private void setInputFileUrlFromEnvironment(String inputFileUrl) {
+        if (StringUtils.isEmpty(inputFileUrl)) {
+            inputFileUrl = System.getenv("NCBI_FILE_URL");
+            if (inputFileUrl == null) {
+                inputFileUrl = System.getProperty("ncbiFileUrl");
+                if (inputFileUrl == null) {
                     log.error("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
-                    inputFile = DEFAULT_INPUT_FILE_URL;
+                    inputFileUrl = DEFAULT_INPUT_FILE_URL;
                 }
             }
         }
-        log.info("Using input file url: " + inputFile);
-        this.inputFileUrl = inputFile;
+        log.info("Using input file url: " + inputFileUrl);
+        this.inputFileUrl = inputFileUrl;
     }
 
     /**
@@ -171,7 +195,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private void createTemporaryNcbiTable() {
 
         //create temporary table
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
 
         String dropTable = "DROP TABLE IF EXISTS tmp_ncbi_zebrafish;";
@@ -225,7 +249,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             }
 
             log.info("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
-            Session session = HibernateUtil.currentSession();
+            Session session = currentSession();
             Transaction tx = session.beginTransaction();
             int recordCount = 0;
             for (CSVRecord record : parser) {
@@ -266,9 +290,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
     /**
      *  The main logic for comparing the NCBI data to the ZFIN data.
+     *  @param toDelete Map of DBLinks that are slated to be deleted (can be null). If provided, logic will be as though those links do not exist.
+     *
      */
-    private List<Object[]> getReportOfPotentialNcbiGenes() {
-        Session session = HibernateUtil.currentSession();
+    private List<Object[]> getReportOfPotentialNcbiGenes(Map<String, Integer> toDelete) {
+        Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
 
         //create ncbi2zfin table -- based on data loaded through NCBI
@@ -302,6 +328,8 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
+        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+
         //Intermediate table for debugging:
         // select dblink_linked_recid as zdb_id, dblink_acc_num as ncbi_id into temp table tmp_zfin2ncbi from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' ;
 
@@ -322,6 +350,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     tmp_ncbi2zfin n2z
                     LEFT JOIN db_link dbl ON dbl.dblink_linked_recid = n2z.zdb_id
                         AND "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-1'
+                        AND dbl.dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM dblinks_to_delete)
                     LEFT JOIN tmp_ncbi2ensembl n2e ON n2z.ncbi_id = n2e.ncbi_id
                     LEFT JOIN db_link dbl2 ON n2e.ensembl_id = dbl2.dblink_acc_num
                     LEFT JOIN record_attribution ra ON dbl2.dblink_zdb_id = ra.recattrib_data_zdb_id
@@ -352,7 +381,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                         db_link
                         LEFT JOIN foreign_db_contains ON dblink_fdbcont_zdb_id = fdbcont_zdb_id
                     WHERE
-                        fdbcont_fdbdt_id = 3) subq ON subq.dblink_linked_recid = nmr.zdb_id
+                        fdbcont_fdbdt_id = 3
+                    AND dblink_zdb_id NOT IN (select dblink_zdb_id from dblinks_to_delete)
+                    ) subq ON subq.dblink_linked_recid = nmr.zdb_id
             GROUP BY
                 ncbi_id,
                 zdb_id,
@@ -376,6 +407,37 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         log.info("Number of those NCBI genes with shared ensembl id : " + results.size());
 
         return results;
+    }
+
+    private void createTemporaryTableOfNcbiDblinksToDelete(Map<String, Integer> toDelete) {
+        if (toDelete == null) {
+            toDelete = Map.of();
+        }
+
+        // The dblinks for NCBI Gene IDs that we are in the process of deleting should be included as though they were already deleted.
+        // So we create a temporary table of those DBLinks to exclude them from the matching logic.
+        // Based on the toDelete map passed in.
+        String query = """
+            DROP TABLE IF EXISTS dblinks_to_delete;
+            CREATE TEMP TABLE dblinks_to_delete (
+                dblink_zdb_id text
+            );
+        """;
+        currentSession().createNativeQuery(query).executeUpdate();
+
+
+        // For the purpose of this report, we only care about DBLinks that have dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' (NCBI Gene IDs)
+        List<List<String>> toDeleteBatches = ListUtils.partition(toDelete.keySet().stream().toList(), 1000);
+        for (List<String> batch : toDeleteBatches) {
+            String inClause = batch.stream().map(s -> "'" + s + "'").reduce((s1, s2) -> s1 + "," + s2).orElse("");
+            query = """
+                INSERT INTO dblinks_to_delete (dblink_zdb_id)
+                SELECT dblink_zdb_id FROM db_link
+                WHERE  dblink_zdb_id IN (""" + inClause + ")";
+
+            currentSession().createNativeQuery(query).executeUpdate();
+        }
+
     }
 
     /**
@@ -404,7 +466,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      * This is unnecessary, but it's good practice to clean up after yourself.
      */
     private void dropTemporaryTables() {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         Transaction tx = session.beginTransaction();
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
@@ -450,5 +512,4 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             }
         }
     }
-
 }
