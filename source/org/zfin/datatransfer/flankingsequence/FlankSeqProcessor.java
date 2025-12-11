@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.flankingsequence;
 
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Objects;
 import static java.time.LocalDate.now;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
+import static org.zfin.mapping.GenomicLocationService.FASTA_GENOMIC_Z11_URL;
 import static org.zfin.util.ZfinCollectionUtils.isIn;
 import static org.zfin.util.ZfinSystemUtils.env;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
@@ -36,7 +39,6 @@ import static org.zfin.util.ZfinSystemUtils.envTrue;
  */
 public class FlankSeqProcessor {
 
-    public static final String FASTA_URL = "/research/zprodmore/gff3/Danio_rerio.fa";
 
     //Add option to check for inconsistencies between .fa file and sequence of reference
     //Can set environment variable CHECK_FOR_INCONSISTENCIES to true to enable
@@ -57,7 +59,7 @@ public class FlankSeqProcessor {
     public void updateFlankingSequences() {
         try {
             CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
-            File fasta = new File(FASTA_URL);
+            File fasta = new File(FASTA_GENOMIC_Z11_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
             int locEnd = 0;
@@ -89,7 +91,7 @@ public class FlankSeqProcessor {
                         if (feature.getFeatureGenomicMutationDetail() == null) {
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                             System.out.print(".");
-                            InsertFeatureGenomeRecord(feature, refSeq);
+                            insertFeatureGenomeRecord(feature, refSeq);
                         }
                         checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
                     } else {
@@ -203,8 +205,8 @@ public class FlankSeqProcessor {
                 }
                 if (!separatorOnlyMismatch) {
                     String message = "\nInconsistency," + feature.getType() + "," + feature.getZdbID() +
-                            "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
-                            ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
+                                     "," + fgmd.getFgmdSeqRef() + "," + refSeq + "," +
+                                     ftrChrom + ":" + locStart + "-" + locEnd + "," + caseOnlyMessage;
                     System.out.println(message);
                     logger.warn(message);
                 }
@@ -223,7 +225,7 @@ public class FlankSeqProcessor {
 
     }
 
-    private void InsertFeatureGenomeRecord(Feature ftr, String seqRef) {
+    private void insertFeatureGenomeRecord(Feature ftr, String seqRef) {
 
         FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
         fgmd.setFeature(ftr);
@@ -238,7 +240,7 @@ public class FlankSeqProcessor {
         HibernateUtil.currentSession().refresh(fgmd);
         HibernateUtil.currentSession().update(ftr);
         HibernateUtil.currentSession().refresh(ftr);
-        this.updated.add(List.of("New FGMD: " +ftr.getZdbID(), seqRef, "+"));
+        this.updated.add(List.of("New FGMD: " + ftr.getZdbID(), seqRef, "+"));
     }
 
     private void insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
@@ -271,16 +273,16 @@ public class FlankSeqProcessor {
             }
         }
         boolean updateMade = this.setFlankSeqIfChanged(vrSeq,
-                ftr.getZdbID(),
-                seq1,
-                seq2,
-                offset,
-                offset,
-                "genomic",
-                "directly sequenced",
-                "Genomic",
-                vfsTargetSequence,
-                vfsVariation);
+            ftr.getZdbID(),
+            seq1,
+            seq2,
+            offset,
+            offset,
+            "genomic",
+            "directly sequenced",
+            "Genomic",
+            vfsTargetSequence,
+            vfsVariation);
         boolean changed = newSequence || updateMade;
 
         try {
@@ -317,7 +319,7 @@ public class FlankSeqProcessor {
         if (vrSeq.getVseqDataZDB() == null) {
             System.out.println("vseqDataZDB is null");
         }
-        if (!Objects.equals(vrSeq.getVseqDataZDB(),zdbID)) {
+        if (!Objects.equals(vrSeq.getVseqDataZDB(), zdbID)) {
             vrSeq.setVseqDataZDB(zdbID);
             changed = true;
         }
@@ -372,7 +374,8 @@ public class FlankSeqProcessor {
         return updated;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
         try {
             FlankSeqProcessor driver = new FlankSeqProcessor();
             driver.updateFlankingSequences();

@@ -2283,16 +2283,9 @@ public class DTOConversionService {
             detail = new FeatureGenomicMutationDetail();
         }
         FeatureGenomicMutationDetail changes = convertToFeatureGenomicMutationDetail(detail, fgmdChangeDTO);
-
-
         detail.setFgmdSeqVar(changes.getFgmdSeqVar());
-
-
         detail.setFgmdSeqRef(changes.getFgmdSeqRef());
-
         detail.setFgmdVarStrand("+");
-
-
         return detail;
 
     }
