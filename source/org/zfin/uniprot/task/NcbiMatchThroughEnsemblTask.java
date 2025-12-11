@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -79,7 +80,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         runTask(inputFileUrl, null);
     }
 
-    public void runTask(String inputFileUrl, Map<String, Integer> toDelete) throws IOException, SQLException {
+    public void runTask(String inputFileUrl, Map<String, String> toDelete) throws IOException, SQLException {
         initAll();
 
         setInputFileUrlFromEnvironment(inputFileUrl);
@@ -88,43 +89,24 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         copyFromNcbiFileIntoDatabase(extractedCsvFile);
         List<Object[]> results = getReportOfPotentialNcbiGenes(toDelete);
         List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
-
         addRnaAccessionsToReportRows(ncbiMatchReportRows, toDelete);
-
         writeResultsToCsv(ncbiMatchReportRows);
         dropTemporaryTables();
         extractedCsvFile.delete();
     }
 
-    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows, Map<String, Integer> toDelete) {
+    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows, Map<String, String> toDelete) {
         HibernateUtil.createTransaction();
-
-        List<String> rnaAccessionsToDelete = getRnaAccessionsToDelete(toDelete);
 
         for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
             List<String> rnaAccessions = getRnaAccessions(ncbiMatchReportRow.getZdbId());
-            List<String> remainingRnaAccessions = ListUtils.subtract(rnaAccessions, rnaAccessionsToDelete);
 
             //progress
             System.out.print(".");
-
-            ncbiMatchReportRow.setRnaAccessions(String.join(";", remainingRnaAccessions));
+            ncbiMatchReportRow.setRnaAccessions(String.join(";", rnaAccessions));
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
-    }
-
-    private List<String> getRnaAccessionsToDelete(Map<String, Integer> toDelete) {
-        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
-        String query = """
-            SELECT dblink_acc_num
-            FROM db_link
-            LEFT JOIN foreign_db_contains ON dblink_fdbcont_zdb_id = fdbcont_zdb_id
-            WHERE fdbcont_fdbdt_id = 3
-            AND dblink_zdb_id IN (select dblink_zdb_id from dblinks_to_delete)
-            """;
-        List<String> results = currentSession().createNativeQuery(query, String.class).list();
-        return results;
     }
 
     private List<String> getRnaAccessions(String zdbId) {
@@ -293,7 +275,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *  @param toDelete Map of DBLinks that are slated to be deleted (can be null). If provided, logic will be as though those links do not exist.
      *
      */
-    private List<Object[]> getReportOfPotentialNcbiGenes(Map<String, Integer> toDelete) {
+    private List<Object[]> getReportOfPotentialNcbiGenes(Map<String, String> toDelete) {
         Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
 
@@ -409,7 +391,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         return results;
     }
 
-    private void createTemporaryTableOfNcbiDblinksToDelete(Map<String, Integer> toDelete) {
+    private void createTemporaryTableOfNcbiDblinksToDelete(Map<String, String> toDelete) {
         if (toDelete == null) {
             toDelete = Map.of();
         }

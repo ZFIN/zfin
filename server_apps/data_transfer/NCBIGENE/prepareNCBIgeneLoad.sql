@@ -148,7 +148,7 @@ from genes_supported_by_rna g
 
 --!echo 'Dump the delete list'
 
-\copy (select * from pre_delete order by dblink_loaded_zdb_id) to 'toDelete.unl' (delimiter '|');
+\copy (select dblink_loaded_zdb_id, dblink_acc_num from pre_delete join db_link on dblink_loaded_zdb_id = dblink_zdb_id order by dblink_loaded_zdb_id) to 'toDelete.unl' (delimiter '|');
 
 drop view mappings_of_genes_supported_by_rna;
 drop view genes_supported_by_rna;

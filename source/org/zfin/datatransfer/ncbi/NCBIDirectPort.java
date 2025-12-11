@@ -128,7 +128,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     // private String handle; // In Java, this will be managed by Hibernate session
 
     // used in eg. getMetricsOfDbLinksToDelete
-    private Map<String, Integer>  toDelete;
+    private Map<String, String>  toDelete;
     private Long ctToDelete;
 
     // used in eg. getRecordCounts
@@ -1028,8 +1028,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 for (String line : lines) {
                     if (StringUtils.isNotBlank(line)) {
                         ctToDelete++;
-                        String dblinkIdToBeDeleted = line.trim();
-                        toDelete.put(dblinkIdToBeDeleted, 1); // Value is just a marker like in Perl
+                        String[] lineParts = line.trim().split("|");
+                        String dblinkIdToBeDeleted = lineParts[0];
+                        String dblinkAccToBeDeleted = lineParts[1];
+                        toDelete.put(dblinkIdToBeDeleted, dblinkAccToBeDeleted); // Value is just a marker like in Perl
                     }
                 }
             }
@@ -2180,6 +2182,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 print(LOG, "WARN: Supplementary mapping file is empty: " + localInputFile.getAbsolutePath() + "\n");
             }
 
+            HashSet toDeleteAccessions = new HashSet(toDelete.values());
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1); // Use -1 limit to include trailing empty strings
                 if (parts.length < 7) {
@@ -2193,14 +2196,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 // String symbol = parts[3].trim(); // not used in this logic directly
                 // String dblinks = parts[4].trim(); // not used in this logic directly
                 // String publications = parts[5].trim(); // not used in this logic directly
-                String rnaAccessions = parts[6].trim();
+                String rnaAccessionsColumn = parts[6].trim(); // not used in this logic directly
 
                 if (mappedReversed.containsKey(ncbiId) || mapped.containsKey(zdbId)) {
                     debugBuffer.append("Skip Duplicate: ").append(line).append("\n");
                     continue;
                 }
 
-                if (StringUtils.isNotEmpty(rnaAccessions) && !zdbId.contains("ZDB-MIRNAG-")) {
+                // Remove any accessions that are in the toDelete list
+                Set<String> rnaAccessions = new HashSet<>(List.of(rnaAccessionsColumn.split(";")));
+                rnaAccessions.removeAll(toDeleteAccessions);
+
+                if (!rnaAccessions.isEmpty() && !zdbId.contains("ZDB-MIRNAG-")) {
                     debugBuffer.append("Skip NON-blank NON-MIRNAG: ").append(line).append("\n");
                     continue;
                 }
@@ -2227,6 +2234,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 ncbiSupplementMap.put(zdbId, ncbiId);
                 ncbiSupplementMapReversed.put(ncbiId, zdbId);
                 ncbiSupplementMapCount++;
+                System.out.print(".");
             }
         } catch (IOException e) {
             reportErrAndExit("Error reading supplementary mapping file " + localInputFile.getAbsolutePath() + ": " + e.getMessage());
@@ -3181,8 +3189,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 } else if (GenPeptAttributedToNonLoadPub.containsKey(genPept) &&
                            GenPeptDbLinkIdAttributedToNonLoadPub.containsKey(genPept)) {
                     String moreToDeleteDblinkId = GenPeptDbLinkIdAttributedToNonLoadPub.get(genPept);
-                    moreToDeleteWriter.write(moreToDeleteDblinkId + "\n");
-                    toDelete.put(moreToDeleteDblinkId, 1); // Add to the main toDelete map
+                    moreToDeleteWriter.write(moreToDeleteDblinkId + "|" + genPept + "\n");
+                    toDelete.put(moreToDeleteDblinkId, genPept); // Add to the main toDelete map
 
                     TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
                             zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
