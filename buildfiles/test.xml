@@ -586,7 +586,7 @@ test(s) need to be run before committing changes or pushing files to production 
         </antcall>
     </target>
 
-    <target name="serviceTests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
+    <target name="serviceTests" depends="build-tests" description="Unit tests for DataExchange module">
         <runDBTest testclass="org.zfin.ThirdPartyServiceTests" outfile="service-result" verbose="true"/>
     </target>
 
@@ -603,8 +603,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <sequential>
             <exec executable="gradle" failonerror="true">
                 <arg value="test" />
-                <arg value="--tests" />
-                <arg value="@{task}" />
+                <arg value="-Psuite=@{task}" />
             </exec>
         </sequential>
     </macrodef>
