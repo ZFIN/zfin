@@ -25,7 +25,9 @@ import static org.zfin.util.FileUtil.gunzipFile;
  * Run tests against a database that only has test data in it.
  * Not to be run on prod or any other important database.
  * Can be invoked with:
- * docker compose run --rm -p 5005:5005 ncbiload bash -lc 'gradle -PgradleDebug -PncbiLoadTests test --tests org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest '
+ *
+ * docker compose run ... (see instructions below)
+ *
  * The gradleDebug property will start the JVM in debug mode and listen on port 5005 for a debugger to attach. (optional)
  */
 public class NCBILoadCharacterizationTest extends AbstractDangerousDatabaseTest {
@@ -42,7 +44,7 @@ public class NCBILoadCharacterizationTest extends AbstractDangerousDatabaseTest 
      * after_load.csv.gz
      *
      * Can be run like so:
-     * docker compose run --rm  compile bash -lc 'gradle -DB=/opt/zfin/unloads/db/2025.10.15.1/2025.10.15.1.bak loaddb; SKIP_DANGER_WARNING=1 gradle -PncbiLoadTests test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization; exec bash'
+     * docker compose run --rm  compile bash -lc 'gradle -DB=/opt/zfin/unloads/db/2025.10.15.1/2025.10.15.1.bak loaddb; SKIP_DANGER_WARNING=1 gradle -PincludeNcbiCharacterizationTest test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization; exec bash'
      *
      * (The SKIP_DANGER_WARNING environment variable is required to actually run the test as a precaution against running against a production database.
      * The `exec bash` at the end is just to keep the container open so you can explore the generated artifacts in /tmp/ncbi_...)

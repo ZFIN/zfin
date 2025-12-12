@@ -783,6 +783,11 @@ test {
         includeNonSmokeTests = true
     }
     def includeNcbiLoadTests = project.hasProperty('ncbiLoadTests')
+    def includeNcbiCharacterizationTest = project.hasProperty('includeNcbiCharacterizationTest')
+    if (includeNcbiLoadTests || includeNcbiCharacterizationTest) {
+        includeNonSmokeTests = false
+        includeSmokeTests = false
+    }
 
     doFirst {
         println "Include smoke tests: " + includeSmokeTests
@@ -793,8 +798,9 @@ test {
     filter {
         if (includeNcbiLoadTests) {
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
-
-//   UNCOMMENT BELOW TO RUN CHARACTERIZATION TEST (DANGEROUS)
+        }
+        if (includeNcbiCharacterizationTest) {
+            //Can be run with: SKIP_DANGER_WARNING=1 gradle -PincludeNcbiCharacterizationTest test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization
             includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
         }
         if (includeNonSmokeTests) {

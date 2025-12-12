@@ -264,6 +264,33 @@
                             "value": "ZFIN Gene Losing All UniProt Accessions"
                         }
                     ]
+                },
+                {
+                    "id": "128d2f2f",
+                    "type": "REPORT",
+                    "subType": "Annotation Status - Current not GRCz12",
+                    "accession": "N/A",
+                    "supplementalDataKeys": [],
+                    "geneZdbID": "N/A",
+                    "details": "",
+                    "length": 0,
+                    "relatedEntityFields": {"Report": "Annotation Status - Current not GRCz12"},
+                    "tables": [
+                        {
+                            "description": "Genes with current annotation status not matching GRCz12",
+                            "headers": [
+                                {"key": "gene_zdb_id", "title": "Gene ZDB ID"},
+                                {"key": "symbol", "title": "Gene Symbol"},
+                                {"key": "status", "title": "Current Annotation Status"},
+                                {"key": "assemblies", "title": "Assemblies"},
+                                {"key": "ncbi_id", "title": "NCBI Gene ID"}
+                            ],
+                            "rows": [
+                                {"gene_zdb_id": "ZDB-GENE-030131-2956", "symbol": "mmp9", "status": "predicted", "assemblies": "GRCz11", "ncbi_id": "30531"},
+                                {"gene_zdb_id": "ZDB-GENE-070912-362", "symbol": "si:ch73-343g19.4", "status": "predicted", "assemblies": "GRCz11", "ncbi_id": "566151"}
+                            ]
+                        }
+                    ]
                 }
             ],
             "supplementalData": {
@@ -690,10 +717,12 @@
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
                     <pre>${supplementals}</pre>
-                    <h4>Links</h4>
+                    ${renderActionItemTables(item)}
+                    ${links && links.length > 0 && html`<h4>Links</h4>
                     <ul>
                         ${links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
                     </ul>
+                    `}
                     ${ relatedActions && relatedActions.length > 0 &&
                         html`<h4>Related Actions</h4>
                             <ul>
@@ -711,6 +740,17 @@
                         `
                     }
                 </div>
+            `;
+        }
+
+        function renderActionItemTables(actionItem) {
+            const tableData = actionItem.tables;
+            if (!tableData) {
+                return null;
+            }
+            tableElements = tableData.map( table => ReportSummaryTable({reportSummaryTable: table} ) );
+            return html`
+            ${tableElements}
             `;
         }
 

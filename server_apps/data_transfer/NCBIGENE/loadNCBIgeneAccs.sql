@@ -13,10 +13,17 @@ begin work;
 create temporary table ncbi_gene_delete (
   delete_dblink_zdb_id    text not null
 );
+create temp table pre_ncbi_gene_delete (
+    delete_dblink_zdb_id    text not null,
+    dblink_acc_num          varchar(255)
+);
 
 create index t_id_index on ncbi_gene_delete (delete_dblink_zdb_id);
 
-\copy ncbi_gene_delete from 'toDelete.unl';
+\copy pre_ncbi_gene_delete from 'toDelete.unl' (delimiter '|');
+insert into ncbi_gene_delete (delete_dblink_zdb_id)
+ select distinct delete_dblink_zdb_id
+   from pre_ncbi_gene_delete;
 
 -- Loaded from toPreserve.unl
 create temp table ncbi_dblink_to_preserve_preload (
