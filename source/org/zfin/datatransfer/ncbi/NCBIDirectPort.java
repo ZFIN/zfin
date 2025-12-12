@@ -2205,6 +2205,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 // Remove any accessions that are in the toDelete list
                 Set<String> rnaAccessions = new HashSet<>(List.of(rnaAccessionsColumn.split(";")));
+                rnaAccessions.removeIf(r -> r == null || r.isEmpty());
                 rnaAccessions.removeAll(toDeleteAccessions);
 
                 if (!rnaAccessions.isEmpty() && !zdbId.contains("ZDB-MIRNAG-")) {
