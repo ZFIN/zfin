@@ -15,6 +15,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -278,7 +279,7 @@ public class MappingDetailController {
                     .highlight(trackingGene) //ignored if using jbrowse for now
                     .highlightColor("pink")
                     .withHeight(200)
-                    .tracks(GBrowseService.getGBrowseTracks(marker))
+                    .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.MAPPING_DETAIL_GENES))
                     .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
                         GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
                     .build();

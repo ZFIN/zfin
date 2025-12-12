@@ -2,8 +2,7 @@ package org.zfin.genomebrowser;
 
 import org.zfin.gbrowse.GBrowseTrack;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,9 +33,31 @@ public enum GenomeBrowserTrack {
     }
 
     private String trackName;
+    private String trackId;
 
     public String toString() {
         return trackName;
+    }
+
+    public String getTrackId(String assembly) {
+        //return trackName.replace(" ", "_") + "_" + assembly.toLowerCase();
+        return trackMap.get(assembly).get(this);
+    }
+
+    static Map<String, Map<GenomeBrowserTrack, String>> trackMap = new HashMap<>();
+
+    static {
+        Map<GenomeBrowserTrack, String> trackIDMap12 = new HashMap<>();
+        trackIDMap12.put(GENES, "zfin-gene12");
+        trackIDMap12.put(REFSEQ, "refseq12");
+        trackMap.put("GRCz12tu", trackIDMap12);
+        Map<GenomeBrowserTrack, String> trackIDMap11 = new HashMap<>();
+        trackIDMap11.put(GENES, "zfin_gene");
+        trackIDMap11.put(TRANSCRIPTS, "zfin_additional_transcripts");
+        trackIDMap11.put(ZFIN_FEATURES, "zfin_features");
+        trackIDMap11.put(ZFIN_MUTANT, "zfin_zebrafish_mutation_project");
+        trackIDMap11.put(COMPLETE_CLONES, "zfin_complete_assembly_clones");
+        trackMap.put("GRCz11", trackIDMap11);
     }
 
     public static GenomeBrowserTrack fromString(String trackName) {
@@ -53,10 +74,10 @@ public enum GenomeBrowserTrack {
             return new ArrayList<>();
         }
         return tracks
-                .stream()
-                .filter(track -> track != null)
-                .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(track -> track != null)
+            .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
+            .collect(Collectors.toList());
     }
 
     public static GBrowseTrack convertGenomeBrowserTrackToGBrowse(GenomeBrowserTrack genomeBrowserTrack) {
@@ -81,4 +102,29 @@ public enum GenomeBrowserTrack {
             case REFSEQ -> GBrowseTrack.REF_SEQ;
         };
     }
+
+    public enum Page {
+        GENE_SEQUENCE(GENES, REFSEQ),
+        GENE_TRANSCRIPTS(GENES, TRANSCRIPTS),
+        MAPPING_DETAIL_GENES(GENES),
+        CLONES(COMPLETE_CLONES, GENES, TRANSCRIPTS),
+        GENE_STRS(GENES, KNOCKDOWN_REAGENT, TRANSCRIPTS),
+        FEATURE(GENES, ZFIN_FEATURES, TRANSCRIPTS, ZFIN_MUTANT),
+        ;
+        private GenomeBrowserTrack[] tracks;
+
+        Page(GenomeBrowserTrack... tracks) {
+            this.tracks = tracks;
+        }
+
+        public GenomeBrowserTrack[] getTracks() {
+            return tracks;
+        }
+
+    }
+
+    public static GenomeBrowserTrack[] getGenomeBrowserTracks(Page page) {
+        return Arrays.stream(Page.values()).filter(page1 -> page1 == page).findFirst().get().getTracks();
+    }
 }
+
