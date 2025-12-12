@@ -66,11 +66,19 @@ public class GeneLinkMLInfo extends LinkMLInfo {
                 dto.setGeneSynonymDtos(getNameSlotAnnotationDTOAliases(marker.getAliases()));
                 dto.setGeneTypeCurie("SO:0000704");
                 dto.setCreatedByCurie("ZFIN:CURATOR");
+                String primaryExternalId = "ZFIN:" + marker.getZdbID();
                 DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new CrossReferenceDTO();
+                crossReferenceDTO.setDisplayName(marker.getZdbID());
+                crossReferenceDTO.setReferencedCurie(primaryExternalId);
+                crossReferenceDTO.setPageArea("fish");
+                crossReferenceDTO.setPrefix("ZFIN");
+                dataProvider.setCrossReferenceDto(crossReferenceDTO);
+
                 dto.setDataProviderDto(dataProvider);
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setPrimaryExternalId("ZFIN:" + marker.getZdbID());
+                dto.setPrimaryExternalId(primaryExternalId);
                 dto.setGeneTypeCurie(marker.getSoTerm().getOboID());
                 GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
                 dto.setDateCreated(format(date));
