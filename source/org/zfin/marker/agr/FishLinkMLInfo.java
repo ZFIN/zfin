@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AffectedGenomicModelDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
@@ -66,11 +67,19 @@ public class FishLinkMLInfo extends LinkMLInfo {
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setSubtypeName("fish");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
-                dto.setPrimaryExternalId("ZFIN:" + fish.getZdbID());
+                String primaryExternalId = "ZFIN:" + fish.getZdbID();
+                dto.setPrimaryExternalId(primaryExternalId);
                 GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
                 dto.setDateCreated(format(date));
                 org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new CrossReferenceDTO();
+                crossReferenceDTO.setDisplayName(fish.getFishID());
+                crossReferenceDTO.setReferencedCurie(primaryExternalId);
+                crossReferenceDTO.setPageArea("fish");
+                crossReferenceDTO.setPrefix("ZFIN");
+                dataProvider.setCrossReferenceDto(crossReferenceDTO);
+
                 dto.setDataProviderDto(dataProvider);
                 return dto;
             })
