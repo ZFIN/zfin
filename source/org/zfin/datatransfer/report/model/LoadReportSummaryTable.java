@@ -36,4 +36,11 @@ public class LoadReportSummaryTable {
         this.headers = headers;
         this.rows = rows;
     }
+
+    public void setTableHeadersByMap(Map<String, String> headerMap) {
+        this.headers = headerMap.entrySet().stream()
+                .map(entry -> new LoadReportTableHeader(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
 }
