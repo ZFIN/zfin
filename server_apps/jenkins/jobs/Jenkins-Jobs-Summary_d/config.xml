@@ -1,7 +1,42 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Daily summary of Jenkins job statuses from the last 24 hours</description>
+    <description><![CDATA[
+# Jenkins Daily Summary Job
+
+This is a Jenkins job definition that generates a comprehensive email report of job statuses.
+
+## Features
+
+### 1. Dynamic Reporting Period
+The job automatically calculates the reporting time frame based on the last execution:
+*   **Intelligent Start Time**: Starts from the previous run's timestamp.
+*   **Minimum Window**: Always covers at least the last **24 hours**, even if ran recently.
+*   **Maximum Lookback**: Caps the history at **72 hours** to prevent overwhelming reports after long downtimes.
+*   **Default**: Defaults to 24 hours if no specific history is found.
+
+### 2. Advanced Streak Tracking
+Instead of simple counts, the report tracks historical streaks for better context:
+*   **Success Streaks**: Shows how many times a job has succeeded in a row (e.g., "succeeded 5 times in a row").
+*   **Failure Streaks**: Shows how many times a job has failed consecutively (e.g., "failed 3 times in a row").
+*   **Unstable Streaks**: Tracks consecutive unstable statuses.
+*   **Deep History Lookup**: Look-back logic extends beyond the reporting period to find the true start of a streak (capped at 10 builds for performance).
+
+### 3. Smart Categorization
+Jobs are categorized for maximizing actionability:
+*   **New Failing Jobs**: Identifies jobs that failed in this period but were previously successful (Streak = 1).
+*   **Repeatedly Failing Jobs**: Groups jobs that have been failing for multiple runs.
+*   **Unstable Jobs**: Lists jobs with unstable results.
+*   **Successful Jobs**: Lists all passing jobs with their success streaks.
+
+### 4. HTML Email Report
+Generates a clean HTML summary table designed for email distribution, including:
+*   Summary statistics (counts for each category).
+*   Direct links to job URLs.
+*   Color-coded statuses.
+*   Clear period timestamps.
+]]>
+    </description>
     <keepDependencies>false</keepDependencies>
     <properties>
         <jenkins.model.BuildDiscarderProperty>
@@ -46,6 +81,12 @@ if (previousBuild != null) {
     timeFrameStart = previousBuild.getTimeInMillis()
 } else {
     timeFrameStart = now - (24 * 60 * 60 * 1000) // Default to 24 hours if no previous run
+}
+
+// Enforce minimum 24 hour window
+def minWindowStart = now - (24 * 60 * 60 * 1000)
+if (timeFrameStart > minWindowStart) {
+    timeFrameStart = minWindowStart
 }
 
 // Cap at 72 hours
