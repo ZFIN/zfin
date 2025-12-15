@@ -33,18 +33,36 @@ import jenkins.model.Jenkins
 import hudson.model.Result
 import java.text.SimpleDateFormat
 
-// Get current time and 24 hours ago
+// Get current time and time frame
+def thisBuild = Thread.currentThread().executable
+// If above doesn't work, try this method: https://www.reddit.com/r/jenkinsci/comments/9suejs/using_javalangthread_executable/
+
+
+def previousBuild = thisBuild.getPreviousBuild()
 def now = System.currentTimeMillis()
-def oneDayAgo = now - (24 * 60 * 60 * 1000)
+def timeFrameStart
+
+if (previousBuild != null) {
+    timeFrameStart = previousBuild.getTimeInMillis()
+} else {
+    timeFrameStart = now - (24 * 60 * 60 * 1000) // Default to 24 hours if no previous run
+}
+
+// Cap at 72 hours
+def maxLookback = 72L * 60 * 60 * 1000
+if ((now - timeFrameStart) > maxLookback) {
+    timeFrameStart = now - maxLookback
+}
+
 def dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 def jenkinsUrl = Jenkins.get().getRootUrl() ?: "http://localhost:8080/"
 
-// Collect all builds from last 24 hours
+// Collect all builds from time frame
 def recentBuilds = []
 
 for (job in Jenkins.get().allItems(hudson.model.Job)) {
     for (build in job.getBuilds()) {
-        if (build.getTimeInMillis() >= oneDayAgo) {
+        if (build.getTimeInMillis() >= timeFrameStart) {
             def status = "SUCCESS"
             if (build.result == Result.FAILURE) {
                 status = "FAILED"
@@ -66,42 +84,46 @@ for (job in Jenkins.get().allItems(hudson.model.Job)) {
 }
 
 // Count failures and unstable per job
-def failureCounts = [:]
-def unstableCounts = [:]
-recentBuilds.each { build ->
-    if (build.status == "FAILED") {
-        failureCounts[build.jobName] = (failureCounts[build.jobName] ?: 0) + 1
-    } else if (build.status == "UNSTABLE") {
-        unstableCounts[build.jobName] = (unstableCounts[build.jobName] ?: 0) + 1
-    }
-}
-
-// Categorize builds
+// Categorize builds and calculate streaks
 def newFailingBuilds = []
 def failedBuilds = []
 def unstableBuilds = []
 def successfulBuilds = []
+def buildStreaks = [:]
 
-recentBuilds.each { build ->
-    if (build.status == "FAILED" && failureCounts[build.jobName] == 1) {
-        newFailingBuilds.add(build)
-    } else if (build.status == "FAILED") {
-        failedBuilds.add(build)
-    } else if (build.status == "UNSTABLE") {
-        unstableBuilds.add(build)
+recentBuilds.each { buildInfo ->
+    // Resolve Run object
+    def job = Jenkins.get().getItemByFullName(buildInfo.jobName)
+    def run = job.getBuildByNumber(buildInfo.buildNumber)
+    
+    int streak = 0
+    if (run != null) {
+        def tempRun = run
+        // Count consecutive builds with SAME result, cap at 10
+        while (tempRun != null && tempRun.result == buildInfo.result && streak < 10) {
+            streak++
+            tempRun = tempRun.getPreviousBuild()
+        }
+    }
+    
+    // Store streak using unique key
+    buildStreaks["${buildInfo.jobName}#${buildInfo.buildNumber}"] = streak
+    
+    if (buildInfo.status == "FAILED") {
+        if (streak == 1) {
+            newFailingBuilds.add(buildInfo)
+        } else {
+            failedBuilds.add(buildInfo)
+        }
+    } else if (buildInfo.status == "UNSTABLE") {
+        unstableBuilds.add(buildInfo)
     } else {
-        successfulBuilds.add(build)
+        successfulBuilds.add(buildInfo)
     }
 }
 
-// Sort each category alphabetically by job name
-newFailingBuilds.sort { it.jobName }
-failedBuilds.sort { it.jobName }
-unstableBuilds.sort { it.jobName }
-successfulBuilds.sort { it.jobName }
-
 // Print results to console
-println "=== Jobs that ran in the last 24 hours ==="
+println "=== Jobs that ran since ${dateFormat.format(new Date(timeFrameStart))} ==="
 println ""
 
 if (newFailingBuilds.size() > 0) {
@@ -115,7 +137,7 @@ if (newFailingBuilds.size() > 0) {
 if (failedBuilds.size() > 0) {
     println "FAILED JOBS:"
     failedBuilds.each { build ->
-        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (failed ${failureCounts[build.jobName]} times)"
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (failed ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
     }
     println ""
 }
@@ -123,7 +145,7 @@ if (failedBuilds.size() > 0) {
 if (unstableBuilds.size() > 0) {
     println "UNSTABLE JOBS:"
     unstableBuilds.each { build ->
-        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (unstable ${unstableCounts[build.jobName]} times)"
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (unstable ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
     }
     println ""
 }
@@ -131,11 +153,11 @@ if (unstableBuilds.size() > 0) {
 if (successfulBuilds.size() > 0) {
     println "SUCCESSFUL JOBS:"
     successfulBuilds.each { build ->
-        println "  ${build.jobName} #${build.buildNumber} - ${build.status}"
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (succeeded ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
     }
 }
 
-println "\nTotal builds in last 24 hours: ${recentBuilds.size()}"
+println "\nTotal builds in period: ${recentBuilds.size()}"
 
 // Generate HTML report for email
 def html = new StringBuilder()
@@ -163,7 +185,8 @@ html.append("""<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>Jenkins Jobs Summary - Last 24 Hours</h1>
+<h1>Jenkins Jobs Summary</h1>
+<p class="timestamp">Period: ${dateFormat.format(new Date(timeFrameStart))} to ${dateFormat.format(new Date(now))}</p>
 <p class="timestamp">Report generated: ${dateFormat.format(new Date())}</p>
 
 <div class="summary">
@@ -201,10 +224,10 @@ if (failedBuilds.size() > 0) {
     html.append("""
 <h2 class="failed">Repeatedly Failing Jobs</h2>
 <table>
-  <tr><th>Job Name</th><th>Build #</th><th>Failure Count</th></tr>
+  <tr><th>Job Name</th><th>Build #</th><th>Failure Streak</th></tr>
 """)
     failedBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"failed\">${failureCounts[build.jobName]} times</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"failed\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
     }
     html.append("</table>\n")
 }
@@ -213,10 +236,10 @@ if (unstableBuilds.size() > 0) {
     html.append("""
 <h2 class="unstable">Unstable Jobs</h2>
 <table>
-  <tr><th>Job Name</th><th>Build #</th><th>Unstable Count</th></tr>
+  <tr><th>Job Name</th><th>Build #</th><th>Unstable Streak</th></tr>
 """)
     unstableBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"unstable\">${unstableCounts[build.jobName]} times</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"unstable\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
     }
     html.append("</table>\n")
 }
@@ -225,10 +248,10 @@ if (successfulBuilds.size() > 0) {
     html.append("""
 <h2 class="success">Successful Jobs</h2>
 <table>
-  <tr><th>Job Name</th><th>Build #</th><th>Status</th></tr>
+  <tr><th>Job Name</th><th>Build #</th><th>Success Streak</th></tr>
 """)
     successfulBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"success\">SUCCESS</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"success\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
     }
     html.append("</table>\n")
 }
