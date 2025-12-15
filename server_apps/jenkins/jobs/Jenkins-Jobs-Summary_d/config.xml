@@ -1,0 +1,356 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description><![CDATA[
+# Jenkins Daily Summary Job
+
+This is a Jenkins job definition that generates a comprehensive email report of job statuses.
+
+## Features
+
+### 1. Dynamic Reporting Period
+The job automatically calculates the reporting time frame based on the last execution:
+*   **Intelligent Start Time**: Starts from the previous run's timestamp.
+*   **Minimum Window**: Always covers at least the last **24 hours**, even if ran recently.
+*   **Maximum Lookback**: Caps the history at **72 hours** to prevent overwhelming reports after long downtimes.
+*   **Default**: Defaults to 24 hours if no specific history is found.
+
+### 2. Advanced Streak Tracking
+Instead of simple counts, the report tracks historical streaks for better context:
+*   **Success Streaks**: Shows how many times a job has succeeded in a row (e.g., "succeeded 5 times in a row").
+*   **Failure Streaks**: Shows how many times a job has failed consecutively (e.g., "failed 3 times in a row").
+*   **Unstable Streaks**: Tracks consecutive unstable statuses.
+*   **Deep History Lookup**: Look-back logic extends beyond the reporting period to find the true start of a streak (capped at 10 builds for performance).
+
+### 3. Smart Categorization
+Jobs are categorized for maximizing actionability:
+*   **New Failing Jobs**: Identifies jobs that failed in this period but were previously successful (Streak = 1).
+*   **Repeatedly Failing Jobs**: Groups jobs that have been failing for multiple runs.
+*   **Unstable Jobs**: Lists jobs with unstable results.
+*   **Successful Jobs**: Lists all passing jobs with their success streaks.
+
+### 4. HTML Email Report
+Generates a clean HTML summary table designed for email distribution, including:
+*   Summary statistics (counts for each category).
+*   Direct links to job URLs.
+*   Color-coded statuses.
+*   Clear period timestamps.
+]]>
+    </description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>-1</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>-1</artifactNumToKeep>
+                <removeLastBuild>false</removeLastBuild>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+        <com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty plugin="naginator@1.504.vfc3736332f16">
+            <optOut>false</optOut>
+        </com.chikli.hudson.plugin.naginator.NaginatorOptOutProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <hudson.plugins.groovy.SystemGroovy plugin="groovy@497.v7b_061a_a_de65d">
+            <source class="hudson.plugins.groovy.StringSystemScriptSource">
+                <script plugin="script-security@1373.vb_b_4a_a_c26fa_00">
+                    <script><![CDATA[
+import jenkins.model.Jenkins
+import hudson.model.Result
+import java.text.SimpleDateFormat
+
+// Get current time and time frame
+def thisBuild = Thread.currentThread().executable
+// If above doesn't work, try this method: https://www.reddit.com/r/jenkinsci/comments/9suejs/using_javalangthread_executable/
+
+
+def previousBuild = thisBuild.getPreviousBuild()
+def now = System.currentTimeMillis()
+def timeFrameStart
+
+if (previousBuild != null) {
+    timeFrameStart = previousBuild.getTimeInMillis()
+} else {
+    timeFrameStart = now - (24 * 60 * 60 * 1000) // Default to 24 hours if no previous run
+}
+
+// Enforce minimum 24 hour window
+def minWindowStart = now - (24 * 60 * 60 * 1000)
+if (timeFrameStart > minWindowStart) {
+    timeFrameStart = minWindowStart
+}
+
+// Cap at 72 hours
+def maxLookback = 72L * 60 * 60 * 1000
+if ((now - timeFrameStart) > maxLookback) {
+    timeFrameStart = now - maxLookback
+}
+
+def dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+def jenkinsUrl = Jenkins.get().getRootUrl() ?: "http://localhost:8080/"
+
+// Collect all builds from time frame
+def recentBuilds = []
+
+for (job in Jenkins.get().allItems(hudson.model.Job)) {
+    for (build in job.getBuilds()) {
+        if (build.getTimeInMillis() >= timeFrameStart) {
+            def status = "SUCCESS"
+            if (build.result == Result.FAILURE) {
+                status = "FAILED"
+            } else if (build.result == Result.UNSTABLE) {
+                status = "UNSTABLE"
+            }
+
+            recentBuilds.add([
+                jobName: job.fullName,
+                buildNumber: build.number,
+                status: status,
+                result: build.result,
+                url: build.absoluteUrl
+            ])
+        } else {
+            break // Builds are in reverse chronological order
+        }
+    }
+}
+
+// Count failures and unstable per job
+// Categorize builds and calculate streaks
+def newFailingBuilds = []
+def failedBuilds = []
+def unstableBuilds = []
+def successfulBuilds = []
+def buildStreaks = [:]
+
+recentBuilds.each { buildInfo ->
+    // Resolve Run object
+    def job = Jenkins.get().getItemByFullName(buildInfo.jobName)
+    def run = job.getBuildByNumber(buildInfo.buildNumber)
+    
+    int streak = 0
+    if (run != null) {
+        def tempRun = run
+        // Count consecutive builds with SAME result, cap at 10
+        while (tempRun != null && tempRun.result == buildInfo.result && streak < 10) {
+            streak++
+            tempRun = tempRun.getPreviousBuild()
+        }
+    }
+    
+    // Store streak using unique key
+    buildStreaks["${buildInfo.jobName}#${buildInfo.buildNumber}"] = streak
+    
+    if (buildInfo.status == "FAILED") {
+        if (streak == 1) {
+            newFailingBuilds.add(buildInfo)
+        } else {
+            failedBuilds.add(buildInfo)
+        }
+    } else if (buildInfo.status == "UNSTABLE") {
+        unstableBuilds.add(buildInfo)
+    } else {
+        successfulBuilds.add(buildInfo)
+    }
+}
+
+// Print results to console
+println "=== Jobs that ran since ${dateFormat.format(new Date(timeFrameStart))} ==="
+println ""
+
+if (newFailingBuilds.size() > 0) {
+    println "NEW FAILING JOBS:"
+    newFailingBuilds.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (failed 1 times)"
+    }
+    println ""
+}
+
+if (failedBuilds.size() > 0) {
+    println "FAILED JOBS:"
+    failedBuilds.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (failed ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
+    }
+    println ""
+}
+
+if (unstableBuilds.size() > 0) {
+    println "UNSTABLE JOBS:"
+    unstableBuilds.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (unstable ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
+    }
+    println ""
+}
+
+if (successfulBuilds.size() > 0) {
+    println "SUCCESSFUL JOBS:"
+    successfulBuilds.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status} (succeeded ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
+    }
+}
+
+println "\nTotal builds in period: ${recentBuilds.size()}"
+
+// Generate HTML report for email
+def html = new StringBuilder()
+html.append("""<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1 { color: #333; }
+  h2 { color: #555; margin-top: 20px; }
+  .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+  .summary-item { display: inline-block; margin-right: 30px; }
+  .count { font-size: 24px; font-weight: bold; }
+  .new-failing { color: #d32f2f; }
+  .failed { color: #f44336; }
+  .unstable { color: #ff9800; }
+  .success { color: #4caf50; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background-color: #f2f2f2; }
+  tr:nth-child(even) { background-color: #f9f9f9; }
+  a { color: #1976d2; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .timestamp { color: #666; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>Jenkins Jobs Summary</h1>
+<p class="timestamp">Period: ${dateFormat.format(new Date(timeFrameStart))} to ${dateFormat.format(new Date(now))}</p>
+<p class="timestamp">Report generated: ${dateFormat.format(new Date())}</p>
+
+<div class="summary">
+  <div class="summary-item">
+    <span class="count new-failing">${newFailingBuilds.size()}</span> New Failures
+  </div>
+  <div class="summary-item">
+    <span class="count failed">${failedBuilds.size()}</span> Repeated Failures
+  </div>
+  <div class="summary-item">
+    <span class="count unstable">${unstableBuilds.size()}</span> Unstable
+  </div>
+  <div class="summary-item">
+    <span class="count success">${successfulBuilds.size()}</span> Successful
+  </div>
+  <div class="summary-item">
+    <strong>Total: ${recentBuilds.size()}</strong>
+  </div>
+</div>
+""")
+
+if (newFailingBuilds.size() > 0) {
+    html.append("""
+<h2 class="new-failing">New Failing Jobs (Requires Attention)</h2>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Status</th></tr>
+""")
+    newFailingBuilds.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"new-failing\">FAILED (new)</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+if (failedBuilds.size() > 0) {
+    html.append("""
+<h2 class="failed">Repeatedly Failing Jobs</h2>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Failure Streak</th></tr>
+""")
+    failedBuilds.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"failed\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+if (unstableBuilds.size() > 0) {
+    html.append("""
+<h2 class="unstable">Unstable Jobs</h2>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Unstable Streak</th></tr>
+""")
+    unstableBuilds.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"unstable\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+if (successfulBuilds.size() > 0) {
+    html.append("""
+<h2 class="success">Successful Jobs</h2>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Success Streak</th></tr>
+""")
+    successfulBuilds.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"success\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+html.append("""
+</body>
+</html>
+""")
+
+// Write HTML report to workspace
+def build = Thread.currentThread().executable
+def workspace = build.workspace
+def reportFile = new File(workspace.getRemote(), "jenkins-jobs-summary.html")
+reportFile.text = html.toString()
+println "\nHTML report written to: ${reportFile.absolutePath}"
+]]>
+                    </script>
+                    <sandbox>false</sandbox>
+                </script>
+            </source>
+        </hudson.plugins.groovy.SystemGroovy>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>jenkins-jobs-summary.html</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>false</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>Jenkins Jobs Summary - Build #${BUILD_NUMBER}</subject>
+                        <body>${FILE,path=&quot;jenkins-jobs-summary.html&quot;}</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+            </configuredTriggers>
+            <contentType>text/html</contentType>
+            <defaultSubject>Jenkins Jobs Summary - Build #${BUILD_NUMBER}</defaultSubject>
+            <defaultContent>${FILE,path=&quot;jenkins-jobs-summary.html&quot;}</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$DEFAULT_REPLYTO</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers/>
+</project>
