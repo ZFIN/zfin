@@ -20,11 +20,20 @@ public class DiseaseAnnotationModelFiltering extends Filtering<DiseaseAnnotation
         (model, value) -> FilterFunction.contains(model.getDiseaseAnnotation().getDisease().getTermName(), value);
 
     public static FilterFunction<DiseaseAnnotationModel, String> fishFilter =
-        (model, value) -> FilterFunction.contains(model.getFishExperiment().getFish().getDisplayName(), value);
+        (model, value) -> {
+            if (model.getFishExperiment() != null && model.getFishExperiment().getFish() != null)
+                return FilterFunction.fullMatchMultiValueOR(model.getFishExperiment().getFish().getName(), value);
+            return false;
+        };
+
     public static FilterFunction<DiseaseAnnotationModel, String> evidenceFilter =
-        (model, value) -> FilterFunction.contains(model.getDiseaseAnnotation().getEvidenceCodeString(), value);
+        (model, value) -> FilterFunction.fullMatchMultiValueOR(model.getDiseaseAnnotation().getEvidenceCodeString(), value);
 
     public static FilterFunction<DiseaseAnnotationModel, String> experimentFilter =
-        (model, value) -> FilterFunction.contains(model.getFishExperiment().getExperiment().getDisplayAllConditions(), value);
+        (model, value) -> {
+            if (model.getFishExperiment() != null && model.getFishExperiment().getExperiment() != null)
+                return FilterFunction.fullMatchMultiValueOR(model.getFishExperiment().getExperiment().getDisplayAllConditions(), value);
+            return false;
+        };
 
 }
