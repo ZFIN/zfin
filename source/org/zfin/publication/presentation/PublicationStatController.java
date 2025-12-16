@@ -134,14 +134,16 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/str/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationSTRStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                   @RequestParam(value = "filter.targetGene", required = false) String targetGene,
+                                                                   @RequestParam(value = "filter.reagent", required = false) String reagent,
                                                                    @RequestParam(value = "filter.reagentType", required = false) String reagentType,
                                                                    @RequestParam(value = "filter.clonalType", required = false) String clonalType,
                                                                    @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
                                                                    @Version Pagination pagination) {
 
-        if (reagentType != null) {
-            pagination.addFieldFilter(FieldFilter.STR_TYPE, reagentType);
-        }
+        pagination.addFieldFilter(FieldFilter.TARGET_GENE, targetGene);
+        pagination.addFieldFilter(FieldFilter.STR_NAME, reagent);
+        pagination.addFieldFilter(FieldFilter.STR_TYPE, reagentType);
         pagination.addFieldFilter(FieldFilter.CLONAL_TYPE, clonalType);
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
@@ -196,9 +198,13 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/probe/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationProbes(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                 @RequestParam(value = "filter.type", required = false) String type,
+                                                                 @RequestParam(value = "filter.probe", required = false) String probe,
                                                                  @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
                                                                  @Version Pagination pagination) {
 
+        pagination.addFieldFilter(FieldFilter.TYPE, type);
+        pagination.addFieldFilter(FieldFilter.PROBE, probe);
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllProbeStats(pagination);
@@ -209,14 +215,20 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/disease/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationDisease(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                  @RequestParam(value = "filter.disease", required = false) String disease,
+                                                                  @RequestParam(value = "filter.fish", required = false) String fish,
+                                                                  @RequestParam(value = "filter.environment", required = false) String environment,
+                                                                  @RequestParam(value = "filter.evidence", required = false) String evidence,
                                                                   @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
                                                                   @RequestParam(value = "cardinalitySortSort.environment", required = false) String cardinalitySortEnvironment,
                                                                   @Version Pagination pagination) {
 
-        //pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
-        StatisticPublicationService service = new StatisticPublicationService();
         pagination.addFieldFilter(FieldFilter.PUBLICATION_ID, publicationID);
-        //pagination.addFieldSorting();
+        pagination.addFieldFilter(FieldFilter.DISEASE_NAME, disease);
+        pagination.addFieldFilter(FieldFilter.FISH_NAME, fish);
+        pagination.addFieldFilter(FieldFilter.EXPERIMENT, environment);
+        pagination.addFieldFilter(FieldFilter.FILTER_EVIDENCE, evidence);
+        StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllDiseaseStats(pagination);
         response.setHttpServletRequest(request);
         return response;

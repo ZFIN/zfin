@@ -23,21 +23,21 @@ public class AntibodyFiltering extends Filtering<Antibody> {
     public static FilterFunction<Antibody, String> isotypeFilter =
             (antibody, value) -> {
                 if (antibody.getHeavyChainIsotype() != null)
-                    return FilterFunction.contains(antibody.getHeavyChainIsotype(), value);
+                    return FilterFunction.fullMatchMultiValueOR(antibody.getHeavyChainIsotype(), value);
                 return false;
             };
 
     public static FilterFunction<Antibody, String> hostFilter =
             (antibody, value) -> {
                 if (antibody.getHostSpecies() != null)
-                    return FilterFunction.contains(antibody.getHostSpecies(), value);
+                    return FilterFunction.fullMatchMultiValueOR(antibody.getHostSpecies(), value);
                 return false;
             };
 
     public static FilterFunction<Antibody, String> clonalTypeFilter =
             (antibody, value) -> {
                 if (antibody.getClonalType() != null)
-                    return FilterFunction.contains(antibody.getClonalType(), value);
+                    return FilterFunction.fullMatchMultiValueOR(antibody.getClonalType(), value);
                 return false;
             };
 

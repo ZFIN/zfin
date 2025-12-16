@@ -15,26 +15,26 @@ public enum FieldFilter {
     RELATIONSHIP_TYPE("relationship.type"),
     GENE_ABBREVIATION("filter.geneAbbreviation"),
     NAME("name"),
-    FISH_NAME("fishName"),
+    FISH_NAME("fish"),
     ASSAY("assay"),
     DISEASE_NAME("disease"),
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
-    STR_NAME("strName"),
-    STR_TYPE("strType"),
+    STR_NAME("reagent"),
+    STR_TYPE("reagentType"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
     CONDITION_NAME("conditionName"),
     PHENOTYPE("phenotype"),
-    CLONAL_TYPE("filter.clonalType"),
-    ISOTYPE("filter.asisotypeay"),
-    HOST("filter.host"),
+    CLONAL_TYPE("clonalType"),
+    ISOTYPE("isotype"),
+    HOST("hostOrganism"),
     ZDB_ENTITY_TYPE("zdb.entity.type"),
     SUPER_TYPE("superType"),
     FOREIGN_DB("foreignDB"),
     DB_LINK_INFO("dbInfo"),
-    TARGET_GENE("filter.targetGene"),
+    TARGET_GENE("targetGene"),
     ANTIGEN_GENE("filter.antigenGenes"),
     ANTIBODY_NAME("antibodyName"),
     ANTIBODY("antibody"),
@@ -43,7 +43,8 @@ public enum FieldFilter {
     ANATOMY("anatomy"),
 
     STAGE("stage"),
-    EXPERIMENT("experiment"), TYPE("type"), STATUS("status"), STATUS_EMPTY("empty"), TRANSCRIPT_ID("ID"), PLASMID("plasmid"), STRAIN("strain"), DISPLAY_GROUP("displayGroup"), NON_REF_STRAIN("nonRefStrain");
+    PROBE("probe"),
+    EXPERIMENT("environment"), TYPE("type"), STATUS("status"), STATUS_EMPTY("empty"), TRANSCRIPT_ID("ID"), PLASMID("plasmid"), STRAIN("strain"), DISPLAY_GROUP("displayGroup"), NON_REF_STRAIN("nonRefStrain");
 
     private String name;
 

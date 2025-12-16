@@ -206,14 +206,17 @@ public class StatisticPublicationService {
     }
 
     public JsonResultResponse<StatisticRow> getAllPublicationStrs(Pagination pagination) {
-        Map<Publication, List<STRTargetRow>> unfilteredMap = getPublicationRepository().getAllAttributedSTRs(pagination);
+        Map<Publication, List<STRTargetRow>> originalMap = getPublicationRepository().getAllAttributedSTRs(pagination);
 
-        // remove empty publications
-        unfilteredMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+        // Keep unfiltered data for histogram (deep copy before any filtering)
+        Map<Publication, List<STRTargetRow>> unfilteredPublicationMap = new HashMap<>();
+        originalMap.forEach((pub, strs) -> unfilteredPublicationMap.put(pub, new ArrayList<>(strs)));
+        // remove empty publications from unfiltered map
+        unfilteredPublicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
 
         Map<Publication, List<STRTargetRow>> publicationMap = new HashMap<>();
-        unfilteredMap.keySet().forEach(key -> {
-            List<STRTargetRow> list = unfilteredMap.get(key);
+        originalMap.keySet().forEach(key -> {
+            List<STRTargetRow> list = originalMap.get(key);
             if (list != null) {
                 FilterService<STRTargetRow> filterService = new FilterService<>(new STRTargetRowFiltering());
                 List<STRTargetRow> strRow = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
@@ -246,11 +249,11 @@ public class StatisticPublicationService {
             new ColumnStats("Reagent", false, false, false, false),
             strTargetRow -> strTargetRow.getStr().getAbbreviation());
         columns.put(
-            new ColumnStats("Reagent Type", false, false, false, false),
+            new ColumnStats("Reagent Type", false, false, false, true),
             strTargetRow -> strTargetRow.getStr().getType().toString());
 
-        // put all columns into a statistic row
-        addColumnsToRows(publicationMap, row, columns);
+        // put all columns into a statistic row using unfiltered data for histogram
+        addColumnsToRows(unfilteredPublicationMap, row, columns);
 
         // create return result set
         List<StatisticRow> rows = new ArrayList<>();
@@ -606,7 +609,14 @@ public class StatisticPublicationService {
         }
 */
 
-        Map<Publication, List<Antibody>> publicationMap = new HashMap<>(getAntibodyRepository().getAntibodiesFromAllPublications());
+        Map<Publication, List<Antibody>> originalMap = getAntibodyRepository().getAntibodiesFromAllPublications();
+
+        // Keep unfiltered data for histogram (deep copy before any filtering)
+        Map<Publication, List<Antibody>> unfilteredPublicationMap = new HashMap<>();
+        originalMap.forEach((pub, antibodies) -> unfilteredPublicationMap.put(pub, new ArrayList<>(antibodies)));
+
+        Map<Publication, List<Antibody>> publicationMap = new HashMap<>();
+        originalMap.forEach((pub, antibodies) -> publicationMap.put(pub, new ArrayList<>(antibodies)));
 
         List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
         // filter on Publication
@@ -686,8 +696,8 @@ public class StatisticPublicationService {
         columns.put(
             new ColumnStats("Host Organism", false, false, false, true),
             Antibody::getHostSpecies);
-        // put all columns into a statistic row
-        addColumnsToRows(publicationMap, row, columns);
+        // put all columns into a statistic row using unfiltered data for histogram
+        addColumnsToRows(unfilteredPublicationMap, row, columns);
 
         Map<ColumnStats, Function<Antibody, List<String>>> columnsMulti = new LinkedHashMap<>();
         columnsMulti.put(
@@ -697,7 +707,7 @@ public class StatisticPublicationService {
             new ColumnStats("Antigen Genes", false, false, true, false),
             antibody -> antibody.getAntigenGenes().stream().map(Marker::getAbbreviation).collect(toList()));
 
-        addColumnsToRowsList(publicationMap, row, columnsMulti);
+        addColumnsToRowsList(unfilteredPublicationMap, row, columnsMulti);
 /*
 
         ColumnStats assay = new ColumnStats("Assay", false, false, true, true);
@@ -1255,7 +1265,14 @@ public class StatisticPublicationService {
     public JsonResultResponse<StatisticRow> getAllProbeStats(Pagination pagination) {
 
         pagination.setLimit(1000000);
-        Map<Publication, List<Clone>> publicationMap = getPublicationPageRepository().getAllProbes(pagination);
+        Map<Publication, List<Clone>> originalMap = getPublicationPageRepository().getAllProbes(pagination);
+
+        // Keep unfiltered data for histogram (deep copy before any filtering)
+        Map<Publication, List<Clone>> unfilteredPublicationMap = new HashMap<>();
+        originalMap.forEach((pub, clones) -> unfilteredPublicationMap.put(pub, new ArrayList<>(clones)));
+
+        Map<Publication, List<Clone>> publicationMap = new HashMap<>();
+        originalMap.forEach((pub, clones) -> publicationMap.put(pub, new ArrayList<>(clones)));
 
         List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
         // filter on Publication
@@ -1265,11 +1282,9 @@ public class StatisticPublicationService {
         publicationMap.keySet().forEach(key -> {
             List<Clone> list = publicationMap.get(key);
             if (list != null) {
-                FilterService<ExpressionTableRow> filterService = new FilterService<>(new ExpressionTableRowFiltering());
-/*
-                List<ExpressionTableRow> expressionTableRows = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
-                publicationMap.put(key, expressionTableRows);
-*/
+                FilterService<Clone> filterService = new FilterService<>(new CloneFiltering());
+                List<Clone> filteredClones = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, filteredClones);
             }
         });
         // remove empty publications
@@ -1332,8 +1347,8 @@ public class StatisticPublicationService {
             new ColumnStats("Type", false, false, false, true),
             expressionTableRow -> expressionTableRow.getType().name());
 
-        // put all columns into a statistic row
-        addColumnsToRows(publicationMap, row, columns);
+        // put all columns into a statistic row using unfiltered data for histogram
+        addColumnsToRows(unfilteredPublicationMap, row, columns);
 
 
         // create return result set
@@ -1380,8 +1395,15 @@ public class StatisticPublicationService {
 
         pagination.setLimit(1000000);
         List<DiseaseAnnotationModel> list1 = getPhenotypeRepository().getAllHumanDiseaseAnnotationModels();
-        Map<Publication, List<DiseaseAnnotationModel>> publicationMap = list1.stream()
+        Map<Publication, List<DiseaseAnnotationModel>> originalMap = list1.stream()
             .collect(groupingBy(model -> model.getDiseaseAnnotation().getPublication()));
+
+        // Keep unfiltered data for histogram (deep copy before any filtering)
+        Map<Publication, List<DiseaseAnnotationModel>> unfilteredPublicationMap = new HashMap<>();
+        originalMap.forEach((pub, models) -> unfilteredPublicationMap.put(pub, new ArrayList<>(models)));
+
+        Map<Publication, List<DiseaseAnnotationModel>> publicationMap = new HashMap<>();
+        originalMap.forEach((pub, models) -> publicationMap.put(pub, new ArrayList<>(models)));
 
         List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
         // filter on Publication
@@ -1453,8 +1475,8 @@ public class StatisticPublicationService {
             new ColumnStats("Evidence", false, false, false, true),
             diseaseModel -> diseaseModel.getDiseaseAnnotation().getEvidenceCodeString());
 
-        // put all columns into a statistic row
-        addColumnsToRows(publicationMap, row, columns);
+        // put all columns into a statistic row using unfiltered data for histogram
+        addColumnsToRows(unfilteredPublicationMap, row, columns);
 
 
         // create return result set
