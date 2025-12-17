@@ -42,6 +42,9 @@
         </z:section>
 
         <z:section title="${GBROWSE}" infoPopup="/action/feature/note/genomebrowser">
+            <z:attributeList>
+                <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
+            </z:attributeList>
             <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.GBrowseImage}" />
         </z:section>
 

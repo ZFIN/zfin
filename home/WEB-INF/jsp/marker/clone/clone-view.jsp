@@ -38,6 +38,9 @@
         <c:if test="${typeName ne 'EST'}">
            <c:if test="${typeName ne 'CDNA'}">
             <z:section title="${GBROWSE}">
+                <z:attributeList>
+                    <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
+                </z:attributeList>
                 <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.image}" />
             </z:section>
            </c:if>

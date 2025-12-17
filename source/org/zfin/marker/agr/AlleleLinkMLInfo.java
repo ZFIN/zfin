@@ -89,11 +89,20 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new CrossReferenceDTO();
                 crossReferenceDTO.setDisplayName(feature.getZdbID());
                 crossReferenceDTO.setReferencedCurie(primaryExternalId);
-                crossReferenceDTO.setPageArea("allele/references");
+                crossReferenceDTO.setPageArea("allele");
                 crossReferenceDTO.setPrefix("ZFIN");
                 dataProvider.setCrossReferenceDto(crossReferenceDTO);
-
                 dto.setDataProviderDto(dataProvider);
+                // reference cross-references
+                org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTOOne = new CrossReferenceDTO();
+                crossReferenceDTOOne.setDisplayName(feature.getZdbID());
+                crossReferenceDTOOne.setReferencedCurie(primaryExternalId);
+                crossReferenceDTOOne.setPageArea("allele/references");
+                crossReferenceDTOOne.setPrefix("ZFIN");
+                dto.setCrossReferenceDtos(List.of(crossReferenceDTOOne));
+
+
+
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);

@@ -18,6 +18,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
@@ -284,7 +285,7 @@ public class SequenceTargetingReagentViewController {
             sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
                     .setLandmarkByGenomeLocation(mergedLocation)
                     .withRelativePadding(0.1)
-                    .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
+                    .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_STRS))
                     .highlight(sequenceTargetingReagent)
                     .genomeBuild(GenomeBrowserBuild.GRCZ11)
                     .build()

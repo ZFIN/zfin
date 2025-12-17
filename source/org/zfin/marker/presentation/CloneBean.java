@@ -1,14 +1,17 @@
 package org.zfin.marker.presentation;
 
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Clone;
 import org.zfin.sequence.MarkerDBLinkList;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
+ *
  */
 public class CloneBean extends MarkerBean {
 
@@ -21,6 +24,8 @@ public class CloneBean extends MarkerBean {
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
     private List<OrganizationLink> suppliers;
     private GenomeBrowserImage image;
+
+    private TreeSet<BrowserLink> locations;
 
     public String getDbSnps() {
         return dbSnps;
@@ -82,11 +87,11 @@ public class CloneBean extends MarkerBean {
 
     public void addFakePubs(ReferenceDatabase ensemblDatabase) {
 
-        if(hasRealPubs(ensemblDatabase)) return ;
+        if (hasRealPubs(ensemblDatabase)) return;
 
         List<LinkDisplay> fakeLinks = new ArrayList<LinkDisplay>();
-        for(LinkDisplay linkDisplay: getOtherMarkerPages()){
-            if(linkDisplay.getReferenceDatabaseName().startsWith("VEGA_")){
+        for (LinkDisplay linkDisplay : getOtherMarkerPages()) {
+            if (linkDisplay.getReferenceDatabaseName().startsWith("VEGA_")) {
                 LinkDisplay fakeLinkDisplay = new LinkDisplay();
                 fakeLinkDisplay.setAccession(linkDisplay.getAccession());
                 fakeLinkDisplay.setMarkerZdbID(linkDisplay.getMarkerZdbID());
@@ -100,8 +105,8 @@ public class CloneBean extends MarkerBean {
     }
 
     private boolean hasRealPubs(ReferenceDatabase ensemblDatabase) {
-        for(LinkDisplay linkDisplay: getOtherMarkerPages()){
-            if(linkDisplay.getReferenceDatabaseName().startsWith(ensemblDatabase.getForeignDB().getDbName().toString())){
+        for (LinkDisplay linkDisplay : getOtherMarkerPages()) {
+            if (linkDisplay.getReferenceDatabaseName().startsWith(ensemblDatabase.getForeignDB().getDbName().toString())) {
                 return true;
             }
         }
@@ -122,5 +127,13 @@ public class CloneBean extends MarkerBean {
 
     public void setImage(GenomeBrowserImage image) {
         this.image = image;
+    }
+
+    public void setLocations(TreeSet<BrowserLink> locations) {
+        this.locations = locations;
+    }
+
+    public TreeSet<BrowserLink> getLocations() {
+        return locations;
     }
 }

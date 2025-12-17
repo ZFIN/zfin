@@ -5,7 +5,7 @@
 </div>
 <div class="popup-body">
     <p>
-    GBrowse image shows the variant/genomic feature in the genomic context when the localization of the variant is known. Additional genomic features, gene(s) and its transcript(s) are also displayed when available
+    JBrowse image shows the variant/genomic feature in the genomic context when the localization of the variant is known. Additional genomic features, gene(s) and its transcript(s) are also displayed when available
 
 
 </div>

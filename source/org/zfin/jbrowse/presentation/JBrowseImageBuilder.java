@@ -12,6 +12,7 @@ import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.gff.Assembly;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -250,6 +251,11 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
     @Override
     public Integer getHeight() {
         return height;
+    }
+
+    @Override
+    public GenomeBrowserImageBuilder setBuild(Assembly assembly) {
+        return null;
     }
 
 }

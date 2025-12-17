@@ -23,11 +23,13 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
@@ -55,6 +57,7 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.mapping.GenomeLocation.GRCZ12TU;
 import static org.zfin.repository.RepositoryFactory.*;
 
 @Controller
@@ -134,70 +137,42 @@ public class GeneViewController {
         geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean(gene));
 
         // sequence section: if not empty
-        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI);
-        if (genomeLocation.size() > 0) {
+        Assembly latestAssembly = gene.getLatestAssembly();
+        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocationByMarkerAndAssembly(gene, latestAssembly);
+        List<MarkerGenomeLocation> markerGenomeLocations = genomeMarkerLocationList.stream()
+            .filter(markerGenomeLocation -> markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN_NCBI) ||
+                                            markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN)).toList();
+        if (latestAssembly != null && CollectionUtils.isNotEmpty(markerGenomeLocations) && markerGenomeLocations.size() == 1) {
+            MarkerGenomeLocation landmark = markerGenomeLocations.get(0);
+            int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
+            int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
             GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                .setLandmarkByGenomeLocation(genomeLocation.get(0))
-                // add 10% left padding
-                .withPadding((genomeLocation.get(0).getEnd() - genomeLocation.get(0).getStart()) / 10, 0)
-                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
-            geneBean.setRefSeqLocations(refseqBuilder.build());
+                .setBuild(latestAssembly)
+                .setLandmarkByGenomeLocation(landmark)
+                // add 10% left padding and 5% right padding
+                .withPadding(startPadding, endPadding)
+                .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
+            GenomeBrowserImage genomeBrowserImageSequence = refseqBuilder.build();
+            // if GRCz12 then show jBrowse image
+            if (latestAssembly.getName().equals(GRCZ12TU)) {
+                geneBean.setRefSeqLocations(genomeBrowserImageSequence);
+                TreeSet<BrowserLink> locations = MappingService.getJBrowserBrowserLinks(genomeMarkerLocationList, genomeBrowserImageSequence, latestAssembly);
+                geneBean.setLocations(locations);
+            }
         }
 
         // Transcripts
-        geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
-        Assembly latestAssembly = gene.getLatestAssembly();
-        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocationByMarkerAndAssembly(gene, latestAssembly);
-        TreeSet locations = new TreeSet<>();
-        for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
-            BrowserLink location = new BrowserLink();
-            location.setUrl(genomeMarkerLocation.getUrl());
-            if (latestAssembly != null) {
-                switch (latestAssembly.getName()) {
-                    case "GRCz12tu": {
-                        switch (genomeMarkerLocation.getSource()) {
-                            case ZFIN_NCBI -> {
-                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                                location.setOrder(0);
-                            }
-                            case NCBI_LOADER -> {
-                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                                location.setOrder(1);
-                            }
-                            default -> {
-                            }
-                        }
-                        break;
-                    }
-                    case "GRCz11": {
-                        switch (genomeMarkerLocation.getSource()) {
-                            case ZFIN -> {
-                                location.setName("ZFIN");
-                                location.setOrder(0);
-                            }
-                            case ENSEMBL -> {
-                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                                location.setOrder(1);
-                            }
-                            case NCBI -> {
-                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                                location.setOrder(2);
-                            }
-                            case UCSC -> {
-                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
-                                location.setOrder(3);
-                            }
-                            default -> {
-                            }
-                        }
-                    }
-                    ;
-                    default:
-                }
-                locations.add(location);
-            }
+        RelatedTranscriptDisplay relatedTranscriptsForGene = TranscriptService.getRelatedTranscriptsForGene(gene);
+        GenomeBrowserImage gbrowseImageTranscripts = relatedTranscriptsForGene.getGbrowseImage();
+        if (gbrowseImageTranscripts != null) {
+            geneBean.setRelatedTranscriptDisplay(relatedTranscriptsForGene);
+            Set<BrowserLink> linkSet = new LinkedHashSet<>();
+            BrowserLink link = new BrowserLink();
+            link.setName("ZFIN");
+            link.setUrl(gbrowseImageTranscripts.getFullLinkUrl());
+            linkSet.add(link);
+            geneBean.setTranscriptLocations(linkSet);
         }
-        geneBean.setLocations(locations);
 
         // gene products
         geneBean.setGeneProductsBean(markerRepository.getGeneProducts(gene.getZdbID()));
