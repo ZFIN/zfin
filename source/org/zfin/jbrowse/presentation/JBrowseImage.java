@@ -6,7 +6,7 @@ import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.GenomeBrowserType;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.util.URLCreator;
 
 import java.util.Collection;
@@ -52,8 +52,8 @@ public class JBrowseImage implements GenomeBrowserImage {
 
             //Remove UI elements from JBrowse view
             url.addNameValuePair("nav", "0");
-            url.addNameValuePair("overview","0");
-            url.addNameValuePair("tracklist","0");
+            url.addNameValuePair("overview", "0");
+            url.addNameValuePair("tracklist", "0");
 
             if (StringUtils.isNotBlank(landmark)) {
                 url.addNameValuePair("loc", landmark);
@@ -77,26 +77,43 @@ public class JBrowseImage implements GenomeBrowserImage {
             //url.addNameValuePair("grid", grid ? "1" : "0");
 
             //getURL converts the spaces in the track names to plus signs - this changes them back
-            String pathSuffix = url.getURL().replaceAll("\\+","%20");
+            String pathSuffix = url.getURL().replaceAll("\\+", "%20");
             String baseUrl = calculateBaseUrl();
             imageUrl = baseUrl + pathSuffix;
         }
         return imageUrl;
     }
 
-    public static String calculateBaseUrl() {
-        String url = ZfinPropertiesEnum.JBROWSE_BASE_URL.value();
-
-        boolean useProxy = "true".equals(ZfinPropertiesEnum.JBROWSE_USE_LOCAL_PROXY.value());
-        if (useProxy) {
-            url = ZfinPropertiesEnum.JBROWSE_PROXY_BASE_URL.value();
+    public String calculateBaseUrl() {
+        String url = "https://dev.d2rwmenofjuae7.amplifyapp.com";
+        if (ZfinProperties.getInstance().equals("franklin") || ZfinProperties.getInstance().equals("crick")) {
+            url = "https://main.d2rwmenofjuae7.amplifyapp.com";
         }
-
         if (!url.endsWith("/")) {
             url += "/";
         }
-
         return url;
+    }
+
+
+    @Override
+    public String getFullLinkUrl() {
+        URLCreator url = new URLCreator(calculateBaseUrl());
+
+        if (StringUtils.isNotBlank(landmark)) {
+            url.addNameValuePair("loc", landmark);
+        }
+
+        String highlight = getHighlightString();
+        if (StringUtils.isNotBlank(highlight)) {
+            url.addNameValuePair("h_feat", highlight);
+        }
+
+        if (CollectionUtils.isNotEmpty(tracks)) {
+            url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
+        }
+        url.addNameValuePair("data", "data/" + build.getValue());
+        return url.getURL().replace("+", "%20");
     }
 
     @Override
@@ -105,7 +122,7 @@ public class JBrowseImage implements GenomeBrowserImage {
             URLCreator url = new URLCreator(linkUrlBase);
 
             if (StringUtils.isNotBlank(landmark)) {
-                url.addNameValuePair("name", landmark);
+                url.addNameValuePair("loc", landmark);
             }
 
             String highlight = getHighlightString();
@@ -129,8 +146,8 @@ public class JBrowseImage implements GenomeBrowserImage {
     }
 
     @Override
-    public String getChromosome(){
-        if(landmark == null)
+    public String getChromosome() {
+        if (landmark == null)
             return "";
         return landmark.substring(0, landmark.indexOf(":"));
     }
@@ -173,7 +190,7 @@ public class JBrowseImage implements GenomeBrowserImage {
         JBrowseImage image = (JBrowseImage) o;
 
         return getLinkUrl().equals(image.getLinkUrl()) &&
-                getImageUrl().equals(image.getImageUrl());
+               getImageUrl().equals(image.getImageUrl());
     }
 
     @Override

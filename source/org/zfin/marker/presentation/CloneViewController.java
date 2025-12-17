@@ -17,6 +17,9 @@ import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
+import org.zfin.mapping.MappingService;
+import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;
@@ -28,6 +31,7 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.List;
+import java.util.TreeSet;
 
 @Controller
 @RequestMapping("/marker")
@@ -104,6 +108,9 @@ public class CloneViewController {
         GenomeBrowserImageBuilder imageBuilder = genomeBrowserFactory.getImageBuilder();
         imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ11);
         cloneBean.setImage(imageBuilder.buildForClone(clone));
+        List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
+        TreeSet<BrowserLink> locations = MappingService.getJBrowserBrowserLinksForClones(cloneBean.getImage());
+        cloneBean.setLocations(locations);
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());

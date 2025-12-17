@@ -6,6 +6,7 @@ import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.mapping.presentation.BrowserLink;
 
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 @Setter
@@ -16,6 +17,7 @@ public class GeneBean extends MarkerBean {
     private List<LinkDisplay> plasmidDBLinks;
     private List<LinkDisplay> pathwayDBLinks;
     private TreeSet<BrowserLink> locations;
+    private Set<BrowserLink> transcriptLocations;
 
     GenomeBrowserImage refSeqLocations;
 }

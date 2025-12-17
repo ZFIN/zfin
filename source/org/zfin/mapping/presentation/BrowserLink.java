@@ -1,33 +1,15 @@
 package org.zfin.mapping.presentation;
 
+import lombok.Data;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+
+@Data
 public class BrowserLink implements Comparable<BrowserLink> {
     private String url;
     private String name;
     private int order;
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
+    private GenomeBrowserImage genomeBrowserImage;
 
     @Override
     public int compareTo(BrowserLink o) {
