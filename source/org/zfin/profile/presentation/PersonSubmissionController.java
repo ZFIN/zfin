@@ -54,11 +54,17 @@ public class PersonSubmissionController {
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String newPersonFormSubmit(@ModelAttribute PersonSubmission submission, Model model) {
+    public String newPersonFormSubmit(@ModelAttribute PersonSubmission submission, Model model, HttpServletRequest request) {
         if (StringUtils.isNotEmpty(submission.getEmail())) {
             log.error("New Person Submission Flagged as Spam: " + submission);
             return "profile/person-submit-process";
         }
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            log.error("New Person Submission Flagged as Spam: " + submission);
+            return "profile/person-submit-process";
+        }
+
         submission.setEmail(submission.getEmail2());
 
         //send confirmation email
