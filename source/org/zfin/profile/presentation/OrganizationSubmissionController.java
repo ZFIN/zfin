@@ -42,11 +42,17 @@ public class OrganizationSubmissionController {
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String newOrganizationFormSubmit(@ModelAttribute OrganizationSubmission submission, Model model) {
+    public String newOrganizationFormSubmit(@ModelAttribute OrganizationSubmission submission, Model model, HttpServletRequest request) {
         if (StringUtils.isNotEmpty(submission.getEmail())) {
             log.error("New Organization Submission Flagged as Spam: " + submission);
             return "profile/organization-submit-process";
         }
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            log.error("New Organization Submission Flagged as Spam: " + submission);
+            return "profile/organization-submit-process";
+        }
+
         submission.setEmail(submission.getEmail2());
 
         //send confirmation email
