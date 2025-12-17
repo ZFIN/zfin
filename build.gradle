@@ -62,7 +62,6 @@ def localFileDependencies = [
         "home/WEB-INF/lib/biojava.1.7.1.jar",
         "home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar",
-        "home/WEB-INF/lib/cvu.jar",
         "home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar",
         "home/WEB-INF/lib/jakarta.servlet.jsp.jstl-api-1.2.7-eclipse-transformed.jar",
         "home/WEB-INF/lib/obo.jar",
