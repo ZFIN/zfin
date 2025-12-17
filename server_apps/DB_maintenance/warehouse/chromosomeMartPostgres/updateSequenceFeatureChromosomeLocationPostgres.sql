@@ -84,18 +84,9 @@ create temp table tmp_ucsc (geneId text,
 				source text,
 				fdb_db_pk_id int8)
 ;
-insert into tmp_ucsc (geneId, chrom1, accnum1, source, fdb_db_pk_id)
-select dblink_linked_recid, 
-       chrom1,
-		accnum1,
-		'UCSCStartEndLoader',
-		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains
-  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
-  and dblink_acc_num = accnum1
-  and fdb_db_pk_id = fdbcont_fdb_db_id
- and start is not null
- and ender is not null
+-- DISABLE UCSC record creation - comment out the insert
+-- insert into tmp_ucsc (geneId, chrom1, accnum1, source, fdb_db_pk_id)
+-- select ... (UCSC logic disabled)
 ;
 
 create temp table tmp_ucsc_all (counter int,
@@ -147,6 +138,39 @@ select distinct dblink_linked_recid,
  and ender is not null
     -- don't include fdb_db_display_name = 'ExpressionAtlas'
  and fdb_db_pk_id != 91
+;
+
+-- Handle genes with ENSDARG accessions that don't have ENSDART links
+-- These genes were deleted but not recreated by the logic above
+insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
+       	    			       sfclg_chromosome,
+				       sfclg_start,
+				       sfclg_end,
+				       sfclg_acc_num,
+				       sfclg_location_source,
+				       sfclg_fdb_db_id,sfclg_evidence_code)
+select distinct dblink_linked_recid,
+       		gff_seqname,
+		gff_start,
+		gff_end,
+		dblink_acc_num,
+		'EnsemblStartEndLoader',
+		fdb_db_pk_id, 'ZDB-TERM-170419-250'
+  from db_link, foreign_db, foreign_db_contains, gff3
+  where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  and dblink_acc_num = gff_id
+  and fdb_db_pk_id = fdbcont_fdb_db_id
+  and dblink_acc_num like 'ENSDARG%'
+  and gff_feature = 'gene'
+  -- Only include genes not already processed by the ENSDART logic above
+  and dblink_linked_recid not in (
+    select distinct dblink_linked_recid
+    from db_link, tmp_gene, foreign_db_contains
+    where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+    and dblink_acc_num = accnum1
+  )
+  -- don't include fdb_db_display_name = 'ExpressionAtlas'
+  and fdb_db_pk_id != 91
 ;
 
 insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 

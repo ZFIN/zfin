@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" scope="request" type="org.zfin.marker.presentation.GeneBean"/>
 
 <z:attributeList>
-    <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" />
+    <zfin2:genomeBrowsersAttributeListItem locations="${formBean.transcriptLocations}" />
 </z:attributeList>
 
 <c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">

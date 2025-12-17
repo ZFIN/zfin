@@ -59,11 +59,11 @@
 
                         <c:choose>
                             <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
-                                <li><a href="/action/jbrowse2">ZFIN</a></li>
+                                <li><a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a></li>
                             </c:when>
                             <c:otherwise>
 <%--                        TODO: remove this once JBrowse with z12 is everywhere (or JBrowse2 is fully deployed)--%>
-                                <li><a href="/action/api/jbrowse/proxy/jbrowse/?data=data/GRCz12tu">ZFIN</a></li>
+                                <li><a href="https://main.d2rwmenofjuae7.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&data=data%2FGRCz12tu">ZFIN</a></li>
                             </c:otherwise>
                         </c:choose>
                         <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink></li>
