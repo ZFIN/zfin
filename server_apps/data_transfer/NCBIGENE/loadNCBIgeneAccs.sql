@@ -9,6 +9,8 @@
 
 begin work;
 
+drop table if exists tmp_pre_ncbi_gene_delete;
+
 -- Loaded from toDelete.unl
 create temporary table ncbi_gene_delete (
   delete_dblink_zdb_id    text not null

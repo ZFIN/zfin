@@ -1,5 +1,6 @@
 package org.zfin.uniprot.task;
 
+import jakarta.persistence.Tuple;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.csv.CSVPrinter;
@@ -89,35 +90,125 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         copyFromNcbiFileIntoDatabase(extractedCsvFile);
         List<Object[]> results = getReportOfPotentialNcbiGenes(toDelete);
         List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
-        addRnaAccessionsToReportRows(ncbiMatchReportRows, toDelete);
+        addRnaAccessionsToReportRows(ncbiMatchReportRows);
         writeResultsToCsv(ncbiMatchReportRows);
         dropTemporaryTables();
         extractedCsvFile.delete();
     }
 
-    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows, Map<String, String> toDelete) {
+    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows) {
         HibernateUtil.createTransaction();
 
-        for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
-            List<String> rnaAccessions = getRnaAccessions(ncbiMatchReportRow.getZdbId());
+        //get zdbid-to-rna accessions map
+        Map<String, String> markerToRnaMap = getMapOfZdbIdToRnaAccessions();
 
-            //progress
-            System.out.print(".");
-            ncbiMatchReportRow.setRnaAccessions(String.join(";", rnaAccessions));
+        for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
+            String rnaAccessions = getRnaAccessions(markerToRnaMap, ncbiMatchReportRow.getZdbId());
+            ncbiMatchReportRow.setRnaAccessions(rnaAccessions);
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    private List<String> getRnaAccessions(String zdbId) {
-        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-        SequenceService sequenceService = new SequenceService();
-        sequenceService.setMarkerRepository(markerRepository);
-        List<MarkerDBLink> results = sequenceService.getMarkerDBLinkResultsForMarkerZdbID(zdbId, false, null, false, true);
-        return results.stream()
-                .filter(markerDBLink -> ForeignDBDataType.DataType.RNA.equals(markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType()))
-                .map(DBLink::getAccessionNumber)
-                .toList();
+    private Map<String, String> getMapOfZdbIdToRnaAccessions() {
+        //this is the logic from SequenceService.getMarkerDBLinkResultsForMarkerZdbID but for all markers at once
+        //to improve performance. It uses all markers that are "isGenedom" which is a superset of the ones we care about
+        //marker IDs:
+        String mrkrIDsSql = """
+                select mrkr_zdb_id from marker where mrkr_type in
+                (select mtgrpmem_mrkr_type from marker_type_group_member
+                 where mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR')
+        """;
+
+        //DBLinks of "sequence" supertype excluding FishMiRNA-Expression
+        String dbLinksSql = """
+                        select distinct dblink_linked_recid as marker_id, dblink_acc_num as acc, 'step1' as numstep from db_link
+                         join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                         join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+                         join foreign_db on fdbcont_fdb_db_id = fdb_db_pk_id
+                         where fdbdt_super_type = 'sequence'
+                       and fdbdt_data_type = 'RNA' -- only RNA data type
+                         and fdb_db_name <> 'FishMiRNA-Expression'
+                """;
+
+        //Related marker DBLinks via marker relationships using first marker
+        String relatedFirstMarkerSql = """
+                select distinct mrel_mrkr_1_zdb_id as marker_id, dblink_acc_num as acc, 'step2' as numstep
+                from db_link
+                         join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                         join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+                         join foreign_db_contains_display_group_member on fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
+                         join foreign_db_contains_display_group on fdbcdg_pk_id = fdbcdgm_group_id
+                         join marker_relationship mr on db_link.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id
+                where foreign_db_contains_display_group.fdbcdg_name = 'marker linked sequence'
+                   and fdbdt_data_type = 'RNA' -- only RNA data type
+                  and mr.mrel_type in ('gene contains small segment',
+                                                      'clone contains small segment',
+                                                      'gene encodes small segment')
+                """;
+
+        //Related marker DBLinks via marker relationships using second marker
+        String relatedSecondMarkerSql = """
+            select distinct mrel_mrkr_2_zdb_id as marker_id, dblink_acc_num as acc, 'step3' as numstep
+            from db_link
+                     join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                     join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+                     join foreign_db_contains_display_group_member on fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
+                     join foreign_db_contains_display_group on fdbcdg_pk_id = fdbcdgm_group_id
+                     join marker_relationship mr on db_link.dblink_linked_recid = mr.mrel_mrkr_1_zdb_id
+            where foreign_db_contains_display_group.fdbcdg_name = 'marker linked sequence'
+               and fdbdt_data_type = 'RNA' -- only RNA data type
+              and mr.mrel_type in ('clone contains gene')
+        """;
+
+        //Transcript related DBLinks
+        String transcriptReferencesSql = """
+          select distinct gtmr.mrel_mrkr_1_zdb_id as marker_id, dblink_acc_num as acc, 'step4' as numstep
+          from db_link
+              join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+             join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+              join foreign_db_contains_display_group_member on fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
+              join foreign_db_contains_display_group on fdbcdg_pk_id = fdbcdgm_group_id
+              join marker_relationship ctmr on ctmr.mrel_mrkr_1_zdb_id = db_link.dblink_linked_recid
+              join marker_relationship gtmr on gtmr.mrel_mrkr_2_zdb_id = ctmr.mrel_mrkr_2_zdb_id
+          where fdbcdg_name = 'marker linked sequence'
+               and fdbdt_data_type = 'RNA' -- only RNA data type
+            and gtmr.mrel_type = 'gene produces transcript'
+            and ctmr.mrel_type = 'clone contains transcript'
+        """;
+
+        String combinedSQL = """
+        select marker_id, string_agg(distinct acc, ';' order by acc) as accessions from ( 
+        (%s)
+         union
+        (%s)
+         union
+        (%s)
+         union
+        (%s)
+        ) as combined_results
+        where marker_id in (%s)
+        group by marker_id
+        order by marker_id         
+        """.formatted(dbLinksSql, relatedFirstMarkerSql, relatedSecondMarkerSql, transcriptReferencesSql,mrkrIDsSql);
+
+        Session session = currentSession();
+        List<Tuple> results = session.createNativeQuery(combinedSQL, Tuple.class).getResultList();
+        return results.stream().collect(
+                java.util.stream.Collectors.toMap(
+                        row -> row.get("marker_id", String.class),
+                        row -> row.get("accessions", String.class)
+                )
+        );
+
+    }
+
+    private String getRnaAccessions(Map<String,String> rnaMap, String zdbId) {
+        String result = rnaMap.get(zdbId);
+        if (result == null) {
+            return "";
+        }
+        return result;
     }
 
     private List<NcbiMatchReportRow> convertResultsToReportRow(List<Object[]> inputRows) {
@@ -391,7 +482,13 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         return results;
     }
 
-    private void createTemporaryTableOfNcbiDblinksToDelete(Map<String, String> toDelete) {
+    /**
+     * Create a temporary table of DBLinks that are slated to be deleted.
+     * The table is named dblinks_to_delete (single column of dblink_zdb_id).
+     *
+     * @param toDelete
+     */
+    public static void createTemporaryTableOfNcbiDblinksToDelete(Map<String, String> toDelete) {
         if (toDelete == null) {
             toDelete = Map.of();
         }

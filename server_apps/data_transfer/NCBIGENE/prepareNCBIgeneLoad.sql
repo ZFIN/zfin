@@ -148,7 +148,18 @@ from genes_supported_by_rna g
 
 --!echo 'Dump the delete list'
 
-\copy (select dblink_loaded_zdb_id, dblink_acc_num from pre_delete join db_link on dblink_loaded_zdb_id = dblink_zdb_id order by dblink_loaded_zdb_id) to 'toDelete.unl' (delimiter '|');
+drop table if exists tmp_pre_ncbi_gene_delete;
+create table tmp_pre_ncbi_gene_delete (
+   dblink_zdb_id    text not null,
+   dblink_acc_num          varchar(255)
+);
+create index tpngd_id_index on tmp_pre_ncbi_gene_delete (dblink_zdb_id);
+create index tpngd_id_acc on tmp_pre_ncbi_gene_delete (dblink_acc_num);
+
+insert into tmp_pre_ncbi_gene_delete (select dblink_loaded_zdb_id, dblink_acc_num from pre_delete join db_link on dblink_loaded_zdb_id = dblink_zdb_id order by dblink_loaded_zdb_id);
+
+\copy (select * from tmp_pre_ncbi_gene_delete order by dblink_zdb_id) to 'toDelete.unl' (delimiter '|');
+
 
 drop view mappings_of_genes_supported_by_rna;
 drop view genes_supported_by_rna;
