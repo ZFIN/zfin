@@ -425,10 +425,12 @@
                     <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
                     <pre>${supplementals}</pre>
-                    <h4>Links</h4>
+                    ${renderActionItemTables(item)}
+                    ${links && links.length > 0 && html`<h4>Links</h4>
                     <ul>
                         ${links.map(link => html`<li><a target="_blank" href="${link.href}">${link.title}</a></li>`)}
                     </ul>
+                    `}
                     ${ relatedActions && relatedActions.length > 0 &&
                         html`<h4>Related Actions</h4>
                             <ul>
@@ -446,6 +448,17 @@
                         `
                     }
                 </div>
+            `;
+        }
+
+        function renderActionItemTables(actionItem) {
+            const tableData = actionItem.tables;
+            if (!tableData) {
+                return null;
+            }
+            tableElements = tableData.map( table => ReportSummaryTable({reportSummaryTable: table} ) );
+            return html`
+            ${tableElements}
             `;
         }
 

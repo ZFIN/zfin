@@ -148,6 +148,50 @@
               "type": "string"
             }
           },
+          "tables": {
+            "type": "array",
+            "description": "Array of tables associated with this action",
+            "items": {
+              "type": "object",
+              "description": "Individual table with description, headers, and rows",
+              "required": ["rows"],
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Description of what this table contains"
+                },
+                "headers": {
+                  "type": "array",
+                  "description": "Column headers for the table",
+                  "items": {
+                    "type": "object",
+                    "description": "Header definition with key and display title",
+                    "required": ["key", "title"],
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "description": "The key used to reference this column in row data"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "The display title for this column"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "rows": {
+                  "type": "array",
+                  "description": "Table data rows",
+                  "items": {
+                    "type": "object",
+                    "description": "Table row - can contain any properties"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
           "links": {
             "type": "array",
             "description": "Array of related links",

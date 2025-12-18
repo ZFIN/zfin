@@ -15,7 +15,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"id", "type", "subType", "accession", "geneZdbID", "details", "length", 
                    "uniprotAccessions", "relatedEntityID", "dbName", "md5", "relatedEntityFields", 
-                   "supplementalDataKeys", "relatedActionsKeys", "links", "tags"})
+                   "supplementalDataKeys", "relatedActionsKeys", "links", "tags", "tables"})
 public class LoadReportAction {
 
     public void addTag(LoadReportActionTag tag) {
@@ -139,6 +139,9 @@ public class LoadReportAction {
     
     @JsonProperty("tags")
     private List<LoadReportActionTag> tags;
+
+    @JsonProperty("tables")
+    private List<LoadReportSummaryTable> tables;
     
     public LoadReportAction() {
     }
