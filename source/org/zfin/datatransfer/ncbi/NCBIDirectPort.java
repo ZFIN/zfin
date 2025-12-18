@@ -3,17 +3,19 @@ package org.zfin.datatransfer.ncbi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.Tuple;
-import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.BidiMap; //TODO: use this to simplify mappings
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.hibernate.query.NativeQuery;
+import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
 import org.zfin.datatransfer.report.model.LoadReportAction;
 import org.zfin.datatransfer.report.model.LoadReportActionLink;
 import org.zfin.datatransfer.report.model.LoadReportActionTag;
+import org.zfin.datatransfer.report.model.LoadReportSummaryTable;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
@@ -48,6 +50,18 @@ import static org.zfin.util.ZfinCollectionUtils.removeAndReturnDuplicateMapEntri
 
 
 public class NCBIDirectPort extends AbstractScriptWrapper {
+    public record AnnotationStatusWarningRow(String geneZdbId, String geneSymbol, String status, String assemblies, String geneNcbiId) {
+        public Map<String, Object> toMap() {
+            return Map.of(
+                    "Gene ZDB ID", geneZdbId,
+                    "Gene Symbol", geneSymbol,
+                    "Status", status,
+                    "Assemblies", assemblies,
+                    "NCBI Gene ID", geneNcbiId
+            );
+        }
+    }
+
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private static final long MAX_REPORT_FILE_SIZE = 50_000_000; // 50 MB
     public File workingDir;
@@ -3714,29 +3728,53 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         writeHtmlReport();
 
-        try {
-            writeAnnotationStatusConflictReport();
-        } catch (IOException e) {
-            System.err.println("Error writing annotation status conflict report: " + e.getMessage());
-        }
-
-
         // Delete the two files
         new File(workingDir, "reportStatistics_p1").delete();
         new File(workingDir, "reportStatistics_p2").delete();
     }
 
-    private void writeAnnotationStatusConflictReport() throws IOException {
+    private List<LoadReportAction> getAnnotationStatusConflictReportActions() {
+        Map<String, List<AnnotationStatusWarningRow>> reports = getAnnotationStatusConflictReports();
+        List<LoadReportAction> actions = new ArrayList<>();
+        for(String key : reports.keySet()) {
+            List<AnnotationStatusWarningRow> rows = reports.get(key);
+            print(LOG, "Report " + key + " has " + rows.size() + " rows.\n");
+
+            LoadReportAction action = new LoadReportAction();
+            action.setType(LoadReportAction.Type.REPORTS);
+            action.setSubType(key);
+            action.setDetails("");
+            action.setGeneZdbID("N/A");
+            action.setAccession("N/A");
+            action.setRelatedEntityFields(Map.of("Report Title", key));
+            LoadReportSummaryTable table = new LoadReportSummaryTable();
+            table.setDescription("");
+
+            // "Gene ZDB ID", "Gene Symbol", "Status", "Assembly Names", "NCBI Gene ID"));
+            table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
+                    "Gene Symbol", "Gene Symbol",
+                    "Status", "Status",
+                    "Assembly Names", "Assembly Names",
+                    "NCBI Gene ID", "NCBI Gene ID"));
+
+            table.setRows(rows.stream().map(row -> row.toMap()).toList());
+            action.setTables(List.of(table));
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    private Map<String, List<AnnotationStatusWarningRow>> getAnnotationStatusConflictReports() {
         String sql = """
                 WITH tmp_csvs AS (
                     SELECT
-                        mas_mrkr_zdb_id,
-                        mrkr_abbrev,
+                        mas_mrkr_zdb_id as gene_zdb_id,
+                        mrkr_abbrev as gene_symbol,
                         mas_vt_pk_id,
                         'Current' as status,
-                        string_agg(ma_a_pk_id::varchar, ',') as assembly_ids,
-                				string_agg(a_name, ',') as assembly_names,
-                        string_agg(distinct dblink_acc_num, ',') as gene_id
+                        string_agg(cast(ma_a_pk_id as varchar), ',') as assembly_ids,
+                        string_agg(a_name, ',') as assembly_names,
+                        string_agg(distinct dblink_acc_num, ',') as gene_ncbi_id
                     FROM
                         marker_annotation_status
                             LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
@@ -3745,27 +3783,23 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
                             and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
                     group by mas_mrkr_zdb_id, mas_vt_pk_id, mrkr_abbrev )
-                select *, 'https://zfin.org/' || mas_mrkr_zdb_id as prod_url, 'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url, 'https://www.ncbi.nlm.nih.gov/gene/' || gene_id as ncbi_id
-                into temp tmprep1
+                select *, 'https://zfin.org/' || gene_zdb_id as zfin_url, 'https://www.ncbi.nlm.nih.gov/gene/' || gene_ncbi_id as ncbi_url
                 from tmp_csvs
                 where assembly_ids not like '%1%' -- No GRCz12tu assembly
                   and mas_vt_pk_id = 12           -- 12 is ""Current"" annotation status
                 ;
-                \\copy (select * from tmprep1) to 'current_status_without_z12.csv' with csv header;
                 """;
-        File tmpFile = new File(workingDir, "current_status_without_z12.sql");
-        Files.writeString(tmpFile.toPath(), sql);
-        tmpFile.deleteOnExit();
-
-        doSystemCommand(
-                List.of(
-                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
-                        "-U", env("PGUSER"),
-                        "-h", env("PGHOST"),
-                        "-d", env("DB_NAME"),
-                        "-a", "-f", tmpFile.getAbsolutePath()
-                ), "report1.txt", "report1.err.txt"
-        );
+        List<AnnotationStatusWarningRow> currentStatusWithoutZ12Records = currentSession().createNativeQuery(sql, Tuple.class)
+                    .list()
+                    .stream()
+                    .map(row -> new AnnotationStatusWarningRow(
+                            row.get("gene_zdb_id", String.class),
+                            row.get("gene_symbol", String.class),
+                            row.get("status", String.class),
+                            row.get("assembly_names", String.class),
+                            row.get("gene_ncbi_id", String.class)
+                    ))
+                    .toList();
 
         sql = """
                 SELECT
@@ -3776,7 +3810,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                        'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url,
                        'https://www.ncbi.nlm.nih.gov/gene?cmd=Retrieve&dopt=Graphics&list_uids=' || dblink_acc_num as ncbi_url,
                          dblink_acc_num as ncbi_id
-                INTO temp tmprep2
                 FROM
                     marker_annotation_status
                         LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
@@ -3788,26 +3821,22 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     ma_a_pk_id = 1          -- GRCz12tu
                   AND mas_vt_pk_id = 13   -- not in current
                   ;
-                \\copy (select * from tmprep2) to 'not_current_with_z12.csv' with csv header;
         """;
-        File tmpFile2 = new File(workingDir, "not_current_with_z12.sql");
-        Files.writeString(tmpFile2.toPath(), sql);
-        tmpFile2.deleteOnExit();
-
-        doSystemCommand(
-                List.of(
-                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
-                        "-U", env("PGUSER"),
-                        "-h", env("PGHOST"),
-                        "-d", env("DB_NAME"),
-                        "-a", "-f", tmpFile2.getAbsolutePath()
-                ), "report2.txt", "report2.err.txt"
-        );
+        List<AnnotationStatusWarningRow> notCurrentWithZ12Records = currentSession().createNativeQuery(sql, Tuple.class)
+                .list()
+                .stream()
+                .map(row -> new AnnotationStatusWarningRow(
+                        row.get("mas_mrkr_zdb_id", String.class),
+                        row.get("mrkr_abbrev", String.class),
+                        row.get("status", String.class),
+                        row.get("assembly_name", String.class),
+                        row.get("ncbi_id", String.class)
+                ))
+                .toList();
 
         sql = """
                 SELECT
                 	mrkr_zdb_id, mrkr_abbrev, ma_a_pk_id, a_name as assembly_name
-                INTO temp tmprep3
                 FROM
                 	marker left join marker_assembly on mrkr_zdb_id = ma_mrkr_zdb_id left join assembly on ma_a_pk_id = a_pk_id
                 WHERE
@@ -3816,34 +3845,25 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 	(mrkr_zdb_id like '%-GENE-%' or mrkr_zdb_id like '%-GENEP-%')
                 AND
                   mrkr_zdb_id IN ( SELECT ma_mrkr_zdb_id from marker_assembly);
-                \\copy (select * from tmprep3) to 'unknown_status.csv' with csv header;
         """;
-        File tmpFile3 = new File(workingDir, "unknown_status.sql");
-        Files.writeString(tmpFile3.toPath(), sql);
-        tmpFile3.deleteOnExit();
 
-        doSystemCommand(
-                List.of(
-                        "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
-                        "-U", env("PGUSER"),
-                        "-h", env("PGHOST"),
-                        "-d", env("DB_NAME"),
-                        "-a", "-f", tmpFile3.getAbsolutePath()
-                ), "report3.txt", "report3.err.txt"
+        List<AnnotationStatusWarningRow> unknownStatusRecords = currentSession().createNativeQuery(sql, Tuple.class)
+                .list()
+                .stream()
+                .map(row -> new AnnotationStatusWarningRow(
+                        row.get("mrkr_zdb_id", String.class),
+                        row.get("mrkr_abbrev", String.class),
+                        "Unknown",
+                        row.get("assembly_name", String.class),
+                        ""
+                ))
+                .toList();
+
+        return Map.of(
+                "Current Annotation Status without GRCz12tu Assembly", currentStatusWithoutZ12Records,
+                "Not Current Annotation Status with GRCz12tu Assembly", notCurrentWithZ12Records,
+                "Unknown Status", unknownStatusRecords
         );
-
-        // Now combine the three CSVs into one report
-        File report1 = new File(workingDir, "current_status_without_z12.csv");
-        File report2 = new File(workingDir, "not_current_with_z12.csv");
-        File report3 = new File(workingDir, "unknown_status.csv");
-        List<File> csvs = List.of(report1, report2, report3);
-
-        combineCsvsToExcelReport("annotation_status_conflicts.xlsx", csvs);
-
-        List<String> filesToDelete = List.of("report1.txt", "report1.err.txt", "report2.txt", "report2.err.txt",
-                "report3.txt", "report3.err.txt",
-                "current_status_without_z12.sql", "not_current_with_z12.sql", "unknown_status.sql");
-        filesToDelete.forEach(filename -> new File(workingDir, filename).delete());
 
     }
 
@@ -3934,6 +3954,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
+        builder.addActions(getAnnotationStatusConflictReportActions());
 
         ObjectNode report = builder.build();
 
