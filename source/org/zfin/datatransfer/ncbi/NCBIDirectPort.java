@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.hibernate.query.NativeQuery;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
 import org.zfin.datatransfer.report.model.LoadReportAction;
@@ -195,6 +194,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  used in eg. writeNCBIgeneIdsMappedBasedOnGenBankRNA
     private long ctToLoad = 0L;
 
+    private NCBIOutputFileToLoad recordsToLoad = new NCBIOutputFileToLoad();
     private BufferedWriter TOLOAD;      // For toLoad.unl
     private BufferedWriter TO_PRESERVE; // For toPreserve.unl
 
@@ -2257,15 +2257,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(entry -> {
                         String zdbId = entry.getKey();
                         String mappedNCBIgeneId = entry.getValue();
-                        // Format: zdbId|mappedNCBIgeneId|||fdcontNCBIgeneId|pubMappedbasedOnRNA
-                        String line = String.format("%s|%s|||%s|%s\n", zdbId, mappedNCBIgeneId, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA);
-                        try {
-                            TOLOAD.write(line);
-                            this.ctToLoad++;
-                        } catch (IOException e) {
-                            // Throw a RuntimeException to be caught by the calling context if direct error handling is complex here
-                            throw new RuntimeException("Error writing to TOLOAD in writeNCBIgeneIdsMappedBasedOnGenBankRNA for ZDB ID " + zdbId, e);
-                        }
+                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA));
+//                            TOLOAD.write(line);
+                        this.ctToLoad++;
                     });
         } catch (RuntimeException e) { // Catch runtime exceptions from the lambda
             if (e.getCause() instanceof IOException) {
@@ -2295,14 +2289,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(entry -> {
                         String zdbId = entry.getKey();
                         String mappedNCBIgeneId = entry.getValue();
-                        // Format: zdbId|mappedNCBIgeneId|||fdcontNCBIgeneId|pubMappedbasedOnNCBISupplement
-                        String line = String.format("%s|%s|||%s|%s\n", zdbId, mappedNCBIgeneId, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
-                        try {
-                            TOLOAD.write(line);
-                            this.ctToLoad++;
-                        } catch (IOException e) {
-                            throw new RuntimeException("Error writing to TOLOAD in writeNCBIgeneIdsMappedBasedOnSupplementaryLoad for ZDB ID " + zdbId, e);
-                        }
+                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT));
+//                            TOLOAD.write(line);
+                        this.ctToLoad++;
                     });
         } catch (RuntimeException e) { // Catch runtime exceptions from the lambda
             if (e.getCause() instanceof IOException) {
@@ -2882,16 +2871,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         !geneNCBIwithAccSupportingMoreThan1.containsKey(ncbiGeneIdMappedViaVega) &&
                         !mapped.containsValue(ncbiGeneIdMappedViaVega)) {
 
-                        try {
-                            // Format: zdbId|NCBIgeneIdMappedViaVega|||fdcontNCBIgeneId|pubMappedbasedOnVega
-                            TOLOAD.write(String.format("%s|%s|||%s|%s\n",
-                                    zdbId, ncbiGeneIdMappedViaVega, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+                            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, ncbiGeneIdMappedViaVega, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+//                            TOLOAD.write(String.format("%s|%s|||%s|%s\n", zdbId, ncbiGeneIdMappedViaVega, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
                             this.ctToLoad++;
                             oneToOneViaVega.put(ncbiGeneIdMappedViaVega, zdbId);
                             ctMappedViaVega++;
-                        } catch (IOException e) {
-                            reportErrAndExit("Error writing to TOLOAD in writeCommonVegaGeneIdMappings for ZDB ID " + zdbId + ": " + e.getMessage());
-                        }
                     }
                 }
             }
@@ -3058,7 +3042,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void writeGenBankRNAaccessionsWithMappedGenesToLoad() {
-        try {
             List<String> sortedKeys = accNCBIsupportingOnly1.keySet().stream().sorted().collect(Collectors.toList());
             for (String genBankRNA : sortedKeys) {
                 String ncbiGeneId = accNCBIsupportingOnly1.get(genBankRNA);
@@ -3074,15 +3057,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 Integer lengthVal = sequenceLength.get(genBankRNA);
                 String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
-                // Format: zdbGeneId|GenBankRNA||length|fdcontGenBankRNA|attributionPub
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, genBankRNA, lengthStr, FDCONT_GENBANK_RNA, attributionPub));
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genBankRNA, lengthVal, FDCONT_GENBANK_RNA, attributionPub));
+//                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, genBankRNA, lengthStr, FDCONT_GENBANK_RNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding
                 this.ctToLoad++;
             }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing GenBank RNA accessions to toLoad.unl: " + e.getMessage());
-        }
     }
 
     private void initializeGenPeptAccessionsMap() {
@@ -3156,8 +3135,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 if (!geneAccFdbcont.containsKey(hashKey)) {
-                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
+
+                    recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genPept, lengthVal, FDCONT_GENPEPT, attributionPub));
+//                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
                     geneAccFdbcont.put(hashKey, "1"); // Mark as added
                     this.ctToLoad++;
                     GenPeptsToLoad.put(genPept, zdbGeneId);
@@ -3167,8 +3147,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     moreToDeleteWriter.write(moreToDeleteDblinkId + "|" + genPept + "\n");
                     toDelete.put(moreToDeleteDblinkId, genPept); // Add to the main toDelete map
 
-                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
+                    recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genPept, lengthVal, FDCONT_GENPEPT, attributionPub));
+//                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
                     // geneAccFdbcont already contains this key, so we are essentially replacing its attribution
                     // No need to increment ctToLoad again if it was already counted, but the logic here implies
                     // it might be a new load line if the attribution changes.
@@ -3279,8 +3259,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                         if (!geneAccFdbcont.containsKey(hashKey)) {
-                            TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                                    zdbGeneId, genBankDNA, lengthStr, FDCONT_GENBANK_DNA, attributionPub));
+                            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genBankDNA, lengthVal, FDCONT_GENBANK_DNA, attributionPub));
+//                            TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, genBankDNA, lengthStr, FDCONT_GENBANK_DNA, attributionPub));
                             geneAccFdbcont.put(hashKey, "1"); // Mark as added
                             this.ctToLoad++;
                         } else {
@@ -3300,63 +3280,52 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void writeRefSeqRNAaccessionsWithMappedGenesToLoad() {
-        try {
-            List<String> sortedRefSeqRNAKeys = RefSeqRNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
+        List<String> sortedRefSeqRNAKeys = RefSeqRNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
-            for (String refSeqRNA : sortedRefSeqRNAKeys) {
-                String ncbiGeneId = RefSeqRNAncbiGeneIds.get(refSeqRNA);
-                String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
-                String zdbGeneId = zdbGeneAndPub[0];
-                String attributionPub = zdbGeneAndPub[1];
+        for (String refSeqRNA : sortedRefSeqRNAKeys) {
+            String ncbiGeneId = RefSeqRNAncbiGeneIds.get(refSeqRNA);
+            String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
+            String zdbGeneId = zdbGeneAndPub[0];
+            String attributionPub = zdbGeneAndPub[1];
 
-                if (zdbGeneId == null) continue;
+            if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refSeqRNA + FDCONT_REFSEQ_RNA;
-                if (geneAccFdbcont.containsKey(hashKey)) continue;
+            String hashKey = zdbGeneId + refSeqRNA + FDCONT_REFSEQ_RNA;
+            if (geneAccFdbcont.containsKey(hashKey)) continue;
 
-                Integer lengthVal = sequenceLength.get(refSeqRNA);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
+            Integer lengthVal = sequenceLength.get(refSeqRNA);
 
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqRNA, lengthStr, FDCONT_REFSEQ_RNA, attributionPub));
-                geneAccFdbcont.put(hashKey, "1");
-                this.ctToLoad++;
-            }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefSeq RNA accessions to toLoad.unl: " + e.getMessage());
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub));
+//                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, refSeqRNA, lengthStr, FDCONT_REFSEQ_RNA, attributionPub));
+            geneAccFdbcont.put(hashKey, "1");
+            this.ctToLoad++;
         }
     }
 
     private void writeRefPeptAccessionsWithMappedGenesToLoad() {
-        try {
-            List<String> sortedRefPeptKeys = RefPeptNCBIgeneIds.keySet().stream().sorted().collect(Collectors.toList());
+        List<String> sortedRefPeptKeys = RefPeptNCBIgeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
-            for (String refPept : sortedRefPeptKeys) {
-                String ncbiGeneId = RefPeptNCBIgeneIds.get(refPept);
-                String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
-                String zdbGeneId = zdbGeneAndPub[0];
-                String attributionPub = zdbGeneAndPub[1];
+        for (String refPept : sortedRefPeptKeys) {
+            String ncbiGeneId = RefPeptNCBIgeneIds.get(refPept);
+            String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
+            String zdbGeneId = zdbGeneAndPub[0];
+            String attributionPub = zdbGeneAndPub[1];
 
-                if (zdbGeneId == null) continue;
+            if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refPept + FDCONT_REFPEPT;
-                if (geneAccFdbcont.containsKey(hashKey)) continue;
+            String hashKey = zdbGeneId + refPept + FDCONT_REFPEPT;
+            if (geneAccFdbcont.containsKey(hashKey)) continue;
 
-                Integer lengthVal = sequenceLength.get(refPept);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
+            Integer lengthVal = sequenceLength.get(refPept);
 
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refPept, lengthStr, FDCONT_REFPEPT, attributionPub));
-                geneAccFdbcont.put(hashKey, "1");
-                this.ctToLoad++;
-            }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefPept accessions to toLoad.unl: " + e.getMessage());
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub));
+//                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, refPept, lengthStr, FDCONT_REFPEPT, attributionPub));
+            geneAccFdbcont.put(hashKey, "1");
+            this.ctToLoad++;
         }
     }
 
     private void writeRefSeqDNAaccessionsWithMappedGenesToLoad() {
-        try {
             List<String> sortedRefSeqDNAKeys = RefSeqDNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
             for (String refSeqDNA : sortedRefSeqDNAKeys) {
@@ -3375,22 +3344,19 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
 
                 Integer lengthVal = sequenceLength.get(refSeqDNA);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqDNA, lengthStr, FDCONT_REFSEQ_DNA, attributionPub));
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub));
+//                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n", zdbGeneId, refSeqDNA, lengthStr, FDCONT_REFSEQ_DNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding in this run for other types if logic allows
                 this.ctToLoad++;
             }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefSeq DNA accessions to toLoad.unl: " + e.getMessage());
-        }
     }
 
     private void closeUnloadFiles() {
         try {
             if (TOLOAD != null) {
+                TOLOAD.write(recordsToLoad.getOutput());
                 TOLOAD.close();
             }
             if (TO_PRESERVE != null) {

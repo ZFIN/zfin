@@ -74,7 +74,8 @@ delete from pre_delete
                 where recattrib_data_zdb_id = dblink_loaded_zdb_id
                   and recattrib_source_zdb_id not in (
                                                       'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
-                                                      'ZDB-PUB-130725-2' -- Curation of NCBI Gene Data Via Shared Vega Gene IDs
+                                                      'ZDB-PUB-130725-2', -- Curation of NCBI Gene Data Via Shared Vega Gene IDs
+                                                      'ZDB-PUB-230516-87'
                                                      ));
 
 --!echo 'Analyze what kinds of data in pre_delete table'
