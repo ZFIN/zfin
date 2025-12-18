@@ -16,13 +16,26 @@ import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_VEGA
 @Log4j2
 public class NCBIOutputFileToLoad {
 
-    // Based on our historical data load process (toLoad.unl which is loaded into temp ncbi_gene table by loadNCBIGeneAccs.sql)
     public record LoadFileRow(String geneID, String accession, Integer length, String fdb, String pub){}
+
+    // Based on our historical data load process (toLoad.unl which is loaded into temp ncbi_gene table by loadNCBIGeneAccs.sql)
+    //This is the substance of the toLoad.unl file. Organized as a map for easy access by ZFIN Gene ID.
+    //Key: ZFIN Gene ID, Value: list of rows to load for that gene
+
+    private Map<String, List<LoadFileRow>> toLoadNcbiGenes = new HashMap<>();
 
     public List<LoadFileRow> getRows() {
         return toLoadNcbiGenes.values().stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    public Integer getRowCount() {
+        return getRows().size();
+    }
+
+    public boolean isEmpty() {
+        return toLoadNcbiGenes.isEmpty();
     }
 
     public String getOutput() {
@@ -41,10 +54,6 @@ public class NCBIOutputFileToLoad {
         }
         return sb.toString();
     }
-
-    //This is the substance of the toLoad.unl file. Organized as a map for easy access by ZFIN Gene ID.
-    //Key: ZFIN Gene ID, Value: list of rows to load for that gene
-    private Map<String, List<LoadFileRow>> toLoadNcbiGenes = new HashMap<>();
 
     public void addRow(LoadFileRow row){
         //we only support one-to-one mapping of ZFIN Gene ID to NCBI Gene ID
