@@ -1,5 +1,7 @@
 package org.zfin.sequence.gff;
 
+//TODO: use a different CSVWriter (This is the only place in ZFIN that uses opencsv)
+//Then we can delete com.xlson.groovycsv:groovycsv:1.0
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-FROM gradle:7-jdk17
+FROM gradle:8-jdk17
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y --no-install-recommends \
@@ -36,7 +36,7 @@ COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
 RUN mkdir /opt/misc 
-COPY ./apache-groovy-binary-3.0.9.zip.sha256 /opt/misc
+COPY ./apache-groovy-binary-4.0.29.zip.sha256 /opt/misc
 #COPY ./init.d-httpd /etc/init.d/httpd
 #RUN chmod 755 /etc/init.d/httpd
 
@@ -45,10 +45,10 @@ RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowti
 RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.5.3/bowtie2-2.5.3-linux-x86_64.zip/download -O bowtie2-2.5.3.zip && \
         unzip bowtie2-2.5.3.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2
 
-RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-3.0.9.zip && \
-        sha256sum -c apache-groovy-binary-3.0.9.zip.sha256 && unzip apache-groovy-binary-3.0.9.zip
+RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip && \
+        sha256sum -c apache-groovy-binary-4.0.29.zip.sha256 && unzip apache-groovy-binary-4.0.29.zip
 
-RUN ln -s /opt/misc/groovy-3.0.9 /opt/misc/groovy
+RUN ln -s /opt/misc/groovy-4.0.29 /opt/misc/groovy
 
 #Java 11 has removed JAXB from the standard library, so we need to add it back in for Groovy
 RUN cd /opt/misc/groovy/lib && wget https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.2.3/jaxb-api-2.2.3.jar && \

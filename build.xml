@@ -395,40 +395,10 @@
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
-        <copy todir="${classbin.dir}">
-            <fileset dir="${source.dir}">
-                <include name="**/*.xml"/>
-                <exclude name="**/.svn"/>
-            </fileset>
-        </copy>
-        <javac srcdir="source"
-               destdir="${classbin.dir}"
-               classpathref="extended.classpath"
-               fork="true"
-               encoding="${encoding}"
-               includeAntRuntime="no"
-               memoryMaximumSize="556m"
-               debug="true"
-               >
-            <compilerarg line="-parameters"/>
-        </javac>
-        <echo message=":JAVA COMPILE SUCCESSFUL:"/>
-    </target>
-
-    <target name="remove-pre-and-post-targets"
-            description="Remove the pre-WEB-INF folder if exists. It is used for the new build version">
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${pre-web-inf}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${post-web-inf}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${gwt.pre-target}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${gwt.post-target}" includes="**/*"/>
-        </delete>
+        <!-- Delegate to Gradle for compilation (handles Lombok, annotation processing, etc.) -->
+        <exec executable="gradle" failonerror="true">
+            <arg value="antCompile"/>
+        </exec>
     </target>
 
     <target name="cleanClasses" description="Remove java classes directory contents. ">
@@ -493,14 +463,6 @@
     <!-- Generate WAR.                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="simple-war" description="Creates war file with no depends targets">
-        <war warfile="${zfin.war}" webxml="${web-inf.dir}/web.xml" duplicate="preserve" index="true">
-            <fileset dir="${web.dir}"/>
-            <lib dir="${web-inf.dir}/lib"/>
-        </war>
-    </target>
-
-
     <target name="schemaVersion" description="Prints schema version">
         <java fork="yes" classname="org.zfin.database.SchemaManager" taskname="junit" failonerror="true">
             <arg value="-checkSchema"/>
@@ -524,27 +486,6 @@
         </delete>
     </target>
 
-    <target name="revert" depends="revert-build,restart" description="Reverts the build and restarts"/>
-
-    <target name="revert-build"
-            description="Moves the last successful build to the current build and this build to the previous build directly (which will get clobbered on a subsequent build).">
-        <fail message=":FAIL TO REVERT BUILD.  POST DIRECTORIES DO NOT EXIST TO MOVE:">
-            <condition>
-                <not>
-                    <and>
-                        <available file="${post-web-inf}"/>
-                        <available file="${gwt.post-target}"/>
-                    </and>
-                </not>
-            </condition>
-        </fail>
-
-        <moveWebApp to="${post-home.target" from="${home.target}"/>
-        <moveWebApp to="${home.target" from="${pre-home.target}" failonerror="true"/>
-
-        <echo message=":REVERTED BUILD SUCCESSFULY:"/>
-    </target>
-
     <macrodef name="moveWebApp">
         <attribute name="from"/>
         <attribute name="to"/>
@@ -564,31 +505,6 @@
             </move>
         </sequential>
     </macrodef>
-
-    <!-- removed the has.pre-directories clause, as we shouldn't get here unless the pre-compile has been built -->
-    <target name="advance-build"
-            description="Moves build from post-home to archive-home, home to post-home, and pre-home to home">
-        <echo message="advancing build"/>
-        <fail message=":FAIL TO ADVANCE BUILD.  PRE DIRECTORIES DO NOT EXIST TO MOVE:">
-            <condition>
-                <not>
-                    <and>
-                        <available file="${pre-web-inf}"/>
-                        <available file="${gwt.pre-target}"/>
-                        <!-- <available file="${pre.version.file}"/> -->
-                    </and>
-                </not>
-            </condition>
-        </fail>
-
-        <delete failonerror="false">
-            <fileset dir="${classes.dir.target}" includes="**/*"/>
-            <fileset dir="${lib.dir.target}" includes="**/*"/>
-        </delete>
-
-        <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
-        <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
-    </target>
 
     <macrodef name="emailMessage">
         <attribute name="message"/>
@@ -612,14 +528,25 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,restart,deploy-solr,deployGitInfoFile"/>
+            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,restart,deploy-solr"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild"
+    <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
+    </target>
+
+    <target name="dirtydeploy" depends="npmBuild">
+        <gradle task="devCompile"/>
+    </target>
+
+    <target name="dirtydeploy-watch" depends="npmBuild">
+        <exec executable="gradle" dir="." failonerror="true">
+            <arg value="devWatch" />
+            <arg value="--continuous" />
+        </exec>
     </target>
 
     <macrodef name="removeWebAppLocation">
@@ -647,81 +574,6 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="removeWebAppDir">
-        <attribute name="dir"/>
-        <sequential>
-            <echo message="removing webapp from @{dir}"/>
-            <delete dir="@{dir}"/>
-        </sequential>
-    </macrodef>
-
-
-    <macrodef name="copyWebApp">
-        <attribute name="from"/>
-        <attribute name="to"/>
-        <attribute name="overwrite" default="false"/>
-        <sequential>
-            <echo message="copying the webapp from @{from} to @{to}"/>
-            <copy todir="@{to}" overwrite="@{overwrite}">
-                <fileset dir="@{from}">
-                    <include name="WEB-INF/**"/>
-                    <exclude name="images/**"/>
-                    <exclude name="templates/**"/>
-                    <exclude name="**/*.jar"/>
-                    <exclude name="**/*.zip"/>
-                    <exclude name="**/*.class"/>
-                    <exclude name="**/*.ser"/>
-                    <exclude name="**/*.svn"/>
-                </fileset>
-                <filterset refid="allfilters"/>
-            </copy>
-
-            <copy todir="@{to}" overwrite="@{overwrite}">
-                <fileset dir="@{from}">
-                    <include name="images/**"/>
-                    <include name="templates/**"/>
-                    <include name="WEB-INF/**/*.jar"/>
-                    <include name="WEB-INF/**/*.zip"/>
-                    <include name="WEB-INF/**/*.class"/>
-                    <include name="WEB-INF/**/*.ser"/>
-                    <include name="slides/**"/>
-                    <exclude name="**/*.svn"/>
-                </fileset>
-            </copy>
-        </sequential>
-    </macrodef>
-
-    <target name="cleandeploy" depends="do"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
-        <removeWebAppDir dir="${home.target}"/>
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-    </target>
-
-    <target name="dirtydeploy" depends="compile"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-        <antcall target="npmBuild"/>
-        <antcall target="deploy-solr"/>
-    </target>
-
-    <target name="dirtycopy" depends="compile"
-            description="Like dirtydeploy, but without npmBuild or deploy-solr">
-        <copyWebApp from="${web.dir}" to="${home.target}"/>
-    </target>
-
-    <target name="copy-to-pre-release" description="Copies built files to pre-release area">
-        <!-- move non-binary files in order to not replace any characters in Binary files -->
-        <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
-    </target>
-
-    <target name="prepareDeploy" description="Remove existing pre-release folder">
-        <delete dir="${pre-web-inf}"/>
-        <delete dir="${gwt.pre-target}"/>
-        <mkdir dir="${pre-web-inf}"/>
-        <mkdir dir="${gwt.pre-target}"/>
-    </target>
-
-
     <target name="build-properties" description="Describes build properties for environment">
         <echo>If properties are defined as true, they will show up that way, otherwise will just produce string
             version.
@@ -729,8 +581,6 @@
         <echo message="Is informix: ${isinformix}"/>
         <echo message="Is mutant: ${ismutant}"/>
         <echo message="Not production: ${notproduction}"/>
-        <echo message="Has pre-redirctories: ${has.pre-directories}"/>
-        <echo message="Has post-redirctories: ${has.post-directories}"/>
     </target>
 
     <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
