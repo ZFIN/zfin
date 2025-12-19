@@ -54,11 +54,22 @@ public class PersonSubmissionController {
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String newPersonFormSubmit(@ModelAttribute PersonSubmission submission, Model model) {
+    public String newPersonFormSubmit(@ModelAttribute PersonSubmission submission, Model model, HttpServletRequest request) {
         if (StringUtils.isNotEmpty(submission.getEmail())) {
             log.error("New Person Submission Flagged as Spam: " + submission);
             return "profile/person-submit-process";
         }
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            log.error("New Person Submission Flagged as Spam: " + submission);
+            return "profile/person-submit-process";
+        }
+        logSubmissionRequest(submission, request);
+        if (flagSpam(submission)) {
+            log.error("New Person Submission Flagged as Spam: " + submission);
+            return "profile/person-submit-process";
+        }
+
         submission.setEmail(submission.getEmail2());
 
         //send confirmation email
@@ -66,6 +77,57 @@ public class PersonSubmissionController {
         model.addAttribute("error", error);
 
         return "profile/person-submit-process";
+    }
+
+    private boolean flagSpam(PersonSubmission submission) {
+        //Look for submissions like: New Person Submission: WsEjiJCJYOXBXrWPWNLAwq KyliyDPBwGnfnAiVOoKCl
+        String firstName = submission.getFirstName();
+        String lastName = submission.getLastName();
+
+        boolean entirelyUpperCaseCheck = StringUtils.isAllUpperCase(firstName) && StringUtils.isAllUpperCase(lastName);
+        if (entirelyUpperCaseCheck) {
+            //some legitimate names are all uppercase
+            return false;
+        }
+
+        int countOfLettersThreshold = 10;
+
+        int upperCaseThreshold = 3;
+        if (numberOfUpperCaseLetters(firstName) >= upperCaseThreshold && firstName.length() >= countOfLettersThreshold) {
+            return true;
+        }
+        if (numberOfUpperCaseLetters(lastName) >= upperCaseThreshold && lastName.length() >= countOfLettersThreshold) {
+            return true;
+        }
+        return false;
+    }
+
+    private int numberOfUpperCaseLetters(String firstName) {
+        int count = 0;
+        for (char c : firstName.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private void logSubmissionRequest(PersonSubmission submission, HttpServletRequest request) {
+        log.error("New Person Submission: " + submission.toText());
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        log.error("Submission IP Address: " + ipAddress);
+
+        //get cookies:
+        StringBuilder cookies = new StringBuilder();
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";\n");
+            }
+        }
+        log.error("Submission Cookies: " + cookies.toString());
     }
 
     private boolean sendPersonConfirmationEmails(PersonSubmission submission) {
