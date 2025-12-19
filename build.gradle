@@ -59,7 +59,7 @@ project.ext.set("jacksonVersion", '2.15.2')
 def localFileDependencies = [
         "home/WEB-INF/lib/agr_curation_api.jar",
         "home/WEB-INF/lib/bbop.jar",
-        "home/WEB-INF/lib/biojava.1.7.1.jar",
+//        "home/WEB-INF/lib/biojava.1.7.1.jar",
         "home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar",
         "home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar",
