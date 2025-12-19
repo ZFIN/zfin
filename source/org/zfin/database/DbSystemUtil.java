@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DbSystemUtil {
 
-    private static final CellStyle rightAlign = new CellStyle(CellStyle.HorizontalAlign.right);
+    private static final CellStyle rightAlign = new CellStyle(CellStyle.HorizontalAlign.RIGHT);
     private static final Logger LOG = LogManager.getLogger("database locking");
 
     /**

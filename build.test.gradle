@@ -53,7 +53,7 @@ dependencies {
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
     implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')
-    implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
+    implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar')
     implementation files('home/WEB-INF/lib/obo.jar')
     implementation files('home/WEB-INF/lib/bbop.jar')
     implementation files('home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar')
@@ -70,6 +70,7 @@ dependencies {
     implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20200713.1'
     implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
     implementation group: 'org.biojava', name: 'core', version: '1.9.4'
+    implementation group: 'org.biojava', name: 'bytecode', version: '1.9.4'
     //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
     implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
     implementation group: 'javax.xml.rpc', name: 'javax.xml.rpc-api', version: '1.1.2'

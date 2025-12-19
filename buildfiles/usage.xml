@@ -6,13 +6,11 @@
 
             DEPLOYMENT:
             all/deploy/install: Deploys entire target
-               pre-deploy (test if not production) advance-build restart 
+               pre-deploy (test if not production)  restart
             revert: revert-build restart
             pre-deploy: Deploys entire WEB-INF environment to the pre-build directories
-            advance-build: Moves the prebuild directory to current
             revert-build: Moves the post-build directory to current, but does not restart
             gwt: Compile gwt targets to the pre-directory
-            jsp-compile: Precompile jsp files and generate appropriate web.xml servlert reference
 
             PROPERTIES:
             rebuildProperties: Builds property files for all instances defined by instances.properties.

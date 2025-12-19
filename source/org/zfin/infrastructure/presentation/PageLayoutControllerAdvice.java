@@ -11,6 +11,8 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.time.Year;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+
 @ControllerAdvice
 public class PageLayoutControllerAdvice {
 
@@ -33,10 +35,16 @@ public class PageLayoutControllerAdvice {
         return Year.now().getValue();
     }
 
+    @ModelAttribute("releaseNumber")
+    public String populateReleaseNumber() {
+        return getInfrastructureRepository().getReleaseNumber();
+    }
+
     // Needed for exception handling which cannot pre-populate model attributes (I don't know why)
     public void populateModelAttributes(Model model){
         model.addAttribute("currentUser", populateCurrentUser());
         model.addAttribute("currentUserHasZebraShareSubmissions", populateCurrentUserHasZebraShareSubmissions());
         model.addAttribute("copyrightYear", populateCopyrightYear());
+        model.addAttribute("releaseNumber", populateReleaseNumber());
     }
 }

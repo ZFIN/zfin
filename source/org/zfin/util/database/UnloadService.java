@@ -1,11 +1,14 @@
 package org.zfin.util.database;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.zfin.database.presentation.Table;
@@ -84,17 +87,19 @@ public class UnloadService {
             luceneQueryService = new LuceneQueryService(indexDirectory);
         else
             luceneQueryService.reopenIndex();
-        Hits hits = luceneQueryService.getHitsFromStartsWith(queryProperties);
+        TopDocs hits = luceneQueryService.getHitsFromStartsWith(queryProperties);
         if (hits == null)
             return;
 
-        LOG.debug(hits.length() + " unload directories found.");
+        LOG.debug(hits.totalHits.value + " unload directories found.");
         dateTableMap = new TreeMap<String, Map<String, Integer>>();
         try {
-            for (int index = 0; index < hits.length(); index++) {
-                String date = hits.doc(index).get(SUMMARY_DATE);
-                String tableName = hits.doc(index).get(SUMMARY_TABLE_NAME);
-                String numberOfRecordString = hits.doc(index).get(SUMMARY_NUMBER_OF_RECORDS);
+            IndexSearcher searcher = new IndexSearcher(luceneQueryService.getIndexReader());
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document doc = searcher.doc(scoreDoc.doc);
+                String date = doc.get(SUMMARY_DATE);
+                String tableName = doc.get(SUMMARY_TABLE_NAME);
+                String numberOfRecordString = doc.get(SUMMARY_NUMBER_OF_RECORDS);
                 Integer numberOfRecords = 0;
                 if (StringUtils.isNotEmpty(numberOfRecordString))
                     numberOfRecords = Integer.valueOf(numberOfRecordString);
@@ -106,7 +111,7 @@ public class UnloadService {
                 } else {
                     existingDate.put(tableName, numberOfRecords);
                 }
-                LOG.debug(hits.doc(index));
+                LOG.debug(doc);
             }
         } catch (IOException e) {
             LOG.error(e);
@@ -201,12 +206,13 @@ public class UnloadService {
 
 
     // <lastDateBeforeDisappearance, List<Match>>
-    private TreeMap<String, List<EntityMatch>> createEntityTraceReport(Hits hits, String tableName) {
+    private TreeMap<String, List<EntityMatch>> createEntityTraceReport(TopDocs hits, String tableName) {
         TreeMap<String, List<EntityMatch>> datedMap = new TreeMap<String, List<EntityMatch>>();
 
-        for (int index = 0; index < hits.length(); index++) {
-            try {
-                Document document = hits.doc(index);
+        try {
+            IndexSearcher searcher = new IndexSearcher(luceneQueryService.getIndexReader());
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document document = searcher.doc(scoreDoc.doc);
                 String date = document.getField(ENTITY_DATE).stringValue();
                 if (document.getField(ENTITY_ID) == null)
                     continue;
@@ -219,9 +225,9 @@ public class UnloadService {
                     datedMap.put(date, occurrences);
                 }
                 occurrences.add(entityMatch);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return datedMap;
     }
@@ -248,14 +254,16 @@ public class UnloadService {
     }
 
 
-    private boolean foundDateHit(String date, Hits hits) {
-        for (int index = 0; index < hits.length(); index++) {
-            try {
-                if (hits.doc(index).get(ENTITY_DATE).equals(date))
+    private boolean foundDateHit(String date, TopDocs hits) {
+        try {
+            IndexSearcher searcher = new IndexSearcher(luceneQueryService.getIndexReader());
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document doc = searcher.doc(scoreDoc.doc);
+                if (doc.get(ENTITY_DATE).equals(date))
                     return true;
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -321,7 +329,7 @@ public class UnloadService {
         if (properties.isEmpty())
             return null;
 
-        Hits hits = luceneQueryService.getHitsFromAndQuery(properties);
+        TopDocs hits = luceneQueryService.getHitsFromAndQuery(properties);
         return createEntityTraceReport(hits, null);
     }
 
@@ -329,18 +337,20 @@ public class UnloadService {
         Map<String, String> queryProperties = new HashMap<String, String>(3);
         queryProperties.put(SUMMARY_TABLE_NAME, table.getTableName().toLowerCase());
 
-        Hits hits = luceneQueryService.getHitsFromAndQuery(queryProperties);
-        int totalHits = hits.length();
+        TopDocs hits = luceneQueryService.getHitsFromAndQuery(queryProperties);
+        int totalHits = (int) hits.totalHits.value;
         if (totalHits == 0)
             return null;
 
         List<String> dates = new ArrayList<String>(totalHits);
-        for (int index = 0; index < totalHits; index++) {
-            try {
-                dates.add(hits.doc(index).get(SUMMARY_DATE));
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            IndexSearcher searcher = new IndexSearcher(luceneQueryService.getIndexReader());
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document doc = searcher.doc(scoreDoc.doc);
+                dates.add(doc.get(SUMMARY_DATE));
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         Collections.sort(dates);
         return dates.get(totalHits - 1);

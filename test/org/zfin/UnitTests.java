@@ -1,7 +1,5 @@
 package org.zfin;
 
-import de.oschoen.junit.runner.BatchTestRunner;
-import org.jenkinsci.testinprogress.runner.ProgressSuite;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -62,8 +60,7 @@ import org.zfin.util.*;
  * This is the master unit test class that runs all registered unit tests (suite).
  * Add your new unit test here if it is ready to be included in regular builds.
  */
-@RunWith(ProgressSuite.class)
-@BatchTestRunner.BatchTestInclude("**.*Suite")
+@RunWith(Suite.class)
 @Suite.SuiteClasses({
         ActiveDataTest.class,
 //        ActiveSourceTest.class,

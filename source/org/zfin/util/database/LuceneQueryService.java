@@ -2,17 +2,20 @@ package org.zfin.util.database;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
-import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.store.FSDirectory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -23,7 +26,7 @@ public class LuceneQueryService {
     // current lucene index
     private String indexDirectory;
     private Analyzer analyzer = new KeywordAnalyzer();
-    private IndexReader reader;
+    private DirectoryReader reader;
     boolean isInitialized = false;
 
     static {
@@ -48,7 +51,7 @@ public class LuceneQueryService {
                 LOG.warn("indexDirectory " + indexDirectory + " not found. Class is not initialized properly");
                 return;
             }
-            reader = IndexReader.open(indexDir);
+            reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDirectory)));
             isInitialized = true;
         } catch (Exception e) {
             LOG.warn("Ignoring. Make sure to re-initialize later.", e);
@@ -59,8 +62,12 @@ public class LuceneQueryService {
     private void createIndexFile() {
         IndexWriter writer = null;
         try {
-            writer = new IndexWriter(indexDirectory, analyzer, true);
-            reader = IndexReader.open(indexDirectory);
+            FSDirectory directory = FSDirectory.open(Paths.get(indexDirectory));
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+            writer = new IndexWriter(directory, config);
+            writer.commit();
+            reader = DirectoryReader.open(directory);
             isInitialized = true;
         } catch (IOException e) {
             LOG.error(e);
@@ -76,7 +83,11 @@ public class LuceneQueryService {
 
     public void reopenIndex() {
         try {
-            reader.reopen();
+            DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
+            if (newReader != null) {
+                reader.close();
+                reader = newReader;
+            }
         } catch (IOException e) {
             LOG.warn(e);
         }
@@ -86,9 +97,9 @@ public class LuceneQueryService {
         return isInitialized;
     }
 
-    public Hits getHitsFromAndQuery(Map<String, String> queryProperties) {
+    public TopDocs getHitsFromAndQuery(Map<String, String> queryProperties) {
         try {
-            Searcher searcher = new IndexSearcher(reader);
+            IndexSearcher searcher = new IndexSearcher(reader);
             Query query = null;
             int index = 0;
             for (Map.Entry<String, String> entry : queryProperties.entrySet()) {
@@ -99,8 +110,8 @@ public class LuceneQueryService {
                 else
                     query = addAndClauseToQuery(fieldName, fieldValue, query);
             }
-            Hits hits = searcher.search(query);
-            LOG.info(hits.length() + " hits found");
+            TopDocs hits = searcher.search(query, 10000);
+            LOG.info(hits.totalHits.value + " hits found");
             return hits;
         } catch (Exception e) {
             LOG.error(e);
@@ -111,7 +122,7 @@ public class LuceneQueryService {
 
     public Query addAndClauseToQuery(String fieldName, String fieldValue, Query query) {
 
-        BooleanQuery prefixQuery = new BooleanQuery();
+        BooleanQuery.Builder prefixQueryBuilder = new BooleanQuery.Builder();
         if (analyzer == null) {
             throw new RuntimeException("Analyzer is null");
         }
@@ -123,31 +134,34 @@ public class LuceneQueryService {
 
         if (tokenStream == null)
             throw new RuntimeException("tokenStream is null");
-        Token token;
+
         try {
-            token = tokenStream.next();
+            CharTermAttribute termAtt = tokenStream.getAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            if (tokenStream.incrementToken()) {
+                String text = termAtt.toString();
+                TermQuery termQuery = new TermQuery(new Term(fieldName, text));
+                prefixQueryBuilder.add(termQuery, BooleanClause.Occur.SHOULD);
+            }
+            tokenStream.end();
+            tokenStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (token != null) {
-            TermQuery termQuery = new TermQuery(new Term(fieldName, new String(token.termBuffer(), 0, token.termLength())));
-            prefixQuery.add(termQuery, BooleanClause.Occur.SHOULD);
-        }
 
-        BooleanQuery fullQuery = new BooleanQuery();
-        fullQuery.add(prefixQuery, BooleanClause.Occur.MUST);
-        fullQuery.add(query, BooleanClause.Occur.MUST);
+        BooleanQuery.Builder fullQueryBuilder = new BooleanQuery.Builder();
+        fullQueryBuilder.add(prefixQueryBuilder.build(), BooleanClause.Occur.MUST);
+        fullQueryBuilder.add(query, BooleanClause.Occur.MUST);
 
-        return fullQuery;
+        return fullQueryBuilder.build();
     }
 
 
-    public Hits getHitsFromStartsWith(Map<String, String> queryProperties) {
+    public TopDocs getHitsFromStartsWith(Map<String, String> queryProperties) {
         if (!isInitialized())
             return null;
         try {
-            IndexReader reader = IndexReader.open(indexDirectory);
-            Searcher searcher = new IndexSearcher(reader);
+            IndexSearcher searcher = new IndexSearcher(reader);
             Query query = null;
             int index = 0;
             for (Map.Entry<String, String> entry : queryProperties.entrySet()) {
@@ -158,8 +172,8 @@ public class LuceneQueryService {
                 else
                     query = addAndClauseToQuery(fieldName, fieldValue, query);
             }
-            Hits hits = searcher.search(query);
-            LOG.info(hits.length() + " hits found");
+            TopDocs hits = searcher.search(query, 10000);
+            LOG.info(hits.totalHits.value + " hits found");
             return hits;
         } catch (Exception e) {
             LOG.error(e);
@@ -173,17 +187,28 @@ public class LuceneQueryService {
     }
 
     private Query getStartsWithQuery(String fieldName, String queryString) throws IOException {
-        BooleanQuery query = new BooleanQuery();
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
         TokenStream tokenStream = analyzer.tokenStream(fieldName, new StringReader(queryString));
-        Token tok;
-        while ((tok = tokenStream.next()) != null) {
-            query.add(new PrefixQuery(new Term(fieldName, new String(tok.termBuffer(), 0, tok.termLength()))), BooleanClause.Occur.MUST);
+        try {
+            CharTermAttribute termAtt = tokenStream.getAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while (tokenStream.incrementToken()) {
+                String text = termAtt.toString();
+                queryBuilder.add(new PrefixQuery(new Term(fieldName, text)), BooleanClause.Occur.MUST);
+            }
+            tokenStream.end();
+        } finally {
+            tokenStream.close();
         }
-        return query;
+        return queryBuilder.build();
     }
 
     public void reLoadIndex() throws IOException {
-        reader.reopen();
+        DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
+        if (newReader != null) {
+            reader.close();
+            reader = newReader;
+        }
     }
 
     public String getIndexDirectory() {
@@ -207,7 +232,7 @@ public class LuceneQueryService {
 
     }
 
-    public IndexReader getIndexReader() {
+    public DirectoryReader getIndexReader() {
         return reader;
     }
 }

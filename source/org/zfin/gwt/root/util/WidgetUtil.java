@@ -1,6 +1,5 @@
 package org.zfin.gwt.root.util;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;

@@ -204,7 +204,7 @@
 
     </target>
 
-    <target name="upgrade-solr" depends="remove-solr-client-lib, dirtydeploy, deploy-solr, restart-solr"/>
+    <target name="upgrade-solr" depends="remove-solr-client-lib,deploy-solr,restart-solr"/>
 
     <target name="remove-solr-home">
         <echo message="Removing existing solr home..."/>

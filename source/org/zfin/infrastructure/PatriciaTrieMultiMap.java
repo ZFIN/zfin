@@ -7,6 +7,7 @@ import org.zfin.gwt.root.dto.TermDTO;
 import java.util.*;
 
 /**
+ * TODO: Replace org.ardverk.collection.PatriciaTrie with org.apache.commons.collections4.trie.PatriciaTrie
  */
 public class PatriciaTrieMultiMap<V> extends PatriciaTrie<String, Set<V>> {
 

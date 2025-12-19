@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,7 +11,7 @@ import java.util.Map;
 /**
  * Data Transfer Object for a composed term with expressed-in boolean.
  */
-public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTermDTO> {
+public class EapQualityTermDTO implements Serializable, IsSerializable, Comparable<EapQualityTermDTO> {
 
     private TermDTO term;
     private String tag;

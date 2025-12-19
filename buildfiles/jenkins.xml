@@ -170,7 +170,7 @@
                                     def file = new File(new File(directory, subDir), fileName)
                                     def targetFile = new File(targetDir, fileName)
                                     println targetFile.absolutePath
-                                    new AntBuilder().copy(file: file, tofile: targetFile)
+                                    ant.copy(file: file, tofile: targetFile)
                                 }
                             }
                         }
@@ -348,7 +348,6 @@
                     jobs.eachWithIndex { value, i ->
                         properties.jobName = value
                         //println value
-                        def ant = new AntBuilder(project)
                         ant."add-trigger-for-job"()
                     }
                 </groovy>
@@ -392,7 +391,6 @@
                 }
 */
 
-                def ant = new AntBuilder(project)
                 ant.'copy-report-files-per-job'()
             }
         </groovy>
@@ -415,7 +413,6 @@
                     jobs.eachWithIndex { value, i ->
                         properties.jobName = value
                         //println value
-                        def ant = new AntBuilder(project)
                         ant.'add-notification-per-job'()
                     }
                 </groovy>
@@ -444,7 +441,6 @@
                 }
                 triggerSeries.eachWithIndex { trName, i ->
                     properties.trigger = trName
-                    def ant = new AntBuilder(project)
                     ant.addTriggerPerJob()
                 }
             </groovy>

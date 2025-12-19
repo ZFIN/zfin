@@ -22,6 +22,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
+import org.zfin.properties.ZfinDatabaseProperty;
 import org.zfin.publication.Publication;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
@@ -447,6 +448,14 @@ public interface InfrastructureRepository {
     void updateUniProtRelease(UniProtRelease release);
 
     void upsertUniProtRelease(UniProtRelease release);
+
+    void setZfinDatabaseProperty(ZfinDatabaseProperty.KeyName keyName, String value);
+
+    String getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName keyName);
+
+    String getReleaseNumber();
+
+    String getReleaseCommit();
 }
 
 

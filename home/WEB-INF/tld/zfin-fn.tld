@@ -311,14 +311,6 @@
     <function>
         <description>
         </description>
-        <name>getSoftwareBranch</name>
-        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>java.lang.String getSoftwareBranch()</function-signature>
-    </function>
-
-    <function>
-        <description>
-        </description>
         <name>getMappingEntityType</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>java.lang.String getMappingEntityType(org.zfin.infrastructure.EntityZdbID))</function-signature>

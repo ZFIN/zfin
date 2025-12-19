@@ -74,7 +74,7 @@ public class HibernateSessionRequestFilter implements Filter {
         String[] values = contents.split("\\|");
         int index = 1;
         for (String val : values) {
-            output.addCell("" + index++ + " ", new CellStyle(CellStyle.HorizontalAlign.right));
+            output.addCell("" + index++ + " ", new CellStyle(CellStyle.HorizontalAlign.RIGHT));
             output.addCell(val);
         }
         return output.render();
