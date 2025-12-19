@@ -24,4 +24,16 @@ public class PersonSubmission {
     private String orcid;
     private String comments;
 
+    public String toText() {
+        return "First Name: " + firstName + "\n" +
+                "Last Name: " + lastName + "\n" +
+                "Email: " + email + "\n" +
+                "Address: " + address + "\n" +
+                "Country: " + country + "\n" +
+                "Phone: " + phone + "\n" +
+                "Lab: " + lab + "\n" +
+                "URL: " + url + "\n" +
+                "ORCID: " + orcid + "\n" +
+                "Comments: " + comments + "\n\n";
+    }
 }

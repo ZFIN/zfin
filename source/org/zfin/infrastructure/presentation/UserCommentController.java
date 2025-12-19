@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
+import org.zfin.profile.OrganizationSubmission;
+import org.zfin.profile.PersonSubmission;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
@@ -70,6 +72,13 @@ public class UserCommentController {
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Captcha Response"), HttpStatus.BAD_REQUEST);
         }
 
+        logSubmissionRequest(request, name, institution, email, subject);
+        if (flagSpam(name, institution)) {
+            log.error("New Person Submission Flagged as Spam: ");
+            return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Form Data"), HttpStatus.BAD_REQUEST);
+        }
+
+
         // send mail to admin
         boolean sent = mailer.sendMail(subject,
                 String.format(ADMIN_EMAIL_TEMPLATE, name, email, institution, referer, comments),
@@ -83,5 +92,58 @@ public class UserCommentController {
         }
 
     }
+
+    private boolean flagSpam(String name, String institution) {
+        //Look for submissions like: WsEjiJCJYOXBXrWPWNLAwq KyliyDPBwGnfnAiVOoKCl
+        boolean entirelyUpperCaseCheck = StringUtils.isAllUpperCase(name) && StringUtils.isAllUpperCase(institution);
+        if (entirelyUpperCaseCheck) {
+            //some legitimate names are all uppercase
+            return false;
+        }
+
+        int countOfLettersThreshold = 10;
+
+        int upperCaseThreshold = 3;
+        if (numberOfUpperCaseLetters(name) >= upperCaseThreshold && name.length() >= countOfLettersThreshold) {
+            if (StringUtils.countMatches(name, " ") == 0) {
+                return true;
+            }
+        }
+        if (numberOfUpperCaseLetters(institution) >= upperCaseThreshold && institution.length() >= countOfLettersThreshold) {
+            if (StringUtils.countMatches(institution, " ") == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int numberOfUpperCaseLetters(String firstName) {
+        int count = 0;
+        for (char c : firstName.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private void logSubmissionRequest(HttpServletRequest request, String name, String institution, String email, String subject) {
+        log.error("New Feedback Submission: name: %s, institution: %s, email: %s, subject: %s".formatted(name, institution, email, subject));
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        log.error("Submission IP Address: " + ipAddress);
+
+        //get cookies:
+        StringBuilder cookies = new StringBuilder();
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";\n");
+            }
+        }
+        log.error("Submission Cookies: " + cookies.toString());
+    }
+
 
 }
