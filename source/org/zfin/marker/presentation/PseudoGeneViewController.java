@@ -12,10 +12,13 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerNotFoundException;
@@ -24,11 +27,14 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.gff.Assembly;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
+import static org.zfin.mapping.GenomeLocation.GRCZ12TU;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 /**
@@ -95,14 +101,26 @@ public class PseudoGeneViewController {
 
 
         // sequence section: if not empty
-        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI);
+        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN_NCBI, GenomeLocation.Source.NCBI_LOADER);
         if (genomeLocation.size() > 0) {
+            MarkerGenomeLocation landmark = genomeLocation.get(0);
+            int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
+            int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
+
             GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                .setLandmarkByGenomeLocation(genomeLocation.get(0))
-                // add 10% left padding
-                .withPadding((genomeLocation.get(0).getEnd() - genomeLocation.get(0).getStart()) / 10, 0)
-                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, GenomeBrowserTrack.REFSEQ});
+                .setLandmarkByGenomeLocation(landmark)
+                // add 10% left padding and 5% right padding
+                .withPadding(startPadding, endPadding)
+                .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
             geneBean.setRefSeqLocations(refseqBuilder.build());
+            // if GRCz12 then show jBrowse image
+            Assembly latestAssembly = genomeLocation.get(0).getMarker().getLatestAssembly();
+            GenomeBrowserImage genomeBrowserImageSequence = refseqBuilder.build();
+            if (latestAssembly.getName().equals(GRCZ12TU)) {
+                geneBean.setRefSeqLocations(genomeBrowserImageSequence);
+                TreeSet<BrowserLink> locations = MappingService.getJBrowserBrowserLinks(genomeLocation, genomeBrowserImageSequence, latestAssembly);
+                geneBean.setLocations(locations);
+            }
         }
 
         // ORTHOLOGY

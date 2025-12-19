@@ -48,14 +48,14 @@ const StatisticTable = ({
                                     <HeaderCell
                                         column={columnGenerateOptions(key, key, value.columnDefinition.filterName,value.columnStat.histogram)}
                                         selectionFilterDisplay={(keyName) => keyName + ' [' + value.columnStat.histogram[keyName] + ']'}
-                                        filterValue={tableState.filter && tableState.filter[key]}
+                                        filterValue={tableState.filter && tableState.filter[value.columnDefinition.filterName]}
                                         onFilterChange={handleFilterChange}
                                     />
                                 )}
                                 {!( value.columnStat.histogram) && (
                                     <HeaderCell
                                         column={columnGenerate(key, key, value.columnDefinition.filterName)}
-                                        filterValue={tableState.filter && tableState.filter[key]}
+                                        filterValue={tableState.filter && tableState.filter[value.columnDefinition.filterName]}
                                         onFilterChange={handleFilterChange}
                                     />
                                 )}

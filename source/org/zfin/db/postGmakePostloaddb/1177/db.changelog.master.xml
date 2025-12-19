@@ -5,6 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+    <include file="source/org/zfin/db/postGmakePostloaddb/1177/ZFIN-9989.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1177/ZFIN-10009.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1177/ZFIN-9872.sql" />
 
 </databaseChangeLog>

@@ -10,6 +10,7 @@ import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.VariantSequence;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
@@ -21,6 +22,7 @@ import org.zfin.zebrashare.FeatureCommunityContribution;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Setter
@@ -31,6 +33,7 @@ public class FeatureBean {
     private int numPubs;
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships;
+    private TreeSet<BrowserLink> locations;
 
 
     private Set<FeatureMarkerRelationship> createdByRelationship;
