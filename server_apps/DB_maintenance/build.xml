@@ -2,15 +2,18 @@
 
 <project name="Download" basedir="../../">
 
-    <property name="web.dir" value="${basedir}/home"/>
-    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property environment="env"/>
+
+    <!-- WAR deployment paths -->
+    <property name="web-inf.dir" value="${env.CATALINA_BASE}/webapps/ROOT/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
-    <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
+
+    <!-- Source paths -->
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
     <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=${web-inf.dir}/conf/log4j2.xml"/>
-
-    <property environment="env"/>
 
     <!-- Classpath definitions -->
     <path id="classpath">
