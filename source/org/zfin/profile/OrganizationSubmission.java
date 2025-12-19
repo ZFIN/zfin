@@ -18,4 +18,15 @@ public class OrganizationSubmission {
     private String url;
     private String comments;
 
+    public String toText() {
+        return "Organization Name: " + name + "\n" +
+                "Type: " + type + "\n" +
+                "Contact Person: " + contactPerson + "\n" +
+                "Email: " + email + "\n" +
+                "Address: " + address + "\n" +
+                "Phone: " + phone + "\n" +
+                "Fax: " + fax + "\n" +
+                "URL: " + url + "\n" +
+                "Comments: " + comments + "\n\n";
+    }
 }
