@@ -1,4 +1,5 @@
-import groovy.util.slurpersupport.GPathResult
+import groovy.xml.slurpersupport.GPathResult
+import groovy.xml.XmlSlurper
 
 import java.time.LocalDate
 import java.util.zip.GZIPInputStream

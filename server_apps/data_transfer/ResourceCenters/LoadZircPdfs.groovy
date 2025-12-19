@@ -5,7 +5,7 @@ import org.zfin.util.ReportGenerator
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 DOWNLOAD_URL = "http://zebrafish.org/zfin/protocol.txt"
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)

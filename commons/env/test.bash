@@ -18,8 +18,8 @@ export DOMAIN_NAME="zfin.org"
 export DOWNLOAD_DIRECTORY="/opt/zfin/download-files"
 export GBROWSE_PATH_FROM_ROOT="action/gbrowse/"
 export GC_LOGGING_OPTS="-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -Xloggc:/opt/zfin//catalina_bases/zfin.org/logs/gc.log"
-export GRADLE_USER_HOME="$HOME/.gradle"
-export GROOVY_CLASSPATH="/opt/zfin//www_homes/zfin.org/home/WEB-INF/lib*:/opt/zfin//source_roots/zfin.org/lib/Java/*:/opt/zfin//www_homes/zfin.org/home/WEB-INF/classes:/opt/misc/groovy/lib/*:/usr/local/tomcat/endorsed/*"
+export GRADLE_USER_HOME="~/.gradle"
+export GROOVY_CLASSPATH="/opt/zfin//catalina_bases/zfin.org/webapps/ROOT/WEB-INF/lib/*:/opt/zfin//source_roots/zfin.org/lib/Java/*:/opt/zfin//catalina_bases/zfin.org/webapps/ROOT/WEB-INF/classes:/opt/misc/groovy/lib/*:/usr/local/tomcat/endorsed/*"
 export HAS_PARTNER="false"
 export IMAGE_LOAD="/imageLoadUp"
 export INDEXER_UNLOAD_DIRECTORY="/research/zunloads/indexes/zfindb"
@@ -64,6 +64,7 @@ export VALIDATION_EMAIL_DBA="informix@zfin.org"
 export WEBHOST_BLASTDB_TO_COPY="/research/crick/blastdb"
 export WIKI_HOST="devwiki.zfin.org"
 export ZFIN_ADMIN="informix@zfin.org"
+export ZFIN_PROPERTIES_PATH="/opt/zfin//catalina_bases/zfin.org/webapps/ROOT/WEB-INF/zfin.properties"
 
 export PATH=/opt/misc/groovy/bin:$PATH
 

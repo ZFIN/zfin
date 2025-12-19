@@ -7,7 +7,7 @@ import static com.xlson.groovycsv.CsvParser.parseCsv
 
 
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 
 def psql (String dbname, String sql) {
