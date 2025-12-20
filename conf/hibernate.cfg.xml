@@ -180,6 +180,7 @@
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
         <mapping class="org.zfin.profile.AccountInfo"/>
         <mapping class="org.zfin.profile.Person"/>
+        <mapping class="org.zfin.properties.ZfinDatabaseProperty"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceNeed"/>
         <mapping class="org.zfin.publication.CorrespondenceNeedReason"/>

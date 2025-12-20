@@ -114,8 +114,9 @@
             <z:attributeList>
                 <zfin2:genomeBrowsersAttributeListItem locations="${formBean.locations}" omit="UCSC,Ensembl"/>
             </z:attributeList>
-            <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
-
+            <c:if test="${not empty formBean.refSeqLocations}">
+                <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.refSeqLocations}"/>
+            </c:if>
             <div
                     class="__react-root"
                     id="MarkerSequencesTable"

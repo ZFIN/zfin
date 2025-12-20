@@ -34,6 +34,7 @@ public class NCBIReleaseFetcher {
             if (contents.isEmpty()) {
                 return Optional.empty();
             }
+            contents = contents.trim();
             if (contents.length() > 7) {
                 return Optional.empty();
             }

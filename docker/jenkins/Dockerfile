@@ -18,7 +18,7 @@ CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.desktop/java.awt=ALL-UNNAMED \
 	-Dinstance=docker \
 	-Dhudson.model.DirectoryBrowserSupport.CSP= \
-	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.504.3.war \
+	-jar /opt/zfin/source_roots/zfin.org/server_apps/jenkins/jenkins-2.528.3.war \
 	 --httpPort=9499 \
 	--sessionTimeout=604800 \
 	--sessionEviction=604800 \

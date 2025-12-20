@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.profile.OrganizationSubmission;
+import org.zfin.profile.PersonSubmission;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
 import java.nio.charset.StandardCharsets;
@@ -42,10 +43,20 @@ public class OrganizationSubmissionController {
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String newOrganizationFormSubmit(@ModelAttribute OrganizationSubmission submission, Model model) {
+    public String newOrganizationFormSubmit(@ModelAttribute OrganizationSubmission submission, Model model, HttpServletRequest request) {
         if (StringUtils.isNotEmpty(submission.getEmail())) {
             log.error("New Organization Submission Flagged as Spam: " + submission);
             return "profile/organization-submit-process";
+        }
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            log.error("New Organization Submission Flagged as Spam: " + submission);
+            return "profile/organization-submit-process";
+        }
+        logSubmissionRequest(submission, request);
+        if (flagSpam(submission)) {
+            log.error("New Person Submission Flagged as Spam: " + submission);
+            return "profile/person-submit-process";
         }
         submission.setEmail(submission.getEmail2());
 
@@ -55,6 +66,50 @@ public class OrganizationSubmissionController {
 
         return "profile/organization-submit-process";
     }
+
+    private void logSubmissionRequest(OrganizationSubmission submission, HttpServletRequest request) {
+        log.error("New Organization Submission: " + submission.toText());
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        log.error("Submission IP Address: " + ipAddress);
+
+        //get cookies:
+        StringBuilder cookies = new StringBuilder();
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                cookies.append(cookie.getName()).append("=").append(cookie.getValue()).append(";\n");
+            }
+        }
+        log.error("Submission Cookies: " + cookies.toString());
+    }
+
+    private boolean flagSpam(OrganizationSubmission submission) {
+        //Look for submissions like: New Person Submission: WsEjiJCJYOXBXrWPWNLAwq KyliyDPBwGnfnAiVOoKCl
+        String contactPerson = submission.getContactPerson();
+        int countOfLettersThreshold = 10;
+
+        int upperCaseThreshold = 3;
+        if (numberOfUpperCaseLetters(contactPerson) >= upperCaseThreshold && contactPerson.length() >= countOfLettersThreshold) {
+            //count the number of spaces
+            if (StringUtils.countMatches(contactPerson, " ") == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int numberOfUpperCaseLetters(String firstName) {
+        int count = 0;
+        for (char c : firstName.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
 
     private boolean sendConfirmationEmails(OrganizationSubmission submission) {
         String submitterEmail = submission.getEmail();

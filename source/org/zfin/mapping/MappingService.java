@@ -5,8 +5,10 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZdbID;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.gff.Assembly;
 import org.zfin.sequence.gff.AssemblyDAO;
@@ -142,7 +144,7 @@ public class MappingService {
         return sortAndFilterGenomeBrowserLocations(genomeLocationList);
     }
 
-    public static Map<String, Integer> assemblyOrder = (new AssemblyDAO()). findAllSortedAssemblies().stream()
+    public static Map<String, Integer> assemblyOrder = (new AssemblyDAO()).findAllSortedAssemblies().stream()
         .collect(Collectors.toMap(Assembly::getName, Assembly::getOrder));
 
     private static List<GenomeLocation> sortAndFilterGenomeBrowserLocations(List<? extends GenomeLocation> genomeLocationList) {
@@ -167,6 +169,68 @@ public class MappingService {
         return query.list();
     }
 
+    public static TreeSet<BrowserLink> getJBrowserBrowserLinks(List<MarkerGenomeLocation> genomeMarkerLocationList, GenomeBrowserImage genomeBrowserImage, Assembly assembly) {
+        TreeSet<BrowserLink> locations = new TreeSet<>();
+        for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
+            BrowserLink location = new BrowserLink();
+            location.setUrl(genomeMarkerLocation.getUrl(genomeBrowserImage));
+            if (assembly != null) {
+                switch (assembly.getName()) {
+                    case "GRCz12tu": {
+                        switch (genomeMarkerLocation.getSource()) {
+                            case ZFIN_NCBI -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(0);
+                            }
+                            case NCBI_LOADER -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(1);
+                            }
+                            default -> {
+                            }
+                        }
+                        break;
+                    }
+                    case "GRCz11": {
+                        switch (genomeMarkerLocation.getSource()) {
+                            case ZFIN -> {
+                                location.setName("ZFIN");
+                                location.setOrder(0);
+                            }
+                            case ENSEMBL -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(1);
+                            }
+                            case NCBI -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(2);
+                            }
+                            case UCSC -> {
+                                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                                location.setOrder(3);
+                            }
+                            default -> {
+                            }
+                        }
+                    }
+                    ;
+                    default:
+                }
+                locations.add(location);
+            }
+        }
+        return locations;
+    }
+
+    public static TreeSet<BrowserLink> getJBrowserBrowserLinksForClones(GenomeBrowserImage genomeBrowserImage) {
+        TreeSet<BrowserLink> locations = new TreeSet<>();
+        BrowserLink location = new BrowserLink();
+        location.setUrl(genomeBrowserImage.getFullLinkUrl());
+        location.setName("ZFIN");
+        location.setOrder(0);
+        locations.add(location);
+        return locations;
+    }
 }
 
 
