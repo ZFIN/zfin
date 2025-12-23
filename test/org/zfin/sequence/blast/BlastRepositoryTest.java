@@ -265,4 +265,81 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         assertNotNull("accession count map is not null", map);
     }
 
+    /**
+     * Tests that Database entity can be fetched directly via HQL.
+     * Verifies JPA annotation mapping is correct.
+     */
+    @Test
+    public void testDatabaseEntityFetch() {
+        List<Database> databases = HibernateUtil.currentSession()
+                .createQuery("FROM Database", Database.class)
+                .setMaxResults(5)
+                .list();
+        assertNotNull(databases);
+        assertFalse("Should have at least one database", databases.isEmpty());
+
+        Database db = databases.get(0);
+        assertNotNull("Database should have zdbID", db.getZdbID());
+        assertNotNull("Database should have name", db.getName());
+        assertNotNull("Database should have abbrev", db.getAbbrev());
+        assertNotNull("Database should have type", db.getType());
+    }
+
+    /**
+     * Tests that Origination entity can be fetched directly via HQL.
+     * Verifies JPA annotation mapping is correct.
+     */
+    @Test
+    public void testOriginationEntityFetch() {
+        List<Origination> originations = HibernateUtil.currentSession()
+                .createQuery("FROM Origination", Origination.class)
+                .setMaxResults(5)
+                .list();
+        assertNotNull(originations);
+        assertFalse("Should have at least one origination", originations.isEmpty());
+
+        Origination orig = originations.get(0);
+        assertNotNull("Origination should have id", orig.getId());
+        assertNotNull("Origination should have type", orig.getType());
+    }
+
+    /**
+     * Tests that DatabaseRelationship entity can be fetched directly via HQL.
+     * Verifies JPA annotation mapping is correct.
+     */
+    @Test
+    public void testDatabaseRelationshipEntityFetch() {
+        List<DatabaseRelationship> relationships = HibernateUtil.currentSession()
+                .createQuery("FROM DatabaseRelationship", DatabaseRelationship.class)
+                .setMaxResults(5)
+                .list();
+        assertNotNull(relationships);
+        assertFalse("Should have at least one relationship", relationships.isEmpty());
+
+        DatabaseRelationship rel = relationships.get(0);
+        assertNotNull("Relationship should have id", rel.getId());
+        assertNotNull("Relationship should have order", rel.getOrder());
+        assertNotNull("Relationship should have child", rel.getChild());
+    }
+
+    /**
+     * Tests that BlastRegenerationCache entity can be fetched directly via HQL.
+     * Verifies JPA annotation mapping is correct.
+     */
+    @Test
+    public void testBlastRegenerationCacheEntityFetch() {
+        List<BlastRegenerationCache> caches = HibernateUtil.currentSession()
+                .createQuery("FROM BlastRegenerationCache", BlastRegenerationCache.class)
+                .setMaxResults(5)
+                .list();
+        assertNotNull(caches);
+        // This table may be empty, so just verify the query works
+        if (!caches.isEmpty()) {
+            BlastRegenerationCache cache = caches.get(0);
+            assertNotNull("Cache should have id", cache.getId());
+            assertNotNull("Cache should have accession", cache.getAccession());
+            assertNotNull("Cache should have blastDatabase", cache.getBlastDatabase());
+        }
+    }
+
 }
