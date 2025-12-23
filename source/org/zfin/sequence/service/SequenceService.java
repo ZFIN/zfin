@@ -24,8 +24,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
-
 /**
  *
  */
@@ -162,17 +160,7 @@ public class SequenceService {
     }
 
     public List<Pair<String, String>> getMarkerRNAMapForNCBILoad() {
-        return sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom()
-                .stream()
-                .sorted((tuple1, tuple2) -> {
-                    int compare = tuple1.getLeft().compareTo(tuple2.getLeft());
-                    if (compare != 0) {
-                        return compare;
-                    } else {
-                        return tuple1.getRight().compareTo(tuple2.getRight());
-                    }
-                })
-                .collect(Collectors.toList());
+        return sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom();
     }
 
     public List<MarkerDBLink> getMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean skipBlastRetrieval) {

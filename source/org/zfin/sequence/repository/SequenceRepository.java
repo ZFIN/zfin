@@ -102,12 +102,6 @@ public interface SequenceRepository {
 
     List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType protein);
 
-    //TODO:REMOVE
-    List<DBLink> getDBLinksForAllMarkers(ForeignDBDataType.SuperType superType);
-
-    //TODO:REMOVE
-    List<DBLink> getAllDBLinksByFirstRelatedMarker(DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes);
-
     List<Pair<String, String>> getAllRNADBLinksForAllMarkersInGenedom();
 
     int getNumberDBLinks(Marker marker);

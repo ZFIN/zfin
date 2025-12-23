@@ -16,7 +16,6 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -157,25 +156,6 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
             logger.error("Error writing to file", e);
         }
         //assertNotNull(accessions);
-    }
-
-    @Test
-    public void testRNAMapRetrieval() {
-        Set<DBLink> dbLinks = new HashSet<>(sequenceRepository
-                .getDBLinksForAllMarkers(ForeignDBDataType.SuperType.SEQUENCE));
-        assertTrue(dbLinks.size() > 20000);
-    }
-
-    @Test
-    public void testRNAMapRetrieval2() {
-        var map = sequenceRepository
-                .getAllDBLinksByFirstRelatedMarker(
-                        DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
-                        MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
-                        MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
-                        MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
-                );
-        assertTrue(map.size() > 20000);
     }
 
     @Test
