@@ -18,39 +18,21 @@ import java.util.stream.Collectors;
 
 public class ConfluenceQuery {
     private static final int RESULTS_LIMIT = 5;
-    private static final int CACHE_TIME_IN_SECONDS = 60 * 5;
-    private static final boolean POPULATE_LABELS = false; // Set to true to fetch labels for each page (from separate API call per page)
 
-    //TODO: replace this custom cache with Spring's @Cacheable when we get our gradle build updated
-    private static final Duration CACHE_TTL = Duration.ofSeconds(CACHE_TIME_IN_SECONDS);
-    private static final Map<String, List<WikiPage>> cache = new HashMap<>();
-    private static final Map<String, Instant> cacheTimestamps = new HashMap<>();
-
-    public List<WikiPage> getWikiPagesForSpaceUsingCache(String space)
-            throws URISyntaxException, IOException {
-        Instant lastFetchTime = cacheTimestamps.get(space);
-        Instant now = Instant.now();
-
-        if (lastFetchTime != null && Duration.between(lastFetchTime, now).compareTo(CACHE_TTL) < 0) {
-            return cache.get(space);
-        }
-
-        List<WikiPage> list = getWikiPagesForSpaceOnCacheMiss(space);
-        cache.put(space, list);
-        cacheTimestamps.put(space, now);
-        return list;
-    }
-
-    private List<WikiPage> getWikiPagesForSpaceOnCacheMiss(String space) throws URISyntaxException, IOException {
-        String url = buildConfluenceAPIEndpoint(space);
+    /**
+     * Get wiki pages for a specific space, optionally filtering by creation date.
+     * @param space The wiki space name (e.g., "jobs", "news", "meetings").
+     * @param numberOfDays Optional number of days to look back for created pages. (null means no date filter)
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public List<WikiPage> getWikiPagesForSpace(String space, Integer numberOfDays) throws URISyntaxException, IOException {
+        String url = buildConfluenceAPIEndpoint(space, numberOfDays);
         System.out.println("Confluence API URL: " + url);
         JSONObject json = readJsonFromUrl(url);
         List<WikiPage> list = convertApiResultToWikiPageList(json);
 
-        if (POPULATE_LABELS) {
-            addLabelsToWikiPages(list);
-        }
-        list = filterWikiPages(list);
         return list;
     }
 
@@ -73,18 +55,26 @@ public class ConfluenceQuery {
         return page;
     }
 
-    private String buildConfluenceAPIEndpoint(String wikiSpaceName) throws URISyntaxException {
+    /**
+     * Builds the Confluence API endpoint URL for querying pages in a specific wiki space.
+     * @param wikiSpaceName The name of the wiki space (e.g., "jobs", "news", "meetings").
+     * @param numberOfDays The number of days to look back for created pages.
+     * @return
+     * @throws URISyntaxException
+     */
+    private String buildConfluenceAPIEndpoint(String wikiSpaceName, Integer numberOfDays) throws URISyntaxException {
         // Validate wikiSpaceName
         Set<String> allowedSpaces = Set.of("jobs", "news", "meetings");
         if (!allowedSpaces.contains(wikiSpaceName)) {
             throw new IllegalArgumentException("Invalid wiki space: " + wikiSpaceName);
         }
 
-        String pageType = Set.of("jobs", "news").contains(wikiSpaceName) ? "blogpost" : "page";
+        String pageType = "blogpost"; //could also be "page" if we decide to use pages in the future
 
         // CQL to filter by creation date (last 120 days). We could remove the 120 days filter if we want all pages.
         // Then filter later based on labels or date.
-        String cql = String.format("space=%s AND type=%s AND created >= now(\"-120d\") ORDER BY created desc",
+        String dateFilter = numberOfDays == null ? "" : " AND created >= now(\"-" + numberOfDays + "d\") ";
+        String cql = String.format("space=%s AND type=%s " + dateFilter + " ORDER BY created desc",
                 wikiSpaceName, pageType);
 
         URIBuilder builder = new URIBuilder("https://zfin.atlassian.net/wiki/rest/api/content/search")

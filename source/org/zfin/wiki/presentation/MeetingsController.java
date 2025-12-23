@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static org.zfin.util.ZfinCollectionUtils.isIn;
+
 @RestController
 @RequestMapping("/api")
 @Log4j2
@@ -38,7 +40,13 @@ public class MeetingsController {
         long start = System.currentTimeMillis();
 
         ConfluenceQuery query = new ConfluenceQuery();
-        List<WikiPage> list = query.getWikiPagesForSpaceUsingCache(wikiSpaceName);
+
+        //No limit on meetings, 120 days for news and jobs
+        Integer numberOfDays = null;
+        if (isIn(wikiSpaceName, "news", "jobs")) {
+            numberOfDays = 120;
+        }
+        List<WikiPage> list = query.getWikiPagesForSpace(wikiSpaceName, numberOfDays);
 
         JsonResultResponse<WikiPage> response = new JsonResultResponse<>();
         response.setPagination(pagination);
