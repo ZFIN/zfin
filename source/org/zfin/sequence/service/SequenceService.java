@@ -2,6 +2,7 @@ package org.zfin.sequence.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
@@ -158,6 +159,20 @@ public class SequenceService {
             return getAllMarkerDBLinkResultsForMarker(marker, summary, response);
         }
         return getMarkerDBLinkResultsForMarker(marker, summary, response, skipBlastRetrieval);
+    }
+
+    public List<Pair<String, String>> getMarkerRNAMapForNCBILoad() {
+        return sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom()
+                .stream()
+                .sorted((tuple1, tuple2) -> {
+                    int compare = tuple1.getLeft().compareTo(tuple2.getLeft());
+                    if (compare != 0) {
+                        return compare;
+                    } else {
+                        return tuple1.getRight().compareTo(tuple2.getRight());
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public List<MarkerDBLink> getMarkerDBLinkResultsForMarker(Marker marker, boolean summary, JsonResultResponse<MarkerDBLink> response, boolean skipBlastRetrieval) {

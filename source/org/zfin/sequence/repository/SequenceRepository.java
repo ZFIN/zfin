@@ -3,6 +3,7 @@
  */
 package org.zfin.sequence.repository;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.zfin.Species;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -101,6 +102,13 @@ public interface SequenceRepository {
 
     List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType protein);
 
+    //TODO:REMOVE
+    List<DBLink> getDBLinksForAllMarkers(ForeignDBDataType.SuperType superType);
+
+    //TODO:REMOVE
+    List<DBLink> getAllDBLinksByFirstRelatedMarker(DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes);
+
+    List<Pair<String, String>> getAllRNADBLinksForAllMarkersInGenedom();
 
     int getNumberDBLinks(Marker marker);
 

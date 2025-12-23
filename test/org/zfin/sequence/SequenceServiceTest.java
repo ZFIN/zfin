@@ -1,6 +1,7 @@
 package org.zfin.sequence;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,19 +16,21 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.SequenceService;
+import org.zfin.framework.HibernateUtil;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
@@ -155,4 +158,129 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
         }
         //assertNotNull(accessions);
     }
+
+    @Test
+    public void testRNAMapRetrieval() {
+        Set<DBLink> dbLinks = new HashSet<>(sequenceRepository
+                .getDBLinksForAllMarkers(ForeignDBDataType.SuperType.SEQUENCE));
+        assertTrue(dbLinks.size() > 20000);
+    }
+
+    @Test
+    public void testRNAMapRetrieval2() {
+        var map = sequenceRepository
+                .getAllDBLinksByFirstRelatedMarker(
+                        DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                        MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                        MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                );
+        assertTrue(map.size() > 20000);
+    }
+
+    @Test
+    public void testRNAMapRetrieval3() {
+        var map = sequenceService.getMarkerRNAMapForNCBILoad();
+        assertTrue(map.size() > 20000);
+    }
+
+    @Test
+    public void testRNAMapRetrievalCombined() {
+        var map = sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom();
+        assertTrue(map.size() > 20000);
+    }
+
+    @Test
+    public void testRNAMapRetrievalCombinedAndMapped() {
+        List<Pair<String, String>> list = sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom();
+        Map<String, List<String>> mapOfGeneIDToAccessionList = new HashMap<>();
+        for (Pair<String, String> tuple : list) {
+            String geneID = tuple.getLeft();
+            String accession = tuple.getRight();
+            if (!mapOfGeneIDToAccessionList.containsKey(geneID)) {
+                mapOfGeneIDToAccessionList.put(geneID, new ArrayList<>());
+            }
+            mapOfGeneIDToAccessionList.get(geneID).add(accession);
+        }
+
+        assertTrue(mapOfGeneIDToAccessionList.size() > 20000);
+    }
+
+    @Test
+    public void testRNAMapRetrievalMatchesNativeSQL() {
+        // Get results from HQL method
+        List<Pair<String, String>> hqlResults = sequenceRepository.getAllRNADBLinksForAllMarkersInGenedom();
+        Set<String> hqlPairs = new TreeSet<>();
+        for (Pair<String, String> tuple : hqlResults) {
+            hqlPairs.add(tuple.getLeft() + "|" + tuple.getRight());
+        }
+
+        // Get results from native SQL
+        String sql = """
+            select * from (
+                (select distinct dblink_linked_recid as marker_id, dblink_acc_num as acc
+                 from db_link
+                 join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                 join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+                 join foreign_db on fdbcont_fdb_db_id = fdb_db_pk_id
+                 where fdbdt_super_type = 'sequence'
+                 and fdbdt_data_type = 'RNA'
+                 and fdb_db_name <> 'FishMiRNA-Expression'
+                 and dblink_linked_recid in (
+                     select mrkr_zdb_id from marker
+                     where mrkr_type in (
+                         select mtgrpmem_mrkr_type from marker_type_group_member
+                         where mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR'
+                     )
+                 ))
+                union
+                (select distinct mrel_mrkr_1_zdb_id as marker_id, dblink_acc_num as acc
+                 from db_link
+                 join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                 join foreign_db_data_type on fdbcont_fdbdt_id = fdbdt_pk_id
+                 join foreign_db_contains_display_group_member on fdbcdgm_fdbcont_zdb_id = fdbcont_zdb_id
+                 join foreign_db_contains_display_group on fdbcdg_pk_id = fdbcdgm_group_id
+                 join foreign_db on fdbcont_fdb_db_id = fdb_db_pk_id
+                 join marker_relationship mr on db_link.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id
+                 where foreign_db_contains_display_group.fdbcdg_name = 'marker linked sequence'
+                 and fdbdt_data_type = 'RNA'
+                 and mr.mrel_type in ('gene contains small segment',
+                                      'clone contains small segment',
+                                      'gene encodes small segment'))
+            ) as subq
+            order by marker_id, acc
+            """;
+
+        List<Object[]> nativeResults = HibernateUtil.currentSession()
+                .createNativeQuery(sql, Object[].class)
+                .list();
+
+        Set<String> nativePairs = new TreeSet<>();
+        for (Object[] row : nativeResults) {
+            nativePairs.add(row[0] + "|" + row[1]);
+        }
+
+        // Compare
+        Set<String> inHqlNotInNative = new TreeSet<>(hqlPairs);
+        inHqlNotInNative.removeAll(nativePairs);
+
+        Set<String> inNativeNotInHql = new TreeSet<>(nativePairs);
+        inNativeNotInHql.removeAll(hqlPairs);
+
+        if (!inHqlNotInNative.isEmpty()) {
+            System.out.println("In HQL but not in native SQL (" + inHqlNotInNative.size() + " items):");
+            inHqlNotInNative.stream().limit(10).forEach(System.out::println);
+        }
+
+        if (!inNativeNotInHql.isEmpty()) {
+            System.out.println("In native SQL but not in HQL (" + inNativeNotInHql.size() + " items):");
+            inNativeNotInHql.stream().limit(10).forEach(System.out::println);
+        }
+
+        assertEquals("HQL and native SQL should return same number of results",
+                nativePairs.size(), hqlPairs.size());
+        assertEquals("HQL and native SQL results should match exactly",
+                nativePairs, hqlPairs);
+    }
+
 }

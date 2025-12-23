@@ -1,6 +1,7 @@
 package org.zfin.sequence.repository;
 
 import jakarta.persistence.Tuple;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -14,10 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerRelationshipType;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.*;
 import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -779,6 +777,142 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
+    //TODO:REMOVE
+    @Override
+    public List<DBLink> getDBLinksForAllMarkers(ForeignDBDataType.SuperType superType) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = """
+                select distinct dbl
+                from DBLink dbl
+                left join fetch dbl.accession
+                , DisplayGroup dg, ReferenceDatabase ref
+                where dbl.referenceDatabase = ref
+                and ref.foreignDBDataType.superType = :superType
+                and ref.foreignDBDataType.dataType = :dataType
+                and ref.foreignDB.dbName != :excludedDbName
+                and not exists (from DisplayGroupMember dgm where dgm.referenceDatabase = ref and dgm.displayGroup = dg)
+                and exists( from Marker m
+                            where m.zdbID = dbl.dataZdbID
+                           and :markerTypeGroup member of m.markerType.mappedTypeGroups
+                          )
+                and dg.groupName = :groupName
+            """;
+
+        Query<DBLink> query = session.createQuery(hql, DBLink.class);
+        query.setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE);
+        query.setParameter("dataType", ForeignDBDataType.DataType.RNA);
+        query.setParameter("excludedDbName", ForeignDB.AvailableName.FISHMIRNA_EXPRESSION);
+        query.setParameter("groupName", DisplayGroup.GroupName.HIDDEN_DBLINKS);
+        query.setParameter("markerTypeGroup", RepositoryFactory.getMarkerRepository().getMarkerTypeGroupByName("GENEDOM_AND_NTR"));
+        return query.list();
+    }
+
+    @Override
+    public List<DBLink> getAllDBLinksByFirstRelatedMarker(DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
+        String hql = """
+            select distinct dbl
+            from DBLink dbl
+            left join fetch dbl.accession
+            , DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,
+            MarkerRelationship mr
+            where dg.groupName = :displayGroup
+            and dbl.referenceDatabase = ref
+            and ref.foreignDBDataType.dataType = :dataType
+            and dgm.referenceDatabase = ref
+            and dgm.displayGroup = dg
+            and mr.markerRelationshipType.name in (:types)
+            and mr.secondMarker.zdbID = dbl.dataZdbID
+        """;
+
+        Set<String> types = new HashSet<>();
+        if (markerRelationshipTypes.length != 0) {
+            for (MarkerRelationship.Type type : markerRelationshipTypes) {
+                types.add(type.toString());
+            }
+        } else {
+            for (MarkerRelationship.Type type : MarkerRelationship.Type.values()) {
+                types.add(type.toString());
+            }
+        }
+        Query<DBLink> query = HibernateUtil.currentSession().createQuery(hql, DBLink.class)
+                .setParameter("displayGroup", groupName)
+                .setParameter("dataType", ForeignDBDataType.DataType.RNA)
+                .setParameterList("types", types);
+        return query.list();
+    }
+
+    @Override
+    public List<Pair<String, String>> getAllRNADBLinksForAllMarkersInGenedom() {
+        Set<Pair<String, String>> results = new HashSet<>();
+
+        // First query: Direct DBLinks for markers in GENEDOM_AND_NTR
+        String hql1 = """
+            select distinct dbl.dataZdbID, dbl.accessionNumber
+            from DBLink dbl
+            join dbl.referenceDatabase ref
+            where ref.foreignDBDataType.dataType = :dataType
+            and ref.foreignDBDataType.superType = :superType
+            and ref.foreignDB.dbName != :excludedDbName
+            and not exists (
+                select 1 from DisplayGroupMember dgm, DisplayGroup dg
+                where dgm.referenceDatabase = ref
+                and dgm.displayGroup = dg
+                and dg.groupName = :hiddenGroupName
+            )
+            and exists (
+                select 1 from Marker m
+                where m.zdbID = dbl.dataZdbID
+                and :markerTypeGroup member of m.markerType.mappedTypeGroups
+            )
+        """;
+
+        List<Object[]> directResults = HibernateUtil.currentSession().createQuery(hql1, Object[].class)
+                .setParameter("dataType", ForeignDBDataType.DataType.RNA)
+                .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
+                .setParameter("excludedDbName", ForeignDB.AvailableName.FISHMIRNA_EXPRESSION)
+                .setParameter("hiddenGroupName", DisplayGroup.GroupName.HIDDEN_DBLINKS)
+                .setParameter("markerTypeGroup", RepositoryFactory.getMarkerRepository().getMarkerTypeGroupByName("GENEDOM_AND_NTR"))
+                .list();
+
+        for (Object[] row : directResults) {
+            results.add(Pair.of((String) row[0], (String) row[1]));
+        }
+
+        // Second query: DBLinks through marker relationships (returns gene ID, not small segment ID)
+        String hql2 = """
+            select distinct mr.firstMarker.zdbID, dbl.accessionNumber
+            from DBLink dbl
+            join dbl.referenceDatabase ref
+            join MarkerRelationship mr on mr.secondMarker.zdbID = dbl.dataZdbID
+            where ref.foreignDBDataType.dataType = :dataType
+            and exists (
+                select 1 from DisplayGroupMember dgm, DisplayGroup dg
+                where dgm.referenceDatabase = ref
+                and dgm.displayGroup = dg
+                and dg.groupName = :linkedGroupName
+            )
+            and mr.markerRelationshipType.name in (:types)
+        """;
+
+        Set<String> types = Set.of(
+            MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT.toString(),
+            MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT.toString(),
+            MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.toString()
+        );
+
+        List<Object[]> relatedResults = HibernateUtil.currentSession().createQuery(hql2, Object[].class)
+                .setParameter("dataType", ForeignDBDataType.DataType.RNA)
+                .setParameter("linkedGroupName", DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+                .setParameterList("types", types)
+                .list();
+
+        for (Object[] row : relatedResults) {
+            results.add(Pair.of((String) row[0], (String) row[1]));
+        }
+
+        return new ArrayList<>(results);
+    }
 
     @Override
     public int getNumberDBLinks(Marker marker) {
