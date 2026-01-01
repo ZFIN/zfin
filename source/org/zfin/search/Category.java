@@ -146,6 +146,7 @@ public enum Category {
     ),
     PHENOTYPE("Phenotype",
             FieldName.GENE,
+            PHENOTYPE_TAG,
             SEQUENCE_ALTERATION,
             IS_MONOGENIC,
             STAGE,
