@@ -57,6 +57,20 @@
         <pathelement location="${buildfiles.dir}"/>
     </path>
 
+    <!-- Deployed WAR classpath (uses WAR_WEB_INF_DIR environment variable) -->
+    <property name="war.web-inf.dir" value="${env.WAR_WEB_INF_DIR}"/>
+    <property name="war.classbin.dir" value="${war.web-inf.dir}/classes"/>
+    <property name="war.lib.dir" value="${war.web-inf.dir}/lib"/>
+
+    <path id="deployed.classpath">
+        <pathelement location="${war.classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${war.lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${buildfiles.dir}"/>
+    </path>
+
     <!-- javadoc diectory -->
     <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
     <property name="enum.class" value="org.zfin.properties.ZfinPropertiesEnum"/>
