@@ -396,7 +396,7 @@
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
         <!-- Delegate to Gradle for compilation (handles Lombok, annotation processing, etc.) -->
-        <exec executable="gradle" failonerror="true">
+        <exec executable="./gradlew" failonerror="true">
             <arg value="antCompile"/>
         </exec>
     </target>
@@ -543,7 +543,7 @@
     </target>
 
     <target name="dirtydeploy-watch" depends="npmBuild">
-        <exec executable="gradle" dir="." failonerror="true">
+        <exec executable="./gradlew" dir="." failonerror="true">
             <arg value="devWatch" />
             <arg value="--continuous" />
         </exec>
@@ -677,7 +677,7 @@
     <macrodef name="gradle">
         <attribute name="task" />
         <sequential>
-            <exec executable="gradle" dir="." failonerror="true">
+            <exec executable="./gradlew" dir="." failonerror="true">
                 <arg value="@{task}" />
             </exec>
         </sequential>
