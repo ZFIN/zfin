@@ -45,8 +45,6 @@
 
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
-        <mapping resource="org/zfin/construct.hbm.xml"/>
-        <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
         <!-- blast.hbm.xml entities converted to annotations -->
         <mapping class="org.zfin.sequence.blast.Hit"/>
