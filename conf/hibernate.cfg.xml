@@ -46,6 +46,7 @@
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
         <mapping resource="org/zfin/construct.hbm.xml"/>
+        <mapping resource="org/zfin/blast.hbm.xml"/>
         <mapping resource="org/zfin/expression.hbm.xml"/>
         <!-- blast.hbm.xml entities converted to annotations -->
         <mapping class="org.zfin.sequence.blast.Hit"/>
@@ -60,13 +61,17 @@
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
+
+        <!-- Annotation Based -->
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
         <mapping class="org.zfin.anatomy.DevelopmentStage"/>
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
         <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
-        <mapping class="org.zfin.profile.Person"/>
         <mapping class="org.zfin.audit.AuditLogItem"/>
+        <mapping class="org.zfin.construct.ConstructCuration"/>
+        <mapping class="org.zfin.construct.ConstructComponent"/>
+        <mapping class="org.zfin.construct.ConstructRelationship"/>
         <mapping class="org.zfin.curation.Curation"/>
         <mapping class="org.zfin.curation.PublicationNote"/>
         <mapping class="org.zfin.database.UnloadInfo"/>
@@ -182,6 +187,7 @@
         <mapping class="org.zfin.orthology.OrthologExternalReference"/>
         <mapping class="org.zfin.profile.EmailPrivacyPreference"/>
         <mapping class="org.zfin.profile.AccountInfo"/>
+        <mapping class="org.zfin.profile.Person"/>
         <mapping class="org.zfin.properties.ZfinDatabaseProperty"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceNeed"/>
