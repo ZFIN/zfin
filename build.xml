@@ -583,9 +583,10 @@
         <echo message="Not production: ${notproduction}"/>
     </target>
 
-    <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
-        <classpath refid="extended.classpath"/>
-    </taskdef>
+    <!-- Grand: Ant build visualization tool (JAR provided via Gradle/JitPack) -->
+    <!--    task.properties is in the grand jar: https://github.com/Ant-Grand/Grand/blob/157df7cb1505804be453c3e5ffb157267c360529/src/main/resources/task.properties -->
+<!-- old way:    <taskdef resource="task.properties" classpathref="combined.classpath"/>-->
+    <taskdef name="grand" classname="net.ggtools.grand.tasks.GrandTask" classpathref="combined.classpath"/>
 
     <target name="graph" description="Creates graph of build process">
         <grand output="build.dot" buildfile="build.xml"/>
