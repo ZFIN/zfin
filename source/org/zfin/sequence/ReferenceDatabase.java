@@ -4,8 +4,11 @@
 package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.framework.api.View;
 import org.zfin.sequence.blast.Database;
 
@@ -15,19 +18,54 @@ import java.util.stream.Collectors;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "foreign_db_contains")
 public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Serializable {
 
+    @Id
+    @GeneratedValue(generator = "zdbIdGenerator")
+    @GenericGenerator(
+            name = "zdbIdGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "FDBCONT"),
+                    @Parameter(name = "insertActiveData", value = "true")
+            }
+    )
+    @Column(name = "fdbcont_zdb_id", nullable = false)
     @JsonView(View.SequenceDetailAPI.class)
     private String zdbID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fdbcont_fdb_db_id", nullable = false)
     @JsonView({View.MarkerRelationshipAPI.class, View.SequenceDetailAPI.class})
     private ForeignDB foreignDB;
+
+    @Column(name = "fdbcont_organism_common_name", nullable = false)
     private String organism;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fdbcont_fdbdt_id", nullable = false)
     @JsonView(View.SequenceDetailAPI.class)
     private ForeignDBDataType foreignDBDataType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fdbcont_primary_blastdb_zdb_id", nullable = false)
     private Database primaryBlastDatabase;
+
+    @OneToMany(mappedBy = "referenceDatabase", fetch = FetchType.LAZY)
     @JsonView(View.SequenceDetailAPI.class)
     private Set<DisplayGroupMember> displayGroupMembers;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "int_fdbcont_analysis_tool",
+            joinColumns = @JoinColumn(name = "ifat_fdbcont_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "ifat_blastdb_zdb_id")
+    )
     private List<Database> relatedBlastDbs;
+
+    @OneToMany(mappedBy = "referenceDatabase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ReferenceDatabaseValidationRule> validationRules;
 
     public String getBaseURL() {
