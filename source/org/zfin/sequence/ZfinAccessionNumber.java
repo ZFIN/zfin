@@ -1,15 +1,17 @@
 package org.zfin.sequence;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@Entity
+@Table(name = "zfin_accession_number")
 public class ZfinAccessionNumber {
-    private String zAccNum;
-    
-    public String getZAccNum() {
-        return zAccNum;
-    }
 
-    public void setZAccNum(String zAccNum) {
-        this.zAccNum = zAccNum;
-    }
+    @Id
+    @Column(name = "za_acc_num", nullable = false)
+    private String zAccNum;
 
 }

@@ -53,7 +53,6 @@
         <mapping resource="org/zfin/mutant.hbm.xml"/>
         <mapping resource="org/zfin/profile.hbm.xml"/>
         <mapping resource="org/zfin/publication.hbm.xml"/>
-        <mapping resource="org/zfin/sequence.hbm.xml"/>
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
         <mapping class="org.zfin.anatomy.DevelopmentStage"/>
@@ -210,6 +209,11 @@
         <mapping class="org.zfin.sequence.MarkerDBLink"/>            
         <mapping class="org.zfin.sequence.MarkerToProtein"/>
         <mapping class="org.zfin.sequence.ReferenceDatabaseValidationRule"/>
+        <mapping class="org.zfin.sequence.ReferenceDatabase"/>
+        <mapping class="org.zfin.sequence.DisplayGroup"/>
+        <mapping class="org.zfin.sequence.DisplayGroupMember"/>
+        <mapping class="org.zfin.sequence.ReplacedAccessionNumber"/>
+        <mapping class="org.zfin.sequence.ZfinAccessionNumber"/>
         <mapping class="org.zfin.sequence.ReferenceProtein"/>
         <mapping class="org.zfin.sequence.reno.Candidate"/>
         <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
