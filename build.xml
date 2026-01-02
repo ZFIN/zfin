@@ -583,16 +583,28 @@
         <echo message="Not production: ${notproduction}"/>
     </target>
 
-    <!-- Grand: Ant build visualization tool (JAR provided via Gradle/JitPack) -->
-    <!--    task.properties is in the grand jar: https://github.com/Ant-Grand/Grand/blob/157df7cb1505804be453c3e5ffb157267c360529/src/main/resources/task.properties -->
-<!-- old way:    <taskdef resource="task.properties" classpathref="combined.classpath"/>-->
-    <taskdef name="grand" classname="net.ggtools.grand.tasks.GrandTask" classpathref="combined.classpath"/>
+    <!--
+    Grand: Ant build visualization tool (JAR provided via Gradle/JitPack)
+    ============================================
+    task.properties is in the grand jar: https://github.com/Ant-Grand/Grand/blob/157df7cb1505804be453c3e5ffb157267c360529/src/main/resources/task.properties
+     and it contains the single line:
+        grand=net.ggtools.grand.tasks.GrandTask
 
+     If you want to use grand, add the dependency to build.gradle:
+            implementation "com.github.Ant-Grand:Grand:1.9.7"  // Ant build visualization tool (via JitPack)
+
+     Then uncomment the following:
+    <taskdef resource="task.properties" classpathref="combined.classpath"/>
     <target name="graph" description="Creates graph of build process">
         <grand output="build.dot" buildfile="build.xml"/>
         <exec executable="dot">
             <arg line="-Tps -Gsize=11.69,8.27 -Grotate=90 -o build.ps build.dot"/>
         </exec>
+    </target>
+     -->
+    <target name="graph" description="Creates graph of build process">
+        <echo message="To use the 'graph' target, please add the Grand dependency to build.gradle and uncomment the relevant code in build.xml"/>
+        <echo message="See comments in build.xml for details."/>
     </target>
 
     <macrodef name="regenerateSSHKey">

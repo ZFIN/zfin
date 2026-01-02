@@ -601,7 +601,6 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.15.2"  // Required by robot.jar
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
     implementation "com.fasterxml.woodstox:woodstox-core:6.5.1"
-    implementation "com.github.Ant-Grand:Grand:1.9.7"  // Ant build visualization tool (via JitPack)
     implementation "com.github.rtaylorzfin:google-analytics-reporting-app:1.0.4"
     implementation "com.github.samtools:htsjdk:4.3.0"
     implementation "com.google.code.gson:gson:2.2.4"
