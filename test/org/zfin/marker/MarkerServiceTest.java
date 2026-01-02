@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,6 +197,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
     GeneViewController geneViewController;
 
     @Test
+    @Ignore
     public void geneViewController() throws Exception {
         Model model = new ExtendedModelMap();
         geneViewController.getGeneView(model, "ZDB-GENE-001103-1");

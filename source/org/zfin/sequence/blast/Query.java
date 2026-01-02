@@ -3,8 +3,10 @@
  */
 package org.zfin.sequence.blast ;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.reno.RunCandidate;
 
@@ -13,12 +15,33 @@ import java.util.Set;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "blast_query")
 public class Query implements Comparable {
 
-    private String zdbID ; 
-    private Accession accession  ; 
-    private RunCandidate runCandidate; 
-    private Set<Hit> blastHits = new HashSet<>() ;
+    @Id
+    @GeneratedValue(generator = "zdbIdGeneratorQuery")
+    @org.hibernate.annotations.GenericGenerator(
+            name = "zdbIdGeneratorQuery",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "BQRY")
+            }
+    )
+    @Column(name = "bqry_zdb_id", nullable = false)
+    private String zdbID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bqry_accbk_pk_id", nullable = false)
+    private Accession accession;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bqry_runcan_zdb_id", nullable = false)
+    private RunCandidate runCandidate;
+
+    @OneToMany(mappedBy = "query", fetch = FetchType.LAZY)
+    @OrderBy("score DESC, expectValue ASC")
+    private Set<Hit> blastHits = new HashSet<>();
 
     public String getName() {
         return accession.getNumber();

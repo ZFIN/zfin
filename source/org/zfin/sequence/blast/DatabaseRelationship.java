@@ -1,50 +1,35 @@
 package org.zfin.sequence.blast;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-/**
- */
-public class DatabaseRelationship implements Comparable<DatabaseRelationship>, Serializable{
+@Setter
+@Getter
+@Entity
+@Table(name = "blastdb_order")
+public class DatabaseRelationship implements Comparable<DatabaseRelationship>, Serializable {
 
-    private Long id ;
-    private Integer order ;
-    private Database parent ;
-    private Database child ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bdborder_pk_id", nullable = false)
+    private Long id;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "bdborder_order", nullable = false)
+    private Integer order;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bdborder_parent_blastdb_zdb_id")
+    private Database parent;
 
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-
-    public Database getParent() {
-        return parent;
-    }
-
-    public void setParent(Database parent) {
-        this.parent = parent;
-    }
-
-    public Database getChild() {
-        return child;
-    }
-
-    public void setChild(Database child) {
-        this.child = child;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bdborder_child_blastdb_zdb_id", nullable = false)
+    private Database child;
 
     public int compareTo(DatabaseRelationship databaseRelationship) {
-        return  (int) (getOrder() - databaseRelationship.getOrder()) ;
+        return (int) (getOrder() - databaseRelationship.getOrder());
     }
 
     @Override

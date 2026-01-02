@@ -3,6 +3,9 @@
  */
 package org.zfin.sequence.blast;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.Accession;
 
@@ -11,186 +14,65 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Setter
+@Getter
+@Entity
+@Table(name = "blast_hit")
 public class Hit {
+
+    @Id
+    @GeneratedValue(generator = "zdbIdGenerator")
+    @org.hibernate.annotations.GenericGenerator(
+            name = "zdbIdGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "BHIT")
+            }
+    )
+    @Column(name = "bhit_zdb_id", nullable = false)
     private String zdbID;
+
+    @Column(name = "bhit_hit_number", nullable = false)
     private int hitNumber;
+
+    @Column(name = "bhit_score", nullable = false)
     private int score;
+
+    @Column(name = "bhit_expect_value", nullable = false)
     private double expectValue;
+
+    @Column(name = "bhit_positives_numerator", nullable = false)
     private int positivesNumerator;
+
+    @Column(name = "bhit_positives_denominator", nullable = false)
     private int positivesDenominator;
 
     /*changed accession to targetAccession to not confuse the query and the target accession numbers*/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bhit_target_accbk_pk_id", nullable = false)
     private Accession targetAccession;
-    private String alignment = null;
-    //    private Marker zfinAccession ;
-//    private String queryZdbId;
+
+    @Column(name = "bhit_alignment")
+    private String alignment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bhit_bqry_zdb_id", nullable = false)
     private Query query;
 
     public static final double noHitExpectValue = 1000;
     public static final int noHitScore = 0;
 
     // second group matches end of line or end of string.  Does not like [], but would be more correct.
+    @Transient
     private final Pattern endPattern = Pattern.compile("\\p{Space}([0-9]+?)(\n|$)");
+    @Transient
     private final Pattern startPattern = Pattern.compile("([0-9]+?)\\p{Space}");
-
+    @Transient
     final Pattern descriptionPattern = Pattern.compile("(Score.*\n.*Identities.*(\n|$))");
-
+    @Transient
     private final Logger logger = LogManager.getLogger(Hit.class);
 
 
-    /**
-     * Get zdbID.
-     *
-     * @return zdbID as String.
-     */
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    /**
-     * Set zdbID.
-     *
-     * @param zdbID the value to set.
-     */
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    /**
-     * Get score.
-     *
-     * @return score as int.
-     */
-    public int getScore() {
-        return score;
-    }
-
-    /**
-     * Set score.
-     *
-     * @param score the value to set.
-     */
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    /**
-     * Get expectValue.
-     *
-     * @return expectValue as double.
-     */
-    public double getExpectValue() {
-        return expectValue;
-    }
-
-    /**
-     * Set expectValue.
-     *
-     * @param expectValue the value to set.
-     */
-    public void setExpectValue(double expectValue) {
-        this.expectValue = expectValue;
-    }
-
-    /**
-     * Get positivesNumerator.
-     *
-     * @return positivesNumerator as int.
-     */
-    public int getPositivesNumerator() {
-        return positivesNumerator;
-    }
-
-    /**
-     * Set positivesNumerator.
-     *
-     * @param positivesNumerator the value to set.
-     */
-    public void setPositivesNumerator(int positivesNumerator) {
-        this.positivesNumerator = positivesNumerator;
-    }
-
-    /**
-     * Get positivesDenominator.
-     *
-     * @return positivesDenominator as int.
-     */
-    public int getPositivesDenominator() {
-        return positivesDenominator;
-    }
-
-    /**
-     * Set positivesDenominator.
-     *
-     * @param positivesDenominator the value to set.
-     */
-    public void setPositivesDenominator(int positivesDenominator) {
-        this.positivesDenominator = positivesDenominator;
-    }
-
-    /**
-     * Get targetAccession.
-     *
-     * @return targetAccession as Accession.
-     */
-    public Accession getTargetAccession() {
-        return targetAccession;
-    }
-
-    /**
-     * Set targetAccession.
-     *
-     * @param targetAccession the value to set.
-     */
-    public void setTargetAccession(Accession targetAccession) {
-        this.targetAccession = targetAccession;
-    }
-
-    /**
-     * Get alignment.
-     *
-     * @return alignment as String.
-     */
-    public String getAlignment() {
-        return alignment;
-    }
-
-    /**
-     * Set alignment.
-     *
-     * @param alignment the value to set.
-     */
-    public void setAlignment(String alignment) {
-        this.alignment = alignment;
-    }
-
-    //    /**
-//     * Get zfinAccession.
-//     *
-//     * @return zfinAccession as DBLink.
-//     */
-//    public Marker getZfinAccession()
-//    {
-//        return zfinAccession;
-//    }
-//
-//    /**
-//     * Set zfinAccession.
-//     *
-//     * @param zfinAccession the value to set.
-//     */
-//    public void setZfinAccession(Marker zfinAccession)
-//    {
-//        this.zfinAccession = zfinAccession;
-//    }
-//
-    public Query getQuery() {
-        return query;
-    }
-
-    public void setQuery(Query query) {
-        this.query = query;
-    }
 
     /**
      * Get formattedAlignment.
@@ -252,15 +134,6 @@ public class Hit {
 
     public short getPercentAlignment() {
         return (short) (((double) positivesNumerator / (double) positivesDenominator) * 100);
-
-    }
-
-    public int getHitNumber() {
-        return hitNumber;
-    }
-
-    public void setHitNumber(int hitNumber) {
-        this.hitNumber = hitNumber;
     }
 
     public int getQueryStart(String s) {

@@ -1,8 +1,10 @@
 package org.zfin.sequence.blast;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.framework.api.View;
 import org.zfin.properties.ZfinPropertiesEnum;
 
@@ -15,29 +17,71 @@ import java.util.Set;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "blast_database")
 public class Database {
 
+    @Id
+    @GeneratedValue(generator = "zdbIdGeneratorBlastDb")
+    @org.hibernate.annotations.GenericGenerator(
+            name = "zdbIdGeneratorBlastDb",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "BLASTDB")
+            }
+    )
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_zdb_id", nullable = false)
     private String zdbID;
+
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_name", nullable = false)
     private String name;
+
+    @Column(name = "blastdb_abbrev", nullable = false)
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.blast.Database$AvailableAbbrev")})
     private AvailableAbbrev abbrev;
+
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_description")
     private String description;
+
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_type", nullable = false)
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.blast.Database$Type")})
     private Type type;
+
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_path")
     private String location;
+
+    @Column(name = "blastdb_public", nullable = false)
     private boolean publicDatabase;
-    private boolean isLocked;
+
+    @Column(name = "blastdb_is_being_processed", nullable = false)
+    private boolean locked;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blastdb_origination_id")
     private Origination origination;
+
     @JsonView(View.SequenceAPI.class)
+    @Column(name = "blastdb_tool_display_name", nullable = false)
     private String displayName;
+
+    @Column(name = "blastdb_tool_display_order")
     private Integer toolDisplayOrder;
 
     // these will be ordered coming out of the database by order
+    @OneToMany(mappedBy = "child", fetch = FetchType.LAZY)
+    @OrderBy("order ASC")
     private Set<DatabaseRelationship> childrenRelationships;
+
     // these will be ordered coming out of the database by order
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @OrderBy("order ASC")
     private Set<DatabaseRelationship> parentRelationships;
 
     public String getShortType() {
@@ -111,7 +155,7 @@ public class Database {
         sb.append(", type=").append(type);
         sb.append(", location='").append(location).append('\'');
         sb.append(", publicDatabase=").append(publicDatabase);
-        sb.append(", isLocked=").append(isLocked);
+        sb.append(", isLocked=").append(locked);
         sb.append(", displayName=").append(displayName);
         if (origination != null) {
             sb.append(", origination=").append(origination.getType().toString());
