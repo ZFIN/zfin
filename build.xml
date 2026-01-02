@@ -10,15 +10,15 @@
 
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef name="createEnum"
              classname="org.zfin.properties.ant.CreateEnumTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef name="exportProperties"
              classname="org.zfin.properties.ant.ExportPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>

@@ -73,10 +73,29 @@
     <path id="deployed.classpath">
         <pathelement location="${war.classbin.dir}"/>
         <pathelement location="${servlet.jar}"/>
-        <fileset dir="${war.lib.dir}">
+        <fileset dir="${war.lib.dir}" erroronmissingdir="false">
             <include name="*.jar"/>
         </fileset>
         <pathelement location="${buildfiles.dir}"/>
+    </path>
+
+    <!-- Combined classpath: includes both source tree and deployed WAR JARs -->
+    <!-- This allows Ant tasks to work before and after deployment -->
+    <!-- Deployed WAR JARs (from Gradle) take precedence for consistent versions -->
+    <path id="combined.classpath">
+        <pathelement location="${buildfiles.dir}"/>
+        <pathelement location="${classbin.dir}"/>
+        <pathelement location="${war.classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${war.lib.dir}" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${web.lib}" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <!-- javadoc diectory -->
