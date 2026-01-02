@@ -1,7 +1,10 @@
 package org.zfin.construct;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Parameter;
+import org.zfin.framework.StringEnumValueUserType;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,22 +15,40 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "construct_component")
 public class ConstructComponent {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cc_pk_id")
+    private int ID;
 
+    @Column(name = "cc_construct_zdb_id")
     private String constructZdbID;
+
+    @Column(name = "cc_component_type")
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@Parameter(name = "enumClassname", value = "org.zfin.construct.ConstructComponent$Type")})
     private Type type;
 
+    @Column(name = "cc_component_zdb_id")
     private String componentZdbID;
+
+    @Transient
     private String markerZDB;
+
+    @Column(name = "cc_order")
     private int componentOrder;
+
+    @Column(name = "cc_cassette_number")
     private int componentCassetteNum;
 
-
+    @Column(name = "cc_component_category")
     private String componentCategory;
-    private String componentValue;
 
-    private int ID;
+    @Column(name = "cc_component")
+    private String componentValue;
 
     public enum Type {
         PROMOTER_OF("promoter of"),

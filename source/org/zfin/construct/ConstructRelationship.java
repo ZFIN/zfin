@@ -5,8 +5,14 @@ package org.zfin.construct;
  */
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.annotations.Parameter;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -21,6 +27,8 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "construct_marker_relationship")
 public class ConstructRelationship implements EntityAttribution {
 
     public enum Type {
@@ -55,18 +63,37 @@ public class ConstructRelationship implements EntityAttribution {
         }
     }
 
-    @JsonView(View.API.class)
-    private Type type;
-
+    @Id
+    @GeneratedValue(generator = "zdbIdGeneratorCMREL")
+    @GenericGenerator(name = "zdbIdGeneratorCMREL", strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "CMREL"),
+                    @Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "conmrkrrel_zdb_id")
     @JsonView(View.API.class)
     private String zdbID;
 
+    @Column(name = "conmrkrrel_relationship_type")
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@Parameter(name = "enumClassname", value = "org.zfin.construct.ConstructRelationship$Type")})
+    @JsonView(View.API.class)
+    private Type type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conmrkrrel_construct_zdb_id")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     @JsonView(View.API.class)
     private ConstructCuration construct;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conmrkrrel_mrkr_zdb_id")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     @JsonView(View.API.class)
     private Marker marker;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     private Set<PublicationAttribution> publications;
 
     public int getPublicationCount() {
