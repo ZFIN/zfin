@@ -51,13 +51,18 @@
     <property name="zfin.war" value="${basedir}/zfin.war"/>
 
     <!-- Classpath definitions -->
+    <!-- Note: buildfiles.dir comes first so its simple log4j2.xml is found before
+         the instance-specific one in classbin.dir (which may require Jackson for JsonLayout) -->
     <path id="classpath">
+        <pathelement location="${buildfiles.dir}"/>
         <pathelement location="${classbin.dir}"/>
         <pathelement location="${servlet.jar}"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
-        <pathelement location="${buildfiles.dir}"/>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <!-- Deployed WAR classpath (uses WAR_WEB_INF_DIR environment variable) -->
