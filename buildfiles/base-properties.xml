@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="base-properties" basedir=".">
 
+    <!-- Load environment variables as properties with env. prefix -->
+    <property environment="env"/>
+
     <!-- today -->
     <tstamp prefix="today"/>
 
