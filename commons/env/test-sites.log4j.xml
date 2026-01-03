@@ -1,63 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!-- Log4j2 configuration for test sites (converted from Log4j1 format) -->
+<Configuration status="warn">
+    <Appenders>
+        <RollingFile name="fileAppender" fileName="${env:CATALINA_BASE}/logs/catalina.out"
+                     filePattern="${env:CATALINA_BASE}/logs/catalina.out.%i.log" filePermissions="rw-r--r--">
+            <PatternLayout pattern="%d [%t] %-5p %c{2} - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
-<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/' debug="false">
+        <RollingFile name="json" fileName="${env:CATALINA_BASE}/logs/catalina.json"
+                     filePattern="${env:CATALINA_BASE}/logs/catalina.json.%i.log" filePermissions="rw-r--r--">
+            <JsonLayout complete="false" compact="false">
+                <KeyValuePair key="instance" value="$${env:INSTANCE:-unknown}"/>
+                <KeyValuePair key="date" value="$${date:yyyy-MM-dd HH:mm:ss}"/>
+            </JsonLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
-    <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/catalina.out"/>
-        <param name="Append" value="true"/>
-        <param name="MaxFileSize" value="1MB"/>
-        <param name="MaxBackupIndex" value="10"/>
-        <param name="DatePattern" value="'.'yyyy-MM"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
-        </layout>
-    </appender>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%t] %-5p %c{2} - %m%n"/>
+        </Console>
+    </Appenders>
 
-    <appender name="json" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/catalina.json"/>
-        <param name="DatePattern" value=".yyyy-MM"/>
-        <layout class="net.logstash.log4j.JSONEventLayout"/>
-    </appender>
-
-    <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%t] %-5p %c{2} - %m%n"/>
-        </layout>
-    </appender>
-
-    <!--
-        <category name="org.zfin" additivity="true">
-            <priority value="debug"/>
-        </category>
-
-    -->
-    <category name="org.hibernate.SQL" additivity="true">
-        <priority value="warn"/>
-    </category>
-
-    <category name="org.hibernate.type" additivity="true">
-        <priority value="warn"/>
-    </category>
-
-    <!-- This should silence proxy warnings about == that show up when loading transcripts in hibernate -->
-    <category name="org.hibernate.engine.interla.StatefulPersistenceContext" additivity="true">
-        <priority value="error"/>
-    </category>
-
-    <category name="org.zfin" additivity="true">
-        <priority value="warn"/>
-    </category>
-
-    <category name="org.zfin.ontology" additivity="true">
-        <priority value="info"/>
-    </category>
-          
-    <root>
-        <priority value="warn"/>
-        <appender-ref ref="console"/>
-        <appender-ref ref="json"/>
-        <appender-ref ref="fileAppender"/>
-    </root>
-</log4j:configuration>
+    <Loggers>
+        <Logger name="org.hibernate.SQL" level="warn"/>
+        <Logger name="org.hibernate.type" level="warn"/>
+        <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
+        <Logger name="org.hibernate.orm.deprecation" level="error"/>
+        <Logger name="org.zfin" level="warn"/>
+        <Logger name="org.zfin.ontology" level="info"/>
+        <Root level="warn">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="json"/>
+            <AppenderRef ref="fileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

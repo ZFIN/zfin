@@ -203,11 +203,11 @@ public final class ZfinProperties {
         if (freeMarkerConfiguration == null) {
             freeMarkerConfiguration = new Configuration();
             try {
-                File templateFile = FileUtil.createFile(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF", "templates");
+                File templateFile = FileUtil.createFileFromDirAndName(ZfinPropertiesEnum.WAR_WEB_INF_DIR.value(), "templates");
                 freeMarkerConfiguration.setDirectoryForTemplateLoading(templateFile);
             } catch (IOException e) {
                 logger.error("Could not find template directory", e);
-                logger.error("Directory: " + ZfinPropertiesEnum.WEBROOT_DIRECTORY.value() +"/" + "WEB-INF" + "/" + "templates");
+                logger.error("Directory: " + ZfinPropertiesEnum.WAR_WEB_INF_DIR.value() + "/" + "templates");
             }
         }
         return freeMarkerConfiguration;

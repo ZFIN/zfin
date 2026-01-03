@@ -25,7 +25,7 @@ entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')*/
 
 
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 DOWNLOAD_URL = "https://www.addgene.org/download/2cae1f5eb19075da8ba8de3ac954e4d5/plasmids/"
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)

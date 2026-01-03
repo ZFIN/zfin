@@ -35,7 +35,7 @@ AND (
 ORDER BY accession_no
 """
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 def client = new FTPClient()
 def db = [

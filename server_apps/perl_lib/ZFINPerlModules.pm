@@ -275,7 +275,7 @@ sub trim {
 
 sub getPropertyValue {
     my $property_name = shift();
-    my $property_file = $ENV{'TARGETROOT'} . "/home/WEB-INF/zfin.properties";
+    my $property_file = $ENV{'ZFIN_PROPERTIES_PATH'};
 
     open(PROPERTIES, $property_file) or die("Could not open $property_file");
     while (<PROPERTIES>) {

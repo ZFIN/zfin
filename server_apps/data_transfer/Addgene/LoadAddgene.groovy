@@ -17,7 +17,7 @@ if (!options) {
 }
 
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 def tokenStorage = new TokenStorage()
 Optional<String> token = tokenStorage.getValue(TokenStorage.ServiceKey.ADDGENE_API_TOKEN);

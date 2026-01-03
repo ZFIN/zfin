@@ -11,7 +11,7 @@ import org.zfin.sequence.GenomeFeature
 
 Logger log = Logger.getLogger(getClass());
 AntBuilder ab = new AntBuilder()
-ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 def db = Sql.newInstance(ZfinPropertiesEnum.JDBC_URL.value(), ZfinPropertiesEnum.JDBC_DRIVER.value())
 
 String destination = ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/data_transfer/Downloads/GFF3"

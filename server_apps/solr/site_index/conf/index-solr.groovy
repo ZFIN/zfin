@@ -6,7 +6,7 @@ def env = System.getenv()
 println 'Start unloading synonym, stopwords and keepwords files...'
 
 def solrDir = "${env['SOLR_HOME']}/conf/"
-def propertiesFile = "${env['TARGETROOT']}/home/WEB-INF/zfin.properties"
+def propertiesFile = "${env['ZFIN_PROPERTIES_PATH']}"
 RunSQLFiles runScriptFiles = new RunSQLFiles("Build solr index", propertiesFile, solrDir)
 runScriptFiles.initializeLogger("./log4j.xml")
 runScriptFiles.initDatabase()

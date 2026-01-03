@@ -32,10 +32,10 @@ if (!options) {
     System.exit(1)
 }
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 //new HibernateSessionCreator()
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 releaseVersionJson = new JsonSlurper().parseText(new URL('https://fms.alliancegenome.org/api/datafile/by/GENE-DESCRIPTION-JSON/ZFIN?latest=true').text)
 

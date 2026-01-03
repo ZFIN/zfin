@@ -35,10 +35,10 @@ Logger log = Logger.getLogger(getClass())
 def env = System.getenv()
 
 /*AbstractScriptWrapper abstractScriptWrapper = new AbstractScriptWrapper()
-abstractScriptWrapper.initProperties("${env['TARGETROOT']}/home/WEB-INF/zfin.properties")
+abstractScriptWrapper.initProperties("${env['ZFIN_PROPERTIES_PATH']}")
 abstractScriptWrapper.initializeLogger("./log4j.xml")*/
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 new HibernateSessionCreator()
 Session session = HibernateUtil.currentSession()
 session.beginTransaction()
