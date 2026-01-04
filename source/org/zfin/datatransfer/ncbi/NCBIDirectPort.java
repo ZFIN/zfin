@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.Tuple;
 import org.apache.commons.collections4.BidiMap; //TODO: use this to simplify mappings
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.hibernate.query.NativeQuery;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.datatransfer.ncbi.port.PortHelper;
 import org.zfin.datatransfer.ncbi.port.PortSqlHelper;
 import org.zfin.datatransfer.report.model.LoadReportAction;
@@ -119,20 +119,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public File beforeFile;
     public File afterFile;
 
-    // used in eg. initializeDatabase
-    private String dbname;
-    private String dbhost;
-    private String instance;
-    private String username;
-    private String password;
-    // private String handle; // In Java, this will be managed by Hibernate session
-
     // used in eg. getMetricsOfDbLinksToDelete
-    private Map<String, Integer>  toDelete;
+    private Map<String, String> toDelete;
     private Long ctToDelete;
 
     // used in eg. getRecordCounts
-    private Map<String, String>  genesWithRefSeqBeforeLoad = new HashMap<>();
+    private Map<String, String> genesWithRefSeqBeforeLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqBefore;
     public Integer numNCBIgeneIdBefore;
     public Integer numRefSeqRNABefore;
@@ -145,11 +137,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesRefSeqPeptBefore;
     public Integer numGenesGenBankBefore;
 
-    // used in eg. readZfinGeneInfoFile
-    private int ctVegaIdsNCBI; // Changed to int
     private Map<String, List<String>> NCBIgeneWithMultipleVega = new HashMap<>();
     private Map<String, String> NCBIidsGeneSymbols = new HashMap<>(); // Value is String, not List<String> based on Perl
-    private Map<String, String> geneSymbolsNCBIids = new HashMap<>(); // Value is String, not List<String>
     private Map<String, String> vegaIdsNCBIids = new HashMap<>(); // Value is String, not List<String>
     private Map<String, List<String>> vegaIdwithMultipleNCBIids = new HashMap<>();
 
@@ -168,7 +157,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     // used in eg. parseGene2AccessionFile
     private Integer ctNoLength;
     private Integer ctNoLengthRefSeq;
-    private Integer ctZebrafishGene2accession;
     private Map<String, List<String>>  GenBankDNAncbiGeneIds;
     private Map<String, String>  GenPeptNCBIgeneIds;
     private Map<String, String>  RefPeptNCBIgeneIds;
@@ -191,19 +179,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  used in eg. oneWayMappingNCBItoZfinGenes
     private Map<String, String>  oneToOneNCBItoZFIN;
     private Map<String, Map<String, String>> oneToNNCBItoZFIN; // NCBI Gene ID -> Map<ZFIN Gene ID, Accession>
-    private Map<String, List<String>> genesNCBIwithAllAccsNotFoundAtZFIN;
 
     //  used in eg. prepare2WayMappingResults
-    private Map<String, String>  mapped; //  the list of 1:1; key: ZDB gene Id; value: NCBI gene Id
-    private Map<String, String>  mappedReversed; // NCBI gene Id -> ZDB gene Id
+    private BidiMap<String, String>  mapped; //  the list of 1:1; key: ZDB gene Id; value: NCBI gene Id
     private long ctOneToOneNCBI; // Count of 1:1 mappings
 
-    private Map<String, String>  ncbiSupplementMap = new HashMap<>();
-    private Map<String, String>  ncbiSupplementMapReversed = new HashMap<>();
+    private BidiMap<String, String>  ncbiSupplementMap = new DualHashBidiMap<>(); // the list of supplementary mappings; key: ZDB gene Id; value: NCBI gene Id
 
-    //  used in eg. writeNCBIgeneIdsMappedBasedOnGenBankRNA
-    private long ctToLoad = 0L;
-
+    private NCBIOutputFileToLoad recordsToLoad = new NCBIOutputFileToLoad();
     private BufferedWriter TOLOAD;      // For toLoad.unl
     private BufferedWriter TO_PRESERVE; // For toPreserve.unl
 
@@ -236,9 +219,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  readZfinGeneInfoFile
     private Map<String, String> geneZDBidsSymbols = new HashMap<>(); // Value is String
 
-    private Long stepCount = 0L;
     private Long STEP_TIMESTAMP = 0L;
-    private String LOAD_TIMESTAMP = nowToString("yyyy-MM-dd_HH-mm-ss");
 
     private BufferedWriter LOG;
     private BufferedWriter STATS_PRIORITY1;
@@ -247,7 +228,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     // After the load
     private Map<String, String> allGenPeptWithGeneAfterLoad = new HashMap<>();
-    private Map<String, List<String>> GenPeptWithMultipleZDBgeneAfterLoad = new HashMap<>();
     public Integer numNCBIgeneIdAfter;
     public Integer numRefSeqRNAAfter;
     public Integer numRefPeptAfter;
@@ -258,13 +238,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesRefSeqRNAAfter;
     public Integer numGenesRefSeqPeptAfter;
     public Integer numGenesGenBankAfter;
-    private Map<String, String> genesWithRefSeqAfterLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqAfter;
     private List<String> geneIDsNotInCurrentAnnotationRelease = null;
     private List<LoadReportAction> manyToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> oneToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
-    private Set<String> loggedMessages = new HashSet<>(); // To avoid duplicate log messages
 
     // Store the actions for changes that are made to the DB (really should be cudActions for create, update, delete)
     private List<LoadReportAction> crudActions = new ArrayList<>();
@@ -549,7 +527,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             WHERE
                 dblink_fdbcont_zdb_id in (?)
                 AND recattrib_source_zdb_id = ?
-                """;
+            """;
         NativeQuery<Tuple> selectQuery = currentSession().createNativeQuery(selectSql, Tuple.class);
         selectQuery.setParameter(1, contIDs);
         selectQuery.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
@@ -581,7 +559,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 WHERE
                     dblink_fdbcont_zdb_id in (?)
                     AND recattrib_source_zdb_id = ?);
-                """;
+            """;
         NativeQuery rpQuery = currentSession().createNativeQuery(referenceProteinDeleteSql);
         rpQuery.setParameter(1, contIDs);
         rpQuery.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
@@ -598,7 +576,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 WHERE
                     dblink_fdbcont_zdb_id in (?)
                     AND recattrib_source_zdb_id = ?);
-                """;
+            """;
 
         NativeQuery query = currentSession().createNativeQuery(sql);
         query.setParameter(1, contIDs);
@@ -779,6 +757,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             }
 
         } catch (IOException e) {
+            print(LOG, "Could not read post_run_n_to_1_zdb_to_ncbi.csv for additional warnings: " + e.getMessage());
         }
     }
 
@@ -972,7 +951,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at before capture - " + e.getMessage());
+            reportErrAndExit("Notify : NCBI gene load :: failed at before capture - " + e.getMessage());
         }
         print(LOG, "Done with capturing before state.\n\n");
 
@@ -1003,11 +982,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at prepareNCBIgeneLoad.sql - " + e.getMessage());
+            reportErrAndExit("Notify : NCBI gene load :: failed at prepareNCBIgeneLoad.sql - " + e.getMessage());
         }
 
         print(LOG, "Done with preparing the delete list and the list for mapping.\n\n");
-        String subjectPrefix = "Auto from " + instance + ": NCBI_gene_load.pl :: ";
+        String subjectPrefix = "Notify : NCBI gene load :: ";
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog1.txt file","prepareLog1.txt", workingDir);
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog2.txt file","prepareLog2.txt", workingDir);
     }
@@ -1028,8 +1007,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 for (String line : lines) {
                     if (StringUtils.isNotBlank(line)) {
                         ctToDelete++;
-                        String dblinkIdToBeDeleted = line.trim();
-                        toDelete.put(dblinkIdToBeDeleted, 1); // Value is just a marker like in Perl
+                        String[] lineParts = line.trim().split("\\|");
+                        String dblinkIdToBeDeleted = lineParts[0];
+                        String dblinkAccToBeDeleted = lineParts[1];
+                        toDelete.put(dblinkIdToBeDeleted, dblinkAccToBeDeleted); // Value is just a marker like in Perl
                     }
                 }
             }
@@ -1039,7 +1020,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
 
         if (ctToDelete == 0) { // Perl condition: if ($ctToDelete == 0)
-            String subjectLine = "Auto from " + instance + ": NCBI_gene_load.pl :: the delete list, toDelete.unl, is empty";
+            String subjectLine = "Notify : NCBI gene load :: the delete list, toDelete.unl, is empty";
             // print(LOG, "\nThe delete list, toDelete.unl is empty. Something is wrong.\n\n"); // Original Perl log.
             // The original script *conditionally* reports error. If toDelete.unl is missing, it's fine.
             // If it's present but empty, it's an error.
@@ -1163,10 +1144,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         int ctLines = 0;
         vegaIdsNCBIids = new HashMap<>();
         NCBIidsGeneSymbols = new HashMap<>();
-        geneSymbolsNCBIids = new HashMap<>(); // Added initialization
+        Map<String, String> geneSymbolsNCBIids = new HashMap<>(); // Added initialization
         vegaIdwithMultipleNCBIids = new HashMap<>();
         NCBIgeneWithMultipleVega = new HashMap<>();
-        ctVegaIdsNCBI = 0;
+        int ctVegaIdsNCBI = 0;
 
         File zfGeneInfoFile = new File(workingDir, "zf_gene_info.gz");
         try (
@@ -1459,7 +1440,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             try {
                 if (STATS_PRIORITY2 != null) STATS_PRIORITY2.close();
             } catch (IOException e) { /* ignore */ }
-            String subjectLine = "Auto from " + instance + ": NCBI_gene_load.pl :: some numbers don't add up in initializeSetsOfZfinRecordsPart2";
+            String subjectLine = "Notify : NCBI gene load :: some numbers don't add up in initializeSetsOfZfinRecordsPart2";
             reportErrAndExit(subjectLine);
         }
 
@@ -1579,7 +1560,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         ctNoLength = 0;
         ctNoLengthRefSeq = 0;
-        ctZebrafishGene2accession = 0;
+        int ctZebrafishGene2accession = 0;
 
         int ctLines = 0;
 
@@ -1784,7 +1765,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             } catch (IOException e) {
                 print(LOG, "Error closing STATS_PRIORITY2: " + e.getMessage() + "\n");
             }
-            String subjectLine = "Auto from " + (instance != null ? instance : "UnknownInstance") + ": NCBI_gene_load.pl :: some numbers don't add up in initializeHashOfNCBIAccessionsSupportingMultipleGenes";
+            String subjectLine = "Notify : NCBI gene load :: some numbers don't add up in initializeHashOfNCBIAccessionsSupportingMultipleGenes";
             reportErrAndExit(subjectLine);
         }
     }
@@ -1891,8 +1872,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             } catch (Exception e) { // Catching generic Exception for safety, though IOException is typical for close()
                 print(LOG, "Error closing STATS_PRIORITY2: " + e.getMessage() + "\n");
             }
-            String subjectLine = "Auto from " + (instance != null ? instance : "UnknownInstance") +
-                                 ": NCBIDirectPort.java :: some numbers don't add up in initializeMapOfZfinToNCBIgeneIds";
+            String subjectLine = "Auto from : NCBIDirectPort.java :: some numbers don't add up in initializeMapOfZfinToNCBIgeneIds";
             reportErrAndExit(subjectLine);
         }
     }
@@ -1932,7 +1912,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         // Step 5-5: get 1:1, 1:N and 1:0 (from NCBI to ZFIN) lists
         oneToNNCBItoZFIN = new HashMap<>();
         oneToOneNCBItoZFIN = new HashMap<>();
-        genesNCBIwithAllAccsNotFoundAtZFIN = new HashMap<>();
+        Map<String, List<String>> genesNCBIwithAllAccsNotFoundAtZFIN = new HashMap<>();
 
         long ct1to1NCBItoZFIN = 0;
         long ct1toNNCBItoZFIN = 0;
@@ -2006,8 +1986,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             } catch (IOException e) {
                 print(LOG, "Error closing STATS_PRIORITY2: " + e.getMessage() + "\n");
             }
-            String subjectLine = "Auto from " + (instance != null ? instance : "UnknownInstance") +
-                                 ": NCBI_gene_load.pl :: numbers don't add up in oneWayMappingNCBItoZfinGenes";
+            String subjectLine = "Notify: NCBI Gene Load :: numbers don't add up in oneWayMappingNCBItoZfinGenes";
             reportErrAndExit(subjectLine);
         }
         // The Perl script calls this "0:1 (ZFIN to NCBI)" which refers to NCBI genes that don't map to ZFIN.
@@ -2052,8 +2031,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void prepare2WayMappingResults() {
-        mapped = new HashMap<>();
-        mappedReversed = new HashMap<>();
+        mapped = new DualHashBidiMap<>();
         this.ctOneToOneNCBI = 0;
 
         long ctAllpotentialOneToOneZFIN = 0;
@@ -2067,7 +2045,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (ncbiIdFromZfinMap != null && zdbid.equals(oneToOneNCBItoZFIN.get(ncbiIdFromZfinMap))) {
                 ctOneToOneZFIN++;
                 mapped.put(zdbid, ncbiIdFromZfinMap);
-                mappedReversed.put(ncbiIdFromZfinMap, zdbid); // Populate mappedReversed here as well
             }
         }
         // ctOneToOneNCBI should be the size of these confirmed 1:1 maps.
@@ -2087,17 +2064,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(debugFile))) {
                 writer.write("ZFIN to NCBI\n===================\n");
                 mapped.entrySet().stream()
-                        .sorted(Map.Entry.comparingByKey())
-                        .forEach(entry -> {
-                            try {
-                                writer.write(entry.getKey() + "\t" + entry.getValue() + "\n");
-                            } catch (IOException e) {
-                                throw new RuntimeException("Error writing to " + debugFile.getName(), e);
-                            }
-                        });
-
-                writer.write("\n\nNCBI to ZFIN\n===================\n");
-                mappedReversed.entrySet().stream()
                         .sorted(Map.Entry.comparingByKey())
                         .forEach(entry -> {
                             try {
@@ -2138,16 +2104,16 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
             try {
                 File downloadFile = new File(workingDir, "zf_gene_info.gz");
-                String[] args = new String[]{};
+                String ncbiInputFileUrl = null;
                 if (envTrue("SKIP_DOWNLOADS") && downloadFile.exists()) {
                     System.out.println("Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.");
                     print(LOG, "Skipping download of zf_gene_info.gz as SKIP_DOWNLOADS is set to true.\n");
-                    args = new String[]{"file://" + downloadFile.getAbsolutePath()};
+                    ncbiInputFileUrl = "file://" + downloadFile.getAbsolutePath();
                 } else {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
                 }
-                task.runTask(args);
+                task.runTask(ncbiInputFileUrl, toDelete);
                 String md5 = md5File(inputFile, LOG);
                 FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
@@ -2170,8 +2136,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             return;
         }
 
-        ncbiSupplementMap = new HashMap<>();
-        ncbiSupplementMapReversed = new HashMap<>();
+        ncbiSupplementMap = new DualHashBidiMap<>();
         long ncbiSupplementMapCount = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(localInputFile))) {
@@ -2180,6 +2145,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 print(LOG, "WARN: Supplementary mapping file is empty: " + localInputFile.getAbsolutePath() + "\n");
             }
 
+            HashSet toDeleteAccessions = new HashSet(toDelete.values());
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1); // Use -1 limit to include trailing empty strings
                 if (parts.length < 7) {
@@ -2193,23 +2159,30 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 // String symbol = parts[3].trim(); // not used in this logic directly
                 // String dblinks = parts[4].trim(); // not used in this logic directly
                 // String publications = parts[5].trim(); // not used in this logic directly
-                String rnaAccessions = parts[6].trim();
+                String rnaAccessionsColumn = parts[6].trim(); // not used in this logic directly
 
-                if (mappedReversed.containsKey(ncbiId) || mapped.containsKey(zdbId)) {
+                if (mapped.containsValue(ncbiId) || mapped.containsKey(zdbId)) {
                     debugBuffer.append("Skip Duplicate: ").append(line).append("\n");
                     continue;
                 }
 
-                if (StringUtils.isNotEmpty(rnaAccessions) && !zdbId.contains("ZDB-MIRNAG-")) {
+                // Remove any accessions that are in the toDelete list
+                Set<String> rnaAccessions = new HashSet<>(List.of(rnaAccessionsColumn.split(";")));
+                rnaAccessions.removeIf(r -> r == null || r.isEmpty());
+                rnaAccessions.removeAll(toDeleteAccessions);
+
+                if (!rnaAccessions.isEmpty() && !zdbId.contains("ZDB-MIRNAG-")) {
                     debugBuffer.append("Skip NON-blank NON-MIRNAG: ").append(line).append("\n");
                     continue;
                 }
 
                 // Check if the gene already has an NCBI Gene link in the database
+                // (accounting for those marked for deletion in tmp_pre_ncbi_gene_delete)
                 String sqlCheckExistingNCBILink = """
                  SELECT COUNT(*) FROM db_link
                  WHERE dblink_linked_recid = :zdbId
                  AND dblink_fdbcont_zdb_id = :fdcontNCBIgeneId
+                 AND dblink_zdb_id not in (select dblink_zdb_id from tmp_pre_ncbi_gene_delete)
                  """;
                 NativeQuery<Long> checkQuery = currentSession().createNativeQuery(sqlCheckExistingNCBILink, Long.class);
                 checkQuery.setParameter("zdbId", zdbId);
@@ -2223,8 +2196,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 debugBuffer.append("Supplemental mapping: ").append(line).append("\n");
                 ncbiSupplementMap.put(zdbId, ncbiId);
-                ncbiSupplementMapReversed.put(ncbiId, zdbId);
                 ncbiSupplementMapCount++;
+                System.out.print(".");
             }
         } catch (IOException e) {
             reportErrAndExit("Error reading supplementary mapping file " + localInputFile.getAbsolutePath() + ": " + e.getMessage());
@@ -2272,15 +2245,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(entry -> {
                         String zdbId = entry.getKey();
                         String mappedNCBIgeneId = entry.getValue();
-                        // Format: zdbId|mappedNCBIgeneId|||fdcontNCBIgeneId|pubMappedbasedOnRNA
-                        String line = String.format("%s|%s|||%s|%s\n", zdbId, mappedNCBIgeneId, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA);
-                        try {
-                            TOLOAD.write(line);
-                            this.ctToLoad++;
-                        } catch (IOException e) {
-                            // Throw a RuntimeException to be caught by the calling context if direct error handling is complex here
-                            throw new RuntimeException("Error writing to TOLOAD in writeNCBIgeneIdsMappedBasedOnGenBankRNA for ZDB ID " + zdbId, e);
-                        }
+                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA));
                     });
         } catch (RuntimeException e) { // Catch runtime exceptions from the lambda
             if (e.getCause() instanceof IOException) {
@@ -2310,14 +2275,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(entry -> {
                         String zdbId = entry.getKey();
                         String mappedNCBIgeneId = entry.getValue();
-                        // Format: zdbId|mappedNCBIgeneId|||fdcontNCBIgeneId|pubMappedbasedOnNCBISupplement
-                        String line = String.format("%s|%s|||%s|%s\n", zdbId, mappedNCBIgeneId, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
-                        try {
-                            TOLOAD.write(line);
-                            this.ctToLoad++;
-                        } catch (IOException e) {
-                            throw new RuntimeException("Error writing to TOLOAD in writeNCBIgeneIdsMappedBasedOnSupplementaryLoad for ZDB ID " + zdbId, e);
-                        }
+                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT));
                     });
         } catch (RuntimeException e) { // Catch runtime exceptions from the lambda
             if (e.getCause() instanceof IOException) {
@@ -2476,29 +2434,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
-    private void getNtoOneAndNtoNfromZFINtoNCBI() {
-        // This version is for when called directly from run(), not appending to an existing file.
-        // It will create its own reportNtoN or log an error if used incorrectly.
-        // However, the logic is now designed to be called by getOneToNNCBItoZFINgeneIds.
-        // So, this standalone version might not be strictly needed if the flow is always through there.
-        // For now, let's make it clear this is not the primary path for NtoN file generation.
-        print(LOG, "WARN: getNtoOneAndNtoNfromZFINtoNCBI() called without BufferedWriter. " +
-                   "N:N (NCBI to ZFIN perspective) report part might be missing from reportNtoN if not handled by caller.\n");
-        // The actual reporting to file is handled when a BufferedWriter is passed.
-        // Here, we just calculate the maps and log counts.
-        try {
-            // This is a dummy writer to satisfy the method signature if we want to reuse the logic
-            // but in practice, the file should be managed by the getOneToNNCBItoZFINgeneIds
-            StringWriter sw = new StringWriter();
-            BufferedWriter dummyWriter = new BufferedWriter(sw);
-            getNtoOneAndNtoNfromZFINtoNCBI(dummyWriter); // Call the main logic
-            // The content in sw is not used here, as reportNtoN file is managed by the caller.
-        } catch (IOException e) {
-            // This should not happen with StringWriter
-            reportErrAndExit("Unexpected IOException with StringWriter in getNtoOneAndNtoNfromZFINtoNCBI: " + e.getMessage());
-        }
-    }
-
     private List<LoadReportAction> getNtoOneAndNtoNfromZFINtoNCBI(BufferedWriter ntonWriter) throws IOException {
         BufferedWriter ntonWriter3 = new BufferedWriter(new FileWriter(new File(workingDir, "reportNtoN.3")));
 
@@ -2623,7 +2558,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         // Send email with NtoN report (this was after close NTON in Perl)
         // The file is managed by the caller, so it should be complete at this point.
-        String subject = "Auto from " + instance + ": NCBI_gene_load.pl :: List of N to N";
+        String subject = "Notify : NCBI gene load :: List of N to N";
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_REPORT"), subject, new File(workingDir, "reportNtoN").getAbsolutePath());
 
         ntonWriter3.close();
@@ -2723,7 +2658,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         sendMailWithAttachedReport(
                 env("SWISSPROT_EMAIL_REPORT"),
-                "Auto from " + instance + ": NCBI_gene_load.pl :: List of 1 to N",
+                "Notify : NCBI gene load :: List of 1 to N",
                 reportFile.getAbsolutePath()
         );
         return warningActions;
@@ -2783,7 +2718,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         sendMailWithAttachedReport(
                 env("SWISSPROT_EMAIL_REPORT"),
-                "Auto from " + instance + ": NCBI_gene_load.pl :: List of N to 1",
+                "Notify : NCBI gene load :: List of N to 1",
                 reportFile.getAbsolutePath()
         );
         return warningActions;
@@ -2895,18 +2830,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     // Further exclude NCBI genes that are problematic (multiple Vegas, complex RNA, or already RNA-mapped)
                     if (!NCBIgeneWithMultipleVega.containsKey(ncbiGeneIdMappedViaVega) &&
                         !geneNCBIwithAccSupportingMoreThan1.containsKey(ncbiGeneIdMappedViaVega) &&
-                        !mappedReversed.containsKey(ncbiGeneIdMappedViaVega)) {
+                        !mapped.containsValue(ncbiGeneIdMappedViaVega)) {
 
-                        try {
-                            // Format: zdbId|NCBIgeneIdMappedViaVega|||fdcontNCBIgeneId|pubMappedbasedOnVega
-                            TOLOAD.write(String.format("%s|%s|||%s|%s\n",
-                                    zdbId, ncbiGeneIdMappedViaVega, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
-                            this.ctToLoad++;
+                            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, ncbiGeneIdMappedViaVega, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
                             oneToOneViaVega.put(ncbiGeneIdMappedViaVega, zdbId);
                             ctMappedViaVega++;
-                        } catch (IOException e) {
-                            reportErrAndExit("Error writing to TOLOAD in writeCommonVegaGeneIdMappings for ZDB ID " + zdbId + ": " + e.getMessage());
-                        }
                     }
                 }
             }
@@ -2924,7 +2852,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         //we only care about the accessions that are mapped to NCBI or ZFIN
         Map<String, String> noLengthAccessionsFiltered = noLength.entrySet().stream().filter(
-                        entry -> mappedReversed.containsKey(entry.getValue()) || oneToOneViaVega.containsKey(entry.getValue()))
+                        entry -> mapped.containsValue(entry.getValue()) || oneToOneViaVega.containsKey(entry.getValue()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue
@@ -2940,7 +2868,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         if (!noLengthUnlFile.exists()) { // Should not happen if previous step succeeded
             print(LOG, "\nCannot find " + noLengthUnlFile.getName() + " as input file for efetch.\n\n");
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: no input file for efetch.r");
+            reportErrAndExit("Notify : NCBI gene load :: no input file for efetch.r");
             return;
         }
 
@@ -2975,7 +2903,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         if (!seqFastaFile.exists()) {
             print(LOG, "\n No " + seqFastaFile.getName() + " found (maybe issue with efetch): $! \n\n"); // $! is Perl specific
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with efetch, " + seqFastaFile.getName() + " not found.");
+            reportErrAndExit("Notify : NCBI gene load :: ERROR with efetch, " + seqFastaFile.getName() + " not found.");
             return;
         }
 
@@ -2989,7 +2917,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         if (!new File(fastaLenCommand).exists()) {
             System.out.println("FASTA_LEN_COMMAND not found at " + fastaLenCommand);
             print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with fasta_len.pl command not found at " + fastaLenCommand);
+            reportErrAndExit("Notify : NCBI gene load :: ERROR with fasta_len.pl command not found at " + fastaLenCommand);
         }
 
         String cmdCalLengthString = String.format("%s %s > %s",
@@ -3000,7 +2928,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         if (!lengthUnlFile.exists()) {
             print(LOG, "\nError happened when execute " + fastaLenCommand + " " + seqFastaFile.getName() + " > " + lengthUnlFile.getName() + "\n\n");
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: ERROR with " + fastaLenCommand);
+            reportErrAndExit("Notify : NCBI gene load :: ERROR with " + fastaLenCommand);
             return;
         }
 
@@ -3073,7 +3001,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void writeGenBankRNAaccessionsWithMappedGenesToLoad() {
-        try {
             List<String> sortedKeys = accNCBIsupportingOnly1.keySet().stream().sorted().collect(Collectors.toList());
             for (String genBankRNA : sortedKeys) {
                 String ncbiGeneId = accNCBIsupportingOnly1.get(genBankRNA);
@@ -3087,17 +3014,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 if (geneAccFdbcont.containsKey(hashKey)) continue;
 
                 Integer lengthVal = sequenceLength.get(genBankRNA);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
-                // Format: zdbGeneId|GenBankRNA||length|fdcontGenBankRNA|attributionPub
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, genBankRNA, lengthStr, FDCONT_GENBANK_RNA, attributionPub));
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genBankRNA, lengthVal, FDCONT_GENBANK_RNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding
-                this.ctToLoad++;
             }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing GenBank RNA accessions to toLoad.unl: " + e.getMessage());
-        }
     }
 
     private void initializeGenPeptAccessionsMap() {
@@ -3168,29 +3088,25 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 String hashKey = zdbGeneId + genPept + FDCONT_GENPEPT;
                 Integer lengthVal = sequenceLength.get(genPept);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 if (!geneAccFdbcont.containsKey(hashKey)) {
-                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
+
+                    recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genPept, lengthVal, FDCONT_GENPEPT, attributionPub));
                     geneAccFdbcont.put(hashKey, "1"); // Mark as added
-                    this.ctToLoad++;
                     GenPeptsToLoad.put(genPept, zdbGeneId);
                 } else if (GenPeptAttributedToNonLoadPub.containsKey(genPept) &&
                            GenPeptDbLinkIdAttributedToNonLoadPub.containsKey(genPept)) {
                     String moreToDeleteDblinkId = GenPeptDbLinkIdAttributedToNonLoadPub.get(genPept);
-                    moreToDeleteWriter.write(moreToDeleteDblinkId + "\n");
-                    toDelete.put(moreToDeleteDblinkId, 1); // Add to the main toDelete map
+                    moreToDeleteWriter.write(moreToDeleteDblinkId + "|" + genPept + "\n");
+                    toDelete.put(moreToDeleteDblinkId, genPept); // Add to the main toDelete map
 
-                    TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                            zdbGeneId, genPept, lengthStr, FDCONT_GENPEPT, attributionPub));
+                    recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genPept, lengthVal, FDCONT_GENPEPT, attributionPub));
                     // geneAccFdbcont already contains this key, so we are essentially replacing its attribution
                     // No need to increment ctToLoad again if it was already counted, but the logic here implies
                     // it might be a new load line if the attribution changes.
                     // The original Perl script adds to TOLOAD and increments ctToLoad regardless here.
                     // Let's assume the old dblink is deleted and a new one is loaded.
-                    this.ctToLoad++; //This logic matches Perl, which would write a new line to toLoad.unl
-
+                     //This logic matches Perl, which would write a new line to toLoad.unl
                     print(LOG, String.format("%s\t%s\t%s\t%s\n",
                             genPept, zdbGeneId, GenPeptAttributedToNonLoadPub.get(genPept), attributionPub));
                     ctToAttribute++;
@@ -3228,7 +3144,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 genPeptWithMultipleZDBgene.computeIfAbsent(genPeptAcc, k -> {
                     List<String> list = new ArrayList<>();
                     // Add the first one encountered from allGenPeptWithGeneZFIN if this is the first time we detect multiple
-                    if (allGenPeptWithGeneZFIN.containsKey(k) && !list.contains(allGenPeptWithGeneZFIN.get(k))) {
+                    if (allGenPeptWithGeneZFIN.containsKey(k)) {
                         list.add(allGenPeptWithGeneZFIN.get(k));
                     }
                     return list;
@@ -3294,10 +3210,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                         if (!geneAccFdbcont.containsKey(hashKey)) {
-                            TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                                    zdbGeneId, genBankDNA, lengthStr, FDCONT_GENBANK_DNA, attributionPub));
+                            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, genBankDNA, lengthVal, FDCONT_GENBANK_DNA, attributionPub));
                             geneAccFdbcont.put(hashKey, "1"); // Mark as added
-                            this.ctToLoad++;
                         } else {
                             // In Perl, this existing dblink_zdb_id is retrieved from geneAccFdbcont
                             String dbLinkToPreserve = geneAccFdbcont.get(hashKey);
@@ -3315,63 +3229,48 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void writeRefSeqRNAaccessionsWithMappedGenesToLoad() {
-        try {
-            List<String> sortedRefSeqRNAKeys = RefSeqRNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
+        List<String> sortedRefSeqRNAKeys = RefSeqRNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
-            for (String refSeqRNA : sortedRefSeqRNAKeys) {
-                String ncbiGeneId = RefSeqRNAncbiGeneIds.get(refSeqRNA);
-                String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
-                String zdbGeneId = zdbGeneAndPub[0];
-                String attributionPub = zdbGeneAndPub[1];
+        for (String refSeqRNA : sortedRefSeqRNAKeys) {
+            String ncbiGeneId = RefSeqRNAncbiGeneIds.get(refSeqRNA);
+            String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
+            String zdbGeneId = zdbGeneAndPub[0];
+            String attributionPub = zdbGeneAndPub[1];
 
-                if (zdbGeneId == null) continue;
+            if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refSeqRNA + FDCONT_REFSEQ_RNA;
-                if (geneAccFdbcont.containsKey(hashKey)) continue;
+            String hashKey = zdbGeneId + refSeqRNA + FDCONT_REFSEQ_RNA;
+            if (geneAccFdbcont.containsKey(hashKey)) continue;
 
-                Integer lengthVal = sequenceLength.get(refSeqRNA);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
+            Integer lengthVal = sequenceLength.get(refSeqRNA);
 
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqRNA, lengthStr, FDCONT_REFSEQ_RNA, attributionPub));
-                geneAccFdbcont.put(hashKey, "1");
-                this.ctToLoad++;
-            }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefSeq RNA accessions to toLoad.unl: " + e.getMessage());
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub));
+            geneAccFdbcont.put(hashKey, "1");
         }
     }
 
     private void writeRefPeptAccessionsWithMappedGenesToLoad() {
-        try {
-            List<String> sortedRefPeptKeys = RefPeptNCBIgeneIds.keySet().stream().sorted().collect(Collectors.toList());
+        List<String> sortedRefPeptKeys = RefPeptNCBIgeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
-            for (String refPept : sortedRefPeptKeys) {
-                String ncbiGeneId = RefPeptNCBIgeneIds.get(refPept);
-                String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
-                String zdbGeneId = zdbGeneAndPub[0];
-                String attributionPub = zdbGeneAndPub[1];
+        for (String refPept : sortedRefPeptKeys) {
+            String ncbiGeneId = RefPeptNCBIgeneIds.get(refPept);
+            String[] zdbGeneAndPub = getZdbGeneIdAndAttributionByNCBIgeneId(ncbiGeneId);
+            String zdbGeneId = zdbGeneAndPub[0];
+            String attributionPub = zdbGeneAndPub[1];
 
-                if (zdbGeneId == null) continue;
+            if (zdbGeneId == null) continue;
 
-                String hashKey = zdbGeneId + refPept + FDCONT_REFPEPT;
-                if (geneAccFdbcont.containsKey(hashKey)) continue;
+            String hashKey = zdbGeneId + refPept + FDCONT_REFPEPT;
+            if (geneAccFdbcont.containsKey(hashKey)) continue;
 
-                Integer lengthVal = sequenceLength.get(refPept);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
+            Integer lengthVal = sequenceLength.get(refPept);
 
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refPept, lengthStr, FDCONT_REFPEPT, attributionPub));
-                geneAccFdbcont.put(hashKey, "1");
-                this.ctToLoad++;
-            }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefPept accessions to toLoad.unl: " + e.getMessage());
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub));
+            geneAccFdbcont.put(hashKey, "1");
         }
     }
 
     private void writeRefSeqDNAaccessionsWithMappedGenesToLoad() {
-        try {
             List<String> sortedRefSeqDNAKeys = RefSeqDNAncbiGeneIds.keySet().stream().sorted().collect(Collectors.toList());
 
             for (String refSeqDNA : sortedRefSeqDNAKeys) {
@@ -3390,22 +3289,17 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
 
                 Integer lengthVal = sequenceLength.get(refSeqDNA);
-                String lengthStr = (lengthVal != null) ? lengthVal.toString() : "";
 
                 // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub
-                TOLOAD.write(String.format("%s|%s||%s|%s|%s\n",
-                        zdbGeneId, refSeqDNA, lengthStr, FDCONT_REFSEQ_DNA, attributionPub));
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding in this run for other types if logic allows
-                this.ctToLoad++;
             }
-        } catch (IOException e) {
-            reportErrAndExit("Error writing RefSeq DNA accessions to toLoad.unl: " + e.getMessage());
-        }
     }
 
     private void closeUnloadFiles() {
         try {
             if (TOLOAD != null) {
+                TOLOAD.write(recordsToLoad.getOutput());
                 TOLOAD.close();
             }
             if (TO_PRESERVE != null) {
@@ -3430,18 +3324,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         outputDate(); // Corresponds to system("/bin/date");
         print(LOG, "Done everything before doing the deleting and inserting\n");
         String statsMessage = String.format("\n%d total number of db_link records are dropped.\n%d total number of new records are added.\n\n",
-                this.ctToDelete, this.ctToLoad);
+                this.ctToDelete, this.recordsToLoad.getRowCount());
         print(LOG, statsMessage);
         print(STATS_PRIORITY2, statsMessage);
     }
 
     private void executeDeleteAndLoadSQLFile() {
         File toLoadFile = new File(workingDir, "toLoad.unl");
-        if (!toLoadFile.exists() || this.ctToLoad == 0) {
+        if (!toLoadFile.exists() || this.recordsToLoad.isEmpty()) {
             String message = "\nMissing the add list, toLoad.unl, or it is empty. Something is wrong!\n\n";
             print(LOG, message);
 
-            String subjectLine = "Auto from " + instance + ": NCBI gene load :: missing or empty add list, toLoad.unl";
+            String subjectLine = "Notify : NCBI gene load NCBI gene load :: missing or empty add list, toLoad.unl";
             if (!toLoadFile.exists()) {
                 reportErrAndExit(subjectLine);
             }
@@ -3474,7 +3368,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             HibernateUtil.rollbackTransaction();
             // Perl script explicitly calls sendLoadLogs() on failure of this specific command.
             sendLoadLogs(); // Send logs before exiting
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
+            reportErrAndExit("Notify : NCBI gene load :: failed at loadNCBIgeneAccs.sql");
         }
         print(LOG, "\nDone with the deletion and loading!\n\n");
     }
@@ -3504,13 +3398,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             HibernateUtil.rollbackTransaction();
             // Perl script explicitly calls sendLoadLogs() on failure of this specific command.
             sendLoadLogs(); // Send logs before exiting
-            reportErrAndExit("Auto from " + instance + ": NCBI_gene_load.pl :: failed at markerAssemblyUpdate.sql");
+            reportErrAndExit("Notify : NCBI gene load :: failed at markerAssemblyUpdate.sql");
         }
         print(LOG, "\nDone with the update of marker-assembly association!\n\n");
     }
 
     private void sendLoadLogs() {
-        String subject = "Auto from " + instance + ": NCBI_gene_load.pl :: loadLog1 file";
+        String subject = "Notify : NCBI gene load :: loadLog1 file";
         // The Perl script attached "loadLog1". We might have "loadLog1.txt" and "loadLog2.txt".
         // Let's decide which one to send or if both. The original was just one.
         // If loadNCBIgeneAccs.sql produces loadLog1.txt and loadLog2.txt:
@@ -3533,30 +3427,30 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         List<Tuple> resultsAfterLoad = queryAfterLoad.list();
 
         allGenPeptWithGeneAfterLoad = new HashMap<>();
-        GenPeptWithMultipleZDBgeneAfterLoad = new HashMap<>();
+        Map<String, List<String>> genPeptWithMultipleZDBgeneAfterLoad = new HashMap<>();
 
         for (Tuple row : resultsAfterLoad) {
             String genPeptAcc = row.get(0, String.class);
             String geneZdbId = row.get(1, String.class);
 
-            if (GenPeptWithMultipleZDBgeneAfterLoad.containsKey(genPeptAcc) ||
+            if (genPeptWithMultipleZDBgeneAfterLoad.containsKey(genPeptAcc) ||
                 (allGenPeptWithGeneAfterLoad.containsKey(genPeptAcc) && !allGenPeptWithGeneAfterLoad.get(genPeptAcc).equals(geneZdbId))) {
-                GenPeptWithMultipleZDBgeneAfterLoad.computeIfAbsent(genPeptAcc, k -> {
+                genPeptWithMultipleZDBgeneAfterLoad.computeIfAbsent(genPeptAcc, k -> {
                     List<String> list = new ArrayList<>();
-                    if (allGenPeptWithGeneAfterLoad.containsKey(k) && !list.contains(allGenPeptWithGeneAfterLoad.get(k))) {
+                    if (allGenPeptWithGeneAfterLoad.containsKey(k)) {
                         list.add(allGenPeptWithGeneAfterLoad.get(k));
                     }
                     return list;
                 });
-                if (!GenPeptWithMultipleZDBgeneAfterLoad.get(genPeptAcc).contains(geneZdbId)) {
-                    GenPeptWithMultipleZDBgeneAfterLoad.get(genPeptAcc).add(geneZdbId);
+                if (!genPeptWithMultipleZDBgeneAfterLoad.get(genPeptAcc).contains(geneZdbId)) {
+                    genPeptWithMultipleZDBgeneAfterLoad.get(genPeptAcc).add(geneZdbId);
                 }
             }
             allGenPeptWithGeneAfterLoad.put(genPeptAcc, geneZdbId);
         }
 
         long ctAllGenPeptWithGeneZFINafterLoad = allGenPeptWithGeneAfterLoad.size();
-        long ctGenPeptWithMultipleZDBgeneAfterLoad = GenPeptWithMultipleZDBgeneAfterLoad.size();
+        long ctGenPeptWithMultipleZDBgeneAfterLoad = genPeptWithMultipleZDBgeneAfterLoad.size();
 
         print(LOG, "\nctAllGenPeptWithGeneZFINafterLoad = " + ctAllGenPeptWithGeneZFINafterLoad + "\n\n");
         print(LOG, "\nctGenPeptWithMultipleZDBgeneAfterLoad (count of accs) = " + ctGenPeptWithMultipleZDBgeneAfterLoad + "\n\n");
@@ -3567,8 +3461,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         // Re-calculate the count of lines printed for multiple ZDB gene after load
         long actualCtGenPeptWithMultipleZDBgeneAfterLoadPrinted = 0;
-        for (String genPept : GenPeptWithMultipleZDBgeneAfterLoad.keySet().stream().sorted().collect(Collectors.toList())) {
-            List<String> associatedGenes = GenPeptWithMultipleZDBgeneAfterLoad.get(genPept);
+        for (String genPept : genPeptWithMultipleZDBgeneAfterLoad.keySet().stream().sorted().collect(Collectors.toList())) {
+            List<String> associatedGenes = genPeptWithMultipleZDBgeneAfterLoad.get(genPept);
             String mappedGeneForPept = GenPeptsToLoad.getOrDefault(genPept, "[not in GenPeptsToLoad hash]");
             if ("[not in GenPeptsToLoad hash]".equals(mappedGeneForPept)) {
                 print(LOG,"ERROR - GenPept " + genPept + " not in GenPeptsToLoad hash (during after-load report)\n");
@@ -3592,7 +3486,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         NativeQuery<Tuple> queryGenesAfter = currentSession().createNativeQuery(sqlGenesWithRefSeqAfter, Tuple.class);
         List<Tuple> resultsGenesAfter = queryGenesAfter.list();
-        genesWithRefSeqAfterLoad = new HashMap<>();
+        Map<String, String> genesWithRefSeqAfterLoad = new HashMap<>();
         for (Tuple row : resultsGenesAfter) {
             genesWithRefSeqAfterLoad.put(row.get(0, String.class), row.get(1, String.class));
         }
@@ -3998,14 +3892,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return action;
     }
 
-    private void appendToFile(File file, String line) {
-        try {
-            FileUtils.writeLines(file, Collections.singletonList(line), true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
         if (this.geneIDsNotInCurrentAnnotationRelease != null) {
             return;
@@ -4036,7 +3922,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         System.out.println("Total of " + geneIDsNotInCurrentAnnotationRelease.size() + " gene IDs not in current annotation release.");
 
         try {
-            if (geneIDsNotInCurrentAnnotationRelease.size() > 0) {
+            if (!geneIDsNotInCurrentAnnotationRelease.isEmpty()) {
                 //write the list of gene IDs not in current annotation release to a file
                 FileUtils.writeLines(cachedListOfNCBIGeneIDs, geneIDsNotInCurrentAnnotationRelease);
             }
@@ -4208,7 +4094,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void emailLoadReports() {
-        String subjectPrefix = "Auto from " + instance + ": NCBI_gene_load.pl :: ";
+        String subjectPrefix = "Notify : NCBI gene load :: ";
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_REPORT"), subjectPrefix + "Statistics", "reportStatistics", workingDir);
         sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"), subjectPrefix + "log file", "logNCBIgeneLoad.txt", workingDir);
     }
@@ -4217,14 +4103,14 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         String zdbGeneId = null;
         String attributionPub = null;
 
-        if (mappedReversed.containsKey(ncbiGeneId)) {
-            zdbGeneId = mappedReversed.get(ncbiGeneId);
+        if (mapped.containsValue(ncbiGeneId)) {
+            zdbGeneId = mapped.getKey(ncbiGeneId); 
             attributionPub = PUB_MAPPED_BASED_ON_RNA;
         } else if (oneToOneViaVega.containsKey(ncbiGeneId)) {
             zdbGeneId = oneToOneViaVega.get(ncbiGeneId);
             attributionPub = PUB_MAPPED_BASED_ON_VEGA;
-        } else if (ncbiSupplementMapReversed != null && ncbiSupplementMapReversed.containsKey(ncbiGeneId)) {
-            zdbGeneId = ncbiSupplementMapReversed.get(ncbiGeneId);
+        } else if (ncbiSupplementMap != null && ncbiSupplementMap.containsValue(ncbiGeneId)) {
+            zdbGeneId = ncbiSupplementMap.getKey(ncbiGeneId);
             attributionPub = PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT;
         }
         return new String[]{zdbGeneId, attributionPub};
@@ -4384,7 +4270,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 int result = execProcess.exec();
 
                 if (result != 0) {
-                    String subjectLine = "Auto from " + instance + ": " + this.getClass().getSimpleName() + " :: failed at: " + commandStringForLog;
+                    String subjectLine = "Notify : NCBI gene load " + this.getClass().getSimpleName() + " :: failed at: " + commandStringForLog;
                     print(LOG, "\nFailed to execute system command, " + commandStringForLog + "\nExit.\n\n");
                     if (commandStringForLog.contains("loadNCBIgeneAccs.sql")) {
                         sendLoadLogs();
@@ -4395,7 +4281,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupted status
             String commandString = String.join(" ", commandWithArguments);
-            String subjectLine = "Auto from " + instance + ": " + this.getClass().getSimpleName() + " :: failed at: " + commandString + ". " + e.getMessage();
+            String subjectLine = "Notify : NCBI gene load " + this.getClass().getSimpleName() + " :: failed at: " + commandString + ". " + e.getMessage();
             print(LOG, "\nFailed to execute system command (exception), " + commandString + "\nExit.\n\n");
             if (commandString.contains("loadNCBIgeneAccs.sql")) {
                 sendLoadLogs();
@@ -4410,7 +4296,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private void printTimingInformation(int step) {
-        stepCount = (long) step;
         String logLine = "Step " + step + " timestamp: " + nowToString("yyyy-MM-dd HH:mm:ss"); // Using specific format
 
         long timeDiff = 0;
@@ -4553,8 +4438,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             System.out.println("zf_gene_info.gz md5: " + (zfGeneInfoMd5 != null ? zfGeneInfoMd5 : "N/A") + " at " + nowToString("yyyy-MM-dd HH:mm:ss"));
 
         } catch (Exception e) {
-            String instanceName = (this.instance != null) ? this.instance : "UnknownInstance";
-            reportErrAndExit("Auto from " + instanceName + ": NCBI_gene_load.pl :: Error during file download/processing: " + e.getMessage());
+            reportErrAndExit("Notify: NCBI gene load :: Error during file download/processing: " + e.getMessage());
         }
     }
 }
