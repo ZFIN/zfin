@@ -59,7 +59,6 @@ project.ext.set("jacksonVersion", '2.15.2')
 def localFileDependencies = [
         "home/WEB-INF/lib/agr_curation_api.jar",
         "home/WEB-INF/lib/bbop.jar",
-        "home/WEB-INF/lib/biojava.1.7.1.jar",
         "home/WEB-INF/lib/blast-serialization-1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar",
         "home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar",
@@ -674,12 +673,20 @@ dependencies {
     implementation "org.apache.neethi:neethi:2.0.4"
     implementation "org.apache.poi:poi-ooxml:5.2.5"
     implementation "org.apache.poi:poi:5.2.5"
-    implementation "org.apache.solr:solr-solrj:8.11.3"
+    implementation("org.apache.solr:solr-solrj:8.11.3") {
+        // Exclude Log4j1 bindings - we use Log4j2
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
     implementation "org.apache.ws.commons.axiom:axiom-api:1.2.7"
     implementation "org.apache.ws.commons.axiom:axiom-impl:1.2.7"
     implementation "org.apache.ws.commons.schema:XmlSchema:1.4.2"
     implementation "org.apache.xmlbeans:xmlbeans:2.4.0"
-    implementation "org.apache.zookeeper:zookeeper:3.4.6"
+    implementation("org.apache.zookeeper:zookeeper:3.4.6") {
+        // Exclude Log4j1 bindings - we use Log4j2
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
     implementation "org.biojava:bytecode:1.9.4"
     implementation "org.biojava:core:1.9.4"
     implementation "org.codehaus.castor:castor-core:1.3"

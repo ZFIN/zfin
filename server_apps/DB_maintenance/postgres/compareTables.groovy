@@ -5,7 +5,7 @@ import groovy.sql.Sql
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 def postgresDb = [
         url: "${ZfinPropertiesEnum.JDBC_URL}",

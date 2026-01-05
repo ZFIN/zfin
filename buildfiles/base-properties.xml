@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="base-properties" basedir=".">
 
+    <!-- Load environment variables as properties with env. prefix -->
+    <property environment="env"/>
+
     <!-- today -->
     <tstamp prefix="today"/>
 
@@ -48,13 +51,51 @@
     <property name="zfin.war" value="${basedir}/zfin.war"/>
 
     <!-- Classpath definitions -->
+    <!-- Note: buildfiles.dir comes first so its simple log4j2.xml is found before
+         the instance-specific one in classbin.dir (which may require Jackson for JsonLayout) -->
     <path id="classpath">
+        <pathelement location="${buildfiles.dir}"/>
         <pathelement location="${classbin.dir}"/>
         <pathelement location="${servlet.jar}"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Deployed WAR classpath (uses WAR_WEB_INF_DIR environment variable) -->
+    <property name="war.web-inf.dir" value="${env.WAR_WEB_INF_DIR}"/>
+    <property name="war.classbin.dir" value="${war.web-inf.dir}/classes"/>
+    <property name="war.lib.dir" value="${war.web-inf.dir}/lib"/>
+
+    <path id="deployed.classpath">
+        <pathelement location="${war.classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${war.lib.dir}" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
         <pathelement location="${buildfiles.dir}"/>
+    </path>
+
+    <!-- Combined classpath: includes both source tree and deployed WAR JARs -->
+    <!-- This allows Ant tasks to work before and after deployment -->
+    <!-- Deployed WAR JARs (from Gradle) take precedence for consistent versions -->
+    <path id="combined.classpath">
+        <pathelement location="${buildfiles.dir}"/>
+        <pathelement location="${classbin.dir}"/>
+        <pathelement location="${war.classbin.dir}"/>
+        <pathelement location="${servlet.jar}"/>
+        <fileset dir="${war.lib.dir}" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${web.lib}" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <!-- javadoc diectory -->

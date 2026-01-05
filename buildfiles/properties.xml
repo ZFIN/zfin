@@ -64,6 +64,24 @@
         </fileset>
     </path>
 
+    <!-- deployed extended classpath for tasks running against deployed WAR -->
+    <path id="deployed.extended.classpath">
+        <path refid="deployed.classpath"/>
+        <fileset dir="${lib}">
+            <include name="junit-orderOfExecution.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${jwebunit.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
     <path id="log4j">
 	<pathelement location="${basedir}/test"/>
     </path>

@@ -345,7 +345,7 @@ def getDB() {
 
     //get java properties
     def props = new Properties()
-    new File("${env['TARGETROOT']}/home/WEB-INF/zfin.properties").withInputStream {
+    new File("${env['ZFIN_PROPERTIES_PATH']}").withInputStream {
         stream -> props.load(stream)
     }
 

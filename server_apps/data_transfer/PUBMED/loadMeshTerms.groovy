@@ -1,11 +1,12 @@
 #!/bin/bash
 //opt/misc/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
+import groovy.xml.XmlSlurper
 import org.apache.commons.net.ftp.FTPClient
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 def download (ftp, filename, closure) {
   println("Downloading $filename")
