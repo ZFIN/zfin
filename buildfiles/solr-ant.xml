@@ -13,20 +13,6 @@
         <copySolr from="server_apps/solr/site_index" to="${env.SOLR_HOME}" overwrite="true"/>
     </target>
 
-    <path id="classpath">
-        <pathelement location="${classbin.dir}"/>
-        <fileset dir="${web.lib}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="lib/Java">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="/opt/misc/groovy/lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-
     <macrodef name="copySolr">
         <attribute name="from"/>
         <attribute name="to"/>
@@ -116,7 +102,7 @@
     <target name="check-indexer">
         <java classname="org.zfin.datatransfer.CheckIndexerJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="deployed.extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="server_apps/DB_maintenance/validatedata"/>

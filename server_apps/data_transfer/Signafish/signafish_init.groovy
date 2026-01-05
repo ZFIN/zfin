@@ -11,7 +11,7 @@ import org.zfin.sequence.ForeignDB
 import org.zfin.sequence.ForeignDBDataType
 import org.zfin.sequence.ReferenceDatabase
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 new HibernateSessionCreator()
 
 Session session = HibernateUtil.currentSession()

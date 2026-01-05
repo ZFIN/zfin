@@ -4,7 +4,7 @@
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
 DBNAME = System.getenv("DBNAME")

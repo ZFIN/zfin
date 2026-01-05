@@ -10,7 +10,7 @@ import org.zfin.properties.ZfinPropertiesEnum
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 def db = [
         url: ZfinPropertiesEnum.JDBC_URL,

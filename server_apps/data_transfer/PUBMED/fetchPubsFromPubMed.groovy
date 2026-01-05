@@ -1,7 +1,7 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
-import groovy.util.slurpersupport.GPathResult
+import groovy.xml.slurpersupport.GPathResult
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.zfin.properties.ZfinProperties
@@ -23,7 +23,7 @@ if (fetchMode == 'update' && args.length < 1) {
     System.exit(1)
 }
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 final PARSE_MESH = new File(WORKING_DIR, "parseMesh.log")

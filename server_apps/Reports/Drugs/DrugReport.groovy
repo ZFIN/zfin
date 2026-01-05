@@ -13,7 +13,7 @@ import org.apache.solr.common.SolrDocument
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 
-ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 
 SolrServer server = null

@@ -104,7 +104,7 @@
   <globalNodeProperties>
     <org.jenkinsci.plugins.envinject.EnvInjectNodeProperty plugin="envinject@2.892.v25453b_80e595">
       <unsetSystemVariables>false</unsetSystemVariables>
-      <propertiesFilePath>/opt/zfin/www_homes/zfin.org/home/WEB-INF/zfin.properties</propertiesFilePath>
+      <propertiesFilePath>/opt/zfin/catalina_bases/zfin.org/webapps/ROOT/WEB-INF/zfin.properties</propertiesFilePath>
     </org.jenkinsci.plugins.envinject.EnvInjectNodeProperty>
   </globalNodeProperties>
   <nodeRenameMigrationNeeded>true</nodeRenameMigrationNeeded>

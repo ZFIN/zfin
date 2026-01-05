@@ -5,7 +5,7 @@ import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
 
 def targetroot = System.getenv('TARGETROOT')
-ZfinProperties.init("$targetroot/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()["ZFIN_PROPERTIES_PATH"]}")
 
 def ignoreList = [
         ['ZDB-TALEN-131113-5'],

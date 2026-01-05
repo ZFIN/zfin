@@ -4,7 +4,7 @@
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubIdList.txt"
