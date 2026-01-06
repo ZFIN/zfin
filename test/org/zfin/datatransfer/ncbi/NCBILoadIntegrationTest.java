@@ -122,6 +122,53 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
     }
 
+    /**
+     * Same as above but with back to back runs.
+     */
+    @Test
+    public void testGeneWithReplacedNCBIGeneMatchingByEnsembl2() throws IOException {
+        // Create database state before the load
+        helper.beforeStateBuilder()
+                .withGene("ZDB-GENE-120709-33", "si:ch211-209j12.2")
+                .withDBLink("ZDB-GENE-120709-33", "103910949", FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT)
+                .withDBLink("ZDB-GENE-120709-33", "ENSDARG00000099337", FDCONT_ENSDARG, "ZDB-PUB-200123-1")
+                .withGene2AccessionFile("108183900","-", "GDQQ01002583.1")
+                .withZfGeneInfoFile("108183900", "si:ch211-209j12.2",
+                        List.of("ZFIN:ZDB-GENE-120709-33", "Ensembl:ENSDARG00000099337", "AllianceGenome:ZFIN:ZDB-GENE-120709-33")
+                )
+                .build();
+
+        helper.runNCBILoad();
+
+        //First time we get ensembl match
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+
+        //run it again:
+        helper.runNCBILoad();
+
+        //Should get the same match via ensembl again
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+
+        //run it again:
+        helper.runNCBILoad();
+
+        //third time? Should still get the same match via ensembl again
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+
+
+        NCBILoadIntegrationTestHelper.AfterState afterState = helper.getAfterState();
+        assertEquals(3, afterState.getFile("before_load.csv").getDataLines().size());
+
+
+        assertEquals(3, afterState.getFile("after_load.csv").getDataLines().size()); //currently getting 1 back, but should be 3?
+
+        //Check that the old NCBI Gene ID was replaced with the new one
+        assertNcbiDBLinkDoesNotExist("ZDB-GENE-120709-33", "103910949");
+        assertNcbiDBLinkExists("ZDB-GENE-120709-33", "108183900");
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+
+    }
+
     @Test
     public void testGeneWithVegaLink() throws IOException {
         // Create database state before the load
@@ -280,7 +327,6 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
     }
 
     public void assertDBLinkExists(String geneZdbID, String accessionNumber, String fdcontID, String publicationID) {
-        helper.getDBLinksWithAttributions(geneZdbID, accessionNumber, fdcontID, publicationID);
         assertEquals(1, helper.getDBLinksWithAttributions(geneZdbID, accessionNumber, fdcontID, publicationID).size());
     }
 
