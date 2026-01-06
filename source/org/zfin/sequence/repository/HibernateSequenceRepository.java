@@ -789,12 +789,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
             where ref.foreignDBDataType.dataType = :dataType
             and ref.foreignDBDataType.superType = :superType
             and ref.foreignDB.dbName != :excludedDbName
-            and not exists (
-                select 1 from DisplayGroupMember dgm, DisplayGroup dg
-                where dgm.referenceDatabase = ref
-                and dgm.displayGroup = dg
-                and dg.groupName = :hiddenGroupName
-            )
             and exists (
                 select 1 from Marker m
                 where m.zdbID = dbl.dataZdbID
@@ -806,7 +800,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 .setParameter("dataType", ForeignDBDataType.DataType.RNA)
                 .setParameter("superType", ForeignDBDataType.SuperType.SEQUENCE)
                 .setParameter("excludedDbName", ForeignDB.AvailableName.FISHMIRNA_EXPRESSION)
-                .setParameter("hiddenGroupName", DisplayGroup.GroupName.HIDDEN_DBLINKS)
                 .setParameter("markerTypeGroup", RepositoryFactory.getMarkerRepository().getMarkerTypeGroupByName("GENEDOM_AND_NTR"))
                 .list();
 
@@ -821,12 +814,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
             join dbl.referenceDatabase ref
             join MarkerRelationship mr on mr.secondMarker.zdbID = dbl.dataZdbID
             where ref.foreignDBDataType.dataType = :dataType
-            and exists (
-                select 1 from DisplayGroupMember dgm, DisplayGroup dg
-                where dgm.referenceDatabase = ref
-                and dgm.displayGroup = dg
-                and dg.groupName = :linkedGroupName
-            )
             and mr.markerRelationshipType.name in (:types)
         """;
 
@@ -838,7 +825,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         List<Object[]> relatedResults = HibernateUtil.currentSession().createQuery(hql2, Object[].class)
                 .setParameter("dataType", ForeignDBDataType.DataType.RNA)
-                .setParameter("linkedGroupName", DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
                 .setParameterList("types", types)
                 .list();
 

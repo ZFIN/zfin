@@ -146,13 +146,13 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         //run it again:
         helper.runNCBILoad();
 
-        //second time we get the rna match. Do we want this? It's because the RNA mapping is loaded from the ensembl match, then used to re-load the gene via rna match
-        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA);
+        //Should get the same match via ensembl again
+        assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
 
         //run it again:
         helper.runNCBILoad();
 
-        //third time? We get the match vie ensembl again?
+        //third time? Should still get the same match via ensembl again
         assertDBLinkExists("ZDB-GENE-120709-33", "GDQQ01002583", FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
 
 
