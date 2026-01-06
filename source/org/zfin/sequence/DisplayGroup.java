@@ -3,6 +3,7 @@ package org.zfin.sequence;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
@@ -11,13 +12,24 @@ import java.util.Set;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "foreign_db_contains_display_group")
 public class DisplayGroup implements Comparable<DisplayGroup>{
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fdbcdg_pk_id", nullable = false)
     private Long id;
+
+    @Column(name = "fdbcdg_name", nullable = false)
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class, parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.DisplayGroup$GroupName")})
     @JsonView(View.SequenceDetailAPI.class)
     private GroupName groupName;
+
+    @Column(name = "fdbcdg_definition", nullable = false)
     private String definition;
+
+    @OneToMany(mappedBy = "displayGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DisplayGroupMember> displayGroupMembers;
 
     public Set<ReferenceDatabase> getReferenceDatabases() {
