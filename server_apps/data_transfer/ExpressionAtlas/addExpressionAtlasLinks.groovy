@@ -7,7 +7,7 @@ import org.zfin.properties.ZfinProperties
 
 import java.util.zip.GZIPInputStream
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 CROSS_REFERENCE_FILE = ""
 
 cli = new CliBuilder(usage: 'LoadAllianceExpressionAtlasLinks')
@@ -20,7 +20,7 @@ if (!options) {
     System.exit(1)
 }
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 print "Loading local JSON file ... "
 

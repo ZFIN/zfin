@@ -89,7 +89,9 @@ try {
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("gzip gene_association.zfin");
+  #Use awk to remove duplicate lines before gzipping
+  ZFINPerlModules->doSystemCommand("awk '!seen[$0]++' gene_association.zfin | gzip > gene_association.zfin.gz");
+  ZFINPerlModules->doSystemCommand("rm gene_association.zfin");
 } catch {
   warn "Failed at gzip gene_association.zfin - $_";
   exit -1;
@@ -135,7 +137,8 @@ try {
 
 
 try {
-  ZFINPerlModules->doSystemCommand("gzip gene_association2.2.zfin");
+  ZFINPerlModules->doSystemCommand("awk '!seen[$0]++' gene_association2.2.zfin | gzip > gene_association2.2.zfin.gz");
+  ZFINPerlModules->doSystemCommand("rm gene_association2.2.zfin");
 } catch {
   warn "Failed at gzip gene_association2.2.zfin - $_";
   exit -1;

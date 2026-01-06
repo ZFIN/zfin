@@ -10,15 +10,15 @@
 
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef name="createEnum"
              classname="org.zfin.properties.ant.CreateEnumTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef name="exportProperties"
              classname="org.zfin.properties.ant.ExportPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
@@ -396,7 +396,7 @@
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
         <!-- Delegate to Gradle for compilation (handles Lombok, annotation processing, etc.) -->
-        <exec executable="gradle" failonerror="true">
+        <exec executable="./gradlew" failonerror="true">
             <arg value="antCompile"/>
         </exec>
     </target>
@@ -543,7 +543,7 @@
     </target>
 
     <target name="dirtydeploy-watch" depends="npmBuild">
-        <exec executable="gradle" dir="." failonerror="true">
+        <exec executable="./gradlew" dir="." failonerror="true">
             <arg value="devWatch" />
             <arg value="--continuous" />
         </exec>
@@ -583,15 +583,28 @@
         <echo message="Not production: ${notproduction}"/>
     </target>
 
-    <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
-        <classpath refid="extended.classpath"/>
-    </taskdef>
+    <!--
+    Grand: Ant build visualization tool (JAR provided via Gradle/JitPack)
+    ============================================
+    task.properties is in the grand jar: https://github.com/Ant-Grand/Grand/blob/157df7cb1505804be453c3e5ffb157267c360529/src/main/resources/task.properties
+     and it contains the single line:
+        grand=net.ggtools.grand.tasks.GrandTask
 
+     If you want to use grand, add the dependency to build.gradle:
+            implementation "com.github.Ant-Grand:Grand:1.9.7"  // Ant build visualization tool (via JitPack)
+
+     Then uncomment the following:
+    <taskdef resource="task.properties" classpathref="combined.classpath"/>
     <target name="graph" description="Creates graph of build process">
         <grand output="build.dot" buildfile="build.xml"/>
         <exec executable="dot">
             <arg line="-Tps -Gsize=11.69,8.27 -Grotate=90 -o build.ps build.dot"/>
         </exec>
+    </target>
+     -->
+    <target name="graph" description="Creates graph of build process">
+        <echo message="To use the 'graph' target, please add the Grand dependency to build.gradle and uncomment the relevant code in build.xml"/>
+        <echo message="See comments in build.xml for details."/>
     </target>
 
     <macrodef name="regenerateSSHKey">
@@ -676,7 +689,7 @@
     <macrodef name="gradle">
         <attribute name="task" />
         <sequential>
-            <exec executable="gradle" dir="." failonerror="true">
+            <exec executable="./gradlew" dir="." failonerror="true">
                 <arg value="@{task}" />
             </exec>
         </sequential>

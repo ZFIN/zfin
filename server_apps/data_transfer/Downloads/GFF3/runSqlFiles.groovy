@@ -8,7 +8,7 @@ def env = System.getenv()
 
 println 'Start re-generating GBrowse tracks'
 
-def propertiesFile = "${env['TARGETROOT']}/home/WEB-INF/zfin.properties"
+def propertiesFile = "${env['ZFIN_PROPERTIES_PATH']}"
 RunSQLFiles runScriptFiles = new RunSQLFiles("Generate-GFF3", propertiesFile, ".")
 runScriptFiles.initializeLogger("./log4j.xml")
 runScriptFiles.initDatabase()

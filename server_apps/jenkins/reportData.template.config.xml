@@ -91,7 +91,7 @@
     <buildWrappers>
         <EnvInjectBuildWrapper plugin="envinject@1.89">
             <info>
-                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+                <propertiesFilePath>$ZFIN_PROPERTIES_PATH</propertiesFilePath>
                 <loadFilesFromMaster>false</loadFilesFromMaster>
             </info>
         </EnvInjectBuildWrapper>

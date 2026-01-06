@@ -36,10 +36,11 @@ where db.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
 
 select * from temp_new_gene;
 
+-- using upsert to avoid message: ERROR:  duplicate key value violates unique constraint "marker_assembly_ma_a_pk_id_ma_mrkr_zdb_id_key"
 insert into marker_assembly (ma_mrkr_zdb_id, ma_a_pk_id)
 select gene_zdb_id, 1
 from temp_new_gene
-;
+on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;
 
 insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
                                                             sfclg_chromosome,
@@ -98,7 +99,8 @@ from temp_new_gene,
 where gna_key = 'Dbxref'
   and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
   and gna_gff_pk_id = gff_pk_id
-  and gff_feature in ('gene', 'pseudogene');
+  and gff_feature in ('gene', 'pseudogene')
+  ON CONFLICT (gna_pk_id) DO NOTHING; 
 
 -- marker gene as GRCz11 if they do not have a z12 association but have a sequence_feature_chromosome_location_generated record for ZFIN with GRCz11
 insert into marker_assembly
@@ -122,4 +124,4 @@ where gg.sfclg_assembly = 'GRCz11'
         where gg.sfclg_data_zdb_id = g.ma_mrkr_zdb_id
           and g.ma_a_pk_id =3
     )
-;
+on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;

@@ -12,7 +12,7 @@ import org.apache.log4j.Logger
 import org.apache.log4j.Level
 import org.zfin.sequence.reno.RunCandidate
 
-ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
+ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 new HibernateSessionCreator()
 
 Session session = HibernateUtil.currentSession();
