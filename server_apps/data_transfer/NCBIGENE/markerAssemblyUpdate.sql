@@ -99,7 +99,8 @@ from temp_new_gene,
 where gna_key = 'Dbxref'
   and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
   and gna_gff_pk_id = gff_pk_id
-  and gff_feature in ('gene', 'pseudogene');
+  and gff_feature in ('gene', 'pseudogene')
+  ON CONFLICT (gna_pk_id) DO NOTHING; 
 
 -- marker gene as GRCz11 if they do not have a z12 association but have a sequence_feature_chromosome_location_generated record for ZFIN with GRCz11
 insert into marker_assembly
