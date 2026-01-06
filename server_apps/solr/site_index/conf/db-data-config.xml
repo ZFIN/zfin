@@ -4052,6 +4052,15 @@
                     where="feature_zdb_id=feature.id"
             />
 
+            <entity name="feature_chromosome"
+                    query="select ul_chromosome as chromosome,
+                                  ul_data_zdb_id as feature_zdb_id
+                           from unique_location
+                           where get_obj_type(ul_data_zdb_id) = 'ALT'"
+                    cacheImpl="SortedMapBackedCache"
+                    where="feature_zdb_id=feature.id"
+            />
+
             <entity name="feature_aliases_from_feature_tracking"
                     query="select ft_feature_abbrev as alias, ft_feature_zdb_id as feature_zdb_id from feature_tracking
                            union
