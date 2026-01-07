@@ -1,16 +1,22 @@
 <project name="Ensembl load" basedir=".">
 
+    <!-- Local properties must be defined BEFORE import (Ant properties are immutable) -->
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
     <property name="lib" value="${root.dir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
+
+    <!-- Import base properties for combined.classpath -->
+    <property name="buildfiles.dir" value="${basedir}/../../../buildfiles"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
     <property name="log.dir" value="${basedir}/logs"/>
 
     <property environment="env"/>
 
-    <!-- Classpath definitions -->
+    <!-- Classpath definitions (kept for reference, but combined.classpath is preferred) -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
@@ -25,7 +31,7 @@
 
     <taskdef name="groovy"
              classname="org.codehaus.groovy.ant.Groovy"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <target name="load-missing-uniprots">
         <property name="dbScriptFiles"
@@ -33,7 +39,7 @@
 
         <java classname="org.zfin.datatransfer.LoadMissingUnitProt" fork="yes" maxmemory="2024m"
               failonerror="true">
-            <classpath refid="classpath"/>
+            <classpath refid="combined.classpath"/>
             <arg value="-dbScriptFileNames"/>
             <arg value="${dbScriptFiles}"/>
             <arg value="-webrootDirectory"/>

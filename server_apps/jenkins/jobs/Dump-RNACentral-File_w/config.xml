@@ -19,7 +19,7 @@
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>create-transcript-info-file -DjobName=Dump-RNACentral-File_w</targets>
-      <buildFile>$TARGETROOT/server_apps/data_transfer/RNACentral/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/data_transfer/RNACentral/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>

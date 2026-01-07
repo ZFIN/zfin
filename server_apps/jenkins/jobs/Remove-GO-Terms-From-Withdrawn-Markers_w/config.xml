@@ -19,7 +19,7 @@
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>remove-go-terms-from-withdrawn-markers -DjobName=Remove-GO-Terms-From-Withdrawn-Markers_w</targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
