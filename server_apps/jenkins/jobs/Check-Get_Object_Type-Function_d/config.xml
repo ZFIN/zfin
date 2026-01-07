@@ -26,7 +26,7 @@
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-dynamic -DJobName=Check-Get_Object_Type-Function_d</targets>
-            <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>

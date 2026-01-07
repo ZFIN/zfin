@@ -19,7 +19,7 @@
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets></targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
       <command>echo &apos;select regen_construct()&apos; | psql -v ON_ERROR_STOP=1 $DBNAME </command>
