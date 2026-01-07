@@ -20,14 +20,14 @@ echo "Using Ensembl release: $cur"
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"
 
-echo "*** COMMITING load_ensdarg.sql into <!--|DB_NAME|--> ***"
-cat load_ensdarG.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+echo "*** COMMITING load_ensdarg.sql into $DB_NAME ***"
+cat load_ensdarG.sql commit.sql | ${PGBINDIR}/psql $DB_NAME
 # Log what is being used as the most current release
 if (! -f fetch_ensembl.log) then
 	touch fetch_ensembl.log
 endif
 echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
-cat updateSequenceFeatureChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+cat updateSequenceFeatureChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql $DB_NAME
 echo "Updated marker_chromosome_location" >> fetch_ensembl.log
 
 endif

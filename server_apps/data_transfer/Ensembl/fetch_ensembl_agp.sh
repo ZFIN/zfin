@@ -11,7 +11,7 @@ AGP="GRCz11.agp"
 gffdir="/research/zprodmore/gff3"
 
 # where we put ZFIN gff3 tracks
-dest="<!--|ROOT_PATH|-->/home/data_transfer/Downloads"
+dest="$ROOT_PATH/home/data_transfer/Downloads"
 
 # where we start from
 wrkdir="`pwd`"

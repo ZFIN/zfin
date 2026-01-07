@@ -64,12 +64,12 @@ sub sendEnv ($$){
 
 #set environment variables
 
-chdir "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
+chdir "$ENV{'ROOT_PATH'}/server_apps/DB_maintenance/";
 
 print "checking for undefined environments ... \n";
 
-$dbname = "<!--|DB_NAME|-->";
-$pghost = "<!--|PGHOST|-->";
+$dbname = "$ENV{'DB_NAME'}";
+$pghost = "$ENV{'PGHOST'}";
 $username = "";
 $password = "";
 

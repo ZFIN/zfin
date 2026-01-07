@@ -8,6 +8,9 @@
 
 use Getopt::Long qw(:config bundling);
 use DBI;
+
+chdir("$ENV{'ROOT_PATH'}/server_apps/DB_maintenance/");
+
 use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
@@ -36,7 +39,7 @@ if (@ARGV < 1) {
 # Define GLOBALS
 #
 
-$globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
+$globalDbName = $ARGV[0]; #"$ENV{'DB_NAME'}";
 $globalpghost = $ENV{'PGHOST'};
 $globalUsername = "";
 $globalPassword = "";
