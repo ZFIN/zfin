@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="test" basedir=".">
+    <property environment="env"/>
     <!-- ====================================================================== -->
     <!-- TESTING TASKS                                                          -->
     <!-- ====================================================================== -->
@@ -372,7 +373,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <taskdef name="groovyc"
              classname="org.codehaus.groovy.ant.Groovyc">
 		<classpath>
-		<fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+		<fileset dir="${env.GROOVY_HOME}/lib" includes="*.jar" erroronmissingdir="false"/>
 		</classpath>
 </taskdef>
 

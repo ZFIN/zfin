@@ -325,7 +325,7 @@
         <fileset dir="${gwt.lib}">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="/opt/misc/groovy/lib">
+        <fileset dir="${env.GROOVY_HOME}/lib" erroronmissingdir="false">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -680,7 +680,7 @@
 
     <taskdef name="groovy"
              classname="org.codehaus.groovy.ant.Groovy"
-             classpathref="combined.classpath"/>
+             classpathref="combined.classpath.with.groovy"/>
 
     <target name="deployGitInfoFile">
         <gradle task="deployGitInfoFile" />
