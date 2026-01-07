@@ -12,7 +12,7 @@ create index pnts_id_idx on publicNotes(id);
 
 create index pnts_nm_idx on publicNotes(name);
 
-copy publicNotes from '<!--|ROOT_PATH|-->/server_apps/DB_maintenance/notes' (delimiter '|');
+copy publicNotes from './notes' (delimiter '|');
 
 alter table publicNotes add noteId text;
 
