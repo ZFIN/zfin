@@ -2,8 +2,6 @@
 
 # rm old reports
 
-setenv INSTANCE <!--|INSTANCE|-->;
-
 if ( -e /tmp/queryCostCheck.txt ) then
  /bin/rm /tmp/queryCostCheck.txt;
  /bin/touch /tmp/queryCostCheck.txt;

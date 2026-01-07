@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/sangerMutantData*.unl;
+/bin/rm -rf $TARGETROOT/server_apps/data_transfer/Ensembl/sangerMutantData*.unl;
 
 # find the name of the most current core database
 /local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_mysql/
@@ -26,15 +26,15 @@ echo " fetch_sangerMutantInfo.sql vs ensembldb.ensembl.org"
 # rollback if not called with the (first) argument "commit"
 
 
-echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
-    ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadSangerMutantData.sql
+echo "*** loading SangerMutantData into $DB_NAME ***"
+    ${PGBINDIR}/psql $DB_NAME < $TARGETROOT/server_apps/data_transfer/Ensembl/loadSangerMutantData.sql
     # Log what is being used as the most current release
     if (! -f fetch_sangerMutantData.log) then
 	    touch fetch_sangerMutantData.log
     endif  
     
 
-/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/ensdarPMapping*.unl;
+/bin/rm -rf $TARGETROOT/server_apps/data_transfer/Ensembl/ensdarPMapping*.unl;
 
 /bin/cat fetch_ensdarpInfo.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  ensdarPMapping.unl;
@@ -46,8 +46,8 @@ echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
 # rollback if not called with the (first) argument "commit"
 
 
-echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
-     ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdarPMapping.sql
+echo "*** loading SangerMutantData into $DB_NAME ***"
+     ${PGBINDIR}/psql $DB_NAME < $TARGETROOT/server_apps/data_transfer/Ensembl/loadEnsdarPMapping.sql
     # Log what is being used as the most current release
     if (! -f fetch_ensdarPMapping.log) then
 	    touch fetch_ensdarPMapping.log

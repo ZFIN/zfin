@@ -2,8 +2,7 @@
 
 # rm old reports
 
-setenv INSTANCE <!--|INSTANCE|-->;
-cd <!--|TARGETROOT|-->/server_apps/DB_maintenance/extentMonitoring
+cd $TARGETROOT/server_apps/DB_maintenance/extentMonitoring
 
 if ( -e extentCheck.txt ) then
  /bin/rm extentCheck.txt;

@@ -18,7 +18,7 @@ select distinct tscript_mrkr_zdb_id,tscript_load_id
  and mtgrpmem_mrkr_type=mrkr_type
  and mtgrpmem_mrkr_type_group='RNAGENE' and (tscript_status_id!=1 or tscript_status_id is null);
 
-\copy (select * from tscripts) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/RNACentral/getSequence' with delimiter as ',' null as '';
+\copy (select * from tscripts) to './getSequence' with delimiter as ',' null as '';
 
 
 
