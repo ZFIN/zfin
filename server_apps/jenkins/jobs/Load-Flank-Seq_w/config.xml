@@ -39,7 +39,7 @@ Otherwise, it will update only the new data each day.  Once per week, the job wi
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>load-flank-seq -DjobName=Load-Flank-Seq_w</targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
       <properties>FORCE_FULL_UPDATE=false</properties>
     </hudson.tasks.Ant>
   </builders>

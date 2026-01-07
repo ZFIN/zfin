@@ -21,7 +21,7 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>validate-data-report-simple -DJobName=Check-For-Orphaned-Features_q</targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
