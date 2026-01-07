@@ -1,17 +1,19 @@
 #!/opt/zfin/bin/perl
 
+chdir "$ENV{'ROOT_PATH'}/server_apps/data_transfer/RNACentral/";
+
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 ## set environment variables
 
-$dbname = "<!--|DB_NAME|-->";
+$dbname = "$ENV{'DB_NAME'}";
 
 
-system("rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/RNACentral/loadedSeq.txt");
+system("rm -rf $ENV{'TARGETROOT'}/server_apps/data_transfer/RNACentral/loadedSeq.txt");
 
-open LOADEDSEQ, "><!--|TARGETROOT|-->/server_apps/data_transfer/RNACentral/loadedSeq.txt" or die "Cannot open loadedseq file : $!\n" ;
+open LOADEDSEQ, ">$ENV{'TARGETROOT'}/server_apps/data_transfer/RNACentral/loadedSeq.txt" or die "Cannot open loadedseq file : $!\n" ;
 
 open (TSCRIPTFILE, "getSequence") or die "open failed";
 

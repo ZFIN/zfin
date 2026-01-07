@@ -21,12 +21,12 @@
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-#system("/local/bin/rsync -vua  <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+#system("/local/bin/rsync -vua  $ENV{'LOADUP_FULL_PATH'}$ENV{'IMAGE_LOAD'}/ /research/zcentral/loadUp/imageLoadUp/");
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -auv <!--|LOADUP_FULL_PATH|-->/ /research/zcentral/loadUp/pubs/");
+system("/local/bin/rsync -auv $ENV{'LOADUP_FULL_PATH'}/ /research/zcentral/loadUp/pubs/");
 
-#system("/local/bin/rsync -vua <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/ /research/zcentral/loadUp/videoLoadUp/");
+#system("/local/bin/rsync -vua $ENV{'LOADUP_FULL_PATH'}$ENV{'VIDEO_LOAD'}/ /research/zcentral/loadUp/videoLoadUp/");
 
 exit;

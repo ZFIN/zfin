@@ -22,7 +22,7 @@ mkdir "$dataDirectory";
 
 # open a handle on the db
 
-my $dbh = DBI->connect ("DBI:Pg:dbname=<!--|DB_NAME|-->;host=<!--|PGHOST|-->", '','') or die "Cannot connect to database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$ENV{'DB_NAME'};host=$ENV{'PGHOST'}", '','') or die "Cannot connect to database: $DBI::errstr\n";
 
 
 # set the mail program

@@ -28,13 +28,13 @@ echo " fetch_ensdargOttdarg.sql vs ensembldb.ensembl.org"
 # rollback if not called with the (first) argument "commit"
 
 
-echo "*** loading ensdargOttdargs into <!--|DB_NAME|--> ***"
-    ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdargOttdarg.sql
+echo "*** loading ensdargOttdargs into $DB_NAME ***"
+    ${PGBINDIR}/psql $DB_NAME < $TARGETROOT/server_apps/data_transfer/Ensembl/loadEnsdargOttdarg.sql
     # Log what is being used as the most current release
     if (! -f fetch_ensdargOttdargTable.log) then
 	    touch fetch_ensdargOttdargTable.log
     endif      
 echo "Using Ensembl release: $cur   `date`" >> fetch_ensdargOttdargTable.log
 
-/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/ensdargOttdarg*.unl;
+/bin/rm -rf $TARGETROOT/server_apps/data_transfer/Ensembl/ensdargOttdarg*.unl;
 
