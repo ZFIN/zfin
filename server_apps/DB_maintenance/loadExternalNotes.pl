@@ -12,12 +12,12 @@ $note3 = "The construct was inserted on the plus strand of the genome. The gene 
 
 $note4 = "The construct was inserted on the minus strand of the genome. The gene in which the insertion occurred is also on the minus strand.";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
+chdir "$ENV{'ROOT_PATH'}/server_apps/DB_maintenance/";
 
 system("/bin/rm -f notesInput");
 system("/bin/rm -f notes");
 
-system("scp /research/zarchive/load_files/notesInput <!--|ROOT_PATH|-->/server_apps/DB_maintenance/");
+system("scp /research/zarchive/load_files/notesInput $ENV{'ROOT_PATH'}/server_apps/DB_maintenance/");
 
 open (INPUT, "notesInput") ||  die "Cannot open notesInput : $!\n";
 
@@ -51,7 +51,7 @@ close INPUT;
 
 close OUTPUT;
 
-system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadExternalNotes.sql");
+system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f loadExternalNotes.sql");
 
 exit;
 

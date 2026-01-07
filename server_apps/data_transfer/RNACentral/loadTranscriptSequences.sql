@@ -9,7 +9,7 @@ create table tscriptsequence
     tscriptseq     text
 );
 
-\copy tscriptsequence from '<!--|ROOT_PATH|-->/server_apps/data_transfer/RNACentral/loadedSeq.txt' delimiter E'\t';
+\copy tscriptsequence from './loadedSeq.txt' delimiter E'\t';
 
 delete from transcript_sequence;
 

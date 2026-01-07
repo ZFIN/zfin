@@ -5,7 +5,7 @@
 my $fileName = $ARGV[0];
 # make sure in the right directory
 
-$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadOntology/";
+$dir = "$ENV{'ROOT_PATH'}/server_apps/data_transfer/LoadOntology/";
 chdir "$dir";
 print "parseHeader.pl running in: $dir"."\n" ;
 
