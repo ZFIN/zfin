@@ -28,7 +28,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
+            <command>cd $SOURCEROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>load-chebi -DJobName=Load-Chebi-Ontology_m</targets>
