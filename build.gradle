@@ -360,10 +360,10 @@ task deployGitInfoFile() {
         def sqlCommandRelease = "INSERT INTO zdb_property (zprop_name, zprop_value) VALUES ('RELEASE_NUMBER', '" + releaseNumber + "') ON CONFLICT (zprop_name) DO UPDATE SET zprop_value = EXCLUDED.zprop_value;"
 
         exec {
-            commandLine "bash", "-c", "echo \"" + sqlCommandCommit + "\" | psql -v " + dbname
+            commandLine "bash", "-c", "echo \"" + sqlCommandCommit + "\" | psql -d " + dbname
         }
         exec {
-            commandLine "bash", "-c", "echo \"" + sqlCommandRelease + "\" | psql -v " + dbname
+            commandLine "bash", "-c", "echo \"" + sqlCommandRelease + "\" | psql -d " + dbname
         }
     }
 }
