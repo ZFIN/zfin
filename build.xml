@@ -264,7 +264,7 @@
             description="Dumps flattened properties.">
         <taskdef name="exportAllInstances"
                  classname="org.zfin.properties.ExportAllInstancesTask"
-                 classpathref="classpath"/>
+                 classpathref="combined.classpath"/>
         <exportAllInstances instancesFile="${commons.dir}/instances.properties"
                             target="dumpFlattenedPropertiesForInstance"/>
     </target>
@@ -304,7 +304,7 @@
     <target name="createAllPropertiesFiles" description="Exports all instances defined in instances.properties">
         <taskdef name="exportAllInstances"
                  classname="org.zfin.properties.ExportAllInstancesTask"
-                 classpathref="classpath"/>
+                 classpathref="combined.classpath"/>
         <exportAllInstances instancesFile="${commons.dir}/instances.properties"
                             target="createPropertiesFilesForInstance"/>
     </target>
@@ -426,7 +426,7 @@
         <javadoc packagenames="org.zfin.*"
                  sourcepath="${source.dir}"
                  excludepackagenames="org.zfin.properties.*"
-                 classpathref="extended.classpath"
+                 classpathref="combined.classpath"
                  destdir="${java-doc.dir}/zfin"
                  author="true"
                  version="true"
@@ -512,7 +512,7 @@
         <sequential>
             <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
                   fork="yes"
-                  classpathref="classpath">
+                  classpathref="combined.classpath">
                 <!-- subject -->
                 <arg value="@{message}"/>
                 <!-- message -->
@@ -642,7 +642,7 @@
 
     <target name="validateDatabases" depends="compile,build-tests">
         <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
         >
         </java>
     </target>
@@ -680,7 +680,7 @@
 
     <taskdef name="groovy"
              classname="org.codehaus.groovy.ant.Groovy"
-             classpathref="extended.classpath"/>
+             classpathref="combined.classpath"/>
 
     <target name="deployGitInfoFile">
         <gradle task="deployGitInfoFile" />

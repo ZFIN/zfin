@@ -2,6 +2,7 @@
 
 <project name="load ontology" default="usage" basedir=".">
 
+    <!-- Local properties must be defined BEFORE import (Ant properties are immutable) -->
     <property name="root.dir" value="${basedir}/../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -12,7 +13,11 @@
 
     <property environment="env"/>
 
-    <!-- Classpath definitions -->
+    <!-- Import base properties for combined.classpath -->
+    <property name="buildfiles.dir" value="${basedir}/../buildfiles"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
+    <!-- Classpath definitions (kept for reference, but combined.classpath is preferred) -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
@@ -25,7 +30,7 @@
 
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
     <loadProperties file="${web-inf.dir}/zfin.properties" />
 
     <target name="usage">
