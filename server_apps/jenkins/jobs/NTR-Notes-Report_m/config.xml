@@ -14,7 +14,7 @@
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>run-data-report -DJobName=NTR-Notes-Report_m</targets>
-            <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>

@@ -33,7 +33,7 @@ Those can be overridden by setting the environment variables:
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>load-gaf-goa -DjobName=Load-GAF-GOA_m</targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
