@@ -1063,6 +1063,11 @@ task reinstallUtilities {
     group = 'deployment'
 }
 
+jar {
+    // Handle duplicates by excluding them (prefer source over compiled classes in WEB-INF)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 war {
     archiveFileName = 'zfin.war'
 
