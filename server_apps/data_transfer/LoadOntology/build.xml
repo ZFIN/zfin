@@ -169,7 +169,7 @@
     <taskdef name="groovyc"
              classname="org.codehaus.groovy.ant.Groovyc">
         <classpath>
-            <fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+            <fileset dir="${env.GROOVY_HOME}/lib" includes="*.jar" erroronmissingdir="false"/>
         </classpath>
     </taskdef>
 

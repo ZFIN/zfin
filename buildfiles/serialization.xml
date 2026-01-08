@@ -14,5 +14,5 @@
         <echo message="Serializable classes: ${SUID}" />
     </target>
 
-    <taskdef name="serialver" classname="net.sourceforge.serialver.SerialVer" classpathref="extended.classpath"/>
+    <taskdef name="serialver" classname="net.sourceforge.serialver.SerialVer" classpathref="combined.classpath"/>
 </project>

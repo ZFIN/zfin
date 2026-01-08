@@ -37,7 +37,7 @@
             </test>
 
 
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <!-- <arg value="${junit.test.class.name}"/>-->
@@ -55,7 +55,7 @@
         <echo message="Performance test results"/>
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
               fork="yes"
-              classpathref="classpath">
+              classpathref="combined.classpath">
             <!--subject -->
             <arg value="Finished Performance Tests.  See ${performanceTestFile} for more detail."/>
             <!--message-->
@@ -72,7 +72,7 @@
                maxmemory="1024m"
                showoutput="true">
             <jvmarg line="${junit.jvmargs}"/>
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
                 <formatter type="plain"/>
