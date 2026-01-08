@@ -2,6 +2,7 @@
 
 <project name="Archive-Downloadfiles" default="archive-download-files" basedir="../../../">
 
+    <!-- Local properties must be defined BEFORE import (Ant properties are immutable) -->
     <property name="web.dir" value="${basedir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
@@ -10,10 +11,13 @@
     <property name="download.dir" value="${web.dir}/data_transfer/Downloads"/>
     <property name="download-execute.dir" value="server_apps/data_transfer/Downloads"/>
 
-
     <property environment="env"/>
 
-    <!-- Classpath definitions -->
+    <!-- Import base properties for combined.classpath -->
+    <property name="buildfiles.dir" value="${basedir}/buildfiles"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
+    <!-- Classpath definitions (kept for reference, but combined.classpath is preferred) -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
@@ -23,12 +27,12 @@
 
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <loadProperties file="${web-inf.dir}/zfin.properties" />
 
     <path id="extended.classpath">
-        <path refid="classpath"/>
+        <path refid="combined.classpath"/>
         <fileset dir="${CATALINA_HOME}/endorsed">
             <include name="*.jar"/>
             <include name="*.zip"/>
@@ -68,7 +72,7 @@
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="combined.classpath"
                   failonerror="true">
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>

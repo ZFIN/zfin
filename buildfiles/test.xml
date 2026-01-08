@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="test" basedir=".">
+    <property environment="env"/>
     <!-- ====================================================================== -->
     <!-- TESTING TASKS                                                          -->
     <!-- ====================================================================== -->
@@ -28,7 +29,7 @@
                    maxmemory="2024m"
 		   includeantruntime="false"
                     >
-                <classpath refid="extended.classpath"/>
+                <classpath refid="combined.classpath"/>
                 <formatter type="brief"/>
                 <formatter type="xml"/>
                 <batchtest todir="${test.reports.dir}">
@@ -61,7 +62,7 @@
                showoutput="false"
                includeantruntime="false">
             <classpath>
-                <path refid="extended.classpath"/>
+                <path refid="combined.classpath"/>
             </classpath>
 
             <test name="org.zfin.SolrUnitTests" todir="${test.reports.dir}"
@@ -108,7 +109,7 @@
                    showoutput="@{verbose}"
                    maxmemory="2024m"
                     >
-                <classpath refid="extended.classpath"/>
+                <classpath refid="combined.classpath"/>
 <!--
                 <formatter classname="org.zfin.util.JunitFormatter" usefile="false" />
 -->
@@ -134,7 +135,7 @@
                    maxmemory="2024m"
 		   includeantruntime="false"
                     >
-                <classpath refid="extended.classpath"/>
+                <classpath refid="combined.classpath"/>
                 <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
                 <jvmarg value="-Xmx1024m"/>
                 <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
@@ -222,7 +223,7 @@
     -->
 <taskdef name="junit"
   classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-  <classpath refid="extended.classpath"/>
+  <classpath refid="combined.classpath"/>
 </taskdef>
 
     <target name="runTagTests" depends="preptagunit" description="Run the actual tagunit tests. You need to have
@@ -262,7 +263,7 @@ test(s) need to be run before committing changes or pushing files to production 
              <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
              <jvmarg value="-Djavax.xml.soap.SAAJMetaFactory=com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"/>
              <classpath>
- 		<path refid="extended.classpath"/>
+ 		<path refid="combined.classpath"/>
              </classpath>
 
             <test name="org.zfin.UnitTests" todir="${test.reports.dir}"
@@ -359,7 +360,7 @@ test(s) need to be run before committing changes or pushing files to production 
         <echo message="${serviceFailureMessage}"/>
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
               fork="false"
-              classpathref="classpath">
+              classpathref="combined.classpath">
             <!--subject -->
             <arg value="Failed service tests.  See ${serviceTestFile}.txt."/>
             <!--message-->
@@ -372,7 +373,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <taskdef name="groovyc"
              classname="org.codehaus.groovy.ant.Groovyc">
 		<classpath>
-		<fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+		<fileset dir="${env.GROOVY_HOME}/lib" includes="*.jar" erroronmissingdir="false"/>
 		</classpath>
 </taskdef>
 
@@ -381,7 +382,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <target name="build-tests" depends="loadPropertiesIntoEnum" description="Target to compile all test classes">
         <groovyc srcdir="test"
                destdir="${classbin.dir}"
-               classpathref="extended.classpath"
+               classpathref="combined.classpath"
                fork="no"
                encoding="${encoding}"
                memoryMaximumSize="256m"
@@ -414,7 +415,7 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="xml"/>
             </test>
 
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <!-- <arg value="${junit.test.class.name}"/>-->
@@ -428,7 +429,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <arg value="${junit.test.class.name}"/>
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
 
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
         </java>
@@ -442,7 +443,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <arg value="${junit.test.class.name}"/>
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
         </java>
@@ -456,7 +457,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <arg value="org.zfin.SmokeTestsReadWrite"/>
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
         </java>
     </target>
 
@@ -464,7 +465,7 @@ test(s) need to be run before committing changes or pushing files to production 
             description="Run the Hibernate standalone class for persistence checking">
         <java classname="org.zfin.repository.HibernateStandaloneUtil"
               fork="yes"
-              classpathref="extended.classpath">
+              classpathref="combined.classpath">
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
         </java>
@@ -474,14 +475,14 @@ test(s) need to be run before committing changes or pushing files to production 
             description="Runs the mail testing code.">
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
               fork="yes"
-              classpathref="classpath">
+              classpathref="combined.classpath">
         </java>
     </target>
 
     <target name="handleTestFailure" if="test.failure">
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
 	            fork="yes"
-              classpathref="classpath">
+              classpathref="combined.classpath">
             <arg value="Failed tests."/>
             <arg value="${serviceFailureMessage}"/>
         </java>
@@ -490,7 +491,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <target name="handleSmokeFailure" if="smoke.failure">
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
               fork="yes"
-              classpathref="classpath">
+              classpathref="combined.classpath">
             <arg value="Failed smoke tests.  See ${smokeTestFile}.txt."/>
             <arg value="${serviceFailureMessage}"/>
         </java>
@@ -508,7 +509,7 @@ test(s) need to be run before committing changes or pushing files to production 
                maxmemory="1024m"
                 >
             <!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <jvmarg value="-Dlog4j2.configurationFile=test/log4j2.xml"/>
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
             <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
@@ -571,7 +572,7 @@ test(s) need to be run before committing changes or pushing files to production 
                maxmemory="2024m"
                >
 <!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="extended.classpath"/>
+            <classpath refid="combined.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
