@@ -28,7 +28,7 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
-        <fileset dir="/opt/misc/groovy/lib">
+        <fileset dir="${env.GROOVY_HOME}/lib" erroronmissingdir="false">
             <include name="*.jar"/>
         </fileset>
     </path>
