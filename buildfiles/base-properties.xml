@@ -98,6 +98,14 @@
         </fileset>
     </path>
 
+    <path id="combined.classpath.with.groovy">
+        <path refid="combined.classpath"/>
+        <fileset dir="${env.GROOVY_HOME}/lib" erroronmissingdir="false">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+
     <!-- javadoc diectory -->
     <property name="zfin-javadoc" value="home/util/javadoc/zfin"/>
     <property name="enum.class" value="org.zfin.properties.ZfinPropertiesEnum"/>

@@ -67,7 +67,7 @@
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="combined.classpath"
                   failonerror="true">
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
@@ -80,7 +80,8 @@
         <attribute name="sql-query-file"/>
         <attribute name="directory"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+            <echo message="Running SQL query tests from @{sql-query-file} in @{directory}"/>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="combined.classpath"
                   failonerror="true">
                 <arg value="${DBNAME}"/>
                 <arg value="@{sql-query-file}"/>

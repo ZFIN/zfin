@@ -15,7 +15,11 @@
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
     <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=${web-inf.dir}/conf/log4j2.xml"/>
 
-    <!-- Classpath definitions -->
+    <!-- Import base properties for combined.classpath -->
+    <property name="buildfiles.dir" value="${basedir}/buildfiles"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
+    <!-- Classpath definitions (kept for reference, but combined.classpath is preferred) -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
@@ -26,7 +30,7 @@
 
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="classpath"/>
+             classpathref="combined.classpath"/>
 
     <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
@@ -35,7 +39,7 @@
     <echo message="SOURCEROOT: ${env.SOURCEROOT}"/>
 
     <path id="extended.classpath">
-        <path refid="classpath"/>
+        <path refid="combined.classpath"/>
         <fileset dir="${env.CATALINA_HOME}/lib">
             <include name="*.jar"/>
             <include name="*.zip"/>
@@ -53,7 +57,7 @@
     <target name="load-gaf-paint" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
@@ -67,7 +71,7 @@
     <target name="load-reference-proteome" description="">
         <java classname="org.zfin.datatransfer.LoadReferenceProteome"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
@@ -106,7 +110,7 @@
 
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
@@ -139,7 +143,7 @@
 
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
@@ -154,7 +158,7 @@
     <target name="load-gaf-fpinference" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
@@ -170,7 +174,7 @@
         <echo message="arg3: ${jobName}"/>
         <java classname="org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob"
               fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -182,7 +186,7 @@
     <target name="check-eap-pato-terms" description="">
         <echo message="Check EaP terms with the latest PATO ontology"/>
         <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -192,7 +196,7 @@
 
     <target name="update-dois" description="">
         <java classname="org.zfin.datatransfer.doi.UpdateDOIJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -207,7 +211,7 @@
         <echo message="arg2: ${validateData}/report_data"/>
         <echo message="arg3: env.JOB_NAME"/>
         <java classname="org.zfin.datatransfer.LoadSignafishJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -218,7 +222,7 @@
 
     <target name="load-author-names" description="">
         <java classname="org.zfin.datatransfer.LoadCompleteAuthorNames" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -229,7 +233,7 @@
 
     <target name="student-metrics" description="">
         <java classname="org.zfin.curation.presentation.StudentMetricsJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -240,7 +244,7 @@
 
     <target name="remove-go-terms-from-withdrawn-markers" description="">
         <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -256,7 +260,7 @@
         <echo message="arg3: ${jobName}"/>
 
         <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -266,7 +270,7 @@
 
     <target name="validate-blast-databases" description="">
         <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -277,7 +281,7 @@
 
     <target name="microarray-update" description="">
         <java classname="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/report_data"/>
@@ -298,7 +302,7 @@
         <echo message="ValidateData Dir: ${validateData}/validatedata"/>
         <echo message="Property File: ${web-inf.dir}/zfin.properties"/>
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
@@ -320,7 +324,7 @@
         <echo message="Use database: ${DBNAME}"/>
         <delete dir="${validateData}/report_data/${JobName}"/>
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
@@ -337,7 +341,7 @@
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
@@ -352,7 +356,7 @@
         <echo message="Use database: ${DBNAME}"/>
         <property name="JobName" value="get-publications-from-ncbi"/>
         <java classname="org.zfin.publication.FetchPubsFromPubMed" fork="yes"
-              classpathref="extended.classpath"
+              classpathref="combined.classpath"
               failonerror="true">
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
@@ -381,7 +385,7 @@
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="combined.classpath"
                   failonerror="true">
                 <arg value="@{instanceName}"/>
                 <arg value="@{db-query-file}"/>
@@ -398,7 +402,7 @@
             <echo message="Use ParameterValues: ${ParameterValues}"/>
             <delete dir="${validateData}/report_data/${JobName}"/>
             <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
-                  classpathref="extended.classpath"
+                  classpathref="combined.classpath"
                   failonerror="true">
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
