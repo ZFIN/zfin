@@ -124,6 +124,25 @@
         </java>
     </target>
 
+    <target name="check-noctua-gpad-available" description="check if a new noctua load file is available.">
+        <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
+        <property environment="env"/>
+        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="https://current.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz">
+            <isset property="env.NOCTUA_GPAD_URL" />
+        </condition>
+
+        <echo message="Checking for new Noctua GPAD file at: ${downloadUrl}"/>
+
+        <java classname="org.zfin.task.CheckNewLoadFileAvailableTask"
+              fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="Noctua"/><!-- organization -->
+            <arg value="${downloadUrl}"/><!-- downloadUrl -->
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
     <target name="load-noctua-gpad" description="">
         <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
         <property environment="env"/>

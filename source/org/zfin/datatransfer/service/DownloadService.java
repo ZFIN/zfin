@@ -9,6 +9,8 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.zfin.datatransfer.go.GafOrganization;
+import org.zfin.datatransfer.persistence.LoadFileLog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * This class helps download ftp files.
@@ -381,6 +385,12 @@ public class DownloadService {
             executor.setWatchdog(watchdog);
         }
         executor.execute(cmdLine);
+    }
+
+    public static boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
+        String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
+        LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
+        return loadFileLog != null;
     }
 
 }
