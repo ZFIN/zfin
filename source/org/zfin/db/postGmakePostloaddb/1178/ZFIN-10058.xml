@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-10058-crispr">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1178/zko-ZFIN-10058.csv"
+                  tableName="crispr_detail" >
+            <column header="id" name="zko_id" type="String"/>
+            <column header="symbol" name="symbol" type="String"/>
+            <column header="zdbID" name="zdb_id" type="String"/>
+            <column header="ensdarg" name="ensdarg" type="String"/>
+            <column header="sequence1" name="sequence1" type="String"/>
+            <column header="sequence2" name="sequence2" type="String"/>
+            <column header="type" name="type" type="String"/>
+        </loadData>
+        <output target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+    <changeSet author="cmpich" id="ZFIN-10058-alleles">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1178/Alleles_zko-ZFIN-10058.csv"
+                  tableName="gene_allele_mutation_detail" quotchar='"' separator=",">
+            <column header="zko #" name="zko_id" type="int"/>
+            <column header="ZFIN symbol" name="symbol" type="String"/>
+            <column header="ZFIN ID" name="zdb_id" type="String"/>
+            <column header="Alleles" name="allele_name" type="String"/>
+            <column header="mutation" name="mutation" type="String"/>
+            <column header="exons" name="exons" type="String"/>
+            <column header="alias" name="alias" type="String"/>
+            <column header="type" name="type" type="String"/>
+        </loadData>
+        <output target="STDOUT">OUTPUT</output>
+    </changeSet>
+
+</databaseChangeLog>
