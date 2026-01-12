@@ -282,6 +282,11 @@ UPDATE phenotype_observation_generated SET psg_mrkr_zdb_id = 'ZDB-ATB-081124-4' 
 -- Update publication_expression_display (references marker)
 UPDATE ui.publication_expression_display SET ped_antibody_zdb_id = 'ZDB-ATB-081124-4' WHERE ped_antibody_zdb_id = 'ZDB-ATB-200224-1';
 
+
+-- Copy immunogen organism from source to target
+UPDATE antibody SET atb_immun_organism = (SELECT atb_immun_organism FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-200224-1')
+WHERE atb_zdb_id = 'ZDB-ATB-081124-4' AND atb_immun_organism IS NULL;
+
 -- Delete the antibody record (this will cascade to antibody table)
 DELETE FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-200224-1';
 DELETE FROM marker WHERE mrkr_zdb_id = 'ZDB-ATB-200224-1';
@@ -887,6 +892,14 @@ UPDATE phenotype_observation_generated SET psg_mrkr_zdb_id = 'ZDB-ATB-160518-1' 
 
 -- Update publication_expression_display (references marker)
 UPDATE ui.publication_expression_display SET ped_antibody_zdb_id = 'ZDB-ATB-160518-1' WHERE ped_antibody_zdb_id = 'ZDB-ATB-190925-3';
+
+-- Copy external note from source to target
+INSERT INTO external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note, extnote_source_zdb_id)
+SELECT get_id_and_insert_active_data('EXTNOTE'), 'ZDB-ATB-160518-1', extnote_note, extnote_source_zdb_id
+FROM external_note WHERE extnote_data_zdb_id = 'ZDB-ATB-190925-3';
+
+-- Delete the old external note
+DELETE FROM external_note WHERE extnote_data_zdb_id = 'ZDB-ATB-190925-3';
 
 -- Delete the antibody record (this will cascade to antibody table)
 DELETE FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-190925-3';
