@@ -42,6 +42,10 @@ public class CheckNewLoadFileAvailableTask extends AbstractScriptWrapper {
 
         try {
             Date lastModified = DownloadService.getLastModifiedOnServer(new URL(downloadUrl));
+            if (lastModified == null) {
+                System.out.println("Could not determine Last-Modified date from server; assuming new file is available. Exiting with code 0.");
+                System.exit(0);
+            }
             boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, orgEnum, lastModified);
             if (alreadyProcessed) {
                 System.out.println("No new file available for download. Exiting with code 1.");
