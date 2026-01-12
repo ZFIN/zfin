@@ -1873,6 +1873,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Query<LoadFileLog> query = currentSession().createQuery(hql, LoadFileLog.class);
         query.setParameter("loadName", loadName);
         query.setParameter("releaseNumber", releaseNumber);
+        query.setMaxResults(1);
         return query.uniqueResult();
     }
 
