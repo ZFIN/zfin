@@ -3,7 +3,17 @@
   <actions/>
   <description>Import the GPAD file that comes from Noctua (GO) and contains Zebrafish-related annotations</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>SKIP_DOWNLOAD_IF_UNCHANGED</name>
+                    <description>This will skip the download and execution if the upstream file is unchanged from last run</description>
+                    <defaultValue>true</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -16,12 +26,12 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
-  <builders>
-    <hudson.tasks.Shell>
-      <command>SKIP_DOWNLOAD_IF_UNCHANGED=true ant -f $TARGETROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
-      <unstableReturn>2</unstableReturn>
-    </hudson.tasks.Shell>
-  </builders>
+    <builders>
+        <hudson.tasks.Ant plugin="ant@1.2">
+            <targets>load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</targets>
+            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
+        </hudson.tasks.Ant>
+    </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*</artifacts>
