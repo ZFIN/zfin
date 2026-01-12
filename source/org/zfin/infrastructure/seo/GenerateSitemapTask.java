@@ -103,7 +103,7 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
     }
 
     private List<String> getZfishBookPages() {
-        File jspLocalFileLocation = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF/jsp/zf_info");
+        File jspLocalFileLocation = new File(ZfinPropertiesEnum.SOURCEROOT.value(), "home/WEB-INF/jsp/zf_info");
         return FileUtils.listFiles(jspLocalFileLocation, new String[]{"jsp"}, false).stream()
                 .map(f -> "zf_info/" + f.getName())
                 .map(f -> f.replaceAll("--", "/").replace(".jsp", ""))
