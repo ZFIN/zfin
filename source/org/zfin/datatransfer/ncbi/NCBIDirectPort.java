@@ -3648,7 +3648,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
                     "Gene Symbol", "Gene Symbol",
                     "Status", "Status",
-                    "Assembly Names", "Assembly Names",
+                    "Assemblies", "Assembly Names",
                     "NCBI Gene ID", "NCBI Gene ID"));
 
             table.setRows(rows.stream().map(row -> row.toMap()).toList());
