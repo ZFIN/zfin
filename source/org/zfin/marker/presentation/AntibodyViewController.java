@@ -43,7 +43,10 @@ public class AntibodyViewController {
         // set base bean
         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
 
-        zdbID = markerService.getActiveMarkerID(zdbID);
+        String activeZdbID = markerService.getActiveMarkerID(zdbID);
+        if (!activeZdbID.equals(zdbID)) {
+            return "redirect:/" + activeZdbID;
+        }
         logger.info("zdbID: " + zdbID);
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
         logger.info("antibody: " + antibody);
