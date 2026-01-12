@@ -57,6 +57,7 @@ services:
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
+      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
       - solr_data:/var/solr
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
@@ -195,6 +196,7 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
+      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
       - maven_cache:/home/gradle/.m2
       - gradle_cache:/home/gradle/.gradle
   ncbiload:
