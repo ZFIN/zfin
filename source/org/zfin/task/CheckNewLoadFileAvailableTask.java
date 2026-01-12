@@ -12,7 +12,7 @@ import static org.zfin.datatransfer.service.DownloadService.isDownloadAlreadyPro
 
 /**
  * Task to check if a new load file is available for download.
- * Exits with code 0 if new file is available, 1 if not, and 2 on error.
+ * Exits with code 0 if new file is available, 1 if not, 2 on error, and 3 on invalid usage (insufficient arguments).
  * Arguments:
  * 1st arg: Organization (eg. Noctua)
  * 2nd arg: Load file URL (eg. https://current.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz)
@@ -22,7 +22,7 @@ import static org.zfin.datatransfer.service.DownloadService.isDownloadAlreadyPro
 public class CheckNewLoadFileAvailableTask extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
-        //expect first arg to be load job url (eg. https://current.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz)
+        // expect first arg to be Organization (eg. Noctua)
         if (args.length < 2) {
             System.out.println("Please provide Organization as first argument (eg. Noctua)");
             System.out.println("Please provide load file URL as second argument");
@@ -40,24 +40,13 @@ public class CheckNewLoadFileAvailableTask extends AbstractScriptWrapper {
     private void runTask(GafOrganization.OrganizationEnum orgEnum, String downloadUrl) {
         initAll();
 
-        try {
-            Date lastModified = DownloadService.getLastModifiedOnServer(new URL(downloadUrl));
-            if (lastModified == null) {
-                System.out.println("Could not determine Last-Modified date from server; assuming new file is available. Exiting with code 0.");
-                System.exit(0);
-            }
-            boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, orgEnum, lastModified);
-            if (alreadyProcessed) {
-                System.out.println("No new file available for download. Exiting with code 1.");
-                System.exit(1);
-            } else {
-                System.out.println("New file available for download. Exiting with code 0.");
-                System.exit(0);
-            }
-        } catch (IOException e) {
-            System.err.println("Error checking for new load file: " + e.getMessage());
-            System.exit(2);
-            throw new RuntimeException(e);
+        boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, orgEnum);
+        if (alreadyProcessed) {
+            System.out.println("No new file available for download. Exiting with code 1.");
+            System.exit(1);
+        } else {
+            System.out.println("New file available for download. Exiting with code 0.");
+            System.exit(0);
         }
 
     }

@@ -387,7 +387,18 @@ public class DownloadService {
         executor.execute(cmdLine);
     }
 
+    public static boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum) {
+        return isDownloadAlreadyProcessed(downloadUrl, organizationEnum, null);
+    }
+
     public static boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
+        if (lastModified == null) {
+            try {
+                lastModified = getLastModifiedOnServer(new URL(downloadUrl));
+            } catch (IOException e) {
+                throw new RuntimeException("Could not get last modified date from server for url: " + downloadUrl, e);
+            }
+        }
         String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
         LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
         return loadFileLog != null;
