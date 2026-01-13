@@ -20,6 +20,7 @@ import java.util.zip.GZIPInputStream
 import java.util.zip.ZipException
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
+import groovy.cli.commons.CliBuilder
 
 
 cli = new CliBuilder(usage: 'LoadAllianceGeneDesc')
