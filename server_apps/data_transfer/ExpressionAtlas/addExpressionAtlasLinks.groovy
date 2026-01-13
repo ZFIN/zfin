@@ -3,6 +3,8 @@
 import groovy.json.*
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
+import groovy.cli.commons.CliBuilder
+
 import org.zfin.properties.ZfinProperties
 
 import java.util.zip.GZIPInputStream

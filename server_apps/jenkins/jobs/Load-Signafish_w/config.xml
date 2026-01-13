@@ -18,9 +18,10 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.11">
-      <targets>load-signafish</targets>
+      <targets>load-signafish -DJobName=Load-Signafish_w</targets>
       <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
-    </hudson.tasks.Ant>  </builders>
+    </hudson.tasks.Ant>
+  </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>server_apps/DB_maintenance/report_data/Load-Signafish_w/*.html</artifacts>

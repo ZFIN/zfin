@@ -21,7 +21,7 @@
 #
 
 cd $SOURCEROOT
-gradle createEnsembTranscriptFastaFile
+gradle createEnsemblTranscriptFastaFile --args="$TARGETROOT/server_apps/data_transfer/BLAST/Ensembl"
 # go back into original directory
 cd -
 pwd
