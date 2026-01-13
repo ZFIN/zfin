@@ -5,6 +5,7 @@ import groovy.json.JsonSlurper
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
 import org.zfin.infrastructure.TokenStorage
+import groovy.cli.commons.CliBuilder
 
 cli = new CliBuilder(usage: 'LoadAddgene')
 cli.jobName(args: 1, 'Name of the job to be displayed in report')
