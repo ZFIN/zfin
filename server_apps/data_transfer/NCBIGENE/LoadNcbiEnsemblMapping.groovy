@@ -5,6 +5,7 @@ import org.zfin.properties.ZfinProperties
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import org.zfin.util.ReportGenerator
+import groovy.cli.commons.CliBuilder
 
 cli = new CliBuilder(usage: 'LoadAddgene')
 cli.jobName(args: 1, 'Name of the job to be displayed in report')
