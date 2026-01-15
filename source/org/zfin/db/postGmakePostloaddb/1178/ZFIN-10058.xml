@@ -32,6 +32,7 @@
             <column header="Alleles" name="allele_name" type="String"/>
             <column header="mutation" name="mutation" type="String"/>
             <column header="exons" name="exons" type="String"/>
+            <column header="introns" name="introns" type="String"/>
             <column header="alias" name="alias" type="String"/>
             <column header="type" name="type" type="String"/>
         </loadData>
