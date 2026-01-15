@@ -50,7 +50,7 @@ UPDATE record_attribution SET recattrib_data_zdb_id = 'ZDB-ALT-170711-6' where r
 DELETE FROM zdb_active_data WHERE zactvd_zdb_id = 'ZDB-ALT-120206-1';
 INSERT INTO zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name) VALUES ('ZDB-ALT-120206-1', 'ZDB-ALT-170711-6', 'zf256Tg');
 
--- Add alias:
-INSERT INTO data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id) VALUES
-    (get_id_and_insert_active_data('DALIAS'), 'ZDB-ALT-170711-6', 'zf256Tg', '1');
+-- Normally we would add an alias here, but it has been manually added already:
+-- INSERT INTO data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id) VALUES
+--    (get_id_and_insert_active_data('DALIAS'), 'ZDB-ALT-170711-6', 'zf256Tg', '1');
 
