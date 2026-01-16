@@ -37,6 +37,7 @@ def pghost = env['PGHOST']
 def dbunloadspath = env['DB_UNLOADS_PATH']
 def solrunloadspath = env['SOLR_UNLOADS_PATH']
 def downloaddirectory = env['DOWNLOAD_DIRECTORY']
+def zfinrelease = env['ZFIN_RELEASE']
 String targetroot = env['TARGETROOT']
 
 
@@ -570,6 +571,69 @@ task createSchemaSpy() {
                     "-o",
                     ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
             ]
+        }
+    }
+}
+
+task uploadGHCRImages(dependsOn: ['buildGHCRImages',
+                                  'tagGHCRImages',
+                                  'pushGHCRImages']) {
+    description "Build and upload containers to Github Container Registry"
+}
+
+def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat']
+
+task buildGHCRImages() {
+    doLast {
+        println 'Building images for Github Container Registry\n'
+        if (zfinrelease!='latest') {
+            throw new GradleException('Please set ZFIN_RELEASE to "latest" in docker/.env and retry.')
+        } else {
+            for (container in containerList) {
+                exec {
+                    commandLine 'docker','compose','build',container
+                    workingDir 'docker/'
+                    environment DOCKER_BUILDKIT: 0
+                }
+            }
+        }
+    }
+}
+
+task tagGHCRImages() {
+    doLast {
+        println 'Tagging images for Github Container Registry'
+        for (container in containerList) {
+            println container
+            exec {
+                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":latest","ghcr.io/zfin/zfin-"+container+":"+release
+                workingDir 'docker/'
+            }
+            exec {
+                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":latest","ghcr.io/zfin/zfin-"+container+":release-"+release
+                workingDir 'docker/'
+            }
+        }
+    }
+}
+
+task pushGHCRImages() {
+    doLast {
+        println 'Pushing images to Github Container Registry'
+        for (container in containerList) {
+            println container
+            exec {
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":latest"
+                workingDir 'docker/'
+            }
+            exec {
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":"+release
+                workingDir 'docker/'
+            }
+            exec {
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":release-"+release
+                workingDir 'docker/'
+            }
         }
     }
 }
