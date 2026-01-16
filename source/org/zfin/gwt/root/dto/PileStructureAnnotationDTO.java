@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This subclass is used to add a structure from the pile to one or more
  * figure annotations. It
@@ -52,7 +54,7 @@ public class PileStructureAnnotationDTO extends ExpressionPileStructureDTO imple
         return 1;
     }
 
-    public enum Action {
+    public enum Action implements IsSerializable {
         ADD,
         REMOVE
     }
