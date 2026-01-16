@@ -24,6 +24,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.task.NcbiMatchThroughEnsemblTask;
 
 import java.io.*;
@@ -137,10 +138,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesRefSeqPeptBefore;
     public Integer numGenesGenBankBefore;
 
-    private Map<String, List<String>> NCBIgeneWithMultipleVega = new HashMap<>();
     private Map<String, String> NCBIidsGeneSymbols = new HashMap<>(); // Value is String, not List<String> based on Perl
-    private Map<String, String> vegaIdsNCBIids = new HashMap<>(); // Value is String, not List<String>
-    private Map<String, List<String>> vegaIdwithMultipleNCBIids = new HashMap<>();
 
 
     // used in eg. initializeSetsOfZfinRecords
@@ -185,6 +183,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private long ctOneToOneNCBI; // Count of 1:1 mappings
 
     private BidiMap<String, String>  ncbiSupplementMap = new DualHashBidiMap<>(); // the list of supplementary mappings; key: ZDB gene Id; value: NCBI gene Id
+    private BidiMap<String, String>  legacyVegaMap = new DualHashBidiMap<>(); // the list of mappings from legacy vega logic; key: ZDB gene Id; value: NCBI gene Id
 
     private NCBIOutputFileToLoad recordsToLoad = new NCBIOutputFileToLoad();
     private BufferedWriter TOLOAD;      // For toLoad.unl
@@ -197,14 +196,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  used in eg. getNtoOneAndNtoNfromZFINtoNCBI
     private Map<String, String>  zdbGeneIdsNtoOneAndNtoN; // ZFIN Gene ID -> NCBI Gene ID (for N:1 cases)
 
-    //  used in eg. buildVegaIDMappings
-    private Map<String, String>  ZDBgeneAndVegaGeneIds; // ZFIN Gene ID -> Vega Gene ID
-    private Map<String, String> VegaGeneAndZDBgeneIds; // Vega Gene ID -> ZFIN Gene ID
-    private Map<String, List<String>>  ZDBgeneWithMultipleVegaGeneIds; // ZFIN Gene ID -> List<Vega Gene ID>
-    private Map<String, List<String>>  vegaGeneIdWithMultipleZFINgenes; // Vega Gene ID -> List<ZFIN Gene ID>
-
     //  used in eg. writeCommonVegaGeneIdMappings
-    private Map<String, String>  oneToOneViaVega; // NCBI Gene ID -> ZDB Gene ID
+//    private Map<String, String>  oneToOneViaVega; // NCBI Gene ID -> ZDB Gene ID
 
     //  used in eg. getGenBankAndRefSeqsWithZfinGenes
     private Map<String, String>  geneAccFdbcont; // Concatenated Key (gene+acc+fdbcont) -> dblink_zdb_id
@@ -219,6 +212,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     //  readZfinGeneInfoFile
     private Map<String, String> geneZDBidsSymbols = new HashMap<>(); // Value is String
 
+    // Store the legacy Vega matches before the load for comparison after
+    private HashSet<DBLinkSlimDTO> legacyVegaMatches = new HashSet<>();
+    private HashSet<String> legacyVegaDblinkIds = new HashSet<>();  // dblink_zdb_id values for deletion
+
+    private Long START_TIMESTAMP = time();
     private Long STEP_TIMESTAMP = 0L;
 
     private BufferedWriter LOG;
@@ -268,36 +266,47 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         removeOldFiles();
 
         openLoggingFileHandles();
-        printTimingInformation(1);
+        printTimingInformation(10);
 
 
 //    #-------------------------------------------------------------------------------------------------
 //    # Step 1: Download NCBI data files
 //    #-------------------------------------------------------------------------------------------------
         downloadNCBIFiles();
-        printTimingInformation(2);
+        printTimingInformation(20);
 
         captureBeforeState();
-        printTimingInformation(201);
-
-        prepareNCBIgeneLoadDatabaseQuery();
-        printTimingInformation(3);
-
-        getMetricsOfDbLinksToDelete();
-        printTimingInformation(4);
+        printTimingInformation(30);
 
 //    # Get Record Counts using global variables
         getRecordCounts();
-        printTimingInformation(5);
+        printTimingInformation(40);
+
+        captureLegacyVegaMatches();
+        printTimingInformation(50);
+
+        // Remove legacy Vega matches BEFORE any native SQL runs,
+        // otherwise SQL may delete them first causing StaleStateException
+        removeLegacyVegaMatchesFromDB();
+        printTimingInformation(60);
+
+        runTemporaryVegaRemoveSQL();
+        printTimingInformation(70);
+
+        prepareNCBIgeneLoadDatabaseQuery();
+        printTimingInformation(80);
+
+        getMetricsOfDbLinksToDelete();
+        printTimingInformation(90);
 
         //Do we want to remove all Ensembl matches before proceeding?
         removeEnsemblMatchesFromDB();
 
         readZfinGeneInfoFile();
-        printTimingInformation(6);
+        printTimingInformation(100);
 
         fetchGeneIDsNotInCurrentAnnotationReleaseSet();
-        printTimingInformation(601);
+        printTimingInformation(110);
         //----------------------------------------------------------------------------------------------------------------------
         // Step 5: Map ZFIN gene records to NCBI gene records based on GenBank RNA sequences
         //----------------------------------------------------------------------------------------------------------------------
@@ -307,121 +316,124 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         //-----------------------------------------
         initializeSetsOfZfinRecordsPart1(); //
         initializeSetsOfZfinRecordsPart2(); //
-        printTimingInformation(7); //
+        printTimingInformation(120);
 
         initializeSequenceLengthHash();
-        printTimingInformation(8);
+        printTimingInformation(130);
 
 //    #----------------------- 2) parse RefSeq-release#.catalog file to get the length for RefSeq sequences ----------------------
 
         parseRefSeqCatalogFileForSequenceLength();
-        printTimingInformation(9);
+        printTimingInformation(140);
 
         printSequenceLengthsCount();
-        printTimingInformation(10);
+        printTimingInformation(150);
 
         parseGene2AccessionFile();
-        printTimingInformation(11);
+        printTimingInformation(160);
 
         countNCBIGenesWithSupportingGenBankRNA();
-        printTimingInformation(12);
+        printTimingInformation(170);
 
         logSupportingAccNCBI();
-        printTimingInformation(13);
+        printTimingInformation(180);
 
         initializeHashOfNCBIAccessionsSupportingMultipleGenes();
-        printTimingInformation(14);
+        printTimingInformation(190);
 
         initializeMapOfZfinToNCBIgeneIds();
-        printTimingInformation(15);
+        printTimingInformation(200);
 
         logOneToZeroAssociations();
-        printTimingInformation(16);
+        printTimingInformation(210);
 
         oneWayMappingNCBItoZfinGenes();
-        printTimingInformation(17);
+        printTimingInformation(220);
 
         logGenBankDNAncbiGeneIds();
-        printTimingInformation(18);
+        printTimingInformation(230);
 
         prepare2WayMappingResults();
-        printTimingInformation(19);
+        printTimingInformation(240);
 
         addReverseMappedGenesFromNCBItoZFINFromSupplementaryLoad();
-        printTimingInformation(20);
+        printTimingInformation(250);
 
 //    # -------- write the NCBI gene Ids mapped based on GenBank RNA accessions on toLoad.unl ------------
         writeNCBIgeneIdsMappedBasedOnGenBankRNA();
-        printTimingInformation(21);
+        printTimingInformation(260);
 
 //    # -------- write the NCBI gene Ids mapped based supplementary ncbi load logic ------------
         writeNCBIgeneIdsMappedBasedOnSupplementaryLoad();
-        printTimingInformation(22);
+        printTimingInformation(270);
+
+        reintroduceLegacyVegaLinks();
+        printTimingInformation(280);
 
 //    #------------------------ get 1:N list and N:N from ZFIN to NCBI -----------------------------
         manyToManyWarningActions = getOneToNNCBItoZFINgeneIds();
-        printTimingInformation(23);
+        printTimingInformation(290);
 
 //    #------------------------ get N:1 list and N:N from ZFIN to NCBI -----------------------------
 //        getNtoOneAndNtoNfromZFINtoNCBI(); //this is called within getOneToNNCBItoZFINgeneIds
-        printTimingInformation(24);
+        printTimingInformation(300);
 
 //    #--------------------- report 1:N ---------------------------------------------
         oneToManyWarningActions = reportOneToN();
-        printTimingInformation(25);
+        printTimingInformation(310);
 
 //    #------------------- report N:1 -------------------------------------------------
         manyToOneWarningActions = reportNtoOne();
-        printTimingInformation(26);
+        printTimingInformation(320);
 
         cleanupReportNtoAllFile();
-        printTimingInformation(261);
+        printTimingInformation(330);
 
 //    ##-----------------------------------------------------------------------------------
 //    ## Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
 //    ##-----------------------------------------------------------------------------------
 
-        buildVegaIDMappings();
-        printTimingInformation(27);
+//        buildVegaIDMappings();
+        printTimingInformation(340);
 
-        writeCommonVegaGeneIdMappings();
-        printTimingInformation(28);
+//        writeCommonVegaGeneIdMappings();
+        printTimingInformation(350);
 
         calculateLengthForAccessionsWithoutLength();
-        printTimingInformation(29);
+        printTimingInformation(360);
 
         getGenBankAndRefSeqsWithZfinGenes();
-        printTimingInformation(30);
+        printTimingInformation(370);
 
         writeGenBankRNAaccessionsWithMappedGenesToLoad();
-        printTimingInformation(31);
+        printTimingInformation(380);
 
         initializeGenPeptAccessionsMap();
-        printTimingInformation(32);
+        printTimingInformation(390);
 
         processGenBankAccessionsAssociatedToNonLoadPubs();
-        printTimingInformation(33);
+        printTimingInformation(400);
 
         printGenPeptsAssociatedWithGeneAtZFIN();
-        printTimingInformation(34);
+        printTimingInformation(410);
 
         writeGenBankDNAaccessionsWithMappedGenesToLoad();
-        printTimingInformation(35);
+        printTimingInformation(420);
 
         writeRefSeqRNAaccessionsWithMappedGenesToLoad();
-        printTimingInformation(36);
+        printTimingInformation(430);
 
         writeRefPeptAccessionsWithMappedGenesToLoad();
-        printTimingInformation(37);
+        printTimingInformation(440);
 
         writeRefSeqDNAaccessionsWithMappedGenesToLoad();
-        printTimingInformation(38);
+        printTimingInformation(450);
 
         closeUnloadFiles();
-        printTimingInformation(3850); // Arbitrary intermediate step number
+        printTimingInformation(460);
 
         printStatsBeforeDelete();
-        printTimingInformation(39);
+        printTimingInformation(470);
 
         if (envTrue("EARLY_EXIT")) {
             System.out.println("Early exit requested, skipping delete and load.");
@@ -430,28 +442,28 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         executeDeleteAndLoadSQLFile();
-        printTimingInformation(40);
+        printTimingInformation(480);
 
         executeMarkerAssemblyUpdate();
-        printTimingInformation(4001);
+        printTimingInformation(490);
 
         sendLoadLogs(); // This was called if loadNCBIgeneAccs.sql failed, good to call after too.
-        printTimingInformation(41);
+        printTimingInformation(500);
 
         captureAfterState();
-        printTimingInformation(4101);
+        printTimingInformation(510);
 
         captureMoreWarnings();
-        printTimingInformation(4102);
+        printTimingInformation(520);
 
         reportAllLoadStatistics();
-        printTimingInformation(42);
+        printTimingInformation(530);
 
         recordUpdatesHistory();
-        printTimingInformation(4201);
+        printTimingInformation(540);
 
         emailLoadReports();
-        printTimingInformation(43);
+        printTimingInformation(550);
 
         // Sort noLength.unl so we can compare the results with the previous run.
         doSystemCommand(List.of("sort",
@@ -464,7 +476,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         outputDate(); // Corresponds to system("/bin/date");
 
         cleanupForJenkins();
-        printTimingInformation(44);
+        printTimingInformation(560);
 
         System.out.println("All done!");
         print(LOG, "\n\nAll done! \n\n\n");
@@ -633,7 +645,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         renameFile(gene2accessionFile, "gene2accession.gz");
         renameFile(refSeqCatalogFile, "RefSeqCatalog.gz");
         compressFilesForCleanup("downloaded_files.zip",
-                List.of("gene2accession.gz", "gene2vega.gz", "RefSeqCatalog.gz", "seq.fasta", "RELEASE_NUMBER", "notInCurrentReleaseGeneIDs.unl", "ncbi_matches_through_ensembl.csv", "zf_gene_info.gz"),
+                List.of("gene2accession.gz", "RefSeqCatalog.gz", "seq.fasta", "RELEASE_NUMBER", "notInCurrentReleaseGeneIDs.unl", "ncbi_matches_through_ensembl.csv", "zf_gene_info.gz"),
                 Collections.emptyList());
 
         //clean up legacy report files
@@ -792,7 +804,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             assertFileExistsAndNotEmpty("gene2accession.gz", "missing gene2accession.gz");
             assertFileExistsAndNotEmpty("RELEASE_NUMBER", "missing RELEASE_NUMBER");
             assertFileExistsAndNotEmpty("RefSeqCatalog.gz", "missing RefSeqCatalog.gz");
-            assertFileExistsAndNotEmpty("gene2vega.gz", "missing gene2vega.gz");
             assertFileExistsAndNotEmpty("zf_gene_info.gz", "missing zf_gene_info.gz");
 
             unless(envTrue("FORCE_EFETCH"), () -> {
@@ -843,7 +854,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     throw new RuntimeException(e);
                 }
             }
-            filesToRemoveMessage = "Removing seq.fasta zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER";
+            filesToRemoveMessage = "Removing seq.fasta zf_gene_info.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER";
             System.out.println(filesToRemoveMessage);
             if (LOG != null) print(LOG, filesToRemoveMessage + "\n");
 
@@ -852,7 +863,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             }
             rmFiles(workingDir, List.of("*.csv",
                     "zf_gene_info.gz",
-                    "gene2vega.gz",
                     "gene2accession.gz",
                     "RefSeqCatalog.gz",
                     "RELEASE_NUMBER"
@@ -903,7 +913,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             assertFileExistsAndNotEmpty("gene2accession.gz", "ERROR with download: gene2accession.gz missing after download attempt");
             // RefSeqCatalog.gz might be filtered to RefSeqCatalog.danio.*.gz, so check original before asserting
             assertFileExistsAndNotEmpty("RefSeqCatalog.gz", "ERROR with download: RefSeqCatalog.gz (original) missing after download attempt");
-            assertFileExistsAndNotEmpty("gene2vega.gz", "ERROR with download: gene2vega.gz missing after download attempt");
         }
     }
 
@@ -957,12 +966,81 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     }
 
+    /**
+     * Capture legacy Vega matches before they are removed from the database.
+     * These matches are identified by the publication ZDB-PUB-130725-2.
+     * Uses native SQL for efficiency - avoids N+1 query problem from lazy loading publications.
+     */
+    private void captureLegacyVegaMatches() {
+        String sql = """
+            SELECT dblink_linked_recid, dblink_acc_num, dblink_zdb_id
+            FROM db_link
+            JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
+            WHERE dblink_fdbcont_zdb_id = :fdbcont
+              AND recattrib_source_zdb_id = :vegaPub
+            """;
+
+        NativeQuery<Tuple> query = currentSession().createNativeQuery(sql, Tuple.class);
+        query.setParameter("fdbcont", FDCONT_NCBI_GENE_ID);
+        query.setParameter("vegaPub", PUB_MAPPED_BASED_ON_VEGA);
+        List<Tuple> results = query.list();
+
+        HashSet<DBLinkSlimDTO> dtos = new HashSet<>();
+        HashSet<String> dblinkIds = new HashSet<>();
+
+        for (Tuple row : results) {
+            String geneId = row.get(0, String.class);
+            String accession = row.get(1, String.class);
+            String dblinkId = row.get(2, String.class);
+
+            DBLinkSlimDTO dto = new DBLinkSlimDTO();
+            dto.setDataZdbID(geneId);
+            dto.setAccession(accession);
+            dtos.add(dto);
+            dblinkIds.add(dblinkId);
+
+            legacyVegaMap.put(geneId, accession);
+        }
+
+        legacyVegaMatches = dtos;
+        legacyVegaDblinkIds = dblinkIds;
+
+        print(LOG, "Captured " + legacyVegaMatches.size() + " legacy Vega matches for potential reintroduction.\n");
+    }
+
+    private void runTemporaryVegaRemoveSQL() {
+        runSqlFile("temporaryVegaRemove.sql", "vega-remove-output.txt", "vega-remove-err.txt");
+    }
+
+    private void removeLegacyVegaMatchesFromDB() {
+        if (legacyVegaDblinkIds.isEmpty()) {
+            print(LOG, "No legacy Vega matches to remove.\n");
+            return;
+        }
+        print(LOG, "Removing " + legacyVegaDblinkIds.size() + " legacy Vega db_links from database.\n");
+
+        // Use native SQL for efficient bulk delete - avoids loading entities into Hibernate session
+        String sql = "DELETE FROM zdb_active_data WHERE zactvd_zdb_id = :dblinkId";
+        HibernateUtil.createTransaction();
+        for (String dblinkId : legacyVegaDblinkIds) {
+            currentSession().createNativeQuery(sql)
+                .setParameter("dblinkId", dblinkId)
+                .executeUpdate();
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
     private void prepareNCBIgeneLoadDatabaseQuery() {
-        String sqlFile = "prepareNCBIgeneLoad.sql";
-        // Construct path relative to SOURCEROOT/server_apps/data_transfer/NCBIGENE/
-        File sqlFilePath = new File(new File(SOURCEROOT.value(), "server_apps/data_transfer/NCBIGENE/"), sqlFile);
+        runSqlFile("prepareNCBIgeneLoad.sql", "prepareLog1.txt", "prepareLog2.txt");
+        print(LOG, "Done with preparing the delete list and the list for mapping.\n\n");
+        String subjectPrefix = "Notify : NCBI gene load :: ";
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog1.txt file","prepareLog1.txt", workingDir);
+        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog2.txt file","prepareLog2.txt", workingDir);
+    }
 
-
+    private void runSqlFile(String sqlFileName, String logFile1, String logFile2) {
+        File basePath = new File(SOURCEROOT.value(), "server_apps/data_transfer/NCBIGENE/");
+        File sqlFilePath = new File(basePath, sqlFileName);
         if (!sqlFilePath.exists()) {
             reportErrAndExit("SQL file not found: " + sqlFilePath.getAbsolutePath());
             return;
@@ -977,18 +1055,15 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                             "-h", env("PGHOST"),
                             "-d", env("DB_NAME"),
                             "-a", "-f", sqlFilePath.getAbsolutePath()
-                    ), "prepareLog1.txt", "prepareLog2.txt"
+                    ), logFile1, logFile2
             );
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
-            reportErrAndExit("Notify : NCBI gene load :: failed at prepareNCBIgeneLoad.sql - " + e.getMessage());
+            reportErrAndExit("Notify : NCBI gene load :: failed at " + sqlFileName + " - " + e.getMessage());
         }
 
-        print(LOG, "Done with preparing the delete list and the list for mapping.\n\n");
-        String subjectPrefix = "Notify : NCBI gene load :: ";
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog1.txt file","prepareLog1.txt", workingDir);
-        sendMailWithAttachedReport(env("SWISSPROT_EMAIL_ERR"),subjectPrefix + "prepareLog2.txt file","prepareLog2.txt", workingDir);
+        print(LOG, "Done with executing " + sqlFileName + ".\n\n");
     }
 
     private void getMetricsOfDbLinksToDelete() {
@@ -1142,12 +1217,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      */
     private void readZfinGeneInfoFile() {
         int ctLines = 0;
-        vegaIdsNCBIids = new HashMap<>();
+        // Value is String, not List<String>
         NCBIidsGeneSymbols = new HashMap<>();
-        Map<String, String> geneSymbolsNCBIids = new HashMap<>(); // Added initialization
-        vegaIdwithMultipleNCBIids = new HashMap<>();
-        NCBIgeneWithMultipleVega = new HashMap<>();
-        int ctVegaIdsNCBI = 0;
 
         File zfGeneInfoFile = new File(workingDir, "zf_gene_info.gz");
         try (
@@ -1176,43 +1247,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String ncbiGeneId = fields[1];
                 String symbol = fields[2];
 
-                geneSymbolsNCBIids.put(symbol, ncbiGeneId);
                 NCBIidsGeneSymbols.put(ncbiGeneId, symbol);
-
-                String dbXrefs = fields[5];
-                Pattern vegaPattern = Pattern.compile("Vega:(OTTDARG[0-9]+)");
-                List<String> foundVegaIds = new ArrayList<>();
-                Matcher matcher = vegaPattern.matcher(dbXrefs);
-                while (matcher.find()) {
-                    foundVegaIds.add(matcher.group(1));
-                }
-
-                if (foundVegaIds.size() > 1) {
-                    // Perl stores the raw dbXrefs string, split by '|' into a list for NCBIgeneWithMultipleVega
-                    // For Java, we'll store the list of Vega IDs extracted if that's more useful,
-                    // or stick to the Perl logic of storing the dbXrefs field itself.
-                    // The Perl code was: $NCBIgeneWithMultipleVega{$NCBIgeneId} = $dbXrefs;
-                    // And prints $dbXrefs. So we store the raw field.
-                    NCBIgeneWithMultipleVega.put(ncbiGeneId, List.of(dbXrefs)); // Storing as a list with one element: the raw field
-                    print(LOG, "\nMultiple Vega: \n " + ncbiGeneId + "\t" + dbXrefs + "\n");
-                    continue;
-                }
-
-                if (foundVegaIds.size() == 1) {
-                    String vegaIdNCBI = foundVegaIds.get(0);
-                    ctVegaIdsNCBI++;
-
-                    if (vegaIdwithMultipleNCBIids.containsKey(vegaIdNCBI) ||
-                        (vegaIdsNCBIids.containsKey(vegaIdNCBI) && !vegaIdsNCBIids.get(vegaIdNCBI).equals(ncbiGeneId))) {
-                        if (!vegaIdwithMultipleNCBIids.containsKey(vegaIdNCBI)) {
-                            String firstNCBIgeneIdFound = vegaIdsNCBIids.get(vegaIdNCBI);
-                            vegaIdwithMultipleNCBIids.put(vegaIdNCBI, new ArrayList<>(Arrays.asList(firstNCBIgeneIdFound, ncbiGeneId)));
-                        } else {
-                            vegaIdwithMultipleNCBIids.get(vegaIdNCBI).add(ncbiGeneId);
-                        }
-                    }
-                    vegaIdsNCBIids.put(vegaIdNCBI, ncbiGeneId);
-                }
             }
         } catch (IOException e) {
             reportErrAndExit("Cannot open or read zf_gene_info.gz: " + e.getMessage());
@@ -1224,89 +1259,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
 
         print(LOG, "\nTotal number of records on NCBI's Danio_rerio.gene_info file: " + dataLinesInZfGeneInfo + "\n\n");
-        if (ctVegaIdsNCBI > 0) {
-            print(LOG, "\nctVegaIdsNCBI from zf_gene_info:  " + ctVegaIdsNCBI + "\n\n");
-        }
         print(STATS_PRIORITY1, "\nTotal number of records on NCBI's Danio_rerio.gene_info file: " + dataLinesInZfGeneInfo + "\n");
-        if (ctVegaIdsNCBI > 0) {
-            print(STATS_PRIORITY1, "\nNumber of Vega Gene Id/NCBI Gene Id pairs on Danio_rerio.gene_info file: " + ctVegaIdsNCBI + "\n\n");
-        }
-
-        if (ctVegaIdsNCBI == 0) {
-            print(LOG, "No Vega IDs found in zf_gene_info. Parsing gene2vega.gz\n");
-            ctLines = 0; // Reset for gene2vega file
-            // ctVegaIdsNCBI is already 0
-            File gene2VegaFile = new File(workingDir, "gene2vega.gz");
-            try (
-                    FileInputStream fis = new FileInputStream(gene2VegaFile);
-                    GZIPInputStream gzis = new GZIPInputStream(fis);
-                    InputStreamReader reader = new InputStreamReader(gzis);
-                    BufferedReader br = new BufferedReader(reader)
-            ) {
-                String line;
-                if (br.ready()) {
-                    br.readLine(); // Skip header
-                    ctLines = 1;
-                }
-                while ((line = br.readLine()) != null) {
-                    ctLines++;
-                    String[] fields = line.split("\t", -1);
-                    if (fields.length < 3) continue;
-
-                    String taxId = fields[0];
-                    if (!"7955".equals(taxId)) {
-                        continue;
-                    }
-
-                    String ncbiGeneId = fields[1];
-                    String vegaIdNCBI = fields[2];
-                    ctVegaIdsNCBI++;
-
-                    if (vegaIdwithMultipleNCBIids.containsKey(vegaIdNCBI) ||
-                        (vegaIdsNCBIids.containsKey(vegaIdNCBI) && !vegaIdsNCBIids.get(vegaIdNCBI).equals(ncbiGeneId))) {
-                        if (!vegaIdwithMultipleNCBIids.containsKey(vegaIdNCBI)) {
-                            String firstNCBIgeneIdFound = vegaIdsNCBIids.get(vegaIdNCBI);
-                            vegaIdwithMultipleNCBIids.put(vegaIdNCBI, new ArrayList<>(Arrays.asList(firstNCBIgeneIdFound, ncbiGeneId)));
-                        } else {
-                            vegaIdwithMultipleNCBIids.get(vegaIdNCBI).add(ncbiGeneId);
-                        }
-                    }
-                    vegaIdsNCBIids.put(vegaIdNCBI, ncbiGeneId);
-                }
-
-            } catch (IOException e) {
-                reportErrAndExit("Cannot open or read gene2vega.gz: " + e.getMessage());
-            }
-            long dataLinesInGene2Vega = ctLines > 0 ? ctLines - 1 : 0;
-
-            print(LOG, "\nTotal number of records on NCBI's gene2vega file: " + dataLinesInGene2Vega + "\n\n");
-            if (ctVegaIdsNCBI > 0) {
-                print(LOG, "\nctVegaIdsNCBI from gene2vega:  " + ctVegaIdsNCBI + "\n\n");
-            }
-            print(STATS_PRIORITY1, "\nTotal number of records on NCBI's gene2vega file: " + dataLinesInGene2Vega + "\n");
-            if (ctVegaIdsNCBI > 0) {
-                print(STATS_PRIORITY1, "\nNumber of Vega Gene Id/NCBI Gene Id pairs on gene2vega file: " + ctVegaIdsNCBI + "\n\n");
-            }
-        }
-
-        if (ctVegaIdsNCBI > 0 && !vegaIdwithMultipleNCBIids.isEmpty()) { // Check if the map is not empty
-            print(STATS_PRIORITY2, "On NCBI's relevant file (zf_gene_info or gene2vega), the following Vega Ids correspond to more than 1 NCBI genes\n\n");
-            print(LOG, "On NCBI's relevant file (zf_gene_info or gene2vega), the following Vega Ids correspond to more than 1 NCBI genes\n");
-
-            long ctVegaIdWithMultipleNCBIgene = vegaIdwithMultipleNCBIids.size();
-            for (Map.Entry<String, List<String>> entry : vegaIdwithMultipleNCBIids.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey()).collect(Collectors.toList())) {
-                String vega = entry.getKey();
-                List<String> ncbiGenes = entry.getValue();
-                String ncbiGenesStr = String.join(" ", ncbiGenes);
-                print(LOG, vega + " " + ncbiGenesStr + "\n");
-                print(STATS_PRIORITY2, vega + " " + ncbiGenesStr + "\n");
-            }
-            print(LOG, "\nctVegaIdWithMultipleNCBIgene = " + ctVegaIdWithMultipleNCBIgene + "\n\n");
-        } else if (ctVegaIdsNCBI > 0) {
-            print(LOG, "No Vega IDs found to correspond to more than 1 NCBI gene, or ctVegaIdsNCBI is zero.\n");
-        }
-
 
         String sqlGeneZDBidsSymbols = """
             select mrkr_zdb_id, mrkr_abbrev from marker
@@ -1324,12 +1277,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         //write for debugging purposes
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
-        rootNode.set("vegaIdsNCBIids", mapper.valueToTree(vegaIdsNCBIids));
         rootNode.set("NCBIidsGeneSymbols", mapper.valueToTree(NCBIidsGeneSymbols));
-        rootNode.set("geneSymbolsNCBIids", mapper.valueToTree(geneSymbolsNCBIids));
-        rootNode.set("vegaIdwithMultipleNCBIids", mapper.valueToTree(vegaIdwithMultipleNCBIids));
-        rootNode.set("NCBIgeneWithMultipleVega", mapper.valueToTree(NCBIgeneWithMultipleVega));
-        rootNode.put("ctVegaIdsNCBI", Integer.toString(ctVegaIdsNCBI));
 
         try {
             mapper.writeValue(new File(workingDir,"java_debug_readZfinGeneInfoFile.json"), rootNode);
@@ -2286,6 +2234,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    private void reintroduceLegacyVegaLinks() {
+        legacyVegaMatches.forEach(dblink -> {
+            // Add back the legacy Vega links to NCBI Gene IDs (won't overwrite existing links if they have higher priority)
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(dblink.getDataZdbID(), dblink.getAccession(), null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+        });
+    }
+
     private List<LoadReportAction> getOneToNNCBItoZFINgeneIds() {
         nToOne = new HashMap<>();
         oneToN = new HashMap<>();
@@ -2724,135 +2679,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return warningActions;
     }
 
-    private void buildVegaIDMappings()  {
-        ZDBgeneAndVegaGeneIds = new HashMap<>();
-        VegaGeneAndZDBgeneIds = new HashMap<>();
-        ZDBgeneWithMultipleVegaGeneIds = new HashMap<>();
-        vegaGeneIdWithMultipleZFINgenes = new HashMap<>();
-
-        String sqlGetVEGAidAndGeneZDBId = String.format("""
-            select mrel_mrkr_1_zdb_id, dblink_acc_num
-            from marker_relationship, db_link
-            where mrel_mrkr_2_zdb_id = dblink_linked_recid
-              and dblink_fdbcont_zdb_id = '%s'
-              and (mrel_mrkr_1_zdb_id like 'ZDB-GENE%%' or mrel_mrkr_1_zdb_id like '%%RNAG%%')
-              and dblink_acc_num like 'OTTDARG%%'
-              and mrel_type = 'gene produces transcript'
-            """, FDCONT_VEGA);
-
-        NativeQuery<Tuple> query = currentSession().createNativeQuery(sqlGetVEGAidAndGeneZDBId, Tuple.class);
-        List<Tuple> results = query.list();
-
-        long ctTotalZDBgeneIdVegaGeneIds = 0;
-
-        for (Tuple row : results) {
-            ctTotalZDBgeneIdVegaGeneIds++;
-            String geneZdbId = row.get(0, String.class);
-            String vegaGeneId = row.get(1, String.class);
-
-            // Logic for ZDBgeneWithMultipleVegaGeneIds
-            if (ZDBgeneWithMultipleVegaGeneIds.containsKey(geneZdbId) ||
-                (ZDBgeneAndVegaGeneIds.containsKey(geneZdbId) && !ZDBgeneAndVegaGeneIds.get(geneZdbId).equals(vegaGeneId))) {
-                ZDBgeneWithMultipleVegaGeneIds.computeIfAbsent(geneZdbId, k -> {
-                    List<String> list = new ArrayList<>();
-                    if (ZDBgeneAndVegaGeneIds.containsKey(k)) list.add(ZDBgeneAndVegaGeneIds.get(k)); // Add the first one found
-                    return list;
-                }).add(vegaGeneId);
-
-                // Keep duplicates
-            }
-            ZDBgeneAndVegaGeneIds.put(geneZdbId, vegaGeneId); // This will overwrite, keeping the last one, as in Perl
-
-            // Logic for vegaGeneIdWithMultipleZFINgenes
-            if (vegaGeneIdWithMultipleZFINgenes.containsKey(vegaGeneId) ||
-                (VegaGeneAndZDBgeneIds.containsKey(vegaGeneId) && !VegaGeneAndZDBgeneIds.get(vegaGeneId).equals(geneZdbId))) {
-                vegaGeneIdWithMultipleZFINgenes.computeIfAbsent(vegaGeneId, k -> {
-                    List<String> list = new ArrayList<>();
-                    if (VegaGeneAndZDBgeneIds.containsKey(k)) list.add(VegaGeneAndZDBgeneIds.get(k));
-                    return list;
-                }).add(geneZdbId);
-
-                // Keep duplicates
-            }
-            VegaGeneAndZDBgeneIds.put(vegaGeneId, geneZdbId); // This will overwrite, keeping the last one
-        }
-
-        print(LOG, "\nctTotalZDBgeneIdVegaGeneIds = " + ctTotalZDBgeneIdVegaGeneIds + "\n\n");
-        print(STATS_PRIORITY2, "\nThe total number of ZFIN genes with Vega Gene Id: " + ctTotalZDBgeneIdVegaGeneIds + "\n\n");
-
-        long ctVegaIdWithMultipleZDBgene = 0;
-        print(LOG, "\nThe following Vega Gene Ids at ZFIN correspond to multiple ZDB Gene Ids\n");
-        for (String vega : vegaGeneIdWithMultipleZFINgenes.keySet().stream().sorted().collect(Collectors.toList())) {
-            ctVegaIdWithMultipleZDBgene++;
-            List<String> zdbGenes = vegaGeneIdWithMultipleZFINgenes.get(vega);
-            print(LOG, vega + " " + String.join(" ", zdbGenes) + "\n");
-        }
-        print(LOG, "\nctVegaIdWithMultipleZDBgene = " + ctVegaIdWithMultipleZDBgene + "\n\n");
-
-        File reportZdbGeneMultipleVega = new File(workingDir, "reportZDBgeneIdWithMultipleVegaIds");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportZdbGeneMultipleVega))) {
-            long ctZDBgeneIdWithMultipleVegaId = 0;
-            for (String zdbGene : ZDBgeneWithMultipleVegaGeneIds.keySet().stream().sorted().collect(Collectors.toList())) {
-                ctZDBgeneIdWithMultipleVegaId++;
-                List<String> vegaIds = ZDBgeneWithMultipleVegaGeneIds.get(zdbGene);
-                writer.write(zdbGene + " " + String.join(" ", vegaIds) + "\n");
-            }
-            print(LOG, "\nctZDBgeneIdWithMultipleVegaId = " + ctZDBgeneIdWithMultipleVegaId + "\n\n");
-        } catch (IOException e) {
-            reportErrAndExit("Cannot open or write to reportZDBgeneIdWithMultipleVegaIds: " + e.getMessage());
-        }
-    }
-
-    private void writeCommonVegaGeneIdMappings()  {
-        oneToOneViaVega = new HashMap<>(); // NCBI Gene ID -> ZDB Gene ID
-        long ctMappedViaVega = 0;
-
-        for (String zdbId : geneZDBidsSymbols.keySet().stream().sorted().collect(Collectors.toList())) {
-            // Exclude genes already mapped via RNA or involved in complex RNA mappings
-            if (mapped.containsKey(zdbId) ||
-                oneToNZFINtoNCBI.containsKey(zdbId) ||
-                (zdbGeneIdsNtoOneAndNtoN != null && zdbGeneIdsNtoOneAndNtoN.containsKey(zdbId)) || // zdbGeneIdsNtoOneAndNtoN is ZFIN -> NCBI
-                geneZFINwithAccSupportingMoreThan1.containsKey(zdbId)) {
-                continue;
-            }
-
-            // Check if ZFIN gene has a unique Vega ID
-            if (ZDBgeneAndVegaGeneIds.containsKey(zdbId) && !ZDBgeneWithMultipleVegaGeneIds.containsKey(zdbId)) {
-                String vegaGeneIdAtZfin = ZDBgeneAndVegaGeneIds.get(zdbId);
-
-                // Check if this Vega ID maps uniquely to an NCBI gene and is not problematic at NCBI/ZFIN Vega level
-                if (vegaIdsNCBIids.containsKey(vegaGeneIdAtZfin) &&
-                    !vegaIdwithMultipleNCBIids.containsKey(vegaGeneIdAtZfin) &&
-                    !vegaGeneIdWithMultipleZFINgenes.containsKey(vegaGeneIdAtZfin)) {
-
-                    String ncbiGeneIdMappedViaVega = vegaIdsNCBIids.get(vegaGeneIdAtZfin);
-
-                    // Further exclude NCBI genes that are problematic (multiple Vegas, complex RNA, or already RNA-mapped)
-                    if (!NCBIgeneWithMultipleVega.containsKey(ncbiGeneIdMappedViaVega) &&
-                        !geneNCBIwithAccSupportingMoreThan1.containsKey(ncbiGeneIdMappedViaVega) &&
-                        !mapped.containsValue(ncbiGeneIdMappedViaVega)) {
-
-                            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, ncbiGeneIdMappedViaVega, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
-                            oneToOneViaVega.put(ncbiGeneIdMappedViaVega, zdbId);
-                            ctMappedViaVega++;
-                    }
-                }
-            }
-        }
-
-        long ctTotalMapped = ctMappedViaVega + this.ctOneToOneNCBI; // ctOneToOneNCBI is from RNA mapping
-        print(LOG, "\nctMappedViaVega = " + ctMappedViaVega + "\n\nTotal number of the gene records mapped: " + ctMappedViaVega + " + " + this.ctOneToOneNCBI + " = " + ctTotalMapped + "\n\n");
-        print(STATS_PRIORITY2, "\nMapping result via Vega Gene Id: " + ctMappedViaVega + " additional gene records are mapped\n\n");
-        print(STATS_PRIORITY2, "Total number of the gene records mapped: " + ctMappedViaVega + " + " + this.ctOneToOneNCBI + " = " + ctTotalMapped + "\n\n");
-    }
-
     private void calculateLengthForAccessionsWithoutLength()  {
         File noLengthUnlFile = new File(workingDir, "noLength.unl");
         int accessionsToWriteCount = 0;
 
         //we only care about the accessions that are mapped to NCBI or ZFIN
         Map<String, String> noLengthAccessionsFiltered = noLength.entrySet().stream().filter(
-                        entry -> mapped.containsValue(entry.getValue()) || oneToOneViaVega.containsKey(entry.getValue()))
+                        entry -> mapped.containsValue(entry.getValue()) )
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue
@@ -3344,32 +3177,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             reportErr(subjectLine);
         }
 
-        String sqlFile = "loadNCBIgeneAccs.sql";
-        File fullPathToSqlFile = new File(SOURCEROOT.value(), "server_apps/data_transfer/NCBIGENE/" + sqlFile);
-
-        if (!fullPathToSqlFile.exists()) {
-            reportErrAndExit("SQL file not found: " + fullPathToSqlFile.getAbsolutePath());
-            return;
-        }
-
-        try {
-            HibernateUtil.createTransaction(); // Assuming the SQL script manages its own transactionality or this is appropriate
-            doSystemCommand(
-                    List.of(
-                            "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
-                            "-U", env("PGUSER"),
-                            "-h", env("PGHOST"),
-                            "-d", env("DB_NAME"),
-                            "-a", "-f", fullPathToSqlFile.getAbsolutePath()
-                    ), "loadLog1.txt", "loadLog2.txt"
-            );
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (Exception e) { // Catch general exception from doSystemCommand
-            HibernateUtil.rollbackTransaction();
-            // Perl script explicitly calls sendLoadLogs() on failure of this specific command.
-            sendLoadLogs(); // Send logs before exiting
-            reportErrAndExit("Notify : NCBI gene load :: failed at loadNCBIgeneAccs.sql");
-        }
+        runSqlFile("loadNCBIgeneAccs.sql", "loadLog1.txt", "loadLog2.txt");
         print(LOG, "\nDone with the deletion and loading!\n\n");
     }
 
@@ -3382,24 +3190,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             return;
         }
 
-        try {
-            HibernateUtil.createTransaction(); // Assuming the SQL script manages its own transactionality or this is appropriate
-            doSystemCommand(
-                    List.of(
-                            "psql", "--echo-all", "-v", "ON_ERROR_STOP=1",
-                            "-U", env("PGUSER"),
-                            "-h", env("PGHOST"),
-                            "-d", env("DB_NAME"),
-                            "-a", "-f", fullPathToSqlFile.getAbsolutePath()
-                    ), "loadLogMarkerAssemblyUpdate.txt", "loadLogMarkerAssemblyUpdateErr.txt"
-            );
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (Exception e) { // Catch general exception from doSystemCommand
-            HibernateUtil.rollbackTransaction();
-            // Perl script explicitly calls sendLoadLogs() on failure of this specific command.
-            sendLoadLogs(); // Send logs before exiting
-            reportErrAndExit("Notify : NCBI gene load :: failed at markerAssemblyUpdate.sql");
-        }
+        runSqlFile(sqlFile, "loadLogMarkerAssemblyUpdate.txt", "loadLogMarkerAssemblyUpdateErr.txt");
         print(LOG, "\nDone with the update of marker-assembly association!\n\n");
     }
 
@@ -4039,12 +3830,44 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         action.setAccession(accNum);
         action.setGeneZdbID(zdbId);
         action.setId(accNum + zdbId + fdbcontZdbId);
-        String details = """
-        %s: %s
-        Gene ZDB ID: %s
-        Database: %s (%s)
-        """.formatted(dbLinkType, accNum, zdbId, dbName, fdbcontZdbId);
-        action.setDetails(details);
+
+        // Build details with supporting RNA accessions for LOAD actions on NCBI Gene IDs
+        StringBuilder detailsBuilder = new StringBuilder();
+        detailsBuilder.append(String.format("%s: %s%n", dbLinkType, accNum));
+        detailsBuilder.append(String.format("Gene ZDB ID: %s%n", zdbId));
+        detailsBuilder.append(String.format("Database: %s (%s)%n", dbName, fdbcontZdbId));
+
+        if (type == LoadReportAction.Type.LOAD && FDCONT_NCBI_GENE_ID.equals(fdbcontZdbId)) {
+            // Add supporting RNA accessions from ZFIN
+            List<String> zfinAccessions = supportedGeneZFIN.getOrDefault(zdbId, Collections.emptyList());
+            if (!zfinAccessions.isEmpty()) {
+                detailsBuilder.append(String.format("%nSupporting ZFIN RNA accessions (%d):%n  %s%n",
+                        zfinAccessions.size(), String.join(", ", zfinAccessions)));
+                // Add links for first few accessions (limit to avoid overwhelming the report)
+                zfinAccessions.stream().limit(5).forEach(action::addRefSeqLink);
+            }
+
+            // Add supporting RNA accessions from NCBI
+            Set<String> ncbiAccessions = supportedGeneNCBI.getOrDefault(accNum, Collections.emptySet());
+            if (!ncbiAccessions.isEmpty()) {
+                detailsBuilder.append(String.format("%nSupporting NCBI RNA accessions (%d):%n  %s%n",
+                        ncbiAccessions.size(), String.join(", ", ncbiAccessions)));
+                // Add links for first few accessions
+                ncbiAccessions.stream().limit(5).forEach(action::addRefSeqLink);
+            }
+
+            // Show common accessions (the basis for the match)
+            if (!zfinAccessions.isEmpty() && !ncbiAccessions.isEmpty()) {
+                Set<String> commonAccessions = new HashSet<>(zfinAccessions);
+                commonAccessions.retainAll(ncbiAccessions);
+                if (!commonAccessions.isEmpty()) {
+                    detailsBuilder.append(String.format("%nCommon accessions (match basis, %d):%n  %s%n",
+                            commonAccessions.size(), String.join(", ", commonAccessions)));
+                }
+            }
+        }
+
+        action.setDetails(detailsBuilder.toString());
         action.setSupplementalDataKeys(Collections.emptyList());
         action.addZdbIdLink(zdbId);
         action.addNcbiGeneIdLink(accNum);
@@ -4106,12 +3929,15 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         if (mapped.containsValue(ncbiGeneId)) {
             zdbGeneId = mapped.getKey(ncbiGeneId); 
             attributionPub = PUB_MAPPED_BASED_ON_RNA;
-        } else if (oneToOneViaVega.containsKey(ncbiGeneId)) {
-            zdbGeneId = oneToOneViaVega.get(ncbiGeneId);
-            attributionPub = PUB_MAPPED_BASED_ON_VEGA;
+//        } else if (oneToOneViaVega.containsKey(ncbiGeneId)) {
+//            zdbGeneId = oneToOneViaVega.get(ncbiGeneId);
+//            attributionPub = PUB_MAPPED_BASED_ON_VEGA;
         } else if (ncbiSupplementMap != null && ncbiSupplementMap.containsValue(ncbiGeneId)) {
             zdbGeneId = ncbiSupplementMap.getKey(ncbiGeneId);
             attributionPub = PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT;
+        } else if (legacyVegaMap != null && legacyVegaMap.containsValue(ncbiGeneId)) {
+            zdbGeneId = legacyVegaMap.getKey(ncbiGeneId);
+            attributionPub = PUB_MAPPED_BASED_ON_VEGA;
         }
         return new String[]{zdbGeneId, attributionPub};
     }
@@ -4307,6 +4133,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
             timeDiff = STEP_TIMESTAMP - lastTimeStamp; // time() returns seconds
             logLine += ". Time since last step: " + timeDiff + " seconds.";
+            logLine += " Total elapsed time: " + (STEP_TIMESTAMP - START_TIMESTAMP) + " seconds.";
         }
         System.out.println(logLine);
         if (LOG != null) { // Ensure LOG is initialized
@@ -4351,7 +4178,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         File refSeqCatalogGz = new File(workingDir, "RefSeqCatalog.gz"); // e.g. RefSeq-releaseXXX.catalog.gz
         File gene2accessionGz = new File(workingDir, "gene2accession.gz");
-        File gene2vegaGz = new File(workingDir, "gene2vega.gz");
         File zfGeneInfoGz = new File(workingDir, "zf_gene_info.gz");
 
         try {
@@ -4429,9 +4255,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
             }
 
-            downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", gene2vegaGz, workingDir, LOG);
-            String gene2vegaMd5 = md5File(gene2vegaGz, LOG);
-            System.out.println("gene2vega.gz md5: " + (gene2vegaMd5 != null ? gene2vegaMd5 : "N/A") + " at " + nowToString("yyyy-MM-dd HH:mm:ss"));
 
             downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz", zfGeneInfoGz, workingDir, LOG);
             String zfGeneInfoMd5 = md5File(zfGeneInfoGz, LOG);
