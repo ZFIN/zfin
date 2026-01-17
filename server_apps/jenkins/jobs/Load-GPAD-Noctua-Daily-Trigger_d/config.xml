@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Trigger the Load GPAD Noctua job if new data is available</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec></spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <hudson.tasks.Shell>
+            <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml check-noctua-gpad-available</command>
+            <unstableReturn>1</unstableReturn>
+        </hudson.tasks.Shell>
+    </builders>
+  <publishers>
+      <hudson.tasks.BuildTrigger>
+          <childProjects>Load-GPAD-Noctua_w</childProjects>
+          <threshold>
+              <name>SUCCESS</name>
+              <ordinal>0</ordinal>
+              <color>GREEN</color>
+              <completeBuild>true</completeBuild>
+          </threshold>
+      </hudson.tasks.BuildTrigger>
+      <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+          <recipientList></recipientList>
+          <configuredTriggers>
+              <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                  <email>
+                      <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                      <subject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}] - Failure checking for new GPAD Noctua file - Build #${BUILD_NUMBER}</subject>
+                      <body>Build ${BUILD_NUMBER} failed while checking for new GPAD Noctua file.
+
+                          Build URL: ${BUILD_URL}
+                          Console Output: ${BUILD_URL}console
+                          Instance: ${INSTANCE}
+                          Date: ${BUILD_TIMESTAMP}
+
+                          Please check the console output for details.
+
+                          This is an automated message from Jenkins.</body>
+                      <sendToDevelopers>false</sendToDevelopers>
+                      <sendToRequester>false</sendToRequester>
+                      <includeCulprits>false</includeCulprits>
+                      <sendToRecipientList>true</sendToRecipientList>
+                      <attachmentsPattern></attachmentsPattern>
+                      <attachBuildLog>true</attachBuildLog>
+                      <compressBuildLog>true</compressBuildLog>
+                      <replyTo>${DB_OWNER}@zfin.org</replyTo>
+                      <contentType>text/plain</contentType>
+                  </email>
+              </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          </configuredTriggers>
+          <contentType>text/plain</contentType>
+          <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
+          <defaultContent>$DEFAULT_CONTENT</defaultContent>
+          <attachmentsPattern></attachmentsPattern>
+          <presendScript></presendScript>
+          <attachBuildLog>false</attachBuildLog>
+          <compressBuildLog>false</compressBuildLog>
+          <replyTo>${DB_OWNER}@zfin.org</replyTo>
+          <saveOutput>false</saveOutput>
+      </hudson.plugins.emailext.ExtendedEmailPublisher>
+
+  </publishers>
+  <buildWrappers>
+  </buildWrappers>
+</project>
