@@ -26,15 +26,15 @@
 </p><table border="0" width="74%">
 <tr>
 <td width="33%">
-<p><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-6"><img height="74" src="icon6.jpg" width="113">
+<p><a href="/ZDB-IMAGE-001220-6"><img height="74" src="icon6.jpg" width="113">
 <br>
         lateral line diagram</a></p>
-<p><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-5"><img height="73" src="icon5.jpg" width="113">
+<p><a href="/ZDB-IMAGE-001220-5"><img height="73" src="icon5.jpg" width="113">
         placode</a></p>
 </td>
-<td width="28%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-7"><img height="164" src="icon7.jpg" width="113"><br>
+<td width="28%"><a href="/ZDB-IMAGE-001220-7"><img height="164" src="icon7.jpg" width="113"><br>
       live neuromasts</a> </td>
-<td width="39%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-8"><img height="111" src="icon8.jpg" width="113"><br>
+<td width="39%"><a href="/ZDB-IMAGE-001220-8"><img height="111" src="icon8.jpg" width="113"><br>
       neuromast polarity</a></td>
 </tr>
 </table>
@@ -45,7 +45,7 @@
   is stimulated by local water displacements and vibrations, and detects propulsion
   of the fish through the water, as well as facilitating shoaling, prey capture,
   and predator and obstacle avoidance. In the 4 day larva, there are eight distinct
-  lateral lines (<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-000523-3">Raible
+  lateral lines (<a href="/ZDB-PUB-000523-3">Raible
   and Kruse, 2000</a>): </p>
 <ul>
   supraorbital (three neuromasts)<br>
@@ -70,7 +70,7 @@ in one of two opposing polarities; in the trunk, these correspond to the anterop
 axis of the body. <a href="../hair_cell/hair_cell.html">Hair cells</a> are innervated
 by lateral line nerves; cell bodies of afferent neurons sit in cranial anterior
 and posterior lateral line ganglia. Three types of efferent neurons have been
-described that project axons into the posterior lateral line nerve (<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961014-768">Metcalfe
+described that project axons into the posterior lateral line nerve (<a href="/ZDB-PUB-961014-768">Metcalfe
 et al., 1985</a>).<!-- /DESC -->
 <p>
 <!-- HMLG --> <!-- HMLG-HDR --><b>Homologues:</b><!-- /HMLG-HDR --><br>

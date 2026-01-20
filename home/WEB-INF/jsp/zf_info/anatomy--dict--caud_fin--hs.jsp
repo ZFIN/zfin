@@ -6,9 +6,9 @@
 <!-- AUTHOR -->
 <!-- AUTHOR-HDR -->by <!-- /AUTHOR-HDR -->
 <!-- AUTHOR-DATA -->
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-960805-320">Paula 
+<a href="/ZDB-PERS-960805-320">Paula 
 Mabee</a> and
-		<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-001106-2">Nathan C. 
+		<a href="/ZDB-PERS-001106-2">Nathan C. 
 Bird</a>
 <!-- /AUTHOR-DATA -->
 <!-- /AUTHOR -->
@@ -45,10 +45,10 @@ Bird</a>
 <!-- FIGURES-DATA -->
 </p><table>
 <tr>
-<td> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-3"><img src="ha2.jpg"><br>
+<td> <a href="/ZDB-IMAGE-010716-3"><img src="ha2.jpg"><br>
        hypurals (larval, 5.8mm)</a>
 </td>
-<td> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-4"><img src="ha3.jpg"><br>
+<td> <a href="/ZDB-IMAGE-010716-4"><img src="ha3.jpg"><br>
        hypurals (adult)</a><br>
 </td></tr>
 </table>
@@ -253,7 +253,7 @@ and Alizarin Red (bone), as per the method of Dinkerkus and Uhler
 <b>Primary: </b>
 <!-- /PUB-PRIM-HDR -->
 <!-- PUB-PRIM-DATA -->
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-011008-1">Mabee, P.M. 
+<a href="/ZDB-PUB-011008-1">Mabee, P.M. 
 and Bird, N.C. (2001) A preliminary description of the anatomy and 
 development of the zebrafish
 axial skeleton. ZFIN Direct Data Submission.</a>

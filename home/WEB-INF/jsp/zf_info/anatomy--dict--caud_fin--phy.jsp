@@ -6,8 +6,8 @@
 <!-- AUTHOR -->
 <!-- AUTHOR-HDR -->by <!-- /AUTHOR-HDR -->
 <!-- AUTHOR-DATA -->
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-960805-320">Paula Mabee</a> and
-		<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-001106-2">Nathan C. Bird</a>
+<a href="/ZDB-PERS-960805-320">Paula Mabee</a> and
+		<a href="/ZDB-PERS-001106-2">Nathan C. Bird</a>
 <!-- /AUTHOR-DATA -->
 <!-- /AUTHOR -->
 </h3>
@@ -35,12 +35,12 @@
 <!-- FIGURES-DATA -->
 </p><table width="499">
 <tr>
-<td> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-2"><img src="ha1.jpg"><br>
+<td> <a href="/ZDB-IMAGE-010716-2"><img src="ha1.jpg"><br>
       hypurals (larval, 4mm)</a> </td>
-<td> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-3"><img src="ha2.jpg"><br>
+<td> <a href="/ZDB-IMAGE-010716-3"><img src="ha2.jpg"><br>
       hypurals (larval, 5.8mm)</a>
 </td>
-<td> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-4"><img src="ha3.jpg"><br>
+<td> <a href="/ZDB-IMAGE-010716-4"><img src="ha3.jpg"><br>
       hypurals (adult)</a><br>
 </td>
 </tr>
@@ -219,7 +219,7 @@
 <b>Primary: </b>
 <!-- /PUB-PRIM-HDR -->
 <!-- PUB-PRIM-DATA -->
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-011008-1">Mabee, P.M. and Bird, N.B. (2001) A preliminary description of the anatomy and development of the zebrafish
+<a href="/ZDB-PUB-011008-1">Mabee, P.M. and Bird, N.B. (2001) A preliminary description of the anatomy and development of the zebrafish
 axial skeleton. ZFIN Direct Data Submission.</a>
 <!-- /PUB-PRIM-DATA -->
 <!-- /PUB-PRIM -->

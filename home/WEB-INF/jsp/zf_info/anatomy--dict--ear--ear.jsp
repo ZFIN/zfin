@@ -16,20 +16,20 @@
 </p><table border="0" height="177" width="624">
 <tr>
 <td height="181" width="300">
-<p><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-1"><img height="85" src="icon1.jpg" width="190">
+<p><a href="/ZDB-IMAGE-001220-1"><img height="85" src="icon1.jpg" width="190">
         4 day ear</a><br>
 <br>
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-4"><img height="71" src="icon2.jpg" width="295"><br>
+<a href="/ZDB-IMAGE-001220-4"><img height="71" src="icon2.jpg" width="295"><br>
         Staging series live whole-mounts</a></p>
 </td>
-<td height="181" width="111"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-3"><img height="170" src="icon3.jpg" width="106"><br>
+<td height="181" width="111"><a href="/ZDB-IMAGE-001220-3"><img height="170" src="icon3.jpg" width="106"><br>
       Staging series sections</a></td>
-<td height="181" width="133"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-2"><img height="170" src="icon4.jpg" width="124"><br>
+<td height="181" width="133"><a href="/ZDB-IMAGE-001220-2"><img height="170" src="icon4.jpg" width="124"><br>
       5 day ear sections</a></td>
 <td height="181" width="62">
-<p><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-19">3D
+<p><a href="/ZDB-IMAGE-001220-19">3D
         movie of 5 day ear</a></p>
-<p><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-18">Z-section
+<p><a href="/ZDB-IMAGE-001220-18">Z-section
         movie of 5 day ear</a></p>
 </td>
 </tr>
@@ -229,7 +229,7 @@
 <p><!-- PUB --> <!-- PUB-HDR --><b>Publications:</b><!-- /PUB-HDR --></p>
 <ul>
 <li><!-- PUB-PRIM --> <!-- PUB-PRIM-HDR --><b>Primary: </b><!-- /PUB-PRIM-HDR -->
-<!-- PUB-PRIM-DATA --><a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961104-14">Waterman,
+<!-- PUB-PRIM-DATA --><a href="/ZDB-PUB-961104-14">Waterman,
     R. E., and Bell, D. H. (1984). Epithelial fusion during early semicircular
     canal formation in the embryonic zebrafish, Brachydanio rerio. Anatomical
     Record 210, 101-114.</a><!-- /PUB-PRIM --></li>

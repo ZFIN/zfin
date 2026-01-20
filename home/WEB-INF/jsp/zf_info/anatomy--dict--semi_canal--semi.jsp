@@ -12,17 +12,17 @@
 <!-- ABBREV-DATA -->scc <!-- /ABBREV --></p>
 <p><!-- SYN --> <!-- SYN-HDR --><b>Synonyms: </b><!-- /SYN-HDR --> <!-- SYN-DATA -->None<!-- /SYN-DATA -->
 </p><p><b>Figures:</b> <br>
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-1"><img height="85" src="../ear/icon1.jpg" width="190"><br>
+<a href="/ZDB-IMAGE-001220-1"><img height="85" src="../ear/icon1.jpg" width="190"><br>
   4 day ear</a><br>
 <br>
-<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-4"><img height="71" src="../ear/icon2.jpg" width="295"><br>
+<a href="/ZDB-IMAGE-001220-4"><img height="71" src="../ear/icon2.jpg" width="295"><br>
   Staging series live whole-mounts</a><!-- DESC-HDR --></p>
 <p><b>Description: </b><!-- /DESC-HDR --> <!-- DESC-DATA -->There are three semicircular
   canals in each ear, anterior, lateral (or horizontal) and posterior, arranged
   roughly orthogonally to one another. Projections of epithelium forming the hubs
   of each canal push inwards from the sides of the <a href="../ear/ear.html">otic
   vesicle</a>, beginning at the high pec stage (45h at 28&#176;C), and fuse in the center
-  of the ear between the long pec (52h) and pec fin (64h) stages at 28&#176;C (<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961104-14">Waterman
+  of the ear between the long pec (52h) and pec fin (64h) stages at 28&#176;C (<a href="/ZDB-PUB-961104-14">Waterman
   and Bell, 1984</a>). The canal itself is the fluid-filled toroidal space surrounding
   each hub. Although the topology of the canals is now complete, further outgrowth
   is required for them to attain their characteristic curved, canal-like shape.
@@ -95,7 +95,7 @@
 <p><!-- PUB --> <!-- PUB-HDR --><b>Publications:</b><!-- /PUB-HDR --></p>
 <ul>
 <li><!-- PUB-PRIM --> <!-- PUB-PRIM-HDR --><b>Primary: </b><!-- /PUB-PRIM-HDR -->
-<!-- PUB-PRIM-DATA --><a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961104-14">Waterman,
+<!-- PUB-PRIM-DATA --><a href="/ZDB-PUB-961104-14">Waterman,
     R. E., and Bell, D. H. (1984). Epithelial fusion during early semicircular
     canal formation in the embryonic zebrafish, Brachydanio rerio. Anatomical
     Record 210, 101-114.</a> <!-- /PUB-PRIM --></li>
