@@ -27,7 +27,7 @@ public class GenomicLocationService {
 
     public static final String FASTA_URL_BASE_DIR = "/opt/zfin/gff3/";
     public static final String FASTA_GENOMIC_Z11_URL = FASTA_URL_BASE_DIR + "Danio_rerio.fa";
-    public static final String FASTA_GENOMIC_Z12_FILE = "GCF_049306965.1_GRCz12tu_genomic.fna";
+    public static final String FASTA_GENOMIC_Z12_FILE = FASTA_URL_BASE_DIR + "GCF_049306965.1_GRCz12tu_genomic.fna";
 
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
