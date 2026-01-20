@@ -8,10 +8,10 @@
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
-    <property name="download.dir" value="${web.dir}/data_transfer/Downloads"/>
     <property name="download-execute.dir" value="server_apps/data_transfer/Downloads"/>
-
     <property environment="env"/>
+
+    <property name="download.dir" value="${env.TARGETROOT}/home/data_transfer/Downloads"/>
 
     <!-- Import base properties for combined.classpath -->
     <property name="buildfiles.dir" value="${basedir}/buildfiles"/>

@@ -521,5 +521,5 @@ system("cp $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/*  $ro
 
 system("$rootPath/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
-system("ant -f $rootPath/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+system("ant -f $sourceRoot/server_apps/data_transfer/Downloads/build.xml archive-download-files");
 
