@@ -614,6 +614,15 @@ VALUES ('ZDB-PERS-030520-1', 'ZDB-ATB-180327-2', 'zdb_id', 'ZDB-ATB-180327-2', '
         'Merged duplicate antibody ZDB-ATB-130808-2 (Ab3-cdc2) - both have same AB_627224 registry ID',
         'Pich, Christian', now());
 
+-- Remove duplicate public note
+DELETE FROM external_note
+WHERE extnote_zdb_id = (
+    SELECT extnote_zdb_id FROM external_note
+    WHERE extnote_data_zdb_id = 'ZDB-ATB-180327-2'
+      AND extnote_note = 'Immunogen was amino acids 224-230 mapping within a central region of Cdc2 of human origin.'
+    LIMIT 1
+);
+
 -- ============================================================================
 -- Merging duplicate antibodies with same AB_10664825 registry ID
 -- Keep: ZDB-ATB-151005-6 (Ab1-gnb1)
