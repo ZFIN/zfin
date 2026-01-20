@@ -16,21 +16,21 @@
 </p><p><b>Figures:</b>
 </p><table border="0" width="75%">
 <tr>
-<td width="50%"><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-1"><img height="85" src="../ear/icon1.jpg" width="190">
-</a><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-1">4
+<td width="50%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-1"><img height="85" src="../ear/icon1.jpg" width="190">
+</a><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-1">4
       day ear</a><br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-15"><img height="64" src="icon15.jpg" width="113">
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-15"><img height="64" src="icon15.jpg" width="113">
       Sensory patches</a> <br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-11"><img height="59" src="icon11.jpg" width="113">
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-11"><img height="59" src="icon11.jpg" width="113">
       bmp4/msx expression</a><br>
 <br>
 </td>
-<td width="50%"><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-12"><img height="73" src="icon12.jpg" width="113">
-      Dissected ears</a> <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-10"><br>
+<td width="50%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-12"><img height="73" src="icon12.jpg" width="113">
+      Dissected ears</a> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-10"><br>
 <img height="51" src="icon10.jpg" width="113"> Anterior macula polarities</a><br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-13"><img height="57" src="icon13.jpg" width="113">
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-13"><img height="57" src="icon13.jpg" width="113">
       Lateral crista polarities</a><br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-14"><img height="47" src="icon14.jpg" width="113">
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-14"><img height="47" src="icon14.jpg" width="113">
       Posterior macula polarities</a></td>
 </tr>
 </table>
@@ -49,7 +49,7 @@
   halves. This is the "standard" four-quadrant pattern for a teleost sacculus
   (Popper et al., 1982), but the adult zebrafish sacculus has been described to
   have a "vertical" pattern, i.e. lacking the anterior region of antiparallel
-  organisation (<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-961014-885">Platt,
+  organisation (<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961014-885">Platt,
   1993</a>). The anterior and posterior cristae are saddle shaped; the lateral
   crista, at day 4 and 5, is triangular, with a few hair cells separated from,
   and lying medial to, the apex of the triangle. Hair cells within a crista all
@@ -187,7 +187,7 @@
         J. P., Toresson, H., Da Rocha, S., and Krauss, S. (1997). Cloning and
         expression of three members of the zebrafish BMP family: Bmp2a, Bmp2b
         and Bmp4. Gene 198, 53-59</a></p>
-<p> <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-961014-885">Platt,
+<p> <a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-961014-885">Platt,
         C. (1993). Zebrafish inner ear sensory surfaces are similar to those in
         goldfish. Hearing Research 65, 133-140.</a></p>
 <p> Popper, A. N., Platt, C., and Saidel, W. M. (1982). Acoustic functions

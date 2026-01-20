@@ -15,9 +15,9 @@
 </p><p><b>Figures:</b>
 </p><table border="0" width="43%">
 <tr>
-<td width="45%"><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-7"><img height="164" src="icon7.jpg" width="113"><br>
+<td width="45%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-7"><img height="164" src="icon7.jpg" width="113"><br>
       live neuromasts</a> </td>
-<td width="55%"><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-8"><img height="111" src="icon8.jpg" width="113"><br>
+<td width="55%"><a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-8"><img height="111" src="icon8.jpg" width="113"><br>
       neuromast polarity</a></td>
 </tr>
 </table><br>
@@ -29,11 +29,11 @@
   have a well-defined apicobasal polarity, with specialised cytoskeletal structures 
   on their apical surfaces. These consist of a bundle of stereocilia, arranged 
   in a stepped array, and a single kinocilium. Stereocilia and kinocilia are embedded 
-  in the otolithic membrane (<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-5">maculae</a>) 
+  in the otolithic membrane (<a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-5">maculae</a>) 
   or a gelatinous cupula (cristae, <a href="../lat_line/lat_line.html">lateral 
   line neuromasts</a>). Stereocilia vary in number and length, depending on the 
   type of sensory patch. The eccentric location of the kinocilium relative to 
-  the stereocilia gives each hair cell a <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-8">polarity</a> 
+  the stereocilia gives each hair cell a <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-001220-8">polarity</a> 
   (and thus a particular directional sensitivity) in the plane of the epithelium. 
   Hair cells synapse with afferent and efferent neurons on their basal surfaces. 
   <!-- /DESC --><p></p>

@@ -6,8 +6,8 @@
 <!-- AUTHOR -->
 <!-- AUTHOR-HDR -->by <!-- /AUTHOR-HDR -->
 <!-- AUTHOR-DATA -->
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PERS-960805-320">Paula Mabee</a> and
-		<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PERS-001106-2">Nathan C. Bird</a>
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-960805-320">Paula Mabee</a> and
+		<a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-001106-2">Nathan C. Bird</a>
 <!-- /AUTHOR-DATA -->
 <!-- /AUTHOR -->
 </h3>
@@ -42,7 +42,7 @@
 <!-- FIGURES-DATA -->
 </p><table height="111">
 <tr>
-<td height="123"> <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-010716-4"><img height="104" src="ha3.jpg" width="144"><br>
+<td height="123"> <a href="/cgi-bin/ZFIN_jump?record=ZDB-IMAGE-010716-4"><img height="104" src="ha3.jpg" width="144"><br>
       adult preural centra and urostyle</a><br>
 </td>
 </tr>
@@ -217,7 +217,7 @@
 <!-- PUB-PRIM -->
 <!-- PUB-PRIM-HDR --><b>Primary: </b><!-- /PUB-PRIM-HDR -->
 <!-- PUB-PRIM-DATA -->
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-011008-1">Mabee, P.M. and Bird, N.C. (2001) A preliminary description of the anatomy and development of the zebrafish axial skeleton. ZFIN Direct Data Submission.</a>
+<a href="/cgi-bin/ZFIN_jump?record=ZDB-PUB-011008-1">Mabee, P.M. and Bird, N.C. (2001) A preliminary description of the anatomy and development of the zebrafish axial skeleton. ZFIN Direct Data Submission.</a>
 <!-- /PUB-PRIM-DATA -->
 <!-- /PUB-PRIM -->
 </li>
