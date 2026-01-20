@@ -1,9 +1,10 @@
 services:
   base:
     build: ./base/
-    image: base:latest
+    image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
   compile:
     build: ./compile/
+    image: ghcr.io/zfin/zfin-compile:${ZFIN_RELEASE}
     profiles:
       - compile
     environment:
@@ -18,6 +19,7 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
       INSTANCE: ${DOCKER_INSTANCE}
+      ZFIN_RELEASE: ${ZFIN_RELEASE}
       DOCKER_SSH_AUTH_SOCK: ${DOCKER_SSH_AUTH_SOCK}
       DOCKER_SSH_USER: ${DOCKER_SSH_USER}
       DOCKER_SSH_HOST: ${DOCKER_SSH_HOST}
@@ -66,6 +68,7 @@ services:
       - gradle_cache:/home/gradle/.gradle
   db:
     build: ./postgresql/
+    image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}
     command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=PST8PDT' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
@@ -82,6 +85,7 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
   solr:
     build: ./solr/
+    image: ghcr.io/zfin/zfin-solr:${ZFIN_RELEASE}
     environment:
       SOLR_HEAP: 10g
     ports:
@@ -91,6 +95,7 @@ services:
   httpd:
     hostname: zfin.org
     build: ./httpd/
+    image: ghcr.io/zfin/zfin-httpd:${ZFIN_RELEASE}
     environment:
       LETSENCRYPT_HOST: ${DOCKER_VIRTUAL_HOST}
       VIRTUAL_HOST: ${DOCKER_VIRTUAL_HOST}
@@ -121,6 +126,7 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
   tomcat:
     build: ./tomcat/
+    image: ghcr.io/zfin/zfin-tomcat:${ZFIN_RELEASE}
     environment:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
@@ -174,6 +180,7 @@ services:
       - "8025:8025"
   jenkins:
     build: ./jenkins/
+    image: ghcr.io/zfin/zfin-jenkins:${ZFIN_RELEASE}
     ports:
       - "9499-9509:9499"
     environment:
@@ -214,6 +221,7 @@ services:
       - gradle_cache:/home/gradle/.gradle
   fail2ban:
     build: ./fail2ban/
+    image: ghcr.io/zfin/zfin-fail2ban:${ZFIN_RELEASE}
     cap_add:
       - NET_ADMIN
       - NET_RAW
