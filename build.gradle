@@ -638,6 +638,15 @@ task pushGHCRImages() {
     }
 }
 
+task dumpTomcatStack() {
+    doLast {
+        exec {
+            commandLine "docker", "compose", "exec", "tomcat", "jstack", "1" 
+            workingDir "docker/"
+        }
+    }
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
