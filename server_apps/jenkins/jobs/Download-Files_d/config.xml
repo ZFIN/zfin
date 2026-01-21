@@ -35,6 +35,13 @@
       <!-- This command is not working on TRUNK/docker/jenkins   -->
       <command>cd $TARGETROOT/server_apps/data_transfer/GO  &amp;&amp; ./go.pl  &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
+
+    <!-- Add a call to ant archive-download-files that are created in the above steps -->
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>archive-download-files</targets>
+      <buildFile>$SOURCEROOT/server_apps/data_transfer/Downloads/build.xml</buildFile>
+    </hudson.tasks.Ant>
+    
     <hudson.tasks.Shell>
       <command>curl -k --silent --output /dev/null --show-error -s -D - https://$DOMAIN_NAME/action/unload/downloads/update-cache</command>
     </hudson.tasks.Shell>
