@@ -8,7 +8,7 @@ import org.alliancegenome.util.ProcessDisplayHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.springframework.test.util.ReflectionTestUtils;
+import java.lang.reflect.Field;
 import org.zfin.alliancegenome.PriorityRESTAllianceService;
 import org.zfin.alliancegenome.presentation.PriorityTag;
 import org.zfin.curation.presentation.CurationStatusDTO;
@@ -122,28 +122,28 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
         PublicationTrackingController controller = new PublicationTrackingController();
 
         // Manually inject repositories using RepositoryFactory
-        ReflectionTestUtils.setField(controller, "publicationRepository",
-            RepositoryFactory.getPublicationRepository());
-        ReflectionTestUtils.setField(controller, "markerRepository",
-            RepositoryFactory.getMarkerRepository());
-        ReflectionTestUtils.setField(controller, "profileRepository",
-            getProfileRepository());
-        ReflectionTestUtils.setField(controller, "phenotypeRepository",
-            RepositoryFactory.getPhenotypeRepository());
-        ReflectionTestUtils.setField(controller, "expressionRepository",
-            RepositoryFactory.getExpressionRepository());
-        ReflectionTestUtils.setField(controller, "mutantRepository",
-            RepositoryFactory.getMutantRepository());
-        ReflectionTestUtils.setField(controller, "curationRepository",
-            new HibernateCurationRepository());
-        ReflectionTestUtils.setField(controller, "zebrashareRepository",
-            RepositoryFactory.getZebrashareRepository());
-        ReflectionTestUtils.setField(controller, "converter",
-            new CurationDTOConversionService());
-        ReflectionTestUtils.setField(controller, "publicationService",
-            new PublicationService());
+        setField(controller, "publicationRepository", RepositoryFactory.getPublicationRepository());
+        setField(controller, "markerRepository", RepositoryFactory.getMarkerRepository());
+        setField(controller, "profileRepository", getProfileRepository());
+        setField(controller, "phenotypeRepository", RepositoryFactory.getPhenotypeRepository());
+        setField(controller, "expressionRepository", RepositoryFactory.getExpressionRepository());
+        setField(controller, "mutantRepository", RepositoryFactory.getMutantRepository());
+        setField(controller, "curationRepository", new HibernateCurationRepository());
+        setField(controller, "zebrashareRepository", RepositoryFactory.getZebrashareRepository());
+        setField(controller, "converter", new CurationDTOConversionService());
+        setField(controller, "publicationService", new PublicationService());
 
         return controller;
+    }
+
+    private void setField(Object target, String fieldName, Object value) {
+        try {
+            Field field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set field " + fieldName, e);
+        }
     }
 
     private ReportBuilder.SummaryTable summaryTableLoad;
