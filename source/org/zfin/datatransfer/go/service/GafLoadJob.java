@@ -97,7 +97,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         Date lastModified = null;
         try {
             lastModified = downloadService.getLastModifiedOnServer(new URL(downloadUrl));
-            boolean alreadyProcessed = isDownloadAlreadyProcessed(downloadUrl, organizationEnum, lastModified);
+            boolean alreadyProcessed = downloadService.isDownloadAlreadyProcessed(downloadUrl, organizationEnum, lastModified);
             if (skipDownloadIfUnchanged != null && skipDownloadIfUnchanged && alreadyProcessed) {
                 logger.info("Download for " + new SimpleDateFormat("yyyy-MM-dd").format(lastModified)
                         + " has already been processed and skipDownloadIfUnchanged is true.  " +
@@ -307,12 +307,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
-    }
-
-    private boolean isDownloadAlreadyProcessed(String downloadUrl, GafOrganization.OrganizationEnum organizationEnum, Date lastModified) {
-        String dateAsString = new java.text.SimpleDateFormat("yyyy-MM-dd").format(lastModified);
-        LoadFileLog loadFileLog = getInfrastructureRepository().getLoadFileLog(organizationEnum.toString(), dateAsString);
-        return loadFileLog != null;
     }
 
     private void addAnnotations(GafJobData gafJobData) {
