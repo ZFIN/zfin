@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.datatransfer.PriorityPipelineTask;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
@@ -112,5 +113,23 @@ public class PublicationDashboardController {
                                                                          @RequestParam(required = false, defaultValue = "50") int count,
                                                                          @RequestParam(required = false) String sort) {
         return publicationRepository.getPublicationsByStatus(status, location, owner, count, offset, sort);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/run-priority-pipeline", method = RequestMethod.POST)
+    public String runPriorityPipeline() {
+        LOG.info("Starting Priority Pipeline...");
+        try {
+            PriorityPipelineTask task = new PriorityPipelineTask();
+            task.initAll();
+            java.lang.reflect.Method runMethod = PriorityPipelineTask.class.getDeclaredMethod("run");
+            runMethod.setAccessible(true);
+            runMethod.invoke(task);
+            LOG.info("Priority Pipeline completed successfully");
+            return "{\"status\": \"completed\"}";
+        } catch (Exception e) {
+            LOG.error("Error running Priority Pipeline", e);
+            throw new RuntimeException("Failed to run Priority Pipeline: " + e.getMessage());
+        }
     }
 }

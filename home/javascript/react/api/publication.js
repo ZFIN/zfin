@@ -103,3 +103,7 @@ export const deleteCorrespondence = (correspondenceId, outgoing) => {
     return http.delete(`/action/publication/correspondences/${correspondenceId}?outgoing=${outgoing}`);
 };
 
+export const runPriorityPipeline = () => {
+    return http.post('/action/publication/run-priority-pipeline', {});
+};
+

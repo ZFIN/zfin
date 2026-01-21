@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import produce, {setAutoFreeze} from 'immer';
 setAutoFreeze(false);
 
-import {getLocations, searchPubStatus, updateStatus} from '../api/publication';
+import {getLocations, searchPubStatus, updateStatus, runPriorityPipeline} from '../api/publication';
 
 import Pagination from '../components/Pagination';
 import FilterBar from '../components/FilterBar';
@@ -46,12 +46,15 @@ class IndexingBin extends React.Component {
             priority: '',
             results: {},
             sort: SORT_OPTIONS[0].value,
+            runningPipeline: false,
+            pipelineError: null,
         };
         this.handlePriorityChange = this.handlePriorityChange.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleSortChange = this.handleSortChange.bind(this);
         this.fetchPubs = this.fetchPubs.bind(this);
         this.updatePubStatus = this.updatePubStatus.bind(this);
+        this.handleRunPipeline = this.handleRunPipeline.bind(this);
     }
 
     componentDidMount() {
@@ -133,8 +136,23 @@ class IndexingBin extends React.Component {
         this.setState({page});
     }
 
+    handleRunPipeline() {
+        this.setState({runningPipeline: true, pipelineError: null});
+        runPriorityPipeline()
+            .then(() => {
+                this.fetchPubs();
+            })
+            .fail(error => {
+                const message = error.responseJSON ? error.responseJSON.message : error.statusText;
+                this.setState({pipelineError: 'Failed to run priority pipeline: ' + message});
+            })
+            .always(() => {
+                this.setState({runningPipeline: false});
+            });
+    }
+
     render() {
-        const { loading, page, priorities, priority, sort, results } = this.state;
+        const { loading, page, priorities, priority, sort, results, runningPipeline, pipelineError } = this.state;
         const priorityOptions = priorities.map(priority => ({
             value: priority.id,
             display: priority.name,
@@ -192,7 +210,20 @@ class IndexingBin extends React.Component {
                     by
                     <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
                     <RefreshButton loading={loading} onClick={this.fetchPubs} />
+                    <button
+                        className='btn btn-outline-secondary btn-sm'
+                        onClick={this.handleRunPipeline}
+                        disabled={runningPipeline}
+                    >
+                        {runningPipeline ? 'Running...' : 'Run Priority Pipeline'}
+                    </button>
                 </FilterBar>
+
+                {pipelineError && (
+                    <div className='alert alert-danger' role='alert'>
+                        {pipelineError}
+                    </div>
+                )}
 
                 <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
 
