@@ -13,11 +13,11 @@
 <p><!-- SYN --> <!-- SYN-HDR --><b>Synonyms: </b><!-- /SYN-HDR --> <!-- SYN-DATA -->None<!-- /SYN-DATA -->
 </p><p><b>Figures:<br>
 </b><br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-9"><img height="152" src="icon9.jpg" width="113">
+<a href="/ZDB-IMAGE-001220-9"><img height="152" src="icon9.jpg" width="113">
   otoliths</a><!-- DESC-HDR --></p>
 <p><b>Description: </b><!-- /DESC-HDR --> <!-- DESC-DATA -->Stony accretions of
   crystalline calcium carbonate and protein. These develop over the anterior and
-  posterior <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-1">maculae</a>
+  posterior <a href="/ZDB-IMAGE-001220-1">maculae</a>
   in the <a href="../ear/ear.html">ear</a> and are tethered in place by a gelatinous
   otolithic membrane, into which the macular <a href="../hair_cell/hair_cell.html">hair
   cells</a> project. From 18-22h, many small crystalline particles are present
@@ -58,10 +58,10 @@
 <p><!-- PARENTS --> <!-- PARENTS-HDR --><b>Parents (forms from): </b><!-- /PARENTS-HDR -->
 <!-- PARENTS-DATA -->Supporting cells are thought to give rise to the correct
   milieu in which the otoliths can precipitate. <a href="../hair_cell/hair_cell.html">Hair
-  cells</a> or non-sensory cell, may also play a role (see <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-000810-4">Haddon
+  cells</a> or non-sensory cell, may also play a role (see <a href="/ZDB-PUB-000810-4">Haddon
   et al., 1999</a>). Otoliths nucleate over hair cell precursors ("tether cells")
   at the anterior and posterior ends of the<a href="../ear/ear.html"> otic vesicle</a>
-  (<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-971216-3">Riley et
+  (<a href="/ZDB-PUB-971216-3">Riley et
   al., 1997</a>). <!-- /PARENTS --></p>
 <p> <!-- CHILD --> <!-- CHILD-HDR --><b>Children: </b><!-- /CHILD-HDR --></p>
 <ul>
@@ -112,7 +112,7 @@
 <p>
 </p><li><!-- PUB-REL --> <!-- PUB-REL-HDR --><b>Secondary: </b><!-- /PUB-REL-HDR -->
 <!-- PUB-REL-DATA --> <br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-000810-4">Haddon,
+<a href="/ZDB-PUB-000810-4">Haddon,
     C., Mowbray, C., Whitfield, T., Jones, D., Gschmeissner, S., and Lewis, J.
     (1999). Hair cells without supporting cells: further studies in the ear of
     the zebrafish mind bomb mutant. Journal of Neurocytology 28, 837-850.</a>
@@ -132,7 +132,7 @@
       B. B., and Moorman, S. J. (2000). Development of utricular otoliths, but
       not saccular otoliths, is necessary for vestibular function and survival
       in zebrafish. Journal of Neurobiology 43, 329-337.</a></p>
-<p><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-971216-3">Riley,
+<p><a href="/ZDB-PUB-971216-3">Riley,
       B. B., Zhu, C., Janetopoulos, C., and Aufderheide, K. J. (1997). A critical
       period of ear development controlled by distinct populations of ciliated
       cells in the zebrafish. Developmental Biology 191, 191-201.</a></p>

@@ -116,7 +116,7 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
         public GeneLink(MarkerDTO markerDTO) {
             String htmlString = "";
             htmlString += "<a href='";
-            htmlString += "/cgi-bin/ZFIN_jump?record=";
+            htmlString += "/";
             htmlString += markerDTO.getZdbID();
             htmlString += "'>";
             htmlString += markerDTO.getName();

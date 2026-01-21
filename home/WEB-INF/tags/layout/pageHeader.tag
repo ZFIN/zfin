@@ -76,8 +76,8 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Resources</span>
                     <ul>
-                        <li><a href="https://@WIKI_HOST@/display/general/Genomic+Resources+for+Zebrafish">Zebrafish Genomics</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Other+Databases">Other Genome Databases</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Genomic+Resources+for+Zebrafish">Zebrafish Genomics</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Other+Databases">Other Genome Databases</a></li>
                     </ul>
                 </div>
             </div>
@@ -90,18 +90,18 @@
                     <span class="nav-column-header">General</span>
                     <ul>
                         <li><a href="/zf_info/zfbook/zfbk.html">The Zebrafish Book</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Educational+Resources">Resources for Students and Educators</a></li>
+                        <li><a href="https://wiki.zfin.org/display/prot">Protocol Wiki</a></li>
+                        <li><a href="https://wiki.zfin.org/display/AB">Antibody Wiki</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Educational+Resources">Resources for Students and Educators</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
                     <span class="nav-column-header">Zebrafish Programs</span>
                     <ul>
                         <li><zfin2:externalLink href="http://www.zf-health.org/">ZF-Health</zfin2:externalLink></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/Zebrafish+Programs">More...</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
@@ -121,9 +121,9 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Announcements</span>
                     <ul>
-                        <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
+                        <li><a href="https://wiki.zfin.org/display/news">News</a></li>
+                        <li><a href="https://wiki.zfin.org/display/meetings">Meetings</a></li>
+                        <li><a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
                         <li><a href="https://community.alliancegenome.org/categories">Alliance Community Forum</a></li>
                     </ul>
                 </div>
@@ -153,7 +153,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Nomenclature</span>
                     <ul class="list-unstyled">
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Conventions">Nomenclature Conventions</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Conventions">Nomenclature Conventions</a></li>
                         <li><a href="/action/feature/line-designations">Line Designations</a></li>
                         <li><a href="/action/feature/wildtype-list">Wild-Type Lines</a></li>
                         <li><a href="/action/nomenclature/gene-name">Submit a Proposed Gene Name</a></li>
@@ -165,27 +165,27 @@
                     <ul>
                         <li><a href="/zf_info/author_guidelines.html">Guidelines for Authors</a></li>
                         <li><a href="/action/zebrashare">Zebrashare</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
                     <span class="nav-column-header">Using ZFIN</span>
                     <ul>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Tips">Help & Tips</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/ZFIN+Tips">Help & Tips</a></li>
                         <li><a href="/zf_info/glossary.html">Glossary</a></li>
-                        <li><a href="http://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
+                        <li><a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
                         <li><a href="/action/submit-data">Submit Data</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Terms of Use</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Terms of Use</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
                     <span class="nav-column-header">About Us</span>
                     <ul>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">About ZFIN</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information">About ZFIN</a></li>
+                        <li><a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information">Contact Information</a></li>
                         <li><a href="/action/infrastructure/annual-stats-view">Statistics</a></li>
                         <li><a href="/zf_info/news/committees.html">Committees</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/jobs/ZFIN+Jobs">Jobs at ZFIN</a></li>
+                        <li><a href="https://wiki.zfin.org/display/jobs/ZFIN+Jobs">Jobs at ZFIN</a></li>
                     </ul>
                 </div>
             </div>
