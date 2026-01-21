@@ -13,5 +13,5 @@
     zebrafish (<i>Danio rerio</i>) as a model organism. ZFIN provides a wide array of expertly curated,
     organized and cross-referenced zebrafish research data.
     </p>
-    <a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Learn More</a>
+    <a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information">Learn More</a>
 </z:section>

@@ -5,7 +5,7 @@
 
 You will be redirected automatically in 5 seconds.  
 
-<a href="@SECURE_HTTP@@WIKI_HOST@/display/meetings">Click here</a> if you are not.
+<a href="https://wiki.zfin.org/display/meetings">Click here</a> if you are not.
 
 </div>
 </z:page>
