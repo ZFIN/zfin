@@ -10,6 +10,11 @@
     <c:set var="GA4_ANALYTICS_ID" value="0" />
 </c:if>
 
+<c:set var="INSTANCE" value="${ZfinPropertiesEnum.INSTANCE.value()}" />
+<c:if test="${empty INSTANCE}">
+    <c:set var="INSTANCE" value="Unknown Instance" />
+</c:if>
+
 <c:if test="${empty title}">
     <c:set var="title">
         ZFIN ${dynamicTitle}
@@ -19,7 +24,7 @@
 <%-- Clear the buffer before rendering the page --%>
 <zfin:clearBuffer/><!doctype html>
 <html lang="en">
-    <!-- Server: @INSTANCE@ -->
+    <!-- Server: ${INSTANCE} -->
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">

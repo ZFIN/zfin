@@ -77,9 +77,9 @@
             <div class="nav-column">
                 <div class="nav-column-header">Community</div>
                 <ul>
-                    <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
+                    <li><a href="https://wiki.zfin.org/display/news">News</a></li>
+                    <li><a href="https://wiki.zfin.org/display/meetings">Meetings</a></li>
+                    <li><a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
                     <li><a href="https://community.alliancegenome.org/categories">Alliance Community Forum</a></li>
                     <li><a href="/action/profile/person/search">People</a></li>
                     <li><a href="/action/profile/lab/search">Labs</a></li>
@@ -90,12 +90,12 @@
             <div class="nav-column">
                 <div class="nav-column-header">Support</div>
                 <ul>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Tips">Help & Tips</a></li>
+                    <li><a href="https://wiki.zfin.org/display/general/ZFIN+Tips">Help & Tips</a></li>
                     <li><a href="/zf_info/glossary.html">Glossary</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">About ZFIN</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
+                    <li><a href="https://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help">Single Box Search</a></li>
+                    <li><a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information">About ZFIN</a></li>
+                    <li><a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
+                    <li><a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information">Contact Information</a></li>
                     <li><a href="https://zfin.atlassian.net/wiki/spaces/jobs/pages/2996503058/ZFIN+Jobs">Jobs at ZFIN</a></li>
                 </ul>
             </div>
@@ -110,7 +110,7 @@
         </div>
         <div class="nav-column right-align">
             <div class="nowrap">&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
-            <div><a href="https://@WIKI_HOST@/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Terms of Use</a></div>
+            <div><a href="https://wiki.zfin.org/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Terms of Use</a></div>
             <div><small>ZFIN logo designed by Kari Pape</small></div>
             <div style="max-width: 450px"><small>Home page banner reprinted from Hearing Research, 341, Monroe, J.D. et al., Hearing sensitivity differs between zebrafish lines used in auditory research, 220-231, Copyright (2016) with permission from Elsevier</small></div>
         </div>
