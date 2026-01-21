@@ -3640,6 +3640,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
         builder.addActions(getAnnotationStatusConflictReportActions());
+        builder.addActions(getUnlinkedGeneReportActions());
 
         ObjectNode report = builder.build();
 
@@ -3654,6 +3655,53 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             print(LOG, "ERROR: JSON reporting failed: " + e.getMessage());
         }
         beforeAfterComparison.clear();
+    }
+
+    private Long getUnlinkedGenesCount() {
+        return 0L;
+    }
+
+    private List<LoadReportAction> getUnlinkedGeneReportActions() {
+        //\copy (select mrkr_zdb_id, mrkr_abbrev from marker where mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR') and mrkr_zdb_id not in (select dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')) to 'rows.csv' with csv header;
+        String sql = """
+            SELECT mrkr_zdb_id, mrkr_abbrev
+            FROM marker
+            WHERE mrkr_type IN (SELECT mtgrpmem_mrkr_type FROM marker_type_group_member WHERE mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR')
+            AND mrkr_zdb_id NOT IN (SELECT dblink_linked_recid FROM db_link WHERE dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')
+            """;
+        List<Tuple> results = currentSession().createNativeQuery(sql, Tuple.class).list();
+        List<LoadReportAction> actions = new ArrayList<>();
+
+        List<Map<String, Object>> rowsList = new ArrayList<>();
+
+        for (Tuple row : results) {
+            String geneZdbId = row.get("mrkr_zdb_id", String.class);
+            String geneSymbol = row.get("mrkr_abbrev", String.class);
+            rowsList.add(Map.of(
+                    "Gene ZDB ID", geneZdbId,
+                    "Gene Symbol", geneSymbol
+            ));
+        }
+
+        //create a report action and include a table of unlinked genes
+        LoadReportAction action = new LoadReportAction();
+        action.setType(LoadReportAction.Type.REPORTS);
+        action.setSubType("Genes without NCBI Gene ID");
+        action.setDetails("The following genes do not have an associated NCBI Gene ID.");
+        action.setGeneZdbID("N/A");
+        action.setAccession("N/A");
+        action.setRelatedEntityFields(Map.of("Report Title", "Genes without NCBI Gene ID"));
+        LoadReportSummaryTable table = new LoadReportSummaryTable();
+        table.setDescription("List of genes without NCBI Gene ID");
+
+        // ID, Symbol
+        table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
+                "Gene Symbol", "Gene Symbol"));
+
+        table.setRows(rowsList);
+        action.setTables(List.of(table));
+        actions.add(action);
+        return actions;
     }
 
     private List<LoadReportAction> postProcessActions(List<LoadReportAction> actions) {

@@ -2,6 +2,7 @@
 -- It removes db_links that were added based on Vega gene IDs where we have other evidence
 -- (RNA seq or Ensembl gene ID match) to retain the NCBI gene ID
 
+-- TODO: Remove this file and references to it after the January 2026 NCBI gene load (needs to run only once)
 drop table if exists vega_based_ncbi_gene_dblinks_to_keep;
 create temp table vega_based_ncbi_gene_dblinks_to_keep as
 select * from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' and dblink_zdb_id in
