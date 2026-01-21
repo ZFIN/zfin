@@ -12,7 +12,7 @@
                         (${formBean.date})
                     </authz:authorize>
                 </h2></td>
-            <td align="right"><a HREF="https://@WIKI_HOST@/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Warranty Disclaimer and Copyright Notice</a>&nbsp;&nbsp;</td>
+            <td align="right"><a HREF="https://wiki.zfin.org/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Warranty Disclaimer and Copyright Notice</a>&nbsp;&nbsp;</td>
         </tr>
     </table>
 

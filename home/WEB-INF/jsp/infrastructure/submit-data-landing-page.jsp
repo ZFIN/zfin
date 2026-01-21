@@ -87,7 +87,7 @@
 
         <p>
             Have a question about other data submissions? ZFIN welcomes
-            <a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">questions, comments and suggestions</a>
+            <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information">questions, comments and suggestions</a>
             from
             the community.
         </p>

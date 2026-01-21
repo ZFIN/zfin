@@ -275,7 +275,7 @@
 
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
-        <url-pattern>/@TARGETCGIBIN@/*</url-pattern>
+        <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
 
     <!--<servlet-mapping>-->
