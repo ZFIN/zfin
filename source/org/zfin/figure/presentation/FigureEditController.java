@@ -21,10 +21,12 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.WithdrawnZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 public class FigureEditController {
 
     public static final Logger LOG = LogManager.getLogger(FigureEditController.class);
+    public static final int MAX_WAIT_TIME_THUMBNAIL_PROCESSING = 10_000;
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
@@ -195,8 +198,27 @@ public class FigureEditController {
             throw new InvalidWebRequestException("Error processing image");
         }
         tx.commit();
+        ImagePresentationBean imagePresentationBean = FigureService.convertToImagePresentationBean(image);
+        String thumbPath = imagePresentationBean.getThumbnailPath();
+        waitForThumbnailCreation(thumbPath);
+        return imagePresentationBean;
+    }
 
-        return FigureService.convertToImagePresentationBean(image);
+    private void waitForThumbnailCreation(String thumbnailFilename) {
+        File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), thumbnailFilename);
+        int waitedMillis = 0;
+        int sleepIntervalMillis = 100;
+        while (!thumbnailFile.exists() && waitedMillis < MAX_WAIT_TIME_THUMBNAIL_PROCESSING) {
+            try {
+                Thread.sleep(sleepIntervalMillis);
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted while waiting for thumbnail creation", e);
+            }
+            waitedMillis += sleepIntervalMillis;
+        }
+        if (!thumbnailFile.exists()) {
+            LOG.error("Thumbnail file was not created within " + MAX_WAIT_TIME_THUMBNAIL_PROCESSING + " milliseconds: " + thumbnailFile.getAbsolutePath());
+        }
     }
 
     private String getFigureUpdateValue(Figure figure) {
