@@ -1,0 +1,24 @@
+DOCKER_SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+DOCKER_SSH_USER=ryanm
+DOCKER_SSH_HOST=crick.zfin.org
+DOCKER_DB_UNLOADS_PATH=~/development/unloads/db
+DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
+DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=~/development/blast
+DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
+DOCKER_RESEARCH_PATH=~/development/research
+DOCKER_DOWNLOADS_PATH=~/development/download-files
+DOCKER_LOADUP_PATH=~/development/loadUp
+DOCKER_HHATLAS_PATH=~/development/hh_atlas
+DOCKER_SOURCE_ROOTS_PATH="../"
+DOCKER_VIRTUAL_HOST=zfin.org
+COMPOSE_PROJECT_NAME=zfin_org
+DOCKER_INSTANCE=dazed
+TZ=PST8PDT
+ELK_VERSION=8.2.3
+ELASTIC_PASSWORD="op://Common/ELASTIC_PASSWORD/password"
+KIBANA_SYSTEM_PASSWORD="op://Common/KIBANA_SYSTEM_PASSWORD/password"
+XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY="op://Common/XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY/password"
+#This won't work on laptops currently but you will need it in .env to stop errors/warnings (Might work on VPN)
+OPENIDC_CRYPTOPASSPHRASE="op://Common/OPENIDC_CRYPTOPASSPHRASE/password"
+OPENIDC_CLIENTID=zfin.org
+OPENIDC_CLIENTSECRET="op://Common/OPENIDC_CLIENTSECRET/password"
