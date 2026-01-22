@@ -137,6 +137,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesRefSeqRNABefore;
     public Integer numGenesRefSeqPeptBefore;
     public Integer numGenesGenBankBefore;
+    public Integer numUnlinkedGenesBefore;
+    public Integer numUnlinkedGenesAfter;
 
     private Map<String, String> NCBIidsGeneSymbols = new HashMap<>(); // Value is String, not List<String> based on Perl
 
@@ -1206,6 +1208,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
             """;
         numGenesGenBankBefore = PortSqlHelper.countData(currentSession(), sql);
+
+        sql = PortSqlHelper.getSqlForUnlinkedGeneCount();
+        numUnlinkedGenesBefore = PortSqlHelper.countData(currentSession(), sql);
     }
 
     /**
@@ -3315,6 +3320,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         tempSql = "select distinct dblink_linked_recid from db_link, foreign_db_contains, foreign_db where dblink_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_id = fdb_db_pk_id and fdb_db_name = 'GenBank' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%RNAG%')";
         numGenesGenBankAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
+        tempSql = PortSqlHelper.getSqlForUnlinkedGeneCount();
+        numUnlinkedGenesAfter = PortSqlHelper.countData(currentSession(), tempSql);
+
         // Print statistics to STATS_PRIORITY1
         print(STATS_PRIORITY1, "\n********* Percentage change of various categories of records *************\n\n");
         print(STATS_PRIORITY1, "number of db_link records with gene     \tbefore load\tafter load\tpercentage change\n");
@@ -3345,6 +3353,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         printStatLine.accept("with RefSeq NM", new Number[]{numGenesRefSeqRNABefore, numGenesRefSeqRNAAfter});
         printStatLine.accept("with RefSeq NP", new Number[]{numGenesRefSeqPeptBefore, numGenesRefSeqPeptAfter});
         printStatLine.accept("with GenBank", new Number[]{numGenesGenBankBefore, numGenesGenBankAfter});
+        printStatLine.accept("without NCBI Gene", new Number[]{numUnlinkedGenesBefore, numUnlinkedGenesAfter});
 
         List<String> keysSortedByValues = geneZDBidsSymbols.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(String.CASE_INSENSITIVE_ORDER))
@@ -3618,6 +3627,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table2.addBeforeAfterCountSummaryRow("with RefSeq NM", numGenesRefSeqRNABefore, numGenesRefSeqRNAAfter);
         table2.addBeforeAfterCountSummaryRow("with RefSeq NP", numGenesRefSeqPeptBefore, numGenesRefSeqPeptAfter);
         table2.addBeforeAfterCountSummaryRow("with GenBank", numGenesGenBankBefore, numGenesGenBankAfter);
+        table2.addBeforeAfterCountSummaryRow("without NCBI Gene ID", numUnlinkedGenesBefore, numUnlinkedGenesAfter);
 
         if (beforeAfterSummary != null) {
             NCBIReportBuilder.SummaryTableBuilder table3 = builder.addSummaryTable("totals before and after load");
@@ -3655,10 +3665,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             print(LOG, "ERROR: JSON reporting failed: " + e.getMessage());
         }
         beforeAfterComparison.clear();
-    }
-
-    private Long getUnlinkedGenesCount() {
-        return 0L;
     }
 
     private List<LoadReportAction> getUnlinkedGeneReportActions() {

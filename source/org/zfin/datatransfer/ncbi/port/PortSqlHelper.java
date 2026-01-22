@@ -47,4 +47,17 @@ public class PortSqlHelper {
         // Fallback or error if type is unexpected
         throw new IllegalStateException("Unexpected type for count query result: " + result.getClass().getName());
     }
+
+    /**
+     * SQL to get all genes that do not have a link to NCBI Gene ID
+     * @return
+     */
+    public static String getSqlForUnlinkedGeneCount() {
+        return """
+            SELECT mrkr_zdb_id, mrkr_abbrev
+            FROM marker
+            WHERE mrkr_type IN (SELECT mtgrpmem_mrkr_type FROM marker_type_group_member WHERE mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR')
+            AND mrkr_zdb_id NOT IN (SELECT dblink_linked_recid FROM db_link WHERE dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')
+            """;
+    }
 }
