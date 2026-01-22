@@ -1209,7 +1209,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             """;
         numGenesGenBankBefore = PortSqlHelper.countData(currentSession(), sql);
 
-        sql = PortSqlHelper.getSqlForUnlinkedGeneCount();
+        sql = PortSqlHelper.getSqlForUnlinkedGenes();
         numUnlinkedGenesBefore = PortSqlHelper.countData(currentSession(), sql);
     }
 
@@ -3320,7 +3320,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         tempSql = "select distinct dblink_linked_recid from db_link, foreign_db_contains, foreign_db where dblink_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_id = fdb_db_pk_id and fdb_db_name = 'GenBank' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%RNAG%')";
         numGenesGenBankAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForUnlinkedGeneCount();
+        tempSql = PortSqlHelper.getSqlForUnlinkedGenes();
         numUnlinkedGenesAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
         // Print statistics to STATS_PRIORITY1
@@ -3651,6 +3651,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addAction(legacyStatsReport);
         builder.addActions(getAnnotationStatusConflictReportActions());
         builder.addActions(getUnlinkedGeneReportActions());
+        builder.addActions(getReplacedNCBIGeneIdReportActions());
 
         ObjectNode report = builder.build();
 
@@ -3669,12 +3670,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private List<LoadReportAction> getUnlinkedGeneReportActions() {
         //\copy (select mrkr_zdb_id, mrkr_abbrev from marker where mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR') and mrkr_zdb_id not in (select dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')) to 'rows.csv' with csv header;
-        String sql = """
-            SELECT mrkr_zdb_id, mrkr_abbrev
-            FROM marker
-            WHERE mrkr_type IN (SELECT mtgrpmem_mrkr_type FROM marker_type_group_member WHERE mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR')
-            AND mrkr_zdb_id NOT IN (SELECT dblink_linked_recid FROM db_link WHERE dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')
-            """;
+        String sql = PortSqlHelper.getSqlForUnlinkedGenes();
         List<Tuple> results = currentSession().createNativeQuery(sql, Tuple.class).list();
         List<LoadReportAction> actions = new ArrayList<>();
 
@@ -3704,6 +3700,48 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
                 "Gene Symbol", "Gene Symbol"));
 
+        table.setRows(rowsList);
+        action.setTables(List.of(table));
+        actions.add(action);
+        return actions;
+    }
+
+    private List<LoadReportAction> getReplacedNCBIGeneIdReportActions() {
+
+        //Returns columns gene_id, gene_symbol, old_id, new_id
+        String sql = PortSqlHelper.getSqlForReplacedGenes();
+        List<Tuple> results = currentSession().createNativeQuery(sql, Tuple.class).list();
+        List<LoadReportAction> actions = new ArrayList<>();
+
+        List<Map<String, Object>> rowsList = new ArrayList<>();
+
+        for (Tuple row : results) {
+            String geneZdbId = row.get("gene_id", String.class);
+            String geneSymbol = row.get("gene_symbol", String.class);
+            String oldId = row.get("old_id", String.class);
+            String newId = row.get("new_id", String.class);
+            rowsList.add(Map.of(
+                    "Gene ZDB ID", geneZdbId,
+                    "Gene Symbol", geneSymbol,
+                    "Old NCBI Gene ID", oldId,
+                    "New NCBI Gene ID", newId
+            ));
+        }
+
+        //create a report action and include a table of unlinked genes
+        LoadReportAction action = new LoadReportAction();
+        action.setType(LoadReportAction.Type.REPORTS);
+        action.setSubType("Replaced NCBI Gene IDs");
+        action.setDetails("The following genes have an NCBI Gene ID that has been replaced according to NCBI.");
+        action.setGeneZdbID("N/A");
+        action.setAccession("N/A");
+        action.setRelatedEntityFields(Map.of("Report Title", "Replaced NCBI Gene IDs"));
+        LoadReportSummaryTable table = new LoadReportSummaryTable();
+        table.setDescription("List of genes with replaced NCBI Gene IDs");
+        table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
+                "Gene Symbol", "Gene Symbol",
+                "Old NCBI Gene ID", "Old NCBI Gene ID",
+                "New NCBI Gene ID", "New NCBI Gene ID"));
         table.setRows(rowsList);
         action.setTables(List.of(table));
         actions.add(action);

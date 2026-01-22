@@ -2,11 +2,8 @@ package org.zfin.datatransfer.ncbi.port;
 
 import jakarta.persistence.Query;
 import org.hibernate.Session;
-import org.hibernate.type.StandardBasicTypes;
 
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
 
 public class PortSqlHelper {
     public static String getSqlForGeneAndRnagDbLinksFromFdbContId(String fdbContId) {
@@ -52,12 +49,21 @@ public class PortSqlHelper {
      * SQL to get all genes that do not have a link to NCBI Gene ID
      * @return
      */
-    public static String getSqlForUnlinkedGeneCount() {
+    public static String getSqlForUnlinkedGenes() {
         return """
             SELECT mrkr_zdb_id, mrkr_abbrev
             FROM marker
             WHERE mrkr_type IN (SELECT mtgrpmem_mrkr_type FROM marker_type_group_member WHERE mtgrpmem_mrkr_type_group = 'GENEDOM_AND_NTR')
             AND mrkr_zdb_id NOT IN (SELECT dblink_linked_recid FROM db_link WHERE dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1')
+            """;
+    }
+
+    public static String getSqlForReplacedGenes() {
+        return """
+            select dblink_linked_recid as gene_id, mrkr_abbrev as gene_symbol, nri_old_id as old_id, nri_new_id as new_id from db_link\s
+            join ncbi_replaced_id on dblink_acc_num = nri_old_id
+            join marker on mrkr_zdb_id = dblink_linked_recid
+            where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
             """;
     }
 }
