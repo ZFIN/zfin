@@ -3724,7 +3724,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     "Gene ZDB ID", geneZdbId,
                     "Gene Symbol", geneSymbol,
                     "Old NCBI Gene ID", oldId,
-                    "New NCBI Gene ID", newId
+                    "New NCBI Gene ID", (newId == null ? "" : newId)
             ));
         }
 
