@@ -3,6 +3,7 @@ package org.zfin.datatransfer.ncbi;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDangerousDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -171,6 +172,9 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
 
     }
 
+    // Test the case where a gene has no NCBI link, but has a Vega link that can be mapped to an NCBI Gene ID
+    // No longer relevant since Vega is retired
+    @Ignore
     @Test
     public void testGeneWithVegaLink() throws IOException {
         // Create database state before the load
