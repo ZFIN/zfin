@@ -51,6 +51,11 @@ public enum GenomeBrowserTrack {
         trackIDMap12.put(GENES, "zfin-gene12");
         trackIDMap12.put(REFSEQ, "refseq12");
         trackMap.put("GRCz12tu", trackIDMap12);
+
+        Map<GenomeBrowserTrack, String> trackIDMap10 = new HashMap<>();
+        trackIDMap10.put(GENES, "GRCz10_zfin_gene");
+        trackMap.put("GRCz10", trackIDMap10);
+
         Map<GenomeBrowserTrack, String> trackIDMap11 = new HashMap<>();
         trackIDMap11.put(GENES, "zfin_gene");
         trackIDMap11.put(TRANSCRIPTS, "zfin_additional_transcripts");
