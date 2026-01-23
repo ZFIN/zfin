@@ -97,10 +97,12 @@ public class FigureEditController {
         newFigure.setCaption(caption);
         newFigure.setPublication(publication);
         session.save(newFigure);
+        List<String> thumbnailPaths = new ArrayList<>();
 
         for (MultipartFile file : files) {
             try {
-                ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser(), newFigure.getPublication().getZdbID());
+                Image image = ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser(), newFigure.getPublication().getZdbID());
+                thumbnailPaths.add(FigureService.convertToImagePresentationBean(image).getThumbnailPath());
             } catch (IOException e) {
                 LOG.error("Error processing image", e);
                 throw new InvalidWebRequestException("Error processing image");
@@ -110,7 +112,11 @@ public class FigureEditController {
         infrastructureRepository.insertUpdatesTable(publication, "fig_zdb_id", "create new record", newFigure.getZdbID(), null);
 
         tx.commit();
-        return FigureService.convertToFigurePresentationBean(newFigure);
+        FigurePresentationBean figurePresentationBean = FigureService.convertToFigurePresentationBean(newFigure);
+        for (String thumbnailPath : thumbnailPaths) {
+            waitForThumbnailCreation(thumbnailPath);
+        }
+        return figurePresentationBean;
     }
 
     @ResponseBody
