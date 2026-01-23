@@ -10,10 +10,12 @@ import org.zfin.framework.HibernateUtil;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.*;
+import static org.zfin.util.DateUtil.nowToString;
 
 /**
  * Run tests against a database that only has test data in it.
@@ -350,7 +352,9 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
             throw new RuntimeException("NCBI_LOAD_CONTAINER environment variable is not set. Preventing run to avoid data corruption.");
         }
 
-        tempDir = Files.createTempDirectory("ncbi_test_");
+        // Set up temporary working directory with prefix of eg. 2025-06-10_15-30-00
+        String timestampForWorkingDir = nowToString("yyyy-MM-dd_HH-mm-ss");
+        tempDir = Files.createTempDirectory("ncbi_test_" + timestampForWorkingDir + "_");
         helper = new NCBILoadIntegrationTestHelper(tempDir);
         if (DELETE_ON_EXIT) {
             tempDir.toFile().deleteOnExit();
