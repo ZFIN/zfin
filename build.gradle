@@ -586,8 +586,8 @@ def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 's
 task buildGHCRImages() {
     doLast {
         println 'Building images for Github Container Registry\n'
-        if (zfinrelease!='latest') {
-            throw new GradleException('Please set ZFIN_RELEASE to "latest" in docker/.env and retry.')
+        if (zfinrelease!='main') {
+            throw new GradleException('Please set ZFIN_RELEASE to "main" in docker/.env and retry.')
         } else {
             for (container in containerList) {
                 exec {
@@ -606,11 +606,11 @@ task tagGHCRImages() {
         for (container in containerList) {
             println container
             exec {
-                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":latest","ghcr.io/zfin/zfin-"+container+":"+release
+                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":main","ghcr.io/zfin/zfin-"+container+":"+release
                 workingDir 'docker/'
             }
             exec {
-                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":latest","ghcr.io/zfin/zfin-"+container+":release-"+release
+                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":main","ghcr.io/zfin/zfin-"+container+":release-"+release
                 workingDir 'docker/'
             }
         }
@@ -623,7 +623,7 @@ task pushGHCRImages() {
         for (container in containerList) {
             println container
             exec {
-                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":latest"
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":main"
                 workingDir 'docker/'
             }
             exec {
