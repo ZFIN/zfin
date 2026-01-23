@@ -511,104 +511,117 @@ VALUES ('ZDB-PERS-030520-1', 'ZDB-ATB-090304-2', 'zdb_id', 'ZDB-ATB-090304-2', '
 
 -- ============================================================================
 -- Merging duplicate antibodies with same AB_627224 registry ID
--- Keep: ZDB-ATB-130808-2 (Ab3-cdc2)
--- Merge into it: ZDB-ATB-180327-2 (Ab1-cdk1)
+-- Keep: ZDB-ATB-180327-2 (Ab1-cdk1)
+-- Merge into it: ZDB-ATB-130808-2 (Ab3-cdc2)
 -- ============================================================================
 
 -- Update expression_experiment2 references
-UPDATE expression_experiment2 SET xpatex_atb_zdb_id = 'ZDB-ATB-130808-2' WHERE xpatex_atb_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE expression_experiment2 SET xpatex_atb_zdb_id = 'ZDB-ATB-180327-2' WHERE xpatex_atb_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update marker_relationship (delete duplicates first, then update remaining)
 DELETE FROM marker_relationship
-WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-180327-2'
+WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-130808-2'
   AND (mrel_mrkr_1_zdb_id, mrel_type) IN (
-    SELECT mrel_mrkr_1_zdb_id, mrel_type FROM marker_relationship WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT mrel_mrkr_1_zdb_id, mrel_type FROM marker_relationship WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE marker_relationship SET mrel_mrkr_2_zdb_id = 'ZDB-ATB-130808-2' WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE marker_relationship SET mrel_mrkr_2_zdb_id = 'ZDB-ATB-180327-2' WHERE mrel_mrkr_2_zdb_id = 'ZDB-ATB-130808-2';
 DELETE FROM marker_relationship
-WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-180327-2'
+WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-130808-2'
   AND (mrel_mrkr_2_zdb_id, mrel_type) IN (
-    SELECT mrel_mrkr_2_zdb_id, mrel_type FROM marker_relationship WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT mrel_mrkr_2_zdb_id, mrel_type FROM marker_relationship WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE marker_relationship SET mrel_mrkr_1_zdb_id = 'ZDB-ATB-130808-2' WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE marker_relationship SET mrel_mrkr_1_zdb_id = 'ZDB-ATB-180327-2' WHERE mrel_mrkr_1_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update marker_history
-UPDATE marker_history SET mhist_mrkr_zdb_id = 'ZDB-ATB-130808-2' WHERE mhist_mrkr_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE marker_history SET mhist_mrkr_zdb_id = 'ZDB-ATB-180327-2' WHERE mhist_mrkr_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update data_alias (delete duplicates first)
 DELETE FROM data_alias
-WHERE dalias_data_zdb_id = 'ZDB-ATB-180327-2'
+WHERE dalias_data_zdb_id = 'ZDB-ATB-130808-2'
   AND (dalias_alias, dalias_group_id) IN (
-    SELECT dalias_alias, dalias_group_id FROM data_alias WHERE dalias_data_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT dalias_alias, dalias_group_id FROM data_alias WHERE dalias_data_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE data_alias SET dalias_data_zdb_id = 'ZDB-ATB-130808-2' WHERE dalias_data_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE data_alias SET dalias_data_zdb_id = 'ZDB-ATB-180327-2' WHERE dalias_data_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update db_link (delete duplicates first to avoid unique constraint violation)
 DELETE FROM db_link
-WHERE dblink_linked_recid = 'ZDB-ATB-180327-2'
+WHERE dblink_linked_recid = 'ZDB-ATB-130808-2'
   AND (dblink_acc_num, dblink_fdbcont_zdb_id) IN (
-    SELECT dblink_acc_num, dblink_fdbcont_zdb_id FROM db_link WHERE dblink_linked_recid = 'ZDB-ATB-130808-2'
+    SELECT dblink_acc_num, dblink_fdbcont_zdb_id FROM db_link WHERE dblink_linked_recid = 'ZDB-ATB-180327-2'
   );
-UPDATE db_link SET dblink_linked_recid = 'ZDB-ATB-130808-2' WHERE dblink_linked_recid = 'ZDB-ATB-180327-2';
+UPDATE db_link SET dblink_linked_recid = 'ZDB-ATB-180327-2' WHERE dblink_linked_recid = 'ZDB-ATB-130808-2';
 
 -- Update record_attribution (move attributions to target, delete duplicates)
 DELETE FROM record_attribution
-WHERE recattrib_data_zdb_id = 'ZDB-ATB-180327-2'
+WHERE recattrib_data_zdb_id = 'ZDB-ATB-130808-2'
   AND recattrib_source_zdb_id IN (
-    SELECT recattrib_source_zdb_id FROM record_attribution WHERE recattrib_data_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT recattrib_source_zdb_id FROM record_attribution WHERE recattrib_data_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE record_attribution SET recattrib_data_zdb_id = 'ZDB-ATB-130808-2' WHERE recattrib_data_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE record_attribution SET recattrib_data_zdb_id = 'ZDB-ATB-180327-2' WHERE recattrib_data_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update int_data_source
 DELETE FROM int_data_source
-WHERE ids_data_zdb_id = 'ZDB-ATB-180327-2'
+WHERE ids_data_zdb_id = 'ZDB-ATB-130808-2'
   AND ids_source_zdb_id IN (
-    SELECT ids_source_zdb_id FROM int_data_source WHERE ids_data_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT ids_source_zdb_id FROM int_data_source WHERE ids_data_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE int_data_source SET ids_data_zdb_id = 'ZDB-ATB-130808-2' WHERE ids_data_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE int_data_source SET ids_data_zdb_id = 'ZDB-ATB-180327-2' WHERE ids_data_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update int_data_supplier
 DELETE FROM int_data_supplier
-WHERE idsup_data_zdb_id = 'ZDB-ATB-180327-2'
+WHERE idsup_data_zdb_id = 'ZDB-ATB-130808-2'
   AND idsup_supplier_zdb_id IN (
-    SELECT idsup_supplier_zdb_id FROM int_data_supplier WHERE idsup_data_zdb_id = 'ZDB-ATB-130808-2'
+    SELECT idsup_supplier_zdb_id FROM int_data_supplier WHERE idsup_data_zdb_id = 'ZDB-ATB-180327-2'
   );
-UPDATE int_data_supplier SET idsup_data_zdb_id = 'ZDB-ATB-130808-2' WHERE idsup_data_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE int_data_supplier SET idsup_data_zdb_id = 'ZDB-ATB-180327-2' WHERE idsup_data_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update updates table
-UPDATE updates SET rec_id = 'ZDB-ATB-130808-2' WHERE rec_id = 'ZDB-ATB-180327-2';
+UPDATE updates SET rec_id = 'ZDB-ATB-180327-2' WHERE rec_id = 'ZDB-ATB-130808-2';
 
 -- Update external_note
-UPDATE external_note SET extnote_data_zdb_id = 'ZDB-ATB-130808-2' WHERE extnote_data_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE external_note SET extnote_data_zdb_id = 'ZDB-ATB-180327-2' WHERE extnote_data_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update ortholog
-UPDATE ortholog SET ortho_other_species_ncbi_gene_id = 'ZDB-ATB-130808-2' WHERE ortho_other_species_ncbi_gene_id = 'ZDB-ATB-180327-2';
+UPDATE ortholog SET ortho_other_species_ncbi_gene_id = 'ZDB-ATB-180327-2' WHERE ortho_other_species_ncbi_gene_id = 'ZDB-ATB-130808-2';
 
 -- Update phenotype_observation_generated (references marker)
-UPDATE phenotype_observation_generated SET psg_mrkr_zdb_id = 'ZDB-ATB-130808-2' WHERE psg_mrkr_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE phenotype_observation_generated SET psg_mrkr_zdb_id = 'ZDB-ATB-180327-2' WHERE psg_mrkr_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Update publication_expression_display (references marker)
-UPDATE ui.publication_expression_display SET ped_antibody_zdb_id = 'ZDB-ATB-130808-2' WHERE ped_antibody_zdb_id = 'ZDB-ATB-180327-2';
+UPDATE ui.publication_expression_display SET ped_antibody_zdb_id = 'ZDB-ATB-180327-2' WHERE ped_antibody_zdb_id = 'ZDB-ATB-130808-2';
+
+-- Copy immunogen organism from source to target
+UPDATE antibody SET atb_immun_organism = (SELECT atb_immun_organism FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-130808-2')
+WHERE atb_zdb_id = 'ZDB-ATB-180327-2' AND atb_immun_organism IS NULL;
 
 -- Delete the antibody record (this will cascade to antibody table)
-DELETE FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-180327-2';
-DELETE FROM marker WHERE mrkr_zdb_id = 'ZDB-ATB-180327-2';
+DELETE FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-130808-2';
+DELETE FROM marker WHERE mrkr_zdb_id = 'ZDB-ATB-130808-2';
 
 -- Remove from active data and add to replaced data
-DELETE FROM zdb_active_data WHERE zactvd_zdb_id = 'ZDB-ATB-180327-2';
+DELETE FROM zdb_active_data WHERE zactvd_zdb_id = 'ZDB-ATB-130808-2';
 INSERT INTO zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
-VALUES ('ZDB-ATB-180327-2', 'ZDB-ATB-130808-2', 'Ab1-cdk1');
+VALUES ('ZDB-ATB-130808-2', 'ZDB-ATB-180327-2', 'Ab3-cdc2');
 
 -- Add alias for the merged antibody name (only if not already exists)
 INSERT INTO data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
-SELECT get_id_and_insert_active_data('DALIAS'), 'ZDB-ATB-130808-2', 'Ab1-cdk1', '1'
-WHERE NOT EXISTS (SELECT 1 FROM data_alias WHERE dalias_data_zdb_id = 'ZDB-ATB-130808-2' AND dalias_alias = 'Ab1-cdk1');
+SELECT get_id_and_insert_active_data('DALIAS'), 'ZDB-ATB-180327-2', 'Ab3-cdc2', '1'
+WHERE NOT EXISTS (SELECT 1 FROM data_alias WHERE dalias_data_zdb_id = 'ZDB-ATB-180327-2' AND dalias_alias = 'Ab3-cdc2');
 
 -- Log the merge in updates table
 INSERT INTO updates (submitter_id, rec_id, field_name, new_value, old_value, comments, submitter_name, upd_when)
-VALUES ('ZDB-PERS-030520-1', 'ZDB-ATB-130808-2', 'zdb_id', 'ZDB-ATB-130808-2', 'ZDB-ATB-180327-2',
-        'Merged duplicate antibody ZDB-ATB-180327-2 (Ab1-cdk1) - both have same AB_627224 registry ID',
+VALUES ('ZDB-PERS-030520-1', 'ZDB-ATB-180327-2', 'zdb_id', 'ZDB-ATB-180327-2', 'ZDB-ATB-130808-2',
+        'Merged duplicate antibody ZDB-ATB-130808-2 (Ab3-cdc2) - both have same AB_627224 registry ID',
         'Pich, Christian', now());
+
+-- Remove duplicate public note
+DELETE FROM external_note
+WHERE extnote_zdb_id = (
+    SELECT extnote_zdb_id FROM external_note
+    WHERE extnote_data_zdb_id = 'ZDB-ATB-180327-2'
+      AND extnote_note = 'Immunogen was amino acids 224-230 mapping within a central region of Cdc2 of human origin.'
+    LIMIT 1
+);
 
 -- ============================================================================
 -- Merging duplicate antibodies with same AB_10664825 registry ID
@@ -900,6 +913,9 @@ FROM external_note WHERE extnote_data_zdb_id = 'ZDB-ATB-190925-3';
 
 -- Delete the old external note
 DELETE FROM external_note WHERE extnote_data_zdb_id = 'ZDB-ATB-190925-3';
+
+-- Move curator note to target antibody
+UPDATE data_note SET dnote_data_zdb_id = 'ZDB-ATB-160518-1' WHERE dnote_data_zdb_id = 'ZDB-ATB-190925-3';
 
 -- Delete the antibody record (this will cascade to antibody table)
 DELETE FROM antibody WHERE atb_zdb_id = 'ZDB-ATB-190925-3';
