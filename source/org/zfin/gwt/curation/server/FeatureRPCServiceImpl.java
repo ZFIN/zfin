@@ -708,7 +708,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 currentSession().save(pa);
 
                 if (fgl.getAssembly() != null && fgl.getAssembly().equals(AssemblyEnum.GRCZ12TU.getName())) {
-                    GenomicLocationService service = new GenomicLocationService("/opt/zfin/catalina_bases/zfin.org/temp/");
+                    GenomicLocationService service = new GenomicLocationService();
                     service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
                 }
 
