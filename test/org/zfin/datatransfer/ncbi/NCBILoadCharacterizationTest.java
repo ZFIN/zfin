@@ -55,7 +55,7 @@ public class NCBILoadCharacterizationTest extends AbstractDangerousDatabaseTest 
     public void testPointInTimeCharacterization() throws IOException {
 
         // Sanity check to make sure we are running against the unload from 2025-10-15
-        assertDatabaseDate(2025,10,15);
+        assertDatabaseDate(2026,1,14);
 
         // Create database state before the load
         copyCharacterizationTestData();
@@ -87,7 +87,7 @@ public class NCBILoadCharacterizationTest extends AbstractDangerousDatabaseTest 
     }
 
     private void copyCharacterizationTestData() {
-        String sourceDir = "/research/zarchive/load_files/NCBI-gene-load-archive/2025-10-15";
+        String sourceDir = "/research/zarchive/load_files/NCBI-gene-load-archive/2026-01-09";
         List<String> filesToCopy = List.of(
             "gene2accession.gz",
             "gene2vega.gz",
