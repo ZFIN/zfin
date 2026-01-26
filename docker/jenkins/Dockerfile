@@ -1,4 +1,4 @@
-FROM base:latest
+FROM ghcr.io/zfin/zfin-base:main
 
 USER root
 
