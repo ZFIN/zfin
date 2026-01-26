@@ -1,4 +1,4 @@
-FROM base:latest
+FROM ghcr.io/zfin/zfin-base:main
 
 # Dockerfile for NCBI gene load test environment
 # It hosts its own PostgreSQL database so it doesn't interfere with the db container
