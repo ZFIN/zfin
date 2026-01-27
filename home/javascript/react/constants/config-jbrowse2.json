@@ -176,6 +176,39 @@
                     }
                 ]
             }
+        },
+        {
+            "name": "Zv9",
+            "displayName": "Danio rerio (Zv9)",
+            "sequence": {
+                "type": "ReferenceSequenceTrack",
+                "trackId": "Zv9_refseq",
+                "adapter": {
+                    "type": "BgzipFastaAdapter",
+                    "fastaLocation": {
+                        "locationType": "UriLocation",
+                        "uri": "https://s3.amazonaws.com/agrjbrowse/fasta/Zv9_toplevel.fa.gz"
+                    },
+                    "faiLocation": {
+                        "locationType": "UriLocation",
+                        "uri": "https://s3.amazonaws.com/agrjbrowse/fasta/Zv9_toplevel.fa.gz.fai"
+                    },
+                    "gziLocation": {
+                        "locationType": "UriLocation",
+                        "uri": "https://s3.amazonaws.com/agrjbrowse/fasta/Zv9_toplevel.fa.gz.gzi"
+                    }
+                },
+                "displays": [
+                    {
+                        "type": "LinearReferenceSequenceDisplay",
+                        "displayId": "Zv9_refseq-LinearReferenceSequenceDisplay"
+                    },
+                    {
+                        "type": "LinearGCContentDisplay",
+                        "displayId": "Zv9_refseq-LinearGCContentDisplay"
+                    }
+                ]
+            }
         }
     ],
     "tracks": [
@@ -957,6 +990,326 @@
                 {
                     "type": "LinearArcDisplay",
                     "displayId": "GRCz10_zfin_mutants-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_gene",
+            "name": "ZFIN Gene",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{id:null,curie:null,ZFIN:'<a href=\"http://zfin.org/'+feature.id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN_Gene/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zfin_gene-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#088080",
+                        "displayMode": "reducedRepresentation"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zfin_gene-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_transcript",
+            "name": "Transcript",
+            "assemblyNames": ["Zv9"],
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN_Gene/{refseq}/trackData.jsonz"
+                }
+            },
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.id+' \">'+ feature.name+'</a>'}"
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_transcript-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#6792ED"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_transcript-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_genes_with_phenotype",
+            "name": "ZFIN Genes with Phenotype",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.gene_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN_Genes_with_Phenotype/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zfin_genes_with_phenotype-1687908071014-LinearBasicDisplay"
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zfin_genes_with_phenotype-1687908071014-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_genes_with_antibody_data",
+            "name": "ZFIN Genes with Antibody Data",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.gene_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN_Genes_with_Antibody_Data/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zfin_genes_with_antibody_data-1687908124039-LinearBasicDisplay"
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zfin_genes_with_antibody_data-1687908124039-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_genes_with_expression",
+            "name": "ZFIN Genes with Expression",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.gene_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN_Genes_with_Expression/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zfin_genes_with_expression-1687908166699-LinearBasicDisplay"
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zfin_genes_with_expression-1687908166699-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_complete_assembly_clones",
+            "name": "Complete Assembly Clones",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.zdb_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/Complete_Assembly_Clones/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_complete_assembly_clones-1687908227633-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "white",
+                        "outline": "#8CADF1"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_complete_assembly_clones-1687908227633-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_knockdown_reagent",
+            "name": "Knockdown Reagent",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.zdb_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/Knockdown_Reagent/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_knockdown_reagent-1687908500113-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#3DB471"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_knockdown_reagent-1687908500113-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_assembly",
+            "name": "Assembly",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.zdb_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/Assembly/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_assembly-1687908614561-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#6792ED"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_assembly-1687908614561-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_zebrafish_mutation_project",
+            "name": "Zebrafish Mutation Project",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.zdb_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/Zebrafish_Mutation_Project/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zebrafish_mutation_project-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#800080"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zebrafish_mutation_project-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_transgenic_insertion",
+            "name": "Transgenic Insertion",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/Transgenic_Insertion/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_transgenic_insertion-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#7135B3"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_transgenic_insertion-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
+            "trackId": "Zv9_zfin_mutants",
+            "name": "ZFIN Mutants",
+            "assemblyNames": ["Zv9"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/Zv9/tracks/ZFIN Mutants/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "Zv9_zfin_mutants-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "goldenrod"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "Zv9_zfin_mutants-LinearArcDisplay"
                 }
             ]
         }
