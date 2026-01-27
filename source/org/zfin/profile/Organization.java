@@ -20,7 +20,8 @@ import java.util.Set;
 
 @Setter
 @Getter
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasImage, EntityZdbID {
 
     public static final String ACTIVE_STATUS = "active";
@@ -29,8 +30,9 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Id
     @Column(name = "zdb_id")
     @GeneratedValue(generator = "zdbIdGeneratorForOrganization")
-    @GenericGenerator(name = "zdbIdGeneratorForOrganization", strategy = "org.zfin.database.ZdbIdGenerator",
-            parameters = @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true"))
+    @GenericGenerator(name = "zdbIdGeneratorForOrganization", strategy = "org.zfin.database.ZdbIdGenerator", parameters = {
+            @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+    })
     private String zdbID;
 
     @NotNull(message = "Name is required")
@@ -60,6 +62,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Size(max = 2000, message = "Must be less than 2000 characters.")
     @Column(name = "url")
     private String url;
+    @ManyToOne
+    @JoinColumn(name = "owner")
     private Person owner;
 
     //    @Size(max=450,message = "Must be less than 450 characters.")
@@ -68,10 +72,10 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Column(name = "country")
     private String country;
 
+    @Transient
     private boolean active;
 
-    @JoinColumn(name = "srcurl_source_zdb_id")
-    @OneToMany
+    @OneToMany(mappedBy = "organization")
     protected Set<SourceUrl> organizationUrls;
 
     @Column(name = "status")
@@ -123,6 +127,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 //    private String contactPersonZdbID ;
 
     // a non-persisted element, just a convenience
+    @Transient
     private String prefix;
 
     @ManyToOne

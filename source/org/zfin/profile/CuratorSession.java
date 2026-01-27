@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.publication.Publication;
 
@@ -8,11 +9,28 @@ import org.zfin.publication.Publication;
  * relating to a specific publication.  (The table is more flexible, but this
  * class will map to a specific Pub)
  */
+@Entity
+@Table(name = "curator_session")
 public class CuratorSession extends CuratorSessionDTO {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cs_pk_id")
     private Long ID;
+
+    @ManyToOne
+    @JoinColumn(name = "cs_person_zdb_id")
     private Person curator;
+
+    @ManyToOne
+    @JoinColumn(name = "cs_pub_zdb_id")
     private Publication publication;
+
+    @Column(name = "cs_field_name")
+    private String field;
+
+    @Column(name = "cs_data")
+    private String value;
 
     public Long getID() {
         return ID;

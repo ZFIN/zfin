@@ -23,15 +23,11 @@ import java.util.stream.Collectors;
 public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Serializable {
 
     @Id
-    @GeneratedValue(generator = "zdbIdGenerator")
-    @GenericGenerator(
-            name = "zdbIdGenerator",
-            strategy = "org.zfin.database.ZdbIdGenerator",
-            parameters = {
-                    @Parameter(name = "type", value = "FDBCONT"),
-                    @Parameter(name = "insertActiveData", value = "true")
-            }
-    )
+    @GeneratedValue(generator = "zdbIdGeneratorForReferenceDatabase")
+    @GenericGenerator(name = "zdbIdGeneratorForReferenceDatabase", strategy = "org.zfin.database.ZdbIdGenerator", parameters = {
+            @Parameter(name = "type", value = "FDBCONT"),
+            @Parameter(name = "insertActiveData", value = "true")
+    })
     @Column(name = "fdbcont_zdb_id", nullable = false)
     @JsonView(View.SequenceDetailAPI.class)
     private String zdbID;
