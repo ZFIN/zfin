@@ -1,23 +1,28 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.feature.Feature;
 
+@Entity
+@DiscriminatorValue("Feat")
+@Getter
+@Setter
 public class MappedFeature extends MappedMarker {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "marker_id", insertable = false, updatable = false)
     private Feature feature;
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
 
     public int compareTo(Object o) {
         if (o == null) {
             return -1;
-        } else if (!(o instanceof MappedMarkerImpl)) {
+        } else if (!(o instanceof MappedFeature)) {
             return o.toString().compareTo(toString());
         }
         // both MappedMarker

@@ -1,82 +1,50 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 
 import java.io.Serializable;
 
+@Entity
+@Table(name = "PRIMER_SET")
+@Getter
+@Setter
 public class PrimerSet implements Serializable {
 
+    @Id
+    @GeneratedValue(generator = "PrimerSet")
+    @GenericGenerator(name = "PrimerSet",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "zdb_id")
     private String zdbID;
-    private Marker marker ;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "marker_id", insertable = false, updatable = false)
+    private Marker marker;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "strain_id", insertable = false, updatable = false)
     private Genotype genotype;
+
+    @Column(name = "fwd_primer")
     private String forwardPrimer;
+
+    @Column(name = "rev_primer")
     private String reversePrimer;
+
+    @Column(name = "band_size")
     private String bandSize;
+
+    @Column(name = "restr_enzyme")
     private String restrictionEnzyme;
+
+    @Column(name = "anneal_temp")
     private String annealingTemperature;
-
-    public String getAnnealingTemperature() {
-        return annealingTemperature;
-    }
-
-    public void setAnnealingTemperature(String annealingTemperature) {
-        this.annealingTemperature = annealingTemperature;
-    }
-
-    public String getBandSize() {
-        return bandSize;
-    }
-
-    public void setBandSize(String bandSize) {
-        this.bandSize = bandSize;
-    }
-
-    public String getForwardPrimer() {
-        return forwardPrimer;
-    }
-
-    public void setForwardPrimer(String forwardPrimer) {
-        this.forwardPrimer = forwardPrimer;
-    }
-
-    public Genotype getGenotype() {
-        return genotype;
-    }
-
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-    public String getRestrictionEnzyme() {
-        return restrictionEnzyme;
-    }
-
-    public void setRestrictionEnzyme(String restrictionEnzyme) {
-        this.restrictionEnzyme = restrictionEnzyme;
-    }
-
-    public String getReversePrimer() {
-        return reversePrimer;
-    }
-
-    public void setReversePrimer(String reversePrimer) {
-        this.reversePrimer = reversePrimer;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 }
