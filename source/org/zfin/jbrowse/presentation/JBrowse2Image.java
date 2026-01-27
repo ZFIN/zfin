@@ -14,195 +14,195 @@ import java.util.List;
 
 public class JBrowse2Image implements GenomeBrowserImage {
 
-    private final String landmark;
-    private final Collection<GenomeBrowserTrack> tracks;
-    private final String highlightFeature;
-    private final String highlightColor;
-    private final boolean grid;
+	private final String landmark;
+	private final Collection<GenomeBrowserTrack> tracks;
+	private final String highlightFeature;
+	private final String highlightColor;
+	private final boolean grid;
 
-    private String imageUrl;
-    private String linkUrlBase;
-    private String linkUrl;
+	private String imageUrl;
+	private String linkUrlBase;
+	private String linkUrl;
 
-    private static final int DEFAULT_HEIGHT = 400;
-    private Integer height = DEFAULT_HEIGHT;
+	private static final int DEFAULT_HEIGHT = 400;
+	private Integer height = DEFAULT_HEIGHT;
 
-    private GenomeBrowserBuild build;
-    private GenomeBrowserType type = GenomeBrowserType.JBROWSE;
+	private GenomeBrowserBuild build;
+	private GenomeBrowserType type = GenomeBrowserType.JBROWSE;
 
-    public JBrowse2Image(JBrowse2ImageBuilder builder) {
-        this.landmark = builder.getLandmark();
-        this.tracks = builder.getTracks();
-        this.highlightFeature = builder.getHighlightLandmark();
-        this.highlightColor = builder.getHighlightColor();
-        this.grid = builder.isGrid();
-        this.height = builder.getHeight();
-        this.build = builder.getGenomeBuild();
-        this.linkUrlBase = this.build.getJBrowsePath();
-    }
+	public JBrowse2Image(JBrowse2ImageBuilder builder) {
+		this.landmark = builder.getLandmark();
+		this.tracks = builder.getTracks();
+		this.highlightFeature = builder.getHighlightLandmark();
+		this.highlightColor = builder.getHighlightColor();
+		this.grid = builder.isGrid();
+		this.height = builder.getHeight();
+		this.build = builder.getGenomeBuild();
+		this.linkUrlBase = this.build.getJBrowsePath();
+	}
 
-    @Override
-    public String getReactComponentId() {
-        return "Jbrowse2Image";
-    }
+	@Override
+	public String getReactComponentId() {
+		return "Jbrowse2Image";
+	}
 
-    @Override
-    public String getImageUrl() {
-        if (imageUrl == null) {
-            URLCreator url = new URLCreator("");
+	@Override
+	public String getImageUrl() {
+		if (imageUrl == null) {
+			URLCreator url = new URLCreator("");
 
-            //Remove UI elements from JBrowse view
-            url.addNameValuePair("nav", "0");
-            url.addNameValuePair("overview", "0");
-            url.addNameValuePair("tracklist", "0");
+			//Remove UI elements from JBrowse view
+			url.addNameValuePair("nav", "0");
+			url.addNameValuePair("overview", "0");
+			url.addNameValuePair("tracklist", "0");
 
-            if (StringUtils.isNotBlank(landmark)) {
-                url.addNameValuePair("loc", landmark);
-            }
+			if (StringUtils.isNotBlank(landmark)) {
+				url.addNameValuePair("loc", landmark);
+			}
 
-            if (CollectionUtils.isNotEmpty(tracks)) {
-                url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
-            }
+			if (CollectionUtils.isNotEmpty(tracks)) {
+				url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
+			}
 
-            if (build != null) {
-                url.addNameValuePair("data", "data/" + build.getValue());
-            }
+			if (build != null) {
+				url.addNameValuePair("data", "data/" + build.getValue());
+			}
 
-            String highlight = getHighlightString();
-            if (StringUtils.isNotBlank(highlight)) {
-                //Disable highlighting by marker for now
-                //TODO: uncomment when highlighting by marker is supported in jbrowse project.
+			String highlight = getHighlightString();
+			if (StringUtils.isNotBlank(highlight)) {
+				//Disable highlighting by marker for now
+				//TODO: uncomment when highlighting by marker is supported in jbrowse project.
 //                url.addNameValuePair("highlight", highlight);
-            }
+			}
 
-            //url.addNameValuePair("grid", grid ? "1" : "0");
+			//url.addNameValuePair("grid", grid ? "1" : "0");
 
-            //getURL converts the spaces in the track names to plus signs - this changes them back
-            String pathSuffix = url.getURL().replaceAll("\\+", "%20");
-            String baseUrl = calculateBaseUrl();
-            imageUrl = baseUrl + pathSuffix;
-        }
-        return imageUrl;
-    }
+			//getURL converts the spaces in the track names to plus signs - this changes them back
+			String pathSuffix = url.getURL().replaceAll("\\+", "%20");
+			String baseUrl = calculateBaseUrl();
+			imageUrl = baseUrl + pathSuffix;
+		}
+		return imageUrl;
+	}
 
-    public String calculateBaseUrl() {
-        String url = "https://dev.d2u241g26l748k.amplifyapp.com";
-        if (ZfinProperties.getInstance().equals("franklin") || ZfinProperties.getInstance().equals("crick")) {
-            url = "https://main.d2u241g26l748k.amplifyapp.com";
-        }
+	public String calculateBaseUrl() {
+		String url = "https://dev.d2u241g26l748k.amplifyapp.com";
+		if (ZfinProperties.getInstance().equals("franklin") || ZfinProperties.getInstance().equals("crick")) {
+			url = "https://main.d2u241g26l748k.amplifyapp.com";
+		}
 
-        if (!url.endsWith("/")) {
-            url += "/";
-        }
+		if (!url.endsWith("/")) {
+			url += "/";
+		}
 
-        return url;
-    }
+		return url;
+	}
 
-    @Override
-    public String getFullLinkUrl() {
-        URLCreator url = new URLCreator(calculateBaseUrl());
-        if (StringUtils.isNotBlank(landmark)) {
-            url.addNameValuePair("loc", landmark);
-        }
-        String highlight = getHighlightString();
-        if (StringUtils.isNotBlank(highlight)) {
-            url.addNameValuePair("h_feat", highlight);
-        }
+	@Override
+	public String getFullLinkUrl() {
+		URLCreator url = new URLCreator(calculateBaseUrl());
+		if (StringUtils.isNotBlank(landmark)) {
+			url.addNameValuePair("loc", landmark);
+		}
+		String highlight = getHighlightString();
+		if (StringUtils.isNotBlank(highlight)) {
+			url.addNameValuePair("h_feat", highlight);
+		}
 
-        if (CollectionUtils.isNotEmpty(tracks)) {
-            List<String> trackIds = tracks.stream().map(track -> track.getTrackId(build.getValue())).toList();
-            url.addNameValuePair("tracks", StringUtils.join(trackIds, ","));
-        }
-        url.addNameValuePair("assembly", build.getValue());
-        url.addNameValuePair("tracklist", "true");
-
-
-        return url.getURL();
-    }
+		if (CollectionUtils.isNotEmpty(tracks)) {
+			List<String> trackIds = tracks.stream().map(track -> track.getTrackId(build.getValue())).toList();
+			url.addNameValuePair("tracks", StringUtils.join(trackIds, ","));
+		}
+		url.addNameValuePair("assembly", build.getValue());
+		url.addNameValuePair("tracklist", "true");
 
 
-    @Override
-    public String getLinkUrl() {
-        if (linkUrl == null) {
-            URLCreator url = new URLCreator(linkUrlBase);
+		return url.getURL();
+	}
 
-            if (StringUtils.isNotBlank(landmark)) {
-                url.addNameValuePair("name", landmark);
-            }
 
-            String highlight = getHighlightString();
-            if (StringUtils.isNotBlank(highlight)) {
-                url.addNameValuePair("h_feat", highlight);
-            }
+	@Override
+	public String getLinkUrl() {
+		if (linkUrl == null) {
+			URLCreator url = new URLCreator(linkUrlBase);
 
-            if (CollectionUtils.isNotEmpty(tracks)) {
-                url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
-            }
+			if (StringUtils.isNotBlank(landmark)) {
+				url.addNameValuePair("name", landmark);
+			}
 
-            linkUrl = "/" + url.getURL();
-        }
-        return linkUrl;
-    }
+			String highlight = getHighlightString();
+			if (StringUtils.isNotBlank(highlight)) {
+				url.addNameValuePair("h_feat", highlight);
+			}
 
-    @Override
-    public String getLandmark() {
-        return landmark;
-    }
+			if (CollectionUtils.isNotEmpty(tracks)) {
+				url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
+			}
 
-    @Override
-    public String getChromosome() {
-        if (landmark == null)
-            return "";
-        return landmark.substring(0, landmark.indexOf(":"));
-    }
+			linkUrl = "/" + url.getURL();
+		}
+		return linkUrl;
+	}
 
-    @Override
-    public GenomeBrowserType getType() {
-        return type;
-    }
+	@Override
+	public String getLandmark() {
+		return landmark;
+	}
 
-    @Override
-    public Integer getHeight() {
-        if (height == null) {
-            return DEFAULT_HEIGHT;
-        }
-        return height;
-    }
+	@Override
+	public String getChromosome() {
+		if (landmark == null)
+			return "";
+		return landmark.substring(0, landmark.indexOf(":"));
+	}
 
-    @Override
-    public String getBuild() {
-        return build.getValue();
-    }
+	@Override
+	public GenomeBrowserType getType() {
+		return type;
+	}
 
-    private String getHighlightString() {
-        String urlHighlight = "";
-        if (StringUtils.isNotBlank(highlightFeature)) {
-            urlHighlight = highlightFeature;
-            if (StringUtils.isNotBlank(highlightColor)) {
-                urlHighlight += "@" + highlightColor;
-            }
-        }
-        // gbrowse wants the highlight name to be lowercase for some reason!
-        return urlHighlight.toLowerCase();
-    }
+	@Override
+	public Integer getHeight() {
+		if (height == null) {
+			return DEFAULT_HEIGHT;
+		}
+		return height;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public String getBuild() {
+		return build.getValue();
+	}
 
-        JBrowse2Image image = (JBrowse2Image) o;
+	private String getHighlightString() {
+		String urlHighlight = "";
+		if (StringUtils.isNotBlank(highlightFeature)) {
+			urlHighlight = highlightFeature;
+			if (StringUtils.isNotBlank(highlightColor)) {
+				urlHighlight += "@" + highlightColor;
+			}
+		}
+		// gbrowse wants the highlight name to be lowercase for some reason!
+		return urlHighlight.toLowerCase();
+	}
 
-        return getLinkUrl().equals(image.getLinkUrl()) &&
-               getImageUrl().equals(image.getImageUrl());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public int hashCode() {
-        int result = getImageUrl() != null ? getImageUrl().hashCode() : 0;
-        result = 31 * result + (getLinkUrl() != null ? getLinkUrl().hashCode() : 0);
-        return result;
-    }
+		JBrowse2Image image = (JBrowse2Image) o;
+
+		return getLinkUrl().equals(image.getLinkUrl()) &&
+			getImageUrl().equals(image.getImageUrl());
+	}
+
+	@Override
+	public int hashCode() {
+		int result = getImageUrl() != null ? getImageUrl().hashCode() : 0;
+		result = 31 * result + (getLinkUrl() != null ? getLinkUrl().hashCode() : 0);
+		return result;
+	}
 
 
 }
