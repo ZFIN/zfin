@@ -1,5 +1,8 @@
 package org.zfin.expression;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -13,92 +16,49 @@ import java.util.Set;
  * moves figure into expression_experiment2, and
  * uses a pk id rather than a zdb_id
  */
+@Entity
+@Table(name = "xpat_exp_details_generated")
+@Getter
+@Setter
 public class ExpressionDetailsGenerated {
+
+    @Id
+    @Column(name = "xedg_pk_id")
     private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_fig_zdb_id")
     private Figure figure;
+
+    @OneToMany(mappedBy = "expressionExperiment", fetch = FetchType.LAZY)
     private Set<ExpressionResultGenerated> expressionResults;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_zdb_id")
     private ExpressionExperiment2 expressionExperiment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_genox_zdb_id")
     private FishExperiment fishExperiment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_gene_zdb_id")
     private Marker gene;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_probe_feature_zdb_id")
     private Clone probe;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_assay_name")
     private ExpressionAssay assay;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_atb_zdb_id")
     private Antibody antibody;
+
     // this markerdblink refers to either the probe or the gene as far as I can tell.  Mostly the gene, though.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xedg_dblink_zdb_id")
     private MarkerDBLink markerDBLink;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public void setFigure(Figure figure) {
-        this.figure = figure;
-    }
-
-    public Set<ExpressionResultGenerated> getExpressionResults() {
-        return expressionResults;
-    }
-
-    public void setExpressionResults(Set<ExpressionResultGenerated> expressionResults) {
-        this.expressionResults = expressionResults;
-    }
-
-    public ExpressionExperiment2 getExpressionExperiment() { return expressionExperiment; }
-
-    public void setExpressionExperiment(ExpressionExperiment2 expressionExperiment) { this.expressionExperiment = expressionExperiment; }
-
-    public FishExperiment getFishExperiment() {
-        return fishExperiment;
-    }
-
-    public void setFishExperiment(FishExperiment fishExperiment) {
-        this.fishExperiment = fishExperiment;
-    }
-
-    public Marker getGene() {
-        return gene;
-    }
-
-    public void setGene(Marker gene) {
-        this.gene = gene;
-    }
-
-    public Clone getProbe() {
-        return probe;
-    }
-
-    public void setProbe(Clone probe) {
-        this.probe = probe;
-    }
-
-    public ExpressionAssay getAssay() {
-        return assay;
-    }
-
-    public void setAssay(ExpressionAssay assay) {
-        this.assay = assay;
-    }
-
-    public Antibody getAntibody() {
-        return antibody;
-    }
-
-    public void setAntibody(Antibody antibody) {
-        this.antibody = antibody;
-    }
-
-    public MarkerDBLink getMarkerDBLink() {
-        return markerDBLink;
-    }
-
-    public void setMarkerDBLink(MarkerDBLink markerDBLink) {
-        this.markerDBLink = markerDBLink;
-    }
 }
