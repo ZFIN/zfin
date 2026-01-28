@@ -23,14 +23,27 @@ public class CuratorSession extends CuratorSessionDTO {
     private Person curator;
 
     @ManyToOne
-    @JoinColumn(name = "cs_pub_zdb_id")
+    @JoinColumn(name = "cs_data_zdb_id")
     private Publication publication;
 
     @Column(name = "cs_field_name")
     private String field;
 
-    @Column(name = "cs_data")
+    @Column(name = "cs_field_name_value")
     private String value;
+
+    // Mark inherited DTO fields as transient - persistence is via 'curator' and 'publication' relationships
+    @Transient
+    @Override
+    public String getPublicationZdbID() {
+        return super.getPublicationZdbID();
+    }
+
+    @Transient
+    @Override
+    public String getCuratorZdbID() {
+        return super.getCuratorZdbID();
+    }
 
     public Long getID() {
         return ID;
