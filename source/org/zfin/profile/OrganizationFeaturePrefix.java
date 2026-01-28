@@ -1,14 +1,27 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.zfin.feature.FeaturePrefix;
 
 import java.io.Serializable;
 
+@Entity
+@Table(name = "source_feature_prefix")
+@IdClass(OrganizationFeaturePrefixId.class)
+public class OrganizationFeaturePrefix implements Serializable {
 
-public class OrganizationFeaturePrefix implements Serializable{
+    @Id
+    @Column(name = "sfp_current_designation")
+    private Boolean currentDesignation;
 
-    private Boolean isCurrentDesignation;
-    private FeaturePrefix featurePrefix ;
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sfp_prefix_id")
+    private FeaturePrefix featurePrefix;
+
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sfp_source_zdb_id")
     private Organization organization;
 
     public Organization getOrganization() {
@@ -20,11 +33,11 @@ public class OrganizationFeaturePrefix implements Serializable{
     }
 
     public Boolean getCurrentDesignation() {
-        return isCurrentDesignation;
+        return currentDesignation;
     }
 
     public void setCurrentDesignation(Boolean currentDesignation) {
-        this.isCurrentDesignation = currentDesignation;
+        this.currentDesignation = currentDesignation;
     }
 
     public FeaturePrefix getFeaturePrefix() {
@@ -40,7 +53,7 @@ public class OrganizationFeaturePrefix implements Serializable{
         final StringBuilder sb = new StringBuilder();
         sb.append("LabFeaturePrefix");
         sb.append("{organization=").append(organization);
-        sb.append(", isCurrentDesignation=").append(isCurrentDesignation);
+        sb.append(", currentDesignation=").append(currentDesignation);
         sb.append(", featurePrefix=").append(featurePrefix);
         sb.append('}');
         return sb.toString();
@@ -55,7 +68,7 @@ public class OrganizationFeaturePrefix implements Serializable{
 
         if (featurePrefix != null ? !featurePrefix.equals(that.featurePrefix) : that.featurePrefix != null)
             return false;
-        if (isCurrentDesignation != null ? !isCurrentDesignation.equals(that.isCurrentDesignation) : that.isCurrentDesignation != null)
+        if (currentDesignation != null ? !currentDesignation.equals(that.currentDesignation) : that.currentDesignation != null)
             return false;
         if (organization != null ? !organization.equals(that.organization) : that.organization != null) return false;
 
@@ -64,7 +77,7 @@ public class OrganizationFeaturePrefix implements Serializable{
 
     @Override
     public int hashCode() {
-        int result = isCurrentDesignation != null ? isCurrentDesignation.hashCode() : 0;
+        int result = currentDesignation != null ? currentDesignation.hashCode() : 0;
         result = 31 * result + (featurePrefix != null ? featurePrefix.hashCode() : 0);
         result = 31 * result + (organization != null ? organization.hashCode() : 0);
         return result;

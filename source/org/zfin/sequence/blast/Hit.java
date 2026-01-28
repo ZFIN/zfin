@@ -21,14 +21,10 @@ import java.util.regex.Pattern;
 public class Hit {
 
     @Id
-    @GeneratedValue(generator = "zdbIdGenerator")
-    @org.hibernate.annotations.GenericGenerator(
-            name = "zdbIdGenerator",
-            strategy = "org.zfin.database.ZdbIdGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "type", value = "BHIT")
-            }
-    )
+    @GeneratedValue(generator = "zdbIdGeneratorForHit")
+    @org.hibernate.annotations.GenericGenerator(name = "zdbIdGeneratorForHit", strategy = "org.zfin.database.ZdbIdGenerator", parameters = {
+            @org.hibernate.annotations.Parameter(name = "type", value = "BHIT")
+    })
     @Column(name = "bhit_zdb_id", nullable = false)
     private String zdbID;
 
