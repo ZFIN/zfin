@@ -1,5 +1,9 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
@@ -12,76 +16,57 @@ import org.zfin.infrastructure.ZdbID;
  * a list of linkageMembers are retrieved. The first entity then is the marker/feature
  * in question and the second entity contains the linked (paired) members (marker or feature).
  */
-abstract public class LinkageMember implements Cloneable, Comparable<LinkageMember> {
+@Entity
+@Table(name = "linkage_membership_search")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(lms_member_1_zdb_id) " +
+        "WHEN 'ALT' THEN " +
+        "  CASE get_obj_type(lms_member_2_zdb_id) " +
+        "  WHEN 'ALT' THEN 'FeatFeat' " +
+        "  ELSE 'FeatMark' " +
+        "  END " +
+        "ELSE " +
+        "  CASE get_obj_type(lms_member_2_zdb_id) " +
+        "  WHEN 'ALT' THEN 'MarkFeat' " +
+        "  ELSE 'MarkMark' " +
+        "  END " +
+        "END"
+)
+@Getter
+@Setter
+public abstract class LinkageMember implements Cloneable, Comparable<LinkageMember> {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lms_pk_id")
     protected long id;
+
+    @Column(name = "lms_lod")
     protected Double lod;
+
+    @Column(name = "lms_distance")
     protected Double distance;
+
+    @Column(name = "lms_units")
     protected String metric;
+
+    @Column(name = "lms_member_1_zdb_id", insertable = false, updatable = false)
     protected String markerOneZdbId;
+
+    @Column(name = "lms_member_2_zdb_id", insertable = false, updatable = false)
     protected String markerTwoZdbId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lms_lnkg_zdb_id")
     protected Linkage linkage;
 
     // Ensure to set these variables by the sub classes
     // attributes of the second entity
+    @Transient
     protected EntityZdbID entityOne;
+    @Transient
     protected EntityZdbID entityTwo;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Double getLod() {
-        return lod;
-    }
-
-    public void setLod(Double lod) {
-        this.lod = lod;
-    }
-
-    public Linkage getLinkage() {
-        return linkage;
-    }
-
-    public void setLinkage(Linkage linkage) {
-        this.linkage = linkage;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
-    }
-
-    public String getMetric() {
-        return metric;
-    }
-
-    public void setMetric(String metric) {
-        this.metric = metric;
-    }
-
-    public String getMarkerOneZdbId() {
-        return markerOneZdbId;
-    }
-
-    public void setMarkerOneZdbId(String markerOneZdbId) {
-        this.markerOneZdbId = markerOneZdbId;
-    }
-
-    public String getMarkerTwoZdbId() {
-        return markerTwoZdbId;
-    }
-
-    public void setMarkerTwoZdbId(String markerTwoZdbId) {
-        this.markerTwoZdbId = markerTwoZdbId;
-    }
 
     public EntityZdbID getEntityOne() {
         return entityOne;

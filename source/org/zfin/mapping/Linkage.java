@@ -1,5 +1,10 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Person;
@@ -8,82 +13,61 @@ import org.zfin.publication.Publication;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Entity
+@Table(name = "linkage")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(lnkg_source_zdb_id) " +
+        "WHEN 'PUB' THEN 'Pub' " +
+        "ELSE 'Per' " +
+        "END"
+)
+@Getter
+@Setter
 public class Linkage {
+
+    @Id
+    @GeneratedValue(generator = "Linkage")
+    @GenericGenerator(name = "Linkage",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "LINK"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "lnkg_zdb_id")
     protected String zdbID;
+
+    @Transient
     protected long id;
+
+    @Column(name = "lnkg_chromosome", nullable = false)
     protected String chromosome;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lnkg_submitter_zdb_id")
     protected Person person;
+
+    @Column(name = "lnkg_comments", nullable = false)
     protected String comments;
+
+    @OneToMany(mappedBy = "linkage", cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<LinkageMember> linkageMemberSet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lnkg_source_zdb_id", insertable = false, updatable = false)
     private Publication publication;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lnkg_source_zdb_id", insertable = false, updatable = false)
     private Person personReference;
+
+    @Column(name = "lnkg_source_zdb_id", insertable = false, updatable = false)
     private String referenceID;
 
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
     public String getChromosome() {
-        if (chromosome.equals("0"))
+        if (chromosome != null && chromosome.equals("0"))
             return "unknown";
         return chromosome;
-    }
-
-    public void setChromosome(String lg) {
-        this.chromosome = lg;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public Person getPersonReference() {
-        return personReference;
-    }
-
-    public void setPersonReference(Person personReference) {
-        this.personReference = personReference;
-    }
-
-    public String getReferenceID() {
-        return referenceID;
-    }
-
-    public void setReferenceID(String referenceID) {
-        this.referenceID = referenceID;
     }
 
     public ZdbID getReference() {
@@ -91,15 +75,6 @@ public class Linkage {
             return publication;
         else
             return personReference;
-
-    }
-
-    public Set<LinkageMember> getLinkageMemberSet() {
-        return linkageMemberSet;
-    }
-
-    public void setLinkageMemberSet(Set<LinkageMember> linkageMemberSet) {
-        this.linkageMemberSet = linkageMemberSet;
     }
 
     public void addLinkageMember(LinkageMember member) {

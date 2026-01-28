@@ -1,103 +1,70 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Company;
 import org.zfin.profile.Person;
 
-import jakarta.persistence.Entity;
 import java.util.Date;
 import java.util.Map;
 
+@Entity
+@Table(name = "panels")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE ptype " +
+        "WHEN 'Radiation Hybrid' THEN 'Radiation' " +
+        "ELSE 'Meiotic  ' " +
+        "END"
+)
+@Getter
+@Setter
 public abstract class Panel implements EntityZdbID {
 
+    @Id
+    @Column(name = "zdb_id")
     private String zdbID;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "abbrev", nullable = false)
     private String abbreviation;
+
+    @Column(name = "ptype")
     private String type;
+
+    @Column(name = "mappanel_comments")
     private String comments;
+
+    @Column(name = "source", nullable = false)
     private String sourceID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source", insertable = false, updatable = false)
     private Person sourcePerson;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source", insertable = false, updatable = false)
     private Company sourceCompany;
+
+    @Column(name = "disp_order", nullable = false)
     private long displayOrder;
+
+    @Column(name = "panel_date", nullable = false)
     private Date date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producer", insertable = false, updatable = false)
     private Person producer;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public long getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(long displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Person getProducer() {
-        return producer;
-    }
-
-    public void setProducer(Person producer) {
-        this.producer = producer;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
 
     public Map<String, Map<String, Long>> getChromosomePanelCountMap() {
         return MappingService.getChromosomePanelCountMap(this);
-    }
-
-    public String getSourceID() {
-        return sourceID;
-    }
-
-    public void setSourceID(String source) {
-        this.sourceID = source;
     }
 
     public ZdbID getSource(){
@@ -105,22 +72,6 @@ public abstract class Panel implements EntityZdbID {
             return sourcePerson;
         else
             return sourceCompany;
-    }
-
-    public Person getSourcePerson() {
-        return sourcePerson;
-    }
-
-    public void setSourcePerson(Person sourcePerson) {
-        this.sourcePerson = sourcePerson;
-    }
-
-    public Company getSourceCompany() {
-        return sourceCompany;
-    }
-
-    public void setSourceCompany(Company sourceCompany) {
-        this.sourceCompany = sourceCompany;
     }
 
     public Map<String, Long> getPanelMarkerCountMap() {
