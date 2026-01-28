@@ -1,6 +1,10 @@
 package org.zfin.expression;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.profile.Person;
@@ -12,15 +16,50 @@ import java.util.Date;
  * This holds a single expression structure, consisting of a superterm (AO), a subterm, a stage in which
  * the superterm is defined and a boolean
  */
-@Data
+@Entity
+@Table(name = "expression_pattern_infrastructure")
+@Getter
+@Setter
+@AttributeOverrides({
+    @AttributeOverride(name = "superterm", column = @Column(name = "xpatinf_superterm_zdb_id")),
+    @AttributeOverride(name = "subterm", column = @Column(name = "xpatinf_subterm_zdb_id"))
+})
+@AssociationOverrides({
+    @AssociationOverride(name = "superterm", joinColumns = @JoinColumn(name = "xpatinf_superterm_zdb_id")),
+    @AssociationOverride(name = "subterm", joinColumns = @JoinColumn(name = "xpatinf_subterm_zdb_id"))
+})
 public class ExpressionStructure extends PostComposedEntity {
 
+    @Id
+    @GeneratedValue(generator = "ExpressionStructure")
+    @GenericGenerator(name = "ExpressionStructure",
+        strategy = "org.zfin.database.ZdbIdGenerator",
+        parameters = {
+            @Parameter(name = "type", value = "XPATINF"),
+            @Parameter(name = "insertActiveData", value = "true")
+        })
+    @Column(name = "xpatinf_zdb_id")
     private String zdbID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatinf_curator_zdb_id")
     private Person person;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatinf_pub_zdb_id")
     private Publication publication;
+
+    @Column(name = "xpatinf_date")
     private Date date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatinf_quality_term_zdb_id")
     private GenericTerm eapQualityTerm;
+
+    @Column(name = "xpatinf_tag")
     private String tag;
+
+    @Column(name = "xpatinf_expression_found")
     private boolean expressionFound = true;
 
     @Override

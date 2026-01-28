@@ -1,29 +1,24 @@
 package org.zfin.expression;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Entity
+@Table(name = "video")
+@Getter
+@Setter
 public class Video {
-    Long id;
-    String videoFilename;
-    Image still;
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "video_pk_id")
+    private Long id;
 
-    public String getVideoFilename() {
-        return videoFilename;
-    }
-    public void setVideoFilename(String videoFilename) {
-        this.videoFilename = videoFilename;
-    }
+    @Column(name = "video_path_to_file", nullable = false)
+    private String videoFilename;
 
-    public Image getStill() {
-        return still;
-    }
-    public void setStill(Image still) {
-        this.still = still;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_image_still_zdb_id")
+    private Image still;
 }
