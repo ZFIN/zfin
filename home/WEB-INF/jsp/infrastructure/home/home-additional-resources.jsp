@@ -15,17 +15,8 @@
     <b>Browse Genome</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-            <c:choose>
-                <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
-                    <li><a href="/action/jbrowse2">ZFIN</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li><a href="/jbrowse/?data=data/GRCz11">ZFIN</a></li>
-                </c:otherwise>
-            </c:choose>
-        </li>
+            <a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a>
         <li class="list-inline-item">
-            <zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink>
         </li>
         <li class="list-inline-item">
             <zfin2:externalLink href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</zfin2:externalLink>
