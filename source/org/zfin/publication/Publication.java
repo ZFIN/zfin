@@ -104,7 +104,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<Person> people;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "mh_pub_zdb_id")
-    private Set<MeshHeading> meshHeadings;
+    @org.hibernate.annotations.SortNatural
+    private SortedSet<MeshHeading> meshHeadings;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pnote_pub_zdb_id")
     @OrderBy("date desc")
