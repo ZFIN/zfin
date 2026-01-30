@@ -23,7 +23,7 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFigures() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
-        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
+        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
         // check that Zhou et al. paper is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
     }
@@ -34,7 +34,7 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
-        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
+        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
     }
 
     /**
@@ -43,7 +43,7 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
-        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
+        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
         // check that publication Liu et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
     }

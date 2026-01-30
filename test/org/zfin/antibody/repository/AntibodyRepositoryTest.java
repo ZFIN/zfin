@@ -863,8 +863,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         term.setZdbID("ZDB-TERM-100331-1053");
         term.setTermName(aoTermName);
 
-        // real name is Ab-Eng
-        String antibodyName = "Ab1-eng";
+        String antibodyName = "Ab1-en";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         assertNotNull(antibody);
     }
