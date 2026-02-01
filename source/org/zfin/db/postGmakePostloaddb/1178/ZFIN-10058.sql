@@ -25,12 +25,15 @@ update gene_allele_mutation_detail as g
 where zdb_id in (select zdb_id from temp_replaced_marker)
 ;
 
--- set feature_zdb_id when allele_name is found
+-- set feature_zdb_id when allele_name is found (check both uppercase and lowercase versions)
 update gene_allele_mutation_detail
 set feature_zdb_id = (select feature_zdb_id
                       from feature
-                      where feature_abbrev = allele_name)
-where exists(select * from feature where feature_abbrev = allele_name)
+                      where feature_abbrev = lower(substring(allele_name, 1, 3)) || substring(allele_name, 4)
+                         OR feature_abbrev = allele_name)
+where exists(select * from feature
+             where feature_abbrev = lower(substring(allele_name, 1, 3)) || substring(allele_name, 4)
+                OR feature_abbrev = allele_name)
 ;
 
 -- insert into temp table then create
@@ -45,8 +48,8 @@ create temp table temp_feature as
 
 insert into feature (feature_zdb_id, feature_abbrev, feature_name, feature_type)
     (select id,
-            allele_name,
-            allele_name,
+            lower(substring(allele_name, 1, 3)) || substring(allele_name, 4),  -- Convert ZKO to zko
+            lower(substring(allele_name, 1, 3)) || substring(allele_name, 4),  -- Convert ZKO to zko
             'INDEL'
      from gene_allele_mutation_detail, temp_feature
      where allele_name is not null
@@ -561,4 +564,29 @@ select create_str_marker('TALEN', 'ZDB-PERS-981201-7') from talen_name_index_max
 --drop table crispr_name_index_max;
 
 --drop table temp_crispr;
+
+-- Populate chromosome location for new features by deriving from associated gene
+-- This enables the chromosome facet in the search results
+insert into sequence_feature_chromosome_location_generated (
+    sfclg_data_zdb_id,
+    sfclg_chromosome,
+    sfclg_location_source,
+    sfclg_assembly
+)
+select distinct
+    f.feature_zdb_id,
+    ul.ul_chromosome,
+    'General Load',
+    'GRCz11'
+from feature f
+join feature_marker_relationship fmr on fmr.fmrel_ftr_zdb_id = f.feature_zdb_id
+    and fmr.fmrel_type = 'is allele of'
+join unique_location ul on ul.ul_data_zdb_id = fmr.fmrel_mrkr_zdb_id
+where f.feature_zdb_id like 'ZDB-ALT-260201%'
+  and ul.ul_chromosome is not null
+  and not exists (
+    select 1 from sequence_feature_chromosome_location_generated
+    where sfclg_data_zdb_id = f.feature_zdb_id
+  )
+;
 
