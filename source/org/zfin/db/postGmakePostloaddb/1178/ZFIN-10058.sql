@@ -239,11 +239,17 @@ where mrkr_abbrev like 'CRISRP%';
 drop table if exists temp_crispr;
 
 create table temp_crispr as
-select zdb_id, sequence1, regexp_replace(sequence1, '(,*)[a-z]{3}', '\1') as sequence2
-from crispr_detail where type = 'CRISPR'
+-- sequence1 for CRISPR type
+select zko_id, zdb_id, sequence1, regexp_replace(sequence1, '(,*)[a-z]{3}', '\1') as sequence2
+from crispr_detail where type = 'CRISPR' and sequence1 is not null and trim(sequence1) != '' and sequence1 != '-'
 union
-select zdb_id, sequence2, regexp_replace(sequence2, '(,*)[a-z]{3}', '\1') as sequence2
-from crispr_detail where type = 'CRISPRi'
+-- sequence2 for CRISPR type (when both sequences are provided)
+select zko_id, zdb_id, sequence2, regexp_replace(sequence2, '(,*)[a-z]{3}', '\1') as sequence2
+from crispr_detail where type = 'CRISPR' and sequence2 is not null and trim(sequence2) != '' and sequence2 != '-'
+union
+-- sequence2 for CRISPRi type
+select zko_id, zdb_id, sequence2, regexp_replace(sequence2, '(,*)[a-z]{3}', '\1') as sequence2
+from crispr_detail where type = 'CRISPRi' and sequence2 is not null and trim(sequence2) != '' and sequence2 != '-'
 ;
 
 delete
@@ -261,7 +267,7 @@ drop table if exists temp_existing_crispr_fmrel;
 create table temp_existing_crispr_fmrel as
 select distinct g.feature_zdb_id, ms.seq_mrkr_zdb_id as crispr_zdb_id, get_id('FMREL') as fmrel_id
 from temp_crispr tc
-join gene_allele_mutation_detail g on g.zdb_id = tc.zdb_id
+join gene_allele_mutation_detail g on g.zko_id = tc.zko_id  -- Join by zko_id for correct feature-CRISPR association
 join marker_sequence ms on (tc.sequence1 = ms.seq_sequence OR tc.sequence2 = ms.seq_sequence)
 where g.feature_zdb_id is not null
   and get_obj_type(ms.seq_mrkr_zdb_id) = 'CRISPR'
@@ -283,6 +289,7 @@ on conflict do nothing
 insert into feature_marker_relationship (fmrel_zdb_id, fmrel_type, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id)
 select fmrel_id, 'created by', feature_zdb_id, crispr_zdb_id
 from temp_existing_crispr_fmrel
+ON CONFLICT DO NOTHING
 ;
 
 -- associate existing CRISPRs when gene ID was replaced (e.g., trappc9 case)
@@ -292,7 +299,7 @@ create table temp_existing_crispr_replaced_gene as
 select distinct g.feature_zdb_id, mr.mrel_mrkr_1_zdb_id as crispr_zdb_id, get_id('FMREL') as fmrel_id
 from crispr_detail cd
 join zdb_replaced_data zrd on zrd.zrepld_old_zdb_id = cd.zdb_id
-join gene_allele_mutation_detail g on g.zdb_id = zrd.zrepld_new_zdb_id
+join gene_allele_mutation_detail g on g.zko_id = cd.zko_id  -- Join by zko_id for correct feature-CRISPR association
 join marker_sequence ms on (
     regexp_replace(cd.sequence1, '[a-z]{3}$', '') = ms.seq_sequence
     OR regexp_replace(cd.sequence2, '[a-z]{3}$', '') = ms.seq_sequence
@@ -319,6 +326,7 @@ on conflict do nothing
 insert into feature_marker_relationship (fmrel_zdb_id, fmrel_type, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id)
 select fmrel_id, 'created by', feature_zdb_id, crispr_zdb_id
 from temp_existing_crispr_replaced_gene
+ON CONFLICT DO NOTHING
 ;
 
 -- remove crispr with an already existing sequence in marker_sequence table
@@ -409,7 +417,7 @@ delete from crispr_name_index_max where exists (
 drop table crispr_id;
 
 create table crispr_id as
-select zdb_id, sequence2, get_id('CRISPR')
+select zko_id, zdb_id, sequence2, get_id('CRISPR')
 from temp_crispr
 ;
 
@@ -432,7 +440,7 @@ select create_str_marker('CRISPR', 'ZDB-PERS-981201-7') from crispr_name_index_m
 drop table if exists temp_talen;
 
 create table temp_talen as
-select zdb_id, trim(sequence1)as sequence1, trim(sequence2) as sequence2
+select zko_id, zdb_id, trim(sequence1)as sequence1, trim(sequence2) as sequence2
 from crispr_detail where type = 'TALEN';
 
 delete from temp_talen where temp_talen.sequence1 = '';
@@ -444,7 +452,7 @@ drop table if exists temp_existing_talen_fmrel;
 create table temp_existing_talen_fmrel as
 select distinct g.feature_zdb_id, ms.seq_mrkr_zdb_id as talen_zdb_id, get_id('FMREL') as fmrel_id
 from temp_talen tt
-join gene_allele_mutation_detail g on g.zdb_id = tt.zdb_id
+join gene_allele_mutation_detail g on g.zko_id = tt.zko_id  -- Join by zko_id for correct feature-TALEN association
 join marker_sequence ms on (tt.sequence1 = ms.seq_sequence OR tt.sequence2 = ms.seq_sequence)
 where g.feature_zdb_id is not null
   and get_obj_type(ms.seq_mrkr_zdb_id) = 'TALEN'
@@ -466,6 +474,7 @@ on conflict do nothing
 insert into feature_marker_relationship (fmrel_zdb_id, fmrel_type, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id)
 select fmrel_id, 'created by', feature_zdb_id, talen_zdb_id
 from temp_existing_talen_fmrel
+ON CONFLICT DO NOTHING
 ;
 
 -- remove TALEN with an already existing sequence in marker_sequence table
@@ -533,12 +542,12 @@ select distinct (zdb_id), 0 from temp_talen where not exists (select * from str_
 -- Create talen_id table (one row per gene with both sequences)
 drop table if exists talen_id;
 create table talen_id as
-select zdb_id, sequence1 as sequence2, get_id('TALEN') as get_id
+select zko_id, zdb_id, sequence1 as sequence2, get_id('TALEN') as get_id
 from temp_talen;
 
 -- Insert TALEN data into crispr_id so create_str_marker can find it
-insert into crispr_id (zdb_id, sequence2, get_id)
-select zdb_id, sequence2, get_id from talen_id;
+insert into crispr_id (zko_id, zdb_id, sequence2, get_id)
+select zko_id, zdb_id, sequence2, get_id from talen_id;
 
 -- Insert TALEN IDs into zdb_active_data
 insert into zdb_active_data (zactvd_zdb_id)
