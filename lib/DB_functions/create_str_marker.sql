@@ -33,9 +33,9 @@ begin
                         -- skip if marker with same abbreviation already exists
                         if not exists (select 1 from marker where mrkr_abbrev = strName) then
                             insert into marker (mrkr_abbrev, mrkr_type, mrkr_zdb_id, mrkr_name, mrkr_owner) values (strName, strType, strRow.get_id, strName, ownerID);
-                            -- For TALEN, get both sequences from temp_talen
+                            -- For TALEN, get both sequences from temp_talen using zko_id
                             if strType = 'TALEN' then
-                                select sequence1, sequence2 into talenSeq1, talenSeq2 from temp_talen where zdb_id = strIndexRow.gene_zdb_id limit 1;
+                                select sequence1, sequence2 into talenSeq1, talenSeq2 from temp_talen where zko_id = strRow.zko_id limit 1;
                                 insert into marker_sequence (seq_mrkr_zdb_id, seq_type, seq_sequence, seq_sequence_2) values (strRow.get_id, 'Nucleotide', talenSeq1, talenSeq2);
                             else
                                 insert into marker_sequence (seq_mrkr_zdb_id, seq_type, seq_sequence) values (strRow.get_id, 'Nucleotide', strRow.sequence2);
@@ -47,8 +47,9 @@ begin
                             insert into record_attribution (recattrib_data_zdb_id, recattrib_source_type, recattrib_source_zdb_id) values
                                 (mrelID, 'standard', 'ZDB-PUB-191214-4');
                             for featureId in
+                                -- Match by zko_id to ensure correct CRISPR-feature association
                                 select feature_zdb_id from gene_allele_mutation_detail
-                                where zdb_id = strIndexRow.gene_zdb_id and feature_zdb_id is not null
+                                where zko_id = strRow.zko_id and feature_zdb_id is not null
                                 loop
                                     select get_id('FMREL') into fmrelID from single;
                                     insert into zdb_active_data values (fmrelID);
