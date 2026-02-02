@@ -1,112 +1,66 @@
 package org.zfin.mapping;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 
-@Data
+@Entity
+@Table(name = "mapped_marker")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(marker_id) " +
+        "WHEN 'ALT' THEN 'Feat' " +
+        "ELSE 'Mark' " +
+        "END"
+)
+@Getter
+@Setter
 public abstract class MappedMarker implements Comparable, ZdbID {
+
+    @Id
+    @Column(name = "zdb_id")
     protected String zdbID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refcross_id", insertable = false, updatable = false)
     protected Panel panel;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "submitter", insertable = false, updatable = false)
     protected Person submitter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lab", insertable = false, updatable = false)
     protected Lab lab;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner", insertable = false, updatable = false)
     protected Person owner;
+
+    @Column(name = "comments")
     protected String comments;
+
+    @Column(name = "mm_chromosome", nullable = false)
     protected String lg;
+
+    @Column(name = "marker_id")
     protected String entityID;
+
+    @Column(name = "map_name")
     protected String mappedName;
+
+    @Column(name = "scoring_data")
     protected String scoringData;
+
+    @Column(name = "metric")
     protected String metric;
+
+    @Column(name = "mm_chrom_location")
     protected Float lgLocation;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Panel getPanel() {
-        return panel;
-    }
-
-    public void setPanel(Panel panel) {
-        this.panel = panel;
-    }
-
-    public Person getSubmitter() {
-        return submitter;
-    }
-
-    public void setSubmitter(Person submitter) {
-        this.submitter = submitter;
-    }
-
-    public Lab getLab() {
-        return lab;
-    }
-
-    public void setLab(Lab lab) {
-        this.lab = lab;
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Person owner) {
-        this.owner = owner;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getLg() {
-        return lg;
-    }
-
-    public void setLg(String lg) {
-        this.lg = lg;
-    }
-
-    public Float getLgLocation() {
-        return lgLocation;
-    }
-
-    public void setLgLocation(Float lgLocation) {
-        this.lgLocation = lgLocation;
-    }
-
-    public String getMappedName() {
-        return mappedName;
-    }
-
-    public void setMappedName(String mappedName) {
-        this.mappedName = mappedName;
-    }
-
-    public String getMetric() {
-        return metric;
-    }
-
-    public void setMetric(String metric) {
-        this.metric = metric;
-    }
-
-    public String getScoringData() {
-        return scoringData;
-    }
-
-    public void setScoringData(String scoringData) {
-        this.scoringData = scoringData;
-    }
 
     public abstract String getEntityID();
 

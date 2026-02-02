@@ -1,26 +1,34 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PostLoad;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
 
-/**
- * Created by cmpich on 3/4/14.
- */
+@Entity
+@DiscriminatorValue("MarkMark")
+@Getter
+@Setter
 public class MarkerMarkerLinkageMember extends LinkageMember {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lms_member_1_zdb_id")
     private Marker marker;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lms_member_2_zdb_id")
     private Marker pairedMarker;
 
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-    public Marker getPairedMarker() {
-        return pairedMarker;
+    @PostLoad
+    private void initTransientFields() {
+        entityOne = marker;
+        entityTwo = pairedMarker;
     }
 
     public void setPairedMarker(Marker pairedMarker) {

@@ -532,7 +532,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
             return panelCountList;
         } else {
             Session session = HibernateUtil.currentSession();
-            String hql = "from PanelCount where panel = :panel order by lg";
+            String hql = "from PanelCount where id.panel = :panel order by id.lg";
             Query query = session.createQuery(hql);
             query.setParameter("panel", panel);
             return (List<PanelCount>) query.list();

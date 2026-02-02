@@ -1,44 +1,58 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Entity
+@Table(name = "panel_count")
+@Getter
+@Setter
 public class PanelCount implements Serializable {
 
-    private Panel panel;
-    private String markerType;
-    private String lg;
+    @EmbeddedId
+    private PanelCountId id;
+
+    @Column(name = "panelcnt_count", nullable = false)
     private long count;
 
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
-    }
-
-    public String getLg() {
-        return lg;
-    }
-
-    public void setLg(String lg) {
-        this.lg = lg;
-    }
-
-    public String getMarkerType() {
-        return markerType;
-    }
-
-    public void setMarkerType(String markerType) {
-        this.markerType = markerType;
-    }
-
+    // Convenience methods to access embedded ID fields
     public Panel getPanel() {
-        return panel;
+        return id != null ? id.getPanel() : null;
     }
 
     public void setPanel(Panel panel) {
-        this.panel = panel;
+        if (id == null) {
+            id = new PanelCountId();
+        }
+        id.setPanel(panel);
+    }
+
+    public String getMarkerType() {
+        return id != null ? id.getMarkerType() : null;
+    }
+
+    public void setMarkerType(String markerType) {
+        if (id == null) {
+            id = new PanelCountId();
+        }
+        id.setMarkerType(markerType);
+    }
+
+    public String getLg() {
+        return id != null ? id.getLg() : null;
+    }
+
+    public void setLg(String lg) {
+        if (id == null) {
+            id = new PanelCountId();
+        }
+        id.setLg(lg);
     }
 
     @Override
@@ -47,19 +61,11 @@ public class PanelCount implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         PanelCount that = (PanelCount) o;
-
-        if (lg != that.lg) return false;
-        if (!markerType.equals(that.markerType)) return false;
-        if (!panel.equals(that.panel)) return false;
-
-        return true;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = panel.hashCode();
-        result = 31 * result + markerType.hashCode();
-        result = 31 * result + lg.hashCode();
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 }
