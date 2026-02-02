@@ -1,7 +1,11 @@
 package org.zfin.mapping;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.Parameter;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
@@ -18,6 +22,15 @@ import static org.zfin.mapping.GenomeLocation.Source.*;
 /**
  * Genome Location entity for NCBI, Vega, Ensembl and other sources for physical location.
  */
+@Entity
+@Table(name = "sequence_feature_chromosome_location_generated")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+        "CASE get_obj_type(sfclg_data_zdb_id) " +
+        "WHEN 'ALT' THEN 'Feat' " +
+        "ELSE 'Mark' " +
+        "END"
+)
 @Setter
 @Getter
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
@@ -27,21 +40,54 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     public static String GRCZ10 = "GRCz10";
     public static String ZV9 = "Zv9";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sfclg_pk_id")
     protected long ID;
+
+    @Column(name = "sfclg_start")
     protected Integer start;
+
+    @Column(name = "sfclg_end")
     protected Integer end;
+
+    @Column(name = "sfclg_data_zdb_id")
     protected String entityID;
+
+    @Column(name = "sfclg_chromosome")
     protected String chromosome;
+
+    @Column(name = "sfclg_location_source")
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@Parameter(name = "enumClassname", value = "org.zfin.mapping.GenomeLocation$Source")})
     protected Source source;
+
+    @Column(name = "sfclg_strand")
     protected Character strand;
+
+    @Column(name = "sfclg_location_subsource")
     protected String detailedSource;
+
+    @Column(name = "sfclg_acc_num")
     protected String accessionNumber;
+
+    @Transient
     protected GenomeBrowserMetaData metaData;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sfclg_pub_zdb_id", insertable = false, updatable = false)
     protected Publication attribution;
+
+    @Column(name = "sfclg_gbrowse_track")
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@Parameter(name = "enumClassname", value = "org.zfin.gbrowse.GBrowseTrack")})
     protected GBrowseTrack gbrowseTrack;
+
+    @Column(name = "sfclg_assembly")
     protected String assembly;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sfclg_evidence_code")
     private GenericTerm evidence;
 
     public String getUrl(GenomeBrowserImage genomeBrowserImage) {
