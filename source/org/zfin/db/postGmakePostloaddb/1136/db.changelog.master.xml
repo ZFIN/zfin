@@ -6,7 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8169.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8167-add-timestamp-columns-to-record-attribution.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8191.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8187.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-7129-pre.sql" />
