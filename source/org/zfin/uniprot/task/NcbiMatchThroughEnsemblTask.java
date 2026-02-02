@@ -81,13 +81,30 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         setInputFileUrlFromEnvironment(inputFileUrl);
         File extractedCsvFile = downloadAndExtract();
-        createTemporaryNcbiTable();
-        copyFromNcbiFileIntoDatabase(extractedCsvFile);
-        List<Object[]> results = getReportOfPotentialNcbiGenes(toDelete);
-        List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
-        addRnaAccessionsToReportRows(ncbiMatchReportRows);
-        writeResultsToCsv(ncbiMatchReportRows);
-        dropTemporaryTables();
+
+        // All temp table operations must happen in a single transaction to ensure the same
+        // database connection is used. PostgreSQL temp tables are session-scoped (connection-scoped),
+        // so if Hibernate returns the connection to the pool between commits, a subsequent
+        // transaction may get a different connection where the temp table doesn't exist.
+        Session session = currentSession();
+        Transaction transaction = HibernateUtil.createTransaction();
+        try {
+            createTemporaryNcbiTable(session);
+            copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
+            List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
+            List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
+            transaction.commit();
+
+            addRnaAccessionsToReportRows(ncbiMatchReportRows);
+            writeResultsToCsv(ncbiMatchReportRows);
+
+            dropTemporaryTables();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
         extractedCsvFile.delete();
     }
 
@@ -185,13 +202,10 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
     /**
      * Create the table structure used later in data load.
+     * Note: This method does NOT commit the transaction - the caller must manage the transaction.
+     * @param session The Hibernate session to use (must be part of an active transaction)
      */
-    private void createTemporaryNcbiTable() {
-
-        //create temporary table
-        Session session = currentSession();
-        Transaction transaction = HibernateUtil.createTransaction();
-
+    private void createTemporaryNcbiTable(Session session) {
         String dropTable = "DROP TABLE IF EXISTS tmp_ncbi_zebrafish;";
         session.createNativeQuery(dropTable).executeUpdate();
 
@@ -203,36 +217,37 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         String createTable = """
                 CREATE TEMP TABLE tmp_ncbi_zebrafish (
-                    taxId text, 
-                    geneId text, 
+                    taxId text,
+                    geneId text,
                     symbol text,
-                    locusTag text, 
-                    synonyms text, 
-                    dbXrefs text, 
-                    chromosome text, 
-                    mapLocation text, 
-                    description text, 
-                    typeOfGene text, 
-                    symbolFromNomenclatureAuthority text, 
-                    fullNameFromNomenclatureAuthority text, 
-                    nomenclatureStatus text, 
-                    otherDesignations text, 
+                    locusTag text,
+                    synonyms text,
+                    dbXrefs text,
+                    chromosome text,
+                    mapLocation text,
+                    description text,
+                    typeOfGene text,
+                    symbolFromNomenclatureAuthority text,
+                    fullNameFromNomenclatureAuthority text,
+                    nomenclatureStatus text,
+                    otherDesignations text,
                     modificationDate text,
                     featureType text);
         """;
         session.createNativeQuery(createTable).executeUpdate();
 
         session.flush();
-        transaction.commit();
     }
 
     /**
      *  Load the contents of the NCBI file into a temporary table in the database (tmp_ncbi_zebrafish).
      *  This table has the same columns as the NCBI file.  It's just used to make the data easier to work with
      *  for set operations.
-      * @param inputFile (the temporary csv file after extracting the gzipped NCBI file)
+     *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
+     *  @param session The Hibernate session to use (must be part of an active transaction)
+     *  @param inputFile (the temporary csv file after extracting the gzipped NCBI file)
      */
-    private void copyFromNcbiFileIntoDatabase(File inputFile) {
+    private void copyFromNcbiFileIntoDatabase(Session session, File inputFile) {
 
         try (CSVParser parser = CSVParser.parse(inputFile, Charset.defaultCharset(), CSVFormat.TDF)) {
 
@@ -243,18 +258,16 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             }
 
             log.info("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
-            Session session = currentSession();
-            Transaction tx = session.beginTransaction();
             int recordCount = 0;
             for (CSVRecord record : parser) {
                 recordCount++;
 
                 //equivalent to `\copy tmp_ncbi_zebrafish from 'zf_gene_info' WITH (DELIMITER E'\t', FORMAT 'text', HEADER true);
                 session.createNativeQuery("""
-                        INSERT INTO tmp_ncbi_zebrafish 
+                        INSERT INTO tmp_ncbi_zebrafish
                         (taxId, geneId, symbol, locusTag, synonyms, dbXrefs, chromosome, mapLocation, description, typeOfGene, symbolFromNomenclatureAuthority, fullNameFromNomenclatureAuthority, nomenclatureStatus, otherDesignations, modificationDate, featureType)
-                         VALUES 
-                        (:taxId, :geneId, :symbol, :locusTag, :synonyms, :dbXrefs, :chromosome, :mapLocation, :description, :typeOfGene, :symbolFromNomenclatureAuthority, :fullNameFromNomenclatureAuthority, :nomenclatureStatus, :otherDesignations, :modificationDate, :featureType)                        
+                         VALUES
+                        (:taxId, :geneId, :symbol, :locusTag, :synonyms, :dbXrefs, :chromosome, :mapLocation, :description, :typeOfGene, :symbolFromNomenclatureAuthority, :fullNameFromNomenclatureAuthority, :nomenclatureStatus, :otherDesignations, :modificationDate, :featureType)
                         """)
                         .setParameter("taxId", record.get(0))
                         .setParameter("geneId", record.get(1))
@@ -274,7 +287,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                         .setParameter("featureType", record.get(15))
                         .executeUpdate();
             }
-            tx.commit();
             log.info("Finished data load of " + recordCount + " records.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -284,12 +296,12 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
     /**
      *  The main logic for comparing the NCBI data to the ZFIN data.
+     *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
+     *  @param session The Hibernate session to use (must be part of an active transaction)
      *  @param toDelete Map of DBLinks that are slated to be deleted (can be null). If provided, logic will be as though those links do not exist.
      *
      */
-    private List<Object[]> getReportOfPotentialNcbiGenes(Map<String, String> toDelete) {
-        Session session = currentSession();
-        Transaction transaction = HibernateUtil.createTransaction();
+    private List<Object[]> getReportOfPotentialNcbiGenes(Session session, Map<String, String> toDelete) {
 
         //create ncbi2zfin table -- based on data loaded through NCBI
         String query = """
@@ -395,8 +407,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 rna_accessions
             """;
         List<Object[]> results = session.createNativeQuery(query).list();
-
-        transaction.commit();
 
         log.info("Number of those NCBI genes with shared ensembl id : " + results.size());
 

@@ -60,7 +60,7 @@ alter table ncbi_gene_load
 update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
 -- If there are any duplicates in the load file but with different load_pub_zdb_id, we want to keep the one with the highest priority load pub
--- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87 > > ZDB-PUB-130725-2
+-- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87
 create temporary table ncbi_gene_load_dedup as
  select distinct on (mapped_zdb_gene_id, ncbi_accession) *
    from ncbi_gene_load
@@ -68,7 +68,6 @@ create temporary table ncbi_gene_load_dedup as
            case load_pub_zdb_id
              when 'ZDB-PUB-020723-3' then 1
              when 'ZDB-PUB-230516-87' then 2
-             when 'ZDB-PUB-130725-2' then 3
              else 4
            end;
 drop table ncbi_gene_load;
@@ -163,7 +162,7 @@ delete from zdb_active_data where zactvd_zdb_id in (select * from ncbi_gene_dele
 --!echo 'Delete from record_attribution table for those manually curated records but attributed to load publication'
 
 delete from record_attribution
- where recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2')
+ where recattrib_source_zdb_id in ('ZDB-PUB-020723-3')
    and exists (select 'x' from db_link
                 where recattrib_data_zdb_id = dblink_zdb_id 
                   and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
@@ -210,7 +209,7 @@ WHERE
     EXISTS (
         SELECT 'x' FROM record_attribution
         WHERE recattrib_data_zdb_id = dblink_zdb_id
-            AND recattrib_source_zdb_id NOT IN ('ZDB-PUB-020723-3', 'ZDB-PUB-130725-2', 'ZDB-PUB-230516-87'));
+            AND recattrib_source_zdb_id NOT IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87'));
 
 -- Combine conflicts into a single table for reporting
 -- This table will be dumped out to 'post_run_n_to_1_zdb_to_ncbi.csv' for review
@@ -263,7 +262,7 @@ select recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid
  where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42' 
    and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
    and dblink_zdb_id = recattrib_data_zdb_id 
-   and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2') 
+   and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3')
 group by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
 order by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid;
 \copy (select * from reportNonLoadPubGenPept) to 'reportNonLoadPubGenPept' with delimiter as '	' null as '';
@@ -413,7 +412,7 @@ WITH eligible_records AS (
             WHEN EXISTS (
                 SELECT 1 FROM record_attribution ra
                 WHERE ra.recattrib_data_zdb_id = dl.dblink_zdb_id
-                  AND ra.recattrib_source_zdb_id IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87', 'ZDB-PUB-130725-2')
+                  AND ra.recattrib_source_zdb_id IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87')
             ) THEN 12  -- "Current"
             END AS annotation_status
     FROM db_link dl
