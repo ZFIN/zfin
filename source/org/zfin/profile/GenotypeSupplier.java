@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.zfin.mutant.Genotype;
 
@@ -8,8 +9,12 @@ import java.io.Serializable;
 /**
  * Main domain object for lab and company info
  */
+@Entity
+@DiscriminatorValue("Genoty")
 public class GenotypeSupplier extends ObjectSupplier implements Serializable, Comparable<GenotypeSupplier> {
 
+    @ManyToOne
+    @JoinColumn(name = "idsup_data_zdb_id", insertable = false, updatable = false)
     private Genotype genotype;
 
     public String getOrderURL() {
