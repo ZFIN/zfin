@@ -18,8 +18,8 @@ apply plugin: 'groovy'
 apply from: 'agr.gradle'
 apply from: 'console.gradle'
 
-sourceCompatibility = 17
-targetCompatibility = 17
+sourceCompatibility = 21
+targetCompatibility = 21
 
 // Application plugin configuration for command-line utilities
 application {

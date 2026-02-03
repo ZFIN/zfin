@@ -3,7 +3,10 @@ services:
     build: ./base/
     image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
   compile:
-    build: ./compile/
+    build:
+      context: ./compile/
+      args:
+        ZFIN_RELEASE: ${ZFIN_RELEASE}
     image: ghcr.io/zfin/zfin-compile:${ZFIN_RELEASE}
     profiles:
       - compile
@@ -105,8 +108,8 @@ services:
       OPENIDC_CLIENTID: ${OPENIDC_CLIENTID}
       OPENIDC_CLIENTSECRET: ${OPENIDC_CLIENTSECRET}
     ports:
-      - "8080-8089:80"
-      - "8443-8452:443"
+      - "8081:80"
+      - "8446:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - httpd_log:/var/log/httpd
