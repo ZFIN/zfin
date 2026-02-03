@@ -65,7 +65,6 @@ def localFileDependencies = [
         "home/WEB-INF/lib/gwt-servlet-jakarta-2.11.0.jar",
         "home/WEB-INF/lib/jakarta.servlet.jsp.jstl-api-1.2.7-eclipse-transformed.jar",
         "home/WEB-INF/lib/obo.jar",
-        "home/WEB-INF/lib/patricia-trie-0.2.jar",  // Not in Maven Central (0.6 version maybe "org.ardverk:patricia-trie:0.6",
         "home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar",
         "home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar",

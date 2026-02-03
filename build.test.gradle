@@ -51,7 +51,6 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
     implementation 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1'
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
-    implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
     implementation files('home/WEB-INF/lib/cvu.jar')
     implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar')
     implementation files('home/WEB-INF/lib/obo.jar')
