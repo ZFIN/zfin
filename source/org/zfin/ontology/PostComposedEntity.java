@@ -1,6 +1,10 @@
 package org.zfin.ontology;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
@@ -8,14 +12,27 @@ import org.zfin.framework.api.View;
 /**
  * A class to group superterm and subterm into a single object,
  * intended to be used as a component in expression and phenotype
- * records
+ * records.
+ *
+ * This class is annotated as @MappedSuperclass to allow entities like
+ * ExpressionStructure to extend it and inherit the superterm/subterm
+ * mappings. It can also be used as an embedded component via
+ * @AttributeOverrides in entities like ExpressionResultGenerated.
  */
+@MappedSuperclass
 @Setter
 @Getter
 public class PostComposedEntity implements Comparable<PostComposedEntity> {
 
-    @JsonView({View.API.class, View.UI.class}) protected GenericTerm superterm;
-    @JsonView({View.API.class, View.UI.class}) protected GenericTerm subterm;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "superterm_zdb_id")
+    @JsonView({View.API.class, View.UI.class})
+    protected GenericTerm superterm;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subterm_zdb_id")
+    @JsonView({View.API.class, View.UI.class})
+    protected GenericTerm subterm;
 
     @Override
     public boolean equals(Object o) {

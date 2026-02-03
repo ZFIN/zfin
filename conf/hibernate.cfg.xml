@@ -45,7 +45,18 @@
 
         <!-- Mappings -->
         <mapping resource="org/zfin/filters.hbm.xml"/>
-        <mapping resource="org/zfin/expression.hbm.xml"/>
+        <!-- expression.hbm.xml entities converted to annotations -->
+        <mapping class="org.zfin.expression.CleanExpFastSrch"/>
+        <mapping class="org.zfin.expression.ExpressionAssay"/>
+        <mapping class="org.zfin.expression.ExpressionDetailsGenerated"/>
+        <mapping class="org.zfin.expression.ExpressionResultGenerated"/>
+        <mapping class="org.zfin.expression.ExpressionStructure"/>
+        <mapping class="org.zfin.expression.Figure"/>
+        <mapping class="org.zfin.expression.FigureFigure"/>
+        <mapping class="org.zfin.expression.Image"/>
+        <mapping class="org.zfin.expression.TextOnlyFigure"/>
+        <mapping class="org.zfin.expression.Video"/>
+        <mapping class="org.zfin.expression.presentation.ExpressionTermFastSearch"/>
         <!-- blast.hbm.xml entities converted to annotations -->
         <mapping class="org.zfin.sequence.blast.Hit"/>
         <mapping class="org.zfin.sequence.blast.Query"/>

@@ -1,9 +1,13 @@
 package org.zfin.expression;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
@@ -17,29 +21,84 @@ import java.util.*;
 /**
  * Figure domain business object. It is a figure referenced in a publication.
  */
+@Entity
+@Table(name = "figure")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula(
+    "CASE fig_label " +
+    "WHEN 'text only' THEN 'TOD' " +
+    "ELSE 'FIG' " +
+    "END"
+)
 @Setter
 @Getter
 public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID {
 
     public static String GELI = "GELI";
 
+    @Id
+    @GeneratedValue(generator = "Figure")
+    @GenericGenerator(name = "Figure",
+        strategy = "org.zfin.database.ZdbIdGenerator",
+        parameters = {
+            @Parameter(name = "type", value = "FIG"),
+            @Parameter(name = "insertActiveData", value = "true")
+        })
+    @Column(name = "fig_zdb_id")
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String zdbID;
+
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "fig_caption")
     private String caption;
+
+    @Column(name = "fig_comments")
     private String comments;
+
+    @Column(name = "fig_label")
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String label;
+
+    @Column(name = "fig_full_label")
     private String orderingLabel;
+
+    @Column(name = "fig_inserted_date")
+    private GregorianCalendar insertedDate;
+
+    @Column(name = "fig_updated_date")
+    private GregorianCalendar updatedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fig_inserted_by")
+    private Person insertedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fig_updated_by")
+    private Person updatedBy;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "efs_fig_zdb_id")
     private Set<ExpressionFigureStage> expressionFigureStage;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "phenox_fig_zdb_id")
     private Set<PhenotypeExperiment> phenotypeExperiments;
+
+    @OneToMany(mappedBy = "figure", fetch = FetchType.LAZY)
     private Set<Image> images;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "construct_figure",
+        joinColumns = @JoinColumn(name = "consfig_fig_zdb_id"),
+        inverseJoinColumns = @JoinColumn(name = "consfig_construct_zdb_id")
+    )
+    private Set<Marker> constructs;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fig_source_zdb_id")
     @JsonView(View.GeneExpressionAPI.class)
     private Publication publication;
-    private Set<Marker> constructs;
-    private GregorianCalendar insertedDate;
-    private GregorianCalendar updatedDate;
-    private Person insertedBy;
-    private Person updatedBy;
 
     public void addImage(Image image) {
         if (images == null) {
