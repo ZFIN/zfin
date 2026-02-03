@@ -120,6 +120,15 @@ public class PatriciaTrieMultiMap<V> implements Map<String, Set<V>>, Serializabl
     }
 
     /**
+     * Returns a view of this map of entries with keys starting with the given prefix.
+     * @param prefix The prefix to search for
+     * @return A SortedMap of entries with keys starting with the prefix
+     */
+    public SortedMap<String, Set<V>> getPrefixedBy(String prefix) {
+        return trie.prefixMap(prefix);
+    }
+
+    /**
      * @param prefix Query string.
      * @return The set of values that the prefix hit.
      */
