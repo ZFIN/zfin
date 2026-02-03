@@ -318,14 +318,14 @@
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <echo message="Use JobName: ${JobName}"/>
-        <echo message="ValidateData Dir: ${validateData}/validatedata"/>
+        <echo message="ValidateData Dir: ${user.dir}/server_apps/DB_maintenance/validatedata"/>
         <echo message="Property File: ${web-inf.dir}/zfin.properties"/>
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
-            <arg value="${validateData}/validatedata"/>
+            <arg value="${user.dir}/server_apps/DB_maintenance/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
         </java>
     </target>
