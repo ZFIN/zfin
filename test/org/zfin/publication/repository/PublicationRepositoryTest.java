@@ -415,7 +415,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
         if (image.getImageStage() == null) {
             imageStage = new ImageStage();
-            imageStage.setZdbID(image.getZdbID());
         } else {
             imageStage = image.getImageStage();
         }

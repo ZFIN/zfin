@@ -1,61 +1,41 @@
 package org.zfin.expression;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Immutable;
 import org.zfin.framework.api.View;
 
 /**
  * Domain object
  */
+@Entity
+@Table(name = "expression_pattern_assay")
+@Immutable
+@Getter
+@Setter
 public class ExpressionAssay implements Comparable<ExpressionAssay> {
 
+    @Id
+    @Column(name = "xpatassay_name")
     @JsonView({View.API.class, View.UI.class})
     private String name;
+
+    @Column(name = "xpatassay_comments")
     private String comments;
+
+    @Column(name = "xpatassay_display_order")
     private int displayOrder;
+
+    @Column(name = "xpatassay_abbrev")
     @JsonView({View.API.class, View.UI.class})
     private String abbreviation;
+
+    @Transient
     private boolean immunogen;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public boolean isImmunogen() {
-        return immunogen;
-    }
-
-    public void setImmunogen(boolean immunogen) {
-        this.immunogen = immunogen;
-    }
-
+    @Override
     public int compareTo(ExpressionAssay anotherAssay) {
         if (anotherAssay == null)
             return 1;

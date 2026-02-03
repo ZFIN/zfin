@@ -1,73 +1,67 @@
 package org.zfin.expression;
 
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
+@Entity
+@Table(name = "xpat_results_generated")
+@Getter
+@Setter
 public class ExpressionResultGenerated implements Comparable<ExpressionResultGenerated> {
+
+    @Id
+    @Column(name = "xrg_pk_id")
     private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xrg_xedg_id", nullable = false)
     private ExpressionDetailsGenerated expressionExperiment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xrg_start_stg_zdb_id")
     private DevelopmentStage start;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xrg_end_stg_zdb_id")
     private DevelopmentStage end;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xrg_subterm_zdb_id")
+    private GenericTerm subterm;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xrg_superterm_zdb_id")
+    private GenericTerm superterm;
+
+    @Transient
     protected PostComposedEntity entity;
+
+    @Column(name = "xrg_expression_found")
     private boolean expressionFound;
+
+    @Column(name = "xrg_comments")
     private String comment;
 
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public ExpressionDetailsGenerated getExpressionExperiment() {
-        return expressionExperiment;
-    }
-
-    public void setExpressionExperiment(ExpressionDetailsGenerated expressionExperiment) {
-        this.expressionExperiment = expressionExperiment;
-    }
-
-    public DevelopmentStage getStart() {
-        return start;
-    }
-
-    public void setStart(DevelopmentStage start) {
-        this.start = start;
-    }
-
-    public DevelopmentStage getEnd() {
-        return end;
-    }
-
-    public void setEnd(DevelopmentStage end) {
-        this.end = end;
-    }
-
     public PostComposedEntity getEntity() {
+        if (entity == null) {
+            entity = new PostComposedEntity();
+            entity.setSuperterm(superterm);
+            entity.setSubterm(subterm);
+        }
         return entity;
     }
 
     public void setEntity(PostComposedEntity entity) {
         this.entity = entity;
-    }
-
-    public boolean isExpressionFound() {
-        return expressionFound;
-    }
-
-    public void setExpressionFound(boolean expressionFound) {
-        this.expressionFound = expressionFound;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+        if (entity != null) {
+            this.superterm = entity.getSuperterm();
+            this.subterm = entity.getSubterm();
+        }
     }
 
 
@@ -80,14 +74,14 @@ public class ExpressionResultGenerated implements Comparable<ExpressionResultGen
             return start.compareTo(o.getStart());
         if (!end.equals(o.getEnd()))
             return end.compareTo(o.getEnd());
-        if (!entity.getSuperterm().equals(o.getEntity().getSuperterm()))
-            return entity.getSuperterm().compareTo(o.getEntity().getSuperterm());
-        if (entity.getSubterm() == null)
+        if (!getEntity().getSuperterm().equals(o.getEntity().getSuperterm()))
+            return getEntity().getSuperterm().compareTo(o.getEntity().getSuperterm());
+        if (getEntity().getSubterm() == null)
             return -1;
         if (o.getEntity().getSubterm() == null)
             return 1;
-        if (!entity.getSubterm().equals(o.getEntity().getSubterm()))
-            return entity.getSubterm().compareTo(o.getEntity().getSubterm());
+        if (!getEntity().getSubterm().equals(o.getEntity().getSubterm()))
+            return getEntity().getSubterm().compareTo(o.getEntity().getSubterm());
 
         return 0;
     }

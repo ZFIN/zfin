@@ -158,7 +158,6 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
             ImageStage imageStage = new ImageStage();
             imageStage.setStart(start);
             imageStage.setEnd(end);
-            imageStage.setZdbID(image.getZdbID());
             image.setImageStage(imageStage);
         } else {
             image.getImageStage().setStart(start);
