@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -8,12 +9,26 @@ import java.io.Serializable;
 /**
  * This class identifies a single url and its business purpose for an organization.
  */
+@Entity
+@Table(name = "source_url")
+@IdClass(SourceUrlId.class)
 public class SourceUrl implements Serializable {
 
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "srcurl_source_zdb_id")
     private Organization organization;
+
+    @Id
+    @Column(name = "srcurl_url")
     private String urlPrefix;
+
+    @Column(name = "srcurl_display_text")
     private String hyperlinkName;
+
     // ToDo: turn this into enumeration
+    @Id
+    @Column(name = "srcurl_purpose")
     private String businessPurpose;
 
     public Organization getOrganization() {

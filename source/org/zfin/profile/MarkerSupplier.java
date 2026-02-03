@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
@@ -10,8 +11,12 @@ import java.io.Serializable;
 /**
  * Main domain object for lab and company info
  */
+@Entity
+@DiscriminatorValue("Marker")
 public class MarkerSupplier extends ObjectSupplier implements Serializable, Comparable<MarkerSupplier>, ProvidesLink {
 
+    @ManyToOne
+    @JoinColumn(name = "idsup_data_zdb_id", insertable = false, updatable = false)
     private Marker marker;
 
     public String getOrderURL() {

@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.zfin.feature.Feature;
 
@@ -8,8 +9,12 @@ import java.io.Serializable;
 /**
  * Main domain object for lab and company info
  */
+@Entity
+@DiscriminatorValue("Featur")
 public class FeatureSupplier extends ObjectSupplier implements Serializable, Comparable<FeatureSupplier> {
 
+    @ManyToOne
+    @JoinColumn(name = "idsup_data_zdb_id", insertable = false, updatable = false)
     private Feature feature;
 
     public int hashCode() {

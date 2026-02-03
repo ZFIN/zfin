@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.zfin.feature.Feature;
 
@@ -7,8 +8,12 @@ import java.io.Serializable;
 
 /**
  */
+@Entity
+@DiscriminatorValue("Featur")
 public class FeatureSource extends ObjectSource implements Serializable, Comparable<FeatureSource> {
 
+    @ManyToOne
+    @JoinColumn(name = "ids_data_zdb_id", insertable = false, updatable = false)
     private Feature feature;
 
 
