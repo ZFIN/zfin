@@ -64,7 +64,7 @@
         <echo message="Synchronizing Jenkins jobs: copy watson files to franklin"/>
 
         <if >
-            <equals arg1="${HOSTNAME}" arg2="franklin.zfin.org" />
+            <equals arg1="${INSTANCE}" arg2="franklin" />
             <then>
                 <exec executable="rsync" failifexecutionfails="true">
                     <arg value="-avz"/>

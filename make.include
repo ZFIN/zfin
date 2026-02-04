@@ -91,7 +91,7 @@ DbNameCheck:
 	$(error DBNAME Environment variable not set.)
 endif
 
-TRANSLATETABLE = ${TOP}/commons/env/${INSTANCE}.tt
+TRANSLATETABLE = ${TOP}/commons/env/replacements.tt
 
 # ---------------  Variable Definitions  --------------------------------
 

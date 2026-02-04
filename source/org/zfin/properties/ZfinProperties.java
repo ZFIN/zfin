@@ -187,17 +187,12 @@ public final class ZfinProperties {
         loadPropertiesTask.execute();
     }
 
-    public static String getWebHostUserAtHost() {
-        return ZfinPropertiesEnum.WEBHOST_USER + "@" + ZfinPropertiesEnum.WEBHOST_HOSTNAME;
-    }
-
     public static String getCurrentPropertyFile() {
         if (loadPropertiesTask != null) {
             return loadPropertiesTask.getFile();
         }
         return null;
     }
-
 
     public static Configuration getTemplateConfiguration() {
         if (freeMarkerConfiguration == null) {
