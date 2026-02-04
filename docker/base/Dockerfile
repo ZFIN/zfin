@@ -1,4 +1,4 @@
-FROM gradle:8-jdk17
+FROM gradle:8-jdk21
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y --no-install-recommends \
