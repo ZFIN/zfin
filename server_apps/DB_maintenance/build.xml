@@ -189,14 +189,14 @@
     </target>
     <target name="load-flank-seq" description="">
         <echo message="arg1: ${web-inf.dir}/zfin.properties"/>
-        <echo message="arg2: ${validateData}/report_data"/>
+        <echo message="arg2: ${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
         <echo message="arg3: ${jobName}"/>
         <java classname="org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob"
               fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
@@ -208,7 +208,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="Check-Eap-Pato-Terms_d"/>
         </java>
     </target>
@@ -218,7 +218,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
             <arg value="10"/>
             <jvmarg value="${jvm.arg.log4j}"/>
@@ -244,7 +244,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
@@ -255,7 +255,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="Student-Metrics_w"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
@@ -266,7 +266,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
         </java>
     </target>
@@ -275,14 +275,14 @@
         <echo message="Regenerate webhost curated databases"/>
         <echo message="main class: org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
         <echo message="arg1: ${web-inf.dir}/zfin.properties"/>
-        <echo message="arg2: ${validateData}/report_data"/>
+        <echo message="arg2: ${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
         <echo message="arg3: ${jobName}"/>
 
         <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
         </java>
     </target>
@@ -292,7 +292,7 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
@@ -303,13 +303,13 @@
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="${jobName}"/>
         </java>
 
         <fail message="Error in microarray update">
             <condition>
-                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
+                <resourcecontains resource="${env.TARGETROOT}/server_apps/DB_maintenance/report_data/${jobName}/${jobName}.html" substring="Error"/>
             </condition>
         </fail>
     </target>
@@ -341,14 +341,14 @@
     <target name="run-data-report" description="">
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <delete dir="${validateData}/report_data/${JobName}"/>
+        <delete dir="${env.TARGETROOT}/server_apps/DB_maintenance/report_data/${JobName}"/>
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
             <arg value="-dataDir"/>
-            <arg value="${validateData}/report_data"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
             <arg value="-propertyDir"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="-taskClassName"/>
@@ -364,7 +364,7 @@
               failonerror="true">
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
-            <arg value="${validateData}/validatedata"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="true"/>
         </java>
@@ -419,7 +419,7 @@
             <echo message="Create Report"/>
             <echo message="Use database: ${DBNAME}"/>
             <echo message="Use ParameterValues: ${ParameterValues}"/>
-            <delete dir="${validateData}/report_data/${JobName}"/>
+            <delete dir="${env.TARGETROOT}/server_apps/DB_maintenance/report_data/${JobName}"/>
             <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
                   classpathref="combined.classpath"
                   failonerror="true">
@@ -434,7 +434,7 @@
                 <arg value="-parameterValues"/>
                 <arg value="${ParameterValues}"/>
                 <arg value="-dataDir"/>
-                <arg value="${validateData}/report_data"/>
+                <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/report_data"/>
                 <arg value="-propertyDir"/>
                 <arg value="${web-inf.dir}/zfin.properties"/>
             </java>
