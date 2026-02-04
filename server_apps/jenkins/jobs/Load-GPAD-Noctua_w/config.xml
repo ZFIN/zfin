@@ -27,10 +27,11 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
-        <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</targets>
-            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
-        </hudson.tasks.Ant>
+        <hudson.tasks.Shell>
+            <!-- Need to use shell task to get unstable return code handling -->
+            <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
+            <unstableReturn>2</unstableReturn>
+        </hudson.tasks.Shell>
     </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
