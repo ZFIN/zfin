@@ -163,9 +163,9 @@ public class GeneViewController {
 
         // Transcripts
         RelatedTranscriptDisplay relatedTranscriptsForGene = TranscriptService.getRelatedTranscriptsForGene(gene);
+        geneBean.setRelatedTranscriptDisplay(relatedTranscriptsForGene);
         GenomeBrowserImage gbrowseImageTranscripts = relatedTranscriptsForGene.getGbrowseImage();
         if (gbrowseImageTranscripts != null) {
-            geneBean.setRelatedTranscriptDisplay(relatedTranscriptsForGene);
             Set<BrowserLink> linkSet = new LinkedHashSet<>();
             BrowserLink link = new BrowserLink();
             link.setName("ZFIN");
