@@ -125,9 +125,12 @@ public class TranscriptService {
         }
 
         if (displayGBrowseImage
-            && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
-            && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
-            MarkerGenomeLocation landmark = getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0);
+            && (getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)
+                || getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.NCBI))) {
+            GenomeLocation.Source locationSource = getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)
+                ? GenomeLocation.Source.ZFIN
+                : GenomeLocation.Source.NCBI;
+            MarkerGenomeLocation landmark = getLinkageRepository().getGenomeLocation(gene, locationSource).get(0);
             int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
             int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
