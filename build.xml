@@ -181,7 +181,18 @@
         <antcall target="compile"/>
     </target>
 
-    <target name="rebuildProperties" depends="createEnum"
+    <!-- rebuildPropertiesFromYaml will invoke the groovy script for creating home/WEB-INF/zfin.properties from all-properties.yml -->
+    <target name="rebuildPropertiesFromYaml" description="Rebuilds zfin.properties from all-properties.yml">
+        <echo message="Rebuilding ${property.file} from all-properties.yml"/>
+        <groovy src="${basedir}/commons/env/PropertiesProcessor.groovy">
+            <arg value="-c"/>
+            <arg value="${basedir}/commons/env/all-properties.yml"/>
+            <arg value="-o"/>
+            <arg value="${property.file}"/>
+        </groovy>
+    </target>
+
+    <target name="rebuildProperties" depends="rebuildPropertiesFromYaml,createEnum"
             description="Rebuilds properties for all instances.">
     </target>
 

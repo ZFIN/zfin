@@ -471,7 +471,7 @@ class PropertiesProcessor {
 
             if (options.o) {
                 new File(options.o as String).text = output
-                System.err.println("Properties written to: ${options.o}")
+                System.err.println("Properties written to: ${options.o} (INSTANCE=${instanceName})")
             } else {
                 print(output)
             }
