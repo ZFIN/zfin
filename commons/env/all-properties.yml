@@ -501,6 +501,10 @@ instance_overrides:
     PRIMARY_COLOR: "#f57c00"
   frost:
     PRIMARY_COLOR: "#d32f2f"
+  github:
+    JAVA_HOME: ""
+    SOURCEROOT: "${env.GITHUB_WORKSPACE}"
+    ZFIN_PROPERTIES_PATH: "${env.GITHUB_WORKSPACE}/home/WEB-INF/zfin.properties"
   iguana:
     PRIMARY_COLOR: "#303f9f"
   moonshine:
@@ -524,7 +528,6 @@ instance_overrides:
     INSPECTLET_ID: "74301150"
   watson:
     PRIMARY_COLOR: "#008080"
-
   watson_test:
     PRIMARY_COLOR: "#008080"
   xray:

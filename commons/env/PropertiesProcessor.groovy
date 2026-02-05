@@ -30,6 +30,15 @@
  *   6. instance_environment    - Maps instance name → environment
  *   7. defaults_by_environment - Applies dev_defaults or prod_defaults based on step 6
  *   8. instance_overrides      - Instance-specific overrides
+ *   9. exclusion filter        - Properties set to "" (empty string) are excluded from output
+ *
+ * Property Exclusion:
+ *   To exclude a property for a specific instance, set its value to empty string in
+ *   instance_overrides:
+ *
+ *     instance_overrides:
+ *       my_instance:
+ *         SOME_PROPERTY: ""    # This property will not appear in output
  */
 
 @Grab('org.yaml:snakeyaml:2.2')
@@ -181,6 +190,18 @@ class PropertiesProcessor {
         // Now resolve all variable references
         debugLog("Resolving variable references...")
         resolved = resolveAllVariables(resolved)
+
+        // Step 9: Remove properties with empty string values (exclusion marker)
+        // Setting a property to "" in instance_overrides excludes it from output
+        debugLog("Step 9: Filtering excluded properties (empty string values)")
+        def excludedKeys = resolved.findAll { k, v -> v == "" }.keySet()
+        if (excludedKeys) {
+            excludedKeys.each { key ->
+                debugLog("  Excluding: ${key}")
+                resolved.remove(key)
+            }
+            debugLog("  Excluded ${excludedKeys.size()} properties")
+        }
 
         // Print overwrite summary in debug mode
         if (debug && overwriteLog) {
