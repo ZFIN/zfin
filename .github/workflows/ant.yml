@@ -40,5 +40,6 @@ jobs:
        mkdir -p /opt/misc/
        ln -s $GROOVY_PATH /opt/misc/groovy
        ls -l /opt/misc/
-       source commons/env/github.bash
+       INSTANCE=github groovy ./commons/env/PropertiesProcessor.groovy -o home/WEB-INF/zfin.properties
+       source commons/env/load-properties.bash
        ant do unittests

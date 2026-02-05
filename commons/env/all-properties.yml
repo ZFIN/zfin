@@ -443,6 +443,7 @@ email_overrides:
   docker: "informix@zfin.org"
   eselsohr: "cmpich@zfin.org"
   frost: "cmpich@zfin.org"
+  github: "informix@zfin.org"
   iguana: "rtaylor@zfin.org"
   moonshine: "ryanm@zfin.org"
   ogon: "cmpich@zfin.org"
