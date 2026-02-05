@@ -29,6 +29,7 @@ import static java.time.LocalDate.now;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
 import static org.zfin.mapping.GenomicLocationService.FASTA_GENOMIC_Z11_URL;
+import static org.zfin.mapping.GenomicLocationService.FASTA_URL_BASE_DIR;
 import static org.zfin.util.ZfinCollectionUtils.isIn;
 import static org.zfin.util.ZfinSystemUtils.env;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
@@ -59,7 +60,7 @@ public class FlankSeqProcessor {
     public void updateFlankingSequences() {
         try {
             CHECK_FOR_INCONSISTENCIES = envTrue("CHECK_FOR_INCONSISTENCIES");
-            File fasta = new File(FASTA_GENOMIC_Z11_URL);
+            File fasta = new File(FASTA_URL_BASE_DIR + FASTA_GENOMIC_Z11_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
             int locEnd = 0;
