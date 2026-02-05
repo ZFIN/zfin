@@ -8,18 +8,6 @@
 
     <import file="${buildfiles.dir}/base-properties.xml"/>
 
-    <taskdef name="loadProperties"
-             classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="combined.classpath"/>
-
-    <taskdef name="createEnum"
-             classname="org.zfin.properties.ant.CreateEnumTask"
-             classpathref="combined.classpath"/>
-
-    <taskdef name="exportProperties"
-             classname="org.zfin.properties.ant.ExportPropertiesTask"
-             classpathref="combined.classpath"/>
-
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="lib/Java/ant-contrib-0.3.jar"/>
@@ -83,8 +71,8 @@
         <echo message="property file=${property.file}"/>
     -->
 
-    <!--here, we are only loading property files into ant, not into the enum -->
-    <loadProperties file="${property.file}"/>
+    <!-- Load properties into Ant for build-time use -->
+    <property file="${property.file}"/>
 
     <!-- ensure git is looking in the source tree directory for hooks -->
     <exec executable="git">
@@ -166,11 +154,9 @@
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
     <target name="install" depends="deploy" description="Same as deploy."/>
 
+    <!-- DEPRECATED: Java code now loads properties at runtime via ZfinProperties.init() -->
     <target name="loadPropertiesIntoEnum">
-        <loadProperties
-                file="${property.file}"
-                enumClass="${enum.class}"
-        />
+        <echo message="loadPropertiesIntoEnum is deprecated - Java loads properties at runtime"/>
     </target>
 
     <!-- createEnum is no longer needed - use gradle generatePropertiesEnum instead -->
@@ -178,7 +164,8 @@
         <echo message="createEnum is deprecated."/>
         <echo message="In the future use 'gradle generatePropertiesEnum' to regenerate ZfinPropertiesEnum.java"/>
         <gradle task="generatePropertiesEnum" />
-        <echo message="TODO: migrate toward using spring @ConfigurationProperties instead of ZfinPropertiesEnum"/>
+        <echo message="####"/>
+        <echo message="#### TODO: migrate toward using spring @ConfigurationProperties instead of ZfinPropertiesEnum"/>
     </target>
 
     <!-- rebuildPropertiesFromYaml will invoke the groovy script for creating home/WEB-INF/zfin.properties from all-properties.yml -->
