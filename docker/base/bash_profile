@@ -1,5 +1,15 @@
-source /opt/zfin/source_roots/zfin.org/commons/env/${INSTANCE}.bash
+source /opt/zfin/source_roots/zfin.org/commons/env/load-properties.bash
+
 cd /opt/zfin/source_roots/zfin.org
 alias nano='nano -Ynone'
 alias restarttomcat='cd /opt/zfin/source_roots/zfin.org/docker && docker compose down tomcat && docker compose up -d tomcat && cd -'
 alias restarttomcatd='cd /opt/zfin/source_roots/zfin.org/docker && docker compose down tomcatdebug && docker compose up -d tomcatdebug && cd -'
+
+
+export PATH=/opt/misc/groovy/bin:$PATH
+export PATH=/opt/postgres/postgresql/bin:$PATH
+export PATH=/opt/ab-blast:$PATH
+
+# Prompt
+export PROMPT_DIRTRIM=2
+export PS1="${INSTANCE}:\w\$ "

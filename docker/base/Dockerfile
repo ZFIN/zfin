@@ -106,7 +106,6 @@ COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile
 RUN git config --global --add safe.directory /opt/zfin/source_roots/zfin.org
 
-RUN echo 'source /opt/zfin/source_roots/zfin.org/commons/env/${INSTANCE}.bash' >> /home/gradle/.bashrc
 RUN echo 'cd /opt/zfin/source_roots/zfin.org' >> /home/gradle/.bashrc
 
 CMD ["/bin/bash","-l"]

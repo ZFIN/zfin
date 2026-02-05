@@ -640,7 +640,7 @@ task pushGHCRImages() {
 task dumpTomcatStack() {
     doLast {
         exec {
-            commandLine "docker", "compose", "exec", "tomcat", "jstack", "1" 
+            commandLine "docker", "compose", "exec", "tomcat", "jstack", "1"
             workingDir "docker/"
         }
     }
