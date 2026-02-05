@@ -182,7 +182,10 @@ services:
       - "25:1025"
       - "8025:8025"
   jenkins:
-    build: ./jenkins/
+    build: 
+      context: ./jenkins/
+      args:
+        ZFIN_RELEASE: ${ZFIN_RELEASE}
     image: ghcr.io/zfin/zfin-jenkins:${ZFIN_RELEASE}
     ports:
       - "9499-9509:9499"
