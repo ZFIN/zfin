@@ -5,14 +5,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.ui.HandlesErrorCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.properties.ant.LoadPropertiesTask;
 import org.zfin.util.FileUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Class that contains global properties for the application, such as
@@ -21,7 +22,7 @@ import java.util.Map;
 public final class ZfinProperties {
 
     private static final Logger logger = LogManager.getLogger(ZfinProperties.class);
-    private static LoadPropertiesTask loadPropertiesTask = new LoadPropertiesTask();
+    private static String currentPropertyFile;
     private static Configuration freeMarkerConfiguration;
 
 
@@ -145,14 +146,46 @@ public final class ZfinProperties {
     }
 
     public static void init() {
-        // should load from a default file, or from a -DPROPERTY=<path/to/file>
-        if (false == isInit()) {
-            if (loadPropertiesTask.getFile() == null) {
-                init("home/WEB-INF/zfin.properties");
-            } else {
-                init(loadPropertiesTask.getFile());
-            }
+        if (!isInit()) {
+            String propertiesPath = resolvePropertiesPath();
+            init(propertiesPath);
         }
+    }
+
+    /**
+     * Resolve the properties file path using the following precedence:
+     * 1. System property: -Dzfin.properties.path=/path/to/file
+     * 2. Environment variable: ZFIN_PROPERTIES_PATH
+     * 3. Web context: webRoot + /WEB-INF/zfin.properties (if running in servlet container)
+     * 4. Default: home/WEB-INF/zfin.properties (relative to working directory)
+     */
+    private static String resolvePropertiesPath() {
+        // 1. Check system property
+        String systemProp = System.getProperty("zfin.properties.path");
+        if (systemProp != null && !systemProp.isEmpty()) {
+            logger.info("Using properties path from system property: {}", systemProp);
+            return systemProp;
+        }
+
+        // 2. Check environment variable
+        String envVar = System.getenv("ZFIN_PROPERTIES_PATH");
+        if (envVar != null && !envVar.isEmpty()) {
+            logger.info("Using properties path from ZFIN_PROPERTIES_PATH: {}", envVar);
+            return envVar;
+        }
+
+        // 3. Check web context
+        String webRoot = ZfinPropertiesLoadListener.getWebRoot();
+        if (webRoot != null) {
+            String webPath = webRoot + "/WEB-INF/zfin.properties";
+            logger.info("Using properties path from web context: {}", webPath);
+            return webPath;
+        }
+
+        // 4. Default to relative path
+        String defaultPath = "home/WEB-INF/zfin.properties";
+        logger.info("Using default properties path: {}", defaultPath);
+        return defaultPath;
     }
 
     public static boolean isInit() {
@@ -179,19 +212,36 @@ public final class ZfinProperties {
     }
 
 
+    /**
+     * Load properties from the specified file and populate ZfinPropertiesEnum values.
+     */
     public static void init(String propertiesFileName) {
-        loadPropertiesTask.setFile(propertiesFileName);
-        loadPropertiesTask.setEnumClass(ZfinPropertiesEnum.class.getCanonicalName());
-        loadPropertiesTask.setOverrideSystemProperties(false);
-        loadPropertiesTask.setProcessSystemProperties(false);
-        loadPropertiesTask.execute();
+        currentPropertyFile = propertiesFileName;
+
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(propertiesFileName)) {
+            props.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load properties file: " + propertiesFileName, e);
+        }
+
+        // Load each property into the corresponding enum constant
+        for (String key : props.stringPropertyNames()) {
+            try {
+                ZfinPropertiesEnum enumConstant = ZfinPropertiesEnum.valueOf(key);
+                enumConstant.setValue(props.getProperty(key));
+            } catch (IllegalArgumentException e) {
+                // Property exists in file but not in enum - log warning but don't fail
+                logger.warn("Property '{}' found in {} but not defined in ZfinPropertiesEnum",
+                           key, propertiesFileName);
+            }
+        }
+
+        logger.info("Loaded {} properties from {}", props.size(), propertiesFileName);
     }
 
     public static String getCurrentPropertyFile() {
-        if (loadPropertiesTask != null) {
-            return loadPropertiesTask.getFile();
-        }
-        return null;
+        return currentPropertyFile;
     }
 
     public static Configuration getTemplateConfiguration() {

@@ -173,12 +173,12 @@
         />
     </target>
 
-    <target name="createEnum">
-        <createEnum file="${property.file}"
-                    sourceDir="source"
-                    enumClass="${enum.class}"
-        />
-        <antcall target="compile"/>
+    <!-- createEnum is no longer needed - use gradle generatePropertiesEnum instead -->
+    <target name="createEnum" description="DEPRECATED: Use 'gradle generatePropertiesEnum' instead">
+        <echo message="createEnum is deprecated."/>
+        <echo message="In the future use 'gradle generatePropertiesEnum' to regenerate ZfinPropertiesEnum.java"/>
+        <gradle task="generatePropertiesEnum" />
+        <echo message="TODO: migrate toward using spring @ConfigurationProperties instead of ZfinPropertiesEnum"/>
     </target>
 
     <!-- rebuildPropertiesFromYaml will invoke the groovy script for creating home/WEB-INF/zfin.properties from all-properties.yml -->
