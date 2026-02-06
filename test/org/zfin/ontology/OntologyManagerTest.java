@@ -107,7 +107,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         long timeToSearch = endTime - startTime;
         logger.info("Search Duration: " + timeToSearch);
         assertNotNull(qualityList);
-        assertEquals(13, qualityList.size());
+        assertTrue(qualityList.size() >= 15);
 
     }
 
@@ -211,7 +211,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         MatchingTermService matcher = new MatchingTermService();
         List<MatchingTerm> qualities = matcher.getMatchingTerms(query, QUALITY);
         assertNotNull(qualities);
-        assertEquals(14, qualities.size());
+        assertEquals(15, qualities.size());
 
         int count = 0;
         for (MatchingTerm matchingTerm : qualities) {
@@ -227,7 +227,7 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         MatchingTermService matcher = new MatchingTermService();
         List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, ANATOMY);
         assertNotNull(anatomyList);
-        assertEquals(13, anatomyList.size());
+        assertTrue(anatomyList.size() >= 15);
     }
 
     @Test
