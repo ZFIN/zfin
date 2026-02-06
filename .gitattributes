@@ -9,6 +9,7 @@
 /home/WEB-INF/lib/log4j-api-2.21.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/log4j-core-2.21.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/lucene-core-2.3.1.jar filter=lfs diff=lfs merge=lfs -text
+/home/WEB-INF/lib/patricia-trie-0.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/slf4j-api-1.7.26.jar filter=lfs diff=lfs merge=lfs -text
 /home/images/search-background.png filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/2006_tutorial/Madison_2006_workshopmodule_zfin-1ii.pdf filter=lfs diff=lfs merge=lfs -text
