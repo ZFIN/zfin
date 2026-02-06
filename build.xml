@@ -154,11 +154,6 @@
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
     <target name="install" depends="deploy" description="Same as deploy."/>
 
-    <!-- DEPRECATED: Java code now loads properties at runtime via ZfinProperties.init() -->
-    <target name="loadPropertiesIntoEnum">
-        <echo message="loadPropertiesIntoEnum is deprecated - Java loads properties at runtime"/>
-    </target>
-
     <!-- createEnum is no longer needed - use gradle generatePropertiesEnum instead -->
     <target name="createEnum" description="DEPRECATED: Use 'gradle generatePropertiesEnum' instead">
         <echo message="createEnum is deprecated."/>
@@ -181,11 +176,6 @@
 
     <target name="rebuildProperties" depends="rebuildPropertiesFromYaml,createEnum"
             description="Rebuilds properties for all instances.">
-    </target>
-
-    <!-- exportAntTokenFilters is no longer needed - filters are loaded directly from zfin.properties -->
-    <target name="exportAntTokenFilters" description="DEPRECATED: No longer needed, kept for backwards compatibility">
-        <echo message="exportAntTokenFilters is deprecated. Filters are now loaded directly from zfin.properties."/>
     </target>
 
     <path id="extended.classpath">

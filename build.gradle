@@ -1057,7 +1057,7 @@ test {
     }
     jvmArgs(jvmArgsList)
     testLogging {
-        events "passed", "skipped", "failed"
+        events "skipped", "failed"
         exceptionFormat "full"
         showStandardStreams = false
     }
