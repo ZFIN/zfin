@@ -584,6 +584,7 @@ public class OntologyManager {
     /**
      * Retrieve a term by ID. All ontologies will be searched through.
      * If no term is found it returns null.
+     * Prioritizes exact name matches over partial matches.
      *
      * @param termID term ID
      * @return term
@@ -593,10 +594,50 @@ public class OntologyManager {
             return null;
         }
 
+        // First pass: look for exact name matches across all ontologies
+        for (OntologyDTO ontology : ontologyTermDTOMap.keySet()) {
+            TermDTO term = getTermByIDExactMatch(termID, ontology);
+            if (term != null) {
+                return term;
+            }
+        }
+
+        // Second pass: return first partial match if no exact match found
         for (OntologyDTO ontology : ontologyTermDTOMap.keySet()) {
             TermDTO term = getTermByID(termID, ontology);
             if (term != null) {
                 return term;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve a term by ID with exact name match only.
+     *
+     * @param id       term ID
+     * @param ontology ontology
+     * @return term with exact name match, or null
+     */
+    private TermDTO getTermByIDExactMatch(String id, OntologyDTO ontology) {
+        if (ontology == null)
+            return null;
+
+        Set<TermDTO> terms = null;
+        if (ontology.isComposed()) {
+            for (OntologyDTO ontologyDTO : ontology.getComposedOntologies()) {
+                terms = ontologyTermDTOMap.get(ontologyDTO).get(id);
+                if (terms != null)
+                    break;
+            }
+        } else
+            terms = ontologyTermDTOMap.get(ontology).get(id);
+
+        if (terms != null) {
+            for (TermDTO t : terms) {
+                if (t.getName().equals(id)) {
+                    return t;
+                }
             }
         }
         return null;
