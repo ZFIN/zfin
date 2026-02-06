@@ -25,11 +25,8 @@
         </fileset>
     </path>
 
-    <taskdef name="loadProperties"
-             classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="combined.classpath"/>
-
-    <loadProperties file="${web-inf.dir}/zfin.properties" />
+    <!-- Load properties into Ant for build-time use -->
+    <property file="${web-inf.dir}/zfin.properties"/>
 
     <path id="extended.classpath">
         <path refid="combined.classpath"/>

@@ -2,7 +2,6 @@
 /home/WEB-INF/lib/agr_curation_api.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-collections-3.2.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-configuration-1.6.jar filter=lfs diff=lfs merge=lfs -text
-/home/WEB-INF/lib/commons-configuration-ant-task-0.9.7.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/commons-lang-2.6.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/htsjdk-4.3.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/jcl-over-slf4j-1.7.26.jar filter=lfs diff=lfs merge=lfs -text

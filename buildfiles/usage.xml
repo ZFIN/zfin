@@ -28,7 +28,6 @@
             UTILITIES:
             deploy-javadoc: Create the JavaDoc and deploy it into the targetfroot
             build-properties:  Echos important build-propertiets.
-            echoProps: Print out all java properties
             jversion: Print out the used JVM
             javadocs: Create JavaDoc for ZFIN API
             generate-wsdl-doi-client: Generates wsdl java client code for the DOI

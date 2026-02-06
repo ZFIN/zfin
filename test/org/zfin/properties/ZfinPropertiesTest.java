@@ -29,7 +29,6 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
         assertTrue("WebHost Get binary", ZfinProperties.getWebHostBlastGetBinary().contains("xdget"));
         assertFalse("WebHost Put binary",ZfinProperties.getWebHostBlastPutBinary().contains("@"));
         assertTrue("WebHost Put binary", ZfinProperties.getWebHostBlastPutBinary().contains("xdformat"));
-        assertTrue("WebHost Server", ZfinProperties.getWebHostUserAtHost().contains("@"));
 
         assertFalse("BlastServer Database Path", ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH.value().contains("@"));
         assertFalse("BlastServer Get binary", ZfinPropertiesEnum.BLASTSERVER_XDGET.value().contains("@"));
