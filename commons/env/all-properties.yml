@@ -1,0 +1,550 @@
+# =============================================================================
+# ZFIN Unified Configuration File
+# =============================================================================
+#
+# PURPOSE:
+#   Single source of truth for all ZFIN application properties across environments
+#   and instances. This file is processed to generate flat .properties files
+#   consumable by Java/Spring, Bash, Perl, and other technologies.
+#
+# -----------------------------------------------------------------------------
+# RESOLUTION ORDER (later sections override earlier ones):
+# -----------------------------------------------------------------------------
+#   1. common_properties       - Base properties shared by all instances
+#   2. deprecated_properties   - Deprecated properties (to be phased out)
+#   3. unique_properties       - Properties that vary per instance (with defaults)
+#   4. emails                  - Email addresses for notifications/reports
+#   5. email_overrides         - Replaces ALL email properties for specific instances
+#   6. instance_environment    - Maps instance name → environment (development/testing/production)
+#   7. defaults_by_environment - Applies dev_defaults or prod_defaults based on step 6
+#   8. instance_overrides      - Instance-specific overrides (franklin, test, trunk, etc.)
+#
+# NOTE: instance_environment is resolved BEFORE defaults_by_environment, ensuring
+# the correct environment defaults are applied before instance-specific overrides.
+#
+# -----------------------------------------------------------------------------
+# KEY CONSTRAINTS:
+# -----------------------------------------------------------------------------
+#   - Keys must be UNIQUE across: common_properties, unique_properties,
+#     deprecated_properties, and emails. The processor should fail if duplicates
+#     are detected.
+#   - deprecated_properties are included for backwards compatibility but should
+#     be removed from consuming code over time.
+#
+# -----------------------------------------------------------------------------
+# VARIABLE INTERPOLATION:
+# -----------------------------------------------------------------------------
+#   - ${variable_name}  - References a key from the 'variables' section below
+#   - ${env.VAR_NAME}   - References a system environment variable at processing time
+#
+#   Variables are resolved BEFORE the resolution order is applied.
+#   Circular references will cause the processor to fail.
+#
+# -----------------------------------------------------------------------------
+# SECRETS HANDLING:
+# -----------------------------------------------------------------------------
+#   TODO: Passwords and sensitive values should NOT be stored in this file.
+#
+#   Current violations that need remediation:
+#     - INDEXER_WIKI_PASSWORD (line ~161)
+#     - WIKI_PASS (line ~165)
+#
+# -----------------------------------------------------------------------------
+# OUTPUT FORMAT:
+# -----------------------------------------------------------------------------
+#   The processor generates a flat key=value properties file:
+#
+#     DBNAME="zfindb"
+#     SMTP_HOST="smtp.uoregon.edu"
+#     BUILD_EMAIL="technical@zfin.org"
+#
+#   This format is compatible with:
+#     - Bash:   source zfin.properties (with set -a for export)
+#     - Perl:   Parse with regex or Config::Properties
+#     - Java:   java.util.Properties.load()
+#     - Spring: @PropertySource annotation
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+# Define reusable values here to avoid repetition and ensure consistency.
+# Reference these in property values using ${variable_name} syntax.
+#
+# NOTE: Variables can reference other variables, but avoid circular references.
+# -----------------------------------------------------------------------------
+variables:
+  db_name: "zfindb"
+  base_path: "/opt/zfin"
+  catalina_base: "${base_path}/catalina_bases/zfin.org"  # Fixed typo: was catalina_bash
+  war_web_inf_dir: "${catalina_base}/webapps/ROOT/WEB-INF"
+
+# -----------------------------------------------------------------------------
+# COMMON PROPERTIES
+# -----------------------------------------------------------------------------
+# Base properties used by ALL instances. These form the foundation and can be
+# overridden by later sections (defaults_by_environment, instance_overrides).
+#
+# Organization suggestion: Group related properties together with sub-comments.
+# -----------------------------------------------------------------------------
+common_properties:
+  ADAM_AMSTERDAM: "/AdamAmsterdamFiles"
+  ANT_HOME: "/usr/share/ant"
+  ANT_OPTS: "-Xms256m -Xmx4096m -Dgwt.persistentunitcache=false"
+  APACHE_PORT: "80"
+  APACHE_PORT_SECURE: "443"
+  APACHE_SERVER_NAME: "httpd"
+  APACHE_USER: "zfishweb"
+  BCRYPT_WORK_FACTOR: "15"
+  BLASTSCRIPT_TARGET_PATH: "/zdevblast/dev_scripts/target"
+  BLASTSERVER_BINARY_PATH: "/opt/ab-blast"
+  BLASTSERVER_BLAST_DATABASE_PATH: "${base_path}/blastdb"
+  BLASTSERVER_DISTRIBUTED_QUERY_PATH: "/tmp/blast_distributed_query"
+  BLASTSERVER_FASTA_FILE_PATH: "/tmp/fasta_file_path"
+  BLASTSERVER_XDFORMAT: "xdformat"
+  BLASTSERVER_XDGET: "xdget"
+  BLAST_ACCESSION_TEMP_DIR: "/research/zprod/blastdb/accessionTempDir"
+  BLAST_FILE_DIR: "/research/zmore/dev_fasta"
+  BLAST_SCRIPT_DIR: "/zdevblast/dev_scripts"
+  CATALINA_HOME: "/usr/local/tomcat"
+  CATALINA_BASE: "${catalina_base}"
+  CATALINA_PID: "${catalina_base}/catalina_pid"
+  CGI_BIN_DIR_NAME: "cgi-bin"
+  CLIENT_LOCALE: "en_US.utf8"
+  CONFIGURATION_DIRECTORY: "conf"
+  CONVERT_BINARY_PATH: "/usr/bin/convert"
+  COOKIE_PATH: "/"
+  CURATION_DBNAME: "false"
+  CURATION_INSTANCE: "false"
+  DATABASE_UNLOAD_DIRECTORY: "/research/zunloads/databases/production"
+  DBNAME: "zfindb"
+  DB_LOCALE: "en_US.utf8"
+  DB_NAME: "zfindb"
+  DB_OWNER: "docker"
+  DB_UNLOADS_PATH: "${base_path}/unloads/db"
+  DEBUGPORT: "5000"
+  DISABLE_SECURITY: "false"
+  DOMAIN_NAME: "zfin.org"
+  DOWNLOAD_DIRECTORY: "${base_path}/download-files"
+  EMAIL_SENDER_CLASS: "org.zfin.framework.mail.IntegratedJavaMailSender"
+  ENVIRONMENT: "development"  # Default; overridden by instance_environment lookup
+  GA4_ANALYTICS_ID_PRODUCTION: "G-R5XJW0QW0Y"
+  GA4_ANALYTICS_ID_ZFINLABS: "G-5J7RMKMBWC"
+  GBROWSE_DB: "ensembl_current"
+  GBROWSE_DB_HOST: "gbrowse1.zfin.org"
+  GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT: "gb2/gbrowse_img/zfin_ensembl/"
+  GBROWSE_GRCZ10_PATH_FROM_ROOT: "action/gbrowse/GRCz10/"
+  GBROWSE_IMG_PATH_FROM_ROOT: "gb2/gbrowse_img/zfin_ensembl_GRCz11/"
+  GBROWSE_PATH_FROM_ROOT: "action/gbrowse/"
+  GBROWSE_ZV9_IMG_PATH_FROM_ROOT: "gb2/gbrowse_img/zfin_ensembl_Zv9/"
+  GBROWSE_ZV9_PATH_FROM_ROOT: "action/gbrowse/Zv9/"
+  GC_LOGGING_OPTS: "-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -Xloggc:${catalina_base}/logs/gc.log"
+  GRADLE_USER_HOME: "${env.HOME}/.gradle" # <<< using environment variable here ($HOME)
+  GROOVY_CLASSPATH: "${catalina_base}/webapps/ROOT/WEB-INF/lib/*:${base_path}/source_roots/zfin.org/lib/Java/*:${catalina_base}/webapps/ROOT/WEB-INF/classes:/opt/misc/groovy/lib/*:/usr/local/tomcat/endorsed/*"
+  GROOVY_HOME: "/opt/misc/groovy"
+  HAS_PARTNER: "false"
+  HIBERNATE_CONFIGURATION_DIRECTORY: "source/org/zfin"
+  IMAGE_LOAD: "/imageLoadUp"
+  INDEXER_UNLOAD_DIRECTORY: "/research/zunloads/indexes/zfindb"
+  INSPECTLET_ID: "0000000000"
+  INTERNAL_BLAST_PATH: "NEED_TO_SET_A_BLAST_PATH"
+  JAVA_HOME: "/opt/java/openjdk"
+  JBROWSE_BASE_URL: "https://dev.d2rwmenofjuae7.amplifyapp.com"
+  JBROWSE_GRCZ10_PATH_FROM_ROOT: "jbrowse/?data=data/GRCz10"
+  JBROWSE_GRCZ11_PATH_FROM_ROOT: "jbrowse/?data=data/GRCz11"
+  JBROWSE_PATH_FROM_ROOT: "jbrowse/?data=data/GRCz12tu"
+  JBROWSE_PROXY_BASE_URL: "/action/api/jbrowse/proxy/jbrowse/"
+  JBROWSE_USE_LOCAL_PROXY: "true"
+  JBROWSE_ZV9_PATH_FROM_ROOT: "jbrowse/?data=data/Zv9"
+  JDBC_DRIVER: "org.postgresql.Driver"
+  JDBC_URL: "jdbc:postgresql://db:5432/zfindb"
+  JENKINS_HOME: "${base_path}/www_homes/zfin.org/server_apps/jenkins/jenkins-home"
+  JENKINS_PORT: "9499"
+  JPDA_ADDRESS: "5000"
+  JSD_EMAIL: "zfinadmin@uoregon.edu"
+  LOADUP_FULL_PATH: "${base_path}/loadUp/pubs"
+  LOAD_ONTOLOGIES_AT_STARTUP: "true"
+  LOG_FILE_MAX: "10"
+  LOG_FILE_PATTERN: "%d [%t] %-5p %c{2} - %m%n"
+  LOG_FILE_SESSION: "zfin-session.log"
+  LOG_FILE_SIZE: "1"
+  MOVE_BLAST_FILES_TO_DEVELOPMENT: "false"
+  MUTANT_NAME: "zfin.org"
+  NCBI_RELEASE_ARCHIVE_DIR: "/research/zarchive/load_files/NCBI-gene-load-archive/"
+  NON_SECUREPORT: "2008"
+  NON_SECURE_HTTP: "http://"
+  PARTNER_DBNAME: "false"
+  PARTNER_INTERNAL_INSTANCE: "false"
+  PARTNER_SOURCEROOT: "false"
+  PDF_LOAD: "/PDFLoadUp"
+  PDF_PATH: "/pdf/"
+  PGBINDIR: "/usr/bin"
+  PGDATA: "/opt/postgres/data"
+  PGDATABASE: "zfindb"
+  PGHOST: "db"
+  ROOT_PATH: "${base_path}/www_homes/zfin.org"
+  SECUREPORT: "8443"
+  SECURE_HTTP: "https://"
+  SECURE_SERVER: "true"
+  SHARED_DOMAIN_NAME: "false"
+  SHOW_SQL: "false"
+  SHUTDOWNPORT: "2007"
+  SOLR_CONTEXT: "solr"
+  SOLR_CORE: "site_index"
+  SOLR_HOME: "/var/solr/data/site_index"
+  SOLR_HOST: "solr"
+  SOLR_PORT: "8983"
+  SOLR_UNLOADS_PATH: "${base_path}/unloads/solr"
+  SQLHOSTS_FILE: "sqlhosts"
+  SQLHOSTS_HOST: "zfin.org"
+  SSH: "ssh"
+  SOURCEROOT: "${base_path}/source_roots/zfin.org"
+  TARGETCGIBIN: "cgi-bin"
+  TARGETROOT: "${base_path}/www_homes/zfin.org"
+  TARGETROOT_PREFIX: "${base_path}"
+  UNIPROT_EC2GO_FILE_URL: "https://current.geneontology.org/ontology/external2go/ec2go"
+  UNIPROT_IP2GO_FILE_URL: "https://current.geneontology.org/ontology/external2go/interpro2go"
+  UNIPROT_KW2GO_FILE_URL: "https://current.geneontology.org/ontology/external2go/uniprotkb_kw2go"
+  UNIPROT_RELEASE_ARCHIVE_DIR: "/research/zarchive/load_files/UniProt-archive/"
+  UNIPROT_SPROT_FILE_URL: "https://rest.uniprot.org/uniprotkb/stream?compressed=true&format=txt&query=%28%28organism_id%3A7955%29+AND+%28reviewed%3Atrue%29%29"
+  UNIPROT_SPROT_FILE_URL_ALT1: "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz"
+  UNIPROT_SPROT_FILE_URL_ALT2: "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz"
+  UNIPROT_SPROT_FILE_URL_ALT3: "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz"
+  UNIPROT_TREMBL_FILE_URL: "https://rest.uniprot.org/uniprotkb/stream?compressed=true&format=txt&query=%28%28organism_id%3A7955%29+AND+%28reviewed%3Afalse%29%29"
+  UNIPROT_TREMBL_FILE_URL_ALT1: "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz"
+  UNIPROT_TREMBL_FILE_URL_ALT2: "ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz"
+  UNIPROT_TREMBL_FILE_URL_ALT3: "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz"
+  UNIPROT_URL_FOR_RELEASE_DATE: "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz"
+  USER: "docker"
+  USE_APACHE_FOR_SMOKE_TESTS: "true"
+  VALID_SESSION_TIMEOUT_SECONDS: "432000"
+  VIDEO_LOAD: "/videoLoadUp"
+  WAREHOUSE_DUMP_DIR: "/research/zunloads/databases/zygotix"
+  WAR_WEB_INF_DIR: "${war_web_inf_dir}"
+  WEBHOST_BINARY_PATH: "/opt/ab-blast"
+  WEBHOST_BLASTALL: "ab-blastall"
+  WEBHOST_BLASTDB_CURL_PATH: "http://almost.zfin.org/blastdb"
+  WEBHOST_BLASTDB_TO_COPY: "/research/crick/blastdb"
+  WEBHOST_BLAST_DATABASE_PATH: "${base_path}/blastdb"
+  WEBHOST_DBNAME: "zfindb"
+  WEBHOST_FASTA_FILE_PATH: "/research/zblastfiles/dev_files"
+  WEBHOST_GENBANK_DAILY_FILES: "/research/zblastfiles/dev_files/daily"
+  WEBHOST_KEY_PATH: "${base_path}/shared_private_keys"
+  WEBHOST_MUTANT: "zfin.org"
+  WEBHOST_SOURCE: "/private/ZfinLinks/Commons/env/waldo"
+  WEBHOST_USER: "docker"
+  WEBHOST_XDFORMAT: "xdformat"
+  WEBHOST_XDGET: "xdget"
+  WEBROOT_DIRECTORY: "${base_path}/www_homes/zfin.org/home"
+  ZFIN_PROPERTIES_PATH: "${war_web_inf_dir}/zfin.properties"
+# -----------------------------------------------------------------------------
+# DEPRECATED PROPERTIES
+# -----------------------------------------------------------------------------
+# Properties scheduled for removal. Included for backwards compatibility only.
+#
+# ACTION REQUIRED: Remove references from consuming code, then delete from here.
+# SECURITY: Passwords below should be moved to environment variables immediately.
+# -----------------------------------------------------------------------------
+deprecated_properties:
+  FTPROOT_PATH: "/ftp/zfin"
+  FTP_ROOT: "${base_path}/ftp/test/${env.INSTANCE}"
+  GOOGLE_ANALYTICS_ID: "0"
+  INDEXER_WIKI_HOSTNAME: "devwiki.zfin.org"
+  INDEXER_WIKI_PASSWORD: "dan1orer1o"   # SECURITY: Move to ${env.INDEXER_WIKI_PASSWORD}
+  INDEXER_WIKI_USERNAME: "webservice"
+  TARGETFTPROOT: "${base_path}/ftp/test/${env.INSTANCE}"
+  WIKI_HOST: "wiki.zfin.org"
+  WIKI_PASS: "dan1orer1o"               # SECURITY: Move to ${env.WIKI_PASS}
+  WIKI_PUSH_TO_WIKI: "false"
+  WIKI_USER: "webservice"
+
+# -----------------------------------------------------------------------------
+# UNIQUE PROPERTIES
+# -----------------------------------------------------------------------------
+# Properties that vary per instance. Values here are defaults; instance_overrides
+# can override these for specific instances.
+#
+# These typically include: instance identity, UI theming, scheduled job config.
+# -----------------------------------------------------------------------------
+unique_properties:
+  INSTANCE: "${env.INSTANCE}"  # <<< Using $INSTANCE here -> should pull from environment variable
+  LOG4J_FILE: "default.log4j.xml"
+  PRIMARY_COLOR: "#512da8"
+  SCHEDULE_TRIGGER_FILES: "production" # <<< other potential values: trunk, test, blank
+  SMTP_HOST: "mailhog"           # Override: smtp.uoregon.edu for test, trunk, production
+  SOLR_CREATE_BACKUPS: "false"  # Override: true for prod, test, trunk
+
+# -----------------------------------------------------------------------------
+# EMAILS
+# -----------------------------------------------------------------------------
+# Email addresses for notifications, reports, and alerts.
+# These are the production defaults; for dev instances, email_overrides below
+# redirects ALL emails to a single developer address to prevent spam.
+#
+# NOTE: Space-separated lists indicate multiple recipients.
+# -----------------------------------------------------------------------------
+emails:
+  ALL_FAILURE_REPORTS_EMAIL: "cmpich@zfin.org ryanm@zfin.org"
+  AO_EMAIL_CURATOR: "ybradford@zfin.org cvanslyk@uoregon.edu"
+  AO_EMAIL_ERR: "informix@zfin.org"
+  BUILD_EMAIL: "technical@zfin.org"
+  COUNT_PATO_ERR: "ryanm@zfin.org"
+  COUNT_PATO_OUT: "cvanslyk@uoregon.edu"
+  COUNT_THISSE_VEGA_ERR: "ryanm@zfin.org"
+  COUNT_THISSE_VEGA_OUT: "cvanslyk@uoregon.edu dfashena@zfin.org"
+  COUNT_VEGA_ERR: "ryanm@zfin.org"
+  COUNT_VEGA_OUT: "sramachandran@zfin.org"
+  COUNT_ZGC_ERR: "ryanm@zfin.org"
+  COUNT_ZGC_OUT: "sramachandran@zfin.org"
+  CURATORS_AT_ZFIN: "curators@zfin.org"
+  DEFAULT_EMAIL: "informix@zfin.org"
+  DOI_EMAIL_REPORT: "pubs@zfin.org dhowe@zfin.org cvanslyk@uoregon.edu"
+  ELSEVIER_REPORT: "dfashena@zfin.org"
+  GENBANK_DAILY_EMAIL: "informix@zfin.org"
+  GO_EMAIL_CURATOR: "dhowe@zfin.org leyla@zfin.org sramachandran@zfin.org"
+  GO_EMAIL_ERR: "leyla@zfin.org dhowe@zfin.org sramachandran@zfin.org"
+  INDEXER_REPORT_EMAIL: "cmpich@zfin.org"
+  LN54_CONTACT_EMAIL: "zfinadmn@zfin.org"
+  LOCUS_REGISTRATION_EMAIL: "locusreg@zfin.org"
+  MICROARRAY_EMAIL: "cvanslyk@uoregon.edu"
+  NEW_PUBLICATION_REPORT: "curators@zfin.org zfinadmn@zfin.org pubs@zfin.org"
+  NOMEN_COORDINATOR: "nomenclature_coordinators@zfin.org"
+  ONTOLOGY_LOADER_EMAIL: "cmpich@zfin.org ybradford@zfin.org"
+  PATO_EMAIL_CURATOR: "informix@zfin.org"
+  PRODUCTION_NOTIFICATION_EMAIL: "curators@zfin.org technical@zfin.org pubs@zfin.org holly@zfin.org"
+  REQUEST_NEW_ANATOMY_EMAIL: "ybradford@zfin.org cvanslyk@uoregon.edu"
+  SWISSPROT_EMAIL_CURATOR: "asinger@uoregon.edu dhowe@zfin.org"
+  SWISSPROT_EMAIL_ERR: "informix@zfin.org"
+  SWISSPROT_EMAIL_REPORT: "asinger@uoregon.edu dhowe@zfin.org ybradford@zfin.org sramachandran@zfin.org"
+  TECHNICAL_AT_ZFIN: "technical@zfin.org"
+  VALIDATION_EMAIL_AD: "ryanm@zfin.org"
+  VALIDATION_EMAIL_CURATOR: "dhowe@zfin.org dfashena@zfin.org"
+  VALIDATION_EMAIL_DBA: "informix@zfin.org"
+  VALIDATION_EMAIL_EST: "informix@zfin.org"
+  VALIDATION_EMAIL_GENE: "sramachandran@zfin.org"
+  VALIDATION_EMAIL_GENOCURATOR: "curators@zfin.org"
+  VALIDATION_EMAIL_MORPHOLINO: "holly@zfin.org leyla@zfin.org"
+  VALIDATION_EMAIL_MUTANT: "dhowe@zfin.org asinger@zfin.org"
+  VALIDATION_EMAIL_OTHER: "informix@zfin.org"
+  VALIDATION_EMAIL_TRANSCRIPT: "sramachandran@zfin.org informix@zfin.org"
+  VALIDATION_EMAIL_XPAT: "dfashena@zfin.org cmpich@zfin.org"
+  WAREHOUSE_REGN_EMAIL: "informix@zfin.org rtaylor@zfin.org cmpich@zfin.org"
+  WEB_ADMIN_EMAIL: "rtaylor@zfin.org ryanm@zfin.org"
+  ZEBRASHARE_CURATORS: "leyla@zfin.org asinger@uoregon.edu"
+  ZFIN_ADMIN: "zfinadmn@zfin.org"
+
+# -----------------------------------------------------------------------------
+# ENVIRONMENT DEFAULTS: DEVELOPMENT
+# -----------------------------------------------------------------------------
+# Applied when ENVIRONMENT = "development" (via defaults_by_environment mapping).
+# These are safe defaults for local development.
+# -----------------------------------------------------------------------------
+dev_defaults:
+  ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
+  BLAST_CACHE_AT_STARTUP: "false"
+  GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
+  NCBI_LINKOUT_UPLOAD: "false"
+  NODE_ENV: "development"
+  SCHEDULE_TRIGGER_FILES: ""
+  SEND_AUTHOR_NOTIF_EMAIL: "false"
+  SOLR_MEMORY: "8g"
+  WIKI_HOST: "devwiki.zfin.org"
+
+# -----------------------------------------------------------------------------
+# ENVIRONMENT DEFAULTS: STAGING
+# -----------------------------------------------------------------------------
+# Applied when ENVIRONMENT = "staging" (via defaults_by_environment mapping).
+# These are for shared test/trunk instances that mirror production behavior
+# but with restricted email recipients.
+# -----------------------------------------------------------------------------
+staging_defaults:
+  ALLIANCE_CURATION_URL: "https://beta-curation.alliancegenome.org"
+  BUILD_EMAIL: "technical@zfin.org"
+  GO_EMAIL_CURATOR: "dhowe@zfin.org"
+  GO_EMAIL_ERR: "dhowe@zfin.org informix@zfin.org"
+  INDEXER_REPORT_EMAIL: "informix@zfin.org cmpich@zfin.org"
+  LOG4J_FILE: "test-sites.log4j.xml"
+  NODE_ENV: "production"
+  ONTOLOGY_LOADER_EMAIL: "informix@zfin.org cmpich@zfin.org"
+  SMTP_HOST: "smtp.uoregon.edu"
+  SOLR_CREATE_BACKUPS: "true"
+  SOLR_MEMORY: "8g"
+
+# -----------------------------------------------------------------------------
+# ENVIRONMENT DEFAULTS: PRODUCTION
+# -----------------------------------------------------------------------------
+# Applied when ENVIRONMENT = "production" (via defaults_by_environment mapping).
+# These enable production features like analytics, email notifications, etc.
+# -----------------------------------------------------------------------------
+prod_defaults:
+  ALLIANCE_CURATION_URL: "https://beta-curation.alliancegenome.org"
+  BLAST_CACHE_AT_STARTUP: "true"
+  GA4_ANALYTICS_ID: "G-R5XJW0QW0Y"
+  LOG4J_FILE: "production-site.log4j.xml"
+  NCBI_LINKOUT_UPLOAD: "true"
+  NODE_ENV: "production"
+  PRIMARY_COLOR: "#008080"
+  SEND_AUTHOR_NOTIF_EMAIL: "true"
+  SMTP_HOST: "smtp.uoregon.edu"
+  SOLR_CREATE_BACKUPS: "true"
+  SOLR_MEMORY: "10g"
+
+# -----------------------------------------------------------------------------
+# DEFAULTS BY ENVIRONMENT MAPPING
+# -----------------------------------------------------------------------------
+# Maps environment values to the appropriate defaults section.
+# The processor looks up the environment from instance_environment (step 6),
+# then applies the corresponding defaults from this mapping.
+# -----------------------------------------------------------------------------
+defaults_by_environment:
+  development: "dev_defaults"
+  staging: "staging_defaults"
+  production: "prod_defaults"
+
+# -----------------------------------------------------------------------------
+# INSTANCE ENVIRONMENT MAPPING
+# -----------------------------------------------------------------------------
+# Maps each instance name to its environment type. This is resolved BEFORE
+# defaults_by_environment, so the correct environment defaults are applied.
+#
+# If an instance is not listed here, it defaults to "development".
+#
+# Valid values: development, staging, production
+# -----------------------------------------------------------------------------
+instance_environment:
+  aws: "production"
+  crick: "production"
+  darwin: "production"
+  franklin: "production"
+  test: "staging"
+  trunk: "staging"
+  schlapp: "development"
+  watson: "production"
+  # Unlisted instances default to "development"
+
+# -----------------------------------------------------------------------------
+# EMAIL OVERRIDES
+# -----------------------------------------------------------------------------
+# For development/test instances, ALL email properties are replaced with the
+# single address specified here. This prevents dev instances from accidentally
+# emailing production users.
+#
+# If an instance is NOT listed here, it uses the real email addresses above.
+# -----------------------------------------------------------------------------
+email_overrides:
+  cell: "rtaylor@zfin.org"
+  confused: "ryanm@zfin.org"
+  coral: "rtaylor@zfin.org"
+  darwin: "informix@zfin.org"
+  dazed: "ryanm@zfin.org"
+  dicer: "rtaylor@zfin.org"
+  dizzy: "ryanm@zfin.org"
+  docker: "informix@zfin.org"
+  eselsohr: "cmpich@zfin.org"
+  frost: "cmpich@zfin.org"
+  github: "informix@zfin.org"
+  iguana: "rtaylor@zfin.org"
+  moonshine: "ryanm@zfin.org"
+  ogon: "cmpich@zfin.org"
+  sandbox: "informix@zfin.org"
+  schlapp: "cmpich@zfin.org"
+  sleepy: "ryanm@zfin.org"
+  tango: "rtaylor@zfin.org"
+  test: "informix@zfin.org"
+  trunk: "informix@zfin.org"
+  watson_test: "informix@zfin.org"
+  xray: "rtaylor@zfin.org"
+
+
+# -----------------------------------------------------------------------------
+# INSTANCE OVERRIDES
+# -----------------------------------------------------------------------------
+# Per-instance configuration overrides. These are applied LAST and take
+# highest precedence.
+#
+# Add new instances here as needed. Common overrides include:
+#   - PRIMARY_COLOR: UI theming to visually distinguish instances
+#   - SMTP_HOST: Mail server (mailhog for dev, smtp.uoregon.edu for others)
+#   - SOLR_CREATE_BACKUPS: Enable for persistent instances
+#
+# NOTE: ENVIRONMENT is set via instance_environment above, not here.
+# This ensures defaults_by_environment is applied correctly before these overrides.
+# -----------------------------------------------------------------------------
+instance_overrides:
+  franklin: { }  # All values now in prod_defaults
+  test:
+    PRIMARY_COLOR: "#ffa000"
+    SWISSPROT_EMAIL_CURATOR: "informix@zfin.org rtaylor@zfin.org"
+    SWISSPROT_EMAIL_ERR: "informix@zfin.org rtaylor@zfin.org"
+    SWISSPROT_EMAIL_REPORT: "informix@zfin.org rtaylor@zfin.org"
+    BLAST_CACHE_AT_STARTUP: "false"
+    ENVIRONMENT: "development"
+    GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
+    GO_EMAIL_CURATOR: "dhowe@zfin.org rtaylor@zfin.org"
+    GOOGLE_ANALYTICS_ID: "UA-2417927-5"
+    NCBI_LINKOUT_UPLOAD: "false"
+    PATO_EMAIL_CURATOR: "informix@zfin.org rtaylor@zfin.org"
+    SCHEDULE_TRIGGER_FILES: ""
+    SEND_AUTHOR_NOTIF_EMAIL: "false"
+  confused:
+    PRIMARY_COLOR: "#303f9f"
+  coral:
+    PRIMARY_COLOR: "#1976d2"
+  dazed:
+    PRIMARY_COLOR: "#0288d1"
+  dicer:
+    PRIMARY_COLOR: "#388e3c"
+  dizzy:
+    PRIMARY_COLOR: "#cd5c5c"
+  eselsohr:
+    PRIMARY_COLOR: "#f57c00"
+  frost:
+    PRIMARY_COLOR: "#d32f2f"
+  github:
+    JAVA_HOME: ""
+    SOURCEROOT: "${env.GITHUB_WORKSPACE}"
+    ZFIN_PROPERTIES_PATH: "${env.GITHUB_WORKSPACE}/home/WEB-INF/zfin.properties"
+  iguana:
+    PRIMARY_COLOR: "#303f9f"
+  moonshine:
+    PRIMARY_COLOR: "#de3e80"
+  ogon:
+    PRIMARY_COLOR: "#e64a19"
+  sandbox:
+    PRIMARY_COLOR: "#303f9f"
+    ALLIANCE_CURATION_URL: "https://beta-curation.alliancegenome.org"
+    BUILD_EMAIL: "technical@zfin.org"
+    GOOGLE_ANALYTICS_ID: "UA-2417927-5"
+    GO_EMAIL_CURATOR: "rtaylor@zfin.org"
+    INDEXER_REPORT_EMAIL: "informix@zfin.org cmpich@zfin.org"
+    LOG4J_FILE: "test-sites.log4j.xml"
+    NODE_ENV: "production"
+    ONTOLOGY_LOADER_EMAIL: "informix@zfin.org cmpich@zfin.org"
+  sleepy:
+    PRIMARY_COLOR: "#0288d1"
+  tango:
+    PRIMARY_COLOR: "#afb42b"
+    INSPECTLET_ID: "74301150"
+  watson:
+    PRIMARY_COLOR: "#008080"
+  watson_test:
+    PRIMARY_COLOR: "#008080"
+  xray:
+    PRIMARY_COLOR: "#512da8"
+  trunk:
+    PRIMARY_COLOR: "#f57c00"
+    SCHEDULE_TRIGGER_FILES: "${env.INSTANCE}"
+    WIKI_PUSH_TO_WIKI: "true"
+    ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
+    BLAST_CACHE_AT_STARTUP: "false"
+    GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
+    GOOGLE_ANALYTICS_ID: "UA-2417927-5"
+    NCBI_LINKOUT_UPLOAD: "false"
+    PGDATABASE: ""
+    SEND_AUTHOR_NOTIF_EMAIL: "false"
+    TARGETROOT_PREFIX: "/opt/zfin/"
+    WIKI_HOST: "devwiki.zfin.org"
+  schlapp:
+    LOG4J_FILE: "default.log4j.xml"
+    PRIMARY_COLOR: "#1976d2"

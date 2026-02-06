@@ -5,10 +5,6 @@
     <!-- TESTING TASKS                                                          -->
     <!-- ====================================================================== -->
 
-    <target name="echoProps" depends="loadPropertiesIntoEnum" description="Simple target to dump all ant properties">
-        <echoproperties/>
-    </target>
-
     <target name="jversion" description="Prints out java version in use">
         <java fork="yes" classname="ignoreMe">
             <jvmarg line="-version"/>
@@ -379,7 +375,7 @@ test(s) need to be run before committing changes or pushing files to production 
 
 
 
-    <target name="build-tests" depends="loadPropertiesIntoEnum" description="Target to compile all test classes">
+    <target name="build-tests" depends="createEnum" description="Target to compile all test classes">
         <groovyc srcdir="test"
                destdir="${classbin.dir}"
                classpathref="combined.classpath"

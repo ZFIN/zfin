@@ -24,10 +24,8 @@ public abstract class AbstractZfinMailSender implements MailSender {
         return sendHtmlMail(subject, message, true, ZfinProperties.getValidationOtherEmailAddresses()[0], recipients);
     }
 
-
-
     public String prependSubject(String initialSubject) {
-        return "From [" + ZfinPropertiesEnum.DOMAIN_NAME + "] on [" + ZfinPropertiesEnum.HOSTNAME + "]: " + initialSubject;
+        return "From [" + ZfinPropertiesEnum.DOMAIN_NAME + "] on [" + ZfinPropertiesEnum.INSTANCE + "]: " + initialSubject;
     }
 
     public static MailSender getInstance() {

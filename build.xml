@@ -8,18 +8,6 @@
 
     <import file="${buildfiles.dir}/base-properties.xml"/>
 
-    <taskdef name="loadProperties"
-             classname="org.zfin.properties.ant.LoadPropertiesTask"
-             classpathref="combined.classpath"/>
-
-    <taskdef name="createEnum"
-             classname="org.zfin.properties.ant.CreateEnumTask"
-             classpathref="combined.classpath"/>
-
-    <taskdef name="exportProperties"
-             classname="org.zfin.properties.ant.ExportPropertiesTask"
-             classpathref="combined.classpath"/>
-
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="lib/Java/ant-contrib-0.3.jar"/>
@@ -75,28 +63,16 @@
 
 
     <!--Define property file.-->
-    <property name="property.file" value="${commons.dir}/${INSTANCE}.properties"/>
+    <property name="property.file" value="${basedir}/home/WEB-INF/zfin.properties"/>
     <property name="log4j.file" value="${commons.dir}/${INSTANCE}.log4j.xml"/>
 
     <!--If the property file is not defined then fail.-->
     <!--
         <echo message="property file=${property.file}"/>
     -->
-    <available property="property.file.available" file="${property.file}"/>
 
-    <fail unless="property.file.available"
-          message="Unable to find property file[${property.file}] for instance[${INSTANCE}"/>
-
-
-    <exportProperties
-            file="${commons.dir}/${INSTANCE}.properties"
-            target="${basedir}/home/WEB-INF/zfin.properties"
-            header="#Properties for INSTANCE=${INSTANCE}"
-            keySuffix="="
-    />
-
-    <!--here, we are only loading property files into ant, not into the enum -->
-    <loadProperties file="home/WEB-INF/zfin.properties"/>
+    <!-- Load properties into Ant for build-time use -->
+    <property file="${property.file}"/>
 
     <!-- ensure git is looking in the source tree directory for hooks -->
     <exec executable="git">
@@ -106,7 +82,10 @@
     </exec>
 
 
-    <import file="${buildfiles.dir}/allfilter.xml"/>
+    <!-- Load filters directly from zfin.properties instead of generated allfilter.xml -->
+    <filterset id="allfilters">
+        <filtersfile file="${property.file}"/>
+    </filterset>
     <import file="${buildfiles.dir}/properties.xml"/>
     <import file="${buildfiles.dir}/gwt.xml"/>
     <import file="${buildfiles.dir}/test.xml"/>
@@ -134,11 +113,13 @@
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/mchange-log.properties" todir="${classbin.dir}"/>
+
         <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/classes/log4j2.xml" failonerror="false">
             <filterset>
                 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
             </filterset>
         </copy>
+
         <copy todir="${classbin.dir}/org/zfin">
             <fileset dir="${hibernate.conf.dir}">
                 <include name="*.hbm.xml"/>
@@ -173,140 +154,28 @@
     <target name="all" depends="deploy" description="The same as deploy for Tom."/>
     <target name="install" depends="deploy" description="Same as deploy."/>
 
-    <target name="loadPropertiesIntoEnum">
-        <loadProperties
-                file="${commons.dir}/${INSTANCE}.properties"
-                enumClass="${enum.class}"
-        />
+    <!-- createEnum is no longer needed - use gradle generatePropertiesEnum instead -->
+    <target name="createEnum" description="DEPRECATED: Use 'gradle generatePropertiesEnum' instead">
+        <echo message="createEnum is deprecated."/>
+        <echo message="In the future use 'gradle generatePropertiesEnum' to regenerate ZfinPropertiesEnum.java"/>
+        <gradle task="generatePropertiesEnum" />
+        <echo message="####"/>
+        <echo message="#### TODO: migrate toward using spring @ConfigurationProperties instead of ZfinPropertiesEnum"/>
     </target>
 
-    <target name="createEnum">
-        <createEnum file="${commons.dir}/${INSTANCE}.properties"
-                    sourceDir="source"
-                    enumClass="${enum.class}"
-        />
-        <antcall target="compile"/>
+    <!-- rebuildPropertiesFromYaml will invoke the groovy script for creating home/WEB-INF/zfin.properties from all-properties.yml -->
+    <target name="rebuildPropertiesFromYaml" description="Rebuilds zfin.properties from all-properties.yml">
+        <echo message="Rebuilding ${property.file} from all-properties.yml"/>
+        <groovy src="${basedir}/commons/env/PropertiesProcessor.groovy">
+            <arg value="-c"/>
+            <arg value="${basedir}/commons/env/all-properties.yml"/>
+            <arg value="-o"/>
+            <arg value="${property.file}"/>
+        </groovy>
     </target>
 
-    <macrodef name="createEnv">
-        <sequential>
-            <exportProperties
-                    file="${commons.dir}/${INSTANCE}.properties"
-                    target="${commons.dir}/${INSTANCE}.env"
-                    header="#!/local/bin/tcsh${line.separator}"
-                    keyPrefix="setenv "
-                    keySuffix=" "
-                    valuePrefix="&quot;"
-                    valueSuffix="&quot;"
-                    footerFile="${commons.dir}/footer.env"
-                    exportPropertyFile="${commons.dir}/env-exports.properties"/>
-        </sequential>
-    </macrodef>
-
-    <target name="createEnvFile">
-        <echo message="creating ENV file for ${INSTANCE}"></echo>
-        <createEnv/>
-    </target>
-
-    <macrodef name="createEnv-bash">
-        <sequential>
-            <exportProperties
-                    file="${commons.dir}/${INSTANCE}.properties"
-                    target="${commons.dir}/${INSTANCE}.bash"
-                    header="#!/local/bin/bash${line.separator}"
-                    keyPrefix="export "
-                    keySuffix="="
-                    valuePrefix="&quot;"
-                    valueSuffix="&quot;"
-                    footerFile="${commons.dir}/footer.bash"
-                    exportPropertyFile="${commons.dir}/env-exports.properties"/>
-        </sequential>
-    </macrodef>
-
-    <target name="createBashEnvFile">
-        <echo message="creating ENV file for ${INSTANCE}"></echo>
-        <createEnv-bash/>
-    </target>
-
-    <macrodef name="createTT">
-        <sequential>
-            <exportProperties
-                    file="${commons.dir}/${INSTANCE}.properties"
-                    target="${commons.dir}/${INSTANCE}.tt"
-                    header="# Autogenerated for instance '${INSTANCE}'.${line.separator}"
-                    keyPrefix="&lt;!--|"
-                    keySuffix="|--&gt;${tab}"
-                    exportPropertyFile="${commons.dir}/tt-exports.properties"
-                    footerFile="${commons.dir}/footer.tt"
-            />
-            <replaceregexp file="${commons.dir}/${INSTANCE}.tt"
-                           match="@"
-                           replace="\\\\@"
-                           flags="g"
-            />
-        </sequential>
-    </macrodef>
-
-    <target name="createTTFile">
-        <echo message="creating TT file for ${INSTANCE}"></echo>
-        <createTT/>
-    </target>
-
-    <target name="rebuildPropertiesForInstance" depends="createEnum,createPropertiesFilesForInstance"
-            description="Rebuilds properties for specified instance: ${INSTANCE} as set in the environemnt.">
-    </target>
-
-    <target name="rebuildProperties" depends="createEnum,createAllPropertiesFiles,exportAntTokenFilters"
+    <target name="rebuildProperties" depends="rebuildPropertiesFromYaml,createEnum"
             description="Rebuilds properties for all instances.">
-    </target>
-
-    <target name="dumpFlattenedProperties" depends="createEnum,exportAntTokenFilters"
-            description="Dumps flattened properties.">
-        <taskdef name="exportAllInstances"
-                 classname="org.zfin.properties.ExportAllInstancesTask"
-                 classpathref="combined.classpath"/>
-        <exportAllInstances instancesFile="${commons.dir}/instances.properties"
-                            target="dumpFlattenedPropertiesForInstance"/>
-    </target>
-
-    <target name="dumpFlattenedPropertiesForInstance">
-        <exportProperties
-                file="${commons.dir}/${INSTANCE}.properties"
-                target="commons/test/${INSTANCE}-flat.properties"
-                header="#Properties for INSTANCE=${INSTANCE}"
-                keySuffix="="
-        />
-    </target>
-
-    <target name="exportAntTokenFilters">
-        <exportProperties
-                file="${commons.dir}/${INSTANCE}.properties"
-                target="${buildfiles.dir}/allfilter.xml"
-                header="&lt;project&gt;${line.separator}&lt;filterset id='allfilters'&gt;"
-                keyPrefix="&lt;filter token=&quot;"
-                keySuffix="&quot; value=&quot;${@KEY@}&quot;/&gt;"
-                suppressValue="true"
-                footer="&lt;/filterset&gt;${line.separator}&lt;/project&gt;"
-        />
-    </target>
-
-    <!--is referenced in ExportAllInstancesTask, so if renamed, please change there-->
-    <target name="createPropertiesFilesForInstance" depends="compile"
-            description="Exports properties to env and tt files.">
-        <echo message="Creating properties file: ${INSTANCE}"></echo>
-        <createEnv/>
-        <createEnv-bash/>
-        <createTT/>
-        <echo message="Created properties file: ${INSTANCE}"></echo>
-    </target>
-
-
-    <target name="createAllPropertiesFiles" description="Exports all instances defined in instances.properties">
-        <taskdef name="exportAllInstances"
-                 classname="org.zfin.properties.ExportAllInstancesTask"
-                 classpathref="combined.classpath"/>
-        <exportAllInstances instancesFile="${commons.dir}/instances.properties"
-                            target="createPropertiesFilesForInstance"/>
     </target>
 
     <path id="extended.classpath">
