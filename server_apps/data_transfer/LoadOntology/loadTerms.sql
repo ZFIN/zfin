@@ -17,9 +17,9 @@ load from ontology_header.unl
  CREATE temp TABLE tmp_syndef
   (
      namespace   VARCHAR(50),
-     TYPE        VARCHAR(30),
+     TYPE        VARCHAR(100),
      def         VARCHAR(100),
-     scoper      VARCHAR(30),
+     scoper      VARCHAR(100),
      syntypedefs VARCHAR(20)
   );
 
