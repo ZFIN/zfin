@@ -541,7 +541,6 @@ instance_overrides:
     GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
     GOOGLE_ANALYTICS_ID: "UA-2417927-5"
     NCBI_LINKOUT_UPLOAD: "false"
-    PGDATABASE: ""
     SEND_AUTHOR_NOTIF_EMAIL: "false"
     TARGETROOT_PREFIX: "/opt/zfin/"
     WIKI_HOST: "devwiki.zfin.org"
