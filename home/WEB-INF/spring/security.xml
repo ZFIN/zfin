@@ -190,9 +190,10 @@
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/antibody/add" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/devtool/**" access="hasAuthority('root')"/>
+        <security:intercept-url pattern="/action/devtool/health" access="permitAll"/>
         <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll"/>
         <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll"/>
+        <security:intercept-url pattern="/action/devtool/**" access="hasAuthority('root')"/>
         <security:intercept-url pattern="/WEB-INF/jsp/devtool/gwt" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/*-edit" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="action/marker/sequence/edit" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>

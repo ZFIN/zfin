@@ -9,10 +9,11 @@
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
 
-    <!-- Source paths -->
+    <!-- Source paths (basedir = SOURCEROOT) -->
     <property name="web.dir" value="${basedir}/home"/>
     <property name="lib" value="${basedir}/lib/Java"/>
-    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+    <!-- Output paths (TARGETROOT) -->
+    <property name="validateData" value="${env.TARGETROOT}/server_apps/DB_maintenance"/>
     <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=${web-inf.dir}/conf/log4j2.xml"/>
 
     <!-- Import base properties for combined.classpath -->
@@ -394,7 +395,7 @@
         </fail>
     </target>
 
-    <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
+    <property name="unloadDir" value="${env.TARGETROOT}/server_apps/DB_maintenance"/>
 
 
     <macrodef name="run-db-query">
