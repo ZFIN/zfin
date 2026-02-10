@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.uniprot.NcbiGeneSymbolMatchRow;
 import org.zfin.uniprot.NcbiMatchReportRow;
 
 import java.io.*;
@@ -50,6 +51,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private static final String CSV_FILE = "ncbi_matches_through_ensembl.csv";
+    private static final String GENE_SYMBOL_MATCH_CSV_FILE = "ncbi_gene_symbol_matches.csv";
     private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
     private String inputFileUrl;
 
@@ -93,10 +95,12 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
             List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
             List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
+            List<NcbiGeneSymbolMatchRow> symbolMatches = getGeneSymbolMatches(session);
             transaction.commit();
 
             addRnaAccessionsToReportRows(ncbiMatchReportRows);
             writeResultsToCsv(ncbiMatchReportRows);
+            writeGeneSymbolMatchCsv(symbolMatches);
 
             dropTemporaryTables();
         } catch (Exception e) {
@@ -466,6 +470,61 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             log.info("Wrote results to " + CSV_FILE);
         } catch (IOException e) {
             log.error("IOException Error while writing results to csv: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(4);
+        }
+    }
+
+    /**
+     * Query for NCBI genes whose symbol matches a ZFIN marker abbreviation.
+     * Must be called while temp tables (tmp_ncbi_zebrafish, tmp_ncbi2zfin) still exist.
+     */
+    private List<NcbiGeneSymbolMatchRow> getGeneSymbolMatches(Session session) {
+        String query = """
+                SELECT
+                    nz.geneId AS ncbi_id,
+                    nz.symbol AS gene_symbol,
+                    m.mrkr_zdb_id,
+                    COALESCE(n2z.zdb_id, '') AS ncbi_predicted_zdb_id,
+                    CASE WHEN n2z.zdb_id = m.mrkr_zdb_id THEN 'true' ELSE 'false' END AS zdb_ids_match
+                FROM
+                    tmp_ncbi_zebrafish nz
+                    INNER JOIN marker m ON m.mrkr_abbrev = nz.symbol
+                    LEFT JOIN tmp_ncbi2zfin n2z ON nz.geneId = n2z.ncbi_id
+                    LEFT JOIN db_link dbl ON dbl.dblink_acc_num = nz.geneId
+                        AND dbl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+                        AND dbl.dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM dblinks_to_delete)
+                WHERE
+                    dbl.dblink_linked_recid IS NULL
+                ORDER BY
+                    nz.symbol COLLATE "C" ASC,
+                    nz.geneId
+                """;
+        List<Object[]> results = session.createNativeQuery(query).list();
+        log.info("Number of NCBI genes matched by gene symbol: " + results.size());
+
+        return results.stream().map(row ->
+                NcbiGeneSymbolMatchRow.builder()
+                        .ncbiId((String) row[0])
+                        .symbol((String) row[1])
+                        .mrkrZdbId((String) row[2])
+                        .ncbiPredictedZdbId((String) row[3])
+                        .zdbIdsMatch((String) row[4])
+                        .build()
+        ).toList();
+    }
+
+    private void writeGeneSymbolMatchCsv(List<NcbiGeneSymbolMatchRow> rows) {
+        try (Writer writer = Files.newBufferedWriter(Paths.get(GENE_SYMBOL_MATCH_CSV_FILE));
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+                     .withHeader("ncbi_id", "gene_symbol", "mrkr_zdb_id", "ncbi_predicted_zdb_id", "zdb_ids_match"))) {
+            for (NcbiGeneSymbolMatchRow row : rows) {
+                csvPrinter.printRecord(row.toList());
+            }
+            csvPrinter.flush();
+            log.info("Wrote gene symbol match results to " + GENE_SYMBOL_MATCH_CSV_FILE);
+        } catch (IOException e) {
+            log.error("IOException Error while writing gene symbol match csv: " + e.getMessage());
             e.printStackTrace();
             System.exit(4);
         }

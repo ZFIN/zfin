@@ -647,7 +647,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         renameFile(gene2accessionFile, "gene2accession.gz");
         renameFile(refSeqCatalogFile, "RefSeqCatalog.gz");
         compressFilesForCleanup("downloaded_files.zip",
-                List.of("gene2accession.gz", "RefSeqCatalog.gz", "seq.fasta", "RELEASE_NUMBER", "notInCurrentReleaseGeneIDs.unl", "ncbi_matches_through_ensembl.csv", "zf_gene_info.gz"),
+                List.of("gene2accession.gz", "RefSeqCatalog.gz", "seq.fasta", "RELEASE_NUMBER", "notInCurrentReleaseGeneIDs.unl", "ncbi_matches_through_ensembl.csv", "ncbi_gene_symbol_matches.csv", "zf_gene_info.gz"),
                 Collections.emptyList());
 
         //clean up legacy report files
@@ -2070,6 +2070,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String md5 = md5File(inputFile, LOG);
                 FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
+
+                File geneSymbolMatchFile = new File(sourceRoot, "ncbi_gene_symbol_matches.csv");
+                if (geneSymbolMatchFile.exists()) {
+                    FileUtils.copyFile(geneSymbolMatchFile, new File(workingDir, geneSymbolMatchFile.getName()));
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
@@ -3651,6 +3656,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addAction(legacyStatsReport);
         builder.addActions(getAnnotationStatusConflictReportActions());
         builder.addActions(getUnlinkedGeneReportActions());
+        builder.addActions(getGeneSymbolMatchReportActions());
         builder.addActions(getReplacedNCBIGeneIdReportActions());
 
         ObjectNode report = builder.build();
@@ -3699,6 +3705,65 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         // ID, Symbol
         table.setTableHeadersByMap(Map.of("Gene ZDB ID", "Gene ZDB ID",
                 "Gene Symbol", "Gene Symbol"));
+
+        table.setRows(rowsList);
+        action.setTables(List.of(table));
+        actions.add(action);
+        return actions;
+    }
+
+    private List<LoadReportAction> getGeneSymbolMatchReportActions() {
+        List<LoadReportAction> actions = new ArrayList<>();
+        File csvFile = new File(workingDir, "ncbi_gene_symbol_matches.csv");
+        if (!csvFile.exists()) {
+            print(LOG, "WARN: Gene symbol match CSV not found: " + csvFile.getAbsolutePath() + "\n");
+            return actions;
+        }
+
+        List<Map<String, Object>> rowsList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+            String line = reader.readLine(); // Skip header
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",", -1);
+                if (parts.length < 5) {
+                    continue;
+                }
+                String ncbiId = parts[0].trim();
+                String geneSymbol = parts[1].trim();
+                String mrkrZdbId = parts[2].trim();
+                String ncbiPredictedZdbId = parts[3].trim();
+                String zdbIdsMatch = parts[4].trim();
+
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("NCBI Gene ID", ncbiId);
+                row.put("Gene Symbol", geneSymbol);
+                row.put("Marker ZDB ID", mrkrZdbId);
+                row.put("NCBI Predicted ZDB ID", ncbiPredictedZdbId);
+                row.put("ZDB IDs Match", zdbIdsMatch);
+                rowsList.add(row);
+            }
+        } catch (IOException e) {
+            print(LOG, "ERROR: Failed to read gene symbol match CSV: " + e.getMessage() + "\n");
+            return actions;
+        }
+
+        LoadReportAction action = new LoadReportAction();
+        action.setType(LoadReportAction.Type.REPORTS);
+        action.setSubType("NCBI Gene Symbol Matches");
+        action.setDetails("NCBI genes matched to ZFIN markers by gene symbol, where no existing NCBI-to-ZFIN db_link exists.");
+        action.setGeneZdbID("N/A");
+        action.setAccession("N/A");
+        action.setRelatedEntityFields(Map.of("Report Title", "NCBI Gene Symbol Matches"));
+        LoadReportSummaryTable table = new LoadReportSummaryTable();
+        table.setDescription("NCBI genes matched by symbol to ZFIN markers (" + rowsList.size() + " rows)");
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("NCBI Gene ID", "NCBI Gene ID");
+        headers.put("Gene Symbol", "Gene Symbol");
+        headers.put("Marker ZDB ID", "Marker ZDB ID");
+        headers.put("NCBI Predicted ZDB ID", "NCBI Predicted ZDB ID");
+        headers.put("ZDB IDs Match", "ZDB IDs Match");
+        table.setTableHeadersByMap(headers);
 
         table.setRows(rowsList);
         action.setTables(List.of(table));
