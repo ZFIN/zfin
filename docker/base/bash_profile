@@ -13,3 +13,6 @@ export PATH=/opt/ab-blast:$PATH
 # Prompt
 export PROMPT_DIRTRIM=2
 export PS1="${INSTANCE}:\w\$ "
+
+# Allow commands to fail without exiting the shell
+set +e
