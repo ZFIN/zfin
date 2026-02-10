@@ -402,7 +402,7 @@
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
+    <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-tomcat-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
     </target>

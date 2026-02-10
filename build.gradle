@@ -1314,6 +1314,63 @@ war {
     // Gradle will automatically package all runtime dependencies
 }
 
+// Deploy application directly to Tomcat webapps/ROOT (exploded WAR)
+// Bypasses WAR packaging for faster deployment
+task tomcatDeploy {
+    description = 'Deploy application directly to Tomcat webapps/ROOT (exploded WAR)'
+    group = 'deployment'
+    dependsOn compileJava
+
+    doLast {
+        def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
+        def webappRoot = catBase + '/webapps/ROOT'
+
+        // Clean and recreate
+        delete webappRoot
+        mkdir webappRoot
+
+        // Copy web app files from home/ (same as war.webAppDirectory)
+        // Excluding static files served by Apache (same excludes as war task)
+        copy {
+            from 'home'
+            into webappRoot
+            exclude 'robots.txt', 'sitemap.xml', 'favicon.ico', 'zfin_is_down.html'
+            exclude 'images/**', 'css/**', 'javascript/**'
+            exclude 'ZFIN/**', 'zf_info/**', 'ensembl/**', 'uniprot/**', 'unavailable/**'
+            exclude '.DS_Store'
+        }
+
+        // Copy conf files into WEB-INF/classes (hibernate, log4j)
+        copy {
+            from 'conf'
+            into webappRoot + '/WEB-INF/classes'
+            include 'hibernate.cfg.xml'
+            include 'log4j2.xml'
+        }
+
+        // Copy Hibernate mappings and properties from source
+        copy {
+            from 'source'
+            into webappRoot + '/WEB-INF/classes'
+            include '**/*.hbm.xml'
+            include '**/*.properties'
+        }
+
+        // Copy asset manifest from TARGETROOT
+        copy {
+            from targetroot + '/home'
+            into webappRoot + '/WEB-INF/classes'
+            include 'asset-manifest.json'
+        }
+
+        // Copy runtime dependencies into WEB-INF/lib
+        copy {
+            from configurations.runtimeClasspath
+            into webappRoot + '/WEB-INF/lib'
+        }
+    }
+}
+
 // Show dependency tree
 task showDependencies {
     doLast {
