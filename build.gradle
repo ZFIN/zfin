@@ -42,8 +42,8 @@ String targetroot = env['TARGETROOT']
 
 
 task deployPostgres(dependsOn: ['deployPostgresFunctions',
-                                'deployPostgresTrigger']) {
-    description "Deploy all postgres code"
+                                'deployPostgresTriggers']) {
+    description = 'Deploy all postgres code'
 }
 
 defaultTasks 'make'
