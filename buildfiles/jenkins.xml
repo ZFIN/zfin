@@ -54,6 +54,30 @@
         <antcall target="deploy-email-templates"/>
         <antcall target="copy-report-files"/>
         <antcall target="copy-validate-data-files"/>
+        <antcall target="extract-jenkins-cli-tool"/>
+    </target>
+
+    <!-- Equivalent to: mkdir -p $TARGETROOT/utilities; unzip -p server_apps/jenkins/jenkins-*.war 'WEB-INF/lib/cli-*.jar' > $TARGETROOT/utilities/jenkins-cli.jar -->
+    <target name="extract-jenkins-cli-tool">
+        <echo message="Extracting Jenkins CLI tool into: ${env.TARGETROOT}/utilities/jenkins-cli.jar"/>
+        <mkdir dir="${env.TARGETROOT}/utilities"/>
+
+        <!-- First we need to calculate the name of the war file, since it contains the version number -->
+        <fileset id="jenkins-war" dir="${jenkins}" includes="jenkins-*.war"/>
+        <pathconvert property="jenkinsWarFile" refid="jenkins-war"/>
+
+        <!-- Now extract it -->
+        <unzip src="${jenkinsWarFile}" dest="${env.TARGETROOT}/utilities" overwrite="true">
+            <patternset>
+                <include name="WEB-INF/lib/cli-*.jar"/>
+            </patternset>
+            <mapper type="flatten"/>
+        </unzip>
+
+        <!-- Now rename the extracted file to a consistent name -->
+        <move tofile="${env.TARGETROOT}/utilities/jenkins-cli.jar" overwrite="true">
+            <fileset dir="${env.TARGETROOT}/utilities" includes="cli-*.jar"/>
+        </move>
     </target>
 
     <target name="create-new-validatedata-job">
