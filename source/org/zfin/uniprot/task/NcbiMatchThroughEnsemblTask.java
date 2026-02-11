@@ -12,7 +12,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.uniprot.NcbiGeneSymbolMatchRow;
 import org.zfin.uniprot.NcbiMatchReportRow;
 
 import java.io.*;
@@ -36,9 +35,9 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
  *
  * Description from ticket:
  * Our current NCBI Load is missing some potential matches between ZFIN and NCBI Gene records.  Our NCBI Load script matches on RNA sequence IDs and, in cases where there is no RNA sequence ID, there is no way to match records.
- * NCBI does annotate links to ZFIN genes and I’ve found that the associations they create are quite good.  So NCBI may have a correct match to a ZFIN gene, but we don’t have a reciprocal link.
+ * NCBI does annotate links to ZFIN genes and I've found that the associations they create are quite good.  So NCBI may have a correct match to a ZFIN gene, but we don't have a reciprocal link.
  * My goal with this report is to identify potential ZFIN/NCBI Gene matches that are supported by additional data, make those associations and pull data from NCBI Gene (including RefSeq IDs) onto ZFIN gene pages as is done with the current NCBI load.  The addition of this data adds to the robustness of ZFIN gene records and adding additional RefSeqs will allow us to associate more UniProt IDs and the resulting UniProt data.
- * A reasonable method to do this would be to find all NCBI Gene records that have a link to ZFIN. Ignore the NCBI Gene records to which we already have links.  For those NCBI Gene records with links to ZFIN that don’t have reciprocal links from ZFIN to NCBI, obtain the Ensembl gene ID in the NCBI Gene records and match those against Ensembl gene IDs on ZFIN gene records.  This list would contain links that NCBI has made to ZFIN and are supported by a shared Ensembl ID.
+ * A reasonable method to do this would be to find all NCBI Gene records that have a link to ZFIN. Ignore the NCBI Gene records to which we already have links.  For those NCBI Gene records with links to ZFIN that don't have reciprocal links from ZFIN to NCBI, obtain the Ensembl gene ID in the NCBI Gene records and match those against Ensembl gene IDs on ZFIN gene records.  This list would contain links that NCBI has made to ZFIN and are supported by a shared Ensembl ID.
  * Finally, identify any instances where the Ensembl ID from NCBI hits a ZFIN gene that already contains a link to an NCBI Gene record (there is some sort of conflict that needs to be resolved).
  *
  * Call with first argument being the input file (https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz)
@@ -48,9 +47,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private static final String CSV_FILE = "ncbi_matches_through_ensembl.csv";
-    private static final String GENE_SYMBOL_MATCH_CSV_FILE = "ncbi_gene_symbol_matches.csv";
 
-    public enum Output { ENSEMBL_MATCH, GENE_SYMBOL_MATCH }
     private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
     private String inputFileUrl;
 
@@ -78,10 +75,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     }
 
     public void runTask(String inputFileUrl, Map<String, String> toDelete) throws IOException, SQLException {
-        runTask(inputFileUrl, toDelete, EnumSet.allOf(Output.class));
-    }
-
-    public void runTask(String inputFileUrl, Map<String, String> toDelete, Set<Output> outputs) throws IOException, SQLException {
         initAll();
 
         setInputFileUrlFromEnvironment(inputFileUrl);
@@ -96,29 +89,14 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         try {
             createTemporaryNcbiTable(session);
             copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
-            createTemporaryTableOfNcbiDblinksToDelete(toDelete);
-            createNcbi2ZfinTable(session);
 
-            List<NcbiMatchReportRow> ncbiMatchReportRows = null;
-            if (outputs.contains(Output.ENSEMBL_MATCH)) {
-                List<Object[]> results = getReportOfPotentialNcbiGenes(session);
-                ncbiMatchReportRows = convertResultsToReportRow(results);
-            }
-
-            List<NcbiGeneSymbolMatchRow> symbolMatches = null;
-            if (outputs.contains(Output.GENE_SYMBOL_MATCH)) {
-                symbolMatches = getGeneSymbolMatches(session);
-            }
+            List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
+            List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
 
             transaction.commit();
 
-            if (ncbiMatchReportRows != null) {
-                addRnaAccessionsToReportRows(ncbiMatchReportRows);
-                writeResultsToCsv(ncbiMatchReportRows);
-            }
-            if (symbolMatches != null) {
-                writeGeneSymbolMatchCsv(symbolMatches);
-            }
+            addRnaAccessionsToReportRows(ncbiMatchReportRows);
+            writeResultsToCsv(ncbiMatchReportRows);
 
             dropTemporaryTables();
         } catch (Exception e) {
@@ -320,14 +298,14 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *  The main logic for comparing the NCBI data to the ZFIN data.
      *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
      *  @param session The Hibernate session to use (must be part of an active transaction)
-     *  Note: Assumes createTemporaryTableOfNcbiDblinksToDelete has already been called.
-     *
+     *  @param toDelete Map of DBLinks that are slated to be deleted (used to exclude from matching)
      */
-    /**
-     * Create the tmp_ncbi2zfin table from the NCBI data. This is used by both the ensembl match
-     * report and the gene symbol match report.
-     */
-    private void createNcbi2ZfinTable(Session session) {
+    private List<Object[]> getReportOfPotentialNcbiGenes(Session session, Map<String, String> toDelete) {
+
+        // Create temp table of dblinks to exclude
+        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+
+        // Create tmp_ncbi2zfin table from NCBI cross-refs
         String query = """
             SELECT geneId AS ncbi_id, replace(t.xref, 'ZFIN:', '') AS zdb_id
             INTO TEMP TABLE tmp_ncbi2zfin
@@ -335,23 +313,20 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             WHERE t.xref LIKE 'ZFIN:%'
         """;
         session.createNativeQuery(query).executeUpdate();
-    }
-
-    private List<Object[]> getReportOfPotentialNcbiGenes(Session session) {
 
         //create ncbi2ensembl table -- based on data loaded through NCBI
-        String query = """
-            SELECT geneId as ncbi_id, replace(t.xref, 'Ensembl:', '') as ensembl_id, symbol 
+        query = """
+            SELECT geneId as ncbi_id, replace(t.xref, 'Ensembl:', '') as ensembl_id, symbol
             INTO TEMP TABLE tmp_ncbi2ensembl
             FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) as t(xref)
-            WHERE t.xref like 'Ensembl:%' 
+            WHERE t.xref like 'Ensembl:%'
         """;
         session.createNativeQuery(query).executeUpdate();
 
         //how many ncbi genes have a link to zfin, but we don't have a reciprocal link?
         query = """
             SELECT count(*) AS num_ncbi_genes_without_zfin_links FROM
-            (SELECT DISTINCT n2z.zdb_id 
+            (SELECT DISTINCT n2z.zdb_id
             FROM tmp_ncbi2zfin n2z
                 LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
                     AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
@@ -491,61 +466,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             log.info("Wrote results to " + CSV_FILE);
         } catch (IOException e) {
             log.error("IOException Error while writing results to csv: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(4);
-        }
-    }
-
-    /**
-     * Query for NCBI genes whose symbol matches a ZFIN marker abbreviation.
-     * Must be called while temp tables (tmp_ncbi_zebrafish, tmp_ncbi2zfin) still exist.
-     */
-    private List<NcbiGeneSymbolMatchRow> getGeneSymbolMatches(Session session) {
-        String query = """
-                SELECT
-                    nz.geneId AS ncbi_id,
-                    nz.symbol AS gene_symbol,
-                    m.mrkr_zdb_id,
-                    COALESCE(n2z.zdb_id, '') AS ncbi_predicted_zdb_id,
-                    CASE WHEN n2z.zdb_id = m.mrkr_zdb_id THEN 'true' ELSE 'false' END AS zdb_ids_match
-                FROM
-                    tmp_ncbi_zebrafish nz
-                    INNER JOIN marker m ON m.mrkr_abbrev = nz.symbol
-                    LEFT JOIN tmp_ncbi2zfin n2z ON nz.geneId = n2z.ncbi_id
-                    LEFT JOIN db_link dbl ON dbl.dblink_acc_num = nz.geneId
-                        AND dbl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
-                        AND dbl.dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM dblinks_to_delete)
-                WHERE
-                    dbl.dblink_linked_recid IS NULL
-                ORDER BY
-                    nz.symbol COLLATE "C" ASC,
-                    nz.geneId
-                """;
-        List<Object[]> results = session.createNativeQuery(query).list();
-        log.info("Number of NCBI genes matched by gene symbol: " + results.size());
-
-        return results.stream().map(row ->
-                NcbiGeneSymbolMatchRow.builder()
-                        .ncbiId((String) row[0])
-                        .symbol((String) row[1])
-                        .mrkrZdbId((String) row[2])
-                        .ncbiPredictedZdbId((String) row[3])
-                        .zdbIdsMatch((String) row[4])
-                        .build()
-        ).toList();
-    }
-
-    private void writeGeneSymbolMatchCsv(List<NcbiGeneSymbolMatchRow> rows) {
-        try (Writer writer = Files.newBufferedWriter(Paths.get(GENE_SYMBOL_MATCH_CSV_FILE));
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                     .withHeader("ncbi_id", "gene_symbol", "mrkr_zdb_id", "ncbi_predicted_zdb_id", "zdb_ids_match"))) {
-            for (NcbiGeneSymbolMatchRow row : rows) {
-                csvPrinter.printRecord(row.toList());
-            }
-            csvPrinter.flush();
-            log.info("Wrote gene symbol match results to " + GENE_SYMBOL_MATCH_CSV_FILE);
-        } catch (IOException e) {
-            log.error("IOException Error while writing gene symbol match csv: " + e.getMessage());
             e.printStackTrace();
             System.exit(4);
         }

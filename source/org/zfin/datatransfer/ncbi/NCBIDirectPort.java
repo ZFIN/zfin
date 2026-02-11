@@ -25,6 +25,7 @@ import org.zfin.framework.exec.ExecProcess;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
+import org.zfin.uniprot.task.NcbiGeneSymbolMatchTask;
 import org.zfin.uniprot.task.NcbiMatchThroughEnsemblTask;
 
 import java.io.*;
@@ -710,12 +711,22 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         print(LOG, "Running gene symbol match report (post-load).\n");
-        NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
+        NcbiGeneSymbolMatchTask task = new NcbiGeneSymbolMatchTask();
         try {
             File downloadFile = new File(workingDir, "zf_gene_info.gz");
             String ncbiInputFileUrl = "file://" + downloadFile.getAbsolutePath();
-            task.runTask(ncbiInputFileUrl, null,
-                    EnumSet.of(NcbiMatchThroughEnsemblTask.Output.GENE_SYMBOL_MATCH));
+
+            File gene2accessionFile = new File(workingDir, "gene2accession.gz");
+            if (gene2accessionFile.exists()) {
+                task.setGene2AccessionUrl("file://" + gene2accessionFile.getAbsolutePath());
+            }
+
+            File notInAnnotationFile = new File(workingDir, "notInCurrentReleaseGeneIDs.unl");
+            if (notInAnnotationFile.exists()) {
+                task.setNotInCurrentAnnotationReleaseUrl("file://" + notInAnnotationFile.getAbsolutePath());
+            }
+
+            task.runTask(ncbiInputFileUrl);
 
             File geneSymbolMatchFile = new File(sourceRoot, "ncbi_gene_symbol_matches.csv");
             if (geneSymbolMatchFile.exists()) {
@@ -2099,8 +2110,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
                 }
-                task.runTask(ncbiInputFileUrl, toDelete,
-                        EnumSet.of(NcbiMatchThroughEnsemblTask.Output.ENSEMBL_MATCH));
+                task.runTask(ncbiInputFileUrl, toDelete);
                 String md5 = md5File(inputFile, LOG);
                 FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);

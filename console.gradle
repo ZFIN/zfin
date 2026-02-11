@@ -93,6 +93,14 @@ task ncbiMatchThroughEnsemblTask(type: JavaExec) {
     systemProperty "ncbiFileUrl", System.getProperty("ncbiFileUrl", null)
 }
 
+task ncbiGeneSymbolMatchTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.uniprot.task.NcbiGeneSymbolMatchTask'
+    systemProperty "ncbiFileUrl", System.getProperty("ncbiFileUrl", null)
+    systemProperty "ncbiGene2AccessionUrl", System.getProperty("ncbiGene2AccessionUrl", null)
+    systemProperty "ncbiNotInAnnotationUrl", System.getProperty("ncbiNotInAnnotationUrl", null)
+}
+
 task createUIIndex(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.indexer.UiIndexer'

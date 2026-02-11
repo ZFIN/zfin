@@ -13,6 +13,10 @@ public class NcbiGeneSymbolMatchRow {
     private String mrkrZdbId;
     private String ncbiPredictedZdbId;
     private String zdbIdsMatch;
+    private String ncbiGeneType;
+    private String zfinMarkerType;
+    private String refSeqAccessions;
+    private String notInCurrentAnnotationRelease;
 
     public List<String> toList() {
         return List.of(
@@ -20,7 +24,11 @@ public class NcbiGeneSymbolMatchRow {
                 symbol == null ? "" : symbol,
                 mrkrZdbId == null ? "" : mrkrZdbId,
                 ncbiPredictedZdbId == null ? "" : ncbiPredictedZdbId,
-                zdbIdsMatch == null ? "" : zdbIdsMatch
+                zdbIdsMatch == null ? "" : zdbIdsMatch,
+                ncbiGeneType == null ? "" : ncbiGeneType,
+                zfinMarkerType == null ? "" : zfinMarkerType,
+                refSeqAccessions == null ? "" : refSeqAccessions,
+                notInCurrentAnnotationRelease == null ? "" : notInCurrentAnnotationRelease
         );
     }
 }
