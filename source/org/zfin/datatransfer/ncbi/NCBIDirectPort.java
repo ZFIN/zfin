@@ -124,6 +124,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private Map<String, String> toDelete;
     private Long ctToDelete;
 
+
     // used in eg. getRecordCounts
     private Map<String, String> genesWithRefSeqBeforeLoad = new HashMap<>();
     public Integer ctGenesWithRefSeqBefore;
@@ -455,6 +456,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         captureAfterState();
         printTimingInformation(510);
 
+        runGeneSymbolMatchReport();
+        printTimingInformation(515);
+
         captureMoreWarnings();
         printTimingInformation(520);
 
@@ -691,6 +695,35 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(File::delete);
         } catch (IOException e) {
             print(LOG, "Error while creating zip archive for debug_files.zip");
+        }
+    }
+
+    /**
+     * Run the gene symbol match report after the load is complete, so db_link is in its final state.
+     * The resulting CSV is used by getGeneSymbolMatchReportActions in the load report.
+     */
+    private void runGeneSymbolMatchReport() {
+        String sourceRoot = env("SOURCEROOT");
+        if (sourceRoot == null) {
+            print(LOG, "WARN: SOURCEROOT not set, skipping gene symbol match report.\n");
+            return;
+        }
+
+        print(LOG, "Running gene symbol match report (post-load).\n");
+        NcbiMatchThroughEnsemblTask task = new NcbiMatchThroughEnsemblTask();
+        try {
+            File downloadFile = new File(workingDir, "zf_gene_info.gz");
+            String ncbiInputFileUrl = "file://" + downloadFile.getAbsolutePath();
+            task.runTask(ncbiInputFileUrl, null,
+                    EnumSet.of(NcbiMatchThroughEnsemblTask.Output.GENE_SYMBOL_MATCH));
+
+            File geneSymbolMatchFile = new File(sourceRoot, "ncbi_gene_symbol_matches.csv");
+            if (geneSymbolMatchFile.exists()) {
+                FileUtils.copyFile(geneSymbolMatchFile, new File(workingDir, geneSymbolMatchFile.getName()));
+            }
+        } catch (IOException | SQLException e) {
+            print(LOG, "ERROR: Gene symbol match report failed: " + e.getMessage() + "\n");
+            e.printStackTrace();
         }
     }
 
@@ -2066,15 +2099,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     System.out.println("Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.");
                     print(LOG, "Downloading zf_gene_info.gz as SKIP_DOWNLOADS is not set to true.\n");
                 }
-                task.runTask(ncbiInputFileUrl, toDelete);
+                task.runTask(ncbiInputFileUrl, toDelete,
+                        EnumSet.of(NcbiMatchThroughEnsemblTask.Output.ENSEMBL_MATCH));
                 String md5 = md5File(inputFile, LOG);
                 FileUtils.copyFile(inputFile, new File(workingDir, inputFile.getName()));
                 System.out.println("md5 checksum of " + inputFile.getName() + ": " + md5);
-
-                File geneSymbolMatchFile = new File(sourceRoot, "ncbi_gene_symbol_matches.csv");
-                if (geneSymbolMatchFile.exists()) {
-                    FileUtils.copyFile(geneSymbolMatchFile, new File(workingDir, geneSymbolMatchFile.getName()));
-                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
