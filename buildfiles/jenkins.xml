@@ -75,7 +75,7 @@
         </unzip>
 
         <!-- Now rename the extracted file to a consistent name -->
-        <move tofile="${env.TARGETROOT}/utilities/jenkins-cli.jar" overwrite="true">
+        <move tofile="${env.TARGETROOT}/utilities/bin/jenkins-cli.jar" overwrite="true">
             <fileset dir="${env.TARGETROOT}/utilities" includes="cli-*.jar"/>
         </move>
     </target>

@@ -188,7 +188,7 @@ services:
         ZFIN_RELEASE: ${ZFIN_RELEASE}
     image: ghcr.io/zfin/zfin-jenkins:${ZFIN_RELEASE}
     ports:
-      - "9499-9509:9499"
+      - "${DOCKER_JENKINS_HTTP_PORT:-9499-9509}:9499"
     environment:
       PGHOST: db
       PGUSER: postgres
