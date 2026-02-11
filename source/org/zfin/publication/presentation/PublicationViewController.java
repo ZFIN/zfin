@@ -437,7 +437,8 @@ PublicationViewController {
         if (journal == null) {
             String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
             if (replacedZdbID != null) {
-                journal = publicationRepository.getJournalByID(replacedZdbID);
+                //redirect to the new journal page if we have a replacement
+                return "redirect:/publication/journal/" + replacedZdbID;
             }
         }
 
