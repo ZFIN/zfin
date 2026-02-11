@@ -3764,7 +3764,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String line = reader.readLine(); // Skip header
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1);
-                if (parts.length < 5) {
+                if (parts.length < 9) {
                     continue;
                 }
                 String ncbiId = parts[0].trim();
@@ -3772,6 +3772,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String mrkrZdbId = parts[2].trim();
                 String ncbiPredictedZdbId = parts[3].trim();
                 String zdbIdsMatch = parts[4].trim();
+                String ncbiGeneType = parts[5].trim();
+                String zfinMarkerType = parts[6].trim();
+                String refSeqAccessions = parts[7].trim();
+                String notInCurrentAnnotation = parts[8].trim();
 
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("NCBI Gene ID", ncbiId);
@@ -3779,6 +3783,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 row.put("Marker ZDB ID", mrkrZdbId);
                 row.put("NCBI Predicted ZDB ID", ncbiPredictedZdbId);
                 row.put("ZDB IDs Match", zdbIdsMatch);
+                row.put("NCBI Gene Type", ncbiGeneType);
+                row.put("ZFIN Marker Type", zfinMarkerType);
+                row.put("RefSeq Accessions", refSeqAccessions);
+                row.put("Not In Current Annotation", notInCurrentAnnotation);
                 rowsList.add(row);
             }
         } catch (IOException e) {
@@ -3802,6 +3810,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         headers.put("Marker ZDB ID", "Marker ZDB ID");
         headers.put("NCBI Predicted ZDB ID", "NCBI Predicted ZDB ID");
         headers.put("ZDB IDs Match", "ZDB IDs Match");
+        headers.put("NCBI Gene Type", "NCBI Gene Type");
+        headers.put("ZFIN Marker Type", "ZFIN Marker Type");
+        headers.put("RefSeq Accessions", "RefSeq Accessions");
+        headers.put("Not In Current Annotation", "Not In Current Annotation");
         table.setTableHeadersByMap(headers);
 
         table.setRows(rowsList);
