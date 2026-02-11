@@ -1513,8 +1513,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                                                             int offset, String sort) {
 
         Query<PublicationTrackingHistory> listCriteria = createPubsByStatusCriteria(status, location, owner, sort, false);
-        PaginationResult<PublicationTrackingHistory> histories = PaginationResultFactory
-            .createResultFromScrollableResultAndClose(offset, offset + count, listCriteria.scroll());
+        List<PublicationTrackingHistory> allResults = listCriteria.list();
+        PaginationResult<PublicationTrackingHistory> histories = new PaginationResult<>();
+        histories.setTotalCount(allResults.size());
+        histories.setPopulatedResults(allResults.subList(
+            Math.min(offset, allResults.size()),
+            Math.min(offset + count, allResults.size())));
 
         Query countsCriteria = createPubsByStatusCriteria(status, location, owner, null, true);
         List countList = countsCriteria.list();
