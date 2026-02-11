@@ -231,7 +231,7 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         // Convert Set<String> to semicolon-separated String
         Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : geneIdToRefSeqSet.entrySet()) {
-            result.put(entry.getKey(), String.join(";", entry.getValue()));
+            result.put(entry.getKey(), String.join("; ", entry.getValue()));
         }
         return result;
     }

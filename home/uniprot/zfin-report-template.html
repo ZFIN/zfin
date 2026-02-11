@@ -157,6 +157,18 @@
             border-radius: 4px;
         }
 
+        .csv-download-btn {
+            margin-bottom: 8px;
+            padding: 4px 12px;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+        .csv-download-btn:hover {
+            background: #e0e0e0;
+        }
         table.summary {
             border-collapse: collapse;
             border: 1px solid #ccc;
@@ -462,6 +474,31 @@
             `;
         }
 
+        function downloadTableAsCsv(headers, rows, filename) {
+            const escapeCsvField = (field) => {
+                const str = (field == null) ? '' : String(field);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            };
+            const headerKeys = headers.map(h => h.key);
+            const headerLine = headers.map(h => escapeCsvField(h.title)).join(',');
+            const dataLines = rows.map(row =>
+                headerKeys.map(key => escapeCsvField(row[key])).join(',')
+            );
+            const csv = [headerLine, ...dataLines].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'table.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         function ReportSummaryTable({reportSummaryTable}) {
             const summaryRows = reportSummaryTable["rows"];
             const summaryHeaders = reportSummaryTable["headers"];
@@ -472,6 +509,7 @@
 
             const headerKeys = summaryHeaders.map(h => h.key);
             const headerTitles = summaryHeaders.map(h => h.title);
+            const csvFilename = (summaryDescription || 'table').replace(/[^a-z0-9]+/gi, '_').toLowerCase() + '.csv';
             const headerRow = html`
                 <tr>
                     ${headerTitles.map(rowName => html`
@@ -486,6 +524,7 @@
             });
             return html`
                 <h4>${summaryDescription}</h4>
+                <button class="csv-download-btn" onclick=${() => downloadTableAsCsv(summaryHeaders, summaryRows, csvFilename)}>Download CSV</button>
                 <table class="summary">
                     <thead>
                     ${headerRow}
