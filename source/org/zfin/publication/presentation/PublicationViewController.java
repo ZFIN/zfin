@@ -598,15 +598,13 @@ PublicationViewController {
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = figureViewService.getFigurePhenotypeSummaries(figures);
+
         Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
-        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
         figures.forEach(figure -> {
             FigureExpressionSummary figureExpressionSummary = figureViewService.getFigureExpressionSummary(figure);
-            FigurePhenotypeSummary figurePhenotypeSummary = figureViewService.getFigurePhenotypeSummary(figure);
             if (figureExpressionSummary.isNotEmpty())
                 expressionSummaryMap.put(figure, figureExpressionSummary);
-            if (figurePhenotypeSummary.isNotEmpty())
-                phenotypeSummaryMap.put(figure, figurePhenotypeSummary);
         });
 
         List<Figure> figuresWithDataOnly = figures.stream()
