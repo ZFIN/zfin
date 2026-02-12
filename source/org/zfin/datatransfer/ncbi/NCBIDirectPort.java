@@ -730,7 +730,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
             File geneSymbolMatchFile = new File(sourceRoot, "ncbi_gene_symbol_matches.csv");
             if (geneSymbolMatchFile.exists()) {
-                FileUtils.copyFile(geneSymbolMatchFile, new File(workingDir, geneSymbolMatchFile.getName()));
+                FileUtils.moveFile(geneSymbolMatchFile, new File(workingDir, geneSymbolMatchFile.getName()));
             }
         } catch (IOException | SQLException e) {
             print(LOG, "ERROR: Gene symbol match report failed: " + e.getMessage() + "\n");
