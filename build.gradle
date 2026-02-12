@@ -1175,6 +1175,7 @@ test {
             includeTestsMatching "org.zfin.fish.smoketest.PhenotypeSummarySmokeTest"
             includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
             includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
+            includeTestsMatching "org.zfin.framework.presentation.HealthEndpointSmokeTest"
             //include specific method in any of the tests
             //        includeTestsMatching "*ActiveDataTest"
         }
