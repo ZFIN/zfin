@@ -68,7 +68,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
             'server_apps/data_transfer/ORTHO/updateZebrafishGeneNames.pl',
             'server_apps/data_transfer/ORTHO/updateZebrafishGeneNames.sql',
             'server_apps/data_transfer/PUBMED/Journal/checkAndUpdateJournals.sql',
-            'server_apps/data_transfer/PUBMED/Journal/insertJournalAlias.sql',
             'server_apps/data_transfer/PUBMED/addMeshTermsToAllPubs.groovy',
             'server_apps/data_transfer/PUBMED/addPMCidsToAllPubs.groovy',
             'server_apps/data_transfer/PUBMED/loadNewPubs.sql',
