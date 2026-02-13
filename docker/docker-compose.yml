@@ -80,8 +80,8 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
     shm_size: 1g
-#    ports:
-#      - "127.0.0.1:5432-5441:5432"
+    ports:
+      - "${DOCKER_DB_PORT:-127.0.0.1:5432-5441}:5432"
     volumes:
       - pg_data:/var/lib/postgresql/
       - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro

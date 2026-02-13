@@ -23,7 +23,7 @@ RUN groupadd -g 1477 zfloadup
 RUN usermod  -aG zfloadup zfishweb
 
 # Download Elastic APM agent and Jolokia JVM agent
-ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.32.0/elastic-apm-agent-1.32.0.jar /opt/elastic-apm-agent.jar
+ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.55.4/elastic-apm-agent-1.55.4.jar /opt/elastic-apm-agent.jar
 ADD https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.7.2/jolokia-jvm-1.7.2.jar /opt/jolokia-jvm.jar
 RUN chmod 444 /opt/elastic-apm-agent.jar /opt/jolokia-jvm.jar
 
