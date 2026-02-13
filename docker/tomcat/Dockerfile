@@ -36,18 +36,17 @@ RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -Dcom.sun.management.jmxremote.rmi.port=9012 \
 -Dcom.sun.management.jmxremote.ssl=false"' > bin/setenv.sh
 
-# Elastic APM agent (activated when APM server is available)
-RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
+# Elastic APM agent + Jolokia (only when ENABLE_APM=true)
+RUN echo 'if [ "$ENABLE_APM" = "true" ]; then' >> bin/setenv.sh && \
+    echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -javaagent:/opt/elastic-apm-agent.jar \
 -Delastic.apm.service_name=zfin-web \
 -Delastic.apm.server_urls=http://apm-server:8200 \
 -Delastic.apm.application_packages=org.zfin \
 -Delastic.apm.enable_log_correlation=true \
--Delastic.apm.environment=docker"' >> bin/setenv.sh
-
-# Jolokia HTTP bridge for JMX metrics (used by Metricbeat)
-RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
--javaagent:/opt/jolokia-jvm.jar=port=8778,host=0.0.0.0"' >> bin/setenv.sh
+-Delastic.apm.environment=docker \
+-javaagent:/opt/jolokia-jvm.jar=port=8778,host=0.0.0.0"' >> bin/setenv.sh && \
+    echo 'fi' >> bin/setenv.sh
 
 USER zfishweb
 
