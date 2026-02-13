@@ -84,8 +84,8 @@ public class UniProtLoadService {
     private static void bulkLoadActionForNewDbLinks(List<UniProtLoadAction> actions) {
         ReferenceDatabase refDB = getUniProtReferenceDatabase();
         String linkInfo = getUniProtLoadLinkInfo();
-        List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).toList());
-        Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker));
+        List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).distinct().toList());
+        Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker, (a, b) -> a));
         List<MarkerDBLink> dblinks = new ArrayList<>();
         for(UniProtLoadAction action : actions) {
             log.info("Adding dblink to load list: " + action.getAccession() + " " + action.getGeneZdbID());
