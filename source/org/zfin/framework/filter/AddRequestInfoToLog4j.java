@@ -1,5 +1,6 @@
 package org.zfin.framework.filter;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.ThreadContext;
 
 import jakarta.servlet.*;
@@ -10,6 +11,7 @@ import java.io.IOException;
 /**
  * Add Request info to log4j MDC (mapped diagnostic context).
  */
+@Log4j2
 public class AddRequestInfoToLog4j implements Filter {
 
     public static final String REQUEST_MAP = "requestMap";
@@ -44,6 +46,7 @@ public class AddRequestInfoToLog4j implements Filter {
             if (resp instanceof HttpServletResponse) {
                 ThreadContext.put("statusCode", String.valueOf(((HttpServletResponse) resp).getStatus()));
             }
+            log.info("Request completed");
             ThreadContext.clearAll();
         }
     }
