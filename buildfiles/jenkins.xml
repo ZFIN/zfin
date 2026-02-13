@@ -330,6 +330,7 @@
             <filterset>
                 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
                 <filter token="SMTP_HOST" value="${SMTP_HOST}"/>
+                <filter token="SMTP_PORT" value="${SMTP_PORT}"/>
             </filterset>
         </copy>
     </target>

@@ -273,6 +273,7 @@ unique_properties:
   PRIMARY_COLOR: "#512da8"
   SCHEDULE_TRIGGER_FILES: "production" # <<< other potential values: trunk, test, blank
   SMTP_HOST: "mailhog"           # Override: smtp.uoregon.edu for test, trunk, production
+  SMTP_PORT: "1025"           # Override: 25 for test, trunk, production
   SOLR_CREATE_BACKUPS: "false"  # Override: true for prod, test, trunk
 
 # -----------------------------------------------------------------------------
@@ -368,6 +369,7 @@ staging_defaults:
   NODE_ENV: "production"
   ONTOLOGY_LOADER_EMAIL: "informix@zfin.org cmpich@zfin.org"
   SMTP_HOST: "smtp.uoregon.edu"
+  SMTP_PORT: "25"
   SOLR_CREATE_BACKUPS: "true"
   SOLR_MEMORY: "8g"
 
@@ -387,6 +389,7 @@ prod_defaults:
   PRIMARY_COLOR: "#008080"
   SEND_AUTHOR_NOTIF_EMAIL: "true"
   SMTP_HOST: "smtp.uoregon.edu"
+  SMTP_PORT: "25"
   SOLR_CREATE_BACKUPS: "true"
   SOLR_MEMORY: "10g"
 
