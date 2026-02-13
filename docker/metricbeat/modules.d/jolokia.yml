@@ -1,0 +1,22 @@
+- module: jolokia
+  metricsets: ["jmx"]
+  period: 30s
+  hosts: ["tomcat:8778"]
+  namespace: "tomcat_jmx"
+  jmx.mappings:
+    - mbean: "Catalina:type=ThreadPool,name=*"
+      attributes:
+        - attr: currentThreadCount
+          field: thread_pool.current
+        - attr: currentThreadsBusy
+          field: thread_pool.busy
+        - attr: maxThreads
+          field: thread_pool.max
+    - mbean: "com.mchange.v2.c3p0:type=PooledDataSource,*"
+      attributes:
+        - attr: numConnectionsDefaultUser
+          field: c3p0.connections.total
+        - attr: numBusyConnectionsDefaultUser
+          field: c3p0.connections.busy
+        - attr: numIdleConnectionsDefaultUser
+          field: c3p0.connections.idle

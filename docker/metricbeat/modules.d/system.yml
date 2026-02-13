@@ -1,0 +1,12 @@
+- module: system
+  period: 30s
+  metricsets:
+    - cpu
+    - load
+    - memory
+    - network
+    - process
+    - process_summary
+  process.include_top_n:
+    by_cpu: 5
+    by_memory: 5
