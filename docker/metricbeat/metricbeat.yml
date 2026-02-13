@@ -6,10 +6,3 @@ output.elasticsearch:
   hosts: ["elasticsearch:9200"]
   username: "elastic"
   password: "${ELASTIC_PASSWORD}"
-
-setup.kibana:
-  host: "kibana:5601"
-  username: "elastic"
-  password: "${ELASTIC_PASSWORD}"
-
-setup.dashboards.enabled: true
