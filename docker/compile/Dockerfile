@@ -1,4 +1,4 @@
-ARG ZFIN_RELEASE=main
+ARG ZFIN_RELEASE
 FROM ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
 
 USER root
