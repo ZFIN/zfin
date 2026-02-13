@@ -280,6 +280,35 @@ services:
       - "127.0.0.1:5601-5610:5601"
     volumes:
       - kibana_data:/usr/share/kibana/data
+  apm-server:
+    build:
+      context: ./apm-server/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    ports:
+      - "127.0.0.1:8200-8209:8200"
+    depends_on:
+      - elasticsearch
+  metricbeat:
+    build:
+      context: ./metricbeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    user: root
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+    depends_on:
+      - elasticsearch
   jbrowse:
     profiles:
       - jbrowse

@@ -25,6 +25,10 @@
                 <KeyValuePair key="instance" value="$${env:INSTANCE:-unknown}"/>
                 <KeyValuePair key="date" value="$${date:yyyy-MM-dd HH:mm:ss}" />
                 <KeyValuePair key="cookie" value="$${ctx:cookie:-}" />
+                <KeyValuePair key="responseTimeMs" value="$${ctx:responseTimeMs:-}" />
+                <KeyValuePair key="statusCode" value="$${ctx:statusCode:-}" />
+                <KeyValuePair key="trace.id" value="$${ctx:trace.id:-}" />
+                <KeyValuePair key="transaction.id" value="$${ctx:transaction.id:-}" />
             </JsonLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="50MB"/>
