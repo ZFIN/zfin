@@ -136,6 +136,7 @@ services:
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
       UMASK: "002"
       ENABLE_APM: ${ENABLE_APM:-false}
+      TZ: ${TZ}
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
@@ -156,6 +157,7 @@ services:
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
       UMASK: "002"
       ENABLE_APM: ${ENABLE_APM:-false}
+      TZ: ${TZ}
       JPDA_ADDRESS: "*:5000"
       JPDA_TRANSPORT: dt_socket
     entrypoint: ["catalina.sh", "jpda", "run"]
