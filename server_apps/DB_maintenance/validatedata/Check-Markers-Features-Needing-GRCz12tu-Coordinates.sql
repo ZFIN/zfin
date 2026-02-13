@@ -1,4 +1,4 @@
-SELECT sfclg_data_zdb_id AS entity_id,
+SELECT DISTINCT sfclg_data_zdb_id AS entity_id,
        get_obj_type(sfclg_data_zdb_id) AS entity_type,
        CASE
            WHEN get_obj_type(sfclg_data_zdb_id) = 'ALT' THEN (SELECT feature_abbrev FROM feature WHERE feature_zdb_id = sfclg_data_zdb_id)
