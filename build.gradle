@@ -1263,6 +1263,43 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+// Shared copy logic for tomcatDeploy and dirtycopy
+def copyWebAppFiles(String webappRoot) {
+    // Copy web app files from home/ excluding static files served by Apache
+    copy {
+        from 'home'
+        into webappRoot
+        exclude 'robots.txt', 'sitemap.xml', 'favicon.ico', 'zfin_is_down.html'
+        exclude 'images/**', 'css/**', 'javascript/**'
+        exclude 'ZFIN/**', 'zf_info/**', 'ensembl/**', 'uniprot/**', 'unavailable/**'
+        exclude '.DS_Store'
+        exclude 'WEB-INF/lib/**'
+    }
+
+    // Copy conf files into WEB-INF/classes (hibernate, log4j)
+    copy {
+        from 'conf'
+        into webappRoot + '/WEB-INF/classes'
+        include 'hibernate.cfg.xml'
+        include 'log4j2.xml'
+    }
+
+    // Copy Hibernate mappings and properties from source
+    copy {
+        from 'source'
+        into webappRoot + '/WEB-INF/classes'
+        include '**/*.hbm.xml'
+        include '**/*.properties'
+    }
+
+    // Copy asset manifest from TARGETROOT
+    copy {
+        from targetroot + '/home'
+        into webappRoot + '/WEB-INF/classes'
+        include 'asset-manifest.json'
+    }
+}
+
 // Deploy application directly to Tomcat webapps/ROOT (exploded WAR)
 // Bypasses WAR packaging for faster deployment
 task tomcatDeploy {
@@ -1278,38 +1315,12 @@ task tomcatDeploy {
         delete webappRoot
         mkdir webappRoot
 
-        // Copy web app files from home/ (same as war.webAppDirectory)
-        // Excluding static files served by Apache (same excludes as war task)
-        copy {
-            from 'home'
-            into webappRoot
-            exclude 'robots.txt', 'sitemap.xml', 'favicon.ico', 'zfin_is_down.html'
-            exclude 'images/**', 'css/**', 'javascript/**'
-            exclude 'ZFIN/**', 'zf_info/**', 'ensembl/**', 'uniprot/**', 'unavailable/**'
-            exclude '.DS_Store'
-        }
+        copyWebAppFiles(webappRoot)
 
-        // Copy conf files into WEB-INF/classes (hibernate, log4j)
+        // Copy legacy jars from home/WEB-INF/lib (excluded by copyWebAppFiles)
         copy {
-            from 'conf'
-            into webappRoot + '/WEB-INF/classes'
-            include 'hibernate.cfg.xml'
-            include 'log4j2.xml'
-        }
-
-        // Copy Hibernate mappings and properties from source
-        copy {
-            from 'source'
-            into webappRoot + '/WEB-INF/classes'
-            include '**/*.hbm.xml'
-            include '**/*.properties'
-        }
-
-        // Copy asset manifest from TARGETROOT
-        copy {
-            from targetroot + '/home'
-            into webappRoot + '/WEB-INF/classes'
-            include 'asset-manifest.json'
+            from 'home/WEB-INF/lib'
+            into webappRoot + '/WEB-INF/lib'
         }
 
         // Copy runtime dependencies into WEB-INF/lib
@@ -1488,4 +1499,96 @@ task devWatch {
     description = 'Watch for source changes and sync to Tomcat (run with --continuous)'
     group = 'development'
     dependsOn devCompile
+}
+
+// ============================================================================
+// npm tasks — pure-Gradle equivalents of the Ant npmInstall / npmBuild targets
+// ============================================================================
+
+task npmInstall(type: Exec) {
+    description = 'Install npm dependencies'
+    group = 'build'
+
+    commandLine 'npm', 'install'
+
+    inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+    outputs.dir 'node_modules'
+}
+
+task npmBuild(type: Exec) {
+    description = 'Build frontend assets with webpack'
+    group = 'build'
+
+    commandLine 'npm', 'run', 'build'
+
+    inputs.dir 'home/javascript/react'
+    inputs.file 'webpack.config.js'
+    inputs.file 'package.json'
+    outputs.dir targetroot + '/home/dist'
+}
+
+// ============================================================================
+// dirtycopy — Quick incremental sync (Java classes + JSPs + configs, no lib jars)
+// ============================================================================
+
+task dirtycopy {
+    description = 'Incremental sync of classes, JSPs, and configs to Tomcat (no lib jars)'
+    group = 'development'
+    dependsOn compileJava
+
+    def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
+    def webappRoot = catBase + '/webapps/ROOT'
+
+    // Declare inputs so --continuous mode watches for changes
+    inputs.dir 'home'
+    inputs.dir 'conf'
+    inputs.files fileTree('source') {
+        include '**/*.hbm.xml'
+        include '**/*.properties'
+    }
+
+    doLast {
+        copyWebAppFiles(webappRoot)
+        println "Incremental sync complete -> ${webappRoot}"
+    }
+}
+
+// ============================================================================
+// dirtydeploy — Frontend build + incremental sync
+// ============================================================================
+
+task dirtydeploy {
+    description = 'Build frontend assets then do an incremental sync to Tomcat'
+    group = 'development'
+    dependsOn npmBuild, dirtycopy
+
+    // Ensure npm build runs before the copy
+    dirtycopy.mustRunAfter npmBuild
+}
+
+// ============================================================================
+// deploy — Full clean build (equivalent of Ant pre-deploy)
+// ============================================================================
+
+task deploy {
+    description = 'Full clean build: Java + GWT + npm + lib jars + git info'
+    group = 'deployment'
+    dependsOn compileJava, gwtCompile, npmInstall, npmBuild, deployGitInfoFile, tomcatDeploy
+
+    // Ordering: compile first, then gwt/npm in parallel, then tomcatDeploy last
+    gwtCompile.mustRunAfter compileJava
+    npmInstall.mustRunAfter compileJava
+    npmBuild.mustRunAfter npmInstall
+    tomcatDeploy.mustRunAfter([gwtCompile, npmBuild, deployGitInfoFile])
+}
+
+// ============================================================================
+// watch — Continuous mode for JSP/Java changes (run with: gradle watch --continuous)
+// ============================================================================
+
+task watch {
+    description = 'Watch for JSP/Java/config changes and sync to Tomcat (run with --continuous)'
+    group = 'development'
+    dependsOn dirtycopy
 }
