@@ -208,13 +208,22 @@ where ff.feature_zdb_id = gg.feature_zdb_id
 )
 ;
 
--- populate fdmd_dna_mutation_term_zdb_id for 5' UTR introns
+-- populate fdmd_gene_localization_term_zdb_id for 5' UTR introns
 update feature_dna_mutation_detail
 set fdmd_gene_localization_term_zdb_id = mdcv.mdcv_term_zdb_id
 from gene_allele_mutation_detail g, mutation_detail_controlled_vocabulary mdcv
 where feature_dna_mutation_detail.fdmd_feature_zdb_id = g.feature_zdb_id
   and mdcv.mdcv_term_display_name = '5'' UTR'
   and g.introns LIKE '5%UTR'
+  and feature_dna_mutation_detail.fdmd_gene_localization_term_zdb_id is null
+;
+
+-- populate fdmd_gene_localization_term_zdb_id = 'exon' for records with exon numbers
+update feature_dna_mutation_detail
+set fdmd_gene_localization_term_zdb_id = 'ZDB-TERM-130401-150'
+from gene_allele_mutation_detail g
+where feature_dna_mutation_detail.fdmd_feature_zdb_id = g.feature_zdb_id
+  and feature_dna_mutation_detail.fdmd_exon_number is not null
   and feature_dna_mutation_detail.fdmd_gene_localization_term_zdb_id is null
 ;
 
