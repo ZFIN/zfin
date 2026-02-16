@@ -312,6 +312,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         then:
         new File(tempDir, "generated-report.txt").size() > 0
         new File(tempDir, "generated-report.html").size() > 0
+        new File(tempDir, "generated-report.xlsx").size() > 0
+        new File(tempDir, "generated-report.csv").size() > 0
 
         cleanup:
         tempDir.deleteDir()
