@@ -1,8 +1,13 @@
 package org.zfin.datatransfer.go;
 
-/**
- *
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "marker_go_term_evidence_annotation_organization")
 public class GafOrganization {
 
     public enum OrganizationEnum {
@@ -34,41 +39,14 @@ public class GafOrganization {
         }
     }
 
+    @Id
+    @Column(name = "mrkrgoevas_pk_id")
     private long id;
+    @Column(name = "mrkrgoevas_annotation_organization", nullable = false)
     private String organization;
+    @Column(name = "mrkrgoevas_definition", nullable = false)
     private String definition;
+    @Column(name = "mrkrgoevas_organization_url")
     private String url;
 
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }
