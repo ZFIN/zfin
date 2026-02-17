@@ -505,7 +505,7 @@ instance_overrides:
   frost:
     PRIMARY_COLOR: "#d32f2f"
   github:
-    JAVA_HOME: ""
+    JAVA_HOME: "__REMOVE__"
     SOURCEROOT: "${env.GITHUB_WORKSPACE}"
     ZFIN_PROPERTIES_PATH: "${env.GITHUB_WORKSPACE}/home/WEB-INF/zfin.properties"
   iguana:
@@ -537,7 +537,7 @@ instance_overrides:
     PRIMARY_COLOR: "#512da8"
   trunk:
     PRIMARY_COLOR: "#f57c00"
-    SCHEDULE_TRIGGER_FILES: "${env.INSTANCE}"
+    SCHEDULE_TRIGGER_FILES: "trunk"
     WIKI_PUSH_TO_WIKI: "true"
     ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
     BLAST_CACHE_AT_STARTUP: "false"
