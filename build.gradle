@@ -1591,4 +1591,15 @@ task watch {
     description = 'Watch for JSP/Java/config changes and sync to Tomcat (run with --continuous)'
     group = 'development'
     dependsOn dirtycopy
+
+    doLast {
+        if (!gradle.startParameter.continuous) {
+            println ''
+            println '============================================================'
+            println '  NOTE: To watch for changes, re-run with --continuous flag:'
+            println '        gradle watch --continuous'
+            println '============================================================'
+            println ''
+        }
+    }
 }
