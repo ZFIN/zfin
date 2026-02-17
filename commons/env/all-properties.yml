@@ -273,7 +273,7 @@ unique_properties:
   PRIMARY_COLOR: "#512da8"
   SCHEDULE_TRIGGER_FILES: "production" # <<< other potential values: trunk, test, blank
   SMTP_HOST: "mailhog"           # Override: smtp.uoregon.edu for test, trunk, production
-  SMTP_PORT: "1025"           # Override: 25 for test, trunk, production
+  SMTP_PORT: "25"           # Override: 25 for test, trunk, production
   SOLR_CREATE_BACKUPS: "false"  # Override: true for prod, test, trunk
 
 # -----------------------------------------------------------------------------
