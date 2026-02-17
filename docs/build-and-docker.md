@@ -157,8 +157,6 @@ do
     ├── hibernate-available   (confirm hibernate.properties exists)
     └── prepare               (copy xml + properties to classes dir)
 
-Note: loadProperties and exportProperties are custom taskdefs that
-run on every ant invocation, not as target dependencies.
 ```
 
 Output: compiled classes in `SOURCEROOT/home/WEB-INF/classes/`. Does **not** deploy to Tomcat.
