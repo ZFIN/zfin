@@ -1,32 +1,22 @@
 package org.zfin.infrastructure.captcha;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.springframework.web.util.WebUtils;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.zfin.infrastructure.service.RequestService.getCurrentRequest;
@@ -36,19 +26,25 @@ import static org.zfin.profile.service.ProfileService.isLoggedIn;
 @Log4j2
 public class CaptchaService {
 
-    //TODO: should we compute this algorithmically? If we see bots setting this without going through captcha,
-    //      we should use some cryptography to set it in a way that prevents tampering.
     private static final String CAPTCHA_COOKIE_NAME = "grcptv";
-    private static final String CAPTCHA_COOKIE_VALUE = "rcv_true";
-    private static final int CAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week
+    private static final int CAPTCHA_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; //one week in seconds
+    private static final long TOKEN_MAX_AGE_MS = CAPTCHA_COOKIE_MAX_AGE * 1000L; //convert to milliseconds
+    private static final String HMAC_ALGORITHM = "HmacSHA256";
 
     /**
      * Set the current session as having been successfully verified using captcha
      *
      */
     public static void setSuccessfulCaptchaToken() {
+        HttpServletRequest request = getCurrentRequest();
         HttpServletResponse response = getCurrentResponse();
-        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, CAPTCHA_COOKIE_VALUE);
+        String sessionId = request.getSession().getId();
+        String token = generateToken(sessionId);
+        if (token == null) {
+            log.error("Failed to generate captcha token; allowing access without cookie");
+            return;
+        }
+        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, token);
         captchaCookie.setMaxAge(CAPTCHA_COOKIE_MAX_AGE);
         captchaCookie.setPath("/");
 
@@ -60,7 +56,7 @@ public class CaptchaService {
      * @param response Server response object to remove cookie from
      */
     public static void unsetSuccessfulCaptchaToken(HttpServletResponse response) {
-        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, CAPTCHA_COOKIE_VALUE);
+        Cookie captchaCookie = new Cookie(CAPTCHA_COOKIE_NAME, "");
         captchaCookie.setMaxAge(0);
         captchaCookie.setPath("/");
 
@@ -74,10 +70,11 @@ public class CaptchaService {
      */
     public static boolean isSuccessfulCaptchaToken(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, CAPTCHA_COOKIE_NAME);
-        if (cookie != null && CAPTCHA_COOKIE_VALUE.equals(cookie.getValue())) {
-            return true;
+        if (cookie == null || StringUtils.isEmpty(cookie.getValue())) {
+            return false;
         }
-        return false;
+        String sessionId = request.getSession().getId();
+        return validateToken(cookie.getValue(), sessionId);
     }
 
     /**
@@ -124,6 +121,66 @@ public class CaptchaService {
             return true;
         }
         return false;
+    }
+
+    private static String generateToken(String sessionId) {
+        try {
+            Optional<String> secretKey = CaptchaKeys.getSecretKey();
+            if (secretKey.isEmpty()) {
+                return null;
+            }
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            String data = timestamp + "|" + sessionId;
+            String hmac = computeHmac(data, secretKey.get());
+            return timestamp + "|" + sessionId + "|" + hmac;
+        } catch (Exception e) {
+            log.error("Failed to generate captcha token", e);
+            return null;
+        }
+    }
+
+    private static boolean validateToken(String token, String sessionId) {
+        try {
+            String[] parts = token.split("\\|", 3);
+            if (parts.length != 3) {
+                return false;
+            }
+
+            String timestamp = parts[0];
+            String tokenSessionId = parts[1];
+            String hmac = parts[2];
+
+            Optional<String> secretKey = CaptchaKeys.getSecretKey();
+            if (secretKey.isEmpty()) {
+                log.error("Secret key unavailable during captcha validation; allowing access");
+                return true;
+            }
+
+            // Verify HMAC
+            String expectedHmac = computeHmac(timestamp + "|" + tokenSessionId, secretKey.get());
+            if (!MessageDigest.isEqual(hmac.getBytes(StandardCharsets.UTF_8), expectedHmac.getBytes(StandardCharsets.UTF_8))) {
+                return false;
+            }
+
+            // Verify timestamp is within allowed window
+            long tokenTime = Long.parseLong(timestamp);
+            if (System.currentTimeMillis() - tokenTime > TOKEN_MAX_AGE_MS) {
+                return false;
+            }
+
+            // Verify session ID matches
+            return tokenSessionId.equals(sessionId);
+        } catch (Exception e) {
+            log.error("Failed to validate captcha token", e);
+            return false;
+        }
+    }
+
+    private static String computeHmac(String data, String key) throws Exception {
+        Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+        mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM));
+        byte[] hmacBytes = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(hmacBytes);
     }
 
     private static boolean verifyAltcha(String challengeResponse) throws IOException {
