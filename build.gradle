@@ -1468,38 +1468,6 @@ task gwtCompile {
 def catalinaBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
 def deployedClassesDir = catalinaBase + '/webapps/ROOT/WEB-INF/classes'
 
-// Compile and deploy classes to running Tomcat (triggers reload via reloadable="true")
-task devCompile {
-    description = 'Compile Java and sync to deployed Tomcat for hot reload'
-    group = 'development'
-
-    dependsOn compileJava
-
-    doLast {
-        // Copy compiled classes to deployed location
-        copy {
-            from 'home/WEB-INF/classes'
-            into deployedClassesDir
-            include '**/*.class'
-        }
-        // Copy resources (XML, properties, etc.)
-        copy {
-            from 'source'
-            into deployedClassesDir
-            include '**/*.xml'
-            include '**/*.properties'
-            exclude '**/*.java'
-        }
-        println "Classes synced to ${deployedClassesDir} - Tomcat will reload"
-    }
-}
-
-// Watch for changes and auto-compile (use with: gradle devWatch --continuous)
-task devWatch {
-    description = 'Watch for source changes and sync to Tomcat (run with --continuous)'
-    group = 'development'
-    dependsOn devCompile
-}
 
 // ============================================================================
 // npm tasks — pure-Gradle equivalents of the Ant npmInstall / npmBuild targets

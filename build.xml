@@ -387,13 +387,13 @@
         <!--        <jsp-compile/> -->
     </target>
 
-    <target name="dirtydeploy" depends="npmBuild">
-        <gradle task="devCompile"/>
+    <target name="dirtydeploy">
+        <gradle task="dirtydeploy"/>
     </target>
 
-    <target name="dirtydeploy-watch" depends="npmBuild">
+    <target name="watch">
         <exec executable="./gradlew" dir="." failonerror="true">
-            <arg value="devWatch" />
+            <arg value="watch" />
             <arg value="--continuous" />
         </exec>
     </target>
