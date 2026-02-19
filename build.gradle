@@ -1067,6 +1067,13 @@ test {
         showStandardStreams = false
     }
 
+    // Check if --tests was passed on the command line. When it is, skip the
+    // filter whitelist so that any individual test can be run directly, e.g.:
+    //   gradle test --tests HelloWorldTest
+    def hasCommandLineTests = gradle.startParameter.taskRequests.any { req ->
+        req.args.any { it.startsWith('--tests') }
+    }
+
     // Check if a specific test suite is requested (from Ant)
     def testSuite = project.hasProperty('suite') ? project.property('suite') : null
 
@@ -1098,18 +1105,21 @@ test {
     }
 
     filter {
-        if (testSuite != null) {
-            // Run specific test suite requested from Ant
-            // Suite classes use standard JUnit 4 @RunWith(Suite.class) and can be run directly
-            includeTestsMatching "org.zfin." + testSuite
-        } else if (includeNcbiLoadTests) {
-            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
-        }
-        if (includeNcbiCharacterizationTest) {
-            //Can be run with: SKIP_DANGER_WARNING=1 gradle -PincludeNcbiCharacterizationTest test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization
-            includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
-        }
-        if (includeNonSmokeTests) {
+        if (hasCommandLineTests) {
+            // Let --tests handle filtering by itself
+        } else {
+            if (testSuite != null) {
+                // Run specific test suite requested from Ant
+                // Suite classes use standard JUnit 4 @RunWith(Suite.class) and can be run directly
+                includeTestsMatching "org.zfin." + testSuite
+            } else if (includeNcbiLoadTests) {
+                includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
+            }
+            if (includeNcbiCharacterizationTest) {
+                //Can be run with: SKIP_DANGER_WARNING=1 gradle -PincludeNcbiCharacterizationTest test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization
+                includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest"
+            }
+            if (includeNonSmokeTests) {
             includeTestsMatching "org.zfin.UnitTests"
             //spock tests
 
@@ -1182,6 +1192,7 @@ test {
             includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
             //include specific method in any of the tests
             //        includeTestsMatching "*ActiveDataTest"
+            }
         }
     }
 
