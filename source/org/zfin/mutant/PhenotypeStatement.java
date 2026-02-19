@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.PostComposedEntityComponent;
 import org.zfin.ontology.Term;
 
 import java.util.Date;
@@ -28,31 +29,23 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     @JoinColumn(name = "phenos_phenox_pk_id", nullable = false)
     private PhenotypeExperiment phenotypeExperiment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "phenos_entity_1_superterm_zdb_id")
-    private GenericTerm e1Superterm;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "phenos_entity_1_subterm_zdb_id")
-    private GenericTerm e1Subterm;
-
-    @Transient
-    private PostComposedEntity entity;
+    @Embedded
+    @AssociationOverrides({
+        @AssociationOverride(name = "superterm", joinColumns = @JoinColumn(name = "phenos_entity_1_superterm_zdb_id")),
+        @AssociationOverride(name = "subterm", joinColumns = @JoinColumn(name = "phenos_entity_1_subterm_zdb_id"))
+    })
+    private PostComposedEntityComponent entity;
 
     @ManyToOne
     @JoinColumn(name = "phenos_quality_zdb_id")
     private GenericTerm quality;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "phenos_entity_2_superterm_zdb_id")
-    private GenericTerm e2Superterm;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "phenos_entity_2_subterm_zdb_id")
-    private GenericTerm e2Subterm;
-
-    @Transient
-    private PostComposedEntity relatedEntity;
+    @Embedded
+    @AssociationOverrides({
+        @AssociationOverride(name = "superterm", joinColumns = @JoinColumn(name = "phenos_entity_2_superterm_zdb_id")),
+        @AssociationOverride(name = "subterm", joinColumns = @JoinColumn(name = "phenos_entity_2_subterm_zdb_id"))
+    })
+    private PostComposedEntityComponent relatedEntity;
 
     @Column(name = "phenos_tag")
     private String tag;
@@ -61,42 +54,34 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     private Date dateCreated;
 
     public PostComposedEntity getEntity() {
-        if (entity == null && e1Superterm != null) {
-            entity = new PostComposedEntity();
-            entity.setSuperterm(e1Superterm);
-            entity.setSubterm(e1Subterm);
-        }
         return entity;
     }
 
     public void setEntity(PostComposedEntity entity) {
-        this.entity = entity;
-        if (entity != null) {
-            this.e1Superterm = entity.getSuperterm();
-            this.e1Subterm = entity.getSubterm();
+        if (entity == null) {
+            this.entity = null;
+        } else if (entity instanceof PostComposedEntityComponent) {
+            this.entity = (PostComposedEntityComponent) entity;
         } else {
-            this.e1Superterm = null;
-            this.e1Subterm = null;
+            this.entity = new PostComposedEntityComponent();
+            this.entity.setSuperterm(entity.getSuperterm());
+            this.entity.setSubterm(entity.getSubterm());
         }
     }
 
     public PostComposedEntity getRelatedEntity() {
-        if (relatedEntity == null && e2Superterm != null) {
-            relatedEntity = new PostComposedEntity();
-            relatedEntity.setSuperterm(e2Superterm);
-            relatedEntity.setSubterm(e2Subterm);
-        }
         return relatedEntity;
     }
 
     public void setRelatedEntity(PostComposedEntity relatedEntity) {
-        this.relatedEntity = relatedEntity;
-        if (relatedEntity != null) {
-            this.e2Superterm = relatedEntity.getSuperterm();
-            this.e2Subterm = relatedEntity.getSubterm();
+        if (relatedEntity == null) {
+            this.relatedEntity = null;
+        } else if (relatedEntity instanceof PostComposedEntityComponent) {
+            this.relatedEntity = (PostComposedEntityComponent) relatedEntity;
         } else {
-            this.e2Superterm = null;
-            this.e2Subterm = null;
+            this.relatedEntity = new PostComposedEntityComponent();
+            this.relatedEntity.setSuperterm(relatedEntity.getSuperterm());
+            this.relatedEntity.setSubterm(relatedEntity.getSubterm());
         }
     }
 
