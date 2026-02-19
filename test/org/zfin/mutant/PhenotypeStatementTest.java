@@ -36,7 +36,7 @@ public class PhenotypeStatementTest {
         // does not contain
         assertTrue(!statement.contains(termComparison));
 
-        entity.setSubterm(termComparison);
+        statement.getEntity().setSubterm(termComparison);
         // contains E1a
         assertTrue(statement.contains(termOne));
         // contains in E1b
