@@ -1,0 +1,136 @@
+{
+  "index_patterns": ["traces-apm*"],
+  "priority": 200,
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "traces-apm-default_policy",
+      "index.mapping.total_fields.limit": 2000
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        }
+      ],
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "span": {
+          "properties": {
+            "db": {
+              "properties": {
+                "statement": {
+                  "type": "text",
+                  "fields": { "keyword": { "type": "keyword", "ignore_above": 1024 } }
+                }
+              }
+            },
+            "duration": {
+              "properties": {
+                "us": { "type": "long" }
+              }
+            },
+            "composite": {
+              "properties": {
+                "count": { "type": "long" },
+                "sum": {
+                  "properties": {
+                    "us": { "type": "long" }
+                  }
+                }
+              }
+            },
+            "self_time": {
+              "properties": {
+                "count": { "type": "long" },
+                "sum": {
+                  "properties": {
+                    "us": { "type": "long" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "transaction": {
+          "properties": {
+            "duration": {
+              "properties": {
+                "us": { "type": "long" }
+              }
+            },
+            "span_count": {
+              "properties": {
+                "started": { "type": "long" },
+                "dropped": { "type": "long" }
+              }
+            },
+            "sampled": { "type": "boolean" }
+          }
+        },
+        "http": {
+          "properties": {
+            "request": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "original": {
+                      "type": "text",
+                      "fields": { "keyword": { "type": "keyword", "ignore_above": 1024 } }
+                    }
+                  }
+                }
+              }
+            },
+            "response": {
+              "properties": {
+                "status_code": { "type": "long" }
+              }
+            }
+          }
+        },
+        "url": {
+          "properties": {
+            "full": {
+              "type": "text",
+              "fields": { "keyword": { "type": "keyword", "ignore_above": 1024 } }
+            },
+            "original": {
+              "type": "text",
+              "fields": { "keyword": { "type": "keyword", "ignore_above": 1024 } }
+            }
+          }
+        },
+        "user_agent": {
+          "properties": {
+            "original": {
+              "type": "text",
+              "fields": { "keyword": { "type": "keyword", "ignore_above": 1024 } }
+            }
+          }
+        },
+        "process": {
+          "properties": {
+            "pid": { "type": "long" },
+            "ppid": { "type": "long" }
+          }
+        },
+        "source": {
+          "properties": {
+            "port": { "type": "long" }
+          }
+        },
+        "client": {
+          "properties": {
+            "port": { "type": "long" }
+          }
+        }
+      }
+    }
+  }
+}

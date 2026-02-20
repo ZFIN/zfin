@@ -22,6 +22,11 @@ RUN usermod  -aG zfishweb zfishweb
 RUN groupadd -g 1477 zfloadup
 RUN usermod  -aG zfloadup zfishweb
 
+# Download Elastic APM agent and Jolokia JVM agent
+ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.55.4/elastic-apm-agent-1.55.4.jar /opt/elastic-apm-agent.jar
+ADD https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.7.2/jolokia-jvm-1.7.2.jar /opt/jolokia-jvm.jar
+RUN chmod 444 /opt/elastic-apm-agent.jar /opt/jolokia-jvm.jar
+
 RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -Dcom.sun.management.jmxremote \
 -Dcom.sun.management.jmxremote.local.only=false \
@@ -30,6 +35,18 @@ RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -Djava.rmi.server.hostname=$(hostname -i) \
 -Dcom.sun.management.jmxremote.rmi.port=9012 \
 -Dcom.sun.management.jmxremote.ssl=false"' > bin/setenv.sh
+
+# Elastic APM agent + Jolokia (only when ENABLE_APM=true)
+RUN echo 'if [ "$ENABLE_APM" = "true" ]; then' >> bin/setenv.sh && \
+    echo 'CATALINA_OPTS="${CATALINA_OPTS} \
+-javaagent:/opt/elastic-apm-agent.jar \
+-Delastic.apm.service_name=zfin-web \
+-Delastic.apm.server_urls=http://apm-server:8200 \
+-Delastic.apm.application_packages=org.zfin \
+-Delastic.apm.enable_log_correlation=true \
+-Delastic.apm.environment=docker \
+-javaagent:/opt/jolokia-jvm.jar=port=8778,host=0.0.0.0"' >> bin/setenv.sh && \
+    echo 'fi' >> bin/setenv.sh
 
 USER zfishweb
 

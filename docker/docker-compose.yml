@@ -80,8 +80,8 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
     shm_size: 1g
-#    ports:
-#      - "127.0.0.1:5432-5441:5432"
+    ports:
+      - "${DOCKER_DB_PORT:-127.0.0.1:5432-5441}:5432"
     volumes:
       - pg_data:/var/lib/postgresql/
       - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro
@@ -92,7 +92,7 @@ services:
     environment:
       SOLR_HEAP: 10g
     ports:
-      - "8983-8992:8983"
+      - "${DOCKER_SOLR_PORT:-8983-8992}:8983"
     volumes:
       - solr_data:/var/solr
   httpd:
@@ -135,6 +135,7 @@ services:
       INSTANCE: docker
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
       UMASK: "002"
+      ENABLE_APM: ${ENABLE_APM:-false}
       TZ: ${TZ}
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
@@ -155,12 +156,13 @@ services:
       INSTANCE: docker
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
       UMASK: "002"
+      ENABLE_APM: ${ENABLE_APM:-false}
       TZ: ${TZ}
       JPDA_ADDRESS: "*:5000"
       JPDA_TRANSPORT: dt_socket
     entrypoint: ["catalina.sh", "jpda", "run"]
     ports:
-      - "127.0.0.1:5000:5000"
+      - "${DOCKER_TOMCAT_DEBUG_PORT:-127.0.0.1:5000}:5000"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
@@ -181,8 +183,8 @@ services:
     environment:
       MH_SMTP_BIND_ADDR: "0.0.0.0:25"
     ports:
-      - "25:1025"
-      - "8025:8025"
+      - "${DOCKER_MAILHOG_SMTP_PORT:-25}:1025"
+      - "${DOCKER_MAILHOG_UI_PORT:-8025}:8025"
   jenkins:
     build: 
       context: ./jenkins/
@@ -190,7 +192,7 @@ services:
         ZFIN_RELEASE: ${ZFIN_RELEASE}
     image: ghcr.io/zfin/zfin-jenkins:${ZFIN_RELEASE}
     ports:
-      - "9499-9509:9499"
+      - "${DOCKER_JENKINS_PORT:-9499-9509}:9499"
     environment:
       PGHOST: db
       PGUSER: postgres
@@ -253,7 +255,7 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     ports:
-      - "127.0.0.1:9200-9209:9200"
+      - "${DOCKER_ELASTICSEARCH_PORT:-127.0.0.1:9200-9209}:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
   filebeat:
@@ -279,9 +281,38 @@ services:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
       XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: ${XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY}
     ports:
-      - "127.0.0.1:5601-5610:5601"
+      - "${DOCKER_KIBANA_PORT:-127.0.0.1:5601-5610}:5601"
     volumes:
       - kibana_data:/usr/share/kibana/data
+  apm-server:
+    build:
+      context: ./apm-server/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    ports:
+      - "${DOCKER_APM_SERVER_PORT:-127.0.0.1:8200-8209}:8200"
+    depends_on:
+      - elasticsearch
+  metricbeat:
+    build:
+      context: ./metricbeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    user: root
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+    depends_on:
+      - elasticsearch
   jbrowse:
     profiles:
       - jbrowse
@@ -289,7 +320,7 @@ services:
       context: ./jbrowse/
       dockerfile: ./Dockerfile
     ports:
-      - "127.0.0.1:8898-8907:80"
+      - "${DOCKER_JBROWSE_PORT:-127.0.0.1:8898-8907}:80"
     volumes:
       - jbrowse_data:/data
   processgff:
