@@ -1620,8 +1620,12 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<OmimPhenotype> getDiseaseModelsFromGenes(int numberOfRecords) {
         String hql = """
-                from OmimPhenotype model where model.externalReferences is not empty
-                order by model.ortholog.zebrafishGene.abbreviationOrder
+                from OmimPhenotype model
+                join fetch model.ortholog o
+                join fetch o.ncbiOtherSpeciesGene nsg
+                join fetch nsg.organism
+                where model.externalReferences is not empty
+                order by o.zebrafishGene.abbreviationOrder
             """;
 
         Query<OmimPhenotype> query = currentSession().createQuery(hql, OmimPhenotype.class);

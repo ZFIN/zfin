@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.ontology.HumanGeneDetail;
@@ -11,14 +12,32 @@ import java.util.Set;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "omim_phenotype")
 public class OmimPhenotype implements Comparable<OmimPhenotype>, Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "omimp_pk_id")
     private long id;
+    @Column(name = "omimp_name")
     private String name;
+    @Column(name = "omimp_omim_id")
     private String omimNum;
+    @ManyToOne
+    @JoinColumn(name = "omimp_ortho_zdb_id")
     private Ortholog ortholog;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "omimp_termxref_mapping",
+            joinColumns = @JoinColumn(name = "otm_omimp_id"),
+            inverseJoinColumns = @JoinColumn(name = "otm_tx_id"))
     private Set<TermExternalReference> externalReferences;
+
+    @Column(name = "omimp_human_gene_id")
     private String humanGeneMimNumber;
 
+    @Transient
     private HumanGeneDetail humanGeneDetail;
 
     @Override

@@ -1,65 +1,36 @@
 package org.zfin.mutant;
 
-/**
- * This class defines the Zygosity.
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "zygocity")
 public class Zygosity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Zygosity")
+    @GenericGenerator(name = "Zygosity",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "ZYG")
+            })
+    @Column(name = "zyg_zdb_id")
     private String zdbID;
+    @Column(name = "zyg_name")
     private String name;
+    @Column(name = "zyg_abbrev")
     private String abbreviation;
+    @Column(name = "zyg_definition")
     private String definition;
+    @Column(name = "zyg_allele_display")
     private String alleleDisplay;
+    @Column(name = "zyg_geno_ont_id")
     private String genoOntologyID;
-
-    public String getGenoOntologyID() {
-        return genoOntologyID;
-    }
-
-    public void setGenoOntologyID(String genoOntologyID) {
-        this.genoOntologyID = genoOntologyID;
-    }
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
-    public String getAlleleDisplay() {
-        return alleleDisplay;
-    }
-
-    public void setAlleleDisplay(String alleleDisplay) {
-        this.alleleDisplay = alleleDisplay;
-    }
 
     public String getZygositySymbol() {
         if (name.equals("homozygous")) {

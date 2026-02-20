@@ -3099,9 +3099,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<OmimPhenotype> getOmimPhenotype(Marker marker) {
         Session session = HibernateUtil.currentSession();
-        String sql = "FROM OmimPhenotype " +
-                     "WHERE ortholog.zebrafishGene = :gene " +
-                     "AND ortholog.ncbiOtherSpeciesGene.organism.commonName = :organism ";
+        String sql = """
+                     FROM OmimPhenotype op 
+                     JOIN FETCH op.ortholog o 
+                     JOIN FETCH o.ncbiOtherSpeciesGene nsg 
+                     JOIN FETCH nsg.organism 
+                     WHERE o.zebrafishGene = :gene 
+                     AND nsg.organism.commonName = :organism 
+                     """;
 
         Query<OmimPhenotype> query = session.createQuery(sql, OmimPhenotype.class);
         query.setParameter("gene", marker);

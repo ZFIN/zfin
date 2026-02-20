@@ -1,66 +1,44 @@
 package org.zfin.mutant;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.feature.Feature;
 
-/**
- * A genotype feature.
- */
+@Getter
+@Setter
+@Entity
+@Table(name = "genotype_feature")
 public class GenotypeFeature {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GenotypeFeature")
+    @GenericGenerator(name = "GenotypeFeature",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "GENOFEAT"),
+                    @Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "genofeat_zdb_id")
     private String zdbID;
-    private Genotype genotype;
-    private Feature feature;
+
+    @ManyToOne
+    @JoinColumn(name = "genofeat_zygocity")
     private Zygosity zygosity;
+    @ManyToOne
+    @JoinColumn(name = "genofeat_dad_zygocity")
     private Zygosity dadZygosity;
+    @ManyToOne
+    @JoinColumn(name = "genofeat_mom_zygocity")
     private Zygosity momZygosity;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Genotype getGenotype() {
-        return genotype;
-    }
-
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
-    }
-
-    public Feature getFeature() {
-        return feature;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public Zygosity getZygosity() {
-        return zygosity;
-    }
-
-    public void setZygosity(Zygosity zygosity) {
-        this.zygosity = zygosity;
-    }
-
-    public Zygosity getDadZygosity() {
-        return dadZygosity;
-    }
-
-    public void setDadZygosity(Zygosity dadZygosity) {
-        this.dadZygosity = dadZygosity;
-    }
-
-    public Zygosity getMomZygosity() {
-        return momZygosity;
-    }
-
-    public void setMomZygosity(Zygosity momZygosity) {
-        this.momZygosity = momZygosity;
-    }
+    @ManyToOne
+    @JoinColumn(name = "genofeat_geno_zdb_id")
+    private Genotype genotype;
+    @ManyToOne
+    @JoinColumn(name = "genofeat_feature_zdb_id")
+    private Feature feature;
 
     public String getParentalZygosityDisplay() {
         return GenotypeService.getParentalZygosityDisplay(momZygosity, dadZygosity);

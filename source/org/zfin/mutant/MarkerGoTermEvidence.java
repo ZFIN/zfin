@@ -1,10 +1,14 @@
 package org.zfin.mutant;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.datatransfer.go.GafOrganization;
+import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -18,21 +22,65 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "marker_go_term_evidence")
 public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MarkerGoTermEvidence")
+    @GenericGenerator(name = "MarkerGoTermEvidence",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "MRKRGOEV"),
+                    @Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "mrkrgoev_zdb_id")
     private String zdbID;
+
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_mrkr_zdb_id", nullable = false)
     private Marker marker;
 
     // this may need to be moved to its own
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_evidence_code", nullable = false)
     private GoEvidenceCode evidenceCode;
+
+    @Column(name = "mrkrgoev_gflag_name")
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@Parameter(name = "enumClassname",
+                    value = "org.zfin.gwt.root.dto.GoEvidenceQualifier")})
     private GoEvidenceQualifier flag;
 
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_source_zdb_id", nullable = false)
     private Publication source;
+
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_term_zdb_id", nullable = false)
     private GenericTerm goTerm;
+
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_relation_term_zdb_id")
     private GenericTerm qualifierRelation;
+
+    @Column(name = "mrkrgoev_notes")
     private String note;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "infgrmem_mrkrgoev_zdb_id", referencedColumnName = "mrkrgoev_zdb_id", insertable = false, updatable = false)
     private Set<InferenceGroupMember> inferredFrom;
+
+    @OneToMany(mappedBy = "mgtaegMarkerGoEvidence", fetch = FetchType.EAGER)
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
+
+    @Column(name = "mrkrgoev_protein_accession")
     private String geneProductAccession;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "noctua_model_annotation",
+            joinColumns = @JoinColumn(name = "nma_mrkrgoev_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "nma_nm_id"))
     private Set<NoctuaModel> noctuaModels;
 
     // editing data
@@ -40,34 +88,47 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     /**
      * Curator created by.  May be null if comes from a null.
      */
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_contributed_by")
     private Person createdBy;
 
     /**
      * Date record originally curated. For imported annotations this can be a date earlier than the external load date.
      */
+    @Column(name = "mrkrgoev_date_entered", nullable = false)
     private Date createdWhen;
 
     /**
      * Curator who modified annotation during curation.  May be null if never modified.
      */
-
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_modified_by")
     private Person modifiedBy;
+
     /**
      * Date curator modified annotation during curation.  May be null if never modified.
      */
+    @Column(name = "mrkrgoev_date_modified", nullable = false)
     private Date modifiedWhen;
+
     /**
      * Date external load brought in annotation.  This may be null if this was a curated record.
      */
+    @Column(name = "mrkrgoev_external_load_date")
     private Date externalLoadDate;
+
     /**
      * Organization that created the original record.  If we pull in the record from an external organization,
      * they may have pulled their record from somewhere else, as well.  This is that record.
      */
+    @Column(name = "mrkrgoev_annotation_organization_created_by", nullable = false)
     private String organizationCreatedBy;
+
     /**
      * Organization that housed the original record.  This is the organization responsible for housing that record.
      */
+    @ManyToOne
+    @JoinColumn(name = "mrkrgoev_annotation_organization", nullable = false)
     private GafOrganization gafOrganization;
 
 

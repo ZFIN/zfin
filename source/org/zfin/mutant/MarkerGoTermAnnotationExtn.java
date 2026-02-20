@@ -1,13 +1,35 @@
 package org.zfin.mutant;
 
-/**
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "marker_go_term_annotation_extension")
 public class MarkerGoTermAnnotationExtn {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mgtae_pk_id")
     private Long id;
+
+    @Column(name = "mgtae_relationship_term_zdb_id")
     private String relationshipTerm;
-    private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;
+
+    @Column(name = "mgtae_term_text")
     private String identifierTermText;
+
+    @Column(name = "mgtae_identifier_term_zdb_id")
+    private String identifierTerm;
+
+    @Column(name = "mgtae_dblink_zdb_id")
     private String annotExtnDBLink;
+
+    @ManyToOne
+    @JoinColumn(name = "mgtae_extension_group_id")
+    private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;
 
     public MarkerGoTermAnnotationExtn(String relationshipTerm, String identifierTermText) {
         this.relationshipTerm = relationshipTerm;
@@ -16,56 +38,6 @@ public class MarkerGoTermAnnotationExtn {
 
     // Do not use this (only used by hibernate)
     public MarkerGoTermAnnotationExtn() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    private String identifierTerm;
-
-    public String getRelationshipTerm() {
-        return relationshipTerm;
-    }
-
-    public void setRelationshipTerm(String relationshipTerm) {
-        this.relationshipTerm = relationshipTerm;
-    }
-
-    public String getIdentifierTerm() {
-        return identifierTerm;
-    }
-
-    public void setIdentifierTerm(String identifierTerm) {
-        this.identifierTerm = identifierTerm;
-    }
-
-    public String getIdentifierTermText() {
-        return identifierTermText;
-    }
-
-    public void setIdentifierTermText(String identifierTermText) {
-        this.identifierTermText = identifierTermText;
-    }
-
-    public String getAnnotExtnDBLink() {
-        return annotExtnDBLink;
-    }
-
-    public void setAnnotExtnDBLink(String annotExtnDBLink) {
-        this.annotExtnDBLink = annotExtnDBLink;
-    }
-
-    public MarkerGoTermAnnotationExtnGroup getAnnotExtnGroupID() {
-        return annotExtnGroupID;
-    }
-
-    public void setAnnotExtnGroupID(MarkerGoTermAnnotationExtnGroup annotExtnGroupID) {
-        this.annotExtnGroupID = annotExtnGroupID;
     }
 
     @Override

@@ -1,8 +1,11 @@
 package org.zfin.mutant;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
@@ -17,28 +20,71 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "fish")
 public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Fish")
+    @GenericGenerator(name = "Fish",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "FISH"),
+                    @Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "fish_zdb_id")
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String zdbID;
+
+    @ManyToOne
+    @JoinColumn(name = "fish_genotype_zdb_id", nullable = false)
     private Genotype genotype;
+
+    @Column(name = "fish_name")
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String name;
+
+    @Column(name = "fish_name_order")
     private String nameOrder;
+
+    @Column(name = "fish_full_name")
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String displayName;
+
+    @Column(name = "fish_handle")
     private String handle;
+
+    @Column(name = "fish_order")
     private long order;
+
+    @Column(name = "fish_is_wildtype")
     private boolean wildtype;
+
+    @OneToMany(mappedBy = "fish")
+    @OrderBy("aliasLowerCase")
     private Set<FishAlias> aliases;
+
+    @OneToMany(mappedBy = "fish")
     private Set<SecondaryFish> secondaryFishSet;
+
+    @OneToMany(mappedBy = "fish")
     private Set<FishSupplier> suppliers;
+
+    @OneToMany(mappedBy = "fish")
     private Set<FishExperiment> fishExperiments;
+
+    @Column(name = "fish_phenotypic_construct_count")
     private long fishPhenotypicConstructCount;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "fish_str",
+            joinColumns = @JoinColumn(name = "fishstr_fish_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "fishstr_str_zdb_id"))
     private List<SequenceTargetingReagent> strList;
+
+    @Column(name = "fish_functional_affected_gene_count")
     private long fishFunctionalAffectedGeneCount;
 
     public Set<FishAlias> getAliases() {

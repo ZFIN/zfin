@@ -1,51 +1,35 @@
 package org.zfin.expression;
 
-/**
- * ToDo: Please add documentation for this class.
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "condition_data_type")
 public class ConditionDataType implements Comparable<ConditionDataType> {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ConditionDataType")
+    @GenericGenerator(name = "ConditionDataType",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @Parameter(name = "type", value = "CDT")
+            })
+    @Column(name = "cdt_zdb_id")
     private String zdbID;
+    @Column(name = "cdt_name")
     private String name;
+    @Column(name = "cdt_group")
     private String group;
+    @Column(name = "cdt_significance")
     private int significance;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public int getSignificance() {
-        return significance;
-    }
-
-    public void setSignificance(int significance) {
-        this.significance = significance;
-    }
-
 
     @Override
     public int compareTo(ConditionDataType o) {
         return significance - o.getSignificance();
-
     }
 }

@@ -1,35 +1,24 @@
 package org.zfin.mutant;
 
-/**
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Immutable;
+
+@Getter
+@Setter
+@Entity
+@Immutable
+@Table(name = "marker_go_term_evidence_annotation_created_by_source")
 public class MarkerGoTermEvidenceCreatedBySource {
+
+    @Id
+    @Column(name = "mrkrgoevcb_pk_id")
     private String id;
+    @Column(name = "mrkrgoevcb_name", nullable = false)
     private String name;
+    @Column(name = "mrkrgoevcb_url")
     private String url;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     @Override
     public String toString() {
