@@ -1534,6 +1534,34 @@ task dirtycopy {
 }
 
 // ============================================================================
+// jspcopy — Copy only JSPs and tags to Tomcat (no compilation, no restart)
+// Tomcat recompiles JSPs automatically on next request.
+// ============================================================================
+
+task jspcopy {
+    description = 'Copy JSP and tag files to Tomcat for instant hot-reload (no compile needed)'
+    group = 'development'
+
+    def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
+    def webappRoot = catBase + '/webapps/ROOT'
+
+    inputs.dir 'home/WEB-INF/jsp'
+    inputs.dir 'home/WEB-INF/tags'
+
+    doLast {
+        copy {
+            from 'home/WEB-INF/jsp'
+            into webappRoot + '/WEB-INF/jsp'
+        }
+        copy {
+            from 'home/WEB-INF/tags'
+            into webappRoot + '/WEB-INF/tags'
+        }
+        println "JSP sync complete -> ${webappRoot}/WEB-INF/{jsp,tags}"
+    }
+}
+
+// ============================================================================
 // dirtydeploy — Frontend build + incremental sync
 // ============================================================================
 
