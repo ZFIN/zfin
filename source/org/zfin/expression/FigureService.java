@@ -23,23 +23,6 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  */
 public class FigureService {
 
-    public static List<String> pubsWithLargeData = List.of("ZDB-PUB-031103-24",
-        "ZDB-PUB-180514-4",
-        "ZDB-PUB-141007-8",
-        "ZDB-PUB-151008-10",
-        "ZDB-PUB-090311-2",
-        "ZDB-PUB-080227-22",
-        "ZDB-PUB-080220-1",
-        "ZDB-PUB-060606-1",
-        "ZDB-PUB-050913-8",
-        "ZDB-PUB-040907-1",
-        "ZDB-PUB-050309-6",
-        "ZDB-PUB-010810-1",
-        "ZDB-PUB-140822-10",
-        "ZDB-PUB-031103-23",
-        "ZDB-PUB-051025-1"
-    );
-
     static Logger LOG = LogManager.getLogger(FigureService.class);
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 

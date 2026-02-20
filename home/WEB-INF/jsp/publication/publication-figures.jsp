@@ -92,6 +92,8 @@
             </div>
         </div>
 
+        <zfin2:pagination paginationBean="${pagination}" />
+
         <c:forEach var="figure" items="${figures}">
             <z:section title="${figure.label}" entity="${figure}">
                 <zfin-figure:imagesAndCaptionPrototype
@@ -120,6 +122,15 @@
                 </zfin-figure:imagesAndCaptionPrototype>
             </z:section>
         </c:forEach>
+
+        <c:if test="${pagination.lastRecord < pagination.totalRecords}">
+            <z:section title="More Figures...">
+                <zfin2:pagination paginationBean="${pagination}" />
+            </z:section>
+        </c:if>
+        <c:if test="${pagination.lastRecord >= pagination.totalRecords}">
+            <zfin2:pagination paginationBean="${pagination}" />
+        </c:if>
 
         <z:section title="${ACKNOWLEDGEMENT}">
             <c:choose>

@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.Figure;
-import org.zfin.expression.FigureService;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
@@ -84,7 +83,7 @@ public class FigureViewController {
 
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
-        model.addAttribute("isLargeDataPublication", FigureService.pubsWithLargeData.contains(figure.getPublication().getZdbID()));
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(figure.getPublication()));
         return "figure/figure-view";
     }
 

@@ -78,13 +78,40 @@ public class FigureViewService {
     }
 
     public FigurePhenotypeSummary getFigurePhenotypeSummary(Figure figure) {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID());
+        return buildPhenotypeSummary(warehouseList);
+    }
+
+    /**
+     * Batch-fetch phenotype warehouse data for all figures and build summaries in one query
+     * instead of N queries (one per figure).
+     */
+    public Map<Figure, FigurePhenotypeSummary> getFigurePhenotypeSummaries(List<Figure> figures) {
+        List<String> figureIds = figures.stream().map(Figure::getZdbID).collect(Collectors.toList());
+        List<PhenotypeWarehouse> allWarehouse = phenotypeRepository.getPhenotypeWarehouseByFigureIds(figureIds);
+
+        Map<String, List<PhenotypeWarehouse>> warehouseByFigure = allWarehouse.stream()
+            .collect(Collectors.groupingBy(pw -> pw.getFigure().getZdbID()));
+
+        Map<Figure, FigurePhenotypeSummary> result = new HashMap<>();
+        for (Figure figure : figures) {
+            List<PhenotypeWarehouse> warehouseList = warehouseByFigure.getOrDefault(figure.getZdbID(), List.of());
+            FigurePhenotypeSummary summary = buildPhenotypeSummary(warehouseList);
+            if (summary.isNotEmpty()) {
+                result.put(figure, summary);
+            }
+        }
+        return result;
+    }
+
+    private FigurePhenotypeSummary buildPhenotypeSummary(List<PhenotypeWarehouse> warehouseList) {
         FigurePhenotypeSummary summary = new FigurePhenotypeSummary();
-        summary.setFish(getPhenotypeFish(figure));
-        summary.setSequenceTargetingReagents(getPhenotypeSTR(figure));
-        summary.setExperiments(getPhenotypeCondition(figure));
-        summary.setEntities(getPhenotypeEntitiesFromWarehouse(phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())));
-        summary.setStartStage(getPhenotypeStartStage(figure));
-        summary.setEndStage(getPhenotypeEndStage(figure));
+        summary.setFish(getPhenotypeFish(warehouseList));
+        summary.setSequenceTargetingReagents(getPhenotypeSTR(warehouseList));
+        summary.setExperiments(getPhenotypeCondition(warehouseList));
+        summary.setEntities(getPhenotypeEntitiesFromWarehouse(warehouseList));
+        summary.setStartStage(getPhenotypeStartStage(warehouseList));
+        summary.setEndStage(getPhenotypeEndStage(warehouseList));
         return summary;
     }
 
@@ -296,57 +323,44 @@ public class FigureViewService {
     /**
      * Sorted/unique list of genotypes from the phenotype shown in this Figure
      */
-    public List<Fish> getPhenotypeFish(Figure figure) {
-        List<Fish> fishList = new ArrayList<>();
-
-        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
+    public List<Fish> getPhenotypeFish(List<PhenotypeWarehouse> warehouseList) {
+        Set<Fish> fishSet = new TreeSet<>();
+        for (PhenotypeWarehouse phenotypeExperiment : warehouseList) {
             Fish fish = phenotypeExperiment.getFishExperiment().getFish();
-            if (fish != null && !fishList.contains(fish)) {
-                fishList.add(fish);
+            if (fish != null) {
+                fishSet.add(fish);
             }
         }
-
-        HashSet hs = new HashSet();
-        hs.addAll(fishList);
-        fishList.clear();
-        fishList.addAll(hs);
-        fishList.stream().distinct().collect(Collectors.toList());
-        Collections.sort(fishList);
-        return fishList;
+        return new ArrayList<>(fishSet);
     }
 
     /**
      * Get the list of sequence targeting reagent (knockdown reagents) shown in a figure
      */
-    public List<SequenceTargetingReagent> getPhenotypeSTR(Figure figure) {
-        List<SequenceTargetingReagent> strs = new ArrayList<>();
-
-        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
+    public List<SequenceTargetingReagent> getPhenotypeSTR(List<PhenotypeWarehouse> warehouseList) {
+        Set<SequenceTargetingReagent> strSet = new TreeSet<>();
+        for (PhenotypeWarehouse phenotypeExperiment : warehouseList) {
             for (SequenceTargetingReagent str : phenotypeExperiment.getFishExperiment().getFish().getStrList()) {
-                if (str != null && !strs.contains(str)) {
-                    strs.add(str);
+                if (str != null) {
+                    strSet.add(str);
                 }
             }
         }
-
-        Collections.sort(strs);
-        return strs;
+        return new ArrayList<>(strSet);
     }
 
     /**
      * Sorted/unique list of conditions (experiments) from the phenotype shown in this Figure
      */
-    public List<Experiment> getPhenotypeCondition(Figure figure) {
+    public List<Experiment> getPhenotypeCondition(List<PhenotypeWarehouse> warehouseList) {
         List<Experiment> conditions = new ArrayList<>();
-
-        List<String> expConditionUniqueKey = new ArrayList<>();
-        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
+        Set<String> expConditionUniqueKeys = new LinkedHashSet<>();
+        for (PhenotypeWarehouse phenotypeExperiment : warehouseList) {
             FishExperiment fishExperiment = phenotypeExperiment.getFishExperiment();
             if (canAddExperimentToConditionsList(fishExperiment)) {
                 String key = fishExperiment.getExperiment().getDisplayAllConditions();
-                if (!expConditionUniqueKey.contains(key)) {
+                if (expConditionUniqueKeys.add(key)) {
                     conditions.add(fishExperiment.getExperiment());
-                    expConditionUniqueKey.add(key);
                 }
             }
         }
@@ -384,37 +398,27 @@ public class FigureViewService {
     /**
      * Earliest stage from phenotype of this figure
      */
-    public DevelopmentStage getPhenotypeStartStage(Figure figure) {
-
-        List<DevelopmentStage> stages = new ArrayList<>();
-
-        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
-            stages.add(phenotypeExperiment.getStart());
-        }
-
-        if (stages.size() == 0) {
+    public DevelopmentStage getPhenotypeStartStage(List<PhenotypeWarehouse> warehouseList) {
+        if (warehouseList.isEmpty()) {
             return null;
         }
-
-        return Collections.min(stages);
+        return warehouseList.stream()
+            .map(PhenotypeWarehouse::getStart)
+            .min(Comparator.naturalOrder())
+            .orElse(null);
     }
 
     /**
      * Latest stage from phenotype of this figure
      */
-    public DevelopmentStage getPhenotypeEndStage(Figure figure) {
-
-        List<DevelopmentStage> stages = new ArrayList<>();
-
-        for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
-            stages.add(phenotypeExperiment.getEnd());
-        }
-
-        if (stages.size() == 0) {
+    public DevelopmentStage getPhenotypeEndStage(List<PhenotypeWarehouse> warehouseList) {
+        if (warehouseList.isEmpty()) {
             return null;
         }
-
-        return Collections.max(stages);
+        return warehouseList.stream()
+            .map(PhenotypeWarehouse::getEnd)
+            .max(Comparator.naturalOrder())
+            .orElse(null);
     }
 
     public String getFullFigureLabel(Figure figure) {
@@ -498,6 +502,11 @@ public class FigureViewService {
 
         Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
         return figures;
+    }
+
+    public boolean isLargeDataPublication(Publication publication) {
+        int figureCount = getFiguresForPublicationAndProbe(publication, null).size();
+        return figureCount > 50;
     }
 
     public List<Figure> getOrderedFiguresForPublication(Publication publication) {
