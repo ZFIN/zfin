@@ -1,11 +1,12 @@
 package org.zfin.mutant;
 
-import lombok.Data;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.PostComposedEntityComponent;
 import org.zfin.ontology.Term;
 
 import java.util.Date;
@@ -15,14 +16,74 @@ import java.util.Date;
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "phenotype_statement")
 public class PhenotypeStatement implements Comparable<PhenotypeStatement>, EntityZdbID {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "phenos_pk_id")
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "phenos_phenox_pk_id", nullable = false)
     private PhenotypeExperiment phenotypeExperiment;
-    private PostComposedEntity entity;
+
+    @Embedded
+    @AssociationOverrides({
+        @AssociationOverride(name = "superterm", joinColumns = @JoinColumn(name = "phenos_entity_1_superterm_zdb_id")),
+        @AssociationOverride(name = "subterm", joinColumns = @JoinColumn(name = "phenos_entity_1_subterm_zdb_id"))
+    })
+    private PostComposedEntityComponent entity;
+
+    @ManyToOne
+    @JoinColumn(name = "phenos_quality_zdb_id")
     private GenericTerm quality;
-    private PostComposedEntity relatedEntity;
+
+    @Embedded
+    @AssociationOverrides({
+        @AssociationOverride(name = "superterm", joinColumns = @JoinColumn(name = "phenos_entity_2_superterm_zdb_id")),
+        @AssociationOverride(name = "subterm", joinColumns = @JoinColumn(name = "phenos_entity_2_subterm_zdb_id"))
+    })
+    private PostComposedEntityComponent relatedEntity;
+
+    @Column(name = "phenos_tag")
     private String tag;
+
+    @Column(name = "phenos_created_date", nullable = false)
     private Date dateCreated;
+
+    public PostComposedEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(PostComposedEntity entity) {
+        if (entity == null) {
+            this.entity = null;
+        } else if (entity instanceof PostComposedEntityComponent) {
+            this.entity = (PostComposedEntityComponent) entity;
+        } else {
+            this.entity = new PostComposedEntityComponent();
+            this.entity.setSuperterm(entity.getSuperterm());
+            this.entity.setSubterm(entity.getSubterm());
+        }
+    }
+
+    public PostComposedEntity getRelatedEntity() {
+        return relatedEntity;
+    }
+
+    public void setRelatedEntity(PostComposedEntity relatedEntity) {
+        if (relatedEntity == null) {
+            this.relatedEntity = null;
+        } else if (relatedEntity instanceof PostComposedEntityComponent) {
+            this.relatedEntity = (PostComposedEntityComponent) relatedEntity;
+        } else {
+            this.relatedEntity = new PostComposedEntityComponent();
+            this.relatedEntity.setSuperterm(relatedEntity.getSuperterm());
+            this.relatedEntity.setSubterm(relatedEntity.getSubterm());
+        }
+    }
 
     @Override
     public String toString() {
@@ -31,12 +92,12 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
 
     public String getDisplayNameWithoutTag() {
         StringBuilder builder = new StringBuilder();
-        builder.append(entity.getDisplayName());
+        builder.append(getEntity().getDisplayName());
         builder.append(" - ");
         builder.append(quality.getTermName());
-        if (relatedEntity != null) {
+        if (getRelatedEntity() != null) {
             builder.append(" - ");
-            builder.append(relatedEntity.getDisplayName());
+            builder.append(getRelatedEntity().getDisplayName());
         }
         return builder.toString();
 
@@ -61,11 +122,11 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     }
 
     public boolean equalsByName(PhenotypeStatement defaultStatement) {
-        if (entity != null ? !entity.equals(defaultStatement.getEntity()) : defaultStatement.getEntity() != null)
+        if (getEntity() != null ? !getEntity().equals(defaultStatement.getEntity()) : defaultStatement.getEntity() != null)
             return false;
         if (quality != null ? !quality.equals(defaultStatement.getQuality()) : defaultStatement.getQuality() != null)
             return false;
-        if (relatedEntity != null ? !relatedEntity.equals(defaultStatement.getRelatedEntity()) : defaultStatement.getRelatedEntity() != null)
+        if (getRelatedEntity() != null ? !getRelatedEntity().equals(defaultStatement.getRelatedEntity()) : defaultStatement.getRelatedEntity() != null)
             return false;
         if (!tag.equals(defaultStatement.getTag())) return false;
 
@@ -78,9 +139,9 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
         if (compStatement == null)
             return false;
 
-        if (entity != null ? !entity.equals(compStatement.entity) : compStatement.entity != null) return false;
+        if (getEntity() != null ? !getEntity().equals(compStatement.getEntity()) : compStatement.getEntity() != null) return false;
         if (quality != null ? !quality.equals(compStatement.quality) : compStatement.quality != null) return false;
-        if (relatedEntity != null ? !relatedEntity.equals(compStatement.relatedEntity) : compStatement.relatedEntity != null)
+        if (getRelatedEntity() != null ? !getRelatedEntity().equals(compStatement.getRelatedEntity()) : compStatement.getRelatedEntity() != null)
             return false;
         if (tag != null ? !tag.equals(compStatement.tag) : compStatement.tag != null) return false;
 
@@ -126,22 +187,22 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
         if (term == null)
             return false;
 
-        if (entity == null)
+        if (getEntity() == null)
             return false;
 
-        if (entity.getSuperterm().equals(term))
+        if (getEntity().getSuperterm().equals(term))
             return true;
 
-        if (entity.getSubterm() != null && entity.getSubterm().equals(term))
+        if (getEntity().getSubterm() != null && getEntity().getSubterm().equals(term))
             return true;
 
         if (quality != null && quality.equals(term))
             return true;
 
-        if (relatedEntity != null && relatedEntity.getSuperterm() != null && relatedEntity.getSuperterm().equals(term))
+        if (getRelatedEntity() != null && getRelatedEntity().getSuperterm() != null && getRelatedEntity().getSuperterm().equals(term))
             return true;
 
-        if (relatedEntity != null && relatedEntity.getSubterm() != null && relatedEntity.getSubterm().equals(term))
+        if (getRelatedEntity() != null && getRelatedEntity().getSubterm() != null && getRelatedEntity().getSubterm().equals(term))
             return true;
 
         return false;
@@ -157,12 +218,12 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     public boolean contains(GenericTerm term) {
         if (term == null)
             return false;
-        if (entity != null) {
-            if (entity.contains(term))
+        if (getEntity() != null) {
+            if (getEntity().contains(term))
                 return true;
         }
-        if (relatedEntity != null) {
-            if (relatedEntity.contains(term))
+        if (getRelatedEntity() != null) {
+            if (getRelatedEntity().contains(term))
                 return true;
         }
         return false;
@@ -199,13 +260,13 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     }
 
     public boolean hasObsoletePhenotype() {
-        if (entity.getSuperterm().isObsolete())
+        if (getEntity().getSuperterm().isObsolete())
             return true;
-        if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
+        if (getEntity().getSubterm() != null && getEntity().getSubterm().isObsolete())
             return true;
-        if (relatedEntity != null && relatedEntity.getSuperterm() != null && relatedEntity.getSuperterm().isObsolete())
+        if (getRelatedEntity() != null && getRelatedEntity().getSuperterm() != null && getRelatedEntity().getSuperterm().isObsolete())
             return true;
-        if (relatedEntity != null && relatedEntity.getSubterm() != null && relatedEntity.getSubterm().isObsolete())
+        if (getRelatedEntity() != null && getRelatedEntity().getSubterm() != null && getRelatedEntity().getSubterm().isObsolete())
             return true;
         return quality.isObsolete();
     }
@@ -237,9 +298,9 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     }
 
     public String getPhenoStatementString() {
-        if (relatedEntity == null)
-            return entity.toString() + " " + quality.getTermName() + " " + tag;
+        if (getRelatedEntity() == null)
+            return getEntity().toString() + " " + quality.getTermName() + " " + tag;
         else
-            return entity.toString() + " " + quality.getTermName() + " " + relatedEntity.toString() + " " + tag;
+            return getEntity().toString() + " " + quality.getTermName() + " " + getRelatedEntity().toString() + " " + tag;
     }
 }
