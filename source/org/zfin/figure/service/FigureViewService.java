@@ -504,6 +504,11 @@ public class FigureViewService {
         return figures;
     }
 
+    public boolean isLargeDataPublication(Publication publication) {
+        int figureCount = getFiguresForPublicationAndProbe(publication, null).size();
+        return figureCount > 50;
+    }
+
     public List<Figure> getOrderedFiguresForPublication(Publication publication) {
         List<Figure> figures = new ArrayList<>();
         figures.addAll(publication.getFigures());

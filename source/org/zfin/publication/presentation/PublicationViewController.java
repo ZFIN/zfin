@@ -149,6 +149,7 @@ PublicationViewController {
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
         model.addAttribute("ctdPublicationID", MatchingTermService.getCtdPubID(publication.getZdbID()));
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(publication));
         return "publication/publication-view";
     }
 
@@ -567,7 +568,7 @@ PublicationViewController {
 
         model.addAttribute("publication", publication);
 
-        if (PUBS_TO_DISALLOW_ALL_FIGURES_PAGE.contains(pubID)) {
+        if (figureViewService.isLargeDataPublication(publication)) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
             return "publication/publication-figures-unavailable";
         }
