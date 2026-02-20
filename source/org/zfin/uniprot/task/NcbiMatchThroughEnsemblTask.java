@@ -20,10 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -38,9 +35,9 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
  *
  * Description from ticket:
  * Our current NCBI Load is missing some potential matches between ZFIN and NCBI Gene records.  Our NCBI Load script matches on RNA sequence IDs and, in cases where there is no RNA sequence ID, there is no way to match records.
- * NCBI does annotate links to ZFIN genes and I’ve found that the associations they create are quite good.  So NCBI may have a correct match to a ZFIN gene, but we don’t have a reciprocal link.
+ * NCBI does annotate links to ZFIN genes and I've found that the associations they create are quite good.  So NCBI may have a correct match to a ZFIN gene, but we don't have a reciprocal link.
  * My goal with this report is to identify potential ZFIN/NCBI Gene matches that are supported by additional data, make those associations and pull data from NCBI Gene (including RefSeq IDs) onto ZFIN gene pages as is done with the current NCBI load.  The addition of this data adds to the robustness of ZFIN gene records and adding additional RefSeqs will allow us to associate more UniProt IDs and the resulting UniProt data.
- * A reasonable method to do this would be to find all NCBI Gene records that have a link to ZFIN. Ignore the NCBI Gene records to which we already have links.  For those NCBI Gene records with links to ZFIN that don’t have reciprocal links from ZFIN to NCBI, obtain the Ensembl gene ID in the NCBI Gene records and match those against Ensembl gene IDs on ZFIN gene records.  This list would contain links that NCBI has made to ZFIN and are supported by a shared Ensembl ID.
+ * A reasonable method to do this would be to find all NCBI Gene records that have a link to ZFIN. Ignore the NCBI Gene records to which we already have links.  For those NCBI Gene records with links to ZFIN that don't have reciprocal links from ZFIN to NCBI, obtain the Ensembl gene ID in the NCBI Gene records and match those against Ensembl gene IDs on ZFIN gene records.  This list would contain links that NCBI has made to ZFIN and are supported by a shared Ensembl ID.
  * Finally, identify any instances where the Ensembl ID from NCBI hits a ZFIN gene that already contains a link to an NCBI Gene record (there is some sort of conflict that needs to be resolved).
  *
  * Call with first argument being the input file (https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz)
@@ -50,6 +47,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private static final String CSV_FILE = "ncbi_matches_through_ensembl.csv";
+
     private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
     private String inputFileUrl;
 
@@ -91,8 +89,10 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         try {
             createTemporaryNcbiTable(session);
             copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
+
             List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
             List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
+
             transaction.commit();
 
             addRnaAccessionsToReportRows(ncbiMatchReportRows);
@@ -298,33 +298,35 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *  The main logic for comparing the NCBI data to the ZFIN data.
      *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
      *  @param session The Hibernate session to use (must be part of an active transaction)
-     *  @param toDelete Map of DBLinks that are slated to be deleted (can be null). If provided, logic will be as though those links do not exist.
-     *
+     *  @param toDelete Map of DBLinks that are slated to be deleted (used to exclude from matching)
      */
     private List<Object[]> getReportOfPotentialNcbiGenes(Session session, Map<String, String> toDelete) {
 
-        //create ncbi2zfin table -- based on data loaded through NCBI
+        // Create temp table of dblinks to exclude
+        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+
+        // Create tmp_ncbi2zfin table from NCBI cross-refs
         String query = """
             SELECT geneId AS ncbi_id, replace(t.xref, 'ZFIN:', '') AS zdb_id
-            INTO TEMP TABLE tmp_ncbi2zfin 
+            INTO TEMP TABLE tmp_ncbi2zfin
             FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) AS t (xref)
-            WHERE t.xref LIKE 'ZFIN:%'                
+            WHERE t.xref LIKE 'ZFIN:%'
         """;
         session.createNativeQuery(query).executeUpdate();
 
         //create ncbi2ensembl table -- based on data loaded through NCBI
         query = """
-            SELECT geneId as ncbi_id, replace(t.xref, 'Ensembl:', '') as ensembl_id, symbol 
+            SELECT geneId as ncbi_id, replace(t.xref, 'Ensembl:', '') as ensembl_id, symbol
             INTO TEMP TABLE tmp_ncbi2ensembl
             FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) as t(xref)
-            WHERE t.xref like 'Ensembl:%' 
+            WHERE t.xref like 'Ensembl:%'
         """;
         session.createNativeQuery(query).executeUpdate();
 
         //how many ncbi genes have a link to zfin, but we don't have a reciprocal link?
         query = """
             SELECT count(*) AS num_ncbi_genes_without_zfin_links FROM
-            (SELECT DISTINCT n2z.zdb_id 
+            (SELECT DISTINCT n2z.zdb_id
             FROM tmp_ncbi2zfin n2z
                 LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
                     AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
@@ -333,8 +335,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         """;
         Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
-
-        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
 
         //Intermediate table for debugging:
         // select dblink_linked_recid as zdb_id, dblink_acc_num as ncbi_id into temp table tmp_zfin2ncbi from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' ;
