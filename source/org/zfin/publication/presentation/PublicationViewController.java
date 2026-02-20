@@ -63,6 +63,10 @@ import static org.zfin.util.ZfinStringUtils.objectToJson;
 public class
 PublicationViewController {
 
+    private static final Set<String> PUBS_TO_DISALLOW_ALL_FIGURES_PAGE = Set.of(
+        "ZDB-PUB-060503-2"
+    );
+
     private Logger logger = LogManager.getLogger(PublicationViewController.class);
 
     @Autowired
@@ -551,6 +555,8 @@ PublicationViewController {
     public String showAllFigures(@PathVariable String pubID,
                                  @RequestParam(value = "probeZdbID", required = false) String probeZdbID,
                                  @RequestParam(value = "showDataOnly", required = false) boolean showDataOnly,
+                                 @ModelAttribute("pagination") PaginationBean pagination,
+                                 HttpServletRequest request,
                                  Model model) {
         Publication publication = publicationRepository.getPublication(pubID);
 
@@ -560,6 +566,12 @@ PublicationViewController {
         }
 
         model.addAttribute("publication", publication);
+
+        if (PUBS_TO_DISALLOW_ALL_FIGURES_PAGE.contains(pubID)) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
+            return "publication/publication-figures-unavailable";
+        }
+
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
@@ -589,9 +601,7 @@ PublicationViewController {
             } else {
                 figures.addAll(publication.getFigures());
             }
-
         }
-
 
         figures.sort(ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
@@ -599,25 +609,42 @@ PublicationViewController {
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
-        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = figureViewService.getFigurePhenotypeSummaries(figures);
+        // When showDataOnly, use a lightweight query to filter figures with data
+        // instead of computing full summaries for every figure
+        List<Figure> filteredFigures;
+        if (showDataOnly) {
+            Set<String> figureIdsWithData = getFigureRepository().getFigureIdsWithData(
+                figures.stream().map(Figure::getZdbID).collect(Collectors.toList()));
+            filteredFigures = figures.stream()
+                .filter(figure -> figureIdsWithData.contains(figure.getZdbID()))
+                .collect(Collectors.toList());
+        } else {
+            filteredFigures = figures;
+        }
 
+        // Paginate, then compute full summaries only for the current page
+        pagination.setMaxDisplayRecords(10);
+        pagination.setTotalRecords(filteredFigures.size());
+        pagination.setRequestUrl(request.getRequestURL());
+        pagination.setQueryString(request.getQueryString());
+        int start = pagination.getFirstRecord() - 1;
+        int end = Math.min(start + 10, filteredFigures.size());
+        List<Figure> pagedFigures = filteredFigures.subList(start, end);
+
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = figureViewService.getFigurePhenotypeSummaries(pagedFigures);
         Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
-        figures.forEach(figure -> {
-            FigureExpressionSummary figureExpressionSummary = figureViewService.getFigureExpressionSummary(figure);
-            if (figureExpressionSummary.isNotEmpty())
-                expressionSummaryMap.put(figure, figureExpressionSummary);
+        pagedFigures.forEach(figure -> {
+            FigureExpressionSummary summary = figureViewService.getFigureExpressionSummary(figure);
+            if (summary.isNotEmpty())
+                expressionSummaryMap.put(figure, summary);
         });
 
-        List<Figure> figuresWithDataOnly = figures.stream()
-            .filter(figure -> (expressionSummaryMap.get(figure) != null || phenotypeSummaryMap.get(figure) != null))
-            .collect(Collectors.toList());
-        if (!showDataOnly) {
-            model.addAttribute("figures", figures);
-            model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
-        }else {
-            model.addAttribute("figures", figuresWithDataOnly);
-            model.addAttribute("figureCaptions", figuresWithDataOnly.stream().map(Figure::getLabel).collect(toList()));
+        model.addAttribute("figures", pagedFigures);
+        List<String> captions = pagedFigures.stream().map(Figure::getLabel).collect(toList());
+        if (pagination.getLastRecord() < pagination.getTotalRecords()) {
+            captions.add("More Figures...");
         }
+        model.addAttribute("figureCaptions", captions);
         model.addAttribute("showDataOnly", showDataOnly);
         model.addAttribute("allFiguresCssClass", !showDataOnly ? "active" : "");
         model.addAttribute("dataFiguresCssClass", showDataOnly ? "active" : "");
