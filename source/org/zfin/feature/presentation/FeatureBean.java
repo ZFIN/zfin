@@ -6,7 +6,7 @@ import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeatureNote;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.VariantSequence;
@@ -43,7 +43,7 @@ public class FeatureBean {
     private String zdbID;
     private Set<FeatureDBLink> summaryPageDbLinks;
     private Set<FeatureDBLink> genbankDbLinks;
-    private GenomeBrowserImage gBrowseImage;
+    private JBrowse2Image gBrowseImage;
     private List<GenotypeDisplay> genotypeDisplays;
     private MutationDetailsPresentation mutationDetails;
     private List<PublicationAttribution> dnaChangeAttributions;

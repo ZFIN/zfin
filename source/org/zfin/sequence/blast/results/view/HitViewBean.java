@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.results.view;
 
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.DBLink;
@@ -30,7 +30,7 @@ public class HitViewBean extends ExpressionMapBean{
     private Set<Marker> genes ;
     private String definition ;
     private List<HighScoringPair> highScoringPairs ;
-    private GenomeBrowserImage gbrowseImage;
+    private JBrowse2Image gbrowseImage;
 
 
     public String getAccessionNumber() {
@@ -158,11 +158,11 @@ public class HitViewBean extends ExpressionMapBean{
     }
 
 
-    public GenomeBrowserImage getGbrowseImage() {
+    public JBrowse2Image getGbrowseImage() {
         return gbrowseImage;
     }
 
-    public void setGbrowseImage(GenomeBrowserImage gbrowseImage) {
+    public void setGbrowseImage(JBrowse2Image gbrowseImage) {
         this.gbrowseImage = gbrowseImage;
     }
 

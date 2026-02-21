@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import lombok.Data;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.service.TranscriptService;
 
@@ -14,7 +14,7 @@ public class RelatedTranscriptDisplay  {
     private List<RelatedMarker> nonWithdrawnTranscripts;
     private List<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
-    private GenomeBrowserImage gbrowseImage;
+    private JBrowse2Image gbrowseImage;
 
     public RelatedTranscriptDisplay() {
         transcripts = new ArrayList<>();

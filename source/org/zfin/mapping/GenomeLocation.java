@@ -8,7 +8,7 @@ import org.hibernate.annotations.Parameter;
 import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -90,7 +90,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     @JoinColumn(name = "sfclg_evidence_code")
     private GenericTerm evidence;
 
-    public String getUrl(GenomeBrowserImage genomeBrowserImage) {
+    public String getUrl(JBrowse2Image genomeBrowserImage) {
         if (List.of(ZFIN, ZFIN_Zv9, ZFIN_NCBI).contains(source)) {
             return genomeBrowserImage.getFullLinkUrl();
         } else {

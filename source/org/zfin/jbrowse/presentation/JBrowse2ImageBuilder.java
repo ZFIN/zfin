@@ -4,8 +4,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -20,7 +18,7 @@ import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
-public class JBrowse2ImageBuilder implements GenomeBrowserImageBuilder {
+public class JBrowse2ImageBuilder {
 
     private GenomeBrowserBuild genomeBuild;
 
@@ -42,8 +40,7 @@ public class JBrowse2ImageBuilder implements GenomeBrowserImageBuilder {
     private String highlightString;
     private Integer height;
 
-    @Override
-    public GenomeBrowserImage build() {
+    public JBrowse2Image build() {
 
         if (highlightMarker != null) {
             highlightLandmark = getHighlightLandmarkByMarkerOrFeature(highlightMarker);
@@ -81,7 +78,7 @@ public class JBrowse2ImageBuilder implements GenomeBrowserImageBuilder {
         return new JBrowse2Image(this);
     }
 
-    public GenomeBrowserImage buildForClone(Clone clone) {
+    public JBrowse2Image buildForClone(Clone clone) {
         List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
         if (CollectionUtils.isEmpty(cloneLocations)) {
             return null;
@@ -125,136 +122,113 @@ public class JBrowse2ImageBuilder implements GenomeBrowserImageBuilder {
         .orElse(null);
     }
 
-    @Override
-    public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
+    public JBrowse2ImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
         this.genomeBuild = genomeBuild;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder landmark(String landmark) {
+    public JBrowse2ImageBuilder landmark(String landmark) {
         this.landmark = landmark;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark) {
+    public JBrowse2ImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark) {
         this.landmarkLocation = landmark;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder withCenteredRange(int range) {
+    public JBrowse2ImageBuilder withCenteredRange(int range) {
         this.centeredRange = range;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder withPadding(int startPadding, int endPadding) {
+    public JBrowse2ImageBuilder withPadding(int startPadding, int endPadding) {
         this.startPadding = startPadding;
         this.endPadding = endPadding;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder withRelativePadding(double padding) {
+    public JBrowse2ImageBuilder withRelativePadding(double padding) {
         relativePadding = padding;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder withPadding(int padding) {
+    public JBrowse2ImageBuilder withPadding(int padding) {
         return withPadding(padding, padding);
     }
 
-    @Override
-    public GenomeBrowserImageBuilder withHeight(int height) {
+    public JBrowse2ImageBuilder withHeight(int height) {
         this.height = height;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder tracks(GenomeBrowserTrack... tracks) {
+    public JBrowse2ImageBuilder tracks(GenomeBrowserTrack... tracks) {
         return tracks(Arrays.asList(tracks));
     }
 
-    private GenomeBrowserImageBuilder tracks(Collection<GenomeBrowserTrack> tracks) {
+    private JBrowse2ImageBuilder tracks(Collection<GenomeBrowserTrack> tracks) {
         this.tracks = tracks;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder highlight(String highlight) {
+    public JBrowse2ImageBuilder highlight(String highlight) {
         highlightString = highlight;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder highlight(Marker highlight) {
+    public JBrowse2ImageBuilder highlight(Marker highlight) {
         highlightMarker = highlight;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder highlight(Feature highlight) {
+    public JBrowse2ImageBuilder highlight(Feature highlight) {
         highlightFeature = highlight;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder highlightColor(String highlightColor) {
+    public JBrowse2ImageBuilder highlightColor(String highlightColor) {
         this.highlightColor = highlightColor;
         return this;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder grid(boolean grid) {
+    public JBrowse2ImageBuilder grid(boolean grid) {
         this.grid = grid;
         return this;
     }
 
-    @Override
     public String getLandmark() {
         return landmark;
     }
 
-    @Override
     public GenomeBrowserBuild getGenomeBuild() {
         return genomeBuild;
     }
 
-    @Override
     public Collection<GenomeBrowserTrack> getTracks() {
         return tracks;
     }
 
-    @Override
     public String getHighlightLandmark() {
         return highlightLandmark;
     }
 
-    @Override
     public String getHighlightColor() {
         return highlightColor;
     }
 
-    @Override
     public boolean isGrid() {
         return grid;
     }
 
-    @Override
     public Feature getHighlightFeature() {
         return highlightFeature;
     }
 
-    @Override
     public Integer getHeight() {
         return height;
     }
 
-    @Override
-    public GenomeBrowserImageBuilder setBuild(Assembly assembly) {
+    public JBrowse2ImageBuilder setBuild(Assembly assembly) {
         switch(assembly.getName()){
             case "GRCz12tu" -> genomeBuild = GenomeBrowserBuild.CURRENT;
             case "GRCz11" -> genomeBuild = GenomeBrowserBuild.GRCZ11;

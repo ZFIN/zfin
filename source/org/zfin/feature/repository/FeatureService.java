@@ -18,9 +18,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
+import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -300,7 +298,7 @@ public class FeatureService {
     }
 
 
-    public static GenomeBrowserImage getGbrowseImage(Feature feature) {
+    public static JBrowse2Image getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
         List<FeatureGenomeLocation> locations1 = getFeatureGenomeLocations(feature);
         List<FeatureGenomeLocation> locations = locations1.stream().sorted(new GenomeVersionComparator<>()).toList();
@@ -312,7 +310,7 @@ public class FeatureService {
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise, just show the feature with
         // some appropriate amount of padding.
-        GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+        JBrowse2ImageBuilder imageBuilder = new JBrowse2ImageBuilder()
             .highlight(feature);
 
         GenomeLocation.Source source;
@@ -351,7 +349,7 @@ public class FeatureService {
     }
 
     public static TreeSet<BrowserLink> getGenomeBrowserLinks(Feature feature) {
-        GenomeBrowserImage genomeBrowserImage = getGbrowseImage(feature);
+        JBrowse2Image genomeBrowserImage = getGbrowseImage(feature);
         if (genomeBrowserImage != null) {
             BrowserLink link = new BrowserLink();
             link.setUrl(genomeBrowserImage.getFullLinkUrl());

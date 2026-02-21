@@ -5,14 +5,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.GenomeBrowserType;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.util.URLCreator;
 
 import java.util.Collection;
 import java.util.List;
 
-public class JBrowse2Image implements GenomeBrowserImage {
+public class JBrowse2Image {
 
 	private final String landmark;
 	private final Collection<GenomeBrowserTrack> tracks;
@@ -41,12 +40,10 @@ public class JBrowse2Image implements GenomeBrowserImage {
 		this.linkUrlBase = this.build.getJBrowsePath();
 	}
 
-	@Override
 	public String getReactComponentId() {
 		return "Jbrowse2Image";
 	}
 
-	@Override
 	public String getImageUrl() {
 		if (imageUrl == null) {
 			URLCreator url = new URLCreator("");
@@ -98,7 +95,6 @@ public class JBrowse2Image implements GenomeBrowserImage {
 		return url;
 	}
 
-	@Override
 	public String getFullLinkUrl() {
 		URLCreator url = new URLCreator(calculateBaseUrl());
 		if (StringUtils.isNotBlank(landmark)) {
@@ -121,7 +117,6 @@ public class JBrowse2Image implements GenomeBrowserImage {
 	}
 
 
-	@Override
 	public String getLinkUrl() {
 		if (linkUrl == null) {
 			URLCreator url = new URLCreator(linkUrlBase);
@@ -144,24 +139,20 @@ public class JBrowse2Image implements GenomeBrowserImage {
 		return linkUrl;
 	}
 
-	@Override
 	public String getLandmark() {
 		return landmark;
 	}
 
-	@Override
 	public String getChromosome() {
 		if (landmark == null)
 			return "";
 		return landmark.substring(0, landmark.indexOf(":"));
 	}
 
-	@Override
 	public GenomeBrowserType getType() {
 		return type;
 	}
 
-	@Override
 	public Integer getHeight() {
 		if (height == null) {
 			return DEFAULT_HEIGHT;
@@ -169,7 +160,6 @@ public class JBrowse2Image implements GenomeBrowserImage {
 		return height;
 	}
 
-	@Override
 	public String getBuild() {
 		return build.getValue();
 	}

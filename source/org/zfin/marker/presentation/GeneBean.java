@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.mapping.presentation.BrowserLink;
 
 import java.util.List;
@@ -19,5 +19,5 @@ public class GeneBean extends MarkerBean {
     private TreeSet<BrowserLink> locations;
     private Set<BrowserLink> transcriptLocations;
 
-    GenomeBrowserImage refSeqLocations;
+    JBrowse2Image refSeqLocations;
 }

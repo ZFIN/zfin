@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
-<%@ attribute name="gbrowseImage" required="false" type="org.zfin.genomebrowser.presentation.GenomeBrowserImage" %>
+<%@ attribute name="gbrowseImage" required="false" type="org.zfin.jbrowse.presentation.JBrowse2Image" %>
 
 <c:choose>
     <c:when test="${empty locations}">

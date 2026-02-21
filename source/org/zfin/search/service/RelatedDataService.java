@@ -17,7 +17,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.JBrowse2Image;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -123,7 +123,7 @@ public class RelatedDataService {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.ALT)) {
 
                 Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(id);
-                GenomeBrowserImage gBrowseImage = FeatureService.getGbrowseImage(feature);
+                JBrowse2Image gBrowseImage = FeatureService.getGbrowseImage(feature);
                 if (gBrowseImage != null) {
                     gBrowseLink = makeLink(GENOME_BROWSER, gBrowseImage.getLinkUrl());
                     links.add(gBrowseLink);

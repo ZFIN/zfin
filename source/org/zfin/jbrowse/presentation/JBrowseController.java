@@ -13,8 +13,6 @@ import org.zfin.framework.api.RestErrorException;
 import org.zfin.framework.api.RestErrorMessage;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -68,7 +66,7 @@ public class JBrowseController {
 
         GenomeLocation location = validateLocations(locations);
 
-        GenomeBrowserImage image = GenomeBrowserFactory.getStaticImageBuilder()
+        JBrowse2Image image = new JBrowse2ImageBuilder()
             .setLandmarkByGenomeLocation(location)
             .tracks(tracks.toArray(new GenomeBrowserTrack[tracks.size()]))
             .genomeBuild(GenomeBrowserBuild.getBySource(source))
