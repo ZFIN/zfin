@@ -3,47 +3,45 @@ String validateData = "${project.rootDir}/server_apps/DB_maintenance"
 def env = System.getenv()
 def dbname = env['DBNAME']
 
-//not sure about this part
-
 if (project.hasProperty("jobName")) {
     ext.cmdargs = project.getProperty("jobName")
 } else {
     ext.cmdargs = ""
 }
 
-
 task updateDOIs(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.datatransfer.doi.UpdateDOIJob'
-    args= [  10,
+    mainClass = 'org.zfin.datatransfer.doi.UpdateDOIJob'
+    args = [10,
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
             "Update-DOIs_m"
-            ]
+    ]
 }
-
 
 task regenerateWebhostCuratedDatabases(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob'
+    mainClass = 'org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
             "Regenerate-WebHost-Curated-Databases_d"
     ]
 }
+
 task validateBlastDatabases(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.sequence.blast.ValidateBlastDatabases'
+    mainClass = 'org.zfin.sequence.blast.ValidateBlastDatabases'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
             "Validate-Blast-Databases_d"
     ]
 }
+
 task loadGafGoa(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.datatransfer.go.service.GafLoadJob'
+    mainClass = 'org.zfin.datatransfer.go.service.GafLoadJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/gafLoad",
@@ -54,28 +52,25 @@ task loadGafGoa(type: JavaExec) {
             "ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz",
             "ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz",
             "org.zfin.datatransfer.go.GoaGafParser"
-
     ]
 }
 
 task loadGafFPInference(type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'org.zfin.datatransfer.go.service.GafLoadJob'
-        args = [
-                "${webDir}/zfin.properties",
-                "${validateData}/gafLoad",
-                "Load-GAF-FP-Inference_m",
-                "FP Inferences",
-                "https://current.geneontology.org/products/upstream_and_raw_data/zfin-prediction.gaf",
-                "org.zfin.datatransfer.go.FpInferenceGafParser"
-
-        ]
-
-    }
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.datatransfer.go.service.GafLoadJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/gafLoad",
+            "Load-GAF-FP-Inference_m",
+            "FP Inferences",
+            "https://current.geneontology.org/products/upstream_and_raw_data/zfin-prediction.gaf",
+            "org.zfin.datatransfer.go.FpInferenceGafParser"
+    ]
+}
 
 task loadNoctuaGpad(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.datatransfer.go.service.GafLoadJob'
+    mainClass = 'org.zfin.datatransfer.go.service.GafLoadJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/gafLoad",
@@ -84,19 +79,16 @@ task loadNoctuaGpad(type: JavaExec) {
             "https://snapshot.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz",
             "org.zfin.datatransfer.go.GoaGafParser"
     ]
-
-
 }
-
 
 task loadFlankSeq(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
+    mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
 }
 
 task checkEapPatoTerms(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.ontology.jobs.CheckEapPatoTermsJob'
+    mainClass = 'org.zfin.ontology.jobs.CheckEapPatoTermsJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
@@ -106,39 +98,27 @@ task checkEapPatoTerms(type: JavaExec) {
 
 task removeGoTermsFromWithdrawnMarkers(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob'
+    mainClass = 'org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
             "Remove-GO-Terms-From-Withdrawn-Markers_w"
     ]
-
 }
 
 task microarrayUpdate(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.datatransfer.microarray.MicroarrayWebserviceJob'
+    mainClass = 'org.zfin.datatransfer.microarray.MicroarrayWebserviceJob'
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
             "Microarray-Update_w"
     ]
-//not sure how to convert
-    if ("${validateData}/report_data/Microarray-Update_w/Microarray-Update_w.html".contains("Error")){
-        throw new GradleException("Error in microarray update")
-    }
-   /* <fail message="Error in microarray update">
-    <condition>
-    <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
-            </condition>
-    </fail>*/
-
 }
-task validateDataReportSimple(type: JavaExec) {
 
-    //how do you specify "jobName" here...It will get passed as a parameter in Jenkisn config.xml
+task validateDataReportSimple(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
+    mainClass = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
     args = [
             "${dbname}",
             "${cmdargs}",
@@ -146,5 +126,3 @@ task validateDataReportSimple(type: JavaExec) {
             "${validateData}/report_data",
     ]
 }
-
-

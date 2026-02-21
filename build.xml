@@ -355,26 +355,6 @@
         </delete>
     </target>
 
-    <macrodef name="moveWebApp">
-        <attribute name="from"/>
-        <attribute name="to"/>
-        <attribute name="overwrite" default="true"/>
-        <attribute name="failonerror" default="false"/>
-        <sequential>
-            <echo message="@{from}"/>
-            <move todir="@{to}" overwrite="@{overwrite}" failonerror="@{failonerror}">
-                <fileset dir="@{from}">
-                    <include name="WEB-INF/**"/>
-                    <include name="dist/**/"/>
-                    <include name="gwt/**"/>
-                    <include name="images/**"/>
-                    <include name="fonts/**"/>
-                    <include name="templates/**"/>
-                </fileset>
-            </move>
-        </sequential>
-    </macrodef>
-
     <macrodef name="emailMessage">
         <attribute name="message"/>
         <attribute name="email"/>
@@ -402,18 +382,18 @@
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-war-and-deploy"
+    <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-tomcat-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
     </target>
 
-    <target name="dirtydeploy" depends="npmBuild">
-        <gradle task="devCompile"/>
+    <target name="dirtydeploy">
+        <gradle task="dirtydeploy"/>
     </target>
 
-    <target name="dirtydeploy-watch" depends="npmBuild">
+    <target name="watch">
         <exec executable="./gradlew" dir="." failonerror="true">
-            <arg value="devWatch" />
+            <arg value="watch" />
             <arg value="--continuous" />
         </exec>
     </target>
