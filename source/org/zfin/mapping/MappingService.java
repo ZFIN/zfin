@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.jbrowse.presentation.JBrowse2Image;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.presentation.BrowserLink;
@@ -169,7 +169,7 @@ public class MappingService {
         return query.list();
     }
 
-    public static TreeSet<BrowserLink> getJBrowserBrowserLinks(List<MarkerGenomeLocation> genomeMarkerLocationList, JBrowse2Image genomeBrowserImage, Assembly assembly) {
+    public static TreeSet<BrowserLink> getJBrowserBrowserLinks(List<MarkerGenomeLocation> genomeMarkerLocationList, GenomeBrowserImage genomeBrowserImage, Assembly assembly) {
         TreeSet<BrowserLink> locations = new TreeSet<>();
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
@@ -222,7 +222,7 @@ public class MappingService {
         return locations;
     }
 
-    public static TreeSet<BrowserLink> getJBrowserBrowserLinksForClones(JBrowse2Image genomeBrowserImage) {
+    public static TreeSet<BrowserLink> getJBrowserBrowserLinksForClones(GenomeBrowserImage genomeBrowserImage) {
         TreeSet<BrowserLink> locations = new TreeSet<>();
         BrowserLink location = new BrowserLink();
         location.setUrl(genomeBrowserImage.getFullLinkUrl());

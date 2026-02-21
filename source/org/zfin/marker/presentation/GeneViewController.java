@@ -22,7 +22,8 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
@@ -144,13 +145,13 @@ public class GeneViewController {
             MarkerGenomeLocation landmark = markerGenomeLocations.get(0);
             int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
             int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
-            JBrowse2ImageBuilder refseqBuilder = new JBrowse2ImageBuilder()
+            GenomeBrowserImageBuilder refseqBuilder = new GenomeBrowserImageBuilder()
                 .setBuild(latestAssembly)
                 .setLandmarkByGenomeLocation(landmark)
                 // add 10% left padding and 5% right padding
                 .withPadding(startPadding, endPadding)
                 .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
-            JBrowse2Image genomeBrowserImageSequence = refseqBuilder.build();
+            GenomeBrowserImage genomeBrowserImageSequence = refseqBuilder.build();
             // if GRCz12 then show jBrowse image
             if (latestAssembly.getName().equals(GRCZ12TU)) {
                 geneBean.setRefSeqLocations(genomeBrowserImageSequence);
@@ -162,7 +163,7 @@ public class GeneViewController {
         // Transcripts
         RelatedTranscriptDisplay relatedTranscriptsForGene = TranscriptService.getRelatedTranscriptsForGene(gene);
         geneBean.setRelatedTranscriptDisplay(relatedTranscriptsForGene);
-        JBrowse2Image gbrowseImageTranscripts = relatedTranscriptsForGene.getGbrowseImage();
+        GenomeBrowserImage gbrowseImageTranscripts = relatedTranscriptsForGene.getGbrowseImage();
         if (gbrowseImageTranscripts != null) {
             Set<BrowserLink> linkSet = new LinkedHashSet<>();
             BrowserLink link = new BrowserLink();

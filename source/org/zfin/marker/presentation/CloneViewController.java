@@ -14,7 +14,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
-import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -104,7 +104,7 @@ public class CloneViewController {
 
 		List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
 		if (cloneLocations.size() > 0) {
-			JBrowse2ImageBuilder imageBuilder = new JBrowse2ImageBuilder();
+			GenomeBrowserImageBuilder imageBuilder = new GenomeBrowserImageBuilder();
 			imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ11);
 			cloneBean.setImage(imageBuilder.buildForClone(clone));
 			TreeSet<BrowserLink> locations = MappingService.getJBrowserBrowserLinksForClones(cloneBean.getImage());

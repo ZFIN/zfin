@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.*;
@@ -132,7 +132,7 @@ public class TranscriptService {
             MarkerGenomeLocation landmark = getLinkageRepository().getGenomeLocation(gene, locationSource).get(0);
             int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
             int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
-            JBrowse2ImageBuilder imageBuilder = new JBrowse2ImageBuilder()
+            GenomeBrowserImageBuilder imageBuilder = new GenomeBrowserImageBuilder()
                 .setLandmarkByGenomeLocation(landmark)
                 .genomeBuild(GRCZ11)
                 // add 10% left padding and 5% right padding

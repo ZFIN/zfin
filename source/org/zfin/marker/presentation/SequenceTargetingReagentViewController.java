@@ -19,7 +19,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.jbrowse.presentation.JBrowse2ImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
@@ -280,7 +280,7 @@ public class SequenceTargetingReagentViewController {
             mergedLocation.setStart(Math.min(mergedLocation.getStart(), strLocations.get(0).getStart()));
             mergedLocation.setEnd(Math.max(mergedLocation.getEnd(), strLocations.get(0).getEnd()));
 
-            sequenceTargetingReagentBean.addGBrowseImage(new JBrowse2ImageBuilder()
+            sequenceTargetingReagentBean.addGBrowseImage(new GenomeBrowserImageBuilder()
                     .setLandmarkByGenomeLocation(mergedLocation)
                     .withRelativePadding(0.1)
                     .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_STRS))
@@ -291,7 +291,7 @@ public class SequenceTargetingReagentViewController {
         } else {
             // otherwise: just show each STR location with 10kbp padding
             for (MarkerGenomeLocation location : strLocations) {
-                sequenceTargetingReagentBean.addGBrowseImage(new JBrowse2ImageBuilder()
+                sequenceTargetingReagentBean.addGBrowseImage(new GenomeBrowserImageBuilder()
                         .setLandmarkByGenomeLocation(location)
                         .withPadding(10000)
                         .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))

@@ -66,7 +66,7 @@ public class JBrowseController {
 
         GenomeLocation location = validateLocations(locations);
 
-        JBrowse2Image image = new JBrowse2ImageBuilder()
+        GenomeBrowserImage image = new GenomeBrowserImageBuilder()
             .setLandmarkByGenomeLocation(location)
             .tracks(tracks.toArray(new GenomeBrowserTrack[tracks.size()]))
             .genomeBuild(GenomeBrowserBuild.getBySource(source))

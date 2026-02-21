@@ -1,7 +1,7 @@
 package org.zfin.mapping.presentation;
 
 import lombok.Data;
-import org.zfin.jbrowse.presentation.JBrowse2Image;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 
 @Data
 public class BrowserLink implements Comparable<BrowserLink> {
@@ -9,7 +9,7 @@ public class BrowserLink implements Comparable<BrowserLink> {
     private String name;
     private int order;
 
-    private JBrowse2Image genomeBrowserImage;
+    private GenomeBrowserImage genomeBrowserImage;
 
     @Override
     public int compareTo(BrowserLink o) {

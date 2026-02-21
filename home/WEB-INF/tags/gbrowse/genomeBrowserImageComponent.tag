@@ -3,7 +3,7 @@
 <%@ tag pageEncoding="UTF-8" %>
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<%@ attribute name="image" type="org.zfin.jbrowse.presentation.JBrowse2Image" required="true"
+<%@ attribute name="image" type="org.zfin.jbrowse.presentation.GenomeBrowserImage" required="true"
               description="GenomeBrowserImage object" %>
 <%@ attribute name="loopIndex" required="false" %>
 <%@ attribute name="themeColor" required="false" %>

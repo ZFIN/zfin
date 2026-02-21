@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.View;
-import org.zfin.jbrowse.presentation.JBrowse2ImageSimilarComparator;
-import org.zfin.jbrowse.presentation.JBrowse2Image;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageSimilarComparator;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.profile.MarkerSupplier;
@@ -35,7 +35,7 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     @JsonView(View.SequenceTargetingReagentAPI.class)
     private List<Feature> genomicFeatures;
     private List<PhenotypeDisplay> phenotypeDisplays;
-    private Set<JBrowse2Image> gBrowseImages;
+    private Set<GenomeBrowserImage> gBrowseImages;
     private List<ExpressionDisplay> expressionDisplays;
     private List<PhenotypeDisplay> allPhenotypeDisplays;
 
@@ -138,13 +138,13 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     }
 
     // the b in browse is lowercase in the method name to make JSP happy for some reason
-    public Set<JBrowse2Image> getGbrowseImages() {
+    public Set<GenomeBrowserImage> getGbrowseImages() {
         return gBrowseImages;
     }
 
-    public void addGBrowseImage(JBrowse2Image image) {
+    public void addGBrowseImage(GenomeBrowserImage image) {
         if (gBrowseImages == null) {
-            gBrowseImages = new TreeSet<>(new JBrowse2ImageSimilarComparator());
+            gBrowseImages = new TreeSet<>(new GenomeBrowserImageSimilarComparator());
         }
         gBrowseImages.add(image);
     }
