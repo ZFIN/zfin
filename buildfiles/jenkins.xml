@@ -78,6 +78,16 @@
         <move tofile="${env.TARGETROOT}/utilities/bin/jenkins-cli.jar" overwrite="true">
             <fileset dir="${env.TARGETROOT}/utilities" includes="cli-*.jar"/>
         </move>
+
+        <!-- Add a simple wrapper script to make it easier to use the CLI tool.
+        Handles authentication and the Jenkins URL, so users can just run "jenkins-cli" with the appropriate arguments
+         -->
+        <echo file="${env.TARGETROOT}/utilities/bin/jenkins-cli" append="false"><![CDATA[#!/bin/bash
+SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
+INITIAL_ADMIN_PASSWORD=$(cat "$SCRIPTPATH/../../server_apps/jenkins/jenkins-home/secrets/initialAdminPassword")
+java -jar "$SCRIPTPATH/jenkins-cli.jar" -auth admin:$INITIAL_ADMIN_PASSWORD -s http://jenkins:9499/jobs/ "$@"
+]]></echo>
+        <chmod perm="u+x" file="${env.TARGETROOT}/utilities/bin/jenkins-cli"/>
     </target>
 
     <target name="create-new-validatedata-job">

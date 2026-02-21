@@ -9,6 +9,7 @@ alias restarttomcatd='cd /opt/zfin/source_roots/zfin.org/docker && docker compos
 export PATH=/opt/misc/groovy/bin:$PATH
 export PATH=/opt/postgres/postgresql/bin:$PATH
 export PATH=/opt/ab-blast:$PATH
+export PATH=$PATH:$TARGETROOT/utilities/bin
 
 # Prompt
 export PROMPT_DIRTRIM=2
