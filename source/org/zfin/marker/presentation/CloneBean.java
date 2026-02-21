@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Clone;
 import org.zfin.sequence.MarkerDBLinkList;

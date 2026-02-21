@@ -11,9 +11,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MappingService;
@@ -107,7 +105,7 @@ public class PseudoGeneViewController {
             int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
             int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
 
-            GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+            GenomeBrowserImageBuilder refseqBuilder = new GenomeBrowserImageBuilder()
                 .setLandmarkByGenomeLocation(landmark)
                 // add 10% left padding and 5% right padding
                 .withPadding(startPadding, endPadding)

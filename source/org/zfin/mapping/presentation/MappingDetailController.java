@@ -16,8 +16,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
@@ -43,8 +42,6 @@ import static org.zfin.repository.RepositoryFactory.*;
 @RequestMapping(value = "/mapping")
 public class MappingDetailController {
 
-    @Autowired
-    private GenomeBrowserFactory genomeBrowserFactory;
 
     @RequestMapping("/panel-detail/{panelID}")
     protected String showPanelDetail(@PathVariable String panelID,
@@ -273,7 +270,7 @@ public class MappingDetailController {
         List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
             if (List.of(ZFIN_NCBI, ZFIN).contains(genomeLocation.getSource())) {
-                GenomeBrowserImage gbrowseImage = genomeBrowserFactory.getImageBuilder()
+                GenomeBrowserImage gbrowseImage = new GenomeBrowserImageBuilder()
                     .setLandmarkByGenomeLocation(genomeLocation)
                     .withCenteredRange(500000)
                     .highlight(trackingGene) //ignored if using jbrowse for now

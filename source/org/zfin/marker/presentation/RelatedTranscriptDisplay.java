@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import lombok.Data;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.service.TranscriptService;
 

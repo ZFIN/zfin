@@ -18,9 +18,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -312,7 +310,7 @@ public class FeatureService {
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise, just show the feature with
         // some appropriate amount of padding.
-        GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+        GenomeBrowserImageBuilder imageBuilder = new GenomeBrowserImageBuilder()
             .highlight(feature);
 
         GenomeLocation.Source source;
