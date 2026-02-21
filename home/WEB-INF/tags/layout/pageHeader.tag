@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ tag import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
-
 <header>
     <div class="mobile-only">
         <a href="#" class="mobile-menu">
@@ -57,15 +55,7 @@
                     <span class="nav-column-header">Genome Browsers</span>
                     <ul>
 
-                        <c:choose>
-                            <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
-                                <li><a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a></li>
-                            </c:when>
-                            <c:otherwise>
-<%--                        TODO: remove this once JBrowse with z12 is everywhere (or JBrowse2 is fully deployed)--%>
-                                <li><a href="https://main.d2rwmenofjuae7.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&data=data%2FGRCz12tu">ZFIN</a></li>
-                            </c:otherwise>
-                        </c:choose>
+                        <li><a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a></li>
                         <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</zfin2:externalLink></li>
