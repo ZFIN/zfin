@@ -16,6 +16,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;

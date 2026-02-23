@@ -18,6 +18,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
