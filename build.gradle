@@ -1287,12 +1287,14 @@ def copyWebAppFiles(String webappRoot) {
         exclude 'WEB-INF/lib/**'
     }
 
-    // Copy conf files into WEB-INF/classes (hibernate, log4j)
+    // Copy conf files into WEB-INF/classes (hibernate, log4j, messages, etc.)
     copy {
         from 'conf'
         into webappRoot + '/WEB-INF/classes'
         include 'hibernate.cfg.xml'
         include 'log4j2.xml'
+        include 'zfin-messages.properties'
+        include 'mchange-log.properties'
     }
 
     // Copy Hibernate mappings and properties from source
@@ -1382,6 +1384,13 @@ task antCompile {
             into 'home/WEB-INF/classes'
             include '**/*.xml'
             exclude '**/.svn'
+        }
+        // Copy conf files that need to be on the classpath
+        copy {
+            from 'conf'
+            into 'home/WEB-INF/classes'
+            include 'zfin-messages.properties'
+            include 'mchange-log.properties'
         }
         println ':JAVA COMPILE SUCCESSFUL:'
     }
