@@ -1288,6 +1288,8 @@ war {
     from('conf') {
         include 'hibernate.cfg.xml'
         include 'log4j2.xml'
+        include 'zfin-messages.properties'
+        include 'mchange-log.properties'
         into 'WEB-INF/classes'
     }
 
@@ -1355,6 +1357,13 @@ task antCompile {
             into 'home/WEB-INF/classes'
             include '**/*.xml'
             exclude '**/.svn'
+        }
+        // Copy conf files that need to be on the classpath
+        copy {
+            from 'conf'
+            into 'home/WEB-INF/classes'
+            include 'zfin-messages.properties'
+            include 'mchange-log.properties'
         }
         println ':JAVA COMPILE SUCCESSFUL:'
     }
@@ -1473,6 +1482,13 @@ task devCompile {
             include '**/*.xml'
             include '**/*.properties'
             exclude '**/*.java'
+        }
+        // Copy conf files that need to be on the classpath
+        copy {
+            from 'conf'
+            into deployedClassesDir
+            include 'zfin-messages.properties'
+            include 'mchange-log.properties'
         }
         println "Classes synced to ${deployedClassesDir} - Tomcat will reload"
     }

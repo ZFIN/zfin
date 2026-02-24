@@ -111,7 +111,6 @@
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
         <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
-        <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/mchange-log.properties" todir="${classbin.dir}"/>
 
         <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/classes/log4j2.xml" failonerror="false">
@@ -142,7 +141,6 @@
         <!--
                 <copy file="${conf.dir}/application.properties" todir="${classbin.dir}/resources"/>
         -->
-        <copy file="${conf.dir}/views.properties" tofile="${classbin.dir}/views.properties"/>
         <copy file="${conf.dir}/zfin-messages.properties" tofile="${classbin.dir}/zfin-messages.properties"/>
     </target>
 
