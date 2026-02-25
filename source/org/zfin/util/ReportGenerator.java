@@ -3,22 +3,27 @@ package org.zfin.util;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
 
 import static java.lang.System.getenv;
 
 public class ReportGenerator {
 
-    public enum Format { HTML, TXT }
+    public enum Format { HTML, TXT, XLSX, CSV }
 
     private final static Logger log = LogManager.getLogger(ReportGenerator.class);
 
@@ -132,15 +137,21 @@ public class ReportGenerator {
     }
 
     public void writeFiles(File directory, String baseName) {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
         for (Format format : Format.values()) {
             try {
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
                 File outputFile = new File(directory, baseName + "." + format.toString().toLowerCase());
                 log.info("Writing report to " + outputFile.getAbsolutePath());
-                FileWriter writer = new FileWriter(outputFile);
-                write(writer, format);
+                if (format == Format.XLSX) {
+                    writeXlsx(outputFile);
+                } else if (format == Format.CSV) {
+                    writeCsv(outputFile);
+                } else {
+                    FileWriter writer = new FileWriter(outputFile);
+                    write(writer, format);
+                }
             } catch (TemplateException | IOException e) {
                 log.error("Error writing " + baseName + "." + format + " to " + directory.getAbsolutePath(), e);
             }
@@ -188,6 +199,83 @@ public class ReportGenerator {
         addIntroParagraph("Artifact diff: <a href=\"" + artifactDiffUrl + "\">" + artifactDiffUrl + "</a>");
     }
 
+
+    @SuppressWarnings("unchecked")
+    private void writeXlsx(File outputFile) throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
+            Font boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(boldFont);
+
+            List<Map<String, Object>> dataTables = (List<Map<String, Object>>) root.get(DATA_TABLES);
+            if (dataTables.isEmpty()) {
+                Sheet sheet = workbook.createSheet("Report");
+                Row row = sheet.createRow(0);
+                row.createCell(0).setCellValue("No data");
+            }
+            int sheetIndex = 0;
+            for (Map<String, Object> table : dataTables) {
+                String caption = (String) table.get(TABLE_CAPTION);
+                String sheetName = caption != null && !caption.isEmpty() ? caption : "Data";
+                // Sheet names must be <= 31 chars and unique
+                if (sheetName.length() > 31) {
+                    sheetName = sheetName.substring(0, 31);
+                }
+                if (sheetIndex > 0) {
+                    sheetName = sheetName.substring(0, Math.min(sheetName.length(), 28)) + "_" + sheetIndex;
+                }
+                Sheet sheet = workbook.createSheet(sheetName);
+                int rowIndex = 0;
+
+                List<String> header = (List<String>) table.get(TABLE_HEADER);
+                if (header != null && !header.isEmpty()) {
+                    Row headerRow = sheet.createRow(rowIndex++);
+                    for (int i = 0; i < header.size(); i++) {
+                        Cell cell = headerRow.createCell(i);
+                        cell.setCellValue(header.get(i));
+                        cell.setCellStyle(headerStyle);
+                    }
+                }
+
+                List<List<String>> data = (List<List<String>>) table.get(TABLE_DATA);
+                if (data != null) {
+                    for (List<String> dataRow : data) {
+                        Row row = sheet.createRow(rowIndex++);
+                        for (int i = 0; i < dataRow.size(); i++) {
+                            Cell cell = row.createCell(i);
+                            cell.setCellValue(dataRow.get(i));
+                        }
+                    }
+                }
+                sheetIndex++;
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                workbook.write(fos);
+            }
+            workbook.dispose();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void writeCsv(File outputFile) throws IOException {
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), CSVFormat.DEFAULT)) {
+            List<Map<String, Object>> dataTables = (List<Map<String, Object>>) root.get(DATA_TABLES);
+            for (Map<String, Object> table : dataTables) {
+                List<String> header = (List<String>) table.get(TABLE_HEADER);
+                if (header != null && !header.isEmpty()) {
+                    printer.printRecord(header);
+                }
+                List<List<String>> data = (List<List<String>>) table.get(TABLE_DATA);
+                if (data != null) {
+                    for (List<String> row : data) {
+                        printer.printRecord(row);
+                    }
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private void addToList(String field, Object toAdd) {

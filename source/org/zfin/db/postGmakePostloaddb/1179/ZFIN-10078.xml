@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="cmpich" id="ZFIN-10078-load">
+        <createTable tableName="tmp_flank_seq">
+            <column name="feature_name" type="text"/>
+            <column name="difftype" type="text"/>
+            <column name="feattype" type="text"/>
+            <column name="feature_id" type="text"/>
+            <column name="sequence_of_reference" type="text"/>
+            <column name="calculated_sequence" type="text"/>
+            <column name="feature_location" type="text"/>
+            <column name="curators" type="text"/>
+        </createTable>
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1179/flank-seq-more-fields.csv"
+                  tableName="tmp_flank_seq" quotchar='"' separator=",">
+            <column header="feature_name" name="feature_name" type="String"/>
+            <column header="difftype" name="difftype" type="String"/>
+            <column header="feattype" name="feattype" type="String"/>
+            <column header="feature_id" name="feature_id" type="String"/>
+            <column header="sequence_of_reference" name="sequence_of_reference" type="String"/>
+            <column header="calculated_sequence" name="calculated_sequence" type="String"/>
+            <column header="feature_location" name="feature_location" type="String"/>
+            <column header="curators" name="curators" type="String"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

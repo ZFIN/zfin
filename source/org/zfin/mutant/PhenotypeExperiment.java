@@ -1,5 +1,8 @@
 package org.zfin.mutant;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 
@@ -11,80 +14,41 @@ import java.util.Set;
  * that has phenotypic data annotated to (phenotype statement).
  *
  */
+@Getter
+@Setter
+@Entity
+@Table(name = "phenotype_experiment")
 public class PhenotypeExperiment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "phenox_pk_id")
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "phenox_genox_zdb_id")
     private FishExperiment fishExperiment;
+
+    @ManyToOne
+    @JoinColumn(name = "phenox_start_stg_zdb_id")
     private DevelopmentStage startStage;
+
+    @ManyToOne
+    @JoinColumn(name = "phenox_end_stg_zdb_id")
     private DevelopmentStage endStage;
+
+    @ManyToOne
+    @JoinColumn(name = "phenox_fig_zdb_id")
     private Figure figure;
+
+    @Column(name = "phenox_created_date")
     private Date dateCreated;
+
+    @Column(name = "phenox_last_modified")
     private Date dateLastModified;
 
+    @OneToMany(mappedBy = "phenotypeExperiment")
     private Set<PhenotypeStatement> phenotypeStatements;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public FishExperiment getFishExperiment() {
-        return fishExperiment;
-    }
-
-    public void setFishExperiment(FishExperiment fishExperiment) {
-        this.fishExperiment = fishExperiment;
-    }
-
-    public DevelopmentStage getStartStage() {
-        return startStage;
-    }
-
-    public void setStartStage(DevelopmentStage startStage) {
-        this.startStage = startStage;
-    }
-
-    public DevelopmentStage getEndStage() {
-        return endStage;
-    }
-
-    public void setEndStage(DevelopmentStage endStage) {
-        this.endStage = endStage;
-    }
-
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public void setFigure(Figure figure) {
-        this.figure = figure;
-    }
-
-    public Set<PhenotypeStatement> getPhenotypeStatements() {
-        return phenotypeStatements;
-    }
-
-    public void setPhenotypeStatements(Set<PhenotypeStatement> phenotypeStatements) {
-        this.phenotypeStatements = phenotypeStatements;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Date getDateLastModified() {
-        return dateLastModified;
-    }
-
-    public void setDateLastModified(Date dateLastModified) {
-        this.dateLastModified = dateLastModified;
-    }
 
     @Override
     public String toString() {

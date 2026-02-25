@@ -86,7 +86,25 @@
         <mapping class="org.zfin.mapping.PrimerSet"/>
         <mapping class="org.zfin.mapping.RadiationPanel"/>
         <mapping class="org.zfin.mapping.SingletonLinkage"/>
-        <mapping resource="org/zfin/mutant.hbm.xml"/>
+        <!-- mutant.hbm.xml entities converted to annotations -->
+        <mapping class="org.zfin.mutant.Fish"/>
+        <mapping class="org.zfin.mutant.DiseaseAnnotation"/>
+        <mapping class="org.zfin.mutant.DiseaseAnnotationModel"/>
+        <mapping class="org.zfin.mutant.GoEvidenceCode"/>
+        <mapping class="org.zfin.mutant.GoFlag"/>
+        <mapping class="org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource"/>
+        <mapping class="org.zfin.mutant.MarkerGoTermEvidence"/>
+        <mapping class="org.zfin.mutant.InferenceGroupMember"/>
+        <mapping class="org.zfin.mutant.MarkerGoTermAnnotationExtn"/>
+        <mapping class="org.zfin.mutant.MarkerGoTermAnnotationExtnGroup"/>
+        <mapping class="org.zfin.mutant.GenotypeFeature"/>
+        <mapping class="org.zfin.mutant.PhenotypeExperiment"/>
+        <mapping class="org.zfin.mutant.PhenotypeStatement"/>
+        <mapping class="org.zfin.mutant.OmimPhenotype"/>
+        <mapping class="org.zfin.mutant.Zygosity"/>
+        <mapping class="org.zfin.mutant.PhenotypeStructure"/>
+        <mapping class="org.zfin.expression.ConditionDataType"/>
+        <mapping class="org.zfin.datatransfer.go.GafOrganization"/>
         <mapping class="org.zfin.profile.ObjectSupplier"/>
         <mapping class="org.zfin.profile.MarkerSupplier"/>
         <mapping class="org.zfin.profile.FishSupplier"/>

@@ -7,7 +7,7 @@
   <properties>
     <EnvInjectJobProperty plugin="envinject@1.89">
       <info>
-        <propertiesFilePath>$SOURCEROOT/commons/env/$INSTANCE.env</propertiesFilePath>
+        <propertiesFilePath>$ZFIN_PROPERTIES_PATH</propertiesFilePath>
         <loadFilesFromMaster>false</loadFilesFromMaster>
       </info>
       <on>true</on>

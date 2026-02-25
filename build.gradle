@@ -1190,6 +1190,7 @@ test {
             includeTestsMatching "org.zfin.fish.smoketest.PhenotypeSummarySmokeTest"
             includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
             includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
+            includeTestsMatching "org.zfin.framework.presentation.HealthEndpointSmokeTest"
             //include specific method in any of the tests
             //        includeTestsMatching "*ActiveDataTest"
             }
@@ -1566,7 +1567,14 @@ task jspcopy {
             from 'home/WEB-INF/tags'
             into webappRoot + '/WEB-INF/tags'
         }
-        println "JSP sync complete -> ${webappRoot}/WEB-INF/{jsp,tags}"
+        // Copy conf files that need to be on the classpath
+        copy {
+            from 'conf'
+            into deployedClassesDir
+            include 'zfin-messages.properties'
+            include 'mchange-log.properties'
+        }
+        println "Classes synced to ${deployedClassesDir} - Tomcat will reload"
     }
 }
 
