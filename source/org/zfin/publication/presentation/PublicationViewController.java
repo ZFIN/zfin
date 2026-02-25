@@ -65,10 +65,6 @@ import static org.zfin.util.ZfinStringUtils.objectToJson;
 public class
 PublicationViewController {
 
-    private static final Set<String> PUBS_TO_DISALLOW_ALL_FIGURES_PAGE = Set.of(
-        "ZDB-PUB-060503-2"
-    );
-
     private Logger logger = LogManager.getLogger(PublicationViewController.class);
 
     @Autowired
