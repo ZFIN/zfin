@@ -83,7 +83,7 @@ public class FigureViewController {
 
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
-        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(figure.getPublication()));
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(figure.getPublication(), probe));
         return "figure/figure-view";
     }
 

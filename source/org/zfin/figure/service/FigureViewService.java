@@ -30,6 +30,7 @@ import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 @Service
 public class FigureViewService {
 
+    public static final int MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY = 50;
     static Logger LOG = LogManager.getLogger(FigureViewService.class);
 
     @Autowired
@@ -103,6 +104,14 @@ public class FigureViewService {
         }
         return result;
     }
+
+    public Map<Figure, FigureExpressionSummary> getFigureExpressionSummaries(List<Figure> figures) {
+        return figures.stream()
+                .map(figure -> Map.entry(figure, getFigureExpressionSummary(figure)))
+                .filter(e -> e.getValue().isNotEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
 
     private FigurePhenotypeSummary buildPhenotypeSummary(List<PhenotypeWarehouse> warehouseList) {
         FigurePhenotypeSummary summary = new FigurePhenotypeSummary();
@@ -504,9 +513,9 @@ public class FigureViewService {
         return figures;
     }
 
-    public boolean isLargeDataPublication(Publication publication) {
-        int figureCount = getFiguresForPublicationAndProbe(publication, null).size();
-        return figureCount > 50;
+    public boolean isLargeDataPublication(Publication publication, Clone probe) {
+        int figureCount = getFiguresForPublicationAndProbe(publication, probe).size();
+        return figureCount > MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY;
     }
 
     public List<Figure> getOrderedFiguresForPublication(Publication publication) {

@@ -39,6 +39,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.PaginationBeanResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.service.RelatedDataService;
 import org.zfin.util.ZfinStringUtils;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
+import static org.zfin.figure.service.FigureViewService.MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY;
 import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
@@ -149,7 +151,7 @@ PublicationViewController {
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
         model.addAttribute("ctdPublicationID", MatchingTermService.getCtdPubID(publication.getZdbID()));
-        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(publication));
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(publication, null));
         return "publication/publication-view";
     }
 
@@ -568,7 +570,11 @@ PublicationViewController {
 
         model.addAttribute("publication", publication);
 
-        if (figureViewService.isLargeDataPublication(publication)) {
+        //also for direct submission pubs, we should see if we got a probe
+        Clone probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID); //handles null by returning null, so no need to check before query
+        List<Figure> figures = figureViewService.getFiguresForPublicationAndProbe(publication, probe);
+
+        if (figures.size() > MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
             return "publication/publication-figures-unavailable";
         }
@@ -576,35 +582,12 @@ PublicationViewController {
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
-        // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
-        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
-        List<Figure> figures = new ArrayList<>();
 
-        //also for direct submission pubs, we should see if we got a probe
-        Clone probe = null;
-        if (!StringUtils.isEmpty(probeZdbID)) {
-            probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID);
-        }
         model.addAttribute("probe", probe);
         if (probe != null) {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
         }
-        if (figureViewService.isZebrasharePub(publication)) {
-            figures.addAll(publication.getFigures());
-        } else {
-            if (publication.isUnpublished()) {
-                if (!StringUtils.isEmpty(probeZdbID)) {
-                    figures.addAll(getFigureRepository().getFiguresForDirectSubmissionPublication(publication, probe));
-                } else {
-                    figures.addAll(publication.getFigures());
-                }
-            } else {
-                figures.addAll(publication.getFigures());
-            }
-        }
-
-        figures.sort(ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
         model.addAttribute("submitters", getFigureRepository().getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
@@ -612,33 +595,16 @@ PublicationViewController {
 
         // When showDataOnly, use a lightweight query to filter figures with data
         // instead of computing full summaries for every figure
-        List<Figure> filteredFigures;
         if (showDataOnly) {
-            Set<String> figureIdsWithData = getFigureRepository().getFigureIdsWithData(
-                figures.stream().map(Figure::getZdbID).collect(Collectors.toList()));
-            filteredFigures = figures.stream()
-                .filter(figure -> figureIdsWithData.contains(figure.getZdbID()))
-                .collect(Collectors.toList());
-        } else {
-            filteredFigures = figures;
+            figures = filterFiguresToDataOnly(figures);
         }
 
         // Paginate, then compute full summaries only for the current page
         pagination.setMaxDisplayRecords(10);
-        pagination.setTotalRecords(filteredFigures.size());
-        pagination.setRequestUrl(request.getRequestURL());
-        pagination.setQueryString(request.getQueryString());
-        int start = pagination.getFirstRecord() - 1;
-        int end = Math.min(start + 10, filteredFigures.size());
-        List<Figure> pagedFigures = filteredFigures.subList(start, end);
+        List<Figure> pagedFigures = PaginationBeanResultFactory.paginateList(figures, pagination, request);
 
         Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = figureViewService.getFigurePhenotypeSummaries(pagedFigures);
-        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
-        pagedFigures.forEach(figure -> {
-            FigureExpressionSummary summary = figureViewService.getFigureExpressionSummary(figure);
-            if (summary.isNotEmpty())
-                expressionSummaryMap.put(figure, summary);
-        });
+        Map<Figure, FigureExpressionSummary> expressionSummaryMap = figureViewService.getFigureExpressionSummaries(pagedFigures);
 
         model.addAttribute("figures", pagedFigures);
         List<String> captions = pagedFigures.stream().map(Figure::getLabel).collect(toList());
@@ -655,6 +621,14 @@ PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
 
         return "publication/publication-figures";
+    }
+
+    private List<Figure> filterFiguresToDataOnly(List<Figure> figures) {
+        Set<String> figureIdsWithData = getFigureRepository().getFigureIdsWithData(figures.stream().map(Figure::getZdbID).toList());
+
+        return figures.stream()
+                .filter(figure -> figureIdsWithData.contains(figure.getZdbID()))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping("/stats")

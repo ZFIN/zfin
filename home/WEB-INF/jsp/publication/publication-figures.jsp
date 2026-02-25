@@ -78,14 +78,14 @@
                 <button
                         type='button'
                         class='btn btn-outline-secondary ${allFiguresCssClass}'
-                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=false';"
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=false<c:if test="${!empty probe}">&probeZdbID=${probe.zdbID}</c:if>';"
                 >
                     All Figures
                 </button>
                 <button
                         type='button'
                         class='btn btn-outline-secondary ${dataFiguresCssClass}'
-                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=true';"
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=true<c:if test="${!empty probe}">&probeZdbID=${probe.zdbID}</c:if>';"
                 >
                     Figures with Data
                 </button>
