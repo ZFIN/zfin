@@ -19,6 +19,7 @@ import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.*;
+import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Clone;
@@ -551,7 +552,14 @@ PublicationViewController {
     public String showAllFigures(@PathVariable String pubID,
                                  @RequestParam(value = "probeZdbID", required = false) String probeZdbID,
                                  @RequestParam(value = "showDataOnly", required = false) boolean showDataOnly,
+                                 HttpServletRequest request,
                                  Model model) {
+        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
+
         Publication publication = publicationRepository.getPublication(pubID);
 
         if (publication == null) {
