@@ -1,4 +1,4 @@
-package org.zfin.genomebrowser.presentation;
+package org.zfin.jbrowse.presentation;
 
 import java.util.Comparator;
 import java.util.regex.Matcher;

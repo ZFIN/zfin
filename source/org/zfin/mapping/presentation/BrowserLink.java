@@ -1,7 +1,7 @@
 package org.zfin.mapping.presentation;
 
 import lombok.Data;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 
 @Data
 public class BrowserLink implements Comparable<BrowserLink> {

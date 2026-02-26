@@ -6,7 +6,7 @@ import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeatureNote;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.VariantSequence;

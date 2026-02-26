@@ -8,7 +8,7 @@ import org.hibernate.annotations.Parameter;
 import org.zfin.framework.StringEnumValueUserType;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;

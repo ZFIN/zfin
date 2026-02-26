@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.results.view;
 
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.DBLink;

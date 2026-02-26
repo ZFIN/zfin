@@ -22,9 +22,8 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImageBuilder;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
@@ -146,7 +145,7 @@ public class GeneViewController {
             MarkerGenomeLocation landmark = markerGenomeLocations.get(0);
             int startPadding = (landmark.getEnd() - landmark.getStart()) / 10;
             int endPadding = (landmark.getEnd() - landmark.getStart()) / 20;
-            GenomeBrowserImageBuilder refseqBuilder = GenomeBrowserFactory.getStaticImageBuilder()
+            GenomeBrowserImageBuilder refseqBuilder = new GenomeBrowserImageBuilder()
                 .setBuild(latestAssembly)
                 .setLandmarkByGenomeLocation(landmark)
                 // add 10% left padding and 5% right padding
