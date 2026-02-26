@@ -17,6 +17,8 @@ import org.zfin.util.FilterType;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Optional;
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 /**
  * This class serves the antibody search page.
@@ -60,7 +62,13 @@ public class AntibodySearchController {
 
     @RequestMapping(value = "/antibody-do-search", method = RequestMethod.GET)
     public String doSearch(Model model,
-                           @Valid @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean) throws Exception {
+                           @Valid @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
+                           HttpServletRequest request) throws Exception {
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
+
         AntibodySearchCriteria antibodySearchCriteria = antibodySearchFormBean.getAntibodyCriteria();
         antibodySearchCriteria.setPaginationBean(antibodySearchFormBean);
         model.addAttribute(LookupStrings.FORM_BEAN, antibodySearchFormBean);

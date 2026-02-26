@@ -23,7 +23,9 @@ import org.zfin.repository.RepositoryFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import java.util.Set;
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 /**
  * This class serves the antibody search page.
@@ -55,7 +57,12 @@ public class FishSearchController {
     @RequestMapping(value = "/do-search", method = RequestMethod.GET)
     protected String search(Model model,
                             @Valid @ModelAttribute("formBean")
-                            FishSearchFormBean formBean, BindingResult result) {
+                            FishSearchFormBean formBean, BindingResult result,
+                            HttpServletRequest request) {
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
 
         //fishSearchFormValidator.validate(formBean, result);
 

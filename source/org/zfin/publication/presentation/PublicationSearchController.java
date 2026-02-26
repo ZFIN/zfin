@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 @Controller
 @RequestMapping("/publication")
@@ -46,6 +47,11 @@ public class PublicationSearchController {
     public String showSearchForm(Model model,
                                  @ModelAttribute PublicationSearchBean formBean,
                                  HttpServletRequest request) {
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
+
         GregorianCalendar oldestPubEntryDate = publicationRepository.getOldestPubEntryDate();
         GregorianCalendar newestPubEntryDate = publicationRepository.getNewestPubEntryDate();
         setDefaultValue(formBean, "petFromMonth", oldestPubEntryDate.get(Calendar.MONTH) + 1);

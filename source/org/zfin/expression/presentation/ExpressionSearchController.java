@@ -26,8 +26,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
+
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 @Controller
 @RequestMapping("/expression")
@@ -80,6 +83,11 @@ public class ExpressionSearchController {
 
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
+
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
             criteria.setGene(markerRepository.getMarkerByID(criteria.getGeneZdbID()));
             populateFigureResults(criteria);
