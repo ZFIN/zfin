@@ -15,6 +15,8 @@ import org.zfin.search.service.MarkerSearchService;
 import org.zfin.util.URLCreator;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import org.zfin.infrastructure.captcha.CaptchaService;
 
 
 /**
@@ -51,6 +53,10 @@ public class MarkerSearchController {
 
     @RequestMapping(value = "/search-results")
     public String results(Model model, @ModelAttribute("criteria") MarkerSearchCriteria criteria, HttpServletRequest request) {
+        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
+        if (captchaRedirectUrl.isPresent()) {
+            return "redirect:" + captchaRedirectUrl.get();
+        }
 
         criteria.setBaseUrl(getBaseUrl(criteria, request));
         markerSearchService.injectFacets(criteria);
