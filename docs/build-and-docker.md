@@ -132,7 +132,7 @@ Ignoring data loads, Docker image builds, and test runs, the essential deploymen
 # 1. Initialize compile container (cert setup via generate_base.sh)
 docker compose run --rm --detach --name trunk-compile-run-1 compile
 
-# 2. Compile Java source
+# 2. Compile Java source (for this and the following steps, run inside compile container--omitting for readability)
 ant do
 
 # 3. Copy scripts, static files, and DB functions to TARGETROOT
