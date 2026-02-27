@@ -1,12 +1,8 @@
 package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -15,14 +11,11 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.uniprot.NcbiMatchReportRow;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
@@ -48,7 +41,6 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private static final String CSV_FILE = "ncbi_matches_through_ensembl.csv";
 
-    private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
     private String inputFileUrl;
 
     public static void main(String[] args) {
@@ -77,8 +69,8 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     public void runTask(String inputFileUrl, Map<String, String> toDelete) throws IOException, SQLException {
         initAll();
 
-        setInputFileUrlFromEnvironment(inputFileUrl);
-        File extractedCsvFile = downloadAndExtract();
+        this.inputFileUrl = NcbiGeneInfoService.resolveInputFileUrl(inputFileUrl);
+        File extractedCsvFile = NcbiGeneInfoService.downloadAndExtract(this.inputFileUrl);
 
         // All temp table operations must happen in a single transaction to ensure the same
         // database connection is used. PostgreSQL temp tables are session-scoped (connection-scoped),
@@ -87,8 +79,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
         try {
-            createTemporaryNcbiTable(session);
-            copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
+            NcbiGeneInfoService.createNcbiZebrafishTempTable(session);
+            dropEnsemblTempTables(session);
+            NcbiGeneInfoService.loadNcbiFileIntoTempTable(session, extractedCsvFile);
 
             List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
             List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
@@ -164,137 +157,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     }
 
     /**
-     * Figure out the source of the NCBI file URL. (can be a file url eg. file:///var/tmp/... or a http url)
-     * It can be set with:
-     *  the first command line argument,
-     *  or the environment variable NCBI_FILE_URL,
-     *  or it uses the default URL.
-     * @param inputFileUrl The input file url from the command line argument.
-     */
-    private void setInputFileUrlFromEnvironment(String inputFileUrl) {
-        if (StringUtils.isEmpty(inputFileUrl)) {
-            inputFileUrl = System.getenv("NCBI_FILE_URL");
-            if (inputFileUrl == null) {
-                inputFileUrl = System.getProperty("ncbiFileUrl");
-                if (inputFileUrl == null) {
-                    log.error("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
-                    inputFileUrl = DEFAULT_INPUT_FILE_URL;
-                }
-            }
-        }
-        log.info("Using input file url: " + inputFileUrl);
-        this.inputFileUrl = inputFileUrl;
-    }
-
-    /**
-     * Download the file from the URL and extract it to a temporary csv file.
-     */
-    public File downloadAndExtract() throws IOException {
-        String url = this.inputFileUrl;
-        File tempGzipFile = File.createTempFile("danio_rerio.gene_info.", ".gz");
-        File tempOutputCsvFile = File.createTempFile("danio_rerio.gene_info.", ".csv");
-
-        downloadFile(url, tempGzipFile);
-        extractGzip(tempGzipFile, tempOutputCsvFile);
-        tempGzipFile.delete();
-        return tempOutputCsvFile;
-    }
-
-    /**
-     * Create the table structure used later in data load.
-     * Note: This method does NOT commit the transaction - the caller must manage the transaction.
-     * @param session The Hibernate session to use (must be part of an active transaction)
-     */
-    private void createTemporaryNcbiTable(Session session) {
-        String dropTable = "DROP TABLE IF EXISTS tmp_ncbi_zebrafish;";
-        session.createNativeQuery(dropTable).executeUpdate();
-
-        dropTable = "DROP TABLE IF EXISTS tmp_ncbi2ensembl;";
-        session.createNativeQuery(dropTable).executeUpdate();
-
-        dropTable = "DROP TABLE IF EXISTS tmp_ncbi2zfin;";
-        session.createNativeQuery(dropTable).executeUpdate();
-
-        String createTable = """
-                CREATE TEMP TABLE tmp_ncbi_zebrafish (
-                    taxId text,
-                    geneId text,
-                    symbol text,
-                    locusTag text,
-                    synonyms text,
-                    dbXrefs text,
-                    chromosome text,
-                    mapLocation text,
-                    description text,
-                    typeOfGene text,
-                    symbolFromNomenclatureAuthority text,
-                    fullNameFromNomenclatureAuthority text,
-                    nomenclatureStatus text,
-                    otherDesignations text,
-                    modificationDate text,
-                    featureType text);
-        """;
-        session.createNativeQuery(createTable).executeUpdate();
-
-        session.flush();
-    }
-
-    /**
-     *  Load the contents of the NCBI file into a temporary table in the database (tmp_ncbi_zebrafish).
-     *  This table has the same columns as the NCBI file.  It's just used to make the data easier to work with
-     *  for set operations.
-     *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
-     *  @param session The Hibernate session to use (must be part of an active transaction)
-     *  @param inputFile (the temporary csv file after extracting the gzipped NCBI file)
-     */
-    private void copyFromNcbiFileIntoDatabase(Session session, File inputFile) {
-
-        try (CSVParser parser = CSVParser.parse(inputFile, Charset.defaultCharset(), CSVFormat.TDF)) {
-
-            //confirm header looks good
-            CSVRecord headerRecord = parser.iterator().next();
-            if (!headerRecord.get(0).equals("#tax_id")) {
-                throw new RuntimeException("Unexpected header format. Expected #tax_id but found " + headerRecord.get(0));
-            }
-
-            log.info("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
-            int recordCount = 0;
-            for (CSVRecord record : parser) {
-                recordCount++;
-
-                //equivalent to `\copy tmp_ncbi_zebrafish from 'zf_gene_info' WITH (DELIMITER E'\t', FORMAT 'text', HEADER true);
-                session.createNativeQuery("""
-                        INSERT INTO tmp_ncbi_zebrafish
-                        (taxId, geneId, symbol, locusTag, synonyms, dbXrefs, chromosome, mapLocation, description, typeOfGene, symbolFromNomenclatureAuthority, fullNameFromNomenclatureAuthority, nomenclatureStatus, otherDesignations, modificationDate, featureType)
-                         VALUES
-                        (:taxId, :geneId, :symbol, :locusTag, :synonyms, :dbXrefs, :chromosome, :mapLocation, :description, :typeOfGene, :symbolFromNomenclatureAuthority, :fullNameFromNomenclatureAuthority, :nomenclatureStatus, :otherDesignations, :modificationDate, :featureType)
-                        """)
-                        .setParameter("taxId", record.get(0))
-                        .setParameter("geneId", record.get(1))
-                        .setParameter("symbol", record.get(2))
-                        .setParameter("locusTag", record.get(3))
-                        .setParameter("synonyms", record.get(4))
-                        .setParameter("dbXrefs", record.get(5))
-                        .setParameter("chromosome", record.get(6))
-                        .setParameter("mapLocation", record.get(7))
-                        .setParameter("description", record.get(8))
-                        .setParameter("typeOfGene", record.get(9))
-                        .setParameter("symbolFromNomenclatureAuthority", record.get(10))
-                        .setParameter("fullNameFromNomenclatureAuthority", record.get(11))
-                        .setParameter("nomenclatureStatus", record.get(12))
-                        .setParameter("otherDesignations", record.get(13))
-                        .setParameter("modificationDate", record.get(14))
-                        .setParameter("featureType", record.get(15))
-                        .executeUpdate();
-            }
-            log.info("Finished data load of " + recordCount + " records.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
      *  The main logic for comparing the NCBI data to the ZFIN data.
      *  Note: This method does NOT commit the transaction - the caller must manage the transaction.
      *  @param session The Hibernate session to use (must be part of an active transaction)
@@ -303,7 +165,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private List<Object[]> getReportOfPotentialNcbiGenes(Session session, Map<String, String> toDelete) {
 
         // Create temp table of dblinks to exclude
-        createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+        NcbiGeneInfoService.createDblinksToDeleteTempTable(toDelete);
 
         // Create tmp_ncbi2zfin table from NCBI cross-refs
         String query = """
@@ -414,43 +276,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     }
 
     /**
-     * Create a temporary table of DBLinks that are slated to be deleted.
-     * The table is named dblinks_to_delete (single column of dblink_zdb_id).
-     *
-     * @param toDelete
-     */
-    public static void createTemporaryTableOfNcbiDblinksToDelete(Map<String, String> toDelete) {
-        if (toDelete == null) {
-            toDelete = Map.of();
-        }
-
-        // The dblinks for NCBI Gene IDs that we are in the process of deleting should be included as though they were already deleted.
-        // So we create a temporary table of those DBLinks to exclude them from the matching logic.
-        // Based on the toDelete map passed in.
-        String query = """
-            DROP TABLE IF EXISTS dblinks_to_delete;
-            CREATE TEMP TABLE dblinks_to_delete (
-                dblink_zdb_id text
-            );
-        """;
-        currentSession().createNativeQuery(query).executeUpdate();
-
-
-        // For the purpose of this report, we only care about DBLinks that have dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' (NCBI Gene IDs)
-        List<List<String>> toDeleteBatches = ListUtils.partition(toDelete.keySet().stream().toList(), 1000);
-        for (List<String> batch : toDeleteBatches) {
-            String inClause = batch.stream().map(s -> "'" + s + "'").reduce((s1, s2) -> s1 + "," + s2).orElse("");
-            query = """
-                INSERT INTO dblinks_to_delete (dblink_zdb_id)
-                SELECT dblink_zdb_id FROM db_link
-                WHERE  dblink_zdb_id IN (""" + inClause + ")";
-
-            currentSession().createNativeQuery(query).executeUpdate();
-        }
-
-    }
-
-    /**
      * Write the results of the sql comparisons to a CSV file.
      *
      * @param results The results from DB query to write to CSV.
@@ -471,6 +296,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         }
     }
 
+    private void dropEnsemblTempTables(Session session) {
+        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
+        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
+    }
+
     /**
      * Drop the temporary tables used in the comparison.
      * This is unnecessary, but it's good practice to clean up after yourself.
@@ -482,44 +312,5 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
         tx.commit();
-    }
-
-    /**
-     * Download the NCBI gene file from NCBI.
-     *
-     * @param url The URL to download the file from (could be "file:///...").
-     * @param tempGzipFile The temporary file destination.
-     * @throws IOException If there is an error downloading the file.
-     */
-    private void downloadFile(String url, File tempGzipFile) throws IOException {
-        String fileName = tempGzipFile.getAbsolutePath();
-
-        if (tempGzipFile.exists()) {
-            new File(fileName).delete();
-        }
-
-        URL website = new URL(url);
-        try (InputStream in = website.openStream()) {
-            Files.copy(in, Paths.get(fileName));
-        }
-    }
-
-    /**
-     * Extract the downloaded file.
-     *
-     * @param tempGzipFile The temporary file source.
-     * @param outputFileName The output file destination.
-     * @throws IOException If there is an error extracting the file.
-     */
-    private void extractGzip(File tempGzipFile, File outputFileName) throws IOException {
-        byte[] buffer = new byte[1024];
-        try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(tempGzipFile))) {
-            try (FileOutputStream out = new FileOutputStream(outputFileName)) {
-                int len;
-                while ((len = gzis.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                }
-            }
-        }
     }
 }

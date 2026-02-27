@@ -1,12 +1,8 @@
 package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
@@ -16,7 +12,6 @@ import org.zfin.uniprot.NcbiGeneSymbolMatchRow;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -43,7 +38,6 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 @Log4j2
 public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
     private static final String GENE_SYMBOL_MATCH_CSV_FILE = "ncbi_gene_symbol_matches.csv";
-    private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
     private String inputFileUrl;
     private String gene2AccessionUrl;
     private String notInCurrentAnnotationReleaseUrl;
@@ -75,10 +69,10 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
     public void runTask(String inputFileUrl, Map<String, String> toDelete) throws IOException, SQLException {
         initAll();
 
-        setInputFileUrlFromEnvironment(inputFileUrl);
+        this.inputFileUrl = NcbiGeneInfoService.resolveInputFileUrl(inputFileUrl);
         setGene2AccessionUrlFromEnvironment();
         setNotInCurrentAnnotationReleaseUrlFromEnvironment();
-        File extractedCsvFile = downloadAndExtract();
+        File extractedCsvFile = NcbiGeneInfoService.downloadAndExtract(this.inputFileUrl);
 
         // Parse gene2accession for RefSeq RNA accessions (optional)
         Map<String, String> geneIdToRefSeqs = parseGene2AccessionFile();
@@ -89,9 +83,9 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
         try {
-            createTemporaryNcbiTable(session);
-            copyFromNcbiFileIntoDatabase(session, extractedCsvFile);
-            createTemporaryTableOfNcbiDblinksToDelete(toDelete);
+            NcbiGeneInfoService.createNcbiZebrafishTempTable(session);
+            NcbiGeneInfoService.loadNcbiFileIntoTempTable(session, extractedCsvFile);
+            NcbiGeneInfoService.createDblinksToDeleteTempTable(toDelete);
             createNcbi2ZfinTable(session);
 
             List<NcbiGeneSymbolMatchRow> symbolMatches = getGeneSymbolMatches(session);
@@ -111,21 +105,6 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
             throw e;
         }
         extractedCsvFile.delete();
-    }
-
-    private void setInputFileUrlFromEnvironment(String inputFileUrl) {
-        if (StringUtils.isEmpty(inputFileUrl)) {
-            inputFileUrl = System.getenv("NCBI_FILE_URL");
-            if (inputFileUrl == null) {
-                inputFileUrl = System.getProperty("ncbiFileUrl");
-                if (inputFileUrl == null) {
-                    log.error("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
-                    inputFileUrl = DEFAULT_INPUT_FILE_URL;
-                }
-            }
-        }
-        log.info("Using input file url: " + inputFileUrl);
-        this.inputFileUrl = inputFileUrl;
     }
 
     public void setGene2AccessionUrl(String url) {
@@ -169,7 +148,7 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         log.info("Downloading gene2accession file from: " + gene2AccessionUrl);
         File tempGzipFile = File.createTempFile("gene2accession.", ".gz");
         try {
-            downloadFile(gene2AccessionUrl, tempGzipFile);
+            NcbiGeneInfoService.downloadFile(gene2AccessionUrl, tempGzipFile);
         } catch (IOException e) {
             log.error("Failed to download gene2accession file: " + e.getMessage());
             tempGzipFile.delete();
@@ -299,116 +278,6 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         }
     }
 
-    public File downloadAndExtract() throws IOException {
-        String url = this.inputFileUrl;
-        File tempGzipFile = File.createTempFile("danio_rerio.gene_info.", ".gz");
-        File tempOutputCsvFile = File.createTempFile("danio_rerio.gene_info.", ".csv");
-
-        downloadFile(url, tempGzipFile);
-        extractGzip(tempGzipFile, tempOutputCsvFile);
-        tempGzipFile.delete();
-        return tempOutputCsvFile;
-    }
-
-    private void createTemporaryNcbiTable(Session session) {
-        String dropTable = "DROP TABLE IF EXISTS tmp_ncbi_zebrafish;";
-        session.createNativeQuery(dropTable).executeUpdate();
-
-        dropTable = "DROP TABLE IF EXISTS tmp_ncbi2zfin;";
-        session.createNativeQuery(dropTable).executeUpdate();
-
-        String createTable = """
-                CREATE TEMP TABLE tmp_ncbi_zebrafish (
-                    taxId text,
-                    geneId text,
-                    symbol text,
-                    locusTag text,
-                    synonyms text,
-                    dbXrefs text,
-                    chromosome text,
-                    mapLocation text,
-                    description text,
-                    typeOfGene text,
-                    symbolFromNomenclatureAuthority text,
-                    fullNameFromNomenclatureAuthority text,
-                    nomenclatureStatus text,
-                    otherDesignations text,
-                    modificationDate text,
-                    featureType text);
-        """;
-        session.createNativeQuery(createTable).executeUpdate();
-
-        session.flush();
-    }
-
-    private void copyFromNcbiFileIntoDatabase(Session session, File inputFile) {
-        try (CSVParser parser = CSVParser.parse(inputFile, Charset.defaultCharset(), CSVFormat.TDF)) {
-
-            CSVRecord headerRecord = parser.iterator().next();
-            if (!headerRecord.get(0).equals("#tax_id")) {
-                throw new RuntimeException("Unexpected header format. Expected #tax_id but found " + headerRecord.get(0));
-            }
-
-            log.info("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
-            int recordCount = 0;
-            for (CSVRecord record : parser) {
-                recordCount++;
-
-                session.createNativeQuery("""
-                        INSERT INTO tmp_ncbi_zebrafish
-                        (taxId, geneId, symbol, locusTag, synonyms, dbXrefs, chromosome, mapLocation, description, typeOfGene, symbolFromNomenclatureAuthority, fullNameFromNomenclatureAuthority, nomenclatureStatus, otherDesignations, modificationDate, featureType)
-                         VALUES
-                        (:taxId, :geneId, :symbol, :locusTag, :synonyms, :dbXrefs, :chromosome, :mapLocation, :description, :typeOfGene, :symbolFromNomenclatureAuthority, :fullNameFromNomenclatureAuthority, :nomenclatureStatus, :otherDesignations, :modificationDate, :featureType)
-                        """)
-                        .setParameter("taxId", record.get(0))
-                        .setParameter("geneId", record.get(1))
-                        .setParameter("symbol", record.get(2))
-                        .setParameter("locusTag", record.get(3))
-                        .setParameter("synonyms", record.get(4))
-                        .setParameter("dbXrefs", record.get(5))
-                        .setParameter("chromosome", record.get(6))
-                        .setParameter("mapLocation", record.get(7))
-                        .setParameter("description", record.get(8))
-                        .setParameter("typeOfGene", record.get(9))
-                        .setParameter("symbolFromNomenclatureAuthority", record.get(10))
-                        .setParameter("fullNameFromNomenclatureAuthority", record.get(11))
-                        .setParameter("nomenclatureStatus", record.get(12))
-                        .setParameter("otherDesignations", record.get(13))
-                        .setParameter("modificationDate", record.get(14))
-                        .setParameter("featureType", record.get(15))
-                        .executeUpdate();
-            }
-            log.info("Finished data load of " + recordCount + " records.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void createTemporaryTableOfNcbiDblinksToDelete(Map<String, String> toDelete) {
-        if (toDelete == null) {
-            toDelete = Map.of();
-        }
-
-        String query = """
-            DROP TABLE IF EXISTS dblinks_to_delete;
-            CREATE TEMP TABLE dblinks_to_delete (
-                dblink_zdb_id text
-            );
-        """;
-        currentSession().createNativeQuery(query).executeUpdate();
-
-        List<List<String>> toDeleteBatches = ListUtils.partition(toDelete.keySet().stream().toList(), 1000);
-        for (List<String> batch : toDeleteBatches) {
-            String inClause = batch.stream().map(s -> "'" + s + "'").reduce((s1, s2) -> s1 + "," + s2).orElse("");
-            query = """
-                INSERT INTO dblinks_to_delete (dblink_zdb_id)
-                SELECT dblink_zdb_id FROM db_link
-                WHERE  dblink_zdb_id IN (""" + inClause + ")";
-
-            currentSession().createNativeQuery(query).executeUpdate();
-        }
-    }
-
     private void createNcbi2ZfinTable(Session session) {
         String query = """
             SELECT geneId AS ncbi_id, replace(t.xref, 'ZFIN:', '') AS zdb_id
@@ -458,7 +327,7 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         ).toList();
     }
 
-    private void writeGeneSymbolMatchCsv(List<NcbiGeneSymbolMatchRow> rows) {
+    private void writeGeneSymbolMatchCsv(List<NcbiGeneSymbolMatchRow> rows) throws IOException {
         try (Writer writer = Files.newBufferedWriter(Paths.get(GENE_SYMBOL_MATCH_CSV_FILE));
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
                      .withHeader("ncbi_id", "gene_symbol", "mrkr_zdb_id", "ncbi_predicted_zdb_id", "zdb_ids_match",
@@ -468,10 +337,6 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
             }
             csvPrinter.flush();
             log.info("Wrote gene symbol match results to " + GENE_SYMBOL_MATCH_CSV_FILE);
-        } catch (IOException e) {
-            log.error("IOException Error while writing gene symbol match csv: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(4);
         }
     }
 
@@ -481,30 +346,5 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
         session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
         tx.commit();
-    }
-
-    private void downloadFile(String url, File tempGzipFile) throws IOException {
-        String fileName = tempGzipFile.getAbsolutePath();
-
-        if (tempGzipFile.exists()) {
-            new File(fileName).delete();
-        }
-
-        URL website = new URL(url);
-        try (InputStream in = website.openStream()) {
-            Files.copy(in, Paths.get(fileName));
-        }
-    }
-
-    private void extractGzip(File tempGzipFile, File outputFileName) throws IOException {
-        byte[] buffer = new byte[1024];
-        try (GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(tempGzipFile))) {
-            try (FileOutputStream out = new FileOutputStream(outputFileName)) {
-                int len;
-                while ((len = gzis.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                }
-            }
-        }
     }
 }
