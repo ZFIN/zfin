@@ -39,6 +39,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.PaginationBeanResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.service.RelatedDataService;
 import org.zfin.util.ZfinStringUtils;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
+import static org.zfin.figure.service.FigureViewService.MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY;
 import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
@@ -145,6 +147,7 @@ PublicationViewController {
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
         model.addAttribute("ctdPublicationID", MatchingTermService.getCtdPubID(publication.getZdbID()));
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(publication, null));
         return "publication/publication-view";
     }
 
@@ -551,6 +554,8 @@ PublicationViewController {
     public String showAllFigures(@PathVariable String pubID,
                                  @RequestParam(value = "probeZdbID", required = false) String probeZdbID,
                                  @RequestParam(value = "showDataOnly", required = false) boolean showDataOnly,
+                                 @ModelAttribute("pagination") PaginationBean pagination,
+                                 HttpServletRequest request,
                                  Model model) {
         Publication publication = publicationRepository.getPublication(pubID);
 
@@ -560,66 +565,49 @@ PublicationViewController {
         }
 
         model.addAttribute("publication", publication);
+
+        //also for direct submission pubs, we should see if we got a probe
+        Clone probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID); //handles null by returning null, so no need to check before query
+        List<Figure> figures = figureViewService.getFiguresForPublicationAndProbe(publication, probe);
+
+        if (figures.size() > MAX_FIGURE_COUNT_FOR_PUBLICATION_DISPLAY) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
+            return "publication/publication-figures-unavailable";
+        }
+
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
-        // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
-        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
-        List<Figure> figures = new ArrayList<>();
 
-        //also for direct submission pubs, we should see if we got a probe
-        Clone probe = null;
-        if (!StringUtils.isEmpty(probeZdbID)) {
-            probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID);
-        }
         model.addAttribute("probe", probe);
         if (probe != null) {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
         }
-        if (figureViewService.isZebrasharePub(publication)) {
-            figures.addAll(publication.getFigures());
-        } else {
-            if (publication.isUnpublished()) {
-                if (!StringUtils.isEmpty(probeZdbID)) {
-                    figures.addAll(getFigureRepository().getFiguresForDirectSubmissionPublication(publication, probe));
-                } else {
-                    figures.addAll(publication.getFigures());
-                }
-            } else {
-                figures.addAll(publication.getFigures());
-            }
-
-        }
-
-
-        figures.sort(ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
         model.addAttribute("submitters", getFigureRepository().getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
-        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
-        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
-        figures.forEach(figure -> {
-            FigureExpressionSummary figureExpressionSummary = figureViewService.getFigureExpressionSummary(figure);
-            FigurePhenotypeSummary figurePhenotypeSummary = figureViewService.getFigurePhenotypeSummary(figure);
-            if (figureExpressionSummary.isNotEmpty())
-                expressionSummaryMap.put(figure, figureExpressionSummary);
-            if (figurePhenotypeSummary.isNotEmpty())
-                phenotypeSummaryMap.put(figure, figurePhenotypeSummary);
-        });
-
-        List<Figure> figuresWithDataOnly = figures.stream()
-            .filter(figure -> (expressionSummaryMap.get(figure) != null || phenotypeSummaryMap.get(figure) != null))
-            .collect(Collectors.toList());
-        if (!showDataOnly) {
-            model.addAttribute("figures", figures);
-            model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
-        }else {
-            model.addAttribute("figures", figuresWithDataOnly);
-            model.addAttribute("figureCaptions", figuresWithDataOnly.stream().map(Figure::getLabel).collect(toList()));
+        // When showDataOnly, use a lightweight query to filter figures with data
+        // instead of computing full summaries for every figure
+        if (showDataOnly) {
+            figures = filterFiguresToDataOnly(figures);
         }
+
+        // Paginate, then compute full summaries only for the current page
+        pagination.setMaxDisplayRecords(10);
+        List<Figure> pagedFigures = PaginationBeanResultFactory.paginateList(figures, pagination, request);
+
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = figureViewService.getFigurePhenotypeSummaries(pagedFigures);
+        Map<Figure, FigureExpressionSummary> expressionSummaryMap = figureViewService.getFigureExpressionSummaries(pagedFigures);
+
+        model.addAttribute("figures", pagedFigures);
+        List<String> captions = pagedFigures.stream().map(Figure::getLabel).collect(toList());
+        if (pagination.getLastRecord() < pagination.getTotalRecords()) {
+            captions.add("More Figures...");
+        }
+        model.addAttribute("figureCaptions", captions);
         model.addAttribute("showDataOnly", showDataOnly);
         model.addAttribute("allFiguresCssClass", !showDataOnly ? "active" : "");
         model.addAttribute("dataFiguresCssClass", showDataOnly ? "active" : "");
@@ -629,6 +617,14 @@ PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
 
         return "publication/publication-figures";
+    }
+
+    private List<Figure> filterFiguresToDataOnly(List<Figure> figures) {
+        Set<String> figureIdsWithData = getFigureRepository().getFigureIdsWithData(figures.stream().map(Figure::getZdbID).toList());
+
+        return figures.stream()
+                .filter(figure -> figureIdsWithData.contains(figure.getZdbID()))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping("/stats")

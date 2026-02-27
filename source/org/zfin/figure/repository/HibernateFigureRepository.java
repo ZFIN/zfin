@@ -17,10 +17,7 @@ import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
 import jakarta.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Calendar.YEAR;
@@ -173,6 +170,22 @@ public class HibernateFigureRepository implements FigureRepository {
 
         return query.list().stream().map(tuple -> tuple.get(0, Image.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<String> getFigureIdsWithData(List<String> figureIds) {
+        if (figureIds.isEmpty()) {
+            return Set.of();
+        }
+        String sql = """
+            SELECT DISTINCT efs_fig_zdb_id FROM expression_figure_stage WHERE efs_fig_zdb_id IN (:ids)
+            UNION
+            SELECT DISTINCT phenox_fig_zdb_id FROM phenotype_experiment WHERE phenox_fig_zdb_id IN (:ids)
+            """;
+        List<String> results = currentSession().createNativeQuery(sql, String.class)
+            .setParameter("ids", figureIds)
+            .getResultList();
+        return new HashSet<>(results);
     }
 
 }
