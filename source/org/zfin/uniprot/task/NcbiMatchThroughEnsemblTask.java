@@ -72,16 +72,10 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         this.inputFileUrl = NcbiGeneInfoService.resolveInputFileUrl(inputFileUrl);
         File extractedCsvFile = NcbiGeneInfoService.downloadAndExtract(this.inputFileUrl);
 
-        // All temp table operations must happen in a single transaction to ensure the same
-        // database connection is used. PostgreSQL temp tables are session-scoped (connection-scoped),
-        // so if Hibernate returns the connection to the pool between commits, a subsequent
-        // transaction may get a different connection where the temp table doesn't exist.
         Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
         try {
-            NcbiGeneInfoService.createNcbiZebrafishTempTable(session);
-            dropEnsemblTempTables(session);
-            NcbiGeneInfoService.loadNcbiFileIntoTempTable(session, extractedCsvFile);
+            NcbiGeneInfoService.loadNcbiFileIntoPersistentTable(session, extractedCsvFile);
 
             List<Object[]> results = getReportOfPotentialNcbiGenes(session, toDelete);
             List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
@@ -90,8 +84,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
             addRnaAccessionsToReportRows(ncbiMatchReportRows);
             writeResultsToCsv(ncbiMatchReportRows);
-
-            dropTemporaryTables();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
@@ -167,29 +159,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         // Create temp table of dblinks to exclude
         NcbiGeneInfoService.createDblinksToDeleteTempTable(toDelete);
 
-        // Create tmp_ncbi2zfin table from NCBI cross-refs
-        String query = """
-            SELECT geneId AS ncbi_id, replace(t.xref, 'ZFIN:', '') AS zdb_id
-            INTO TEMP TABLE tmp_ncbi2zfin
-            FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) AS t (xref)
-            WHERE t.xref LIKE 'ZFIN:%'
-        """;
-        session.createNativeQuery(query).executeUpdate();
-
-        //create ncbi2ensembl table -- based on data loaded through NCBI
-        query = """
-            SELECT geneId as ncbi_id, replace(t.xref, 'Ensembl:', '') as ensembl_id, symbol
-            INTO TEMP TABLE tmp_ncbi2ensembl
-            FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) as t(xref)
-            WHERE t.xref like 'Ensembl:%'
-        """;
-        session.createNativeQuery(query).executeUpdate();
-
         //how many ncbi genes have a link to zfin, but we don't have a reciprocal link?
-        query = """
+        String query = """
             SELECT count(*) AS num_ncbi_genes_without_zfin_links FROM
             (SELECT DISTINCT n2z.zdb_id
-            FROM tmp_ncbi2zfin n2z
+            FROM external_resource.ncbi_danio_rerio_gene_info_zfin n2z
                 LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
                     AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
             WHERE
@@ -198,10 +172,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
-        //Intermediate table for debugging:
-        // select dblink_linked_recid as zdb_id, dblink_acc_num as ncbi_id into temp table tmp_zfin2ncbi from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' ;
-
-        // Get semi-final report using the above mapping tables.
+        // Get semi-final report using the view-based mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
         // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
         session.createNativeQuery("DROP TABLE IF EXISTS ncbi_match_report").executeUpdate();
@@ -215,11 +186,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     string_agg(ra.recattrib_source_zdb_id, '; ' order by ra.recattrib_source_zdb_id) AS publications
                     INTO TEMP TABLE ncbi_match_report
                 FROM
-                    tmp_ncbi2zfin n2z
+                    external_resource.ncbi_danio_rerio_gene_info_zfin n2z
                     LEFT JOIN db_link dbl ON dbl.dblink_linked_recid = n2z.zdb_id
                         AND "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-1'
                         AND dbl.dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM dblinks_to_delete)
-                    LEFT JOIN tmp_ncbi2ensembl n2e ON n2z.ncbi_id = n2e.ncbi_id
+                    LEFT JOIN external_resource.ncbi_danio_rerio_gene_info_ensembl n2e ON n2z.ncbi_id = n2e.ncbi_id
                     LEFT JOIN db_link dbl2 ON n2e.ensembl_id = dbl2.dblink_acc_num
                     LEFT JOIN record_attribution ra ON dbl2.dblink_zdb_id = ra.recattrib_data_zdb_id
                 WHERE
@@ -296,21 +267,4 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         }
     }
 
-    private void dropEnsemblTempTables(Session session) {
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
-    }
-
-    /**
-     * Drop the temporary tables used in the comparison.
-     * This is unnecessary, but it's good practice to clean up after yourself.
-     */
-    private void dropTemporaryTables() {
-        Session session = currentSession();
-        Transaction tx = session.beginTransaction();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2ensembl").executeUpdate();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
-        tx.commit();
-    }
 }

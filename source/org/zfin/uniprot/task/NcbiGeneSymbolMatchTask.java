@@ -83,10 +83,8 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         Session session = currentSession();
         Transaction transaction = HibernateUtil.createTransaction();
         try {
-            NcbiGeneInfoService.createNcbiZebrafishTempTable(session);
-            NcbiGeneInfoService.loadNcbiFileIntoTempTable(session, extractedCsvFile);
+            NcbiGeneInfoService.loadNcbiFileIntoPersistentTable(session, extractedCsvFile);
             NcbiGeneInfoService.createDblinksToDeleteTempTable(toDelete);
-            createNcbi2ZfinTable(session);
 
             List<NcbiGeneSymbolMatchRow> symbolMatches = getGeneSymbolMatches(session);
 
@@ -96,8 +94,6 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
             enrichRows(symbolMatches, geneIdToRefSeqs, notInCurrentAnnotationRelease);
 
             writeGeneSymbolMatchCsv(symbolMatches);
-
-            dropTemporaryTables();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
@@ -278,38 +274,28 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         }
     }
 
-    private void createNcbi2ZfinTable(Session session) {
-        String query = """
-            SELECT geneId AS ncbi_id, replace(t.xref, 'ZFIN:', '') AS zdb_id
-            INTO TEMP TABLE tmp_ncbi2zfin
-            FROM tmp_ncbi_zebrafish, unnest(string_to_array(dbXrefs, '|')) AS t (xref)
-            WHERE t.xref LIKE 'ZFIN:%'
-        """;
-        session.createNativeQuery(query).executeUpdate();
-    }
-
     private List<NcbiGeneSymbolMatchRow> getGeneSymbolMatches(Session session) {
         String query = """
                 SELECT
-                    nz.geneId AS ncbi_id,
+                    nz.gene_id AS ncbi_id,
                     nz.symbol AS gene_symbol,
                     m.mrkr_zdb_id,
                     COALESCE(n2z.zdb_id, '') AS ncbi_predicted_zdb_id,
                     CASE WHEN n2z.zdb_id = m.mrkr_zdb_id THEN 'true' ELSE 'false' END AS zdb_ids_match,
-                    nz.typeOfGene AS ncbi_gene_type,
+                    nz.type_of_gene AS ncbi_gene_type,
                     m.mrkr_type AS zfin_marker_type
                 FROM
-                    tmp_ncbi_zebrafish nz
+                    external_resource.ncbi_danio_rerio_gene_info nz
                     INNER JOIN marker m ON m.mrkr_abbrev = nz.symbol
-                    LEFT JOIN tmp_ncbi2zfin n2z ON nz.geneId = n2z.ncbi_id
-                    LEFT JOIN db_link dbl ON dbl.dblink_acc_num = nz.geneId
+                    LEFT JOIN external_resource.ncbi_danio_rerio_gene_info_zfin n2z ON nz.gene_id = n2z.ncbi_id
+                    LEFT JOIN db_link dbl ON dbl.dblink_acc_num = nz.gene_id
                         AND dbl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
                         AND dbl.dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM dblinks_to_delete)
                 WHERE
                     dbl.dblink_linked_recid IS NULL
                 ORDER BY
                     nz.symbol COLLATE "C" ASC,
-                    nz.geneId
+                    nz.gene_id
                 """;
         List<Object[]> results = session.createNativeQuery(query).list();
         log.info("Number of NCBI genes matched by gene symbol: " + results.size());
@@ -340,11 +326,4 @@ public class NcbiGeneSymbolMatchTask extends AbstractScriptWrapper {
         }
     }
 
-    private void dropTemporaryTables() {
-        Session session = currentSession();
-        Transaction tx = session.beginTransaction();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi2zfin").executeUpdate();
-        session.createNativeQuery("DROP TABLE IF EXISTS tmp_ncbi_zebrafish").executeUpdate();
-        tx.commit();
-    }
 }

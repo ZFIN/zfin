@@ -287,6 +287,7 @@
         <mapping class="org.zfin.mapping.VariantSequence"/>
         <mapping class="org.zfin.mutant.FishExperiment"/>
         <mapping class="org.zfin.mutant.GeneGenotypeExperiment"/>
+        <mapping class="org.zfin.datatransfer.ncbi.NcbiGeneInfo"/>
 
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
 
