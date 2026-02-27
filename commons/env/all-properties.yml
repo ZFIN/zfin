@@ -273,6 +273,7 @@ unique_properties:
   PRIMARY_COLOR: "#512da8"
   SCHEDULE_TRIGGER_FILES: "production" # <<< other potential values: trunk, test, blank
   SMTP_HOST: "mailhog"           # Override: smtp.uoregon.edu for test, trunk, production
+  SMTP_PORT: "25"           # Override: 25 for test, trunk, production
   SOLR_CREATE_BACKUPS: "false"  # Override: true for prod, test, trunk
 
 # -----------------------------------------------------------------------------
@@ -368,6 +369,7 @@ staging_defaults:
   NODE_ENV: "production"
   ONTOLOGY_LOADER_EMAIL: "informix@zfin.org cmpich@zfin.org"
   SMTP_HOST: "smtp.uoregon.edu"
+  SMTP_PORT: "25"
   SOLR_CREATE_BACKUPS: "true"
   SOLR_MEMORY: "8g"
 
@@ -387,6 +389,7 @@ prod_defaults:
   PRIMARY_COLOR: "#008080"
   SEND_AUTHOR_NOTIF_EMAIL: "true"
   SMTP_HOST: "smtp.uoregon.edu"
+  SMTP_PORT: "25"
   SOLR_CREATE_BACKUPS: "true"
   SOLR_MEMORY: "10g"
 
@@ -502,7 +505,7 @@ instance_overrides:
   frost:
     PRIMARY_COLOR: "#d32f2f"
   github:
-    JAVA_HOME: ""
+    JAVA_HOME: "__REMOVE__"
     SOURCEROOT: "${env.GITHUB_WORKSPACE}"
     ZFIN_PROPERTIES_PATH: "${env.GITHUB_WORKSPACE}/home/WEB-INF/zfin.properties"
   iguana:
@@ -534,7 +537,7 @@ instance_overrides:
     PRIMARY_COLOR: "#512da8"
   trunk:
     PRIMARY_COLOR: "#f57c00"
-    SCHEDULE_TRIGGER_FILES: "${env.INSTANCE}"
+    SCHEDULE_TRIGGER_FILES: "trunk"
     WIKI_PUSH_TO_WIKI: "true"
     ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
     BLAST_CACHE_AT_STARTUP: "false"

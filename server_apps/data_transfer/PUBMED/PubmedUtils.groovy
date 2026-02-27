@@ -1,10 +1,51 @@
 import groovy.xml.slurpersupport.GPathResult
 import groovy.xml.XmlSlurper
+import org.zfin.infrastructure.TokenStorage
 
 import java.time.LocalDate
 import java.util.zip.GZIPInputStream
 
 class PubmedUtils {
+
+    private static final int MAX_RETRIES = 5
+    private static final long INITIAL_RETRY_DELAY_MS = 2000
+    private static final long MAX_RETRY_DELAY_MS = 60000
+    private static final Set<Integer> RETRYABLE_HTTP_CODES = [429, 500, 502, 503, 504] as Set
+
+    private static String ncbiApiKey = null
+    private static boolean apiKeyStatusLogged = false
+
+    static String getNcbiApiKey() {
+        if (ncbiApiKey == null) {
+            try {
+                def tokenStorage = new TokenStorage()
+                Optional<String> token = tokenStorage.getValue(TokenStorage.ServiceKey.NCBI_API_TOKEN)
+                if (token.isPresent()) {
+                    ncbiApiKey = token.get()
+                } else {
+                    ncbiApiKey = ""
+                }
+            } catch (Exception e) {
+                println("[NCBI API Key] Warning: could not read from TokenStorage: ${e.message}")
+                ncbiApiKey = ""
+            }
+        }
+        return ncbiApiKey
+    }
+
+    private static void logApiKeyStatus() {
+        if (!apiKeyStatusLogged) {
+            def key = getNcbiApiKey()
+            if (key) {
+                println("[NCBI API Key] Using API key from TokenStorage (NCBI_API_TOKEN) for eutils calls")
+            } else {
+                println("[NCBI API Key] WARNING: No NCBI API key found in TokenStorage. eutils calls will be unauthenticated (lower rate limits).")
+                println("[NCBI API Key] To set a key, run: zfin-util token-storage write NCBI_API_TOKEN <your-key>")
+            }
+            println("[NCBI API Key] PMC OAI/OA endpoints do not use an API key")
+            apiKeyStatusLogged = true
+        }
+    }
 
     private static final Map<String, Integer> MONTHS = [
             'Jan': 1,
@@ -21,24 +62,73 @@ class PubmedUtils {
             'Dec': 12
     ]
 
+    /**
+     * Fetch a URL with retry and exponential backoff for transient HTTP errors (429, 5xx).
+     * Returns an InputStream on success, throws on exhausted retries.
+     */
+    static InputStream fetchWithRetry(String url, String method = "GET", String postBody = null) {
+        logApiKeyStatus()
+        long delay = INITIAL_RETRY_DELAY_MS
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection()
+                connection.setRequestMethod(method)
+                connection.setConnectTimeout(30000)
+                connection.setReadTimeout(60000)
+                if (postBody != null) {
+                    connection.setDoOutput(true)
+                    connection.outputStream.withWriter("UTF-8") { it.write(postBody) }
+                }
+                int responseCode = connection.getResponseCode()
+                if (responseCode >= 200 && responseCode < 300) {
+                    return connection.getInputStream()
+                }
+                if (RETRYABLE_HTTP_CODES.contains(responseCode)) {
+                    println("[Retry] HTTP $responseCode from $url (attempt $attempt/$MAX_RETRIES). Waiting ${delay}ms before retry...")
+                    Thread.sleep(delay)
+                    delay = Math.min(delay * 2, MAX_RETRY_DELAY_MS)
+                    continue
+                }
+                throw new IOException("Server returned HTTP response code: $responseCode for URL: $url")
+            } catch (SocketTimeoutException | ConnectException e) {
+                if (attempt == MAX_RETRIES) {
+                    throw e
+                }
+                println("[Retry] ${e.class.simpleName} for $url (attempt $attempt/$MAX_RETRIES). Waiting ${delay}ms before retry...")
+                Thread.sleep(delay)
+                delay = Math.min(delay * 2, MAX_RETRY_DELAY_MS)
+            }
+        }
+        throw new IOException("Failed to fetch $url after $MAX_RETRIES attempts")
+    }
+
+    /**
+     * Parse XML from a URL with retry logic.
+     */
+    static GPathResult parseUrlWithRetry(String url, String method = "GET", String postBody = null) {
+        def inputStream = fetchWithRetry(url, method, postBody)
+        getParser().parse(inputStream)
+    }
+
+    /**
+     * Returns "&api_key=..." if key is available, empty string otherwise.
+     */
+    private static String apiKeyParam() {
+        def key = getNcbiApiKey()
+        return key ? "&api_key=${key}" : ""
+    }
 
     static GPathResult getFullText(pmcId) {
+        // OAI endpoint does not support api_key parameter
         def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
-        getParser().parse(url)
+        parseUrlWithRetry(url)
     }
 
     static GPathResult getPdfMetaDataRecord(pmcId){
+        // OA endpoint does not support api_key parameter
         def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
         def query = "id="+pmcId
-        def connection = new URL(url).openConnection()
-        connection.setDoOutput(true)
-        connection.connect()
-        def writer = new OutputStreamWriter(connection.outputStream)
-        writer.write(query)
-        writer.flush()
-        writer.close()
-        connection.connect()
-        getParser().parse(connection.inputStream)
+        parseUrlWithRetry(url, "POST", query)
     }
 
 //
@@ -90,16 +180,8 @@ class PubmedUtils {
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        def query = "db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=${id}&retmode=xml"
-        def connection = new URL(url).openConnection()
-        connection.setRequestMethod("POST")
-        connection.setDoOutput(true)
-        def writer = new OutputStreamWriter(connection.outputStream)
-        writer.write(query)
-        writer.flush()
-        writer.close()
-        connection.connect()
-        getParser().parse(connection.inputStream)
+        def query = "db=pubmed${apiKeyParam()}&id=${id}&retmode=xml"
+        parseUrlWithRetry(url, "POST", query)
     }
 
 
@@ -108,24 +190,15 @@ class PubmedUtils {
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        def query = "db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=${ids.join(",")}&retmode=xml"
-
-        def connection = new URL(url).openConnection()
-        connection.setRequestMethod("POST")
-        connection.setDoOutput(true)
-        def writer = new OutputStreamWriter(connection.outputStream)
-        writer.write(query)
-        writer.flush()
-        writer.close()
-        connection.connect()
-        getParser().parse(connection.inputStream)
+        def query = "db=pubmed${apiKeyParam()}&id=${ids.join(",")}&retmode=xml"
+        parseUrlWithRetry(url, "POST", query)
     }
 
     static Iterator<GPathResult> searchPubmed(query, daysBack = 500) {
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
-                "esearch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&term=${URLEncoder.encode(query, "UTF-8")}" +
+                "esearch.fcgi?db=pubmed${apiKeyParam()}&term=${URLEncoder.encode(query, "UTF-8")}" +
                 "&usehistory=y&reldate=${daysBack}&datetype=edat"
-        def searchResult = getParser().parse(url)
+        def searchResult = parseUrlWithRetry(url)
         Integer count = searchResult.Count.toInteger()
         String queryKey = searchResult.QueryKey.text()
         String webEnv = searchResult.WebEnv.text()
@@ -275,28 +348,19 @@ class PubmedUtils {
         }
 
         private void fetch() {
-            def attempt = 0
             def fetchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
-                    "efetch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&query_key=${queryKey}&WebEnv=${webEnv}" +
+                    "efetch.fcgi?db=pubmed${apiKeyParam()}&query_key=${queryKey}&WebEnv=${webEnv}" +
                     "&retmode=xml&retstart=${start}&retmax=${max}"
-            while (attempt < 3) {
-                attempt += 1
-                println("attempt" + "$attempt: $fetchUrl")
-                try {
-                    def articles = getParser().parse(fetchUrl).PubmedArticle
-                    if (articles.size() > 0) {
-                        println("articleSize: " + articles.size())
-                        articles.each { queue.push(it) }
-                        start += max
-                        return
-                    }
-                    println("No articles")
-                } catch (IOException ignore) {
-                    println("Caught IOException!")
-                }
+            println("Fetching: $fetchUrl")
+            def articles = parseUrlWithRetry(fetchUrl).PubmedArticle
+            if (articles.size() > 0) {
+                println("articleSize: " + articles.size())
+                articles.each { queue.push(it) }
+                start += max
+                return
             }
-            println("fetching done")
-            throw new RuntimeException("Giving up after 3 attempt to fetch from NCBI")
+            println("No articles returned")
+            throw new RuntimeException("No articles returned from NCBI fetch")
         }
     }
 

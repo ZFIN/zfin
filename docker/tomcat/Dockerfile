@@ -23,6 +23,7 @@ RUN groupadd -g 1477 zfloadup
 RUN usermod  -aG zfloadup zfishweb
 
 RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
+-Duser.timezone=${TZ:-America/Los_Angeles} \
 -Dcom.sun.management.jmxremote \
 -Dcom.sun.management.jmxremote.local.only=false \
 -Dcom.sun.management.jmxremote.authenticate=false \
