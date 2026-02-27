@@ -298,6 +298,9 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
 
 def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
 
+    def failedIds = []
+    def processedCount = 0
+
     for (id in idsToGrab) {
         def zdbId = id.value
         def pmcId = id.key
@@ -311,29 +314,47 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
                 pubYear = "20" + pubYear
             }
         }
-        PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
-            println("Processing " + pmcId + " for ZDB ID " + zdbId)
 
-            // Iterate over each link element in the record
-            rec.link.each { link ->
-                def format = link.@format.text()
-                def href = link.@href.text()
-                println("Found link to " + href)
-                println("Found format " + format)
+        try {
+            PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
+                println("Processing " + pmcId + " for ZDB ID " + zdbId)
 
-                if (format == 'tgz') {
-                    PUBS_WITH_PDFS_TO_UPDATE.append(href + "\n")
-                    downloadPMCFileBundle(href, zdbId, pubYear)
-                    def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                    println pmcId + "," + zdbId
-                    println(href)
-                    processPMCText(fullTxt, zdbId, pmcId, pubYear)
-                } else if (format == 'pdf') {
-                    println "found a PDF to try and download manually " + pmcId + "," + zdbId
-                    downloadPDF(href, pmcId, zdbId, pubYear)
+                // Iterate over each link element in the record
+                rec.link.each { link ->
+                    def format = link.@format.text()
+                    def href = link.@href.text()
+                    println("Found link to " + href)
+                    println("Found format " + format)
+
+                    if (format == 'tgz') {
+                        PUBS_WITH_PDFS_TO_UPDATE.append(href + "\n")
+                        downloadPMCFileBundle(href, zdbId, pubYear)
+                        def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
+                        println pmcId + "," + zdbId
+                        println(href)
+                        processPMCText(fullTxt, zdbId, pmcId, pubYear)
+                    } else if (format == 'pdf') {
+                        println "found a PDF to try and download manually " + pmcId + "," + zdbId
+                        downloadPDF(href, pmcId, zdbId, pubYear)
+                    }
                 }
             }
+        } catch (Exception e) {
+            println("ERROR processing ${pmcId} (${zdbId}): ${e.message}")
+            failedIds << [pmcId: pmcId, zdbId: zdbId, error: e.message]
         }
+
+        processedCount++
+        // Brief pause between publications to avoid overwhelming NCBI
+        if (processedCount % 5 == 0) {
+            Thread.sleep(500)
+        }
+    }
+
+    if (failedIds.size() > 0) {
+        println("\n=== FAILED PUBLICATIONS (${failedIds.size()}) ===")
+        failedIds.each { println("  ${it.pmcId} (${it.zdbId}): ${it.error}") }
+        println("===================================\n")
     }
 }
 
