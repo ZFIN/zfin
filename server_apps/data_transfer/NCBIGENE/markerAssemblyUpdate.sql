@@ -125,3 +125,30 @@ where gg.sfclg_assembly = 'GRCz11'
           and g.ma_a_pk_id =3
     )
 on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;
+
+-- another pass to catch any genes that have a GRCz12 association in gff3_ncbi but not in marker_assembly, and are not listed as "not in current annotation release set"
+-- any gene that has an NCBI gene ID and is not marked as "not in current annotation release set" should be associated to GRCz12,
+-- after all, GRCz12 is the current annotation release, and if it has an NCBI gene ID and it's in gff3_ncbi table, it should be in the GRCz12 set.
+-- get that warning set:
+CREATE TEMP VIEW warning_report_current_not_z12 AS
+SELECT
+    mas_mrkr_zdb_id                          AS gene_zdb_id,
+    string_agg(DISTINCT dblink_acc_num, ',') AS gene_ncbi_id
+FROM marker_annotation_status
+         LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
+         LEFT JOIN db_link         ON mas_mrkr_zdb_id = dblink_linked_recid
+    AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+WHERE mas_vt_pk_id = 12
+GROUP BY mas_mrkr_zdb_id
+HAVING string_agg(ma_a_pk_id::varchar, ',') NOT LIKE '%1%';
+
+-- get the genes that have a GRCz12 association in gff3_ncbi but also show up in the warning report
+create temp view new_inserts as
+select * from warning_report_current_not_z12
+    join gff3_ncbi
+    on gff_attributes like '%Dbxref=GeneID:' || gene_ncbi_id || ',%'
+    and gff_attributes like '%gbkey=Gene%';
+
+insert into marker_assembly (ma_mrkr_zdb_id, ma_a_pk_id)
+select gene_zdb_id, 1 from new_inserts
+on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;
