@@ -30,15 +30,15 @@
  *   6. instance_environment    - Maps instance name → environment
  *   7. defaults_by_environment - Applies dev_defaults or prod_defaults based on step 6
  *   8. instance_overrides      - Instance-specific overrides
- *   9. exclusion filter        - Properties set to "" (empty string) are excluded from output
+ *   9. exclusion filter        - Properties set to "__REMOVE__" are excluded from output
  *
  * Property Exclusion:
- *   To exclude a property for a specific instance, set its value to empty string in
+ *   To exclude a property for a specific instance, set its value to "__REMOVE__" in
  *   instance_overrides:
  *
  *     instance_overrides:
  *       my_instance:
- *         SOME_PROPERTY: ""    # This property will not appear in output
+ *         SOME_PROPERTY: "__REMOVE__"    # This property will not appear in output
  */
 
 @Grab('org.yaml:snakeyaml:2.2')
@@ -52,6 +52,7 @@ class PropertiesProcessor {
     private boolean debug = false
     private Set<String> resolving = [] as Set  // For circular reference detection
     private List<Map> overwriteLog = []  // Track all overwrites for debug summary
+    private static final String REMOVE_MARKER = "__REMOVE__"
 
     // Sections that must have unique keys (no overlap allowed)
     private static final List<String> UNIQUE_KEY_SECTIONS = [
@@ -191,10 +192,10 @@ class PropertiesProcessor {
         debugLog("Resolving variable references...")
         resolved = resolveAllVariables(resolved)
 
-        // Step 9: Remove properties with empty string values (exclusion marker)
-        // Setting a property to "" in instance_overrides excludes it from output
-        debugLog("Step 9: Filtering excluded properties (empty string values)")
-        def excludedKeys = resolved.findAll { k, v -> v == "" }.keySet()
+        // Step 9: Remove properties marked with __REMOVE__ sentinel
+        // Setting a property to "__REMOVE__" in instance_overrides excludes it from output
+        debugLog("Step 9: Filtering excluded properties (__REMOVE__ marker)")
+        def excludedKeys = resolved.findAll { k, v -> v == REMOVE_MARKER }.keySet()
         if (excludedKeys) {
             excludedKeys.each { key ->
                 debugLog("  Excluding: ${key}")

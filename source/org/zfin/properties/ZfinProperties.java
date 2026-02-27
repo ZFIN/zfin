@@ -204,7 +204,8 @@ public final class ZfinProperties {
         }
         for (ZfinPropertiesEnum zfinPropertiesEnum : ZfinPropertiesEnum.values()) {
             if (zfinPropertiesEnum.value() == null) {
-                logger.error("Property[" + zfinPropertiesEnum.name() + " not defined for INSTANCE[" + ZfinPropertiesEnum.INSTANCE + "]");
+                logger.error("Property[" + zfinPropertiesEnum.name() + " not defined for INSTANCE[" + ZfinPropertiesEnum.INSTANCE + "], defaulting to empty string");
+                zfinPropertiesEnum.setValue("");
             } else {
                 logger.info("Property[" + zfinPropertiesEnum.name() + "=[" + zfinPropertiesEnum.value() + "]");
             }

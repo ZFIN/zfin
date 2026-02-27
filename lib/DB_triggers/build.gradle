@@ -1,44 +1,38 @@
 def env = System.getenv()
 def dbname = env['DBNAME']
 def pgbindir = env['PGBINDIR']
-def pgdata = env['PGDATA']
 
 task deployPostgresTriggers {
-    description = "deploy postgres triggers into PG"
+    description = 'Deploy postgres triggers'
     doLast {
-        println "deploying postgres triggers ..."
-        int numberOfTrigger = runSqlFiles(".")
-        println "deployed "+numberOfTrigger +" trigger ..."
+        println 'deploying postgres triggers ...'
+        int numberOfTriggers = runSqlFiles('.')
+        println "Deployed triggers: ${numberOfTriggers}"
     }
 }
 
-File[] fileList(String dir) {
-    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
-}
+int runSqlFiles(String directory) {
+    int numberOfTriggers = 0
 
-
-int runSqlFiles(String directory){
-
-    def env = System.getenv()
-    def dbname = env['DBNAME']
-    def pgbindir = env['PGBINDIR']
-
-    int numberOfTrigger = 0;
-    fileList(directory).each {
-        File file ->
-            if (file.getName().endsWith(".sql")) {
-                String command = pgbindir + "/psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
-                //println command
-                command.execute().text
-                numberOfTrigger++;
+    file(directory).listFiles({ file -> file.isFile() } as FileFilter).sort().each { File file ->
+        if (file.name.endsWith('.sql')) {
+            exec {
+                commandLine pgbindir + '/psql',
+                        '-d', dbname,
+                        '-q',
+                        '-v', 'ON_ERROR_STOP=1',
+                        '-v', 'client_min_messages=warning',
+                        '-f', file.absolutePath
             }
+            numberOfTriggers++
+        }
     }
-    return numberOfTrigger;
+    return numberOfTriggers
 }
 
-task dropTriggers() {
-     doLast {
-     	    description = "drop all triggers from the database"
-   	    exec { commandLine "bash", "-c", "echo 'select strip_all_triggers()' | psql -v ON_ERROR_STOP=1 $dbname" }
-     }
+task dropTriggers {
+    description = 'Drop all triggers from the database'
+    doLast {
+        exec { commandLine 'bash', '-c', "echo 'select strip_all_triggers()' | psql -v ON_ERROR_STOP=1 ${dbname}" }
+    }
 }

@@ -204,7 +204,6 @@
         <mkdir dir="${domain-conf}"/>
         <mkdir dir="${CATALINA_BASE}/logs"/>
         <mkdir dir="${CATALINA_BASE}/webapps"/>
-        <mkdir dir="${CATALINA_BASE}/wars"/>
         <mkdir dir="${CATALINA_BASE}/work/Catalina/${DOMAIN_NAME}/_"/>
         <mkdir dir="${CATALINA_BASE}/temp"/>
         <mkdir dir="${CATALINA_BASE}/bin"/>
@@ -242,13 +241,8 @@
     </target>
 
 
-    <target name="gradle-war-and-deploy">
-        <gradle task="war"/>
-
-        <!--        copy war file to wars directory-->
-        <echo message="Deploying war file to ${CATALINA_BASE}/wars/zfin.war from build/libs/zfin.war"/>
-        <copy file="build/libs/zfin.war" tofile="${CATALINA_BASE}/wars/zfin.war" overwrite="true"/>
-
+    <target name="gradle-tomcat-deploy">
+        <gradle task="tomcatDeploy"/>
     </target>
 
 </project>

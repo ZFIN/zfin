@@ -1,51 +1,43 @@
 def env = System.getenv()
 def dbname = env['DBNAME']
+def pgbindir = env['PGBINDIR']
 
 task deployPostgresFunctions {
-    description = "deploy postgres function in PG"
+    description = 'Deploy postgres functions'
 
     doLast {
-        println "deploying postgres functions ..."
-        int numberOfFunctions = runSqlFiles(".")
-        println "Deployed functions: " + numberOfFunctions
+        println 'deploying postgres functions ...'
+        int numberOfFunctions = runSqlFiles('.')
+        println "Deployed functions: ${numberOfFunctions}"
     }
 }
 
-File[] fileList(String dir) {
-    file(dir).listFiles().sort()
-}
-
 int runSqlFiles(String directory) {
-
-    def env = System.getenv()
-    def dbname = env['DBNAME']
-    def pgbindir = env['PGBINDIR']
-
     int numberOfProc = 0
 
-    fileList(directory).each {
-        File file ->
-            if (file.getName().endsWith(".sql")) {
-                exec { commandLine pgbindir + "/psql",
-                        "-d", dbname,
-                        "-q",
-                        "-v", "ON_ERROR_STOP=1",
-                        "-v", "client_min_messages=warning",
-                        "-f", file.getAbsoluteFile()
-                }
-                numberOfProc++
+    file(directory).listFiles().sort().each { File file ->
+        if (file.name.endsWith('.sql')) {
+            exec {
+                commandLine pgbindir + '/psql',
+                        '-d', dbname,
+                        '-q',
+                        '-v', 'ON_ERROR_STOP=1',
+                        '-v', 'client_min_messages=warning',
+                        '-f', file.absolutePath
             }
-            if (file.isDirectory()) {
-                int number = runSqlFiles(file.getAbsolutePath())
-                println "deployed " + number + " files in subdirectory: " + file.getName()
-            }
+            numberOfProc++
+        }
+        if (file.isDirectory()) {
+            int number = runSqlFiles(file.absolutePath)
+            println "deployed ${number} files in subdirectory: ${file.name}"
+        }
     }
     return numberOfProc
 }
 
-task dropFunctions() {
+task dropFunctions {
+    description = 'Drop all functions from the database'
     doLast {
-        description = "drop all functions from the database"
-        exec { commandLine "bash", "-c", "psql -v ON_ERROR_STOP=1 $dbname < ./dropFunctions" }
+        exec { commandLine 'bash', '-c', "psql -v ON_ERROR_STOP=1 ${dbname} < ./dropFunctions" }
     }
 }

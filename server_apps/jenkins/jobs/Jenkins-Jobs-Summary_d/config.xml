@@ -57,7 +57,11 @@ Generates a clean HTML summary table designed for email distribution, including:
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-    <triggers/>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
     <concurrentBuild>false</concurrentBuild>
     <builders>
         <hudson.plugins.groovy.SystemGroovy plugin="groovy@497.v7b_061a_a_de65d">
