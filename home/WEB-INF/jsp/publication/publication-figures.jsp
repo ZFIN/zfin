@@ -78,19 +78,21 @@
                 <button
                         type='button'
                         class='btn btn-outline-secondary ${allFiguresCssClass}'
-                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=false';"
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=false<c:if test="${!empty probe}">&probeZdbID=${probe.zdbID}</c:if>';"
                 >
                     All Figures
                 </button>
                 <button
                         type='button'
                         class='btn btn-outline-secondary ${dataFiguresCssClass}'
-                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=true';"
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=true<c:if test="${!empty probe}">&probeZdbID=${probe.zdbID}</c:if>';"
                 >
                     Figures with Data
                 </button>
             </div>
         </div>
+
+        <zfin2:pagination paginationBean="${pagination}" />
 
         <c:forEach var="figure" items="${figures}">
             <z:section title="${figure.label}" entity="${figure}">
@@ -120,6 +122,15 @@
                 </zfin-figure:imagesAndCaptionPrototype>
             </z:section>
         </c:forEach>
+
+        <c:if test="${pagination.lastRecord < pagination.totalRecords}">
+            <z:section title="More Figures...">
+                <zfin2:pagination paginationBean="${pagination}" />
+            </z:section>
+        </c:if>
+        <c:if test="${pagination.lastRecord >= pagination.totalRecords}">
+            <zfin2:pagination paginationBean="${pagination}" />
+        </c:if>
 
         <z:section title="${ACKNOWLEDGEMENT}">
             <c:choose>

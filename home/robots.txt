@@ -51,6 +51,10 @@ Disallow: /action/fish/fish-detail-popup/
 Disallow: /action/ontology/term-detail-popup/
 Disallow: /action/marker/gene-product-description/ZDB-*
 
+#all-figures pages are expensive and should not be crawled
+Disallow: /action/publication/ZDB-PUB-*/all-figures
+Disallow: /ZDB-PUB-*/all-figures
+
 Disallow: /downloads/archive
 Disallow: /downloads/archive/*
 

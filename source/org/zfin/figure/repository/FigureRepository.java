@@ -7,6 +7,7 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FigureRepository {
 
@@ -23,4 +24,6 @@ public interface FigureRepository {
     List<Image> getAllImagesWithFigures();
 
     List<Image> getRecentlyCuratedImages();
+
+    Set<String> getFigureIdsWithData(List<String> figureIds);
 }

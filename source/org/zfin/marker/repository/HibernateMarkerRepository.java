@@ -176,6 +176,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public Clone getCloneById(String zdbID) {
+        if (StringUtils.isEmpty(zdbID)) {
+            return null;
+        }
         Session session = currentSession();
         return session.get(Clone.class, zdbID);
     }

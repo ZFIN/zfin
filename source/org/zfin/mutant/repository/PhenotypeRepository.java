@@ -11,6 +11,7 @@ import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -300,6 +301,8 @@ public interface PhenotypeRepository {
     List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent);
 
     List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID);
+
+    List<PhenotypeWarehouse> getPhenotypeWarehouseByFigureIds(Collection<String> figureIDs);
 
     /**
      * Retrieve the status of the pheno mart

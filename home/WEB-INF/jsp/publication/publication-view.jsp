@@ -105,7 +105,7 @@
                  data-images-json="${imagesJson}"
                  data-publication-id="${publication.zdbID}"
             ></div>
-            <c:if test="${figureCount > 0 && figureCount < 50}">
+            <c:if test="${!isLargeDataPublication}">
                 <div><a href="/action/publication/${publication.zdbID}/all-figures">Show all Figures</a></div>
             </c:if>
         </z:section>
