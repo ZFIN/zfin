@@ -56,6 +56,12 @@
         </a>
     </div>
     <div class="col-lg-6">
+        <a href="/action/zirc/submit" class="section primary-link">
+            <div class="title">ZIRC Submission</div>
+            <div class="description">Submit fish lines to the Zebrafish International Resource Center</div>
+        </a>
+    </div>
+    <div class="col-lg-6">
         <a href="https://www.alliancegenome.org" class="no-icon section primary-link" target="_blank" rel="noopener noreferrer">
             <div class="title external">Alliance of Genome Resources</div>
             <div class="description">Explore genetic/genomic data from multiple model organisms</div>

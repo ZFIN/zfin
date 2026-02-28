@@ -51,8 +51,8 @@
         <div>
             <h4>Submit a fish line to ZIRC</h4>
             <p>
-                <a href="http://zebrafish.org/submissions/submitTerms.php">Submit fish strains</a> to the Zebrafish
-                International Resource Center.
+                <a href="/action/zirc/submit">Submit fish lines</a> to the Zebrafish
+                International Resource Center using the ZIRC submission form.
             </p>
         </div>
 
