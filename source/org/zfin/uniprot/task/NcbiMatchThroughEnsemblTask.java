@@ -172,11 +172,10 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         Long count = session.createNativeQuery(query, Long.class).uniqueResult();
         log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
-        // Get semi-final report using the view-based mapping tables.
-        // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
-        // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
-        session.createNativeQuery("DROP TABLE IF EXISTS ncbi_match_report").executeUpdate();
+        // Get report of NCBI genes that link to ZFIN but lack a reciprocal link,
+        // matched through shared Ensembl IDs, with RNA accessions appended.
         query = """
+            WITH ncbi_match_report AS (
                 SELECT
                     n2z.ncbi_id,
                     zdb_id,
@@ -184,7 +183,6 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     symbol,
                     string_agg(dbl2.dblink_zdb_id, '; ' order by dbl2.dblink_zdb_id) AS dblinks,
                     string_agg(ra.recattrib_source_zdb_id, '; ' order by ra.recattrib_source_zdb_id) AS publications
-                    INTO TEMP TABLE ncbi_match_report
                 FROM
                     external_resource.ncbi_danio_rerio_gene_info_zfin n2z
                     LEFT JOIN db_link dbl ON dbl.dblink_linked_recid = n2z.zdb_id
@@ -201,13 +199,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     n2z.ncbi_id,
                     zdb_id,
                     ensembl_id,
-                    symbol ORDER BY n2z.ncbi_id
-                """;
-        session.createNativeQuery(query).executeUpdate();
-
-        // Add the rna accessions to the report.
-        query = """
-            SELECT
+                    symbol
+            )
+            SELECT -- Add the rna accessions to the report.
                 nmr.*,
                 string_agg(dblink_acc_num, ';' ORDER BY dblink_acc_num) AS rna_accessions
             FROM

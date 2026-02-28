@@ -3767,27 +3767,17 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 if (parts.length < 9) {
                     continue;
                 }
-                String ncbiId = parts[0].trim();
-                String geneSymbol = parts[1].trim();
-                String mrkrZdbId = parts[2].trim();
-                String ncbiPredictedZdbId = parts[3].trim();
-                String zdbIdsMatch = parts[4].trim();
-                String ncbiGeneType = parts[5].trim();
-                String zfinMarkerType = parts[6].trim();
-                String refSeqAccessions = parts[7].trim();
-                String notInCurrentAnnotation = parts[8].trim();
-
-                Map<String, Object> row = new LinkedHashMap<>();
-                row.put("NCBI Gene ID", ncbiId);
-                row.put("Gene Symbol", geneSymbol);
-                row.put("Marker ZDB ID", mrkrZdbId);
-                row.put("NCBI Predicted ZDB ID", ncbiPredictedZdbId);
-                row.put("ZDB IDs Match", zdbIdsMatch);
-                row.put("NCBI Gene Type", ncbiGeneType);
-                row.put("ZFIN Marker Type", zfinMarkerType);
-                row.put("RefSeq Accessions", refSeqAccessions);
-                row.put("Not In Current Annotation", notInCurrentAnnotation);
-                rowsList.add(row);
+                rowsList.add(Map.of(
+                        "NCBI Gene ID", parts[0].trim(),
+                        "Gene Symbol", parts[1].trim(),
+                        "Marker ZDB ID", parts[2].trim(),
+                        "NCBI Predicted ZDB ID", parts[3].trim(),
+                        "ZDB IDs Match", parts[4].trim(),
+                        "NCBI Gene Type", parts[5].trim(),
+                        "ZFIN Marker Type", parts[6].trim(),
+                        "RefSeq Accessions", parts[7].trim(),
+                        "Not In Current Annotation", parts[8].trim()
+                ));
             }
         } catch (IOException e) {
             print(LOG, "ERROR: Failed to read gene symbol match CSV: " + e.getMessage() + "\n");
