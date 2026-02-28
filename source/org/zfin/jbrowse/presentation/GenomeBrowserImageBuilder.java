@@ -4,8 +4,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -20,7 +18,7 @@ import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
-public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
+public class GenomeBrowserImageBuilder {
 
     private GenomeBrowserBuild genomeBuild;
 
@@ -42,7 +40,6 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
     private String highlightString;
     private Integer height;
 
-    @Override
     public GenomeBrowserImage build() {
 
         if (highlightMarker != null) {
@@ -78,7 +75,7 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
             landmark = landmarkLocation.getChromosome() + ":" + start + ".." + end;
         }
 
-        return new JBrowseImage(this);
+        return new GenomeBrowserImage(this);
     }
 
     public GenomeBrowserImage buildForClone(Clone clone) {
@@ -125,55 +122,46 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         .orElse(null);
     }
 
-    @Override
     public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
         this.genomeBuild = genomeBuild;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder landmark(String landmark) {
         this.landmark = landmark;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark) {
         this.landmarkLocation = landmark;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder withCenteredRange(int range) {
         this.centeredRange = range;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder withPadding(int startPadding, int endPadding) {
         this.startPadding = startPadding;
         this.endPadding = endPadding;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder withRelativePadding(double padding) {
         relativePadding = padding;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder withPadding(int padding) {
         return withPadding(padding, padding);
     }
 
-    @Override
     public GenomeBrowserImageBuilder withHeight(int height) {
         this.height = height;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder tracks(GenomeBrowserTrack... tracks) {
         return tracks(Arrays.asList(tracks));
     }
@@ -183,79 +171,70 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder highlight(String highlight) {
         highlightString = highlight;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder highlight(Marker highlight) {
         highlightMarker = highlight;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder highlight(Feature highlight) {
         highlightFeature = highlight;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder highlightColor(String highlightColor) {
         this.highlightColor = highlightColor;
         return this;
     }
 
-    @Override
     public GenomeBrowserImageBuilder grid(boolean grid) {
         this.grid = grid;
         return this;
     }
 
-    @Override
     public String getLandmark() {
         return landmark;
     }
 
-    @Override
     public GenomeBrowserBuild getGenomeBuild() {
         return genomeBuild;
     }
 
-    @Override
     public Collection<GenomeBrowserTrack> getTracks() {
         return tracks;
     }
 
-    @Override
     public String getHighlightLandmark() {
         return highlightLandmark;
     }
 
-    @Override
     public String getHighlightColor() {
         return highlightColor;
     }
 
-    @Override
     public boolean isGrid() {
         return grid;
     }
 
-    @Override
     public Feature getHighlightFeature() {
         return highlightFeature;
     }
 
-    @Override
     public Integer getHeight() {
         return height;
     }
 
-    @Override
     public GenomeBrowserImageBuilder setBuild(Assembly assembly) {
-        return null;
+        switch(assembly.getName()){
+            case "GRCz12tu" -> genomeBuild = GenomeBrowserBuild.CURRENT;
+            case "GRCz11" -> genomeBuild = GenomeBrowserBuild.GRCZ11;
+            default -> genomeBuild = GenomeBrowserBuild.CURRENT;
+        }
+        return this;
     }
 
 }

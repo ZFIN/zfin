@@ -17,7 +17,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;

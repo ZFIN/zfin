@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.mapping.presentation.BrowserLink;
 
 import java.util.List;

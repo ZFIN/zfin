@@ -38,6 +38,7 @@ import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
+import org.zfin.mutant.MutantEntityMappingTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
 import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
 import org.zfin.mutant.repository.MutantRepositoryTest;
@@ -109,6 +110,7 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
     MarkerAttributionServiceTest.class,
     MergeMarkerDBTest.class,
 //        MicroArrayTest.class,     // Takes 1.5 min to run, but works.
+    MutantEntityMappingTest.class,
     MutantRepositoryTest.class,
 //        NomenclatureCandidateControllerTest.class, // no tests
     OntologyManagerTest.class,

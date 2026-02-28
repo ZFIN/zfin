@@ -11,9 +11,11 @@ import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.Genotype;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
+import org.zfin.mutant.*;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -39,6 +41,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private PhenotypeRepository phenotypeRepository = RepositoryFactory.getPhenotypeRepository();
     private FigureViewService figureViewService = new FigureViewService();
 
     @Test
@@ -237,6 +240,61 @@ public class FigureServiceTest extends AbstractDatabaseTest {
             figureSummaryDisplay.getExpressionStatementList(), not(hasItem(notPresentInFigure)));
 
         return figureSummaryList;
+    }
+
+    @Test
+    public void getPhenotypeFishFromWarehouse() {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse("ZDB-FIG-150416-9");
+        assertThat("warehouse list should not be empty", warehouseList, not(empty()));
+
+        List<Fish> fish = figureViewService.getPhenotypeFish(warehouseList);
+        assertThat("fish list should not be null", fish, notNullValue());
+        assertThat("figure should have at least one fish", fish, not(empty()));
+    }
+
+    @Test
+    public void getPhenotypeSTRFromWarehouse() {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse("ZDB-FIG-150416-9");
+        List<SequenceTargetingReagent> strs = figureViewService.getPhenotypeSTR(warehouseList);
+        assertThat("STR list should not be null", strs, notNullValue());
+    }
+
+    @Test
+    public void getPhenotypeConditionFromWarehouse() {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse("ZDB-FIG-150416-9");
+        List<Experiment> conditions = figureViewService.getPhenotypeCondition(warehouseList);
+        assertThat("conditions list should not be null", conditions, notNullValue());
+    }
+
+    @Test
+    public void getPhenotypeEntitiesFromWarehouse() {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse("ZDB-FIG-150416-9");
+        assertThat("warehouse list should not be empty", warehouseList, not(empty()));
+
+        List<PostComposedEntity> entities = figureViewService.getPhenotypeEntitiesFromWarehouse(warehouseList);
+        assertThat("entities should not be null", entities, notNullValue());
+        assertThat("figure should have at least one entity", entities, not(empty()));
+    }
+
+    @Test
+    public void getPhenotypeStagesFromWarehouse() {
+        List<PhenotypeWarehouse> warehouseList = phenotypeRepository.getPhenotypeWarehouse("ZDB-FIG-150416-9");
+        assertThat("warehouse list should not be empty", warehouseList, not(empty()));
+
+        DevelopmentStage startStage = figureViewService.getPhenotypeStartStage(warehouseList);
+        DevelopmentStage endStage = figureViewService.getPhenotypeEndStage(warehouseList);
+        assertThat("start stage should not be null", startStage, notNullValue());
+        assertThat("end stage should not be null", endStage, notNullValue());
+        assertThat("start stage should be <= end stage", startStage, lessThanOrEqualTo(endStage));
+    }
+
+    @Test
+    public void getPhenotypeStagesFromEmptyWarehouse() {
+        List<PhenotypeWarehouse> emptyList = new ArrayList<>();
+        DevelopmentStage startStage = figureViewService.getPhenotypeStartStage(emptyList);
+        DevelopmentStage endStage = figureViewService.getPhenotypeEndStage(emptyList);
+        assertThat("start stage should be null for empty list", startStage, nullValue());
+        assertThat("end stage should be null for empty list", endStage, nullValue());
     }
 
     private ExpressionStatement generateExpressionStatement(String superTermOboID, String subTermOboID, boolean isExpressionFound) {

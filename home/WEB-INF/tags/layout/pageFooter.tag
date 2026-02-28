@@ -1,6 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ tag import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
-
 <footer>
     <div class="footer-row">
         <div class="footer-contact">
@@ -62,15 +60,7 @@
                 <div class="nav-column-header">Genomics</div>
                 <ul>
                     <li><a href="/action/blast/blast">BLAST</a></li>
-                    <c:choose>
-                        <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE2)}">
-                            <li><a href="/action/jbrowse2">ZFIN</a></li>
-                        </c:when>
-                        <c:otherwise>
-<%--                        TODO: remove this once JBrowse with z12 is everywhere (or JBrowse2 is fully deployed)--%>
-                            <li><a href="/action/api/jbrowse/proxy/jbrowse/?data=data/GRCz12tu">ZFIN</a></li>
-                        </c:otherwise>
-                    </c:choose>
+                    <li><a href="/action/jbrowse2">ZFIN</a></li>
                 </ul>
             </div>
 

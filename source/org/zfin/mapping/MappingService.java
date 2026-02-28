@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.jbrowse.presentation.GenomeBrowserImage;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.presentation.BrowserLink;

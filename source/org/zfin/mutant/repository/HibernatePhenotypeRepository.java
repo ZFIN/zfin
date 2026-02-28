@@ -1111,6 +1111,17 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         return (List<PhenotypeWarehouse>) query.list();
     }
 
+    @Override
+    public List<PhenotypeWarehouse> getPhenotypeWarehouseByFigureIds(Collection<String> figureIDs) {
+        if (figureIDs == null || figureIDs.isEmpty()) {
+            return List.of();
+        }
+        String hql = "from PhenotypeWarehouse where figure.zdbID in (:figureIDs)";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("figureIDs", figureIDs);
+        return (List<PhenotypeWarehouse>) query.list();
+    }
+
     /**
      * Retrieve the status of the pheno mart
      *
