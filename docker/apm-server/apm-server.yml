@@ -1,0 +1,15 @@
+apm-server:
+  host: "0.0.0.0:8200"
+  data_streams:
+    wait_for_integration: false
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+
+kibana:
+  enabled: true
+  host: "kibana:5601"
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
