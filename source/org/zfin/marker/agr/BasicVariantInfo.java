@@ -69,8 +69,8 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                         && ftrLoc.getReferenceSequenceAccessionNumber() != null && ftrLoc.getReferenceSequenceAccessionNumber() != ""
                     ) {
                         String featureType = variant.getFeature().getType().toString();
-                        if (featureType.equals("POINT_MUTATION") || featureType.equals("DELETION") || featureType == "INSERTION" || featureType == "INDEL") {
-                            if (featureType == "POINT_MUTATION") {
+                        switch (featureType) {
+                            case "POINT_MUTATION":
                                 dto.setType("SO:1000008");
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
@@ -81,26 +81,32 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 if (variant.getFgmdSeqVar() == null || variant.getFgmdSeqVar() == "") {
                                     System.out.println(feature.getZdbID());
                                 }
-                            } else if (featureType == "DELETION") {
+                                break;
+                            case "DELETION":
                                 dto.setType("SO:0000159");
                                 dto.setGenomicVariantSequence("N/A");
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 if (variant.getFgmdSeqRef() == null || variant.getFgmdSeqRef() == "") {
                                     System.out.println(feature.getZdbID());
                                 }
-                            } else if (featureType == "INSERTION") {
+                                break;
+                            case "INSERTION":
                                 dto.setType("SO:0000667");
                                 dto.setGenomicReferenceSequence("N/A");
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                 if (variant.getFgmdSeqVar() == null || variant.getFgmdSeqVar() == "") {
                                     System.out.println(feature.getZdbID());
                                 }
-                            } else if (featureType == "INDEL") {
+                                break;
+                            case "INDEL":
                                 dto.setType("SO:1000032");
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-                            } else {
+                                dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
+                                break;
+                            default:
                                 System.out.println("invalid feature type");
-                            }
+                                break;
+                        }
 
                             dto.setSequenceOfReferenceAccessionNumber("RefSeq:" + ftrLoc.getReferenceSequenceAccessionNumber());
                             if (ftrLoc.getReferenceSequenceAccessionNumber() == "" || ftrLoc.getReferenceSequenceAccessionNumber() == null
@@ -172,7 +178,6 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                             CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
                             xRefs.add(xref);
                             dto.setCrossReferences(xRefs);
-                        }
                     }
 
                     return dto;
