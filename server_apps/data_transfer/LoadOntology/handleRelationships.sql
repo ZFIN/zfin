@@ -126,10 +126,11 @@ insert into term_relationship_type
 					from term_relationship_type
 					where termreltype_name = termrel_type);
 
-!echo "term relationships with null term_2s?";
+!echo "term relationships with null term_1s or term_2s?";
 
 delete from tmp_zfin_rels
-  where termrel_term_2_zdb_id is null;
+  where termrel_term_1_zdb_id is null
+     or termrel_term_2_zdb_id is null;
 
 insert into zdb_active_data
   select termrel_zdb_id
