@@ -2,7 +2,10 @@ import React from 'react';
 import { string, node } from 'prop-types';
 
 const ExternalLinkMaybe = ({href, className, children}) => {
-    const isExternal = href && href.indexOf('http') === 0 && href.includes('zfin.org') === false;
+    if (!href) {
+        return <span className={className || ''}>{children}</span>;
+    }
+    const isExternal = href.indexOf('http') === 0 && href.includes('zfin.org') === false;
     if (isExternal) {
         return <a href={href} className={'external' + (className ? ' ' + className : '') } target='_blank' rel='noopener noreferrer'>{children}</a>;
     } else {

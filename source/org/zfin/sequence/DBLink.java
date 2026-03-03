@@ -305,7 +305,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @JsonView(View.SequenceAPI.class)
     @JsonProperty("url")
     public String getUrl() {
-        return referenceDatabase.getForeignDB().getDbUrlPrefix() + accessionNumber;
+        String prefix = referenceDatabase.getForeignDB().getDbUrlPrefix();
+        if (prefix == null || prefix.isEmpty()) {
+            return null;
+        }
+        return prefix + accessionNumber;
     }
 
     @JsonView(View.SequenceAPI.class)
