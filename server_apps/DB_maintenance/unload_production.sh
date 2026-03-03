@@ -24,7 +24,9 @@ mkdir $pth/$dirname
 
 echo "pg_dump starting"
 
-${PGBINDIR}/pg_dump -Fc ${DBNAME} -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
+# Exclude data (but keep structure) for tables in the external_resource schema.
+# These tables are large mirrors of external data that get reloaded from their sources.
+${PGBINDIR}/pg_dump -Fc ${DBNAME} --exclude-table-data='external_resource.*' -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
 
 if ($? != "0") then
   /bin/rm -rf $pth/$dirname
