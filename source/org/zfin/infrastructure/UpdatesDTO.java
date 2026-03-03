@@ -1,6 +1,5 @@
 package org.zfin.infrastructure;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
@@ -8,6 +7,7 @@ import org.zfin.profile.Person;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingStatus;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,9 +33,11 @@ public record UpdatesDTO(
         @JsonView(View.API.class)
         String comments,
 
-        @JsonView(View.API.class)
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         Date whenUpdated,
+
+        @JsonView(View.API.class)
+        @JsonProperty("whenUpdated")
+        String whenUpdatedString,
 
         @JsonView(View.API.class)
         String submitterZdbID
@@ -44,7 +46,7 @@ public record UpdatesDTO(
     @JsonView(View.API.class)
     @JsonProperty("uniqueKey")
     public String uniqueKey() {
-        return id + fieldName + whenUpdated;
+        return id + fieldName + whenUpdatedString;
     }
 
 
@@ -67,6 +69,7 @@ public record UpdatesDTO(
                 update.getNewValue(),
                 update.getComments(),
                 update.getWhenUpdated(),
+                formatDate(update.getWhenUpdated()),
                 zdbID
         );
     }
@@ -83,11 +86,27 @@ public record UpdatesDTO(
             previous = tempEvent;
         }
         updates.sort(Comparator.comparing(UpdatesDTO::whenUpdated));
-        for(UpdatesDTO update : updates) {
-            System.out.println(update.whenUpdated);
-        }
+//        for(UpdatesDTO update : updates) {
+//            System.out.println(update.whenUpdated);
+//        }
 
         return updates;
+    }
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    private static String formatDate(Date date) {
+        if (date == null) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf.format(date);
+    }
+
+    private static String formatCalendar(Calendar cal) {
+        if (cal == null) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(cal.getTimeZone());
+        return sdf.format(cal.getTime());
     }
 
     private static UpdatesDTO publicationEventToDTO(PublicationTrackingHistory publicationEvent, UpdatesDTO previous) {
@@ -101,7 +120,6 @@ public record UpdatesDTO(
         String oldValue = previous != null ? previous.newValue() : null;
         String newValue = statusName.toString();
         String display = publicationEvent.getDisplay();
-        Date updated = date.getTime();
         String submitterZdbID = performedBy != null ? performedBy.getZdbID() : null;
 
         return new UpdatesDTO(
@@ -112,7 +130,8 @@ public record UpdatesDTO(
                 oldValue,
                 newValue,
                 display,
-                updated,
+                date.getTime(),
+                formatCalendar(date),
                 submitterZdbID
         );
     }
