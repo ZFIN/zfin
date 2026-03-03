@@ -113,13 +113,15 @@ public class AnnualStatsController {
 
         Map<Date,List<AnnualStats>> map = annualStatsList.stream().collect(groupingBy(AnnualStats::getDate));
         List<Date> dates = new ArrayList<>(map.keySet());
+        dates.sort(Comparator.naturalOrder());
 
         // find stat dates to include for each year
         List<Date> keyDates = new ArrayList<>();
         List<Integer> statsForYear = new ArrayList<>();
 
         // go through all years and determine the key dates that are used to calculate a year's stats
-        for (int indexYear = beginYear; indexYear <= endYear; indexYear++) {
+        // Jan 1st stats represent the previous year's numbers
+        for (int indexYear = beginYear; indexYear < currentYear(); indexYear++) {
             for (Date date : dates) {
                 if (isEndOfThisYear(indexYear, date)) {
                     keyDates.add(date);
