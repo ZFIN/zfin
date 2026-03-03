@@ -10,5 +10,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1179/remove-jbrowse2-feature-flag.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1179/ZFIN-10078.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1179/ZFIN-10078.sql"/>
-        
+    <include file="source/org/zfin/db/postGmakePostloaddb/1179/remove-unists.sql"/>
+
 </databaseChangeLog>

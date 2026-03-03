@@ -46,6 +46,9 @@ public class LinkDisplay implements ProvidesLink {
 
     @Override
     public String getLink() {
+        if (urlPrefix == null || urlPrefix.isEmpty()) {
+            return getDisplayName();
+        }
         return urlPrefix + accession + (urlSuffix != null ? urlSuffix : "");
     }
 
