@@ -185,11 +185,9 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected void cleanoutTable(String schema, String... tables) {
         List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).map(s -> schema + "." + s).toList();
         log.info(getLogPrefix() + " Cleaning out tables: ");
-        tableNames.forEach(table -> {
-            HibernateUtil.createTransaction();
-            getDiseasePageRepository().deleteUiTables(table);
-            HibernateUtil.flushAndCommitCurrentSession();
-        });
+        HibernateUtil.createTransaction();
+        getDiseasePageRepository().deleteUiTables(tableNames.toArray(new String[0]));
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     public String calculateRequestDuration(LocalDateTime startTime) {
