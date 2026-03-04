@@ -201,7 +201,12 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         String chromosome = view.featureChromosome.getText();
         String assembly = view.featureAssembly.getSelectedItemText();
         Integer startLoc = view.featureStartLoc.getBoxValue();
-        Integer endLoc = view.featureEndLoc.getBoxValue();
+        Integer endLoc;
+        if (featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            endLoc = startLoc;
+        } else {
+            endLoc = view.featureEndLoc.getBoxValue();
+        }
 
         if (chromosome == null || chromosome.trim().isEmpty()) return;
         if (assembly == null || assembly.trim().isEmpty()) return;
@@ -258,7 +263,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());
         featureDTO.setFeatureAssembly(view.featureAssembly.getSelectedItemText());
         featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
-        featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
+        if (featureTypeEnum == FeatureTypeEnum.POINT_MUTATION) {
+            featureDTO.setFeatureEndLoc(view.featureStartLoc.getBoxValue());
+        } else {
+            featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
+        }
 
         if (view.hasMutationDetails()) {
             featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());

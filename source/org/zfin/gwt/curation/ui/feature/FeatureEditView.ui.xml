@@ -139,9 +139,10 @@
 
                         <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="13"/>
 
-                        <g:Label text="End Location"/>
-
-                        <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="13"/>
+                        <g:HorizontalPanel ui:field="endLocationPanel">
+                            <g:Label text="End Location"/>
+                            <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="13"/>
+                        </g:HorizontalPanel>
                         <g:Label text="EvidenceCode"/>
                         <zfin:StringListBox ui:field="featureEvidenceCode"/>
 

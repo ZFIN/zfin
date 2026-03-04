@@ -78,6 +78,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     Label dnaChangeFirstColumn;
     @UiField
     Label variantInfoFirstColumn;
+    @UiField
+    HorizontalPanel endLocationPanel;
 
     public AbstractFeatureView() {
     }
@@ -195,6 +197,10 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("featureStartLoc")
     void onChangeStartLocation(@SuppressWarnings("unused") ChangeEvent event) {
+        String featureType = featureTypeBox.getSelected();
+        if (featureType != null && featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            featureEndLoc.setNumber(featureStartLoc.getBoxValue());
+        }
         handleChanges();
         presenter.fetchReferenceSequenceIfReady();
     }
@@ -364,6 +370,12 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
         }
 
+        boolean isPointMutation = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION;
+        endLocationPanel.setVisible(!isPointMutation);
+        if (isPointMutation) {
+            featureEndLoc.setNumber(featureStartLoc.getBoxValue());
+        }
+
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
     }
 
@@ -401,6 +413,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         genomicMutationDetailView.resetGUI();
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
+        endLocationPanel.setVisible(true);
         saveButton.setEnabled(false);
     }
 
