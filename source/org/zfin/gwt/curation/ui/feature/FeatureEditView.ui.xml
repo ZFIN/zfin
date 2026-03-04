@@ -126,9 +126,11 @@
             </g:row>
             <g:row>
 
-                <g:cell styleName="{style.grey-background}">Chromosome</g:cell>
+                <g:customCell styleName="{style.grey-background}">
+                    <g:Label ui:field="chromosomeLabel" text="Chromosome"/>
+                </g:customCell>
                 <g:customCell>
-                    <g:HorizontalPanel>
+                    <g:HorizontalPanel ui:field="chromosomePanel">
 
                         <zfin:StringTextBox ui:field="featureChromosome" visibleLength="5"/>
 

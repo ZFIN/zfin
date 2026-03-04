@@ -81,6 +81,10 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     HorizontalPanel endLocationPanel;
     @UiField
+    Label chromosomeLabel;
+    @UiField
+    HorizontalPanel chromosomePanel;
+    @UiField
     Label startLocationLabel;
     @UiField
     HTML startLocHint;
@@ -125,6 +129,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             featureSuffixPanel.setVisible(true);
             featureSuffixPanel.setVisible(true);
         }
+        boolean showChromosome = knownInsertionCheckBox.getValue();
+        chromosomeLabel.setVisible(showChromosome);
+        chromosomePanel.setVisible(showChromosome);
         handleChanges();
     }
 
@@ -376,6 +383,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
         }
 
+        boolean showChromosomeRow = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION
+                || featureTypeSelected == FeatureTypeEnum.INSERTION
+                || featureTypeSelected == FeatureTypeEnum.INDEL
+                || featureTypeSelected == FeatureTypeEnum.DELETION
+                || (featureTypeSelected == FeatureTypeEnum.TRANSGENIC_INSERTION && knownInsertionCheckBox.getValue());
+        chromosomeLabel.setVisible(showChromosomeRow);
+        chromosomePanel.setVisible(showChromosomeRow);
+
         boolean isPointMutation = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION;
         endLocationPanel.setVisible(!isPointMutation);
         startLocationLabel.setText(isPointMutation ? "Location" : "Start Location");
@@ -434,6 +449,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         genomicMutationDetailView.resetGUI();
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
+        chromosomeLabel.setVisible(true);
+        chromosomePanel.setVisible(true);
         endLocationPanel.setVisible(true);
         startLocationLabel.setText("Start Location");
         startLocHint.setVisible(false);
