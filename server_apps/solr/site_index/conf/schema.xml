@@ -69,6 +69,7 @@
             -->
         <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
             <analyzer type="index">
+                <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
                 <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1" splitOnNumerics="0" types="wdgff_types.txt"/>
@@ -80,6 +81,7 @@
                 <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
             </analyzer>
             <analyzer type="query">
+                <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
                 <!-- it's possible that we don't want preserveOriginal here, since it puts in a pair of queries that both need to match....but then, because preserve original is on above,
@@ -430,12 +432,14 @@
 
         <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
             <analyzer type="index">
+                <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
                 <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
             </analyzer>
             <analyzer type="query">
+                <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
@@ -444,6 +448,7 @@
 
         <fieldType name="simplified-international-text" class="solr.TextField" positionIncrementGap="100">
             <analyzer>
+                <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
