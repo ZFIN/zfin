@@ -172,11 +172,13 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureChromosome")
     void onKeyUpChr(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureChromosome")
     void onChangeChromosome(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureEvidenceCode")
@@ -188,16 +190,19 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureAssembly")
     void onChangeAssembly(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureStartLoc")
     void onChangeStartLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureEndLoc")
     void onChangeEndLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
 
@@ -212,6 +217,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureAssembly")
     void onKeyUpAssembly(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     /*@UiHandler("featureStartLoc")

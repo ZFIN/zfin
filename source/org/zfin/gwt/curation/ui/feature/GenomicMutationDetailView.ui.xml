@@ -53,18 +53,14 @@
                 <g:customCell>
                     <g:HTMLPanel visible="true">
                         <table>
-                            <tr ui:field="sequenceMessage">
-                                <td><i>Please enter data from the + strand</i>
-                                </td>
-                            </tr>
                             <tr ui:field="sequenceOfReferenceRow">
                                 <td>Sequence of  Reference</td>
-                                <td><zfin:StringTextBox ui:field="seqReference" /></td>
-                                <td><g:Button ui:field="reverseComplRefButton" text="Reverse Complement" /></td>
+                                <td><g:TextArea ui:field="seqReference" readOnly="true" /></td>
+                                <td></td>
                             </tr>
 
                             <tr ui:field="sequenceOfVariantRow">
-                                <td>Sequence of Variant</td>
+                                <td>Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
                                 <td><zfin:StringTextBox ui:field="seqVariant" /></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
                             </tr>

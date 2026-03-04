@@ -1181,6 +1181,22 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
 
+    @Override
+    public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
+        AssemblyEnum assemblyEnum = null;
+        for (AssemblyEnum ae : AssemblyEnum.values()) {
+            if (ae.getName().equals(assembly)) {
+                assemblyEnum = ae;
+                break;
+            }
+        }
+        if (assemblyEnum == null) {
+            return null;
+        }
+        GenomicLocationService genomicLocationService = new GenomicLocationService();
+        return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases());
+    }
+
     private class SupplierCacheThread extends Thread {
 
         @Override

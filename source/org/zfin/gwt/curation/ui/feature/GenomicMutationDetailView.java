@@ -8,10 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.*;
 
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
@@ -39,11 +36,9 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     @UiField
     FlowPanel changePanel;
     @UiField
-    StringTextBox seqReference;
+    TextArea seqReference;
     @UiField
     StringTextBox seqVariant;
-    @UiField
-    Button reverseComplRefButton;
     @UiField
     Button reverseComplVarButton;
     @UiField
@@ -55,20 +50,6 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
-
-    @UiHandler("seqReference")
-    void onKeyDownseqRef(@SuppressWarnings("unused") KeyDownEvent event) {
-        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER)
-
-            seqReference.setText(seqReference.getText().toUpperCase());
-
-        handleChanges();
-
-    }
-    @UiHandler("seqReference")
-    void onKeyChangeSeqReference(@SuppressWarnings("unused") KeyUpEvent event) {
-        handleChanges();
-    }
 
     @UiHandler("seqVariant")
     void onKeyDownseqVar(@SuppressWarnings("unused") KeyDownEvent event) {
@@ -82,14 +63,6 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     @UiHandler("seqVariant")
     void onKeyChangeSeqVar(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
-    }
-
-    @UiHandler("reverseComplRefButton")
-    void onClickComplRefButton(@SuppressWarnings("unused") ClickEvent event) {
-
-        seqReference.setText(reverseComplement(seqReference.getText().toUpperCase()));
-
-
     }
 
     @UiHandler("reverseComplVarButton")
@@ -132,11 +105,12 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     }
 
     public FeatureGenomeMutationDetailChangeDTO getDto() {
-        if (!hasEnteredValues())
+        boolean hasRefSeq = seqReference.getText() != null && !seqReference.getText().trim().isEmpty();
+        if (!hasEnteredValues() && !hasRefSeq)
             return null;
         FeatureGenomeMutationDetailChangeDTO dto = new FeatureGenomeMutationDetailChangeDTO();
 
-        dto.setFgmdSeqRef(seqReference.getBoxValue());
+        dto.setFgmdSeqRef(seqReference.getText());
         dto.setFgmdSeqVar(seqVariant.getBoxValue());
 
         return dto;
@@ -179,7 +153,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
     public void resetGUI() {
 
-        seqReference.clear();
+        seqReference.setText("");
         seqVariant.clear();
 
         clearError();
@@ -188,7 +162,6 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public Set<IsDirtyWidget> getValueFields() {
         Set<IsDirtyWidget> fields = new HashSet<>();
 
-        fields.add(seqReference);
         fields.add(seqVariant);
 
         return fields;
@@ -223,9 +196,19 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     }
 
 
+    public void setReferenceSequence(String seq) {
+        seqReference.setText(seq != null ? seq : "");
+        seqReference.setStyleName("gwt-TextArea");
+    }
+
+    public void setReferenceSequenceLoading() {
+        seqReference.setText("Loading...");
+        seqReference.setStyleName("gwt-TextArea");
+    }
+
     public void populateFields(FeatureGenomeMutationDetailChangeDTO dto, FeatureTypeEnum type, Boolean knownInsSite) {
         if (dto == null) {
-            seqReference.clear();
+            seqReference.setText("");
             seqVariant.clear();
             return;
         }
