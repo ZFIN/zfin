@@ -135,7 +135,7 @@
                         <g:Label text="Assembly"/>
 
                         <zfin:StringListBox ui:field="featureAssembly"/>
-                        <g:Label text="Start Location" />
+                        <g:Label text="Start Location" ui:field="startLocationLabel"/>
 
                         <g:FlowPanel>
                             <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="13"/>

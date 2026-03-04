@@ -81,6 +81,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     HorizontalPanel endLocationPanel;
     @UiField
+    Label startLocationLabel;
+    @UiField
     HTML startLocHint;
     @UiField
     HTML endLocHint;
@@ -376,16 +378,23 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
         boolean isPointMutation = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION;
         endLocationPanel.setVisible(!isPointMutation);
+        startLocationLabel.setText(isPointMutation ? "Location" : "Start Location");
         if (isPointMutation) {
             featureEndLoc.setNumber(featureStartLoc.getBoxValue());
         }
 
-        boolean isDeletion = featureTypeSelected == FeatureTypeEnum.DELETION;
-        startLocHint.setVisible(isDeletion);
-        endLocHint.setVisible(isDeletion);
-        if (isDeletion) {
+        boolean isDeletionOrIndel = featureTypeSelected == FeatureTypeEnum.DELETION
+                || featureTypeSelected == FeatureTypeEnum.INDEL;
+        boolean isInsertion = featureTypeSelected == FeatureTypeEnum.INSERTION;
+        boolean showLocHints = isDeletionOrIndel || isInsertion;
+        startLocHint.setVisible(showLocHints);
+        endLocHint.setVisible(showLocHints);
+        if (isDeletionOrIndel) {
             startLocHint.setHTML("Position of<br/>1st nucleotide deleted");
             endLocHint.setHTML("Position of<br/>last nucleotide deleted");
+        } else if (isInsertion) {
+            startLocHint.setHTML("Position of<br/>5' flanking nucleotide");
+            endLocHint.setHTML("Position of<br/>3' flanking nucleotide");
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
@@ -426,6 +435,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
         endLocationPanel.setVisible(true);
+        startLocationLabel.setText("Start Location");
         startLocHint.setVisible(false);
         endLocHint.setVisible(false);
         saveButton.setEnabled(false);
