@@ -133,10 +133,12 @@
                     <g:Label text="Start Location" />
 
                     <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="13"/>
+                    <g:Label ui:field="startLocHint" visible="false" addStyleNames="italic"/>
 
                     <g:HorizontalPanel ui:field="endLocationPanel">
                         <g:Label text="End Location"/>
                         <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="13"/>
+                        <g:Label ui:field="endLocHint" visible="false" addStyleNames="italic"/>
                     </g:HorizontalPanel>
                         <g:Label text="EvidenceCode"/>
                         <zfin:StringListBox ui:field="featureEvidenceCode"/>

@@ -80,6 +80,10 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     Label variantInfoFirstColumn;
     @UiField
     HorizontalPanel endLocationPanel;
+    @UiField
+    Label startLocHint;
+    @UiField
+    Label endLocHint;
 
     public AbstractFeatureView() {
     }
@@ -376,6 +380,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             featureEndLoc.setNumber(featureStartLoc.getBoxValue());
         }
 
+        boolean isDeletion = featureTypeSelected == FeatureTypeEnum.DELETION;
+        startLocHint.setVisible(isDeletion);
+        endLocHint.setVisible(isDeletion);
+        if (isDeletion) {
+            startLocHint.setText("Position of 1st nucleotide deleted");
+            endLocHint.setText("Position of last nucleotide deleted");
+        }
+
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
     }
 
@@ -414,6 +426,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
         endLocationPanel.setVisible(true);
+        startLocHint.setVisible(false);
+        endLocHint.setVisible(false);
         saveButton.setEnabled(false);
     }
 

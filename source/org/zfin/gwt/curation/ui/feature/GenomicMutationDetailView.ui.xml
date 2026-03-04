@@ -54,7 +54,7 @@
                     <g:HTMLPanel visible="true">
                         <table>
                             <tr ui:field="sequenceOfReferenceRow">
-                                <td>Sequence of  Reference</td>
+                                <td>Sequence of Reference (auto-generated)</td>
                                 <td><g:TextArea ui:field="seqReference" readOnly="true" /></td>
                                 <td></td>
                             </tr>
