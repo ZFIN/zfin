@@ -9,6 +9,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.zfin.infrastructure.captcha.CaptchaInterceptor;
 import org.zfin.wiki.presentation.PaginationArgumentResolver;
 
 import java.util.List;
@@ -76,7 +77,7 @@ public class ZfinWebConfigConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry interceptorRegistry) {
-
+        interceptorRegistry.addInterceptor(new CaptchaInterceptor());
     }
 
     @Override
