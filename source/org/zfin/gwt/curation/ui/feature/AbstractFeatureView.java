@@ -81,9 +81,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     HorizontalPanel endLocationPanel;
     @UiField
-    Label startLocHint;
+    HTML startLocHint;
     @UiField
-    Label endLocHint;
+    HTML endLocHint;
 
     public AbstractFeatureView() {
     }
@@ -384,8 +384,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         startLocHint.setVisible(isDeletion);
         endLocHint.setVisible(isDeletion);
         if (isDeletion) {
-            startLocHint.setText("Position of 1st nucleotide deleted");
-            endLocHint.setText("Position of last nucleotide deleted");
+            startLocHint.setHTML("Position of<br/>1st nucleotide deleted");
+            endLocHint.setHTML("Position of<br/>last nucleotide deleted");
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);

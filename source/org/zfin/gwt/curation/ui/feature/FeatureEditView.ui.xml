@@ -139,14 +139,14 @@
 
                         <g:FlowPanel>
                             <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="13"/>
-                            <g:Label ui:field="startLocHint" visible="false" styleName="{style.grey-text}"/>
+                            <g:HTML ui:field="startLocHint" visible="false" styleName="{style.grey-text}"/>
                         </g:FlowPanel>
 
                         <g:HorizontalPanel ui:field="endLocationPanel">
                             <g:Label text="End Location"/>
                             <g:FlowPanel>
                                 <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="13"/>
-                                <g:Label ui:field="endLocHint" visible="false" styleName="{style.grey-text}"/>
+                                <g:HTML ui:field="endLocHint" visible="false" styleName="{style.grey-text}"/>
                             </g:FlowPanel>
                         </g:HorizontalPanel>
                         <g:Label text="EvidenceCode"/>
