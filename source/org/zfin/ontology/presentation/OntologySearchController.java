@@ -17,8 +17,7 @@ import org.zfin.ontology.Ontology;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
-import org.zfin.infrastructure.captcha.CaptchaService;
+import org.zfin.infrastructure.captcha.RequiresCaptcha;
 
 /**
  * Action class that serves the anatomy search page.
@@ -35,29 +34,20 @@ public class OntologySearchController {
     @Autowired
     private AnatomyRepository anatomyRepository;
 
+    @RequiresCaptcha
     @RequestMapping("/search")
     protected String showSearchForm(Model model,
                                     AnatomySearchBean form,
                                     HttpServletRequest request) throws Exception {
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
         form.setOntologyName(Ontology.AOGODOCHEBI.getOntologyName());
         model.addAttribute("formBean", form);
         return "ontology/search-form";
     }
 
+    @RequiresCaptcha
     @RequestMapping(value = "/show-anatomy-terms-by-stage", method = RequestMethod.GET)
-    public String showAnatomyTermsByStage(@ModelAttribute("formBean") AnatomySearchBean anatomyForm,
-                                          HttpServletRequest request) throws Exception {
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
-
+    public String showAnatomyTermsByStage(@ModelAttribute("formBean") AnatomySearchBean anatomyForm) throws Exception {
         LOG.debug("Start Action Class");
         doTermSearchByStage(anatomyForm);
         return "ontology/show-anatomy-terms-by-stage";
