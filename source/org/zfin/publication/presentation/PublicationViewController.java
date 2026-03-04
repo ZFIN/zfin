@@ -442,7 +442,7 @@ PublicationViewController {
             String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
             if (replacedZdbID != null) {
                 //redirect to the new journal page if we have a replacement
-                return "redirect:/publication/journal/" + replacedZdbID;
+                return "redirect:/" + replacedZdbID;
             }
         }
 
@@ -647,6 +647,7 @@ PublicationViewController {
         return "publication/publication-view-stats";
     }
 }
+
 
 
 
