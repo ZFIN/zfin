@@ -36,13 +36,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-PDFs-Added-After-Closed-Pub_m</targets>
+            <targets>validate-data-report-simple -DJobName=Check-And-Update-PDFs-Added-After-Closed-Pub_m</targets>
             <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -55,8 +55,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m</reportDir>
-                    <reportFiles>Check-PDFs-Added-After-Closed-Pub_m.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m</reportDir>
+                    <reportFiles>Check-And-Update-PDFs-Added-After-Closed-Pub_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -70,7 +70,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m/Check-And-Update-PDFs-Added-After-Closed-Pub_m.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
@@ -88,7 +88,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m/Check-And-Update-PDFs-Added-After-Closed-Pub_m.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -108,7 +108,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-PDFs-Added-After-Closed-Pub_m/Check-PDFs-Added-After-Closed-Pub_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m/Check-And-Update-PDFs-Added-After-Closed-Pub_m.html&quot;}
 
                             See report on Jenkins dashboard (for aborted build): &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
