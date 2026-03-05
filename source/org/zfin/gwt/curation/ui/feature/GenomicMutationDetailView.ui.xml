@@ -56,7 +56,7 @@
             <g:row visible="false">
                 <g:customCell>
                     <g:HTMLPanel visible="true">
-                        <table>
+                        <table style="width: 100%">
                             <tr ui:field="sequenceOfReferenceRow">
                                 <td>Sequence of Reference (auto-generated)</td>
                                 <td colspan="2"><g:TextArea ui:field="seqReference" readOnly="true" styleName="{style.uppercase}" width="100%"/></td>
