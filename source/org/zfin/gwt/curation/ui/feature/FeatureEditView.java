@@ -141,5 +141,11 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         removeFeatureLink.setVisible(true);
     }
 
+    @Override
+    void setFeatureAssemblyList() {
+        super.setFeatureAssemblyList();
+        featureAssembly.addItem("GRCz10");
+        featureAssembly.addItem("Zv9");
+    }
 
 }

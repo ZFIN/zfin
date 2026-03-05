@@ -59,8 +59,7 @@
                         <table>
                             <tr ui:field="sequenceOfReferenceRow">
                                 <td>Sequence of Reference (auto-generated)</td>
-                                <td><g:TextArea ui:field="seqReference" readOnly="true" styleName="{style.uppercase}"/></td>
-                                <td></td>
+                                <td colspan="2"><g:TextArea ui:field="seqReference" readOnly="true" styleName="{style.uppercase}" width="100%"/></td>
                             </tr>
 
                             <tr ui:field="sequenceOfVariantRow">
