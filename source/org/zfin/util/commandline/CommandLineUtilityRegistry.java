@@ -24,6 +24,12 @@ public class CommandLineUtilityRegistry {
                 "Manage token storage operations",
                 "token-storage <operation> [options] \n eg. token-storage read NCBI_API_TOKEN\n     token-storage write NCBI_API_TOKEN 'your_token_value'");
 
+        //Password hashing utility
+        register("hash-password",
+                "org.zfin.util.PasswordHasher",
+                "Hash a password using BCrypt",
+                "hash-password <password>");
+
         // Add more utilities as they are discovered/created
     }
 

@@ -45,7 +45,6 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
         } else {
 
             col.addBoolean(genMutView.seqVariant.isDirty(fgmdChangeDTO.getFgmdSeqVar()));
-            col.addBoolean(genMutView.seqReference.isDirty(fgmdChangeDTO.getFgmdSeqRef()));
         }
 
         MutationDetailDNAView mutationDetailDnaView = view.mutationDetailDnaView;

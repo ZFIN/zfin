@@ -41,6 +41,20 @@ public class FeatureValidationService {
             return "You must specify a chromosome if you specify a location";
         }
 
+        if (featureDTO.getFgmdChangeDTO() != null && StringUtils.isNotEmpty(featureDTO.getFgmdChangeDTO().getFgmdSeqVar())) {
+            if (StringUtils.isEmptyTrim(featureDTO.getFeatureChromosome())
+                    || StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())
+                    || featureDTO.getFeatureStartLoc() == null
+                    || featureDTO.getFeatureEndLoc() == null
+                    || StringUtils.isEmptyTrim(featureDTO.getEvidence())) {
+                return "Chromosome, Assembly, Start Location, End Location, and Evidence Code are required when Sequence of Variant is specified";
+            }
+            if (StringUtils.isNotEmpty(featureDTO.getFgmdChangeDTO().getFgmdSeqRef())
+                    && featureDTO.getFgmdChangeDTO().getFgmdSeqVar().trim().equals(featureDTO.getFgmdChangeDTO().getFgmdSeqRef().trim())) {
+                return "Sequence of Variant cannot be the same as Sequence of Reference";
+            }
+        }
+
         if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             if (featureDTO.getAssemblyInfoDate().length() != 8 || !(featureDTO.getAssemblyInfoDate().contains("/"))) {
                 return "Please enter date in mm/dd/yy format";
