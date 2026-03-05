@@ -1,8 +1,6 @@
 package org.zfin.search.service;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -10,6 +8,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -27,7 +28,6 @@ import org.zfin.search.*;
 import org.zfin.search.presentation.FacetValue;
 import org.zfin.search.presentation.SearchResult;
 import org.zfin.util.URLCreator;
-import org.zfin.util.ZfinStringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -982,60 +982,104 @@ public class SolrService {
     }
 
     /**
-     * Builds a CSV from search results using injected attributes (the same data shown on the results page).
+     * Builds an XLSX workbook from search results using injected attributes (the same data shown on the results page).
      * This works universally for all search categories.
      *
-     * @param results the search results with attributes already injected
-     * @return InputStream of the CSV data
+     * @param results the search results to include
+     * @param resultService used to inject display attributes into each result
+     * @param outputStream the stream to write the XLSX workbook to
      */
     @SuppressWarnings("unchecked")
-    public InputStream buildUniversalCsv(List<SearchResult> results, ResultService resultService) {
-        try {
-            StringBuilder out = new StringBuilder();
-            CSVPrinter csvPrinter = new CSVPrinter(out, CSVFormat.DEFAULT);
+    public void buildUniversalXlsx(List<SearchResult> results, ResultService resultService, OutputStream outputStream) throws IOException {
+        resultService.injectAttributes(results);
 
-            // inject attributes for each result
-            resultService.injectAttributes(results);
-
-            // collect attribute keys from first result that has attributes
-            List<String> attributeKeys = new ArrayList<>();
-            for (SearchResult result : results) {
-                if (result.getAttributes() != null && !result.getAttributes().isEmpty()) {
-                    attributeKeys = new ArrayList<>(result.getAttributes().keySet());
-                    break;
-                }
+        // collect attribute keys from first result that has attributes
+        List<String> attributeKeys = new ArrayList<>();
+        for (SearchResult result : results) {
+            if (result.getAttributes() != null && !result.getAttributes().isEmpty()) {
+                attributeKeys = new ArrayList<>(result.getAttributes().keySet());
+                break;
             }
+        }
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Search Results");
+
+            // bold header style
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+
+            // wrap text style for data cells
+            CellStyle wrapStyle = workbook.createCellStyle();
+            wrapStyle.setWrapText(true);
+            wrapStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
             // header row
-            List<String> header = new ArrayList<>();
-            header.add("ID");
-            header.add("Name");
-            header.addAll(attributeKeys);
-            csvPrinter.printRecord(header);
+            Row headerRow = sheet.createRow(0);
+            int col = 0;
+            setCellValue(headerRow, col++, "ID", headerStyle);
+            setCellValue(headerRow, col++, "Name", headerStyle);
+            for (String key : attributeKeys) {
+                setCellValue(headerRow, col++, key, headerStyle);
+            }
 
             // data rows
+            int rowNum = 1;
             for (SearchResult result : results) {
-                List<String> row = new ArrayList<>();
-                row.add(result.getId() != null ? result.getId() : "");
-                row.add(result.getName() != null ? result.getName() : "");
+                Row row = sheet.createRow(rowNum++);
+                col = 0;
+                setCellValue(row, col++, result.getId() != null ? result.getId() : "", null);
+                setCellValue(row, col++, result.getName() != null ? result.getName() : "", null);
 
                 Map<String, String> attrs = result.getAttributes();
                 for (String key : attributeKeys) {
-                    String value = attrs != null ? attrs.get(key) : null;
+                    String value = attrs != null ? (String) attrs.get(key) : null;
                     if (value != null) {
-                        row.add(ZfinStringUtils.removeHtmlTags(value));
+                        setCellValue(row, col++, stripHtmlToPlainText(value), wrapStyle);
                     } else {
-                        row.add("");
+                        setCellValue(row, col++, "", null);
                     }
                 }
-                csvPrinter.printRecord(row);
             }
 
-            return new ByteArrayInputStream(out.toString().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            logger.error(e);
-            return new ByteArrayInputStream(new byte[0]);
+            workbook.write(outputStream);
         }
+    }
+
+    private void setCellValue(Row row, int col, String value, CellStyle style) {
+        Cell cell = row.createCell(col);
+        cell.setCellValue(value);
+        if (style != null) {
+            cell.setCellStyle(style);
+        }
+    }
+
+    /**
+     * Converts HTML to plain text, preserving list/block structure as newline-separated values.
+     */
+    static String stripHtmlToPlainText(String html) {
+        if (html == null) return "";
+        // convert block-level separators to newlines
+        String text = html;
+        text = text.replaceAll("(?i)<br\\s*/?>", "\n");
+        text = text.replaceAll("(?i)</li>", "\n");
+        text = text.replaceAll("(?i)</div>", "\n");
+        text = text.replaceAll("(?i)</p>", "\n");
+        // strip remaining tags
+        text = text.replaceAll("<[^>]+>", "");
+        // decode common HTML entities
+        text = text.replace("&amp;", "&");
+        text = text.replace("&lt;", "<");
+        text = text.replace("&gt;", ">");
+        text = text.replace("&quot;", "\"");
+        text = text.replace("&#39;", "'");
+        text = text.replace("&nbsp;", " ");
+        // clean up extra whitespace/newlines
+        text = text.replaceAll("[ \t]+\n", "\n");
+        text = text.replaceAll("\n{2,}", "\n");
+        return text.strip();
     }
 }
 

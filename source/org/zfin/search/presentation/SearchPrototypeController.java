@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
@@ -610,8 +609,8 @@ public class SearchPrototypeController {
             }
         }
 
-        response.setContentType("data:text/csv;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.xlsx\"");
 
         SolrQuery query = new SolrQuery();
 
@@ -643,18 +642,7 @@ public class SearchPrototypeController {
             QueryResponse queryResponse = client.query(query);
             List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
 
-            InputStream csvStream = solrService.buildUniversalCsv(results, resultService);
-            BufferedReader in = new BufferedReader(new InputStreamReader(csvStream));
-
-            OutputStreamWriter out = new OutputStreamWriter(
-                    new BufferedOutputStream(
-                            response.getOutputStream()));
-
-            IOUtils.copy(in, out);
-
-            in.close();
-            out.flush();
-            out.close();
+            solrService.buildUniversalXlsx(results, resultService, response.getOutputStream());
 
         } catch (Exception e) {
             logger.error(e);
