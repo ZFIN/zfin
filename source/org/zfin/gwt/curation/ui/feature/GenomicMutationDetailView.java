@@ -110,8 +110,10 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
             return null;
         FeatureGenomeMutationDetailChangeDTO dto = new FeatureGenomeMutationDetailChangeDTO();
 
-        dto.setFgmdSeqRef(seqReference.getText());
-        dto.setFgmdSeqVar(seqVariant.getBoxValue());
+        String refText = seqReference.getText();
+        dto.setFgmdSeqRef(refText != null ? refText.toUpperCase() : null);
+        String varText = seqVariant.getBoxValue();
+        dto.setFgmdSeqVar(varText != null ? varText.toUpperCase() : null);
 
         return dto;
     }

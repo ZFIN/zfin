@@ -33,6 +33,10 @@
         .green {
             color: green;
         }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
     </ui:style>
 
     <g:FlowPanel ui:field="changePanel" visible="false">
@@ -55,13 +59,13 @@
                         <table>
                             <tr ui:field="sequenceOfReferenceRow">
                                 <td>Sequence of Reference (auto-generated)</td>
-                                <td><g:TextArea ui:field="seqReference" readOnly="true" /></td>
+                                <td><g:TextArea ui:field="seqReference" readOnly="true" styleName="{style.uppercase}"/></td>
                                 <td></td>
                             </tr>
 
                             <tr ui:field="sequenceOfVariantRow">
                                 <td>Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
-                                <td><zfin:StringTextBox ui:field="seqVariant" /></td>
+                                <td><zfin:StringTextBox ui:field="seqVariant" addStyleNames="{style.uppercase}"/></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
                             </tr>
                         </table>
