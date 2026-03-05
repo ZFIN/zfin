@@ -46,7 +46,7 @@
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{featureConstructionPanel}" ui:field="showHideToggle" show="false"/>
         </g:HorizontalPanel>
-        <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}" visible="false">
+        <g:Grid ui:field="featureConstructionPanel" styleName="{style.grey-background}" visible="false" width="100%">
             <g:row>
                 <g:cell styleName="{style.grey-background}">Feature Type</g:cell>
                 <g:customCell>
@@ -158,8 +158,7 @@
                 </g:customCell>
                 <g:customCell>
 
-                    <g:HTML ui:field="noMutationDetailMessage" styleName="{style.grey-text}">Only for feature type:
-                        Point Mutation, Insertion, Indel, Deletion and Transgenic Insertion with known insertion site</g:HTML>
+                    <g:HTML ui:field="noMutationDetailMessage" styleName="{style.grey-text}"/>
                 </g:customCell>
             </g:row>
             <g:row>
