@@ -1214,7 +1214,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             return null;
         }
         GenomicLocationService genomicLocationService = new GenomicLocationService();
-        return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases());
+        return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
     }
 
     private class SupplierCacheThread extends Thread {
