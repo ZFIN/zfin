@@ -17,6 +17,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.profile.Company;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
@@ -36,6 +37,9 @@ public class CompanyController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private AntibodyRepository antibodyRepository;
 
     @Autowired
     private FeatureRepository featureRepository;
@@ -164,6 +168,7 @@ public class CompanyController {
         model.addAttribute("prefixes", featurePrefixes);
         model.addAttribute("country", profileService.getCountryDisplayName(company.getCountry()));
 
+        model.addAttribute("hasAntibodies", antibodyRepository.getAntibodyCountForOrganization(zdbID) > 0);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
         return "profile/company-view";
     }

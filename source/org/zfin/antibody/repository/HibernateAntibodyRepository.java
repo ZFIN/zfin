@@ -888,4 +888,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return pubAntibodyMapCached;
     }
 
+    @Override
+    public long getAntibodyCountForOrganization(String orgZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql = "SELECT count(*) FROM int_data_supplier WHERE idsup_supplier_zdb_id = :orgZdbID AND idsup_data_zdb_id LIKE 'ZDB-ATB%'";
+        return ((Number) session.createNativeQuery(sql)
+                .setParameter("orgZdbID", orgZdbID)
+                .uniqueResult()).longValue();
+    }
+
 }
