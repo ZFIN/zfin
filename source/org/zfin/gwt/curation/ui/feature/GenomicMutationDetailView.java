@@ -44,6 +44,10 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     @UiField
     TableRowElement sequenceOfReferenceRow;
     @UiField
+    TableRowElement sequenceOfReferenceSmallRow;
+    @UiField
+    TextBox seqReferenceSmall;
+    @UiField
     TableRowElement sequenceOfVariantRow;
 
     public GenomicMutationDetailView() {
@@ -104,13 +108,22 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         row.getStyle().setDisplay(show ? Style.Display.TABLE_ROW : Style.Display.NONE);
     }
 
+    private String getRefSeqText() {
+        boolean smallVisible = sequenceOfReferenceSmallRow.getStyle().getDisplay().equals(Style.Display.TABLE_ROW.getCssName());
+        if (smallVisible) {
+            return seqReferenceSmall.getText();
+        }
+        return seqReference.getText();
+    }
+
     public FeatureGenomeMutationDetailChangeDTO getDto() {
-        boolean hasRefSeq = seqReference.getText() != null && !seqReference.getText().trim().isEmpty();
+        String currentRefText = getRefSeqText();
+        boolean hasRefSeq = currentRefText != null && !currentRefText.trim().isEmpty();
         if (!hasEnteredValues() && !hasRefSeq)
             return null;
         FeatureGenomeMutationDetailChangeDTO dto = new FeatureGenomeMutationDetailChangeDTO();
 
-        String refText = seqReference.getText();
+        String refText = currentRefText;
         dto.setFgmdSeqRef(refText != null ? refText.toUpperCase() : null);
         String varText = seqVariant.getBoxValue();
         dto.setFgmdSeqVar(varText != null ? varText.toUpperCase() : null);
@@ -122,7 +135,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         switch (type) {
             case POINT_MUTATION:
 
-                    showBoth();
+                    showBothPointMutation();
 
                 break;
             case INSERTION:
@@ -156,6 +169,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void resetGUI() {
 
         seqReference.setText("");
+        seqReferenceSmall.setText("");
         seqVariant.clear();
 
         clearError();
@@ -172,6 +186,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void showVariantSeq() {
 
         showRow(sequenceOfReferenceRow, false);
+        showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfVariantRow, true);
 
     }
@@ -179,6 +194,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void showReferenceSeq() {
 
         showRow(sequenceOfVariantRow, false);
+        showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfReferenceRow, true);
 
     }
@@ -186,7 +202,16 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void showBoth() {
 
         showRow(sequenceOfVariantRow, true);
+        showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfReferenceRow, true);
+
+    }
+
+    public void showBothPointMutation() {
+
+        showRow(sequenceOfVariantRow, true);
+        showRow(sequenceOfReferenceRow, false);
+        showRow(sequenceOfReferenceSmallRow, true);
 
     }
 
@@ -194,32 +219,38 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
         showRow(sequenceOfVariantRow, false);
         showRow(sequenceOfReferenceRow, false);
+        showRow(sequenceOfReferenceSmallRow, false);
 
     }
 
 
     public void setReferenceSequence(String seq) {
-        seqReference.setText(seq != null ? seq : "");
+        String value = seq != null ? seq : "";
+        seqReference.setText(value);
         seqReference.setStyleName("gwt-TextArea");
+        seqReferenceSmall.setText(value);
     }
 
     public void setReferenceSequenceLoading() {
         seqReference.setText("Loading...");
         seqReference.setStyleName("gwt-TextArea");
+        seqReferenceSmall.setText("Loading...");
     }
 
     public void populateFields(FeatureGenomeMutationDetailChangeDTO dto, FeatureTypeEnum type, Boolean knownInsSite) {
         if (dto == null) {
             seqReference.setText("");
+            seqReferenceSmall.setText("");
             seqVariant.clear();
             return;
         }
         seqReference.setText(dto.getFgmdSeqRef());
+        seqReferenceSmall.setText(dto.getFgmdSeqRef() != null ? dto.getFgmdSeqRef() : "");
         seqVariant.setText(dto.getFgmdSeqVar());
         switch (type) {
             case POINT_MUTATION:
 
-                showBoth();
+                showBothPointMutation();
 
                 break;
             case INSERTION:
