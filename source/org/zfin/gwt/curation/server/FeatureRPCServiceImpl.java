@@ -273,6 +273,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            validateReferenceSequence(fgmd, fgl);
+
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
@@ -1215,6 +1217,26 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         GenomicLocationService genomicLocationService = new GenomicLocationService();
         return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
+    }
+
+    private void validateReferenceSequence(FeatureGenomicMutationDetail fgmd, FeatureLocation fgl) throws ValidationException {
+        if (StringUtils.isEmpty(fgmd.getFgmdSeqRef()) || fgl == null
+                || StringUtils.isEmpty(fgl.getAssembly())
+                || StringUtils.isEmpty(fgl.getChromosome())
+                || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
+            return;
+        }
+        GenomicLocationService glService = new GenomicLocationService();
+        for (AssemblyEnum ae : AssemblyEnum.values()) {
+            if (ae.getName().equals(fgl.getAssembly())) {
+                String expected = new String(glService.getReferenceSequence(ae, fgl.getChromosome(),
+                        fgl.getStartLocation(), fgl.getEndLocation()).getBases()).toUpperCase();
+                if (!expected.equals(fgmd.getFgmdSeqRef().toUpperCase())) {
+                    throw new ValidationException("Sequence of Reference does not match the auto-generated sequence from the genome assembly");
+                }
+                break;
+            }
+        }
     }
 
     private class SupplierCacheThread extends Thread {
