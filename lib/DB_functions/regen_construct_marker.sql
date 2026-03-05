@@ -101,7 +101,7 @@ returns void as $$
 			   mrkr_type)
 	select construct_zdb_id,
 	       construct_name,
-	       lower(construct_name),
+	       construct_name,
 	       construct_owner_zdb_id,
 	       construct_comments,
 	       construct_type
