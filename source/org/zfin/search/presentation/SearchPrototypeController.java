@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
@@ -609,8 +610,8 @@ public class SearchPrototypeController {
             }
         }
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.xlsx\"");
+        response.setContentType("text/csv;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
         SolrQuery query = new SolrQuery();
 
@@ -642,7 +643,15 @@ public class SearchPrototypeController {
             QueryResponse queryResponse = client.query(query);
             List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
 
-            solrService.buildUniversalXlsx(results, resultService, response.getOutputStream());
+            InputStream csvStream = solrService.buildUniversalCsv(results, resultService);
+
+            OutputStreamWriter out = new OutputStreamWriter(
+                    new BufferedOutputStream(
+                            response.getOutputStream()));
+
+            IOUtils.copy(new InputStreamReader(csvStream), out);
+            out.flush();
+            out.close();
 
         } catch (Exception e) {
             logger.error(e);
