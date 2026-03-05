@@ -23,6 +23,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.GenomicLocationService;
 import org.zfin.marker.Marker;
@@ -967,6 +968,25 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 List<Marker> isAlleleMarkers = featureRepository.getMarkerIsAlleleOf(featureMarkerRelationship.getFeature());
                 if (isAlleleMarkers != null && isAlleleMarkers.size() > 0) {
                     throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a mutant type and can only have one 'is allele of' relationship.");
+                }
+            }
+        }
+
+        if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+            var linkageRepository = RepositoryFactory.getLinkageRepository();
+            TreeSet<String> featureChromosomes = new TreeSet<>();
+            List<FeatureGenomeLocation> featureLocations = linkageRepository.getGenomeLocation(featureMarkerRelationship.getFeature());
+            for (var loc : featureLocations) {
+                if (loc.getChromosome() != null) {
+                    featureChromosomes.add(loc.getChromosome());
+                }
+            }
+            TreeSet<String> markerChromosomes = linkageRepository.getChromosomeLocations(featureMarkerRelationship.getMarker());
+
+            if (!featureChromosomes.isEmpty() && !markerChromosomes.isEmpty()) {
+                featureChromosomes.retainAll(markerChromosomes);
+                if (featureChromosomes.isEmpty()) {
+                    throw new ValidationException("The feature and gene must be on the same chromosome for an 'is allele of' relationship.");
                 }
             }
         }
