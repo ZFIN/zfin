@@ -1018,7 +1018,9 @@ public class SolrService {
                     List<String> header = new ArrayList<>();
                     header.add("ID");
                     header.add("Name");
-                    header.addAll(attributeKeys[0]);
+                    for (String key : attributeKeys[0]) {
+                        header.add(key.endsWith(":") ? key.substring(0, key.length() - 1) : key);
+                    }
                     csvPrinter.printRecord(header);
                 }
 
@@ -1039,7 +1041,11 @@ public class SolrService {
             Map<String, String> attrs = result.getAttributes();
             for (String key : attributeKeys) {
                 String value = attrs != null ? (String) attrs.get(key) : null;
-                row.add(value != null ? htmlToPlainText(value) : "");
+                String text = value != null ? htmlToPlainText(value) : "";
+                if ("Location:".equals(key)) {
+                    text = text.replaceAll("\\s*Mapping Details/Browsers\\s*", "").trim();
+                }
+                row.add(text);
             }
             csvPrinter.printRecord(row);
         }
