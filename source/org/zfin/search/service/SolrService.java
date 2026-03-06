@@ -6,7 +6,6 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
@@ -23,11 +22,12 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CursorMarkParams;
 import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
-import org.zfin.marker.Marker;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
 import org.zfin.search.presentation.FacetValue;
+import org.zfin.search.presentation.SearchResult;
 import org.zfin.util.URLCreator;
+import org.jsoup.Jsoup;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -38,11 +38,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 /**
@@ -984,74 +982,87 @@ public class SolrService {
     }
 
     /**
-     * Transforms a solr csv to a zfin csv based on the filterQuery. This involves adding more fields that are not available through solr
+     * Streams search results as CSV using cursor-based Solr pagination.
+     * Each batch is fetched, attribute-injected, and written to the output immediately,
+     * so the first bytes reach the client quickly and memory stays bounded.
      *
-     * @param filterQuery the filter query that was used to get the solr csv
-     * @param inputStream the solr csv input stream
-     * @return the transformed csv input stream
+     * @param query         the base Solr query (rows/cursor will be overridden)
+     * @param writer        the response writer to stream CSV into
+     * @param resultService used to inject display attributes into each batch
      */
-    public InputStream transformSolrCsvToZfinCsv(String[] filterQuery, InputStream inputStream) {
-        Map<String, List<String>> filterQueryMap = getFilterQueryMap(filterQuery);
+    @SuppressWarnings("unchecked")
+    public void streamCsvResults(SolrQuery query, Writer writer, ResultService resultService) throws IOException, SolrServerException {
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
+        // mutable holder so the lambda can carry attribute keys across batches
+        final List<String>[] attributeKeys = new List[]{null};
 
-        //categoryTypePairs is a list of pairs of category and type that we want to transform
-        //if there is a match in the filterQueryMap, we will transform the csv, otherwise we will return the original csv
-        Map<Pair<String, String>, Function<InputStream, InputStream>> categoryTypePairs = Map.of(
-            Pair.of("Gene / Transcript", "Gene"), in -> transformSolrCsvForGenestoZfinCsv(in)
-            //add more rows for other category/type pairs to transform...
-        );
+        getAllResults(query, response -> {
+            try {
+                List<SearchResult> batch = response.getBeans(SearchResult.class);
+                if (batch.isEmpty()) return;
 
-        //category and type_0 are the keys in the filterQueryMap that we want to check for. The value has quotes around it, so we remove them
-        String category = "";
-        String type = "";
-        try {
-            category = filterQueryMap.get("category").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
-            type = filterQueryMap.get("type_0").stream().map(s -> s.replaceAll("\"", "")).findFirst().orElse("");
-        } catch (Exception e) {
-            //default to "" and "" for category and type if there is an exception
+                resultService.injectAttributes(batch);
+
+                // derive attribute keys from first batch that has them
+                if (attributeKeys[0] == null) {
+                    for (SearchResult result : batch) {
+                        if (result.getAttributes() != null && !result.getAttributes().isEmpty()) {
+                            attributeKeys[0] = new ArrayList<>(result.getAttributes().keySet());
+                            break;
+                        }
+                    }
+                    if (attributeKeys[0] == null) {
+                        attributeKeys[0] = new ArrayList<>();
+                    }
+
+                    List<String> header = new ArrayList<>();
+                    header.add("ID");
+                    header.add("Name");
+                    for (String key : attributeKeys[0]) {
+                        header.add(key.endsWith(":") ? key.substring(0, key.length() - 1) : key);
+                    }
+                    csvPrinter.printRecord(header);
+                }
+
+                writeBatchRows(csvPrinter, batch, attributeKeys[0]);
+                writer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void writeBatchRows(CSVPrinter csvPrinter, List<SearchResult> results, List<String> attributeKeys) throws IOException {
+        for (SearchResult result : results) {
+            List<String> row = new ArrayList<>();
+            row.add(result.getId() != null ? result.getId() : "");
+            row.add(result.getName() != null ? result.getName() : "");
+
+            Map<String, String> attrs = result.getAttributes();
+            for (String key : attributeKeys) {
+                String value = attrs != null ? (String) attrs.get(key) : null;
+                String text = value != null ? htmlToPlainText(value) : "";
+                if ("Location:".equals(key)) {
+                    text = text.replaceAll("\\s*Mapping Details/Browsers\\s*", "").trim();
+                }
+                row.add(text);
+            }
+            csvPrinter.printRecord(row);
         }
-        
-        //get the transformer for the category and type pair, or return the original inputStream if there is no transformer
-        Function<InputStream, InputStream> transformer = categoryTypePairs.get(Pair.of(category, type));
-        return transformer == null ? inputStream : transformer.apply(inputStream);
     }
 
     /**
-     * Transforms the solr csv to a zfin csv for genes
-     *
-     * Includes the following fields: ZFIN ID, Symbol, Aliases, Name, Location, Type
-     *
-     * @param inputStream the solr csv input stream for the original csv
-     * @return the transformed csv input stream
+     * Converts HTML to plain text using Jsoup. Block-level elements (li, div, br, p)
+     * are converted to semicolon-separated values suitable for CSV cells.
      */
-    private InputStream transformSolrCsvForGenestoZfinCsv(InputStream inputStream) {
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            StringBuilder out = new StringBuilder();
-            CSVPrinter csvPrinter = new CSVPrinter(out, CSVFormat.DEFAULT);
-
-            List<String> ids = in.lines()
-                .skip(1) // Skip the header row
-                .map(l -> l.split(",")[0])
-                .toList();
-
-            List<Marker> markers = getMarkerRepository().getMarkersByZdbIDsJoiningAliases(ids);
-
-            csvPrinter.printRecord("ZFIN ID", "Symbol", "Aliases", "Name", "Location", "Type");
-            for(Marker marker : markers) {
-                String zdbID = marker.getZdbID();
-                String symbol = marker.getAbbreviation();
-                String aliases = marker.getAliases() == null ? "" : marker.getAliases().stream().map(alias -> alias.getAlias()).collect(Collectors.joining("; "));
-                String name = marker.getName();
-                String location = marker.getChromosomeLocations().stream().collect(Collectors.joining("; "));
-                String markerType = marker.getMarkerType().getDisplayName();
-                csvPrinter.printRecord(zdbID, symbol, aliases, name, location, markerType);
-            }
-
-            return new ByteArrayInputStream(out.toString().getBytes());
-        } catch (IOException e) {
-            logger.error(e);
-            return inputStream;
-        }
+    static String htmlToPlainText(String html) {
+        if (html == null || html.isEmpty()) return "";
+        // insert semicolon separators before stripping, so list items don't collapse together
+        String prepared = html;
+        prepared = prepared.replaceAll("(?i)</li>\\s*<li>", "; ");
+        prepared = prepared.replaceAll("(?i)</div>\\s*<div>", "; ");
+        prepared = prepared.replaceAll("(?i)<br\\s*/?>", "; ");
+        return Jsoup.parse(prepared).text();
     }
 }
 
