@@ -634,22 +634,14 @@ public class SearchPrototypeController {
             }
         }
 
-        query.setRows(Integer.MAX_VALUE);
-
         handleRootOnlyResults(query);
 
         try {
-            SolrClient client = SolrService.getSolrClient();
-            QueryResponse queryResponse = client.query(query);
-            List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
+            Writer out = new OutputStreamWriter(
+                    new BufferedOutputStream(response.getOutputStream()),
+                    java.nio.charset.StandardCharsets.UTF_8);
 
-            InputStream csvStream = solrService.buildUniversalCsv(results, resultService);
-
-            OutputStreamWriter out = new OutputStreamWriter(
-                    new BufferedOutputStream(
-                            response.getOutputStream()));
-
-            IOUtils.copy(new InputStreamReader(csvStream), out);
+            solrService.streamCsvResults(query, out, resultService);
             out.flush();
             out.close();
 

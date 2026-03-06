@@ -982,55 +982,66 @@ public class SolrService {
     }
 
     /**
-     * Builds a CSV from search results using injected attributes (the same data shown on the results page).
-     * This works universally for all search categories.
+     * Streams search results as CSV using cursor-based Solr pagination.
+     * Each batch is fetched, attribute-injected, and written to the output immediately,
+     * so the first bytes reach the client quickly and memory stays bounded.
      *
-     * @param results the search results to include
-     * @param resultService used to inject display attributes into each result
-     * @return InputStream of the CSV data
+     * @param query         the base Solr query (rows/cursor will be overridden)
+     * @param writer        the response writer to stream CSV into
+     * @param resultService used to inject display attributes into each batch
      */
     @SuppressWarnings("unchecked")
-    public InputStream buildUniversalCsv(List<SearchResult> results, ResultService resultService) {
-        try {
-            StringBuilder out = new StringBuilder();
-            CSVPrinter csvPrinter = new CSVPrinter(out, CSVFormat.DEFAULT);
+    public void streamCsvResults(SolrQuery query, Writer writer, ResultService resultService) throws IOException, SolrServerException {
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
+        // mutable holder so the lambda can carry attribute keys across batches
+        final List<String>[] attributeKeys = new List[]{null};
 
-            resultService.injectAttributes(results);
+        getAllResults(query, response -> {
+            try {
+                List<SearchResult> batch = response.getBeans(SearchResult.class);
+                if (batch.isEmpty()) return;
 
-            // collect attribute keys from first result that has attributes
-            List<String> attributeKeys = new ArrayList<>();
-            for (SearchResult result : results) {
-                if (result.getAttributes() != null && !result.getAttributes().isEmpty()) {
-                    attributeKeys = new ArrayList<>(result.getAttributes().keySet());
-                    break;
+                resultService.injectAttributes(batch);
+
+                // derive attribute keys from first batch that has them
+                if (attributeKeys[0] == null) {
+                    for (SearchResult result : batch) {
+                        if (result.getAttributes() != null && !result.getAttributes().isEmpty()) {
+                            attributeKeys[0] = new ArrayList<>(result.getAttributes().keySet());
+                            break;
+                        }
+                    }
+                    if (attributeKeys[0] == null) {
+                        attributeKeys[0] = new ArrayList<>();
+                    }
+
+                    List<String> header = new ArrayList<>();
+                    header.add("ID");
+                    header.add("Name");
+                    header.addAll(attributeKeys[0]);
+                    csvPrinter.printRecord(header);
                 }
+
+                writeBatchRows(csvPrinter, batch, attributeKeys[0]);
+                writer.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        });
+    }
 
-            // header row
-            List<String> header = new ArrayList<>();
-            header.add("ID");
-            header.add("Name");
-            header.addAll(attributeKeys);
-            csvPrinter.printRecord(header);
+    private void writeBatchRows(CSVPrinter csvPrinter, List<SearchResult> results, List<String> attributeKeys) throws IOException {
+        for (SearchResult result : results) {
+            List<String> row = new ArrayList<>();
+            row.add(result.getId() != null ? result.getId() : "");
+            row.add(result.getName() != null ? result.getName() : "");
 
-            // data rows
-            for (SearchResult result : results) {
-                List<String> row = new ArrayList<>();
-                row.add(result.getId() != null ? result.getId() : "");
-                row.add(result.getName() != null ? result.getName() : "");
-
-                Map<String, String> attrs = result.getAttributes();
-                for (String key : attributeKeys) {
-                    String value = attrs != null ? (String) attrs.get(key) : null;
-                    row.add(value != null ? htmlToPlainText(value) : "");
-                }
-                csvPrinter.printRecord(row);
+            Map<String, String> attrs = result.getAttributes();
+            for (String key : attributeKeys) {
+                String value = attrs != null ? (String) attrs.get(key) : null;
+                row.add(value != null ? htmlToPlainText(value) : "");
             }
-
-            return new ByteArrayInputStream(out.toString().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            logger.error(e);
-            return new ByteArrayInputStream(new byte[0]);
+            csvPrinter.printRecord(row);
         }
     }
 
