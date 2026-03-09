@@ -1,0 +1,43 @@
+--liquibase formatted sql
+--changeset rtaylor:ZFIN-10172.sql
+
+update publication set accession_no = '18041920' where zdb_id = 'ZDB-PUB-071227-23';
+update publication set accession_no = '28305625' where zdb_id = 'ZDB-PUB-961014-1204';
+update publication set accession_no = '7067647' where zdb_id = 'ZDB-PUB-961014-131';
+update publication set accession_no = '28305262' where zdb_id = 'ZDB-PUB-961014-8';
+update publication set accession_no = '28305942' where zdb_id = 'ZDB-PUB-961014-1000';
+update publication set accession_no = '28306037' where zdb_id = 'ZDB-PUB-961014-1001';
+update publication set accession_no = '28304583' where zdb_id = 'ZDB-PUB-961014-429';
+update publication set accession_no = '13907765' where zdb_id = 'ZDB-PUB-961014-451';
+update publication set accession_no = '13988443' where zdb_id = 'ZDB-PUB-961014-1028';
+update publication set accession_no = '28305881' where zdb_id = 'ZDB-PUB-961014-859';
+update publication set accession_no = '5613289' where zdb_id = 'ZDB-PUB-961014-1012';
+update publication set accession_no = '37281358' where zdb_id = 'ZDB-PUB-961014-536';
+update publication set accession_no = '20735667' where zdb_id = 'ZDB-PUB-100112-5';
+update publication set accession_no = '5267171' where zdb_id = 'ZDB-PUB-961014-305';
+update publication set accession_no = '5168668' where zdb_id = 'ZDB-PUB-961014-567';
+update publication set accession_no = '20735570' where zdb_id = 'ZDB-PUB-100112-4';
+update publication set accession_no = '18041927' where zdb_id = 'ZDB-PUB-070907-1';
+update publication set accession_no = '18041923' where zdb_id = 'ZDB-PUB-071118-10';
+update publication set accession_no = '4198044' where zdb_id = 'ZDB-PUB-961014-14';
+update publication set accession_no = '25587201' where zdb_id = 'ZDB-PUB-091113-5';
+update publication set accession_no = '15335988' where zdb_id = 'ZDB-PUB-961014-1084';
+update publication set accession_no = '21828644' where zdb_id = 'ZDB-PUB-100520-2';
+update publication set accession_no = '9373149' where zdb_id = 'ZDB-PUB-040831-1';
+update publication set accession_no = '20585416' where zdb_id = 'ZDB-PUB-080825-8';
+update publication set accession_no = '18041943' where zdb_id = 'ZDB-PUB-070427-4';
+update publication set accession_no = '18041944' where zdb_id = 'ZDB-PUB-070427-5';
+update publication set accession_no = '18041921' where zdb_id = 'ZDB-PUB-071118-8';
+update publication set accession_no = '17224155' where zdb_id = 'ZDB-PUB-090210-3';
+update publication set accession_no = '15458787' where zdb_id = 'ZDB-PUB-090225-21';
+update publication set accession_no = '20483270' where zdb_id = 'ZDB-PUB-091215-1';
+update publication set accession_no = '20494847' where zdb_id = 'ZDB-PUB-091215-2';
+update publication set accession_no = '20483217' where zdb_id = 'ZDB-PUB-091215-3';
+update publication set accession_no = '17545465' where zdb_id = 'ZDB-PUB-070820-21';
+update publication set accession_no = '21244869' where zdb_id = 'ZDB-PUB-961014-1062';
+update publication set accession_no = '16288945' where zdb_id = 'ZDB-PUB-090225-22';
+update publication set accession_no = '26407024' where zdb_id = 'ZDB-PUB-170612-6';
+update publication set accession_no = '20483237' where zdb_id = 'ZDB-PUB-071129-14';
+update publication set accession_no = '20035460' where zdb_id = 'ZDB-PUB-080825-6';
+update publication set accession_no = '16765501' where zdb_id = 'ZDB-PUB-090225-19';
+update publication set accession_no = '25553106' where zdb_id = 'ZDB-PUB-170221-3';
