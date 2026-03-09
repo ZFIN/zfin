@@ -5,7 +5,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.zfin.AbstractSmokeTest;
+import org.zfin.AbstractSecureSmokeTest;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(Parameterized.class)
-public class AntibodySmokeTest extends AbstractSmokeTest {
+public class AntibodySmokeTest extends AbstractSecureSmokeTest {
 
     public AntibodySmokeTest(WebClient webClient) {
         super(webClient);
@@ -26,7 +26,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodySearchPageOk() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/search");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/search");
         assertEquals("ZFIN Antibody search", "ZFIN Antibody Search", page.getTitleText());
     }
 
@@ -37,7 +37,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testSearchZn1() throws IOException {
         String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn1&maxDisplayRecords=25";
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+        HtmlPage page = webClient.getPage(secureUrlDomain + uri);
         List<?> relatedTerms = page.getByXPath("//a[@id='zn-1']");
         assertEquals(1, relatedTerms.size());
         relatedTerms = page.getByXPath("//a[@id='zn-13']");
@@ -49,7 +49,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         // name
         String zdbID = "ZDB-ATB-081002-3";
         String uri = "/" + zdbID;
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+        HtmlPage page = webClient.getPage(secureUrlDomain + uri);
         HtmlSpan markerId = (HtmlSpan) page.getElementById("marker-id");
         assertNotNull("find the ID on the page", markerId);
         assertTrue(markerId.getTextContent().contains(zdbID));
@@ -65,7 +65,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testSearchAb_2() throws IOException {
         String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=ab-2&maxDisplayRecords=25";
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+        HtmlPage page = webClient.getPage(secureUrlDomain + uri);
         List<?> relatedTerms = page.getByXPath("//a[@id='ab-2f11']");
         assertEquals(1, relatedTerms.size());
         HtmlAnchor link = (HtmlAnchor) relatedTerms.get(0);
@@ -80,7 +80,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         // nucleus
         String termID = "ZDB-TERM-091209-4086";
         String uri = "/action/antibody/antibody-do-search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=nuclear%20body&antibodyCriteria.anatomyTermIDs=" + termID + "&action=SEARCH";
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+        HtmlPage page = webClient.getPage(secureUrlDomain + uri);
         List<?> relatedTerms = page.getByXPath("//a[@id='Ab-Pax7']");
         assertEquals(1, relatedTerms.size());
         HtmlAnchor link = (HtmlAnchor) relatedTerms.get(0);
@@ -95,7 +95,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testSearchZn5() throws IOException {
         String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25";
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
+        HtmlPage page = webClient.getPage(secureUrlDomain + uri);
         assertThat("Should have page title for detail page",
                 page.getTitleText(), is("ZFIN Antibody: zn-5"));
 
@@ -140,7 +140,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFigures() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
         assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
         // check that Pub Zhou et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
@@ -151,7 +151,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFiguresNoStageInfo() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10");
         assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
         // check that Pub Zhou et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
@@ -162,7 +162,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
         assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
     }
 
@@ -171,7 +171,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
         assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-en", page.getTitleText());
         // check that pub Liu et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
