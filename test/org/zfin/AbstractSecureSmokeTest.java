@@ -6,23 +6,27 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.profile.AccountInfo;
+import org.zfin.profile.EmailPrivacyPreference;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
- * This class uses the more raw HtmlUnit protocols.
+ * Base class for smoke tests that require an authenticated user.
+ * Creates a unique test user before each test and deletes it after.
  */
 public class AbstractSecureSmokeTest extends AbstractSmokeTest {
 
     protected Person person;
-    protected String password = "veryeasypass";
+    protected String password = UUID.randomUUID().toString();
     private final Logger logger = LogManager.getLogger(AbstractSecureSmokeTest.class);
 
     public AbstractSecureSmokeTest(WebClient webClient) {
@@ -37,75 +41,67 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        createTestPersonObject();
         insertTestPersonIntoDatabase();
         login(webClient);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void cleanUp() {
         deletePerson();
-        super.tearDown();
     }
 
-    @BeforeClass
-    public static void setUpGLobal() {
-
-    }
-
-
-        private void createTestPersonObject() {
+    private void createTestPersonObject() {
+        String uniqueLogin = "testUser_" + UUID.randomUUID().toString().substring(0, 8);
+        String uniqueCookie = "cookie_" + UUID.randomUUID();
 
         person = new Person();
-
         person.setFirstName("Test");
         person.setLastName("Person");
         person.generateNameVariations();
-        person.setEmail("Email Address Test");
-        AccountInfo accountInfo = new AccountInfo();
-        accountInfo.setLogin("newUser");
-        accountInfo.setRole("root");
+        person.setEmail("test_" + uniqueLogin + "@test.com");
 
-        String saltedPassword = "ABCDEFGH";
-        accountInfo.setPassword(saltedPassword);
+        EmailPrivacyPreference emailPrivacyPreference = new EmailPrivacyPreference();
+        emailPrivacyPreference.setId(3L);
+        emailPrivacyPreference.setName(EmailPrivacyPreference.Name.HIDDEN.toString());
+        person.setEmailPrivacyPreference(emailPrivacyPreference);
+
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setLogin(uniqueLogin);
+        accountInfo.setRole("root");
+        accountInfo.setPassword(new BCryptPasswordEncoder().encode(password));
         accountInfo.setName("Test Person");
         accountInfo.setLoginDate(new Date());
         accountInfo.setAccountCreationDate(new Date());
-        accountInfo.setCookie("somecookie");
+        accountInfo.setCookie(uniqueCookie);
+        accountInfo.setPerson(person);
         person.setAccountInfo(accountInfo);
-
     }
 
-    protected void insertTestPersonIntoDatabase() {
-        createTestPersonObject();
-        Person existingPerson = RepositoryFactory.getProfileRepository().getPersonByName(person.getAccountInfo().getLogin());
-        if(existingPerson != null && existingPerson.getAccountInfo() != null && existingPerson.getAccountInfo().getLogin() != null){
-            person = existingPerson;
-            return;
-        }
+    private void insertTestPersonIntoDatabase() {
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(person);
         HibernateUtil.currentSession().flush();
-
-        // need to evict object so that it can be reloaded later
         HibernateUtil.currentSession().evict(person);
 
-        // because persons add active source is added with person, need to evict it, too
         ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
         assertNotNull(activeSource);
         HibernateUtil.currentSession().evict(activeSource);
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    protected void deletePerson() {
-        ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
-        HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().delete(person);
-        if (activeSource != null) {
-            HibernateUtil.currentSession().delete(activeSource);
-        } else {
-            logger.error("unable to delete user: " + person.getZdbID() + " " + person.getShortName());
+    private void deletePerson() {
+        try {
+            ActiveSource activeSource = RepositoryFactory.getInfrastructureRepository().getActiveSource(person.getZdbID());
+            HibernateUtil.createTransaction();
+            HibernateUtil.currentSession().delete(person);
+            if (activeSource != null) {
+                HibernateUtil.currentSession().delete(activeSource);
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error("Failed to clean up test user: " + person.getZdbID(), e);
         }
-        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     public void login(WebClient webClient) throws Exception {

@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.zfin.AbstractSmokeTest;
+import org.zfin.AbstractSecureSmokeTest;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(Parameterized.class)
-public class AnatomySmokeTest extends AbstractSmokeTest {
+public class AnatomySmokeTest extends AbstractSecureSmokeTest {
 
     public AnatomySmokeTest(WebClient webClient) {
         super(webClient);
@@ -26,7 +26,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     @Test
     public void testAnatomyLookupFormExists() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/search");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/search");
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
         assertEquals("ZFIN AO / GO Search", page.getTitleText());
         List<?> byXPath = page.getByXPath("//label[. = 'Term:']");
@@ -45,7 +45,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     @Test
     public void testAnatomySearchMultipleResults() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
         assertEquals("ZFIN Ontology Search", page.getTitleText());
         // check that embryonic structure is listed
         List caption = page.getByXPath("//a[@name = 'embryonic structure']");
@@ -54,7 +54,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     @Test
     public void testAllAnatomyTerms() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-anatomy-terms");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-all-anatomy-terms");
         assertEquals("ZFIN", page.getTitleText());
         // check that embryonic structure is listed
         List caption = page.getByXPath("//a[@name = 'embryonic structure']");
@@ -64,7 +64,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     @Test
     public void testAnatomyDetailPageByAnatId() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/ZDB-ANAT-010921-415");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/term/ZDB-ANAT-010921-415");
         assertEquals("ZFIN Anatomy Ontology: brain", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
     }
@@ -72,7 +72,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     // liver page
     @Test
     public void testAnatomyDetailPageByTermId() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/ZDB-TERM-100331-116");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/term/ZDB-TERM-100331-116");
         assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
     }
@@ -81,7 +81,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAnatomyDetailPageByOboId() throws IOException {
         webClient.waitForBackgroundJavaScriptStartingBefore(1);
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/ZFA:0000123");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/term/ZFA:0000123");
         assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
     }
@@ -91,7 +91,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     // ignore for now until autocomplete is re-written
     @Ignore
     public void testAnatomyDetailPageByName() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/term?name=liver");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/term/term?name=liver");
         assertNotNull(page);
         assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
@@ -101,7 +101,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     @Ignore // test often fails as the test times out for the response
     // brain
     public void testShowAllMutantMorpholinos() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-8");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-8");
         assertTrue(page.getTitleText().startsWith("ZFIN"));
         assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-070521-2']").get(0));
     }
@@ -113,7 +113,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         // vhl^hu2081/+;vhl^hu2117/+;Tg(kdrl:EGFP)s843
         String genoID = "ZDB-GENO-100524-4";
         // mutants in retina
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-1770");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-1770");
         assertTrue(page.getTitleText().startsWith("ZFIN"));
         assertThat(page.getAnchorByText("vhlhu2081/+; vhlhu2117/+; s843Tg"), is(notNullValue()));
     }
@@ -124,7 +124,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAnatomyDetailPageExpressedGenes() throws IOException {
         // 	telencephalic ventricle [ZDB-TERM-100331-665]
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-expressed-genes/ZDB-TERM-100331-665");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-expressed-genes/ZDB-TERM-100331-665");
         // gene creb1a with 3 figures
         assertNotNull(page.getByXPath("//a[@id='ZDB-GENE-040426-750']").get(0));
     }
@@ -136,7 +136,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testAnatomyDetailPageAntibodies() throws IOException {
         webClient.waitForBackgroundJavaScriptStartingBefore(1);
         // 	brain [ZDB-TERM-100331-8]
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-labeled-antibodies/ZDB-TERM-100331-8");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-labeled-antibodies/ZDB-TERM-100331-8");
         // antibody Ab1-5-hmC
         assertNotNull("Could not find antibody Ab1-5-hmc", page.getByXPath("//a[@id='ab1-5-hmc']").get(0));
     }
@@ -148,7 +148,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testAnatomyDetailPageInSituProbe() throws IOException {
         webClient.waitForBackgroundJavaScriptStartingBefore(1);
         // 	brain [ZDB-TERM-100331-8]
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-expressed-insitu-probes/ZDB-TERM-100331-8");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-expressed-insitu-probes/ZDB-TERM-100331-8");
         // gene crhbp with 3 figures
         assertNotNull(page.getByXPath("//a[@id='ZDB-GENE-040801-196']").get(0));
     }
@@ -160,7 +160,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testShowGenotypesPerAOSubstructures() throws IOException {
         webClient.waitForBackgroundJavaScriptStartingBefore(1000);
         // 	actinotrichium [ZDB-TERM-100614-30]
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish-include-substructures/ZDB-TERM-100614-30");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/ontology/show-all-clean-fish-include-substructures/ZDB-TERM-100614-30");
         // Genotype Df(Chr03:sox8,sox9b)b971/b971
         assertThat(page.getAnchorByText("AB + MO1-plod1a"), is(notNullValue()));
     }
