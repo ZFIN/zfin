@@ -2168,11 +2168,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 rnaAccessions.removeIf(r -> r == null || r.isEmpty());
                 rnaAccessions.removeAll(toDeleteAccessions);
 
-                if (!rnaAccessions.isEmpty() && !zdbId.contains("ZDB-MIRNAG-")) {
-                    debugBuffer.append("Skip NON-blank NON-MIRNAG: ").append(line).append("\n");
-                    continue;
-                }
-
                 // Check if the gene already has an NCBI Gene link in the database
                 // (accounting for those marked for deletion in tmp_pre_ncbi_gene_delete)
                 String sqlCheckExistingNCBILink = """
