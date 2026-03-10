@@ -38,9 +38,15 @@
     <g:FlowPanel ui:field="changePanel" visible="false">
         <g:Grid ui:field='dnaDataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
             <g:row>
-                <g:cell>Change</g:cell>
-                <g:cell>Position</g:cell>
-                <g:cell>Accession #</g:cell>
+                <g:customCell>
+                    <g:Label text="Change" ui:field="changeLabel"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Position" ui:field="positionLabel"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Accession #" ui:field="accessionLabel"/>
+                </g:customCell>
                 <g:cell>Localization</g:cell>
                 <g:customCell>
                     <g:Label text="Exon" ui:field="exonLabel"/>

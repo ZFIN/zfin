@@ -33,10 +33,30 @@
         .green {
             color: green;
         }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        @external .seq-detail-table;
+        .seq-detail-table {
+            width: 100%;
+        }
+
+        @external .seq-label-column;
+        .seq-label-column {
+            width: 40%;
+        }
+
+        @external .seq-textarea;
+        .seq-textarea {
+            width: 100%;
+        }
+
     </ui:style>
 
     <g:FlowPanel ui:field="changePanel" visible="false">
-        <g:Grid ui:field='genomicDetailsTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+        <g:Grid ui:field='genomicDetailsTable' cellSpacing='2' styleName="searchresults groupstripes-hover" width="100%">
             <!--<g:row>
                 <g:cell>Change</g:cell>
                 <g:cell>Position</g:cell>
@@ -52,20 +72,20 @@
             <g:row visible="false">
                 <g:customCell>
                     <g:HTMLPanel visible="true">
-                        <table>
-                            <tr ui:field="sequenceMessage">
-                                <td><i>Please enter data from the + strand</i>
-                                </td>
-                            </tr>
+                        <table class="{style.seq-detail-table}">
                             <tr ui:field="sequenceOfReferenceRow">
-                                <td>Sequence of  Reference</td>
-                                <td><zfin:StringTextBox ui:field="seqReference" /></td>
-                                <td><g:Button ui:field="reverseComplRefButton" text="Reverse Complement" /></td>
+                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td colspan="2"><g:TextArea ui:field="seqReference" readOnly="true" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
+                            </tr>
+
+                            <tr ui:field="sequenceOfReferenceSmallRow">
+                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td colspan="2"><g:TextBox ui:field="seqReferenceSmall" readOnly="true" addStyleNames="{style.uppercase}"/></td>
                             </tr>
 
                             <tr ui:field="sequenceOfVariantRow">
-                                <td>Sequence of Variant</td>
-                                <td><zfin:StringTextBox ui:field="seqVariant" /></td>
+                                <td class="{style.seq-label-column}">Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
+                                <td><zfin:StringTextBox ui:field="seqVariant" addStyleNames="{style.uppercase}"/></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
                             </tr>
                         </table>
