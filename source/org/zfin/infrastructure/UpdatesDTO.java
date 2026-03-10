@@ -86,10 +86,6 @@ public record UpdatesDTO(
             previous = tempEvent;
         }
         updates.sort(Comparator.comparing(UpdatesDTO::whenUpdated));
-//        for(UpdatesDTO update : updates) {
-//            System.out.println(update.whenUpdated);
-//        }
-
         return updates;
     }
 
