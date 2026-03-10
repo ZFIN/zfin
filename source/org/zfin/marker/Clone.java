@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.ExpressionExperiment2;
@@ -9,23 +10,53 @@ import org.zfin.infrastructure.ActiveData;
 
 import java.util.Set;
 
+@Entity
+@Table(name = "clone")
+@PrimaryKeyJoinColumn(name = "clone_mrkr_zdb_id")
 @Setter
 @Getter
 public class Clone extends Marker {
 
+    @Column(name = "clone_rating")
     @JsonView({View.API.class, View.UI.class})
     private Integer rating;
+
+    @Column(name = "clone_problem_type")
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.Clone$ProblemType")})
     private ProblemType problem;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatex_probe_feature_zdb_id")
     private Set<ExpressionExperiment2> expressionExperiments2;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clone_vector_name")
     private Vector vector;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clone_probelib_zdb_id")
     private ProbeLibrary probeLibrary;
+
+    @Column(name = "clone_digest")
     private String digest;
+
+    @Column(name = "clone_insert_size")
     private Integer insertSize;
+
+    @Column(name = "clone_polymerase_name")
     private String polymeraseName;
+
+    @Column(name = "clone_pcr_amplification")
     private String pcrAmplification;
+
+    @Column(name = "clone_comments")
     private String cloneComments;
+
+    @Column(name = "clone_cloning_site")
     private String cloningSite;
+
+    @Column(name = "clone_sequence_type", nullable = false)
     private String sequenceType;
 
     public boolean isRnaClone() {

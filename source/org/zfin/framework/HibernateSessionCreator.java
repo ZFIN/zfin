@@ -174,6 +174,8 @@ public class HibernateSessionCreator {
         config.setProperty("hibernate.jdbc.batch_size", String.valueOf(BATCH_SIZE));
         config.setProperty("hibernate.order_inserts", "true");
         config.setProperty("hibernate.order_updates", "true");
+
+        //TODO: Should we consider enabling the second level cache?
         config.setProperty("hibernate.cache.use_second_level_cache", "false");
         //config.setProperty("hibernate.cache.use_query_cache", "true");
 //        config.setProperty("hibernate.use_sql_comments", "true");

@@ -1,9 +1,18 @@
 package org.zfin.marker;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "marker_types")
+@Immutable
+@Access(AccessType.PROPERTY)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class MarkerType implements Comparable, Serializable {
 
     private String name;
@@ -36,6 +45,8 @@ public class MarkerType implements Comparable, Serializable {
         return returnString;
     }
 
+    @Id
+    @Column(name = "marker_type")
     public String getName() {
         return name;
     }
@@ -45,6 +56,7 @@ public class MarkerType implements Comparable, Serializable {
         type = Marker.Type.getType(name);
     }
 
+    @Column(name = "mrkrtype_type_display")
     public String getDisplayName() {
         return displayName;
     }
@@ -53,6 +65,7 @@ public class MarkerType implements Comparable, Serializable {
         this.displayName = displayName;
     }
 
+    @Transient
     public Marker.Type getType() {
         return type;
     }
@@ -61,6 +74,9 @@ public class MarkerType implements Comparable, Serializable {
         this.type = type;
     }
 
+    @ElementCollection
+    @CollectionTable(name = "marker_type_group_member", joinColumns = @JoinColumn(name = "mtgrpmem_mrkr_type"))
+    @Column(name = "mtgrpmem_mrkr_type_group")
     public Set<String> getTypeGroupStrings() {
         return typeGroupStrings;
     }
@@ -75,6 +91,7 @@ public class MarkerType implements Comparable, Serializable {
     }
 
 
+    @Transient
     public Set<Marker.TypeGroup> getTypeGroups() {
         return typeGroups;
     }
@@ -83,6 +100,10 @@ public class MarkerType implements Comparable, Serializable {
         this.typeGroups = typeGroups;
     }
 
+    @ManyToMany
+    @JoinTable(name = "marker_type_group_member",
+            joinColumns = @JoinColumn(name = "mtgrpmem_mrkr_type"),
+            inverseJoinColumns = @JoinColumn(name = "mtgrpmem_mrkr_type_group"))
     public Set<MarkerTypeGroup> getMappedTypeGroups() {
         return mappedTypeGroups;
     }
@@ -91,6 +112,7 @@ public class MarkerType implements Comparable, Serializable {
         this.mappedTypeGroups = mappedTypeGroups;
     }
 
+    @Column(name = "mrkrtype_significance")
     public Integer getSignificance() {
         return significance;
     }

@@ -310,7 +310,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(", ExpressionExperiment2 experiment ");
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            hql.append(",  AbstractMarkerRelationshipInterface rel   ");
+            hql.append(",  MarkerRelationship rel   ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult2 expressionResult ");
