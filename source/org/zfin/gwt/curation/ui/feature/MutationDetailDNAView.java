@@ -291,9 +291,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             case TRANSGENIC_INSERTION:
                 showTgFields();
                 break;
-            case SEQUENCE_VARIANT:
-                showTgFields();
-                break;
         }
     }
 

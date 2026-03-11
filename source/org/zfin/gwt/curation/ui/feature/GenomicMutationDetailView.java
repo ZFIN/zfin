@@ -154,9 +154,6 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
                     showTgFields();
                 }
                 break;
-            case SEQUENCE_VARIANT:
-                showTgFields();
-                break;
             case INDEL:
                 showBoth();
                 break;
@@ -266,9 +263,6 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
                 else{
                     showTgFields();
                 }
-                break;
-            case SEQUENCE_VARIANT:
-                showTgFields();
                 break;
             case INDEL:
                 showBoth();

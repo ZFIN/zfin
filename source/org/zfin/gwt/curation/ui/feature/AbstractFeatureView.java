@@ -353,7 +353,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
                 break;
             case POINT_MUTATION:
             case DELETION:
-            case SEQUENCE_VARIANT:
             case INSERTION:
                 // just uses the defaults
                 featureNameBox.setText("");
@@ -538,8 +537,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         INSERTION,
         INDEL,
         MNV,
-        TRANSGENIC_INSERTION,
-        SEQUENCE_VARIANT;
+        TRANSGENIC_INSERTION;
 
         public static boolean hasFeatureType(String featureType, boolean knownInsertionSite) {
             for (MutationDetailType type : values()) {
