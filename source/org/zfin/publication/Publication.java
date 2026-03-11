@@ -443,7 +443,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         if (status == Status.EPUB || status == Status.PRESS) {
             sb.append(". ").append(status.toString());
         }
-        if (journal.isZfinDierectDataSubmission()) {
+        if (journal.isZfinDirectDataSubmission()) {
             sb.append(". (http://zfin.org)");
         }
         sb.append(".");

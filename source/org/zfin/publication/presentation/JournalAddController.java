@@ -85,7 +85,7 @@ public class JournalAddController {
             newJournal.setPrintIssn(printISSN);
             newJournal.setOnlineIssn(eISSN);
             newJournal.setPublisher(publisher);
-            newJournal.setIsNice(isNice);
+            newJournal.setNice(isNice);
 
             session.save(newJournal);
 
