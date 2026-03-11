@@ -136,8 +136,8 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         for (Journal dbRecord : dbRecords) {
             String id = dbRecord.getZdbID();
             String name = dbRecord.getName();
-            String med = dbRecord.getRawMedAbbrev();
-            String iso = dbRecord.getRawIsoAbbrev();
+            String med = dbRecord.getMedAbbrev();
+            String iso = dbRecord.getIsoAbbrev();
 
             boolean fixNeeded = StringUtils.isEmpty(med) || StringUtils.isEmpty(iso);
             if (!fixNeeded) {
