@@ -7,8 +7,11 @@ cli.with {
     h longOpt: 'help', 'Show usage information'
     i longOpt: 'input', args: 1, argName: 'samfile', 'Use specified sam file as input. If not specified, stdin will be used.'
     _ longOpt: 'useZdbId', 'Use ZDB ID in the alias ID field. If not specified, a unique ID will be generated.'
+    _ longOpt: 'source', args: 1, argName: 'source', 'GFF3 source field value. Default: ZFIN_knockdown_reagent'
 }
 def options = cli.parse(args)
+
+def sourceName = options.source ?: 'ZFIN_knockdown_reagent'
 
 soTerms = [
         'MRPHLNO': 'morpholino_oligo',
@@ -55,7 +58,7 @@ List<String> successList = new ArrayList<>()
             end = start.toInteger() + cigar.substring(0, 2).toInteger()
             newName = "ID=" + id + name.substring(3)
             newName = newName.replace(",", "%2C")
-            System.out.println("$chromosome\tZFIN_knockdown_reagent\t$type\t$start\t$end\t.\t$strand\t.\t$newName")
+            System.out.println("$chromosome\t$sourceName\t$type\t$start\t$end\t.\t$strand\t.\t$newName")
             errorMap.remove(truncatedLine)
             successList.add(truncatedLine)
         } else {
