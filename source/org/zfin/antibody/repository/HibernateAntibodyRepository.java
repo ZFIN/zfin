@@ -891,7 +891,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     @Override
     public long getAntibodyCountForOrganization(String orgZdbID) {
         Session session = HibernateUtil.currentSession();
-        String sql = "SELECT count(*) FROM int_data_supplier WHERE idsup_supplier_zdb_id = :orgZdbID AND idsup_data_zdb_id LIKE 'ZDB-ATB%'";
+        String sql = "SELECT count(*) FROM int_data_supplier WHERE idsup_supplier_zdb_id = :orgZdbID AND get_obj_type(idsup_data_zdb_id) = 'ATB'";
         return ((Number) session.createNativeQuery(sql)
                 .setParameter("orgZdbID", orgZdbID)
                 .uniqueResult()).longValue();
