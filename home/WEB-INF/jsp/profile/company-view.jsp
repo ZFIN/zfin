@@ -4,11 +4,12 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="PRODUCTS" value="Products and Services"/>
+<c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="CITATIONS" value="Zebrafish Publications of Company Representatives"/>
 <c:set var="REPRESENTATIVE" value="Company Representative"/>
 
 <c:set var="secs"
-       value="${[SUMMARY, PRODUCTS, REPRESENTATIVE, CITATIONS]}"/>
+       value="${[SUMMARY, PRODUCTS, ANTIBODIES, REPRESENTATIVE, CITATIONS]}"/>
 
 <z:dataPage sections="${secs}" additionalBodyClass="company-view nav-title-wrap">
 
@@ -59,6 +60,17 @@
 
         <z:section title="${PRODUCTS}">
             <div id='bio'><zfin2:splitLines input="${company.bio}"/></div>
+        </z:section>
+
+        <z:section title="${ANTIBODIES}">
+            <c:choose>
+                <c:when test="${hasAntibodies}">
+                    <a href="/search?q=&fq=category%3A%22Antibody%22&fq=xref%3A%22${company.zdbID}%22">View all antibodies from this company</a>
+                </c:when>
+                <c:otherwise>
+                    <span class="no-data-tag">No data available</span>
+                </c:otherwise>
+            </c:choose>
         </z:section>
 
         <z:section title="${REPRESENTATIVE}">
