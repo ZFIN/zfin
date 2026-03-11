@@ -1,34 +1,28 @@
 package org.zfin.publication;
 
+import org.zfin.framework.StringEnumValueUserType;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "mesh_term")
 public class MeshTerm implements Comparable<MeshTerm> {
 
+    @Id
+    @Column(name = "mesht_mesh_id", nullable = false)
     private String id;
+
+    @Column(name = "mesht_term_name", nullable = false)
     private String name;
+
+    @Column(name = "mesht_type", nullable = false)
+    @org.hibernate.annotations.Type(value = StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.MeshTerm$Type")})
     private Type type;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
 
     @Override
     public int compareTo(MeshTerm o) {
