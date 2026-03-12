@@ -7,7 +7,7 @@ if [[ "${ELASTIC_PASSWORD}" == "ChangeMe!" ]]; then
 	exit
 fi
 
-docker compose down kibana filebeat elasticsearch
+docker compose down kibana filebeat metricbeat elasticsearch
 
 docker compose up --detach elasticsearch 
 
@@ -17,4 +17,6 @@ docker compose up --detach filebeat
 
 docker compose exec filebeat filebeat setup -e
 
-docker compose up --detach kibana 
+docker compose up --detach metricbeat
+
+docker compose up --detach kibana
