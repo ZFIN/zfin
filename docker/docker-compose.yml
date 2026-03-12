@@ -295,7 +295,6 @@ services:
         ELK_VERSION: ${ELK_VERSION}
     profiles:
       - logging
-    user: root
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     volumes:
