@@ -259,6 +259,7 @@ services:
       context: ./elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-elasticsearch:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
@@ -276,6 +277,7 @@ services:
       context: ./filebeat/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-filebeat:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
@@ -291,6 +293,7 @@ services:
       context: ./kibana/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-kibana:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
