@@ -6,9 +6,9 @@ DECLARE
     result text;
 BEGIN
 
-    --if table_prefix doesn't contain _fast_search_old_ then it's not a renamed table
-    if (table_prefix not like '%_fast_search_old_%') then
-        return 'this function should only be used to clean up tables named like ..._fast_search_old_...';
+    --if table_prefix doesn't match a known renamed-table pattern, reject it
+    if (table_prefix not like '%_fast_search_old_%' and table_prefix not like 'all_term_contains_old_%') then
+        return 'this function should only be used to clean up tables named like ..._fast_search_old_... or all_term_contains_old_...';
     end if;
 
     result := 'tables dropped: ';

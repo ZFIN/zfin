@@ -2,6 +2,8 @@ services:
   base:
     build: ./base/
     image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
+    environment:
+      TZ: ${TZ}
   compile:
     build:
       context: ./compile/
@@ -72,13 +74,14 @@ services:
   db:
     build: ./postgresql/
     image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}
-    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=PST8PDT' -c 'shared_preload_libraries="pg_stat_statements"'
+    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
       POSTGRES_INITDB_ARGS: "-E SQL_ASCII"
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
+      TZ: ${TZ}
     shm_size: 1g
 #    ports:
 #      - "127.0.0.1:5432-5441:5432"
@@ -86,11 +89,14 @@ services:
       - pg_data:/var/lib/postgresql/
       - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro
       - www_data:/opt/zfin/www_homes/zfin.org
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
   solr:
     build: ./solr/
     image: ghcr.io/zfin/zfin-solr:${ZFIN_RELEASE}
     environment:
       SOLR_HEAP: 10g
+      TZ: ${TZ}
     ports:
       - "8983-8992:8983"
     volumes:
@@ -107,6 +113,7 @@ services:
       OPENIDC_CRYPTOPASSPHRASE: ${OPENIDC_CRYPTOPASSPHRASE}
       OPENIDC_CLIENTID: ${OPENIDC_CLIENTID}
       OPENIDC_CLIENTSECRET: ${OPENIDC_CLIENTSECRET}
+      TZ: ${TZ}
     ports:
       - "${DOCKER_HTTPD_HTTP_PORT:-8080-8089}:80"
       - "${DOCKER_HTTPD_HTTPS_PORT:-8443-8452}:443"
@@ -173,6 +180,8 @@ services:
   blast:
     build: ./blast/
     platform: linux/amd64
+    environment:
+      TZ: ${TZ}
     volumes:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
@@ -214,6 +223,8 @@ services:
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
       - maven_cache:/home/gradle/.m2
       - gradle_cache:/home/gradle/.gradle
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
   ncbiload:
     build: ./ncbiload/
     environment:
@@ -242,32 +253,41 @@ services:
     volumes:
       - fail2ban_config:/config
       - httpd_log:/var/log/httpd:ro #optional
+      - /etc/localtime:/etc/localtime:ro
   elasticsearch:
     build:
       context: ./elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-elasticsearch:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      TZ: ${TZ}
     ports:
       - "127.0.0.1:9200-9209:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
   filebeat:
     build:
       context: ./filebeat/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-filebeat:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      TZ: ${TZ}
     volumes:
       - httpd_log:/var/log/httpd
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro      
   metricbeat:
     build:
       context: ./metricbeat/
@@ -281,6 +301,8 @@ services:
     volumes:
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro      
     depends_on:
       - elasticsearch
   kibana:
@@ -288,11 +310,13 @@ services:
       context: ./kibana/
       args:
         ELK_VERSION: ${ELK_VERSION}
+    image: ghcr.io/zfin/zfin-kibana:${ZFIN_RELEASE}
     profiles:
       - logging
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
       XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: ${XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY}
+      TZ: ${TZ}
     ports:
       - "127.0.0.1:5601-5610:5601"
     volumes:

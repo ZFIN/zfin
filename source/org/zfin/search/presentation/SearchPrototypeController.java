@@ -23,7 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.infrastructure.captcha.CaptchaService;
+import org.zfin.infrastructure.captcha.RequiresCaptcha;
 import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -46,8 +46,6 @@ import static org.zfin.search.service.FacetBuilderService.categorySupportsSort;
 @Controller
 @RequestMapping("/quicksearch")
 public class SearchPrototypeController {
-
-    private static final boolean ENABLE_CAPTCHA = true;
 
     @Autowired
     private SolrService solrService;
@@ -92,6 +90,7 @@ public class SearchPrototypeController {
 
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
+    @RequiresCaptcha
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,
                               @RequestParam(value = "fq", required = false) String[] filterQuery,
@@ -105,12 +104,6 @@ public class SearchPrototypeController {
                               @RequestParam(required = false, defaultValue = "true") Boolean appendCategoryToBaseUrl,
                               Model model,
                               HttpServletRequest request) {
-        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
-
         if (page == null) {
             page = 1;
         }

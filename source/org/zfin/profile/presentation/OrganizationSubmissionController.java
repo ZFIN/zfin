@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.infrastructure.captcha.CaptchaService;
+import org.zfin.infrastructure.captcha.RequiresCaptcha;
 import org.zfin.profile.OrganizationSubmission;
 import org.zfin.profile.PersonSubmission;
 import org.zfin.profile.repository.ProfileRepository;
@@ -28,14 +29,9 @@ public class OrganizationSubmissionController {
     @Autowired
     ProfileRepository profileRepository;
 
+    @RequiresCaptcha
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
-    public String newPersonForm(Model model, HttpServletRequest request) {
-        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
-
+    public String newPersonForm(Model model) {
         OrganizationSubmission submission = new OrganizationSubmission();
         model.addAttribute("submission", submission);
 

@@ -49,4 +49,7 @@ public class LoadFileLog {
     @Column(name = "lfl_processed_date")
     private Date processedDate;
 
+    @Column(name = "lfl_table_name")
+    private String tableName;
+
 }

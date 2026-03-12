@@ -703,7 +703,7 @@ task uploadGHCRImages(dependsOn: ['buildGHCRImages',
     description "Build and upload containers to Github Container Registry"
 }
 
-def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat']
+def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat']
 
 task buildGHCRImages() {
     doLast {
@@ -713,7 +713,7 @@ task buildGHCRImages() {
         } else {
             for (container in containerList) {
                 exec {
-                    commandLine 'docker','compose','build',container
+                    commandLine 'docker','compose','build','--no-cache',container
                     workingDir 'docker/'
                     environment DOCKER_BUILDKIT: 0
                 }
@@ -809,7 +809,6 @@ dependencies {
     implementation "com.sun.xml.fastinfoset:FastInfoset:1.2.15"
     implementation "com.sun.xml.messaging.saaj:saaj-impl:3.0.3"
     implementation "com.sun.xml.stream.buffer:streambuffer:1.5.6"
-    implementation "com.sun.xml.ws:policy:2.3.1"
     implementation "com.xlson.groovycsv:groovycsv:1.0"
     implementation "commons-beanutils:commons-beanutils:1.9.4"
     implementation "commons-cli:commons-cli:1.9.0"
@@ -886,9 +885,7 @@ dependencies {
     implementation "org.biojava:core:1.9.4"
     implementation "org.codehaus.castor:castor-core:1.3"
     implementation "org.codehaus.castor:castor-xml:1.3"
-    implementation "org.codehaus.woodstox:stax2-api:3.1.4"
-    implementation "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
-    implementation "org.codehaus.woodstox:wstx-asl:3.2.7"
+    implementation "org.codehaus.woodstox:stax2-api:4.2.2"
 
     implementation("org.dom4j:dom4j:2.1.3") {
         // Exclude xpp3 XML parser - conflicts with Tomcat's built-in parsers

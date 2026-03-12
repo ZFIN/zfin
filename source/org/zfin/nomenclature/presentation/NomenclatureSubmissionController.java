@@ -1,6 +1,5 @@
 package org.zfin.nomenclature.presentation;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +16,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.captcha.CaptchaService;
+import org.zfin.infrastructure.captcha.RequiresCaptcha;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
@@ -71,13 +70,9 @@ public class NomenclatureSubmissionController {
         return "nomenclature/event-view";
     }
 
+    @RequiresCaptcha
     @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
-    public String newGeneNameForm(Model model, HttpServletRequest request) {
-        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
+    public String newGeneNameForm(Model model) {
         GeneNameSubmission submission = new GeneNameSubmission();
         submission.setHomologyInfoList(Arrays.asList(new HomologyInfo()));
         model.addAttribute("submission", submission);
@@ -96,13 +91,9 @@ public class NomenclatureSubmissionController {
         return "nomenclature/gene-name-submit";
     }
 
+    @RequiresCaptcha
     @RequestMapping(value = "/line-name", method = RequestMethod.GET)
-    public String newLineNameForm(Model model, HttpServletRequest request) {
-        //TODO: This would read better if it was an annotation on the method (eg. `@RequiresCaptcha`)
-        Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
-        if (captchaRedirectUrl.isPresent()) {
-            return "redirect:" + captchaRedirectUrl.get();
-        }
+    public String newLineNameForm(Model model) {
         LineNameSubmission submission = new LineNameSubmission();
         submission.setLineDetails(Arrays.asList(new LineInfo()));
         model.addAttribute("submission", submission);
