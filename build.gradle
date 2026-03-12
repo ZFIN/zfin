@@ -703,7 +703,7 @@ task uploadGHCRImages(dependsOn: ['buildGHCRImages',
     description "Build and upload containers to Github Container Registry"
 }
 
-def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat']
+def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat']
 
 task buildGHCRImages() {
     doLast {
@@ -713,7 +713,7 @@ task buildGHCRImages() {
         } else {
             for (container in containerList) {
                 exec {
-                    commandLine 'docker','compose','build',container
+                    commandLine 'docker','compose','build','--no-cache',container
                     workingDir 'docker/'
                     environment DOCKER_BUILDKIT: 0
                 }
