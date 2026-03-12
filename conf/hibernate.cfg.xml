@@ -118,7 +118,11 @@
         <mapping class="org.zfin.profile.SourceUrl"/>
         <mapping class="org.zfin.profile.OrganizationFeaturePrefix"/>
         <mapping class="org.zfin.profile.CuratorSession"/>
-        <mapping resource="org/zfin/publication.hbm.xml"/>
+        <!-- publication.hbm.xml entities converted to annotations -->
+        <mapping class="org.zfin.publication.DOIAttempt"/>
+        <mapping class="org.zfin.publication.Journal"/>
+        <mapping class="org.zfin.publication.MeshTerm"/>
+        <mapping class="org.zfin.publication.MeshHeading"/>
         <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
         <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
         <mapping class="org.zfin.anatomy.DevelopmentStage"/>
@@ -320,3 +324,4 @@
 <listener class="org.hibernate.envers.event.AuditEventListener" type="post-collection-recreate"/>-->
     </session-factory>
 </hibernate-configuration>
+
