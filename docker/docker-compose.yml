@@ -287,7 +287,23 @@ services:
       - httpd_log:/var/log/httpd
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
+      - /etc/timezone:/etc/timezone:ro      
+  metricbeat:
+    build:
+      context: ./metricbeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro      
+    depends_on:
+      - elasticsearch
   kibana:
     build:
       context: ./kibana/
