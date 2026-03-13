@@ -16,15 +16,9 @@ public class MarkerEditEntryPoint implements EntryPoint {
     public void onModuleLoad() {
 
         String zdbID ;
-        String state = null ;
 
         Dictionary dictionary = Dictionary.getDictionary("MarkerProperties") ;
         zdbID = dictionary.get(LOOKUP_ZDBID) ;
-        try {
-            state = dictionary.get(GoMarkerEditController.STATE_STRING) ;
-        } catch (Exception e) {
-        }
-
         if(zdbID.indexOf("TSCRIPT")>0){
             (new TranscriptEditController()).initGUI();
         }
@@ -32,10 +26,6 @@ public class MarkerEditEntryPoint implements EntryPoint {
         if(zdbID.indexOf("GENE")>0){
             if(zdbID.startsWith("Alternate")){
                 (new AlternateGeneEditController()).initGUI();
-            }
-            else
-            if(state!=null ){
-                (new GoMarkerEditController()).initGUI();
             }
             else{
                 (new GeneEditController()).initGUI();

@@ -25,7 +25,7 @@ import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
 import org.zfin.gwt.curation.CurationRPCTest;
-import org.zfin.gwt.marker.GoEvidenceTest;
+
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.infrastructure.RecordAttributionTest;
@@ -97,7 +97,7 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
     GafServiceTest.class,
     GBrowseServiceTest.class,
     GoaGafServiceTest.class,
-    GoEvidenceTest.class,
+
     InformixUtilTest.class,
     InfrastructureRepositoryTest.class,
     LinkageRepositoryTest.class,
