@@ -35,8 +35,6 @@ import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -612,11 +610,10 @@ public class SearchPrototypeController {
             }
         }
 
-        response.setContentType("data:text/csv;charset=utf-8");
+        response.setContentType("text/csv;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
         SolrQuery query = new SolrQuery();
-        query.setParam("wt", "csv");
 
         category = getCategory(filterQuery, category);
 
@@ -624,14 +621,9 @@ public class SearchPrototypeController {
             query.addFilterQuery("category:\"" + category + "\"");
         }
 
-        //this should do everything exactly the same as regular controller method to build the result set,
-        //but...
-        //  leave facets off
         query.setFacet(false);
-        //  no highlighting
         query.setHighlight(false);
-        //  set the fl to just name, id
-        query.set("fl", "id, name");
+        query.set("fl", "id, name, category, type, url");
 
         if (StringUtils.isNotEmpty(q)) {
             query.setQuery(q);
@@ -642,34 +634,20 @@ public class SearchPrototypeController {
             }
         }
 
-        //set rows to...lots
-        query.setRows(Integer.MAX_VALUE);
-
         handleRootOnlyResults(query);
 
         try {
+            Writer out = new OutputStreamWriter(
+                    new BufferedOutputStream(response.getOutputStream()),
+                    java.nio.charset.StandardCharsets.UTF_8);
 
-            URL urlForQuery = SolrService.getUrlForQuery(query);
-            URLConnection connection = urlForQuery.openConnection();
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            solrService.transformSolrCsvToZfinCsv(query.getFilterQueries(), connection.getInputStream())));
-
-            OutputStreamWriter out = new OutputStreamWriter(
-                    new BufferedOutputStream(
-                            response.getOutputStream()));
-
-            IOUtils.copy(in, out);
-
-            in.close();
+            solrService.streamCsvResults(query, out, resultService);
             out.flush();
             out.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e);
         }
-
 
     }
 
