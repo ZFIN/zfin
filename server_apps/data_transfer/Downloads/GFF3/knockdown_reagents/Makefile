@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/
 
-STATICS =  get_crispr_seq.sql get_talen_seq_1.sql load_knockdown_reagents.sql reportMissedMO.groovy get_mo_and_crispr_seq.sql get_talen_seq_2.sql reportMissedTalens.groovy get_mo_seq.sql load_knockdown_reagents.sh reportMissedCRISPR.groovy sam2gff3.groovy merge_gff3.groovy load_knockdown_reagents_grcz12tu.sh load_knockdown_reagents_grcz12tu.sql prepare_grcz12tu_genome.sh
+STATICS =  get_crispr_seq.sql get_talen_seq_1.sql load_knockdown_reagents.sql reportMissedMO.groovy get_mo_and_crispr_seq.sql get_talen_seq_2.sql reportMissedTalens.groovy get_mo_seq.sql load_knockdown_reagents.sh reportMissedCRISPR.groovy sam2gff3.groovy merge_gff3.groovy
 
 include $(TOP)/make.default.rules
 

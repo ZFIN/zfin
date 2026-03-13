@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-##GLOBALSTORE="/research/zprodmore/gff3"
-GLOBALSTORE="/opt/zfin/source_roots/zfin.org"
+GLOBALSTORE="/research/zprodmore/gff3"
 TARGETDIR="$TARGETROOT/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/"
 
 BOWTIE_IDX="$GLOBALSTORE/GRCz12tu/GRCz12tu"

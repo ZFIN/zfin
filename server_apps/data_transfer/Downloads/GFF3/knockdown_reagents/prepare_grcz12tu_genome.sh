@@ -13,10 +13,9 @@
 #   - /opt/misc/bowtie2/bowtie2-build
 #   - GRCz12tu FASTA available (GCF_049306965.1_GRCz12tu_genomic.fna)
 
-##GLOBALSTORE="/research/zprodmore/gff3"
-GLOBALSTORE="/opt/zfin/source_roots/zfin.org"
+GLOBALSTORE="/research/zprodmore/gff3"
 INDEXDIR="$GLOBALSTORE/GRCz12tu"
-FASTA_SOURCE="${1:-/opt/zfin/source_roots/zfin.org/GCF_049306965.1_GRCz12tu_genomic.fna}"
+FASTA_SOURCE="${1:-/research/zprodmore/gff3/GCF_049306965.1_GRCz12tu_genomic.fna}"
 
 if [ ! -f "$FASTA_SOURCE" ]; then
     echo "Error: FASTA file not found: $FASTA_SOURCE"
