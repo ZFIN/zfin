@@ -2,19 +2,19 @@
 
 ## Docker Services
 
-| Service | Image | Purpose | Ports |
-|---------|-------|---------|-------|
-| **base** | `ghcr.io/zfin/zfin-base` | Foundation image — Gradle 8, JDK 21, Node 18, Ant, Perl, Groovy, Bowtie | — |
-| **compile** | `ghcr.io/zfin/zfin-compile` | Build container — inherits base, adds Docker CLI | — |
-| **db** | `ghcr.io/zfin/zfin-db` | PostgreSQL 18 | 5432 |
-| **solr** | — | Solr search engine | 8983 |
-| **tomcat** | — | Tomcat 10 + JDK 21 (app server) | 8080 |
+| Service         | Image | Purpose | Ports |
+|-----------------|-------|---------|-------|
+| **base**        | `ghcr.io/zfin/zfin-base` | Foundation image — Gradle 8, JDK 21, Node 18, Ant, Perl, Groovy, Bowtie | — |
+| **compile**     | `ghcr.io/zfin/zfin-compile` | Build container — inherits base, adds Docker CLI | — |
+| **db**          | `ghcr.io/zfin/zfin-db` | PostgreSQL 18 | 5432 |
+| **solr**        | — | Solr search engine | 8983 |
+| **tomcat**      | — | Tomcat 10 + JDK 21 (app server) | 8080 |
 | **tomcatdebug** | — | Debug variant of Tomcat (JPDA) | 5000 |
-| **httpd** | — | Apache (reverse proxy + static files) | 80/443 |
-| **jenkins** | — | CI/CD server | 9499 |
-| **ncbiload** | — | NCBI data loading | — |
-| **blast** | — | BLAST sequence search | — |
-| **mailhog** | — | Email testing | — |
+| **httpd**       | — | Apache (reverse proxy + static files) | 80/443 |
+| **jenkins**     | — | CI/CD server | 9499 |
+| **ncbiload**    | — | NCBI data loading | — |
+| **blast**       | — | BLAST sequence search | — |
+| **mailpit**     | — | Email testing | — |
 
 ## Container Volumes
 
