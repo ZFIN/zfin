@@ -96,7 +96,7 @@
     </Location>
     <Location /mailpit>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
+        Require env ZfinHosts
         RewriteEngine On
         RewriteCond %{HTTP:Upgrade} websocket [NC]
         RewriteCond %{HTTP:Connection} upgrade [NC]
@@ -242,7 +242,7 @@
         <Else>
             AuthType openid-connect
             <RequireAll>
-              Require env ZfinRestrictedHosts
+              Require env ZfinHosts
               Require valid-user
             </RequireAll>
         </Else>
