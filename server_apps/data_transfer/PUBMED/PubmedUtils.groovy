@@ -3,7 +3,6 @@ import groovy.xml.XmlSlurper
 import org.zfin.infrastructure.TokenStorage
 
 import java.time.LocalDate
-import java.util.zip.GZIPInputStream
 
 class PubmedUtils {
 
@@ -71,6 +70,7 @@ class PubmedUtils {
         long delay = INITIAL_RETRY_DELAY_MS
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
+                println("[HTTP] $method $url" + (postBody != null ? " (with POST body)" : ""))
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection()
                 connection.setRequestMethod(method)
                 connection.setConnectTimeout(30000)
@@ -118,61 +118,67 @@ class PubmedUtils {
         return key ? "&api_key=${key}" : ""
     }
 
+    private static final String PMC_OAI_BASE_URL = "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/"
+    private static final String PMC_S3_BASE_URL = "https://pmc-oa-opendata.s3.amazonaws.com"
+
     static GPathResult getFullText(pmcId) {
         // OAI endpoint does not support api_key parameter
-        def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
+        def url = "${PMC_OAI_BASE_URL}?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
         parseUrlWithRetry(url)
     }
 
-    static GPathResult getPdfMetaDataRecord(pmcId){
-        // OA endpoint does not support api_key parameter
-        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
-        def query = "id="+pmcId
-        parseUrlWithRetry(url, "POST", query)
+    /**
+     * List all files available in the PMC Open Access S3 bucket for a given PMC ID.
+     * Returns a list of S3 keys for the latest version of the article.
+     * PMC IDs in the DB are stored as "PMC123456"; S3 keys are "PMC123456.1/file.ext".
+     */
+    static List<String> listS3Files(String pmcId) {
+        def allKeys = []
+        String continuationToken = null
+
+        while (true) {
+            def url = "${PMC_S3_BASE_URL}/?list-type=2&prefix=${pmcId}."
+            if (continuationToken) {
+                url += "&continuation-token=${URLEncoder.encode(continuationToken, 'UTF-8')}"
+            }
+            def result = parseUrlWithRetry(url)
+            result.Contents.each { content ->
+                allKeys << content.Key.text()
+            }
+            if (result.IsTruncated.text() == 'true') {
+                continuationToken = result.NextContinuationToken.text()
+            } else {
+                break
+            }
+        }
+
+        if (allKeys.isEmpty()) {
+            return []
+        }
+
+        // Find the latest version by extracting version numbers from prefixes
+        def versionGroups = allKeys.groupBy { key ->
+            // Extract prefix like "PMC123456.2" from "PMC123456.2/file.ext"
+            key.split('/')[0]
+        }
+        def latestPrefix = versionGroups.keySet().sort { a, b ->
+            def versionA = a.split('\\.').last() as int
+            def versionB = b.split('\\.').last() as int
+            versionA <=> versionB
+        }.last()
+
+        return versionGroups[latestPrefix]
     }
 
-//
-//    static GPathResult getPDFandImagesTarballsByDate(date) {
-//        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
-//        def query = "from="+date
-//        def connection = new URL(url).openConnection()
-//        connection.setDoOutput(true)
-//        connection.connect()
-//        def writer = new OutputStreamWriter(connection.outputStream)
-//        writer.write(query)
-//        writer.flush()
-//        writer.close()
-//        connection.connect()
-//        new XmlSlurper().parse(connection.inputStream)
-//    }
-//
-//    static GPathResult getResumptionSet(token) {
-//        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
-//        def query = "resumptionToken="+token
-//        def connection = new URL(url).openConnection()
-//        connection.setDoOutput(true)
-//        connection.connect()
-//        def writer = new OutputStreamWriter(connection.outputStream)
-//        writer.write(query)
-//        writer.flush()
-//        writer.close()
-//        connection.connect()
-//        new XmlSlurper().parse(connection.inputStream)
-//    }
-
-    static gunzip(String file_input, String file_output) {
-        FileInputStream fis = new FileInputStream(file_input)
-        FileOutputStream fos = new FileOutputStream(file_output)
-        GZIPInputStream gzis = new GZIPInputStream(fis)
-        byte[] buffer = new byte[1024]
-        int len = 0
-
-        while ((len = gzis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len)
+    /**
+     * Download a file from the PMC S3 bucket to a local path.
+     */
+    static void downloadS3File(String s3Key, String localPath) {
+        def url = "${PMC_S3_BASE_URL}/${s3Key}"
+        def inputStream = fetchWithRetry(url)
+        new File(localPath).withOutputStream { out ->
+            out << inputStream
         }
-        fos.close()
-        fis.close()
-        gzis.close()
     }
 
     static GPathResult getPubFromPubmed(id) {

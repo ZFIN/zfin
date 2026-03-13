@@ -27,11 +27,16 @@ WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
-PUBS_WITH_PDFS_TO_UPDATE = new File("pdfsAvailable.txt")
-FIGS_TO_LOAD = new File("figsToLoad.txt")
-PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
-ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
-PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
+PUBS_WITH_PDFS_TO_UPDATE_FILE = new File("pdfsAvailable.txt")
+PUBS_WITH_PDFS_TO_UPDATE = new LinkedHashSet<String>()
+FIGS_TO_LOAD_FILE = new File("figsToLoad.txt")
+FIGS_TO_LOAD = new LinkedHashSet<String>()
+PUB_FILES_TO_LOAD_FILE = new File("pdfsToLoad.txt")
+PUB_FILES_TO_LOAD = new LinkedHashSet<String>()
+ADD_BASIC_PDFS_TO_DB_FILE = new File("pdfBasicFilesToLoad.txt")
+ADD_BASIC_PDFS_TO_DB = new LinkedHashSet<String>()
+PUBS_TO_GIVE_PERMISSIONS_FILE = new File("pubsToGivePermission.txt")
+PUBS_TO_GIVE_PERMISSIONS = new LinkedHashSet<String>()
 NON_OPEN_PUBS = new File("nonOpenAccessPubs.csv")
 
 def idsToGrab = [:]
@@ -78,71 +83,64 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
     dir.eachFileRecurse(FileType.FILES) { file ->
         if (file.name.endsWith('.pdf')) {
-            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name, file.name].join('|') + "\n")
+            ADD_BASIC_PDFS_TO_DB.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name, file.name].join('|'))
         }
     }
 
 }
 
-def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
+private static final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
+
+def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear) {
     def timeStart = new Date()
     def directoryPath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId"
-    def filePrefix = "$directoryPath/$zdbId"
-    def directory = new File(directoryPath)
-    directory.mkdirs()
+    new File(directoryPath).mkdirs()
 
-    def tarOutputFile = "${filePrefix}.tar.gz"
-    println("Writing to $tarOutputFile")
-    new File(tarOutputFile).withOutputStream { it << new URL(url).openStream() }
+    def keysToDownload = s3Keys.findAll { key ->
+        def ext = key.split('\\.').last().toLowerCase()
+        DOWNLOADABLE_EXTENSIONS.contains(ext)
+    }
+
+    keysToDownload.each { key ->
+        def filename = key.split('/').last()
+        def localPath = "$directoryPath/$filename"
+        println("Downloading S3: $key -> $localPath")
+        PubmedUtils.downloadS3File(key, localPath)
+    }
 
     def timeStop = new Date()
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println("download to filesystem duration:" + duration)
-
-    def unzipped_output = "${filePrefix}.tar"
-    File unzippedFile = new File(unzipped_output)
-    if (!unzippedFile.exists()) {
-        PubmedUtils.gunzip(tarOutputFile, unzipped_output)
-    }
-
-    def timeStart2 = new Date()
-    def cmd = "cd $directoryPath && /bin/tar -xf *.tar --strip 1"
-    ["/bin/bash", "-c", cmd].execute().waitFor()
-
-    def timeStop2 = new Date()
-    TimeDuration duration2 = TimeCategory.minus(timeStop2, timeStart2)
-    println("extract file duration:" + duration2)
+    println("S3 download duration for $zdbId: $duration (${keysToDownload.size()} files)")
 }
 
-def downloadPDF (String downloadUrl, String pmcId, String zdbId, String pubYear) {
+def recordPdfFromS3(String s3PdfKey, String pmcId, String zdbId, String pubYear) {
+    def directoryPath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId"
+    // The PDF was already downloaded by downloadS3FilesForArticle; rename to match expected convention
+    def s3Filename = s3PdfKey.split('/').last()
+    def s3FilePath = "$directoryPath/$s3Filename"
+    def expectedPath = "$directoryPath/${zdbId}.pdf"
 
-    def timeStart = new Date()
-    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
-    def filePath = "$directory/${zdbId}.pdf"
-    def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC","")}/"
-    def zfinUrl = "https://zfin.org/${zdbId}"
-
-    directory.mkdirs()
-
-    def successfulDownload = downloadPdfFromFtp(downloadUrl, filePath)
-    def timeStop = new Date()
-    TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println("PDF download to filesystem duration:" + duration)
-    if (!successfulDownload) {
-        println("Could not download the PDF from the FTP site for $pmcId")
-        if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
-            NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
-        }
-        NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
+    if (s3Filename != "${zdbId}.pdf") {
+        new File(s3FilePath).renameTo(new File(expectedPath))
     }
-    def mimetype = "/usr/bin/file -b --mime-type $filePath".execute().text.trim()
+
+    def mimetype = "/usr/bin/file -b --mime-type $expectedPath".execute().text.trim()
     if (!mimetype.equals("application/pdf")) {
-        println("The file downloaded from PMC for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
-        new File("$filePath").delete()
+        println("The file downloaded from S3 for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
+        new File(expectedPath).delete()
     } else {
-        println("successfully downloaded the PDF from the FTP site for $pmcId")
-        ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
+        println("Successfully downloaded PDF from S3 for $pmcId")
+        ADD_BASIC_PDFS_TO_DB.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|'))
     }
+}
+
+def recordNonOpenPub(String pmcId, String zdbId) {
+    def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC", "")}/"
+    def zfinUrl = "https://zfin.org/${zdbId}"
+    if (!NON_OPEN_PUBS.exists() || NON_OPEN_PUBS.length() == 0) {
+        NON_OPEN_PUBS.append("pmcId,zdbId,ncbiUrl,zfinUrl\n")
+    }
+    NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
 }
 
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, String pubYear) {
@@ -150,7 +148,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     def header = pmcTextArticle.GetRecord.record.header
     header.setSpec.each { setspec ->
         if (setspec == 'npgopen' || setspec == 'pmc-open') {
-            PUBS_TO_GIVE_PERMISSIONS.append([zdbId].join('|') + "\n")
+            PUBS_TO_GIVE_PERMISSIONS.add(zdbId)
         }
     }
     def markedUpBody = new StreamingMarkupBuilder().bindNode(article.body).toString()
@@ -178,7 +176,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                         println("videos")
                         println(filename)
                     } else {
-                        PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|') + "\n")
+                        PUB_FILES_TO_LOAD.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|'))
                     }
                 }
             }
@@ -249,9 +247,9 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
             String extension = FilenameUtils.getExtension(image)
             String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
             String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
-            FIGS_TO_LOAD.append([zdbId, pmcId, image, label, caption, pubYear + "/" + zdbId + "/" + image,
+            FIGS_TO_LOAD.add([zdbId, pmcId, image, label, caption, pubYear + "/" + zdbId + "/" + image,
                                  pubYear + "/" + zdbId + "/" + thumbnailFilename,
-                                 pubYear + "/" + zdbId + "/" + mediumFileName].join('|') + "\n")
+                                 pubYear + "/" + zdbId + "/" + mediumFileName].join('|'))
         }
     }
 }
@@ -296,7 +294,7 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
 
 }
 
-def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
+def fetchBundlesForExistingPubs(Map idsToGrab) {
 
     def failedIds = []
     def processedCount = 0
@@ -316,36 +314,44 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
         }
 
         try {
-            PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
-                println("Processing " + pmcId + " for ZDB ID " + zdbId)
+            println("Processing $pmcId for ZDB ID $zdbId")
 
-                // Iterate over each link element in the record
-                rec.link.each { link ->
-                    def format = link.@format.text()
-                    def href = link.@href.text()
-                    println("Found link to " + href)
-                    println("Found format " + format)
-
-                    if (format == 'tgz') {
-                        PUBS_WITH_PDFS_TO_UPDATE.append(href + "\n")
-                        downloadPMCFileBundle(href, zdbId, pubYear)
-                        def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                        println pmcId + "," + zdbId
-                        println(href)
-                        processPMCText(fullTxt, zdbId, pmcId, pubYear)
-                    } else if (format == 'pdf') {
-                        println "found a PDF to try and download manually " + pmcId + "," + zdbId
-                        downloadPDF(href, pmcId, zdbId, pubYear)
-                    }
-                }
+            // List available files from the PMC Open Access S3 bucket
+            def s3Files = PubmedUtils.listS3Files(pmcId)
+            if (s3Files.isEmpty()) {
+                println("No files found in S3 for $pmcId")
+                recordNonOpenPub(pmcId, zdbId)
+                processedCount++
+                continue
             }
+            println("Found ${s3Files.size()} files in S3 for $pmcId: ${s3Files.collect { it.split('/').last() }}")
+
+            // Download all files from S3 (PDF, images, etc.)
+            downloadS3FilesForArticle(s3Files, zdbId, pubYear)
+            PUBS_WITH_PDFS_TO_UPDATE.add("s3://${s3Files[0].split('/')[0]}")
+
+            // Check for PDF
+            def pdfKey = s3Files.find { it.toLowerCase().endsWith('.pdf') }
+            if (pdfKey) {
+                recordPdfFromS3(pdfKey, pmcId, zdbId, pubYear)
+            } else {
+                println("No PDF available in S3 for $pmcId")
+                recordNonOpenPub(pmcId, zdbId)
+            }
+
+            // Fetch full text via OAI for figure/caption metadata and process it
+            def numericPmcId = pmcId.toString().replace("PMC", "")
+            def fullTxt = PubmedUtils.getFullText(numericPmcId)
+            processPMCText(fullTxt, zdbId, pmcId, pubYear)
+
         } catch (Exception e) {
             println("ERROR processing ${pmcId} (${zdbId}): ${e.message}")
+            e.printStackTrace()
             failedIds << [pmcId: pmcId, zdbId: zdbId, error: e.message]
         }
 
         processedCount++
-        // Brief pause between publications to avoid overwhelming NCBI
+        // Brief pause between publications to avoid overwhelming services
         if (processedCount % 5 == 0) {
             Thread.sleep(500)
         }
@@ -358,16 +364,6 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     }
 }
 
-Boolean downloadPdfFromFtp(String pdfUrl, String fileLocation) {
-    new File(fileLocation).withOutputStream { out ->
-        URLConnection connection = new URL(pdfUrl).openConnection()
-        connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
-        out << connection.getInputStream()
-    }
-    println "Downloaded PDF to " + fileLocation
-    return true;
-}
-
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
     def lines = reader.iterator()
     lines.each { String line ->
@@ -378,7 +374,17 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 }
 
 println("Found " + idsToGrab.size() + " publications to check for PDFs and images.")
-fetchBundlesForExistingPubs(idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
+fetchBundlesForExistingPubs(idsToGrab)
+
+// Write deduplicated entries to files for SQL loading
+def writeSetToFile = { Set<String> set, File file ->
+    file.text = set.collect { it + "\n" }.join('')
+}
+writeSetToFile(PUBS_WITH_PDFS_TO_UPDATE, PUBS_WITH_PDFS_TO_UPDATE_FILE)
+writeSetToFile(ADD_BASIC_PDFS_TO_DB, ADD_BASIC_PDFS_TO_DB_FILE)
+writeSetToFile(FIGS_TO_LOAD, FIGS_TO_LOAD_FILE)
+writeSetToFile(PUB_FILES_TO_LOAD, PUB_FILES_TO_LOAD_FILE)
+writeSetToFile(PUBS_TO_GIVE_PERMISSIONS, PUBS_TO_GIVE_PERMISSIONS_FILE)
 
 givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ERROR_STOP=1  " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/give_pubs_permissions.sql " +
