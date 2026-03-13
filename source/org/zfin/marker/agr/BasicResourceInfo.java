@@ -3,21 +3,14 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apache.commons.collections4.CollectionUtils;
-import org.zfin.marker.Marker;
-import org.zfin.infrastructure.SourceAlias;
-import org.zfin.marker.SecondaryMarker;
 import org.zfin.publication.Journal;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.publication.Publication;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -68,8 +61,8 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
                                 dto.setPrimaryId("ZFIN:" + jrnl.getZdbID());
                             }
                             dto.setTitle(jrnl.getName());
-                            dto.setMedlineAbbreviation(jrnl.getMedAbbrev());
-                            dto.setIsoAbbreviation(jrnl.getIsoAbbrev());
+                            dto.setMedlineAbbreviation(jrnl.getMedAbbrevOrDefault());
+                            dto.setIsoAbbreviation(jrnl.getIsoAbbrevOrDefault());
                             dto.setPublisher(jrnl.getPublisher());
                             dto.setPrintISSN(jrnl.getPrintIssn());
                             dto.setOnlineISSN(jrnl.getOnlineIssn());

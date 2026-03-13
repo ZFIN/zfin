@@ -1,37 +1,28 @@
 package org.zfin.publication;
 
-/**
- */
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "doi_attempts")
 public class DOIAttempt {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "doia_pk_id", nullable = false)
     private Long id;
+
     private String doi;
+
+    @ManyToOne
+    @JoinColumn(name = "doia_pub_zdb_id", nullable = false)
     private Publication publication;
+
+    @Column(name = "doia_num_attempts", nullable = false)
     private int numAttempts;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public int getNumAttempts() {
-        return numAttempts;
-    }
-
-    public void setNumAttempts(int numAttempts) {
-        this.numAttempts = numAttempts;
-    }
 
     public int addAttempt() {
         return ++numAttempts;
