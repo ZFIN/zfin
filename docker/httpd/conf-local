@@ -95,15 +95,6 @@ OIDCXForwardedHeaders X-Forwarded-Host X-Forwarded-Port X-Forwarded-Proto
    Require all granted
    Require not env RejectRequest
   </RequireAll>
-  # Note: To bypass OIDC for PDF files locally, replace the auth directives below with:
-  #   <If "reqenv('DISABLE_OIDC') == 'true'">
-  #     Require all granted
-  #   </If>
-  #   <Else>
-  #     Require env ZfinHosts
-  #     AuthType openid-connect
-  #     Require valid-user
-  #   </Else>
   <FilesMatch ".+\.(?i)(pdf|doc|docx|xls|xlsx|nxml)$">
     SSLRequireSSL
     Require env ZfinHosts
