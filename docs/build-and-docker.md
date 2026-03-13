@@ -59,6 +59,12 @@ Named volumes are managed by Docker. Bind mounts (prefixed with `$DOCKER_*`) are
 | `/var/run/docker.sock` | `/var/run/docker.sock` | compile |
 | `~/.ssh/known_hosts` | `/home/gradle/.ssh/known_hosts` | compile |
 
+### Service Environment Variables (from `.env`)
+
+| Variable | Default | Used By | Purpose |
+|----------|---------|---------|---------|
+| `DISABLE_OIDC` | `false` | httpd | Set to `true` to bypass OpenID Connect authentication on `/cgi-bin`, `/jobs`, `/solr`, `/logs`, and `/mailpit` for local development. Requires rebuilding the httpd container (`docker compose up -d httpd`). |
+
 ### Key Observations
 
 - The **compile** container has the most volume mounts — it needs access to source code, all output directories, build caches, Docker socket, and SSH for the full build pipeline.
@@ -70,20 +76,13 @@ Named volumes are managed by Docker. Bind mounts (prefixed with `$DOCKER_*`) are
 
 GoCD uses the following steps to build and deploy a full instance.
 
-### 1. Build Docker Images
+### 1. Pull Docker Images
 
 ```bash
-docker compose build base
-docker compose kill compile
-docker compose build compile
+docker compose pull
 docker compose run --rm compile bash -lc '# init volumes for certs and zfin.properties'
 docker compose run --rm --detach --name trunk-compile-run-1 compile #kick off the compile container to run in the background and be available for `docker exec...`
 docker compose run --rm compile bash -lc "ant do"
-docker compose build db
-docker compose build solr
-docker compose build tomcat
-docker compose build jenkins
-docker compose build httpd
 ```
 
 ### 2. Load Database
