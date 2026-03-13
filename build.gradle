@@ -915,6 +915,7 @@ dependencies {
     implementation "org.jdom:jdom:1.1"
     implementation "org.jooq:jool:0.9.15"
     implementation "org.json:json:20240303"
+    implementation "org.jsoup:jsoup:1.18.3"
     implementation "org.jvnet.staxex:stax-ex:1.8"
     implementation "org.liquibase:liquibase-core:4.30.0"
     implementation "org.nocrala.tools.texttablefmt:text-table-formatter:1.2.4"
