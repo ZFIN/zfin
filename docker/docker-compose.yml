@@ -113,6 +113,7 @@ services:
       OPENIDC_CRYPTOPASSPHRASE: ${OPENIDC_CRYPTOPASSPHRASE}
       OPENIDC_CLIENTID: ${OPENIDC_CLIENTID}
       OPENIDC_CLIENTSECRET: ${OPENIDC_CLIENTSECRET}
+      DISABLE_OIDC: ${DISABLE_OIDC:-false}
       TZ: ${TZ}
     ports:
       - "${DOCKER_HTTPD_HTTP_PORT:-8080-8089}:80"
@@ -195,6 +196,7 @@ services:
       MP_DATABASE: /data/mailpit.db
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      MP_WEBROOT: /mailpit
     volumes:
       - ./data:/data
     ports:
