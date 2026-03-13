@@ -47,7 +47,7 @@ create or replace function regen_term()
           on all_term_contains_new (alltermcon_contained_zdb_id);
 
       alter table all_term_contains_new
-          add constraint atc_pk_new primary key using index atc_pk_idx_new;
+          add constraint atc_pk_new primary key (alltermcon_container_zdb_id, alltermcon_contained_zdb_id);
 
       alter table all_term_contains_new add constraint atc_container_fk_new
           foreign key (alltermcon_container_zdb_id) references term on delete cascade;
@@ -82,7 +82,7 @@ create or replace function regen_term()
       alter table all_term_contains_new rename to all_term_contains;
 
       -- rename constraints and indexes to canonical names
-      alter index atc_pk_new rename to all_term_contains_primary_key_index;
+      alter index atc_pk_idx_new rename to all_term_contains_primary_key_index;
       alter index atc_container_idx_new rename to alltermcon_container_zdb_id_index;
       alter index atc_contained_idx_new rename to alltermcon_contained_zdb_id_index;
       alter table all_term_contains rename constraint atc_pk_new to all_term_contains_primary_key;
