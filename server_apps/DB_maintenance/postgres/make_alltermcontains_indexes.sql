@@ -13,16 +13,18 @@ create index if not exists alltermcon_container_zdb_id_index
 create index if not exists alltermcon_contained_zdb_id_index
      on all_term_contains (alltermcon_contained_zdb_id);
 
--- Add primary key constraint if not already present
+-- Add primary key constraint if not already present.
+-- Note: regen_term() names the PK constraint 'all_term_contains_primary_key_index'
+-- (PK constraint and backing index share a name in PostgreSQL).
 do $$
 begin
     if not exists (
         select 1 from pg_constraint
-        where conname = 'all_term_contains_primary_key'
+        where conname = 'all_term_contains_primary_key_index'
           and conrelid = 'all_term_contains'::regclass
     ) then
         alter table all_term_contains
-            add constraint all_term_contains_primary_key primary key
+            add constraint all_term_contains_primary_key_index primary key
             using index all_term_contains_primary_key_index;
     end if;
 end $$;

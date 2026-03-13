@@ -82,7 +82,7 @@ create or replace function regen_term()
 
           -- rename old constraints so they don't collide with the new table's canonical names
           BEGIN
-              EXECUTE 'ALTER TABLE ' || old_table_name || ' RENAME CONSTRAINT all_term_contains_primary_key TO '
+              EXECUTE 'ALTER TABLE ' || old_table_name || ' RENAME CONSTRAINT all_term_contains_primary_key_index TO '
                   || old_table_name || '_pk';
           EXCEPTION WHEN undefined_object THEN NULL;
           END;
@@ -102,15 +102,15 @@ create or replace function regen_term()
       raise notice 'regen_term: promoting new table to all_term_contains';
       alter table all_term_contains_new rename to all_term_contains;
 
-      -- rename constraints and indexes to canonical names
-      -- (rename constraints first — renaming a PK's backing index also renames the constraint)
-      raise notice 'regen_term: renaming constraints and indexes to canonical names';
-      alter table all_term_contains rename constraint atc_pk_new to all_term_contains_primary_key;
-      alter table all_term_contains rename constraint atc_container_fk_new to alltermcon_container_zdb_id_foreign_key;
-      alter table all_term_contains rename constraint atc_contained_fk_new to alltermcon_contained_zdb_id_foreign_key;
-      alter index all_term_contains_primary_key rename to all_term_contains_primary_key_index;
+      -- rename indexes and constraints to canonical names
+      -- Note: for a PK, renaming the index also renames the constraint (they share a name),
+      -- so we only rename the index and let the constraint follow.
+      raise notice 'regen_term: renaming indexes and constraints to canonical names';
+      alter index atc_pk_new rename to all_term_contains_primary_key_index;
       alter index atc_container_idx_new rename to alltermcon_container_zdb_id_index;
       alter index atc_contained_idx_new rename to alltermcon_contained_zdb_id_index;
+      alter table all_term_contains rename constraint atc_container_fk_new to alltermcon_container_zdb_id_foreign_key;
+      alter table all_term_contains rename constraint atc_contained_fk_new to alltermcon_contained_zdb_id_foreign_key;
 
       raise notice 'regen_term: done';
   return 0;
