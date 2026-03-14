@@ -35,7 +35,16 @@
                     </c:if></td>
                     <td>${member.assembly}</td>
                     <td>${member.source}</td>
-                    <td>${member.detailedSource}</td>
+                    <td>
+                        <c:if test="${member.detailedSource == 'BurgessLin'}">
+                            ${member.detailedSource}
+                        </c:if>
+                        <authz:authorize access="hasRole('root')">
+                            <c:if test="${member.detailedSource != 'BurgessLin'}">
+                                ${member.detailedSource}
+                            </c:if>
+                        </authz:authorize>
+                    </td>
                     <td>
                         <zfin:link entity="${member.attribution}"/>
                     </td>
