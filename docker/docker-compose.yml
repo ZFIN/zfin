@@ -199,9 +199,6 @@ services:
       MP_WEBROOT: /mailpit
     volumes:
       - ./data:/data
-    ports:
-      - "1025:25"
-      - "8025:8025"
   jenkins:
     build: 
       context: ./jenkins/
