@@ -78,31 +78,12 @@
     </Location>
     <Location /jobs>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
-        ProxyPass         http://jenkins:9499/jobs
-        ProxyPassReverse  http://jenkins:9499/jobs
-        ProxyPassReverse  http://zfin.org/jobs
-        ProxyPassReverse  http://clone.zfin.org/jobs
-        ProxyPassReverse  http://watson.zfin.org/jobs
-        ProxyPassReverse  http://franklin.zfin.org/jobs
-        ProxyPassReverse  http://crick.zfin.org/jobs
-        ProxyPassReverse  http://stage.zfin.org/jobs
     </Location>
     <Location /logs>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
-        ProxyPass         http://kibana:5601/logs
-        ProxyPassReverse  http://kibana:5601/logs
     </Location>
     <Location /mailpit>
         SSLRequireSSL
-        Require env ZfinHosts
-        RewriteEngine On
-        RewriteCond %{HTTP:Upgrade} websocket [NC]
-        RewriteCond %{HTTP:Connection} upgrade [NC]
-        RewriteRule ^/mailpit/(.*) ws://mailpit:8025/mailpit/$1 [P,L]
-        ProxyPass         http://mailpit:8025/mailpit
-        ProxyPassReverse  http://mailpit:8025/mailpit
     </Location>
     <Location /jbrowse>
         ProxyPreserveHost Off
@@ -242,8 +223,11 @@
         <Else>
             AuthType openid-connect
             <RequireAll>
-              Require env ZfinHosts
-              Require valid-user
+                Require valid-user
+                <RequireAny>
+                    Require env ZfinHosts
+                    Require env ZfinRestrictedHosts
+                </RequireAny>
             </RequireAll>
         </Else>
         RewriteEngine On
