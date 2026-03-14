@@ -198,7 +198,7 @@ services:
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
       MP_WEBROOT: /mailpit
     volumes:
-      - ./data:/data
+      - mailpit_data:/data
   jenkins:
     build: 
       context: ./jenkins/
@@ -363,6 +363,7 @@ volumes:
   kibana_data:
   certbot_data:
   jbrowse_data:
+  mailpit_data:
   nfs-zunloads:
     driver_opts:
       type: nfs
