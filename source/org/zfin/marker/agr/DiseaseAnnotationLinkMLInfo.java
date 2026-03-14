@@ -12,6 +12,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.apache.commons.collections4.CollectionUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.feature.Feature;
@@ -100,11 +101,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         // treat as purely implicated by a gene
                         org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                         dataProvider.setSourceOrganizationAbbreviation("ZFIN");
-                        org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
-                        crossReferenceDTO.setDisplayName(disease.getOboID());
-                        crossReferenceDTO.setPrefix("ZFIN");
-                        crossReferenceDTO.setPageArea("disease");
-                        crossReferenceDTO.setReferencedCurie(disease.getOboID());
+                        org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = getCrossReferenceDTO(disease);
                         dataProvider.setCrossReferenceDto(crossReferenceDTO);
 
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
@@ -160,6 +157,15 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         return diseaseDTOList;
     }
 
+    private static org.alliancegenome.curation_api.model.ingest.dto.@NonNull CrossReferenceDTO getCrossReferenceDTO(GenericTerm disease) {
+        org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
+        crossReferenceDTO.setDisplayName(disease.getOboID());
+        crossReferenceDTO.setPrefix("ZFIN");
+        crossReferenceDTO.setPageArea("disease");
+        crossReferenceDTO.setReferencedCurie(disease.getOboID());
+        return crossReferenceDTO;
+    }
+
     private String getUniqueID(Fish fish, Publication publication, List<String> evidenceCodes, String experiment, GenericTerm disease) {
         String uniqueID = fish.getZdbID();
         uniqueID +="|";
@@ -181,6 +187,8 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
         org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
         dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+        org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = getCrossReferenceDTO(damo.getDiseaseAnnotation().getDisease());
+        dataProvider.setCrossReferenceDto(crossReferenceDTO);
         annotation.setDataProviderDto(dataProvider);
         annotation.setCreatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
