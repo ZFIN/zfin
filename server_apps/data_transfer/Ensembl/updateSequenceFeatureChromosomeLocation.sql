@@ -188,6 +188,12 @@ select gff_seqname, gff_name, gff_start, gff_end, 'ZfinGbrowseStartEndLoader', '
 from gff3
 where gff_source = 'ZFIN_knockdown_reagent';
 
+insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
+  sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly)
+select gff_seqname, gff_name, gff_start, gff_end, 'ZfinGbrowseStartEndLoader', 'KnockdownReagentLoader', 'GRCz12tu'
+from gff3
+where gff_source = 'ZFIN_knockdown_reagent_GRCz12tu';
+
 
 delete from sequence_feature_chromosome_location_generated
  where sfclg_chromosome in ('AB','U','0')
