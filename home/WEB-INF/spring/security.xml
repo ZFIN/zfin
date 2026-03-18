@@ -199,6 +199,7 @@
         <security:intercept-url pattern="/action/marker/*-edit" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="action/marker/sequence/edit" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/database/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/sequence/dblink/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/gene/*/ortholog/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/security-check" access="permitAll"/>
         <security:intercept-url pattern="/action/login-redirect" access="permitAll"/>

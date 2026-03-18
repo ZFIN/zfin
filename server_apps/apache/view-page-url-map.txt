@@ -91,3 +91,4 @@ MMO     /action/ontology/term/MMO
 OBI     /action/ontology/term/OBI
 RO     /action/ontology/term/RO
 DALIAS     /action/data/alias/ZDB-DALIAS
+DBLINK     /action/sequence/dblink/view/ZDB-DBLINK
