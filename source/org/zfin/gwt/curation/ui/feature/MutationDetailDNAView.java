@@ -48,6 +48,12 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     @UiField
     NumberTextBox positionEnd;
     @UiField
+    Label changeLabel;
+    @UiField
+    Label positionLabel;
+    @UiField
+    Label accessionLabel;
+    @UiField
     Label exonLabel;
     @UiField
     Label intronLabel;
@@ -153,15 +159,23 @@ public class MutationDetailDNAView extends AbstractViewComposite {
                 localizationTerm.getSelected().equals(THREE_PRIME_SPLICE)) {
             WidgetUtil.showHideBoxField(intronNumber, true);
             WidgetUtil.showHideBoxField(exonNumber, true);
+            intronLabel.setVisible(true);
+            exonLabel.setVisible(true);
         } else if (localizationTerm.getSelected().equals(EXON)) {
             WidgetUtil.showHideBoxField(intronNumber, false);
             WidgetUtil.showHideBoxField(exonNumber, true);
+            intronLabel.setVisible(false);
+            exonLabel.setVisible(true);
         } else if (localizationTerm.getSelected().equals(INTRON)) {
             WidgetUtil.showHideBoxField(intronNumber, true);
             WidgetUtil.showHideBoxField(exonNumber, false);
+            intronLabel.setVisible(true);
+            exonLabel.setVisible(false);
         } else {
             WidgetUtil.showHideBoxField(intronNumber, false);
             WidgetUtil.showHideBoxField(exonNumber, false);
+            intronLabel.setVisible(false);
+            exonLabel.setVisible(false);
         }
         handleChanges();
     }
@@ -172,6 +186,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         //0showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, false);
         //showRow(deletionSequenceRow, false);
+        changeLabel.setVisible(true);
+        positionLabel.setVisible(true);
+        accessionLabel.setVisible(true);
         positionStart.setVisible(true);
         positionDash.setVisible(false);
         positionEnd.setVisible(false);
@@ -183,6 +200,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         //showRow(insertionSequenceRow, true);
         showRow(deletionLengthRow, false);
         //showRow(deletionSequenceRow, false);
+        changeLabel.setVisible(true);
         showHideBaseFields(true);
     }
 
@@ -192,6 +210,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         //showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, true);
         //showRow(deletionSequenceRow, true);
+        changeLabel.setVisible(true);
         showHideBaseFields(true);
     }
 
@@ -201,6 +220,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         //showRow(insertionSequenceRow, true);
         showRow(deletionLengthRow, true);
         //showRow(deletionSequenceRow, true);
+        changeLabel.setVisible(true);
         showHideBaseFields(true);
     }
 
@@ -210,6 +230,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         //showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, false);
         //showRow(deletionSequenceRow, false);
+        changeLabel.setVisible(false);
+        exonLabel.setVisible(false);
+        intronLabel.setVisible(false);
         showHideBaseFields(false);
     }
 
@@ -217,7 +240,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         positionStart.setVisible(show);
         positionEnd.setVisible(show);
         positionDash.setVisible(show);
+        positionLabel.setVisible(show);
         zfinAccessionBox.setVisible(show);
+        accessionLabel.setVisible(show);
     }
 
     private void showRow(TableRowElement row, boolean show) {
@@ -264,9 +289,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
                 showPlusMinusBP();
                 break;
             case TRANSGENIC_INSERTION:
-                showTgFields();
-                break;
-            case SEQUENCE_VARIANT:
                 showTgFields();
                 break;
         }

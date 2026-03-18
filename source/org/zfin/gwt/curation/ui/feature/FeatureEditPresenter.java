@@ -106,7 +106,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                 featureDTO.setPublicationZdbID(publicationID);
                 dto = featureDTO;
                 mutationDetailPresenter.setDto(featureDTO);
-                view.onChangeFeatureType();
                 revertGUI();
                 view.removeFeatureLink.setUrl("/action/infrastructure/deleteRecord/" + dto.getZdbID());
                 view.removeFeatureLink.setTitle("Delete Feature " + dto.getZdbID());
@@ -208,7 +207,11 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.assemblyInfoDate.setText(dto.getAssemblyInfoDate());
         featureNotesPresenter.setFeatureDTO(dto);
         featureNotesPresenter.rebuildGUI();
-        view.featureNameBox.setText(FeatureValidationService.getNameFromFullName(dto));
+        String nameForBox = FeatureValidationService.getNameFromFullName(dto);
+        if ((nameForBox == null || nameForBox.isEmpty()) && dto.getFeatureType() == FeatureTypeEnum.TRANSGENIC_INSERTION) {
+            nameForBox = dto.getName();
+        }
+        view.featureNameBox.setText(nameForBox);
         view.labOfOriginBox.setIndexForValue(dto.getLabOfOrigin());
         String selectedLab =  view.labOfOriginBox.getSelectedText();
         if (selectedLab != null)
@@ -225,6 +228,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
         view.genomicMutationDetailView.populateFields(dto.getFgmdChangeDTO(),dto.getFeatureType(),dto.getKnownInsertionSite());
 
+        // Recalculate dirty state after all fields are populated
+        handleDirty();
     }
 
 
