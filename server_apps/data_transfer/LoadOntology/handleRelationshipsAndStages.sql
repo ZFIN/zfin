@@ -258,6 +258,10 @@ insert into term_relationship (termrel_zdb_id,
 	termrel_type
     from tmp_zfin_rels ;
 
+!echo "Updating transitive closure for new relationships";
+
+select update_all_term_contains_batch();
+
 --update statistics high for table term_relationship ;
 
 --!!! NOT OBVIOUS logic: if the second term in the relationship belongs to this ontology load, then it is
@@ -296,6 +300,38 @@ WHERE  NOT EXISTS (SELECT 'x'
        AND parent.term_zdb_id = termrel_term_1_zdb_id
        AND child.term_zdb_id = termrel_term_2_zdb_id;
        
+!echo "Capturing removed relationships for closure update";
+
+create temp table tmp_removed_rels (
+	termrel_term_1_zdb_id varchar(50),
+	termrel_term_2_zdb_id varchar(50),
+	termrel_type varchar(100)
+);
+
+insert into tmp_removed_rels (termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type)
+SELECT termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
+FROM term_relationship
+WHERE  NOT EXISTS (SELECT 'x'
+                   FROM   term a,
+                          term b,
+                          tmp_rels
+                   WHERE  a.term_ont_id = termrel_term_1_id
+                          AND b.term_ont_id = termrel_term_2_id
+                          AND termrel_term_1_zdb_id = a.term_zdb_id
+                          AND termrel_term_2_zdb_id = b.term_zdb_id
+                          AND term_relationship.termrel_type =
+                              tmp_rels.termrel_type)
+       AND EXISTS (SELECT 'x'
+                   FROM   tmp_term_onto_no_dups,
+                          term
+                   WHERE  term_id = term_ont_id
+                          AND term_zdb_id = termrel_term_2_zdb_id)
+       AND EXISTS (SELECT 'x'
+                   FROM   tmp_term_onto_no_dups,
+                          term
+                   WHERE  term_id = term_ont_id
+                          AND term_zdb_id = termrel_term_1_zdb_id);
+
 !echo "delete from term relationship";
 DELETE FROM term_relationship
 WHERE  NOT EXISTS (SELECT 'x'
@@ -318,3 +354,7 @@ WHERE  NOT EXISTS (SELECT 'x'
                           term
                    WHERE  term_id = term_ont_id
                           AND term_zdb_id = termrel_term_1_zdb_id);
+
+!echo "Updating transitive closure for removed relationships";
+
+select update_all_term_contains_batch_remove();

@@ -73,7 +73,28 @@ create or replace function regen_term()
           EXECUTE 'ALTER TABLE all_term_contains RENAME TO ' || old_table_name;
           EXECUTE 'TRUNCATE ' || old_table_name;
 
-          EXECUTE 'ALTER INDEX IF EXISTS all_term_contains_primary_key_index RENAME TO '
+          -- Rename old table's constraints so the names are free for the new table.
+          -- Use the old_table_name prefix to avoid collisions.
+          BEGIN
+              EXECUTE 'ALTER TABLE ' || old_table_name
+                  || ' RENAME CONSTRAINT all_term_contains_primary_key TO '
+                  || old_table_name || '_pk';
+          EXCEPTION WHEN undefined_object THEN NULL;
+          END;
+          BEGIN
+              EXECUTE 'ALTER TABLE ' || old_table_name
+                  || ' RENAME CONSTRAINT alltermcon_container_zdb_id_foreign_key TO '
+                  || old_table_name || '_container_fk';
+          EXCEPTION WHEN undefined_object THEN NULL;
+          END;
+          BEGIN
+              EXECUTE 'ALTER TABLE ' || old_table_name
+                  || ' RENAME CONSTRAINT alltermcon_contained_zdb_id_foreign_key TO '
+                  || old_table_name || '_contained_fk';
+          EXCEPTION WHEN undefined_object THEN NULL;
+          END;
+
+          EXECUTE 'ALTER INDEX IF EXISTS all_term_contains_primary_key RENAME TO '
               || old_table_name || '_pk_idx';
           EXECUTE 'ALTER INDEX IF EXISTS alltermcon_container_zdb_id_index RENAME TO '
               || old_table_name || '_container_idx';
