@@ -46,6 +46,9 @@
     RewriteCond %{HTTPS} =off
     RewriteCond %{REQUEST_URI} ^/logs
     RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+    RewriteCond %{HTTPS} =off
+    RewriteCond %{REQUEST_URI} ^/mailpit
+    RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
     Include /srv/www/zfin.org/server_apps/apache/inc-redirect
 
@@ -75,21 +78,12 @@
     </Location>
     <Location /jobs>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
-        ProxyPass         http://jenkins:9499/jobs
-        ProxyPassReverse  http://jenkins:9499/jobs
-        ProxyPassReverse  http://zfin.org/jobs
-        ProxyPassReverse  http://clone.zfin.org/jobs
-        ProxyPassReverse  http://watson.zfin.org/jobs
-        ProxyPassReverse  http://franklin.zfin.org/jobs
-        ProxyPassReverse  http://crick.zfin.org/jobs
-        ProxyPassReverse  http://stage.zfin.org/jobs
     </Location>
     <Location /logs>
         SSLRequireSSL
-        Require env ZfinRestrictedHosts
-        ProxyPass         http://kibana:5601/logs
-        ProxyPassReverse  http://kibana:5601/logs
+    </Location>
+    <Location /mailpit>
+        SSLRequireSSL
     </Location>
     <Location /jbrowse>
         ProxyPreserveHost Off
@@ -147,7 +141,7 @@
     ProxyPassReverse /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
 
     #this is required by mod_auth_openidc
-    PassEnv OPENIDC_CRYPTOPASSPHRASE OPENIDC_CLIENTID OPENIDC_CLIENTSECRET
+    PassEnv OPENIDC_CRYPTOPASSPHRASE OPENIDC_CLIENTID OPENIDC_CLIENTSECRET DISABLE_OIDC
     OIDCCryptoPassphrase ${OPENIDC_CRYPTOPASSPHRASE}
     OIDCProviderMetadataURL https://bouncer.zfin.org/realms/ZFIN/.well-known/openid-configuration
     OIDCClientID ${OPENIDC_CLIENTID}
@@ -162,15 +156,25 @@
         Require valid-user
     </Location>
     <Location /cgi-bin/>
-        AuthType openid-connect
-        Require valid-user
+        <If "osenv('DISABLE_OIDC') == 'true'">
+            Require all granted
+        </If>
+        <Else>
+            AuthType openid-connect
+            Require valid-user
+        </Else>
     </Location>
     <Location /jobs>
-        AuthType openid-connect
-        <RequireAll>
-          #Require env ZfinHosts
-          Require valid-user
-        </RequireAll>
+        <If "osenv('DISABLE_OIDC') == 'true'">
+            Require all granted
+        </If>
+        <Else>
+            AuthType openid-connect
+            <RequireAll>
+              #Require env ZfinHosts
+              Require valid-user
+            </RequireAll>
+        </Else>
         ProxyPass         http://jenkins:9499/jobs
         ProxyPassReverse  http://jenkins:9499/jobs
         ProxyPassReverse  http://zfin.org/jobs
@@ -183,23 +187,55 @@
     <Location /solr>
       # Make sure you're using HTTPS, or anyone can read your LDAP password.
       SSLRequireSSL
-      AuthType openid-connect
-      <RequireAll>
-        Require env ZfinRestrictedHosts
-        Require valid-user
-      </RequireAll>
+      <If "osenv('DISABLE_OIDC') == 'true'">
+          Require all granted
+      </If>
+      <Else>
+          AuthType openid-connect
+          <RequireAll>
+            Require env ZfinRestrictedHosts
+            Require valid-user
+          </RequireAll>
+      </Else>
       ProxyPass         http://solr:8983/solr
       ProxyPassReverse  http://solr:8983/solr
     </Location>
     <Location /logs>
         SSLRequireSSL
-        AuthType openid-connect
-        <RequireAll>
-          Require env ZfinRestrictedHosts
-          Require valid-user
-        </RequireAll>
+        <If "osenv('DISABLE_OIDC') == 'true'">
+            Require all granted
+        </If>
+        <Else>
+            AuthType openid-connect
+            <RequireAll>
+              Require env ZfinRestrictedHosts
+              Require valid-user
+            </RequireAll>
+        </Else>
         ProxyPass          http://kibana:5601/logs
         ProxyPassReverse   http://kibana:5601/logs
+    </Location>
+    <Location /mailpit>
+        SSLRequireSSL
+        <If "osenv('DISABLE_OIDC') == 'true'">
+            Require all granted
+        </If>
+        <Else>
+            AuthType openid-connect
+            <RequireAll>
+                Require valid-user
+                <RequireAny>
+                    Require env ZfinHosts
+                    Require env ZfinRestrictedHosts
+                </RequireAny>
+            </RequireAll>
+        </Else>
+        RewriteEngine On
+        RewriteCond %{HTTP:Upgrade} websocket [NC]
+        RewriteCond %{HTTP:Connection} upgrade [NC]
+        RewriteRule ^/mailpit/(.*) ws://mailpit:8025/mailpit/$1 [P,L]
+        ProxyPass          http://mailpit:8025/mailpit
+        ProxyPassReverse   http://mailpit:8025/mailpit
     </Location>
     <Location /jbrowse>
         ProxyPreserveHost Off
