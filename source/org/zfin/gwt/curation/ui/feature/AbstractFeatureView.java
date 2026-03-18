@@ -78,6 +78,18 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     Label dnaChangeFirstColumn;
     @UiField
     Label variantInfoFirstColumn;
+    @UiField
+    HorizontalPanel endLocationPanel;
+    @UiField
+    Label chromosomeLabel;
+    @UiField
+    HorizontalPanel chromosomePanel;
+    @UiField
+    Label startLocationLabel;
+    @UiField
+    HTML startLocHint;
+    @UiField
+    HTML endLocHint;
 
     public AbstractFeatureView() {
     }
@@ -117,6 +129,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             featureSuffixPanel.setVisible(true);
             featureSuffixPanel.setVisible(true);
         }
+        boolean showChromosome = knownInsertionCheckBox.getValue();
+        chromosomeLabel.setVisible(showChromosome);
+        chromosomePanel.setVisible(showChromosome);
         handleChanges();
     }
 
@@ -172,11 +187,13 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureChromosome")
     void onKeyUpChr(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureChromosome")
     void onChangeChromosome(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureEvidenceCode")
@@ -188,16 +205,23 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureAssembly")
     void onChangeAssembly(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureStartLoc")
     void onChangeStartLocation(@SuppressWarnings("unused") ChangeEvent event) {
+        String featureType = featureTypeBox.getSelected();
+        if (featureType != null && featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            featureEndLoc.setNumber(featureStartLoc.getBoxValue());
+        }
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     @UiHandler("featureEndLoc")
     void onChangeEndLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
 
@@ -212,6 +236,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiHandler("featureAssembly")
     void onKeyUpAssembly(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
+        presenter.fetchReferenceSequenceIfReady();
     }
 
     /*@UiHandler("featureStartLoc")
@@ -328,7 +353,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
                 break;
             case POINT_MUTATION:
             case DELETION:
-            case SEQUENCE_VARIANT:
             case INSERTION:
                 // just uses the defaults
                 featureNameBox.setText("");
@@ -356,6 +380,35 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
                 featureNameBox.setEnabled(true);
                 break;
 
+        }
+
+        boolean showChromosomeRow = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION
+                || featureTypeSelected == FeatureTypeEnum.INSERTION
+                || featureTypeSelected == FeatureTypeEnum.INDEL
+                || featureTypeSelected == FeatureTypeEnum.DELETION
+                || (featureTypeSelected == FeatureTypeEnum.TRANSGENIC_INSERTION && knownInsertionCheckBox.getValue());
+        chromosomeLabel.setVisible(showChromosomeRow);
+        chromosomePanel.setVisible(showChromosomeRow);
+
+        boolean isPointMutation = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION;
+        endLocationPanel.setVisible(!isPointMutation);
+        startLocationLabel.setText(isPointMutation ? "Location" : "Start Location");
+        if (isPointMutation) {
+            featureEndLoc.setNumber(featureStartLoc.getBoxValue());
+        }
+
+        boolean isDeletionOrIndel = featureTypeSelected == FeatureTypeEnum.DELETION
+                || featureTypeSelected == FeatureTypeEnum.INDEL;
+        boolean isInsertion = featureTypeSelected == FeatureTypeEnum.INSERTION;
+        boolean showLocHints = isDeletionOrIndel || isInsertion;
+        startLocHint.setVisible(showLocHints);
+        endLocHint.setVisible(showLocHints);
+        if (isDeletionOrIndel) {
+            startLocHint.setHTML("Position of<br/>1st nucleotide deleted");
+            endLocHint.setHTML("Position of<br/>last nucleotide deleted");
+        } else if (isInsertion) {
+            startLocHint.setHTML("Position of<br/>5' flanking nucleotide");
+            endLocHint.setHTML("Position of<br/>3' flanking nucleotide");
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
@@ -395,6 +448,12 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         genomicMutationDetailView.resetGUI();
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
+        chromosomeLabel.setVisible(true);
+        chromosomePanel.setVisible(true);
+        endLocationPanel.setVisible(true);
+        startLocationLabel.setText("Start Location");
+        startLocHint.setVisible(false);
+        endLocHint.setVisible(false);
         saveButton.setEnabled(false);
     }
 
@@ -478,8 +537,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         INSERTION,
         INDEL,
         MNV,
-        TRANSGENIC_INSERTION,
-        SEQUENCE_VARIANT;
+        TRANSGENIC_INSERTION;
 
         public static boolean hasFeatureType(String featureType, boolean knownInsertionSite) {
             for (MutationDetailType type : values()) {
@@ -510,9 +568,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     void setFeatureAssemblyList() {
         featureAssembly.addItem("");
         featureAssembly.addItem("GRCz12tu");
-        featureAssembly.addItem("GRCz11");
-        featureAssembly.addItem("GRCz10");
-        featureAssembly.addItem("Zv9");
     }
 
 

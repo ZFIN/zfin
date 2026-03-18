@@ -73,5 +73,7 @@ public interface FeatureRPCServiceAsync {
 
     void isValidAccession(String accessionNumber, String type, AsyncCallback<String> valid);
 
+    void getReferenceSequence(String assembly, String chromosome, int start, int end, AsyncCallback<String> async);
+
 }
 

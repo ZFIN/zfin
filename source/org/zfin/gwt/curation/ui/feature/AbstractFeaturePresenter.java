@@ -188,6 +188,49 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     }
 
+    public void fetchReferenceSequenceIfReady() {
+        String featureType = view.featureTypeBox.getSelected();
+        if (featureType == null) return;
+
+        boolean needsRefSeq = featureType.equals(FeatureTypeEnum.DELETION.getName())
+                || featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())
+                || featureType.equals(FeatureTypeEnum.INDEL.getName())
+                || featureType.equals(FeatureTypeEnum.MNV.getName());
+        if (!needsRefSeq) return;
+
+        String chromosome = view.featureChromosome.getText();
+        String assembly = view.featureAssembly.getSelectedItemText();
+        Integer startLoc = view.featureStartLoc.getBoxValue();
+        Integer endLoc;
+        if (featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+            endLoc = startLoc;
+        } else {
+            endLoc = view.featureEndLoc.getBoxValue();
+        }
+
+        if (chromosome == null || chromosome.trim().isEmpty()) return;
+        if (assembly == null || assembly.trim().isEmpty()) return;
+        if (startLoc == null || endLoc == null) return;
+        if (!assembly.equals("GRCz11") && !assembly.equals("GRCz12tu")) return;
+
+        view.genomicMutationDetailView.setReferenceSequenceLoading();
+
+        FeatureRPCService.App.getInstance().getReferenceSequence(assembly, chromosome, startLoc, endLoc,
+                new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
+                    @Override
+                    public void onSuccess(String result) {
+                        view.genomicMutationDetailView.setReferenceSequence(result);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        view.genomicMutationDetailView.setReferenceSequence("");
+                        super.onFailure(throwable);
+                    }
+                }
+        );
+    }
+
     public FeatureDTO createDTOFromGUI(AbstractFeatureView view) {
 
         FeatureDTO featureDTO = new FeatureDTO();
@@ -220,7 +263,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());
         featureDTO.setFeatureAssembly(view.featureAssembly.getSelectedItemText());
         featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
-        featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
+        if (featureTypeEnum == FeatureTypeEnum.POINT_MUTATION) {
+            featureDTO.setFeatureEndLoc(view.featureStartLoc.getBoxValue());
+        } else {
+            featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
+        }
 
         if (view.hasMutationDetails()) {
             featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());

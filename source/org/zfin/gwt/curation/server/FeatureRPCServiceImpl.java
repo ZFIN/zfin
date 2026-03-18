@@ -23,6 +23,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.GenomicLocationService;
 import org.zfin.marker.Marker;
@@ -133,7 +134,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return null;
     }
 
-    private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) {
+    private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) throws ValidationException {
         // check if no value was submitted. If so then delete it
         if (StringUtils.isEmpty(dto.getFeatureChromosome()) &&
             StringUtils.isEmpty(dto.getFeatureAssembly()) &&
@@ -143,6 +144,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             infrastructureRepository.deleteRecordAttribution(fl.getZdbID(), dto.getPublicationZdbID());
             HibernateUtil.currentSession().delete(fl);
             return;
+        }
+        // If the assembly is changing, only allow changing to GRCz12tu
+        String previousAssembly = fl.getAssembly();
+        String newAssembly = dto.getFeatureAssembly();
+        if (previousAssembly != null && newAssembly != null
+                && !previousAssembly.equals(newAssembly)
+                && !AssemblyEnum.GRCZ12TU.getName().equals(newAssembly)) {
+            throw new ValidationException("Assembly can only be changed to " + AssemblyEnum.GRCZ12TU.getName());
         }
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
@@ -272,6 +281,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            validateReferenceSequence(fgmd, fgl);
+
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
@@ -970,6 +981,25 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 }
             }
         }
+
+        if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+            var linkageRepository = RepositoryFactory.getLinkageRepository();
+            TreeSet<String> featureChromosomes = new TreeSet<>();
+            List<FeatureGenomeLocation> featureLocations = linkageRepository.getGenomeLocation(featureMarkerRelationship.getFeature());
+            for (var loc : featureLocations) {
+                if (loc.getChromosome() != null) {
+                    featureChromosomes.add(loc.getChromosome());
+                }
+            }
+            TreeSet<String> markerChromosomes = linkageRepository.getChromosomeLocations(featureMarkerRelationship.getMarker());
+
+            if (!featureChromosomes.isEmpty() && !markerChromosomes.isEmpty()) {
+                featureChromosomes.retainAll(markerChromosomes);
+                if (featureChromosomes.isEmpty()) {
+                    throw new ValidationException("The feature and gene must be on the same chromosome for an 'is allele of' relationship.");
+                }
+            }
+        }
     }
 
     @Override
@@ -1180,6 +1210,42 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             pubs.size(), pubs.size() == 1 ? "" : "s");
     }
 
+
+    @Override
+    public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
+        AssemblyEnum assemblyEnum = null;
+        for (AssemblyEnum ae : AssemblyEnum.values()) {
+            if (ae.getName().equals(assembly)) {
+                assemblyEnum = ae;
+                break;
+            }
+        }
+        if (assemblyEnum == null) {
+            return null;
+        }
+        GenomicLocationService genomicLocationService = new GenomicLocationService();
+        return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
+    }
+
+    private void validateReferenceSequence(FeatureGenomicMutationDetail fgmd, FeatureLocation fgl) throws ValidationException {
+        if (StringUtils.isEmpty(fgmd.getFgmdSeqRef()) || fgl == null
+                || StringUtils.isEmpty(fgl.getAssembly())
+                || StringUtils.isEmpty(fgl.getChromosome())
+                || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
+            return;
+        }
+        GenomicLocationService glService = new GenomicLocationService();
+        for (AssemblyEnum ae : AssemblyEnum.values()) {
+            if (ae.getName().equals(fgl.getAssembly())) {
+                String expected = new String(glService.getReferenceSequence(ae, fgl.getChromosome(),
+                        fgl.getStartLocation(), fgl.getEndLocation()).getBases()).toUpperCase();
+                if (!expected.equals(fgmd.getFgmdSeqRef().toUpperCase())) {
+                    throw new ValidationException("Sequence of Reference does not match the auto-generated sequence from the genome assembly");
+                }
+                break;
+            }
+        }
+    }
 
     private class SupplierCacheThread extends Thread {
 
