@@ -13,7 +13,9 @@
                 <th style="width: 5%">Position</th>
                 <th style="width: 8%">Assembly</th>
                 <th style="width: 8%">Source</th>
-                <th style="width: 8%">DetailedSource</th>
+                <authz:authorize access="hasRole('root')">
+                    <th style="width: 8%">DetailedSource</th>
+                </authz:authorize>
                 <th style="width: 17%">Citations</th>
 
 
@@ -35,7 +37,9 @@
                     </c:if></td>
                     <td>${member.assembly}</td>
                     <td>${member.source}</td>
-                    <td>${member.detailedSource}</td>
+                    <authz:authorize access="hasRole('root')">
+                        <td>${member.detailedSource}</td>
+                    </authz:authorize>
                     <td>
                         <zfin:link entity="${member.attribution}"/>
                     </td>
