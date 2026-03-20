@@ -63,14 +63,23 @@
         </z:section>
 
         <z:section title="${ANTIBODIES}">
-            <c:choose>
-                <c:when test="${hasAntibodies}">
-                    <a href="/search?q=&fq=category%3A%22Antibody%22&fq=xref%3A%22${company.zdbID}%22">View all antibodies from this company</a>
-                </c:when>
-                <c:otherwise>
-                    <span class="no-data-tag">No data available</span>
-                </c:otherwise>
-            </c:choose>
+            <z:dataTable hasData="${!empty antibodyBeans}">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="antibodyBean" items="${antibodyBeans}" end="4">
+                        <tr>
+                            <td><zfin:link entity="${antibodyBean}"/></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </z:dataTable>
+            <c:if test="${!empty antibodyBeans}">
+                <a href="/search?q=&fq=category%3A%22Antibody%22&fq=xref%3A%22${company.zdbID}%22">View all antibodies from this company</a>
+            </c:if>
         </z:section>
 
         <z:section title="${REPRESENTATIVE}">
