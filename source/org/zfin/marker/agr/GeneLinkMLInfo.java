@@ -143,6 +143,9 @@ public class GeneLinkMLInfo extends LinkMLInfo {
 
     private static CrossReferenceDTO getCrossReferenceDTO(String curie, String pageArea, String prefix) {
         CrossReferenceDTO xRefDto = new CrossReferenceDTO();
+        if (prefix != null && prefix.equals("ZFIN")) {
+            curie = "ZFIN:" + curie;
+        }
         xRefDto.setReferencedCurie(curie);
         xRefDto.setDisplayName(curie);
         xRefDto.setPageArea(pageArea);
