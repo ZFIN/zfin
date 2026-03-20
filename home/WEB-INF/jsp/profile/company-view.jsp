@@ -78,7 +78,7 @@
                 </tbody>
             </z:dataTable>
             <c:if test="${!empty antibodyBeans}">
-                <a href="/search?q=&fq=category%3A%22Antibody%22&fq=xref%3A%22${company.zdbID}%22">View all antibodies from this company</a>
+                <a href="/search?q=&fq=category%3A%22Antibody%22&fq=xref%3A%22${company.zdbID}%22">View all ${fn:length(antibodyBeans)} antibodies from this company</a>
             </c:if>
         </z:section>
 
