@@ -1,18 +1,34 @@
 package org.zfin.marker;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
+@Entity
+@Table(name = "transcript_status")
 @Setter
 @Getter
 public class TranscriptStatus {
 
     private static Logger logger = LogManager.getLogger(TranscriptStatus.class) ;
 
+    @Id
+    @Column(name = "tscripts_pk_id")
     private Long id ;
+
+    @Column(name = "tscripts_status", nullable = false)
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.TranscriptStatus$Status")})
     private Status status;
+
+    @Column(name = "tscripts_display", nullable = false)
     private String display;
+
+    @Column(name = "tscripts_order", nullable = false)
     private String order;
 
     public enum Status{

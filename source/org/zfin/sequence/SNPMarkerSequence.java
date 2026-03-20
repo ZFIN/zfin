@@ -1,12 +1,27 @@
 
 package org.zfin.sequence;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class SNPMarkerSequence {
+    @Column(name = "seq_sequence")
     private String targetSequence;
+
+    @Column(name = "seq_offset_start")
     private Long offsetStart;
+
+    @Column(name = "seq_offset_stop")
     private Long offsetStop;
+
+    @Column(name = "seq_variation")
     private String variation;
+
+    @Column(name = "seq_left_end", nullable = false)
     private String leftEnd;
+
+    @Column(name = "seq_type")
     private String type;
 
     public void setType(String type) {
