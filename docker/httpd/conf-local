@@ -80,7 +80,7 @@ SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.
 Alias /imageLoadUp "/opt/zfin/loadUp/pubs"
 Alias /PDFLoadUp "/opt/zfin/loadUp/pubs"
 #this is required by mod_auth_openidc
-PassEnv OPENIDC_CRYPTOPASSPHRASE OPENIDC_CLIENTID OPENIDC_CLIENTSECRET
+PassEnv OPENIDC_CRYPTOPASSPHRASE OPENIDC_CLIENTID OPENIDC_CLIENTSECRET DISABLE_OIDC
 OIDCCryptoPassphrase ${OPENIDC_CRYPTOPASSPHRASE}
 OIDCProviderMetadataURL https://bouncer.zfin.org/realms/ZFIN/.well-known/openid-configuration
 OIDCClientID ${OPENIDC_CLIENTID}

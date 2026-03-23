@@ -113,6 +113,7 @@ services:
       OPENIDC_CRYPTOPASSPHRASE: ${OPENIDC_CRYPTOPASSPHRASE}
       OPENIDC_CLIENTID: ${OPENIDC_CLIENTID}
       OPENIDC_CLIENTSECRET: ${OPENIDC_CLIENTSECRET}
+      DISABLE_OIDC: ${DISABLE_OIDC:-false}
       TZ: ${TZ}
     ports:
       - "${DOCKER_HTTPD_HTTP_PORT:-8080-8089}:80"
@@ -185,13 +186,19 @@ services:
     volumes:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
-  mailhog:
-    build: ./mailhog/
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
     environment:
-      MH_SMTP_BIND_ADDR: "0.0.0.0:25"
-    ports:
-      - "1025:25"
-      - "8025:8025"
+      MP_SMTP_BIND_ADDR: "0.0.0.0:25"
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      MP_WEBROOT: /mailpit
+    volumes:
+      - mailpit_data:/data
   jenkins:
     build: 
       context: ./jenkins/
@@ -356,6 +363,7 @@ volumes:
   kibana_data:
   certbot_data:
   jbrowse_data:
+  mailpit_data:
   nfs-zunloads:
     driver_opts:
       type: nfs

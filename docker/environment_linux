@@ -32,3 +32,6 @@ ZFIN_RELEASE=latest
 DOCKER_HTTPD_HTTP_PORT=127.0.0.2:8084
 DOCKER_HTTPD_HTTPS_PORT=127.0.0.2:443
 DOCKER_JENKINS_HTTP_PORT=127.0.0.2:9499
+
+# To override OIDC settings for local development Set the following to "true"
+# DISABLE_OIDC=false
