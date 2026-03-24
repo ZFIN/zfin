@@ -62,7 +62,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
 			.map(marker -> {
 				org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
 				dto.setGeneSymbolDto(getNameSlotAnnotationDTOAbbrev(marker.getAbbreviation()));
-				dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getAbbreviation()));
+				dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getName()));
 				dto.setGeneSynonymDtos(getNameSlotAnnotationDTOAliases(marker.getAliases()));
 				dto.setGeneTypeCurie("SO:0000704");
 				dto.setCreatedByCurie("ZFIN:CURATOR");

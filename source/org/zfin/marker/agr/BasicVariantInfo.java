@@ -103,9 +103,14 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 break;
-                            default:
-                                System.out.println("invalid feature type");
+                            case "MNV":
+                                dto.setType("SO:SO:0002007");
+                                dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
+                                dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 break;
+                            default:
+                                System.out.println("invalid feature type: "+featureType);
+                                return null;
                         }
 
                             dto.setSequenceOfReferenceAccessionNumber("RefSeq:" + ftrLoc.getReferenceSequenceAccessionNumber());
