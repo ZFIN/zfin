@@ -47,7 +47,7 @@ psql dbname, """
 
 DROP TABLE if exists tmp_rnac_zfin;
 
-CREATE TABLE tmp_rnac_zfin (
+CREATE TEMP TABLE tmp_rnac_zfin (
     rnacid text,
     mod text,
     tscriptid text,
