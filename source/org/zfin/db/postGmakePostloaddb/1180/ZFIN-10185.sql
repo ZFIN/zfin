@@ -44,5 +44,11 @@ drop table if exists tmp_fishnoeap;
 drop table if exists tmp_onlydeficiencies;
 drop table if exists tmp_onlyfish;
 drop table if exists tmp_zirc_geno;
+drop table if exists ensembl_remove_temp;
+drop table if exists sequence_feature_chromosome_location_temp;
+drop table if exists temp_crispr;
+drop table if exists temp_to_load_data_alias;
+drop table if exists temporary_nondupl_mrkr_cc;
+drop table if exists unitprot_temp;
 
 drop function if exists p_update_BurgessLinn_genotype_names();
