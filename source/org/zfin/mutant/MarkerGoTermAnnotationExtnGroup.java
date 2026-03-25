@@ -19,7 +19,7 @@ public class MarkerGoTermAnnotationExtnGroup implements Serializable {
     @Column(name = "mgtaeg_annotation_extension_group_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mgtaeg_mrkrgoev_zdb_id")
     private MarkerGoTermEvidence mgtaegMarkerGoEvidence;
 
