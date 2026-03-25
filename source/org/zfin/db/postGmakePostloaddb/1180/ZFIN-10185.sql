@@ -33,5 +33,16 @@ drop table if exists tmp_efs_map;
 drop table if exists tmp_esag_predistinct;
 drop table if exists tmp_inference_group_member_updates;
 drop table if exists tmp_to_delete_marker_go_term_evidence;
+drop table if exists tmp_betterfishdump;
+drop table if exists tmp_flank_seq;
+drop table if exists tmp_seqref;
+drop table if exists tmp_to_convert;
+drop table if exists tmp_zeco_tt;
+drop table if exists tmp_fish490;
+drop table if exists tmp_fish_thatfitthebill;
+drop table if exists tmp_fishnoeap;
+drop table if exists tmp_onlydeficiencies;
+drop table if exists tmp_onlyfish;
+drop table if exists tmp_zirc_geno;
 
 drop function if exists p_update_BurgessLinn_genotype_names();
