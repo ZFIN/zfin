@@ -310,7 +310,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append(", ExpressionExperiment2 experiment ");
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            hql.append(",  AbstractMarkerRelationshipInterface rel   ");
+            hql.append(",  MarkerRelationship rel   ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult2 expressionResult ");
@@ -895,6 +895,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return ((Number) session.createNativeQuery(sql)
                 .setParameter("orgZdbID", orgZdbID)
                 .uniqueResult()).longValue();
+    }
+
+    @Override
+    public List<Antibody> getAntibodiesForOrganization(String orgZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select a from Antibody a join a.suppliers s where s.organization.zdbID = :orgZdbID order by a.abbreviation";
+        return session.createQuery(hql, Antibody.class)
+                .setParameter("orgZdbID", orgZdbID)
+                .list();
     }
 
 }

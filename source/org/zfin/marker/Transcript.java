@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.VocabularyTerm;
@@ -15,21 +16,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Entity
+@Table(name = "transcript")
+@PrimaryKeyJoinColumn(name = "tscript_mrkr_zdb_id")
 @Getter
 @Setter
 public class Transcript extends Marker {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tscript_type_id")
     @JsonView(View.TranscriptDetailsAPI.class)
     private TranscriptType transcriptType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tscript_status_id")
     @JsonView(View.TranscriptDetailsAPI.class)
     private TranscriptStatus status;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dblink_linked_recid")
     private Set<TranscriptDBLink> transcriptDBLinks;
+
+    @Column(name = "tscript_ensdart_id")
     private String ensdartId;
+
+    @Column(name = "tscript_load_id")
     private String loadId;
+
+    @Transient
     private TranscriptSequence trSequence;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tscript_genotype_zdb_id")
     private Genotype strain;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tscript_vocab_id")
     private VocabularyTerm annotationMethod;
 
 
