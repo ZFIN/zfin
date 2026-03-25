@@ -897,4 +897,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 .uniqueResult()).longValue();
     }
 
+    @Override
+    public List<Antibody> getAntibodiesForOrganization(String orgZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select a from Antibody a join a.suppliers s where s.organization.zdbID = :orgZdbID order by a.abbreviation";
+        return session.createQuery(hql, Antibody.class)
+                .setParameter("orgZdbID", orgZdbID)
+                .list();
+    }
+
 }

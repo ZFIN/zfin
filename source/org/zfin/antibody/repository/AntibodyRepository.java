@@ -136,4 +136,6 @@ public interface AntibodyRepository {
 	Map<Publication, List<Antibody>> getAntibodiesFromAllPublications();
 
 	long getAntibodyCountForOrganization(String orgZdbID);
+
+	List<Antibody> getAntibodiesForOrganization(String orgZdbID);
 }
