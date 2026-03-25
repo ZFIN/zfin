@@ -46,9 +46,15 @@ drop table if exists tmp_onlyfish;
 drop table if exists tmp_zirc_geno;
 drop table if exists ensembl_remove_temp;
 drop table if exists sequence_feature_chromosome_location_temp;
+drop table if exists sequence_feature_chromosome_location_bkup;
 drop table if exists temp_crispr;
 drop table if exists temp_to_load_data_alias;
 drop table if exists temporary_nondupl_mrkr_cc;
 drop table if exists unitprot_temp;
+
+alter table if exists sequence_feature_chromosome_location_generated_temp
+  rename to sequence_feature_chromosome_location_generated_staging;
+comment on table sequence_feature_chromosome_location_generated_staging
+  is 'Staging table for Chromosome Mart rebuild. Populated and cleared by chromosomeMartPostgres scripts.';
 
 drop function if exists p_update_BurgessLinn_genotype_names();
