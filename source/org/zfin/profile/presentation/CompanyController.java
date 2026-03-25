@@ -24,6 +24,8 @@ import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
+import org.zfin.antibody.Antibody;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +170,8 @@ public class CompanyController {
         model.addAttribute("prefixes", featurePrefixes);
         model.addAttribute("country", profileService.getCountryDisplayName(company.getCountry()));
 
-        model.addAttribute("hasAntibodies", antibodyRepository.getAntibodyCountForOrganization(zdbID) > 0);
+        List<Antibody> antibodyBeans = antibodyRepository.getAntibodiesForOrganization(zdbID);
+        model.addAttribute("antibodyBeans", antibodyBeans);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
         return "profile/company-view";
     }
