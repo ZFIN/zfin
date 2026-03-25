@@ -467,14 +467,6 @@ create index term_subset_subset_id_foreign_key_index on term_subset(termsub_subs
 create index term_subset_term_zdb_id_foreign_key_index on term_subset(termsub_term_zdb_id);
 create index term_xref_fdb_foreign_key_index on term_xref(tx_fdb_db_id);
 create index term_xref_term_foreign_key_index on term_xref(tx_term_zdb_id);
-create index alltermcon_contained_zdb_id_index_t on tmp_all_term_contains(alltermcon_contained_zdb_id);
-create index alltermcon_container_zdb_id_index_t on tmp_all_term_contains(alltermcon_container_zdb_id);
-
-create index tmp_index on tmp_efs_map(efs2);
-create index tmp_index_x2 on tmp_efs_map(xpatres_subterm);
-create index tmp_index_x on tmp_efs_map(xpatres_superterm);
-create index tmp_efs_id_index on tmp_esag_predistinct(esag_efs_id);
-create index tmp_term_zdb_id_index on tmp_esag_predistinct(esag_term_zdb_id);
 create index genox_idx on tmp_genox(genox_zdb_id);
 create index tscript_status_fk_index on transcript(tscript_status_id);
 create index tscript_type_foreign_key_index on transcript(tscript_type_id);

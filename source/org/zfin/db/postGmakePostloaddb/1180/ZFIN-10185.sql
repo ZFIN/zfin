@@ -28,5 +28,10 @@ drop table if exists xpat_results_generated_temp;
 drop table if exists feature_temp;
 drop table if exists genox_fish_annotation_search_temp;
 drop table if exists linkage_member_temp;
+drop table if exists tmp_all_term_contains;
+drop table if exists tmp_efs_map;
+drop table if exists tmp_esag_predistinct;
+drop table if exists tmp_inference_group_member_updates;
+drop table if exists tmp_to_delete_marker_go_term_evidence;
 
 drop function if exists p_update_BurgessLinn_genotype_names();
