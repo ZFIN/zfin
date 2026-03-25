@@ -111,7 +111,7 @@ public class DbScriptFileParserTest {
         parser = new DbScriptFileParser(file);
         queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(33, queries.size());
+        assertEquals(40, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/handleSynonyms.sql";
         file = new File(fileName);
