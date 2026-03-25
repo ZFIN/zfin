@@ -1,20 +1,39 @@
 package org.zfin.sequence;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
+
 /**
  * Component class for STRSequence.
  * Only MO and CRISPR marker have sequence associated.
  * In case we decide to also include sequence info for general marker type we would make this a component
  * of the Marker class.
  */
+@Embeddable
 public class STRMarkerSequence {
 
+    @Transient
     private String zdbID;
+    @Transient
     private String name;
+
+    @Column(name = "seq_sequence", nullable = false)
     private String sequence;
+
+    @Column(name = "seq_offset_start")
     private Long offsetStart;
+
+    @Column(name = "seq_offset_stop")
     private Long offsetStop;
+
+    @Column(name = "seq_left_end", nullable = false)
     private String leftEnd;
+
+    @Column(name = "seq_type")
     private String type;
+
+    @Column(name = "seq_sequence_2")
     private String secondSequence;
 
     public String getSecondSequence() {

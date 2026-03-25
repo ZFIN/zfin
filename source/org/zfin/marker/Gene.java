@@ -1,12 +1,24 @@
 package org.zfin.marker;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.zfin.framework.NamedData;
 
+@Entity
+@Table(name = "marker")
 public class Gene implements NamedData, Comparable<Gene> {
     public final static String CSS_CLASS = "genedom";
 
+    @Id
+    @Column(name = "mrkr_zdb_id")
     private String zdbID;
+
+    @Column(name = "mrkr_abbrev")
     private String symbol;
+
+    @Column(name = "mrkr_name")
     private String name;
 
 

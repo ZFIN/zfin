@@ -81,13 +81,13 @@ public class FileUtilTest {
         assertTrue(file.getAbsolutePath().contains("org"));
         assertTrue(file.getAbsolutePath().contains("zfin"));
 
-        file = FileUtil.createFileFromStrings("source", "org", "zfin", "marker.hbm.xml");
+        file = FileUtil.createFileFromStrings("source", "org", "zfin", "marker", "Marker.java");
         assertNotNull(file);
         assertTrue(file.exists());
         assertTrue(file.getAbsolutePath().contains("source"));
         assertTrue(file.getAbsolutePath().contains("org"));
         assertTrue(file.getAbsolutePath().contains("zfin"));
-        assertTrue(file.getAbsolutePath().contains("marker.hbm.xml"));
+        assertTrue(file.getAbsolutePath().contains("Marker.java"));
     }
 
     @Test

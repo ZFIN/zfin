@@ -2,11 +2,14 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
@@ -36,6 +39,10 @@ import java.util.stream.Collectors;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
+@Entity
+@Table(name = "marker")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DynamicUpdate
 @Setter
 @Getter
 public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID, ZdbID {
@@ -43,38 +50,134 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = LogManager.getLogger(Marker.class);
 
+    @Column(name = "mrkr_abbrev", nullable = false)
     private String abbreviation;
+
+    @Column(name = "mrkr_abbrev_order")
     private String abbreviationOrder;
+
+    @Transient
     private Set<ExpressionExperiment2> expressionExperiments;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     @JsonView(View.SequenceTargetingReagentAPI.class)
     private Set<PublicationAttribution> publications;
+
+    @Transient
     private HashMap<String, List<Publication>> pubsPerAnatomy;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "construct_figure",
+            joinColumns = @JoinColumn(name = "consfig_construct_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "consfig_fig_zdb_id"))
     private Set<Figure> figures;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "genedom_family_member",
+            joinColumns = @JoinColumn(name = "gfammem_mrkr_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "gfammem_gfam_name"))
     private Set<MarkerFamilyName> familyName;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "fpProtein_efg",
+            joinColumns = @JoinColumn(name = "fe_mrkr_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "fe_fl_protein_id"))
     private Set<FluorescentProtein> fluorescentProteinEfgs;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "fpProtein_construct",
+            joinColumns = @JoinColumn(name = "fc_mrkr_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "fc_fl_protein_id"))
     private Set<FluorescentProtein> fluorescentProteinConstructs;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fm_mrkr_zdb_id")
     private Set<FluorescentMarker> fluorescentMarkers;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ortho_zdb_id")
     private Set<Ortholog> orthologs;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrel_mrkr_1_zdb_id")
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrel_mrkr_2_zdb_id")
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fmrel_mrkr_zdb_id")
     private Set<FeatureMarkerRelationship> featureMarkerRelationships;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "mrkr_type")
     private MarkerType markerType;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mhist_mrkr_zdb_id")
+    @SortNatural
     private Set<MarkerHistory> markerHistory;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "marker_id")
     private Set<MappedMarkerImpl> directPanelMappings;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "mrkr_owner")
     private Person owner;
+
+    @Column(name = "mrkr_comments")
     private String publicComments;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dblink_linked_recid")
     private Set<MarkerDBLink> dbLinks;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dalias_data_zdb_id")
+    @org.hibernate.annotations.SQLOrder("dalias_alias_lower")
     private Set<MarkerAlias> aliases;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dnote_data_zdb_id")
+    @OrderBy("date desc")
     private Set<DataNote> dataNotes;
+
+    @OneToMany
+    @JoinColumn(name = "idsup_data_zdb_id", updatable = false)
     private Set<MarkerSupplier> suppliers;
+
+    @Transient
     private String chromosome;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrkrgoev_mrkr_zdb_id")
     private Set<MarkerGoTermEvidence> goTermEvidence;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zrepld_new_zdb_id")
     private Set<SecondaryMarker> secondaryMarkerSet;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "marker_assembly",
+            joinColumns = @JoinColumn(name = "ma_mrkr_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "ma_a_pk_id"))
     private Set<Assembly> assemblies;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "marker_annotation_status",
+            joinColumns = @JoinColumn(name = "mas_mrkr_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "mas_vt_pk_id"))
     private Set<VocabularyTerm> annotationStatusTerms;
-    // cashed attribute
+
+    // cached attribute
+    @Transient
     private transient List<Marker> markers;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "extnote_data_zdb_id")
     private Set<OrthologyNote> orthologyNotes;
 
     public String getAbbreviationOrder() {
