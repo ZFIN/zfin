@@ -25,19 +25,19 @@ public class PhenotypeExperiment {
     @Column(name = "phenox_pk_id")
     private long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenox_genox_zdb_id")
     private FishExperiment fishExperiment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenox_start_stg_zdb_id")
     private DevelopmentStage startStage;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenox_end_stg_zdb_id")
     private DevelopmentStage endStage;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenox_fig_zdb_id")
     private Figure figure;
 

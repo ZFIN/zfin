@@ -27,7 +27,7 @@ public class MarkerGoTermAnnotationExtn {
     @Column(name = "mgtae_dblink_zdb_id")
     private String annotExtnDBLink;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mgtae_extension_group_id")
     private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;
 

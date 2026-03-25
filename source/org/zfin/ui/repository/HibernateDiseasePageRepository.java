@@ -144,10 +144,15 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     public PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, String filterPhenotype, boolean includeChildren) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
         String hql;
+        String fetchJoins = " join fetch chebiPhenotype.fish" +
+                " join fetch chebiPhenotype.term" +
+                " left join fetch chebiPhenotype.figure" +
+                " left join fetch chebiPhenotype.publication" +
+                " left join fetch chebiPhenotype.experiment";
         if (!includeChildren) {
-            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype where chebiPhenotype.term = :term ";
+            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins + " where chebiPhenotype.term = :term ";
         } else {
-            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype, TransitiveClosure as clo  " +
+            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins + ", TransitiveClosure as clo  " +
                   "where clo.child = chebiPhenotype.term AND clo.root = :term ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {

@@ -37,16 +37,16 @@ public class DiseaseAnnotation implements EntityZdbID {
     @JsonView(View.API.class)
     private String zdbID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dat_term_zdb_id")
     @JsonView(View.API.class)
     private GenericTerm disease;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dat_source_zdb_id")
     private Publication publication;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dat_evidence_term_zdb_id")
     private GenericTerm evidenceCode;
 

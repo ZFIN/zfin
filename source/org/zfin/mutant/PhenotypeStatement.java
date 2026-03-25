@@ -25,7 +25,7 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     @Column(name = "phenos_pk_id")
     private long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenos_phenox_pk_id", nullable = false)
     private PhenotypeExperiment phenotypeExperiment;
 
@@ -36,7 +36,7 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     })
     private PostComposedEntityComponent entity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phenos_quality_zdb_id")
     private GenericTerm quality;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -35,30 +36,31 @@ public class ChebiPhenotypeDisplay {
     private long id;
 
     @JsonView(View.API.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpd_fish_zdb_id")
     private Fish fish;
     @JsonView(View.API.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpd_fig_zdb_id")
     private Figure figure;
     @JsonView(View.API.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpd_pub_zdb_id")
     private Publication publication;
     @JsonView(View.API.class)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     @JoinTable(schema = "ui", name = "chebi_phenotype_warehouse_association",
         joinColumns = {@JoinColumn(name = "cpwa_phenotype_id", nullable = false, updatable = false, insertable = false)},
         inverseJoinColumns = {@JoinColumn(name = "cpwa_phenotype_warehouse_id", nullable = false, updatable = false, insertable = false)})
     private List<PhenotypeStatementWarehouse> phenotypeStatements;
     @JsonView(View.API.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpd_exp_zdb_id")
     private Experiment experiment;
 
     @JsonView(View.API.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpd_term_zdb_id")
     private GenericTerm term;
 
