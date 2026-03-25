@@ -240,6 +240,9 @@ public class MappingDetailController {
 
         List<FeatureGenomeLocation> featureLocationList = getLinkageRepository().getFeatureLocations(marker);
         Collections.sort(featureLocationList);
+        filterFeatureLocationsToRemoveOlderAssemblies(featureLocationList);
+        deduplicateFeatureLocations(featureLocationList);
+        removeOutlierChromosomeLocations(featureLocationList);
         model.addAttribute("allelicFeatures", featureLocationList);
 
 
@@ -321,6 +324,94 @@ public class MappingDetailController {
         if (hasGRCz12tu) {
             locations.removeIf(location -> location.getSource() == ZFIN);
         }
+    }
+
+    private void filterFeatureLocationsToRemoveOlderAssemblies(List<FeatureGenomeLocation> featureLocations) {
+        if (featureLocations == null || featureLocations.isEmpty()) {
+            return;
+        }
+
+        // Collect features that have a GRCz12tu location
+        Set<String> featuresWithGRCz12tu = featureLocations.stream()
+            .filter(loc -> GenomeLocation.GRCZ12TU.equals(loc.getAssembly()))
+            .map(loc -> loc.getFeature().getZdbID())
+            .collect(java.util.stream.Collectors.toSet());
+
+        // Remove GRCz11 OTHER_MAPPING locations for features that have GRCz12tu
+        // Keep precise (DirectSubmission etc.) GRCz11 rows as they show historical location data
+        featureLocations.removeIf(loc ->
+            GenomeLocation.GRCZ11.equals(loc.getAssembly())
+            && loc.getSource() == GenomeLocation.Source.OTHER_MAPPING
+            && featuresWithGRCz12tu.contains(loc.getFeature().getZdbID())
+        );
+    }
+
+    /**
+     * Deduplicate feature locations that share the same (feature, chromosome, start, end, assembly).
+     * Keeps the row with the most complete data (prefers non-null citation, then non-null source).
+     */
+    private void deduplicateFeatureLocations(List<FeatureGenomeLocation> featureLocations) {
+        if (featureLocations == null || featureLocations.isEmpty()) {
+            return;
+        }
+
+        Map<String, FeatureGenomeLocation> bestByKey = new LinkedHashMap<>();
+        for (FeatureGenomeLocation loc : featureLocations) {
+            String key = loc.getFeature().getZdbID()
+                + "|" + loc.getChromosome()
+                + "|" + loc.getStart()
+                + "|" + loc.getEnd()
+                + "|" + loc.getAssembly();
+            bestByKey.merge(key, loc, (existing, candidate) -> {
+                // Prefer the row with a citation
+                boolean existingHasPub = existing.getAttribution() != null;
+                boolean candidateHasPub = candidate.getAttribution() != null;
+                if (candidateHasPub && !existingHasPub) {
+                    return candidate;
+                }
+                if (existingHasPub && !candidateHasPub) {
+                    return existing;
+                }
+                // Prefer the row with a source
+                boolean existingHasSource = existing.getSource() != null;
+                boolean candidateHasSource = candidate.getSource() != null;
+                if (candidateHasSource && !existingHasSource) {
+                    return candidate;
+                }
+                return existing;
+            });
+        }
+
+        featureLocations.retainAll(bestByKey.values());
+    }
+
+    /**
+     * Remove imprecise feature location rows on chromosomes that conflict with more authoritative data.
+     * For each feature, if it has precise locations (with coordinates) on a chromosome, remove
+     * OTHER_MAPPING rows on different chromosomes.
+     */
+    private void removeOutlierChromosomeLocations(List<FeatureGenomeLocation> featureLocations) {
+        if (featureLocations == null || featureLocations.isEmpty()) {
+            return;
+        }
+
+        // Collect chromosomes that have precise coordinates across all features for this gene
+        Set<String> preciseChromosomes = new HashSet<>();
+        for (FeatureGenomeLocation loc : featureLocations) {
+            if (loc.getStart() != null) {
+                preciseChromosomes.add(loc.getChromosome());
+            }
+        }
+
+        if (preciseChromosomes.isEmpty()) {
+            return;
+        }
+
+        // Remove OTHER_MAPPING rows on chromosomes that have no precise data from any feature
+        featureLocations.removeIf(loc ->
+            loc.getSource() == GenomeLocation.Source.OTHER_MAPPING
+            && !preciseChromosomes.contains(loc.getChromosome())
+        );
     }
 
     private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {
