@@ -1,18 +1,30 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import org.zfin.framework.api.View;
 
-/**
- * mapped to marker_relationship_type
- */
+@Entity
+@Table(name = "marker_relationship_type")
 public class MarkerRelationshipType implements Comparable<MarkerRelationshipType> {
+    @Id
+    @Column(name = "mreltype_name")
     @JsonView(View.MarkerRelationshipAPI.class)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mreltype_mrkr_type_group_1")
     private MarkerTypeGroup firstMarkerTypeGroup;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mreltype_mrkr_type_group_2")
     private MarkerTypeGroup secondMarkerTypeGroup;
+
+    @Column(name = "mreltype_1_to_2_comments")
     @JsonView(View.MarkerRelationshipAPI.class)
     private String firstToSecondLabel;
+
+    @Column(name = "mreltype_2_to_1_comments")
     @JsonView(View.MarkerRelationshipAPI.class)
     private String secondToFirstLabel;
 

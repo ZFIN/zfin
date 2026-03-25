@@ -1,14 +1,15 @@
 package org.zfin.antibody;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
-import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,22 +19,43 @@ import java.util.stream.Collectors;
 /**
  * Main domain object for antibodies.
  */
+@Entity
+@Table(name = "antibody")
+@PrimaryKeyJoinColumn(name = "atb_zdb_id")
 @Setter
 @Getter
 public class Antibody extends Marker {
 
+    @Column(name = "atb_host_organism")
     @JsonView(View.AntibodyDetailsAPI.class)
     private String hostSpecies;
+
+    @Column(name = "atb_immun_organism")
     @JsonView(View.AntibodyDetailsAPI.class)
     private String immunogenSpecies;
+
+    @Column(name = "atb_hviso_name")
     @JsonView(View.AntibodyDetailsAPI.class)
     private String heavyChainIsotype;
+
+    @Column(name = "atb_ltiso_name")
     @JsonView(View.AntibodyDetailsAPI.class)
     private String lightChainIsotype;
+
+    @Column(name = "atb_type")
     @JsonView(View.AntibodyDetailsAPI.class)
     private String clonalType;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatex_atb_zdb_id")
     private Set<ExpressionExperiment2> antibodyLabelings;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "extnote_data_zdb_id")
+    @SortNatural
     private Set<AntibodyExternalNote> externalNotes;
+
+    @Transient
     @JsonView(View.AntibodyDetailsAPI.class)
     private List<Marker> antigenGenes;
 

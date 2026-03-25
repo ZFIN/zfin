@@ -1,8 +1,10 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
@@ -10,6 +12,8 @@ import org.zfin.publication.Publication;
 import java.util.Set;
 
 
+@Entity
+@Table(name = "marker_relationship")
 @Setter
 @Getter
 public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
@@ -69,12 +73,36 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         }
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MarkerRelationship")
+    @GenericGenerator(name = "MarkerRelationship",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "MREL"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
+            })
+    @Column(name = "mrel_zdb_id")
     private String zdbID;
+
+    @Column(name = "mrel_type")
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.MarkerRelationship$Type")})
     private Type type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrel_mrkr_1_zdb_id")
     private Marker firstMarker;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrel_mrkr_2_zdb_id")
     private Marker secondMarker;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mrel_type", insertable = false, updatable = false)
     private MarkerRelationshipType markerRelationshipType;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
     private Set<PublicationAttribution> publications;
 
     public int getPublicationCount() {

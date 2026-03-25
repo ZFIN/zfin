@@ -1,10 +1,24 @@
 package org.zfin.marker;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "tscript_type_status_definition")
 public class TranscriptTypeStatusDefinition {
 
+    @Id
+    @Column(name = "ttsdef_pk_id")
     private Long id ;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ttsdef_tscript_type_id")
     private TranscriptType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ttsdef_tscript_status_id")
     private TranscriptStatus status ;
+
+    @Column(name = "ttsdef_definition")
     private String definition;
 
     public Long getId() {

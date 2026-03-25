@@ -1,21 +1,43 @@
 package org.zfin.marker;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "transcript_type")
 @Setter
 @Getter
 public class TranscriptType implements Comparable<TranscriptType> {
 
+    @Id
+    @Column(name = "tscriptt_pk_id")
     private Long id;
+
+    @Column(name = "tscriptt_type", nullable = false)
+    @org.hibernate.annotations.Type(value = org.zfin.framework.StringEnumValueUserType.class,
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.marker.TranscriptType$Type")})
     private Type type;
+
+    @Column(name = "tscriptt_display", nullable = false)
     private String display;
+
+    @Column(name = "tscriptt_order", nullable = false)
     private String order;
+
+    @Column(name = "tscriptt_definition")
     private String definition;
+
+    @Column(name = "tscriptt_indent", nullable = false)
     private boolean isIndented;
+
+    @Column(name = "tscriptt_so_id")
     private String soID;
 
     public boolean isIndented() {

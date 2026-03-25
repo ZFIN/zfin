@@ -14,6 +14,7 @@
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.generate_statistics">true</property>
         <property name="hibernate.format_sql">true</property>
+        <!--TODO: Should we consider enabling the second level cache?-->
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
         <property name="hibernate.jdbc.batch_size">50</property>
@@ -64,7 +65,24 @@
         <mapping class="org.zfin.sequence.blast.DatabaseRelationship"/>
         <mapping class="org.zfin.sequence.blast.Origination"/>
         <mapping class="org.zfin.sequence.blast.BlastRegenerationCache"/>
-        <mapping resource="org/zfin/marker.hbm.xml"/>
+        <!-- marker.hbm.xml entities converted to annotations -->
+        <mapping class="org.zfin.marker.Marker"/>
+        <mapping class="org.zfin.antibody.Antibody"/>
+        <mapping class="org.zfin.mutant.SequenceTargetingReagent"/>
+        <mapping class="org.zfin.marker.SNP"/>
+        <mapping class="org.zfin.marker.Clone"/>
+        <mapping class="org.zfin.marker.Transcript"/>
+        <mapping class="org.zfin.marker.MarkerRelationship"/>
+        <mapping class="org.zfin.marker.MarkerRelationshipType"/>
+        <mapping class="org.zfin.marker.MarkerType"/>
+        <mapping class="org.zfin.marker.MarkerTypeGroup"/>
+        <mapping class="org.zfin.marker.TranscriptType"/>
+        <mapping class="org.zfin.marker.TranscriptStatus"/>
+        <mapping class="org.zfin.marker.TranscriptTypeStatusDefinition"/>
+        <mapping class="org.zfin.marker.TranscriptSequence"/>
+        <mapping class="org.zfin.marker.Vector"/>
+        <mapping class="org.zfin.marker.ProbeLibrary"/>
+        <mapping class="org.zfin.marker.Gene"/>
         <!-- mapping.hbm.xml entities converted to annotations -->
         <mapping class="org.zfin.mapping.FeatureFeatureLinkageMember"/>
         <mapping class="org.zfin.mapping.FeatureGenomeLocation"/>

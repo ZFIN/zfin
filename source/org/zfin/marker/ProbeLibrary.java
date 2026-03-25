@@ -1,21 +1,46 @@
 package org.zfin.marker;
 
+import jakarta.persistence.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.Term;
 
-/**
- */
+@Entity
+@Table(name = "probe_library")
 public class ProbeLibrary {
+    @Id
+    @Column(name = "probelib_zdb_id")
     private String zdbID;
+
+    @Column(name = "probelib_name")
     private String name;
+
+    @Column(name = "probelib_url")
     private String url;
+
+    @Column(name = "probelib_species")
     private String species;
+
+    @Column(name = "probelib_non_zfin_strain_name")
     private String nonZfinStrain;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "probelib_strain_zdb_id")
     private Genotype strain;
+
+    @Column(name = "probelib_sex")
     private String sex;
+
+    @Column(name = "probelib_non_zfin_tissue_name")
     private String nonZfinTissue;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = org.zfin.ontology.GenericTerm.class)
+    @JoinColumn(name = "probelib_tissue_zdb_id")
     private Term tissue;
+
+    @Column(name = "probelib_host")
     private String host;
+
+    @Column(name = "probelib_restriction_sites")
     private String restrictionSites;
 
 

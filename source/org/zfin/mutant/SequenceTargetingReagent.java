@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import jakarta.persistence.*;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -12,9 +13,15 @@ import java.util.List;
 /**
  * Business entity for Morpholinos, TALEN and CRISPR.
  */
+@Entity
+@Table(name = "marker_sequence")
+@PrimaryKeyJoinColumn(name = "seq_mrkr_zdb_id")
 public class SequenceTargetingReagent extends Marker {
 
+    @Transient
     private List<Marker> targetGenes;
+
+    @Embedded
     private STRMarkerSequence sequence;
     private static Logger logger = LogManager.getLogger(SequenceTargetingReagent.class);
 
