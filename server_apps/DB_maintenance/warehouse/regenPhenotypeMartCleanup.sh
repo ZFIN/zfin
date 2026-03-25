@@ -12,12 +12,5 @@ do
     fi
 done
 
-echo "Cleaning all_term_contains_old_ tables";
-echo "select regen_cleanup_renamed_tables('all_term_contains_old_')" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
-if [ $? -ne 0 ]; then
-    echo "regen_cleanup_renamed_tables('all_term_contains_old_') failed";
-    exit 1;
-fi
-
 date;
 echo "done with regen finish cleanup";

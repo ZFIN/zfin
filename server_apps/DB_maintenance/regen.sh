@@ -14,9 +14,6 @@ echo 'select regen_anatomy_counts();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DB
 echo "Starting regen_term at `date`"
 echo 'select regen_term();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
 
-echo "Starting regen_term_indexes at `date`"
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
-
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'select regen_expression_term_fast_search();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
 
