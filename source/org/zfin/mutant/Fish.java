@@ -38,7 +38,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String zdbID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fish_genotype_zdb_id", nullable = false)
     private Genotype genotype;
 
