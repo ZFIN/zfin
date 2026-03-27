@@ -47,7 +47,7 @@ psql dbname, """
 
 DROP TABLE if exists tmp_zirc_geno;
 
-CREATE TABLE tmp_zirc_geno (
+CREATE TEMP TABLE tmp_zirc_geno (
     ftrid text,
     pdf text
 );

@@ -93,7 +93,7 @@ drop table if exists tmp_addgene;
 \\COPY (SELECT dblink_linked_recid,dblink_acc_num
     FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $PRE_FILE;
 
-CREATE   TABLE tmp_addgene(
+CREATE TEMP TABLE tmp_addgene(
     addgeneid text,
     addgenename text,
     zfingene text

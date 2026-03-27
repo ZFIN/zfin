@@ -161,10 +161,10 @@ WHERE  mrel_type = 'clone contains small segment'
        AND lnkg_chromosome != '0'
 ;
 
-insert into sequence_feature_chromosome_location_generated_temp (sfclg_chromosome, sfclg_data_zdb_id, sfclg_location_source, sfclg_location_subsource)
+insert into sequence_feature_chromosome_location_generated_staging (sfclg_chromosome, sfclg_data_zdb_id, sfclg_location_source, sfclg_location_subsource)
 select distinct * from tmp_full;
  
-delete from sequence_feature_chromosome_location_generated_temp
+delete from sequence_feature_chromosome_location_generated_staging
  where sfclg_chromosome in ('AB','U','0');
 
 
