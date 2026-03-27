@@ -14,6 +14,7 @@ import groovy.xml.slurpersupport.GPathResult
 import groovy.xml.StreamingMarkupBuilder
 
 import org.apache.commons.io.FilenameUtils
+import org.zfin.figure.service.ImageService
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 
@@ -264,32 +265,16 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", mediumFileName)
     File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
 
-    // make thumbnail and medium images in the same directory as their parent images.
-    def thumbnailProc = "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
-    def thumbnailResult = thumbnailProc.waitFor()
-    int thumbnailResultCode = thumbnailResult.intValue()
-
-    def mediumProc = "/bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}".execute()
-    def mediumResult = mediumProc.waitFor()
-    int mediumResultCode = mediumResult.intValue()
-
-    if (thumbnailResultCode != 0) {
-        println("Error creating thumbnail for " + fullFile.getAbsolutePath())
-        println("Command executed: /bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}")
-        println("Error code: " + thumbnailProc.exitValue())
-        println("Standard error: ")
-        println(thumbnailProc.err.text)
-        println("Standard output: ")
-        println(thumbnailProc.in.text)
+    try {
+        ImageService.convertImageToThumbnail(fullFile.getAbsolutePath(), thumbnailFile.getAbsolutePath(), false)
+    } catch (IOException e) {
+        println("Error creating thumbnail for " + fullFile.getAbsolutePath() + ": " + e.getMessage())
     }
-    if (mediumResultCode != 0) {
-        println("Error creating medium image for " + fullFile.getAbsolutePath())
-        println("Command executed: /bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}")
-        println("Error code: " + mediumProc.exitValue())
-        println("Standard error: ")
-        println(mediumProc.err.text)
-        println("Standard output: ")
-        println(mediumProc.in.text)
+
+    try {
+        ImageService.convertImageToMedium(fullFile.getAbsolutePath(), mediumFile.getAbsolutePath(), false)
+    } catch (IOException e) {
+        println("Error creating medium image for " + fullFile.getAbsolutePath() + ": " + e.getMessage())
     }
 
 }
