@@ -1,6 +1,9 @@
 services:
   base:
-    build: ./base/
+    build:
+      context: ./base/
+      additional_contexts:
+        deps: ${DOCKER_BUILD_CACHE_PATH:-/research/zarchive/docker-build-deps}
     image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
     environment:
       TZ: ${TZ}

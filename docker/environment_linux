@@ -25,6 +25,8 @@ OPENIDC_CRYPTOPASSPHRASE=passphrase-changeme
 OPENIDC_CLIENTID=dazed.zfin.org
 OPENIDC_CLIENTSECRET=secret-from-keycloak
 DOCKER_GFF3_PATH=/research/zprod/gff3/
+# Local cache for Docker build dependencies (default: /research/zarchive/docker-build-deps)
+#DOCKER_BUILD_CACHE_PATH=/research/zarchive/docker-build-deps
 DOCKER_HTTPD_HTTP_PORT=8080-8089
 DOCKER_HTTPD_HTTPS_PORT=8443-8452
 ZFIN_RELEASE=latest

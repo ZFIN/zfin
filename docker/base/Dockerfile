@@ -30,22 +30,15 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
 COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
-# --- Bowtie, Bowtie2, Groovy (download + extract + delete zips in one layer) ---
-RUN mkdir /opt/misc
-COPY ./apache-groovy-binary-4.0.29.zip.sha256 /opt/misc
-RUN cd /opt/misc \
-    && wget -q https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1/bowtie-1.3.1-linux-x86_64.zip/download -O bowtie-1.3.1.zip \
-    && unzip -q bowtie-1.3.1.zip && rm bowtie-1.3.1.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie \
-    && wget -q https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.5.3/bowtie2-2.5.3-linux-x86_64.zip/download -O bowtie2-2.5.3.zip \
-    && unzip -q bowtie2-2.5.3.zip && rm bowtie2-2.5.3.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2 \
-    && wget -q https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip \
-    && sha256sum -c apache-groovy-binary-4.0.29.zip.sha256 && unzip -q apache-groovy-binary-4.0.29.zip \
-    && rm apache-groovy-binary-4.0.29.zip \
-    && ln -s /opt/misc/groovy-4.0.29 /opt/misc/groovy \
-    # JAXB for Groovy (removed from JDK 11+)
-    && cd /opt/misc/groovy/lib \
-    && wget -q https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.2.3/jaxb-api-2.2.3.jar \
-    && wget -q https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/4.0.5/jaxb-impl-4.0.5.jar
+# --- Bowtie, Bowtie2, Groovy (from local cache, see deps.sha256 for URLs) ---
+RUN --mount=type=bind,from=deps,target=/deps \
+    mkdir /opt/misc \
+    && cd /deps && sha256sum -c deps.sha256 \
+    && cd /opt/misc \
+    && unzip -q /deps/bowtie-1.3.1-linux-x86_64.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie \
+    && unzip -q /deps/bowtie2-2.5.3-linux-x86_64.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2 \
+    && unzip -q /deps/apache-groovy-binary-4.0.29.zip && ln -s groovy-4.0.29 groovy \
+    && cp /deps/jaxb-api-2.2.3.jar /deps/jaxb-impl-4.0.5.jar groovy-4.0.29/lib/
 
 # --- Directory structure + symlinks + groups (single layer) ---
 RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
