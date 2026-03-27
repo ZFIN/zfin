@@ -24,7 +24,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sf
     sfclg_location_source,
     sfclg_location_subsource,
     sfclg_fdb_db_id,
-    sfclg_evidence_code from sequence_feature_chromosome_location_generated_temp
+    sfclg_evidence_code from sequence_feature_chromosome_location_generated_staging
 where trim(sfclg_location_source) in ('other map location','General Load');
 
 
@@ -33,7 +33,7 @@ insert into linkage_membership_search
 
 -- cleanup "temp" tables after no longer needed
 delete from linkage_membership_search_temp;
-delete from sequence_feature_chromosome_location_generated_temp;
+delete from sequence_feature_chromosome_location_generated_staging;
 
 update linkage_membership set lnkgm_metric = null where
 lnkgm_metric is not null and lnkgm_distance is null;
