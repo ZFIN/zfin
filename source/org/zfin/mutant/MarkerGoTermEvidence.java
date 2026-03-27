@@ -37,12 +37,12 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     @Column(name = "mrkrgoev_zdb_id")
     private String zdbID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_mrkr_zdb_id", nullable = false)
     private Marker marker;
 
     // this may need to be moved to its own
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_evidence_code", nullable = false)
     private GoEvidenceCode evidenceCode;
 
@@ -52,15 +52,15 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
                     value = "org.zfin.gwt.root.dto.GoEvidenceQualifier")})
     private GoEvidenceQualifier flag;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_source_zdb_id", nullable = false)
     private Publication source;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_term_zdb_id", nullable = false)
     private GenericTerm goTerm;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_relation_term_zdb_id")
     private GenericTerm qualifierRelation;
 
@@ -88,7 +88,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     /**
      * Curator created by.  May be null if comes from a null.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_contributed_by")
     private Person createdBy;
 
@@ -101,7 +101,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     /**
      * Curator who modified annotation during curation.  May be null if never modified.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_modified_by")
     private Person modifiedBy;
 
@@ -127,7 +127,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     /**
      * Organization that housed the original record.  This is the organization responsible for housing that record.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mrkrgoev_annotation_organization", nullable = false)
     private GafOrganization gafOrganization;
 

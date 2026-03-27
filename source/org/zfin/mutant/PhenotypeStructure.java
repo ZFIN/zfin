@@ -36,11 +36,11 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
     @Column(name = "api_zdb_id")
     private String zdbID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "api_curator_zdb_id")
     private Person person;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "api_pub_zdb_id")
     private Publication publication;
 
@@ -58,7 +58,7 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
     })
     private PostComposedEntityComponent relatedEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "api_quality_zdb_id")
     private GenericTerm qualityTerm;
 

@@ -24,19 +24,19 @@ public class GenotypeFeature {
     @Column(name = "genofeat_zdb_id")
     private String zdbID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genofeat_zygocity")
     private Zygosity zygosity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genofeat_dad_zygocity")
     private Zygosity dadZygosity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genofeat_mom_zygocity")
     private Zygosity momZygosity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genofeat_geno_zdb_id")
     private Genotype genotype;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genofeat_feature_zdb_id")
     private Feature feature;
 

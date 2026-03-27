@@ -19,12 +19,12 @@ public class DiseaseAnnotationModel implements ZdbID {
     @JsonView(View.API.class)
     private long ID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "damo_dat_zdb_id")
     @JsonView(View.API.class)
     private DiseaseAnnotation diseaseAnnotation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "damo_genox_zdb_id")
     @JsonView(View.API.class)
     private FishExperiment fishExperiment;
