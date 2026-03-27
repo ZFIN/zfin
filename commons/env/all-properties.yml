@@ -113,7 +113,6 @@ common_properties:
   CGI_BIN_DIR_NAME: "cgi-bin"
   CLIENT_LOCALE: "en_US.utf8"
   CONFIGURATION_DIRECTORY: "conf"
-  CONVERT_BINARY_PATH: "/usr/bin/convert"
   COOKIE_PATH: "/"
   CURATION_DBNAME: "false"
   CURATION_INSTANCE: "false"

@@ -1,12 +1,5 @@
 FROM tomcat:10-jdk21
 
-#Add imagemagick for generating thumbnails
-RUN apt-get update && apt-get install -y \
-  imagemagick \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN ln -s /usr/bin/convert /usr/local/bin/convert
-
 #Delete the user with id 1000 (ubuntu) if they exist -- will also delete group with id of 1000
 RUN id -u 1000 && userdel $(id -un 1000)
 

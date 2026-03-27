@@ -12,18 +12,22 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.FileUtil;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,48 +153,106 @@ public class ImageService {
     }
 
     public static String convertImageToDimensions(String imageFilename, String thumbnailFilename, String dimensions, boolean previewCommandOnly) throws IOException {
-        String convertBinary = ZfinPropertiesEnum.CONVERT_BINARY_PATH.value();
-        if (convertBinary == null) {
-            throw new RuntimeException("Environment variable CONVERT_BINARY_PATH must be set");
+        String[] parts = dimensions.split("x");
+        int maxWidth = Integer.parseInt(parts[0]);
+        int maxHeight = Integer.parseInt(parts[1]);
+
+        String description = "resize " + imageFilename + " -> " + thumbnailFilename + " (" + dimensions + ")";
+        log.info(description);
+
+        if (!previewCommandOnly) {
+            resizeImage(new File(imageFilename), new File(thumbnailFilename), maxWidth, maxHeight);
         }
-        if (!FileUtil.checkFileExists(convertBinary)) {
-            log.error("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
-            File convertBinaryFile = findConvertBinaryInPath();
-            if (convertBinaryFile == null) {
-                throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary + " or in PATH");
-            } else {
-                log.error("Found convert binary at: " + convertBinaryFile.getAbsolutePath());
-                convertBinary = convertBinaryFile.getAbsolutePath();
+        return description;
+    }
+
+    /**
+     * Resize an image to fit within maxWidth x maxHeight, preserving aspect ratio.
+     * Handles CMYK images by converting to RGB before resizing.
+     */
+    static void resizeImage(File inputFile, File outputFile, int maxWidth, int maxHeight) throws IOException {
+        BufferedImage original = readImage(inputFile);
+        if (original == null) {
+            throw new IOException("Unable to read image: " + inputFile.getAbsolutePath());
+        }
+
+        // Convert CMYK to RGB if necessary
+        if (original.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+            log.info("Converting CMYK image to RGB: " + inputFile.getName());
+            ColorConvertOp op = new ColorConvertOp(
+                    ColorSpace.getInstance(ColorSpace.CS_sRGB), null);
+            original = op.filter(original, null);
+        }
+
+        double scale = Math.min(
+                (double) maxWidth / original.getWidth(),
+                (double) maxHeight / original.getHeight());
+
+        // Don't upscale
+        if (scale >= 1.0) {
+            Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return;
+        }
+
+        int w = (int) (original.getWidth() * scale);
+        int h = (int) (original.getHeight() * scale);
+
+        BufferedImage resized = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = resized.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.drawImage(original, 0, 0, w, h, null);
+        g.dispose();
+
+        String extension = FilenameUtils.getExtension(outputFile.getName()).toLowerCase();
+        String formatName = switch (extension) {
+            case "png" -> "png";
+            case "gif" -> "gif";
+            case "tif", "tiff" -> "tiff";
+            default -> "jpg";
+        };
+
+        if (!ImageIO.write(resized, formatName, outputFile)) {
+            // Fallback to JPEG if the format isn't supported
+            log.warn("Could not write format '" + formatName + "', falling back to JPEG: " + outputFile.getName());
+            ImageIO.write(resized, "jpg", outputFile);
+        }
+    }
+
+    /**
+     * Read an image file, trying all available ImageIO readers.
+     * This handles cases where the default reader fails (e.g. certain CMYK JPEGs).
+     */
+    private static BufferedImage readImage(File file) throws IOException {
+        // Try the simple path first
+        BufferedImage img = ImageIO.read(file);
+        if (img != null) {
+            return img;
+        }
+
+        // If that failed, try each reader explicitly (some readers handle CMYK)
+        try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            while (readers.hasNext()) {
+                ImageReader reader = readers.next();
+                try {
+                    reader.setInput(iis);
+                    return reader.read(0);
+                } catch (Exception e) {
+                    log.debug("Reader " + reader.getClass().getName() + " failed for " + file.getName(), e);
+                } finally {
+                    reader.dispose();
+                }
             }
         }
-        String[] makeThumbCommand = {convertBinary, "-thumbnail", dimensions, imageFilename, thumbnailFilename};
-        log.info("running makeThumb command: " + String.join(" ", makeThumbCommand));
-        if (!previewCommandOnly) {
-            Runtime.getRuntime().exec(makeThumbCommand);
-        }
-        return String.join(" ", makeThumbCommand);
+
+        log.error("No ImageIO reader could read: " + file.getAbsolutePath());
+        return null;
     }
 
     private static void createDestinationParentDirectoryIfNotExists(String publicationZdbId) throws IOException {
         File destinationDirectory = getDestinationParentDirectory(publicationZdbId, true);
         FileUtils.forceMkdir(destinationDirectory);
-    }
-
-    private static File findConvertBinaryInPath() {
-        try {
-            Process process = Runtime.getRuntime().exec("which convert");
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                File file = new File(line.trim());
-                if (file.exists()) {
-                    return file;
-                }
-            }
-        } catch (IOException e) {
-            log.error("Error finding convert binary in path", e);
-        }
-        return null;
     }
 }

@@ -12,7 +12,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
        > /etc/apt/sources.list.d/nodesource.list \
     && apt update && apt install -y --no-install-recommends \
        ant tcsh sudo \
-       vim nano iputils-ping imagemagick \
+       vim nano iputils-ping \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
        gnupg lsb-release msmtp jq file \
