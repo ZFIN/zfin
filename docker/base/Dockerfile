@@ -20,8 +20,9 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
     && npm install -g npm \
     # Perl modules (need build-essential)
     && cpanm --notest Devel::Camelcadedb JSON \
-    # Remove build-essential now that Perl modules are compiled
+    # Remove build-time deps and unused packages inherited from base image
     && apt purge -y build-essential cpp gcc g++ make dpkg-dev cpanminus \
+       python3-breezy mercurial subversion binutils git-lfs \
     && apt autoremove -y \
     && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
 
