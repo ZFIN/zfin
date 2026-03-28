@@ -14,14 +14,14 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
        vim nano iputils-ping \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release msmtp jq file \
+       gnupg msmtp jq file \
        postgresql-client-18 \
        nodejs \
     && npm install -g npm \
     # Perl modules (need build-essential)
     && cpanm --notest Devel::Camelcadedb JSON \
     # Remove build-essential now that Perl modules are compiled
-    && apt purge -y build-essential cpp gcc g++ make dpkg-dev \
+    && apt purge -y build-essential cpp gcc g++ make dpkg-dev cpanminus \
     && apt autoremove -y \
     && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
 
