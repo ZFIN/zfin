@@ -30,15 +30,31 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
 COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
-# --- Bowtie, Bowtie2, Groovy (from local cache, see deps.sha256 for URLs) ---
+# --- Groovy (extracted at build time) ---
 RUN --mount=type=bind,from=deps,target=/deps \
     mkdir /opt/misc \
     && cd /deps && sha256sum -c deps.sha256 \
     && cd /opt/misc \
-    && unzip -q /deps/bowtie-1.3.1-linux-x86_64.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie \
-    && unzip -q /deps/bowtie2-2.5.3-linux-x86_64.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2 \
     && unzip -q /deps/apache-groovy-binary-4.0.29.zip && ln -s groovy-4.0.29 groovy \
-    && cp /deps/jaxb-api-2.2.3.jar /deps/jaxb-impl-4.0.5.jar groovy-4.0.29/lib/
+    && cp /deps/jaxb-api-2.2.3.jar /deps/jaxb-impl-4.0.5.jar groovy-4.0.29/lib/ \
+    && chown -R gradle:gradle /opt/misc
+
+# --- Bowtie, Bowtie2 (lazy extraction shim, saves ~415MB in image) ---
+# These tools are large (~555MB extracted) but only used by a few Jenkins jobs.
+# Instead of extracting at build time, we store the zips (~140MB) and set up
+# shim symlinks at the expected binary paths (e.g., /opt/misc/bowtie/bowtie).
+# On first invocation, lazy-extract.sh extracts the zip and replaces the shim
+# directory with the real one. See lazy-extract.sh for details.
+COPY --chown=gradle:gradle --from=deps bowtie-1.3.1-linux-x86_64.zip /opt/misc/
+COPY --chown=gradle:gradle --from=deps bowtie2-2.5.3-linux-x86_64.zip /opt/misc/
+COPY --chown=gradle:gradle ./lazy-extract.sh /opt/misc/lazy-extract.sh
+RUN chmod +x /opt/misc/lazy-extract.sh \
+    && mkdir -p /opt/misc/bowtie /opt/misc/bowtie2 \
+    && ln -s /opt/misc/lazy-extract.sh /opt/misc/bowtie/bowtie \
+    && ln -s /opt/misc/lazy-extract.sh /opt/misc/bowtie/bowtie-build \
+    && ln -s /opt/misc/lazy-extract.sh /opt/misc/bowtie2/bowtie2 \
+    && ln -s /opt/misc/lazy-extract.sh /opt/misc/bowtie2/bowtie2-build \
+    && chown -R gradle:gradle /opt/misc/bowtie /opt/misc/bowtie2
 
 # --- Directory structure + symlinks + groups (single layer) ---
 RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
