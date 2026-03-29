@@ -83,8 +83,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       TZ: ${TZ}
     shm_size: 1g
-    ports:
-      - "127.0.0.1:5444:5432"
+#    ports:
+#      - "127.0.0.1:5444:5432"
     volumes:
       - pg_data:/var/lib/postgresql/
       - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro

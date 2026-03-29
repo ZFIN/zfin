@@ -104,7 +104,7 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 break;
                             case "MNV":
-                                dto.setType("SO:SO:0002007");
+                                dto.setType("SO:0002007");
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 break;
