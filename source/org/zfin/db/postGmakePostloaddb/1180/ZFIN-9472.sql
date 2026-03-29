@@ -1,9 +1,6 @@
 --liquibase formatted sql
 --changeset cmpich:ZFIN-9472
 
--- ZFIN-9472: Remove duplicate ENSDART IDs from transcripts
--- Each ENSDART should only be assigned to one transcript
-
 delete from db_link where dblink_linked_recid = 'ZDB-TSCRIPT-131113-4130' and dblink_acc_num = 'ENSDART00000003665';
 delete from db_link where dblink_linked_recid = 'ZDB-TSCRIPT-160112-531' and dblink_acc_num = 'ENSDART00000020936';
 delete from db_link where dblink_linked_recid = 'ZDB-TSCRIPT-091110-789' and dblink_acc_num = 'ENSDART00000038301';
@@ -208,3 +205,41 @@ delete from marker_relationship where mrel_mrkr_2_zdb_id = 'ZDB-TSCRIPT-240503-1
 delete from transcript where tscript_mrkr_zdb_id = 'ZDB-TSCRIPT-240503-1485';
 delete from marker where mrkr_zdb_id = 'ZDB-TSCRIPT-240503-1485';
 delete from zdb_active_data where zactvd_zdb_id = 'ZDB-TSCRIPT-240503-1485';
+
+-- Merge transcripts (36 operations)
+-- NOTE: ZDB-TSCRIPT-121213-120 -> ZDB-TSCRIPT-240503-1485 is skipped because the target is deleted above
+select merge_transcripts('ZDB-TSCRIPT-131113-4130', 'ZDB-TSCRIPT-241211-418');
+select merge_transcripts('ZDB-TSCRIPT-131113-2634', 'ZDB-TSCRIPT-250730-545');
+select merge_transcripts('ZDB-TSCRIPT-141209-1786', 'ZDB-TSCRIPT-241211-1050');
+select merge_transcripts('ZDB-TSCRIPT-141209-3166', 'ZDB-TSCRIPT-240503-6896');
+select merge_transcripts('ZDB-TSCRIPT-160623-304', 'ZDB-TSCRIPT-241211-788');
+select merge_transcripts('ZDB-TSCRIPT-090929-14096', 'ZDB-TSCRIPT-241211-2232');
+select merge_transcripts('ZDB-TSCRIPT-090929-13766', 'ZDB-TSCRIPT-240503-6767');
+select merge_transcripts('ZDB-TSCRIPT-090929-10488', 'ZDB-TSCRIPT-241211-2527');
+select merge_transcripts('ZDB-TSCRIPT-090929-1339', 'ZDB-TSCRIPT-241211-1379');
+select merge_transcripts('ZDB-TSCRIPT-100915-576', 'ZDB-TSCRIPT-241211-212');
+select merge_transcripts('ZDB-TSCRIPT-091110-1139', 'ZDB-TSCRIPT-241211-406');
+select merge_transcripts('ZDB-TSCRIPT-160112-531', 'ZDB-TSCRIPT-241211-1813');
+select merge_transcripts('ZDB-TSCRIPT-110325-907', 'ZDB-TSCRIPT-110325-11');
+select merge_transcripts('ZDB-TSCRIPT-090929-10684', 'ZDB-TSCRIPT-241211-2249');
+select merge_transcripts('ZDB-TSCRIPT-090929-14137', 'ZDB-TSCRIPT-241211-1223');
+select merge_transcripts('ZDB-TSCRIPT-090929-14883', 'ZDB-TSCRIPT-241211-1009');
+select merge_transcripts('ZDB-TSCRIPT-090929-12920', 'ZDB-TSCRIPT-241211-2018');
+select merge_transcripts('ZDB-TSCRIPT-090929-19273', 'ZDB-TSCRIPT-241211-1493');
+select merge_transcripts('ZDB-TSCRIPT-090929-21575', 'ZDB-TSCRIPT-241211-335');
+select merge_transcripts('ZDB-TSCRIPT-090929-16239', 'ZDB-TSCRIPT-241211-442');
+select merge_transcripts('ZDB-TSCRIPT-090929-13262', 'ZDB-TSCRIPT-241211-2080');
+select merge_transcripts('ZDB-TSCRIPT-090929-19396', 'ZDB-TSCRIPT-241211-703');
+select merge_transcripts('ZDB-TSCRIPT-141209-1908', 'ZDB-TSCRIPT-241112-259');
+select merge_transcripts('ZDB-TSCRIPT-090929-16061', 'ZDB-TSCRIPT-241211-2137');
+select merge_transcripts('ZDB-TSCRIPT-090929-5817', 'ZDB-TSCRIPT-241211-772');
+select merge_transcripts('ZDB-TSCRIPT-090929-6446', 'ZDB-TSCRIPT-241211-862');
+select merge_transcripts('ZDB-TSCRIPT-090929-7228', 'ZDB-TSCRIPT-241211-846');
+select merge_transcripts('ZDB-TSCRIPT-090929-8711', 'ZDB-TSCRIPT-241211-2585');
+select merge_transcripts('ZDB-TSCRIPT-090929-9061', 'ZDB-TSCRIPT-241211-2228');
+select merge_transcripts('ZDB-TSCRIPT-090929-14252', 'ZDB-TSCRIPT-241211-491');
+select merge_transcripts('ZDB-TSCRIPT-091110-789', 'ZDB-TSCRIPT-241211-1090');
+select merge_transcripts('ZDB-TSCRIPT-090929-19690', 'ZDB-TSCRIPT-241211-1466');
+select merge_transcripts('ZDB-TSCRIPT-091110-336', 'ZDB-TSCRIPT-241211-731');
+select merge_transcripts('ZDB-TSCRIPT-090929-13150', 'ZDB-TSCRIPT-241211-535');
+select merge_transcripts('ZDB-TSCRIPT-090929-13149', 'ZDB-TSCRIPT-241211-536');
