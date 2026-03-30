@@ -13,18 +13,15 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/ap
        ant tcsh sudo \
        vim nano iputils-ping \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
-       cpanminus build-essential rsync bind9-dnsutils \
+       rsync bind9-dnsutils \
        gnupg msmtp jq file \
        postgresql-client-18 \
        nodejs \
     && npm install -g npm \
-    # Perl modules (need build-essential)
-    && cpanm --notest Devel::Camelcadedb JSON \
-    # Remove build-time deps and unused packages inherited from base image
-    && apt purge -y build-essential cpp gcc g++ make dpkg-dev cpanminus \
-       python3-breezy mercurial subversion binutils git-lfs \
+    # Remove unused packages inherited from base gradle image
+    && apt purge -y python3-breezy mercurial subversion binutils git-lfs \
     && apt autoremove -y \
-    && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
+    && apt clean && rm -rf /var/lib/apt/lists/*
 
 # --- Mail config ---
 COPY ./msmtprc /etc/
@@ -91,3 +88,16 @@ RUN cat /tmp/bash_profile >> /home/gradle/.profile \
     && echo 'cd /opt/zfin/source_roots/zfin.org' >> /home/gradle/.bashrc
 
 CMD ["/bin/bash","-l"]
+
+# --- Optional: JetBrains Perl debugger (Devel::Camelcadedb) ---
+# Uncomment the lines below to install the Camelcadedb module for remote Perl
+# debugging with IntelliJ/WebStorm. This requires build-essential to compile
+# XS extensions and adds ~1-2 min to the build. Do not commit uncommented.
+#
+# USER root
+# RUN apt update && apt install -y --no-install-recommends build-essential cpanminus \
+#     && cpanm --notest Devel::Camelcadedb \
+#     && apt purge -y build-essential cpp gcc g++ make dpkg-dev cpanminus \
+#     && apt autoremove -y \
+#     && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
+# USER gradle
