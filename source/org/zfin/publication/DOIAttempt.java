@@ -15,8 +15,6 @@ public class DOIAttempt {
     @Column(name = "doia_pk_id", nullable = false)
     private Long id;
 
-    private String doi;
-
     @ManyToOne
     @JoinColumn(name = "doia_pub_zdb_id", nullable = false)
     private Publication publication;
