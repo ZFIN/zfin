@@ -185,8 +185,9 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("snRNA")
               || bioType.equals("antisense")
               || bioType.equals("transcribed_unprocessed_pseudogene")
-              || bioType.equals("snoRNA"))) {
-            if (bioType.equals("retained_intron") || bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
+              || bioType.equals("snoRNA")
+              || bioType.equals("retained_intron"))) {
+            if (bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
                 || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("sense_overlapping")) {
                 LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
                 HashMap<String, String> columns = new HashMap<>();
