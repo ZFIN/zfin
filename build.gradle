@@ -1,6 +1,7 @@
 buildscript {
+    ext.postgresqlVersion = '42.7.8'
     dependencies {
-        classpath 'org.postgresql:postgresql:42.7.8'
+        classpath "org.postgresql:postgresql:${postgresqlVersion}"
     }
 }
 
@@ -675,23 +676,17 @@ task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
         javaexec {
-            main = "-jar"
+            classpath = configurations.schemaspy
+            mainClass = 'org.schemaspy.Main'
             args = [
-                    "lib/Java/schemaSpy_5.0.0.jar",
-                    "-t",
-                    "pgsql",
-                    "-db",
-                    ttNameMap.get('DB_NAME'),
-                    "-u",
-                    ttNameMap.get('USER'),
-                    "-host",
-                    pghost,
-                    "-dp",
-                    "lib/Java/postgresql-42.2.18.jar",
-                    "-s",
-                    "public",
-                    "-o",
-                    ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
+                    "-t", "pgsql11",
+                    "-db", ttNameMap.get('DB_NAME'),
+                    "-u", env['PGUSER'],
+                    "-host", pghost,
+                    "-dp", configurations.runtimeClasspath.find { it.name.startsWith('postgresql-') }.absolutePath,
+                    "-s", "public",
+                    "-o", ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
+                    "-vizjs",
             ]
         }
     }
@@ -775,7 +770,12 @@ repositories {
     maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
+configurations {
+    schemaspy
+}
+
 dependencies {
+    schemaspy "org.schemaspy:schemaspy:6.2.4"
     annotationProcessor "org.projectlombok:lombok:1.18.42"
     compileOnly "com.github.nmorel.gwtjackson:gwt-jackson:0.15.4"
     compileOnly "com.google.jsinterop:jsinterop-annotations:2.0.0"
@@ -926,7 +926,7 @@ dependencies {
     implementation "org.ow2.asm:asm-util:5.0.3"
     implementation "org.ow2.asm:asm-xml:5.0.3"
     implementation "org.ow2.asm:asm:5.0.3"
-    implementation "org.postgresql:postgresql:42.7.8"
+    implementation "org.postgresql:postgresql:${postgresqlVersion}"
     implementation "org.projectlombok:lombok:1.18.42"
     implementation "org.reactivestreams:reactive-streams:1.0.4"
     implementation "org.slf4j:jcl-over-slf4j:2.0.16"
@@ -982,7 +982,7 @@ dependencies {
 
     liquibaseRuntime "org.liquibase:liquibase-core:4.30.0"
     liquibaseRuntime "info.picocli:picocli:4.7.6"
-    liquibaseRuntime "org.postgresql:postgresql:42.7.8"
+    liquibaseRuntime "org.postgresql:postgresql:${postgresqlVersion}"
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.42"
     testCompileOnly "org.projectlombok:lombok:1.18.42"
