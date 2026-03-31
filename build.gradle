@@ -160,6 +160,11 @@ task loadSolrIndex(type: GradleBuild) {
     tasks = ['getLatestSolrIndex']
 }
 
+task deploySolrJdbc(type: Copy) {
+    from configurations.runtimeClasspath.filter { it.name.startsWith('postgresql-') }
+    into System.getenv('SOLR_HOME') + '/lib'
+}
+
 task getdb(dependsOn: downloadDB) //alias for downloadDB (aka getLatestDatabaseUnload)
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
