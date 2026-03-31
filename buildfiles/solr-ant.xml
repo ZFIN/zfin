@@ -11,7 +11,6 @@
 
     <target name="deploy-solr">
         <copySolr from="server_apps/solr/site_index" to="${env.SOLR_HOME}" overwrite="true"/>
-        <gradle task="deploySolrJdbc"/>
     </target>
 
     <macrodef name="copySolr">
