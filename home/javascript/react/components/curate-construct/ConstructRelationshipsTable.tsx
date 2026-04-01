@@ -145,11 +145,16 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/construct-relationships`);
             const constructsData = await response.json();
-            const uniqueConstructsMap = {};
+            const uniqueConstructsMap: Record<string, string> = {};
 
-            const uniqueConstructs = [];
+            const uniqueConstructs: MarkerLabelAndZdbId[] = [];
 
-            const mappedConstructRelationships = constructsData.map(({ zdbID, constructDTO, markerDTO, relationshipType }) => {
+            const mappedConstructRelationships = constructsData.map(({ zdbID, constructDTO, markerDTO, relationshipType }: {
+                zdbID: string;
+                constructDTO: { zdbID: string; constructType: string; name: string };
+                markerDTO: { label: string; zdbID: string };
+                relationshipType: string;
+            }) => {
                 const { zdbID: constructZdbID, constructType: constructType, name: constructName } = constructDTO;
                 const { label: markerLabel, zdbID: markerZdbID } = markerDTO;
 
@@ -175,7 +180,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
             //sort by constructName, then by relationshipType, then by markerLabel
             const sortedMappedConstructRelationships = sortConstructRelationshipRows(mappedConstructRelationships);
 
-            setPublicationConstructs(uniqueConstructs.sort((a, b) => a.label.localeCompare(b.label)));
+            setPublicationConstructs(uniqueConstructs.sort((a: MarkerLabelAndZdbId, b: MarkerLabelAndZdbId) => a.label.localeCompare(b.label)));
             setConstructRelationshipRows(sortedMappedConstructRelationships);
         } catch (error) {
             console.error('Failed to fetch construct relationships:', error);
@@ -188,8 +193,8 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/${RELATIONSHIP_TO_ADD}/markersForRelation`);
             const markersData = await response.json();
-            const regionsData = markersData.filter(m => m.markerType === 'Engineered Region');
-            setRegionsForRelation(regionsData.map(({ label, zdbID }) => ({ label, zdbID })).sort((a, b) => a.label.localeCompare(b.label)));
+            const regionsData = markersData.filter((m: {markerType: string}) => m.markerType === 'Engineered Region');
+            setRegionsForRelation(regionsData.map(({ label, zdbID }: {label: string; zdbID: string}) => ({ label, zdbID })).sort((a: MarkerLabelAndZdbId, b: MarkerLabelAndZdbId) => a.label.localeCompare(b.label)));
         } catch (error) {
             console.error('Failed to fetch markers for relation:', error);
         }

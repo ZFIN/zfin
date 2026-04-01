@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {
+    Cassette,
     cassettesToSimplifiedCassettes,
     EditConstructFormDTO,
     normalizeConstructCassette,
@@ -14,6 +15,7 @@ import {
     blankCassette,
     blankConstruct,
     CurateConstructEditProvider,
+    CurateConstructEditState,
     useCurateConstructEditContext
 } from './CurateConstructEditContext';
 import CurateConstructSynonymEditor from './CurateConstructSynonymEditor';
@@ -75,17 +77,18 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         }
     }
 
-    const handleCassettesChanged = (cassettesChanged) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _handleCassettesChanged = (cassettesChanged: Cassette[]) => {
         setStateByProxy(proxy => {
             proxy.selectedConstruct.cassettes = cassettesChanged;
         });
     }
 
-    const isDirty = (stateObject) => {
+    const isDirty = (stateObject: CurateConstructEditState) => {
         return captureStateForDirtyCheck(stateObject) !== initialState;
     }
 
-    const captureStateForDirtyCheck = (stateObject) => {
+    const captureStateForDirtyCheck = (stateObject: CurateConstructEditState) => {
         return JSON.stringify(
             { selectedConstruct: stateObject.selectedConstruct,
                 stagedSynonym: stateObject.stagedSynonym,
@@ -158,7 +161,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         });
     }
 
-    const initializeDataForConstructID = async (constructId) => {
+    const initializeDataForConstructID = async (constructId: string) => {
         try {
             const response = await fetch(`${calculatedDomain}/action/construct/json/${constructId}`);
             const constructNameData = await response.json();
@@ -175,7 +178,6 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     chosenType: constructNameData.typeAbbreviation,
                     prefix: constructNameData.prefix,
                     publicNote: constructNameData.publicNote,
-                    curatorNote: constructNameData.curatorNote,
                     cassettes: fullCassettes,
                     editCassetteMode: false,
                     editCassetteIndex: null,
@@ -187,7 +189,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     const constructData = constructDetailsArray[0];
 
                     // Initialize synonyms
-                    proxy.selectedConstruct.synonyms = constructData.constructAliases.map(syn => ({
+                    proxy.selectedConstruct.synonyms = constructData.constructAliases.map((syn: {alias: string; aliasZdbID: string}) => ({
                         label: syn.alias,
                         zdbID: syn.aliasZdbID
                     }));
@@ -196,13 +198,13 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     proxy.selectedConstruct.publicNote = constructData.constructComments || '';
 
                     // Initialize sequences
-                    proxy.selectedConstruct.sequences = constructData.constructSequences.map(seq => ({
+                    proxy.selectedConstruct.sequences = constructData.constructSequences.map((seq: {view: string; zdbID: string}) => ({
                         label: seq.view,
                         zdbID: seq.zdbID
                     }));
 
                     // Initialize notes
-                    proxy.selectedConstruct.notes = constructData.constructCuratorNotes.map(note => ({
+                    proxy.selectedConstruct.notes = constructData.constructCuratorNotes.map((note: {noteData: string; zdbID: string}) => ({
                         label: note.noteData,
                         zdbID: note.zdbID
                     }));
@@ -268,7 +270,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                 <label htmlFor='prefix'><b>Prefix:</b></label>{' '}
                                 <input
                                     id='prefix'
-                                    size='15'
+                                    size={15}
                                     className='prefix'
                                     name='prefix'
                                     value={state.selectedConstruct.prefix || ''}
@@ -298,7 +300,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     </tbody>
                 </table>
                 <div className='mb-3'>
-                    <ConstructCassetteListEditor onChange={handleCassettesChanged} />
+                    <ConstructCassetteListEditor />
                 </div>
                 <div className='mb-3'>
                     <p>
@@ -308,7 +310,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                             disabled={true}
                             type='text'
                             value={constructDisplayName || ''}
-                            size='150'
+                            size={150}
                         />
                     </p>
                 </div>

@@ -132,16 +132,15 @@ function ConstructMarkerAutocomplete({onSelect, onChange, onChangeWithObject}: C
         handleSelection(suggestion);
     }
 
-    const shouldDisableAddButton = (): string => {
-        const shouldDisable = input == null || input.trim().length === 0;
-        return shouldDisable ? 'disabled' : '';
+    const shouldDisableAddButton = (): boolean => {
+        return input == null || input.trim().length === 0;
     }
 
 
     // Hide dropdown when clicking outside
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setSuggestions([]);
             }
         };
@@ -150,7 +149,7 @@ function ConstructMarkerAutocomplete({onSelect, onChange, onChangeWithObject}: C
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [dropdownRef]);
 
-    const dropdownStyle = {
+    const dropdownStyle: React.CSSProperties = {
         position: 'absolute',
         zIndex: 1,
         backgroundColor: 'white',

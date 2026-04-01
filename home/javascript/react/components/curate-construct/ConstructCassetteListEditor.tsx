@@ -3,17 +3,18 @@ import ConstructCassetteEditor from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
 import ConstructModal from './ConstructModal';
+import {Cassette, ConstructComponent} from './ConstructTypes';
 
 const ConstructCassetteListEditor = () => {
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
-    const setCassette = (cassette) => {
+    const setCassette = (cassette: Cassette) => {
         setStateByProxy(proxy => {
             proxy.stagedCassette = cassette;
         });
     }
 
-    const handleAddCassetteClick = (e) => {
+    const handleAddCassetteClick = (e: React.MouseEvent) => {
         e.preventDefault();
         setStateByProxy(proxy => {
             proxy.selectedConstruct.addCassetteMode = true;
@@ -41,26 +42,26 @@ const ConstructCassetteListEditor = () => {
         });
     }
 
-    const handleRemoveCassette = (index) => {
+    const handleRemoveCassette = (index: number) => {
         const newCassettes = [...state.selectedConstruct.cassettes];
         newCassettes.splice(index, 1);
         setStateByProxy(proxy => {proxy.selectedConstruct.cassettes = newCassettes;});
     }
 
-    const handleEditCassetteClick = (e, index: number) => {
+    const handleEditCassetteClick = (e: React.MouseEvent, index: number) => {
         e.preventDefault();
         handleEditCassette(index);
     }
 
-    const handleMoveUpClick = (e, index: number) => {
+    const handleMoveUpClick = (e: React.MouseEvent, index: number) => {
         handleMoveClick(e, index, -1);
     }
 
-    const handleMoveDownClick = (e, index: number) => {
+    const handleMoveDownClick = (e: React.MouseEvent, index: number) => {
         handleMoveClick(e, index, 1);
     }
 
-    const handleMoveClick = (e, index: number, direction: number) => {
+    const handleMoveClick = (e: React.MouseEvent, index: number, direction: number) => {
         e.preventDefault();
         const newCassettes = [...state.selectedConstruct.cassettes];
         if (index + direction >= 0 && index + direction < newCassettes.length) {
@@ -71,7 +72,7 @@ const ConstructCassetteListEditor = () => {
         }
     }
 
-    const handleEditCassette = (index) => {
+    const handleEditCassette = (index: number) => {
         setCassette(state.selectedConstruct.cassettes[index]);
         setStateByProxy(proxy => {
             proxy.selectedConstruct.addCassetteMode = false;
@@ -139,12 +140,12 @@ const ConstructCassetteListEditor = () => {
     );
 };
 
-const cassetteHumanReadable = (cassette) => {
+const cassetteHumanReadable = (cassette: Cassette) => {
     if (!cassette) {
         return '';
     }
-    const promoter = cassette.promoter.map(item => item.value + item.separator).join('');
-    const coding = cassette.coding.map(item => item.value + item.separator).join('');
+    const promoter = cassette.promoter.map((item: ConstructComponent) => item.value + item.separator).join('');
+    const coding = cassette.coding.map((item: ConstructComponent) => item.value + item.separator).join('');
     if (promoter.length === 0) {
         return coding;
     }
@@ -154,7 +155,7 @@ const cassetteHumanReadable = (cassette) => {
     return promoter + ':' + coding;
 }
 
-const cassetteHumanReadableList = (cassettes) => {
+const cassetteHumanReadableList = (cassettes: Cassette[]) => {
     return cassettes.map(cassetteHumanReadable).join(',');
 }
 
