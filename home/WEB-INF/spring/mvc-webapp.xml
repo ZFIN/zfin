@@ -24,6 +24,10 @@
             ignore-default-model-on-redirect="true"
     />
 
+    <mvc:interceptors>
+        <bean class="org.zfin.infrastructure.captcha.CaptchaInterceptor"/>
+    </mvc:interceptors>
+
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
