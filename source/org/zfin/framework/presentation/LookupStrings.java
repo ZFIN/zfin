@@ -1,7 +1,5 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.ui.Model;
-
 /**
  * *  Class LookupStrings.
  */
@@ -64,9 +62,5 @@ public class LookupStrings {
     public static final String JSREF_INPUT_DIV = "inputDiv";
     public static final String JSREF_TERM_LIST_DIV = "termListDiv";
 
-    public static String idNotFound(Model model, String fishID) {
-        model.addAttribute(LookupStrings.ZDB_ID, fishID);
-        return LookupStrings.RECORD_NOT_FOUND_PAGE;
-    }
 }
 
