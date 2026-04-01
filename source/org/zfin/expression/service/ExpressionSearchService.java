@@ -1,5 +1,6 @@
 package org.zfin.expression.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.search.service.SolrQueryFacade.addTo;
 
+@Log4j2
 @Service
 public class ExpressionSearchService {
 
@@ -267,7 +269,7 @@ public class ExpressionSearchService {
         solrQuery.add("group", TRUE);
         solrQuery.add("group.ngroups", TRUE);
         solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
-        solrQuery.setRows(5000);
+        solrQuery.setRows(200);
         solrQuery.setStart(0);
         solrQuery.addSort("date", SolrQuery.ORDER.asc);
 
@@ -275,7 +277,8 @@ public class ExpressionSearchService {
         try {
             queryResponse = SolrService.getSolrClient().query(solrQuery);
         } catch (SolrServerException | IOException e) {
-            e.printStackTrace();
+            log.error("Failed to retrieve image results from Solr", e);
+            return Collections.emptyList();
         }
         return queryResponse.getGroupResponse().getValues().get(0).getValues().stream()
                 .map(this::getFirstDocumentFromGroup)
