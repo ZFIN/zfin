@@ -1,4 +1,4 @@
-FROM gradle:8-jdk21
+FROM gradle:8-jdk21-noble #only if we want to keep the explicit use of noble as opposed to invoking lsb-release
 
 ENV DEBIAN_FRONTEND=noninteractive
 
