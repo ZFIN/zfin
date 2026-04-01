@@ -186,9 +186,6 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
-        <fileset dir="${jwebunit.lib}">
-            <include name="*.jar"/>
-        </fileset>
         <fileset dir="${gwt.lib}">
             <include name="*.jar"/>
         </fileset>
@@ -205,9 +202,6 @@
         <fileset dir="${lib}">
             <include name="*.jar"/>
             <include name="*.zip"/>
-        </fileset>
-        <fileset dir="${jwebunit.lib}">
-            <include name="*.jar"/>
         </fileset>
         <fileset dir="${gwt.lib}">
             <include name="*.jar"/>

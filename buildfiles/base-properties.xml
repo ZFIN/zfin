@@ -16,7 +16,6 @@
     <property name="web.conf" value="${web-inf.dir}/conf"/>
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="gwt.lib" value="${lib}/gwt"/>
-    <property name="jwebunit.lib" value="${lib}/jwebunit"/>
     <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>
     <!-- path to servlet jar file -->
     <property name="servlet.jar" value="${lib}/servlet-api-2.4.jar"/>

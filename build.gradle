@@ -1,4 +1,5 @@
 buildscript {
+    //If updating here, match it in the tomcat and solr Dockerfiles
     ext.postgresqlVersion = '42.7.8'
     dependencies {
         classpath "org.postgresql:postgresql:${postgresqlVersion}"
@@ -672,6 +673,7 @@ task getBlast(type: GradleBuild) {
     ]
 }
 
+// Requires GraphViz 'dot' command to render diagrams. Install graphviz in the compile container if needed.
 task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
@@ -686,7 +688,6 @@ task createSchemaSpy() {
                     "-dp", configurations.runtimeClasspath.find { it.name.startsWith('postgresql-') }.absolutePath,
                     "-s", "public",
                     "-o", ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
-                    "-vizjs",
             ]
         }
     }
@@ -1031,7 +1032,6 @@ sourceSets {
             srcDirs = ['test']
             // Exclude test suite files that use unavailable test runners
             exclude '**/SolrUnitTests.java'
-            exclude '**/SmokeTestsReadWrite.java'
         }
         resources {
             srcDirs = ['test']
