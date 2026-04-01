@@ -172,6 +172,7 @@ public enum ZfinPropertiesEnum {
     SHOW_SQL,
     SHUTDOWNPORT,
     SMTP_HOST,
+    SMTP_PORT,
     SOLR_CONTEXT,
     SOLR_CORE,
     SOLR_CREATE_BACKUPS,
