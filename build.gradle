@@ -1467,15 +1467,18 @@ task gwtCompile {
             javaexec {
                 mainClass = 'com.google.gwt.dev.Compiler'
 
-                // Filter out jackson-annotations-*-sources.jar from Maven;
-                // the local eclipse-transformed sources JAR in lib/Java/gwt/ is used instead.
-                def filteredCompileClasspath = configurations.compileClasspath.filter { file ->
-                    !file.name.matches('jackson-annotations-.*-sources\\.jar')
-                }
-                classpath = files('source') +
-                            files('home/WEB-INF/classes') +
-                            filteredCompileClasspath +
-                            fileTree(dir: 'lib/Java/gwt', include: '*.jar')
+                // GWT compiler classpath: compiled classes, GWT jars (eclipse-transformed + gwt-user),
+                // standard deps from Gradle, restygwt, and Java source for GWT compilation
+                // Note: jackson-annotations and validation-api are NOT pulled from Maven here because
+                // GWT needs source-compatible jars (the eclipse-transformed ones in lib/Java/gwt/)
+                classpath = files('home/WEB-INF/classes') +
+                            fileTree(dir: 'lib/Java/gwt', include: '*.jar') +
+                            configurations.compileClasspath.filter { f ->
+                                f.name.startsWith('jakarta.ws.rs-api-') ||
+                                f.name.startsWith('jakarta.xml.bind-api-')
+                            } +
+                            files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar') +
+                            files('source')
 
                 args = [
                     '-war', gwtTarget,
