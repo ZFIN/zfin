@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import type {ConstructComponent} from './ConstructTypes';
+import type {Cassette, ConstructComponent} from './ConstructTypes';
 import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
 import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructRegulatoryCodingUnitListProps {
     onChange?: (value: ConstructComponent[]) => void;
-    type: string;
+    type: keyof Pick<Cassette, 'promoter' | 'coding'>;
 }
 
 
@@ -24,7 +24,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
     const [insertAtIndex, setInsertAtIndex] = useState<number | null>(null);
 
-    const setStagedCassette = (value) => {
+    const setStagedCassette = (value: Cassette) => {
         setStateByProxy(proxy => {
             proxy.stagedCassette = value;
         });
@@ -101,13 +101,13 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         onChange(newItems);
     }
 
-    const handleItemRemoved = (itemToRemove) => {
+    const handleItemRemoved = (itemToRemove: ConstructComponent) => {
         const newItems = rcUnitItems.filter((existingItem) => existingItem !== itemToRemove);
         setInsertAtIndex(null);
         setRcUnitItemsAndNotify(newItems);
     }
 
-    const handleSeparatorChange = (index, separator) => {
+    const handleSeparatorChange = (index: number, separator: string) => {
         const changedPart = {...rcUnitItems[index], separator: separator};
         const newItems = [...rcUnitItems.slice(0, index), changedPart, ...rcUnitItems.slice(index + 1)];
         setRcUnitItemsAndNotify(newItems);
@@ -117,7 +117,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         }
     }
 
-    const setRcUnitItemsAndNotify = (items) => {
+    const setRcUnitItemsAndNotify = (items: ConstructComponent[]) => {
         setStagedCassette({...getStagedCassette(), [type]: items});
         setRcUnitItems(items);
         onChange(items);
