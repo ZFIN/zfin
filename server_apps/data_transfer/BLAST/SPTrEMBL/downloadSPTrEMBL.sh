@@ -1,24 +1,25 @@
 #!/bin/bash -e
 #
-# The script download SwissProt and TrEMBL zebrafish file, 
-
+# Download SwissProt and TrEMBL zebrafish, mouse, and human FASTA files
+# from UniProt REST API.
+#
+# UniProt migrated from www.uniprot.org/uniprot/ to rest.uniprot.org in 2022.
+# See: https://www.uniprot.org/help/api
 
 source "../config.sh"
 
-echo "== Downloading the sprot.dat.gz =="
+BASE_URL="https://rest.uniprot.org/uniprotkb/stream"
 
-wget -qN "www.uniprot.org/uniprot/?query=organism%3azebrafish&force=yes&format=fasta"
+echo "== Downloading zebrafish FASTA =="
+wget -q -O zebrafish.fasta "${BASE_URL}?query=organism_name:zebrafish&format=fasta"
+sed -i 's/>tr/>sp/g' zebrafish.fasta
 
-sed 's/>tr/>sp/g' index.html\?query=organism:zebrafish\&force=yes\&format=fasta > zebrafish.fasta
+echo "== Downloading mouse FASTA =="
+wget -q -O mouse.fasta "${BASE_URL}?query=organism_name:mouse&format=fasta"
+sed -i 's/>tr/>sp/g' mouse.fasta
 
-wget -qN "www.uniprot.org/uniprot/?query=organism%3amouse&force=yes&format=fasta"
+echo "== Downloading human FASTA =="
+wget -q -O human.fasta "${BASE_URL}?query=organism_name:human&format=fasta"
+sed -i 's/>tr/>sp/g' human.fasta
 
-sed 's/>tr/>sp/g' index.html\?query=organism:mouse\&force=yes\&format=fasta > mouse.fasta
-
-
-wget -qN "www.uniprot.org/uniprot/?query=organism%3ahuman&force=yes&format=fasta"
-
-sed 's/>tr/>sp/g' index.html\?query=organism:human\&force=yes\&format=fasta > human.fasta
-
-echo "==| done downloading SPTrEMBL | =="
-exit
+echo "==| done downloading SPTrEMBL |=="
