@@ -72,7 +72,7 @@ def localFileDependencies = [
 // ============================================================================
 // DEPENDENCY RESOLUTION STRATEGY (Conflict Resolution)
 // ============================================================================
-configurations.all {
+configurations.all { config ->
     // Exclude XML parsers provided by Tomcat from all dependencies
     exclude group: 'xpp3', module: 'xpp3'
     exclude group: 'pull-parser', module: 'pull-parser'
@@ -80,12 +80,16 @@ configurations.all {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xml-apis', module: 'xml-apis'
 
-    resolutionStrategy {
-        // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
-        eachDependency { details ->
-            if (details.requested.group.startsWith("com.fasterxml.jackson")) {
-                details.useVersion(jacksonVersion)
-                details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+    // Skip Jackson version forcing for gwtSources — it must stay at 2.11.x
+    // because GWT can't compile jackson-annotations 2.12+ (uses String.format).
+    if (config.name != 'gwtSources') {
+        resolutionStrategy {
+            // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+            eachDependency { details ->
+                if (details.requested.group.startsWith("com.fasterxml.jackson")) {
+                    details.useVersion(jacksonVersion)
+                    details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+                }
             }
         }
     }
@@ -773,7 +777,16 @@ repositories {
     maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
+configurations {
+    // Jackson-annotations 2.12+ uses String.format() which GWT's JRE emulation doesn't support.
+    // This configuration pulls the newest GWT-compatible sources jar (2.11.x) from Maven.
+    // See lib/Java/gwt/GWT-JACKSON-NOTES.md for details.
+    gwtSources
+}
+
 dependencies {
+    gwtSources("com.fasterxml.jackson.core:jackson-annotations:2.11.4") { artifact { classifier = 'sources' } }
+
     annotationProcessor "org.projectlombok:lombok:1.18.42"
     compileOnly "com.github.nmorel.gwtjackson:gwt-jackson:0.15.4"
     compileOnly "com.google.jsinterop:jsinterop-annotations:2.0.0"
@@ -1430,6 +1443,7 @@ task compileGwtModule(type: JavaExec) {
     classpath = files('source') +
                 files('home/WEB-INF/classes') +
                 filteredCompileClasspath +
+                configurations.gwtSources +
                 fileTree(dir: 'lib/Java/gwt', include: '*.jar')
     args = [
         '-war', gwtTarget,
@@ -1467,14 +1481,15 @@ task gwtCompile {
             javaexec {
                 mainClass = 'com.google.gwt.dev.Compiler'
 
-                // Filter out jackson-annotations-*-sources.jar from Maven;
-                // the local eclipse-transformed sources JAR in lib/Java/gwt/ is used instead.
+                // Filter out jackson-annotations-*-sources.jar from Maven (2.15.2 uses
+                // String.format which GWT can't compile); use gwtSources config instead.
                 def filteredCompileClasspath = configurations.compileClasspath.filter { file ->
                     !file.name.matches('jackson-annotations-.*-sources\\.jar')
                 }
                 classpath = files('source') +
                             files('home/WEB-INF/classes') +
                             filteredCompileClasspath +
+                            configurations.gwtSources +
                             fileTree(dir: 'lib/Java/gwt', include: '*.jar')
 
                 args = [
