@@ -1,6 +1,7 @@
 -- merge_transcripts(source_id, target_id)
 -- Merges one transcript into another: moves all dependent data from source to target,
--- adds a replacement record, and deletes the source transcript.
+-- retains the source transcript's type and status, adds a replacement record,
+-- and deletes the source transcript.
 
 create or replace function merge_transcripts(
     source_id text,
@@ -24,6 +25,12 @@ begin
     end if;
 
     raise notice 'Merging transcript % (%) into % (%)', source_id, source_abbrev, target_id, target_abbrev;
+
+    -- Retain the source transcript's type and status on the target
+    update transcript
+    set tscript_type_id = (select tscript_type_id from transcript where tscript_mrkr_zdb_id = source_id),
+        tscript_status_id = (select tscript_status_id from transcript where tscript_mrkr_zdb_id = source_id)
+    where tscript_mrkr_zdb_id = target_id;
 
     -- Move db_link records (skip duplicates that already exist on target)
     delete from db_link
