@@ -102,11 +102,15 @@ These tables use the rename-and-recreate concept but with a fixed `_old` suffix.
 
 **Note**: These do not use the `regen_cleanup_renamed_tables()` function. Old tables are dropped at the beginning of the next regen cycle.
 
-### Not Using Rename-and-Recreate
+### Managed by `pheno_term_regen.sql`
 
-| Table | Pattern Used | Source File |
-|-------|-------------|-------------|
-| `pheno_term_fast_search` | `DELETE` + `INSERT` (no rename) | `server_apps/DB_maintenance/pheno/pheno_term_regen.sql` |
+Called from `regen.sh`. Uses timestamped `_old_` naming with cleanup support. Wrapped in a `DO $$` block.
+
+| Live Table | Staging Table | Source File |
+|------------|---------------|-------------|
+| `pheno_term_fast_search` | `pheno_term_fast_search_tmp` | `server_apps/DB_maintenance/pheno/pheno_term_regen.sql` |
+
+**Purpose**: Stores phenotype observation IDs paired with ontology term IDs (both direct annotations and transitive ancestors via `all_term_contains`). Powers phenotype-by-term queries through Hibernate (`PhenotypeTermFastSearch` entity). Has FKs to `phenotype_observation_generated` and `term`.
 
 ## Cleanup
 
@@ -118,6 +122,7 @@ Drops all tables whose names start with the given prefix. Has a whitelist of all
 
 - `%_fast_search_old_%`
 - `all_term_contains_old_%`
+- `pheno_term_fast_search_old_%`
 - `phenotype_source_generated_old_%`
 - `phenotype_observation_generated_old_%`
 - `phenotype_generated_curated_mapping_old_%`
@@ -134,6 +139,9 @@ genotype_figure_fast_search_old_
 
 # term tables
 all_term_contains_old_
+
+# pheno term search
+pheno_term_fast_search_old_
 
 # phenotype mart tables
 phenotype_source_generated_old_
@@ -156,7 +164,7 @@ Run order:
 5. `regen_expression_term_fast_search()` — expression_term_fast_search
 6. `regen_clean_expression()` — clean_expression_fast_search
 7. `regen_fish_components()` — (not a rename-and-recreate table)
-8. `pheno_term_regen.sql` — pheno_term_fast_search (uses DELETE, not rename)
+8. `pheno_term_regen.sql` — pheno_term_fast_search
 9. `regenExpressionSearchAnatomy.sql`
 10. `VACUUM ANALYZE`
 

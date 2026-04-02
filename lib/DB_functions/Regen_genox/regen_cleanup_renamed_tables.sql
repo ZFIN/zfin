@@ -7,8 +7,13 @@ DECLARE
 BEGIN
 
     --if table_prefix doesn't match a known renamed-table pattern, reject it
-    if (table_prefix not like '%_fast_search_old_%' and table_prefix not like 'all_term_contains_old_%') then
-        return 'this function should only be used to clean up tables named like ..._fast_search_old_... or all_term_contains_old_...';
+    if (table_prefix not like '%_fast_search_old_%'
+        and table_prefix not like 'all_term_contains_old_%'
+        and table_prefix not like 'phenotype_source_generated_old_%'
+        and table_prefix not like 'phenotype_observation_generated_old_%'
+        and table_prefix not like 'phenotype_generated_curated_mapping_old_%'
+        and table_prefix not like 'pheno_term_fast_search_old_%') then
+        return 'this function should only be used to clean up tables named like ..._fast_search_old_..., all_term_contains_old_..., pheno_term_fast_search_old_..., or phenotype_*_old_...';
     end if;
 
     result := 'tables dropped: ';
