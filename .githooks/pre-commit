@@ -5,6 +5,7 @@ source $(dirname "$0")/helpers
 changed_files=$(git diff --cached --name-only --diff-filter=ACMR)
 
 run_if_changes "$changed_files" home/javascript/react/ "npm run lint"
+run_if_changes "$changed_files" home/javascript/react/ "npm test"
 
 check_for_comment_marker "$changed_files"
 
