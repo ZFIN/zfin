@@ -133,14 +133,11 @@
         <security:intercept-url pattern="/action/indexer*" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/indexer/*" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/construct-add" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/construct-update" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/people/edit-user*" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
         <security:intercept-url pattern="/action/profile/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/profile/company/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/profile/lab/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/profile/person/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/construct/rename/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
 
         <security:intercept-url pattern="/action/figure/*" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/figure/*/images" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>

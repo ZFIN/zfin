@@ -16,7 +16,6 @@ const config = {
     mode: isProd ? 'production' : 'development',
     entry: {
         bootstrap: './bootstrap/index.js',
-        curation: './curation/index.js',
         'jquery-ui': './jquery-ui/index.js',
         profiles: './profiles/index.js',
         search: './search/index.js',
