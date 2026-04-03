@@ -169,6 +169,9 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
 
             {displayMode === 'edit' && <div className='mt-2'>
                 <span className='bold'>EDIT CONSTRUCT: </span>
+                <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline', marginLeft: '10px'}}>
+                    Switch construct ({constructList.length} available)
+                </a>
                 <CurateConstructForm
                     key={selectedConstructID}
                     publicationId={publicationId}
@@ -179,12 +182,16 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 />
                 <div className='mt-2'>
                     {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
+                    {successMessage && <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline'}}>Edit another construct</a>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}
 
             {displayMode === 'new' && <div className='mt-2'>
                 <span className='bold'>NEW CONSTRUCT: </span>
+                <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline', marginLeft: '10px'}}>
+                    Edit existing ({constructList.length} available)
+                </a>
                 <CurateConstructForm
                     key={selectedConstructID}
                     publicationId={publicationId}
@@ -196,6 +203,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 <div className='mt-2'>
                     {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
                     {successMessage && lastCreatedConstructID && <div><a onClick={() => activateEditMode()} style={{textDecoration: 'underline'}}>Edit this construct</a></div>}
+                    {successMessage && <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline'}}>Edit another construct</a>}
                     {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
                 </div>
             </div>}

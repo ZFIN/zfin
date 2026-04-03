@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import ConstructCassetteEditor from './ConstructCassetteEditor';
 import ConstructCassetteView from './ConstructCassetteView';
 import {blankCassette, useCurateConstructEditContext} from './CurateConstructEditContext';
-import ConstructModal from './ConstructModal';
 import {Cassette, ConstructComponent} from './ConstructTypes';
 
 const ConstructCassetteListEditor = () => {
@@ -129,9 +128,7 @@ const ConstructCassetteListEditor = () => {
                 <a onClick={(e) => {handleAddCassetteClick(e)}} title='Add' href='#'>Add cassette</a>
             )}
             {showCassetteEditorEditMode() && <>
-                <ConstructModal>
-                    <ConstructCassetteEditor onSave={handleAddCassette} onCancel={handleCancelCassette}/>
-                </ConstructModal>
+                <ConstructCassetteEditor onSave={handleAddCassette} onCancel={handleCancelCassette}/>
             </>}
             {showCassetteEditorAddMode() && <>
                 <ConstructCassetteEditor onSave={handleAddCassette} onCancel={handleCancelCassette}/>

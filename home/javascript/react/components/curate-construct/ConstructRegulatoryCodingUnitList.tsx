@@ -23,6 +23,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     const defaultSeparator = '-';
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
     const [insertAtIndex, setInsertAtIndex] = useState<number | null>(null);
+    const [preInsertItems, setPreInsertItems] = useState<ConstructComponent[] | null>(null);
 
     const setStagedCassette = (value: Cassette) => {
         setStateByProxy(proxy => {
@@ -81,6 +82,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
             ...rcUnitItems.slice(insertAtIndex)
         ];
         setInsertAtIndex(null);
+        setPreInsertItems(null);
         setRcUnitItemsAndNotify(newItems);
     }
 
@@ -99,6 +101,15 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         ];
         setStagedCassette({...getStagedCassette(), [type]: newItems});
         onChange(newItems);
+    }
+
+    const handleCancelInsert = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (preInsertItems) {
+            setRcUnitItemsAndNotify(preInsertItems);
+        }
+        setInsertAtIndex(null);
+        setPreInsertItems(null);
     }
 
     const handleItemRemoved = (itemToRemove: ConstructComponent) => {
@@ -132,12 +143,12 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
                             onSelect={handleInsertItemSelected}
                             onChangeWithObject={handleInsertAutoCompleteChange}
                         />
-                        <a href='#' onClick={(e) => {e.preventDefault(); setInsertAtIndex(null)}} title='Cancel insert'>
+                        <a href='#' onClick={handleCancelInsert} title='Cancel insert'>
                             <i className='fa fa-times' aria-hidden='true'/>
                         </a>
                     </div>
                 ) : (
-                    <a href='#' onClick={(e) => {e.preventDefault(); setInsertAtIndex(index)}} title='Insert component here'>
+                    <a href='#' onClick={(e) => {e.preventDefault(); setPreInsertItems([...rcUnitItems]); setInsertAtIndex(index)}} title='Insert component here'>
                         <i className='fa fa-plus-circle' aria-hidden='true' style={{color: '#5cb85c', fontSize: '14px'}}/>
                     </a>
                 )}
