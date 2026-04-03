@@ -353,6 +353,8 @@ public interface MarkerRepository {
      */
     List<MarkerType> getAllMarkerTypes();
 
+    String convertMarkerType(String oldZdbId, String newType);
+
     /**
      * Retrieve all gene ids of genes that have a SwissProt external note.
      *
