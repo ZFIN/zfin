@@ -49,6 +49,7 @@ public class AntibodySearchController {
         return formBean;
     }
 
+    @RequiresCaptcha
     @RequestMapping("/search")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody Search");
