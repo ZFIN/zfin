@@ -35,6 +35,7 @@ public class MarkerSearchController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
+    @RequiresCaptcha
     @RequestMapping(value = "/search")
     public String search(Model model) {
 
