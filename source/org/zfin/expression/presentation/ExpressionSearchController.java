@@ -73,6 +73,7 @@ public class ExpressionSearchController {
         return criteria;
     }
 
+    @RequiresCaptcha
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
