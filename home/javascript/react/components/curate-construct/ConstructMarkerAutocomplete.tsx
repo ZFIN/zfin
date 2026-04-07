@@ -188,7 +188,7 @@ function ConstructMarkerAutocomplete({onSelect, onChange, onChangeWithObject}: C
                     ))}
                 </ul>
             )}
-            <button onClick={handleFreeTextAdded} disabled={shouldDisableAddButton()}>+</button>
+            <button onClick={handleFreeTextAdded} disabled={shouldDisableAddButton()}><i className='fa fa-check' aria-hidden='true'/></button>
         </>
     );
 }

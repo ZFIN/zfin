@@ -70,8 +70,12 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
 
             return [...state.selectedConstruct.cassettes, stagedCassette];
         } else if (state.selectedConstruct.editCassetteMode) {
-            //ignore the staged cassette if we are editing a cassette
-            return state.selectedConstruct.cassettes;
+            const stagedCassette = {...state.stagedCassette};
+            stagedCassette.coding = normalizeConstructComponents(stagedCassette.coding);
+            stagedCassette.promoter = normalizeConstructComponents(stagedCassette.promoter);
+            const updatedCassettes = [...state.selectedConstruct.cassettes];
+            updatedCassettes[state.selectedConstruct.editCassetteIndex] = stagedCassette;
+            return updatedCassettes;
         } else {
             return state.selectedConstruct.cassettes;
         }
