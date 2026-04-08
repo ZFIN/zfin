@@ -616,7 +616,7 @@
 /lib/Java/ontologies/robot-cleaned.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/tomcat/bin/tomcat-juli-extra.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/tomcat/lib/tomcat-juli-adapters.jar filter=lfs diff=lfs merge=lfs -text
-/server_apps/jenkins/jenkins-2.528.3.war filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/jenkins-2.541.3.war filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/antisamy-markup-formatter.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/apache-httpcomponents-client-4-api.jpi filter=lfs diff=lfs merge=lfs -text
@@ -646,6 +646,7 @@
 /server_apps/jenkins/plugins/instance-identity.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ionicons-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/jackson2-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/jackson3-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/jakarta-activation-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/jakarta-mail-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/jakarta-xml-bind-api.jpi filter=lfs diff=lfs merge=lfs -text
@@ -677,7 +678,9 @@
 /server_apps/jenkins/plugins/prism-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/scm-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/script-security.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/simple-queue.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/snakeyaml-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/snakeyaml-engine-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ssh-credentials.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/sshd.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/structs.jpi filter=lfs diff=lfs merge=lfs -text
@@ -685,6 +688,7 @@
 /server_apps/jenkins/plugins/token-macro.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/trilead-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/variant.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/woodstox-core-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-cps.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-job.jpi filter=lfs diff=lfs merge=lfs -text
