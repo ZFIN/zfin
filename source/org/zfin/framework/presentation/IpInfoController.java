@@ -3,6 +3,7 @@ package org.zfin.framework.presentation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.zfin.infrastructure.service.RequestService;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -21,7 +22,7 @@ public class IpInfoController {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
         String xRealIp = request.getHeader("X-Real-IP");
 
-        result.put("clientIp", resolveClientIp(request));
+        result.put("clientIp", RequestService.resolveClientIp(request));
         result.put("remoteAddr", request.getRemoteAddr());
         result.put("remoteHost", request.getRemoteHost());
         result.put("remotePort", request.getRemotePort());
@@ -59,16 +60,4 @@ public class IpInfoController {
         return result;
     }
 
-    private String resolveClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            // First IP in the chain is the original client
-            return xForwardedFor.split(",")[0].trim();
-        }
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty()) {
-            return xRealIp;
-        }
-        return request.getRemoteAddr();
-    }
 }

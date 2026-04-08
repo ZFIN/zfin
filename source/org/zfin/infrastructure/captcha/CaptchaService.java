@@ -6,9 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.util.SubnetUtils;
 import org.springframework.web.util.WebUtils;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,8 +21,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Optional;
 
-import static org.zfin.infrastructure.service.RequestService.getCurrentRequest;
-import static org.zfin.infrastructure.service.RequestService.getCurrentResponse;
+import static org.zfin.infrastructure.service.RequestService.*;
 import static org.zfin.profile.service.ProfileService.isLoggedIn;
 
 @Log4j2
@@ -89,6 +90,9 @@ public class CaptchaService {
             return Optional.empty();
         }
         if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
+            return Optional.empty();
+        }
+        if (isClientIpBypassed(request)) {
             return Optional.empty();
         }
         if (isSuccessfulCaptchaToken(request)) {
@@ -195,5 +199,33 @@ public class CaptchaService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Check if the client IP is within one of the configured CAPTCHA bypass CIDR ranges.
+     */
+    static boolean isClientIpBypassed(HttpServletRequest request) {
+        String bypassRanges = ZfinPropertiesEnum.CAPTCHA_BYPASS_IP_RANGES.value();
+        if (StringUtils.isEmpty(bypassRanges)) {
+            return false;
+        }
+        String clientIp = resolveClientIp(request);
+        for (String cidr : bypassRanges.split(",")) {
+            cidr = cidr.trim();
+            if (StringUtils.isEmpty(cidr)) {
+                continue;
+            }
+            try {
+                SubnetUtils subnet = new SubnetUtils(cidr);
+                subnet.setInclusiveHostCount(true);
+                if (subnet.getInfo().isInRange(clientIp)) {
+                    log.debug("Client IP {} matched bypass range {}", clientIp, cidr);
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid CIDR in CAPTCHA_BYPASS_IP_RANGES: {}", cidr, e);
+            }
+        }
+        return false;
     }
 }
