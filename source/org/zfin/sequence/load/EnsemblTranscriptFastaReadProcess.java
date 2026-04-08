@@ -186,6 +186,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
               || bioType.equals("antisense")
               || bioType.equals("transcribed_unprocessed_pseudogene")
               || bioType.equals("snoRNA")
+              || bioType.equals("Mt_rRNA")
               || bioType.equals("retained_intron"))) {
             if (bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
                 || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("sense_overlapping")) {
