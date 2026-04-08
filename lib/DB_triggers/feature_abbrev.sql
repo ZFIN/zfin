@@ -3,14 +3,7 @@ drop trigger if exists feature_abbrev_trigger on feature;
 create or replace function feature_abbrev()
 returns trigger as
 $BODY$
-
-declare feature_abbrev feature.feature_abbrev%TYPE := scrub_char(NEW.feature_abbrev);
-declare feature_abbrev_order feature.feature_abbrev_order%TYPE :=zero_pad(NEW.feature_abbrev_order);
-
 begin
-
-     NEW.feature_abbrev = feature_abbrev;
-     NEW.feature_abbrev_order = zero_pad(NEW.feature_abbrev);
 
      perform checkFeatureAbbrev(NEW.feature_zdb_id,
        		 		     NEW.feature_type, 
