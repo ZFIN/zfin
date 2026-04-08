@@ -54,35 +54,6 @@
         <antcall target="deploy-email-templates"/>
         <antcall target="copy-report-files"/>
         <antcall target="copy-validate-data-files"/>
-        <antcall target="extract-jenkins-cli-tool"/>
-    </target>
-
-    <target name="extract-jenkins-cli-tool">
-        <echo message="Extracting Jenkins CLI tool into: ${env.TARGETROOT}/utilities/bin/jenkins-cli.jar"/>
-        <mkdir dir="${env.TARGETROOT}/utilities/bin"/>
-
-        <!-- Extract the CLI jar from the Jenkins war file -->
-        <unzip src="/opt/jenkins/jenkins.war" dest="${env.TARGETROOT}/utilities" overwrite="true">
-            <patternset>
-                <include name="WEB-INF/lib/cli-*.jar"/>
-            </patternset>
-            <mapper type="flatten"/>
-        </unzip>
-
-        <!-- Rename the extracted file to a consistent name -->
-        <move tofile="${env.TARGETROOT}/utilities/bin/jenkins-cli.jar" overwrite="true">
-            <fileset dir="${env.TARGETROOT}/utilities" includes="cli-*.jar"/>
-        </move>
-
-        <!-- Add a simple wrapper script to make it easier to use the CLI tool.
-        Handles authentication and the Jenkins URL, so users can just run "jenkins-cli" with the appropriate arguments
-         -->
-        <echo file="${env.TARGETROOT}/utilities/bin/jenkins-cli" append="false"><![CDATA[#!/bin/bash
-SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
-INITIAL_ADMIN_PASSWORD=$(cat "$SCRIPTPATH/../../server_apps/jenkins/jenkins-home/secrets/initialAdminPassword")
-java -jar "$SCRIPTPATH/jenkins-cli.jar" -auth admin:$INITIAL_ADMIN_PASSWORD -s http://jenkins:9499/jobs/ "$@"
-]]></echo>
-        <chmod perm="u+x" file="${env.TARGETROOT}/utilities/bin/jenkins-cli"/>
     </target>
 
     <target name="create-new-validatedata-job">
