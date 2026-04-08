@@ -15,7 +15,9 @@ USER gradle
 # http://plugins.jenkins.io/nested-view/releases/#version_1.24
 RUN touch /home/gradle/.nestedViewsSearch
 
-ADD --checksum=sha256:0000addfa8722963164137a4e0e60abc227d9d60710c4deb19481f9a751cf512 https://updates.jenkins.io/download/war/2.541.3/jenkins.war /opt/jenkins/jenkins-2.541.3.war
+ADD --chown=gradle:gradle \
+    --checksum=sha256:0000addfa8722963164137a4e0e60abc227d9d60710c4deb19481f9a751cf512 \
+     https://updates.jenkins.io/download/war/2.541.3/jenkins.war /opt/jenkins/jenkins-2.541.3.war
 
 CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang=ALL-UNNAMED \
