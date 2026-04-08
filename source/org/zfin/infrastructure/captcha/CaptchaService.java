@@ -10,7 +10,9 @@ import org.apache.commons.net.util.SubnetUtils;
 import org.springframework.web.util.WebUtils;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
+import org.zfin.properties.ZfinDatabaseProperty;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -203,14 +205,28 @@ public class CaptchaService {
 
     /**
      * Check if the client IP is within one of the configured CAPTCHA bypass CIDR ranges.
+     * Checks both the file-based property (CAPTCHA_BYPASS_IP_RANGES) and the database
+     * property (MORE_CAPTCHA_BYPASS_IP_RANGES).
      */
     static boolean isClientIpBypassed(HttpServletRequest request) {
-        String bypassRanges = ZfinPropertiesEnum.CAPTCHA_BYPASS_IP_RANGES.value();
-        if (StringUtils.isEmpty(bypassRanges)) {
+        String clientIp = resolveClientIp(request);
+
+        // Check file-based config
+        if (isIpInCidrList(clientIp, ZfinPropertiesEnum.CAPTCHA_BYPASS_IP_RANGES.value())) {
+            return true;
+        }
+
+        // Check database config
+        String dbRanges = RepositoryFactory.getInfrastructureRepository()
+                .getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName.MORE_CAPTCHA_BYPASS_IP_RANGES);
+        return isIpInCidrList(clientIp, dbRanges);
+    }
+
+    private static boolean isIpInCidrList(String clientIp, String cidrList) {
+        if (StringUtils.isEmpty(cidrList)) {
             return false;
         }
-        String clientIp = resolveClientIp(request);
-        for (String cidr : bypassRanges.split(",")) {
+        for (String cidr : cidrList.split(",")) {
             cidr = cidr.trim();
             if (StringUtils.isEmpty(cidr)) {
                 continue;
@@ -223,7 +239,7 @@ public class CaptchaService {
                     return true;
                 }
             } catch (IllegalArgumentException e) {
-                log.warn("Invalid CIDR in CAPTCHA_BYPASS_IP_RANGES: {}", cidr, e);
+                log.warn("Invalid CIDR in captcha bypass IP ranges: {}", cidr, e);
             }
         }
         return false;
