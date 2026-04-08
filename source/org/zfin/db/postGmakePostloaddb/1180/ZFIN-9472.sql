@@ -199,6 +199,13 @@ values ('ENSDART00000144692', 'ZDB-TSCRIPT-091110-923');
 insert into ensembl_transcript_add
 values ('ENSDART00000145638', 'ZDB-TSCRIPT-091110-537');
 
+insert into ensembl_transcript_add
+values ('ENSDART00000141456', 'ZDB-TSCRIPT-090929-13766');
+
+update transcript
+set tscript_ensdart_id = 'ENSDART00000141456'
+where tscript_mrkr_zdb_id = 'ZDB-TSCRIPT-090929-13766';
+
 -- Delete transcript record ZDB-TSCRIPT-240503-1485
 delete from db_link where dblink_linked_recid = 'ZDB-TSCRIPT-240503-1485';
 delete from marker_relationship where mrel_mrkr_2_zdb_id = 'ZDB-TSCRIPT-240503-1485';
@@ -214,7 +221,7 @@ select merge_transcripts('ZDB-TSCRIPT-141209-1786', 'ZDB-TSCRIPT-241211-1050');
 select merge_transcripts('ZDB-TSCRIPT-141209-3166', 'ZDB-TSCRIPT-240503-6896');
 select merge_transcripts('ZDB-TSCRIPT-160623-304', 'ZDB-TSCRIPT-241211-788');
 select merge_transcripts('ZDB-TSCRIPT-090929-14096', 'ZDB-TSCRIPT-241211-2232');
-select merge_transcripts('ZDB-TSCRIPT-090929-13766', 'ZDB-TSCRIPT-240503-6767');
+
 select merge_transcripts('ZDB-TSCRIPT-090929-10488', 'ZDB-TSCRIPT-241211-2527');
 select merge_transcripts('ZDB-TSCRIPT-090929-1339', 'ZDB-TSCRIPT-241211-1379');
 select merge_transcripts('ZDB-TSCRIPT-100915-576', 'ZDB-TSCRIPT-241211-212');
