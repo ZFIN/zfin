@@ -42,7 +42,7 @@ END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER feature_before_trigger
-BEFORE INSERT ON feature
+BEFORE INSERT OR UPDATE ON feature
 FOR EACH ROW EXECUTE PROCEDURE feature_before();
 
 CREATE TRIGGER feature_after_trigger
