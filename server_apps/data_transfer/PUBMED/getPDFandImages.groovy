@@ -332,6 +332,18 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
             }
             println("Found ${s3Files.size()} files in S3 for $pmcId: ${s3Files.collect { it.split('/').last() }}")
 
+            // Check if S3 has any downloadable files (images or PDFs)
+            def hasDownloadableFiles = s3Files.any { key ->
+                def ext = key.split('\\.').last().toLowerCase()
+                DOWNLOADABLE_EXTENSIONS.contains(ext)
+            }
+            if (!hasDownloadableFiles) {
+                println("No downloadable files (images/PDFs) in S3 for $pmcId — skipping")
+                recordNonOpenPub(pmcId, zdbId)
+                processedCount++
+                continue
+            }
+
             // Download all files from S3 (PDF, images, etc.)
             downloadS3FilesForArticle(s3Files, zdbId, pubYear)
             PUBS_WITH_PDFS_TO_UPDATE.add("s3://${s3Files[0].split('/')[0]}")
