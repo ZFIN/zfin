@@ -7,6 +7,7 @@
  * If publication ZDB ID(s) are provided as command line arguments, it will only check for those.
  */
 
+import groovy.transform.Field
 import groovy.io.FileType
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
@@ -89,7 +90,7 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 }
 
-private static final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
+@Field final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
 
 def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear) {
     def timeStart = new Date()
@@ -240,6 +241,11 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
             // Only append .jpg if the filename doesn't already have an extension
             if (!FilenameUtils.getExtension(image)) {
                 image = image + ".jpg"
+            }
+            File imageFile = new File(imageFilePath, image)
+            if (!imageFile.exists()) {
+                println("Skipping figure '$image' for $zdbId — file not found on disk (not available in S3)")
+                return
             }
             println (image)
             String fileNameNoExtension = FilenameUtils.removeExtension(image)
