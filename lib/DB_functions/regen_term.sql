@@ -61,6 +61,10 @@ create or replace function regen_term()
     -- Swap: rename old out, rename new in.
     -- The exclusive lock window is just these two fast DDL renames.
     -- Old table is renamed with a timestamp, truncated, and left for later cleanup.
+    --
+    -- Use a short lock_timeout with retries to avoid blocking readers for
+    -- extended periods. If the rename can't acquire AccessExclusiveLock
+    -- within the timeout, we back off briefly and retry.
     -- -------------------------------------------------------------------------
 
       IF EXISTS (SELECT 1 FROM information_schema.tables
@@ -70,7 +74,27 @@ create or replace function regen_term()
           old_table_name := old_table_name || '_' || substring(md5(random()::text), 1, 4);
 
           raise notice 'regen_term: swapping old table to %', old_table_name;
-          EXECUTE 'ALTER TABLE all_term_contains RENAME TO ' || old_table_name;
+
+          -- Retry loop: try to acquire lock with short timeout, back off on failure
+          FOR i IN 1..30 LOOP
+              BEGIN
+                  SET LOCAL lock_timeout = '1s';
+                  EXECUTE 'ALTER TABLE all_term_contains RENAME TO ' || old_table_name;
+                  RESET lock_timeout;
+                  EXIT; -- success, leave loop
+              EXCEPTION WHEN lock_not_available THEN
+                  RESET lock_timeout;
+                  raise notice 'regen_term: lock not available, retry % of 30', i;
+                  PERFORM pg_sleep(2);
+              END;
+          END LOOP;
+
+          -- Verify the rename succeeded
+          IF EXISTS (SELECT 1 FROM information_schema.tables
+                     WHERE table_name = 'all_term_contains' AND table_schema = 'public') THEN
+              raise exception 'regen_term: failed to rename all_term_contains after 30 retries';
+          END IF;
+
           EXECUTE 'TRUNCATE ' || old_table_name;
 
           EXECUTE 'ALTER INDEX IF EXISTS all_term_contains_primary_key_index RENAME TO '
