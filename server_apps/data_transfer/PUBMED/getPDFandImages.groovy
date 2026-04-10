@@ -325,8 +325,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
             // List available files from the PMC Open Access S3 bucket
             def s3Files = PubmedUtils.listS3Files(pmcId)
             if (s3Files.isEmpty()) {
-                println("No files found in S3 for $pmcId")
-                recordNonOpenPub(pmcId, zdbId)
+                println("No files found in S3 for $pmcId — not in open access subset, skipping")
                 processedCount++
                 continue
             }
@@ -338,8 +337,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
                 DOWNLOADABLE_EXTENSIONS.contains(ext)
             }
             if (!hasDownloadableFiles) {
-                println("No downloadable files (images/PDFs) in S3 for $pmcId — skipping")
-                recordNonOpenPub(pmcId, zdbId)
+                println("No downloadable files (images/PDFs) in S3 for $pmcId — not in open access subset, skipping")
                 processedCount++
                 continue
             }
