@@ -1496,7 +1496,7 @@ task npmInstall(type: Exec) {
     description = 'Install npm dependencies'
     group = 'build'
 
-    commandLine 'npm', 'install'
+    commandLine 'npm', 'ci'
 
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
