@@ -872,7 +872,19 @@ public class HibernateMutantRepository implements MutantRepository {
             basicPhenos.add(basicPheno);
         }
 
-        return basicPhenos;
+        // Deduplicate: same objectId + phenotypeStatement + publication + primaryGeneticEntityIDs
+        List<BasicPhenotypeDTO> dedupedPhenos = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (BasicPhenotypeDTO pheno : basicPhenos) {
+            String key = pheno.getObjectId() + "|" + pheno.getPhenotypeStatement() + "|"
+                + (pheno.getEvidence() != null ? pheno.getEvidence().getPublicationId() : "") + "|"
+                + (pheno.getPrimaryGeneticEntityIDs() != null ? pheno.getPrimaryGeneticEntityIDs().toString() : "");
+            if (seen.add(key)) {
+                dedupedPhenos.add(pheno);
+            }
+        }
+
+        return dedupedPhenos;
     }
 
     @SuppressWarnings("unchecked")
