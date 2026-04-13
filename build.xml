@@ -507,7 +507,7 @@
 
     <target name="npmInstall">
         <exec executable="npm" failonerror="true">
-            <arg value="install"/>
+            <arg value="ci"/>
         </exec>
     </target>
 
