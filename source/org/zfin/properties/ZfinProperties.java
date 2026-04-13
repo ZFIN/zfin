@@ -235,6 +235,7 @@ public final class ZfinProperties {
                 // Property exists in file but not in enum - log warning but don't fail
                 logger.warn("Property '{}' found in {} but not defined in ZfinPropertiesEnum",
                            key, propertiesFileName);
+                logger.warn("You can rebuild ZfinPropertiesEnum with `ant rebuildProperties && gradle generatePropertiesEnum`");
             }
         }
 

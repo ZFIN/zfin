@@ -2,7 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import org.fusesource.restygwt.client.DirectRestService;
 import org.fusesource.restygwt.client.Options;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;

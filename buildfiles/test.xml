@@ -319,20 +319,6 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="xml"/>
             </test>
 
-            <test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}"
-                  haltonerror="false" haltonfailure="false"
-                  failureproperty="smoke.failure">
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-
-            <test name="org.zfin.SmokeTestsReadWrite" todir="${test.reports.dir}" outfile="${smokeTestFileReadWrite}"
-                  haltonerror="false" haltonfailure="false"
-                  failureproperty="smoke.failure">
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-
             <classpath refid="unittest.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
@@ -388,38 +374,16 @@ test(s) need to be run before committing changes or pushing files to production 
         </groovyc>
     </target>
 
-    <target name="smoke" depends="compile,build-tests" description="Runs database and unit tests quietly">
-
-        <junit fork="false"
-               printsummary="yes"
-               haltonfailure="yes"
-               haltonerror="yes"
-               maxmemory="2024m"
-               showoutput="false">
-	  
-<test name="org.zfin.SmokeTests" todir="${test.reports.dir}" outfile="${smokeTestFile}"
-                  haltonerror="false" haltonfailure="false"
-                  failureproperty="smoke.failure">
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-
-<test name="org.zfin.SmokeTestsReadWrite" todir="${test.reports.dir}" outfile="${smokeTestFileReadWrite}"
-                  haltonerror="false" haltonfailure="false"
-                  failureproperty="smoke.failure">
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-
-            <classpath refid="combined.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <!-- <arg value="${junit.test.class.name}"/>-->
-
-            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
-            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-        </junit>
-	</target>
+    <target name="smoke" depends="compile,build-tests" description="Runs smoke tests via Gradle">
+        <exec executable="gradle" failonerror="true">
+            <arg value="test" />
+            <arg value="-Psuite=SmokeTests" />
+        </exec>
+        <exec executable="gradle" failonerror="true">
+            <arg value="test" />
+            <arg value="-Psuite=SmokeTestsReadWrite" />
+        </exec>
+    </target>
     <target name="testsingleclass" depends="build-tests" description="Runs a database tests for a single class specified in this target" >
         <java fork="false" classname="org.zfin.ontology.OntologySerializationTest" taskname="junit" failonerror="true">
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
@@ -493,96 +457,50 @@ test(s) need to be run before committing changes or pushing files to production 
         </java>
     </target>
 
-    <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
-    <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
     <target name="productionSmokeTests" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
         <sleep minutes="1"/>
-        <junit fork="true"
-               printsummary="yes"
-               haltonfailure="false"
-               haltonerror="false"
-               showoutput="true"
-               maxmemory="1024m"
-                >
-            <!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="combined.classpath"/>
-            <jvmarg value="-Dlog4j2.configurationFile=test/log4j2.xml"/>
-            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
-
-            <test name="org.zfin.ProductionSmokeTests" outfile="${smokeTestFile}"
-                  todir="${test.reports.dir}"
-                  haltonerror="false" haltonfailure="true"
-                  failureproperty="smoke.failure" >
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-        </junit>
+        <exec executable="gradle" failonerror="false" resultproperty="smoke.exitcode">
+            <arg value="test" />
+            <arg value="-Psuite=ProductionSmokeTests" />
+        </exec>
+        <condition property="smoke.failure">
+            <not><equals arg1="${smoke.exitcode}" arg2="0"/></not>
+        </condition>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestFile}"/>
         </antcall>
+        <fail message="Production smoke tests failed" if="smoke.failure"/>
     </target>
 
     <!-- getting a consistent name without having to do a full refactor... -->
     <target name="runSmokeTests" depends="smokeTests"/>
 
-    <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
-    <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
     <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
-
-        <junit fork="true"
-               printsummary="yes"
-               haltonfailure="false"
-               haltonerror="false"
-               showoutput="true"
-               maxmemory="2024m"
-               >
-<!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="unittest.classpath"/>
-            <sysproperty key="log4j.configurationFile" value="${web-inf.dir}/log4j2.xml"/>
-            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
-            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <jvmarg value="-Xverify:none"/> <!-- fix issue with smoke tests and "Illegal use of nonvirtual function call" and spock -->
-            <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
-            <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
-            <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
-                  todir="${test.reports.dir}"
-                  haltonerror="false" haltonfailure="true"
-                  failureproperty="smoke.failure" >
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-        </junit>
+        <exec executable="gradle" failonerror="false" resultproperty="smoke.exitcode">
+            <arg value="test" />
+            <arg value="-Psuite=SmokeTests" />
+        </exec>
+        <condition property="smoke.failure">
+            <not><equals arg1="${smoke.exitcode}" arg2="0"/></not>
+        </condition>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestFile}"/>
         </antcall>
+        <fail message="Smoke tests failed" if="smoke.failure"/>
     </target>
 
     <target name="smokeTestsReadWrite" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
-
-        <junit fork="false"
-               printsummary="yes"
-               haltonfailure="false"
-               haltonerror="false"
-               showoutput="true"
-               maxmemory="2024m"
-               >
-<!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="combined.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
-            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <test name="org.zfin.SmokeTestsReadWrite" outfile="${smokeTestFileReadWrite}"
-                  todir="${test.reports.dir}"
-                  haltonerror="false" haltonfailure="true"
-                  failureproperty="smoke.failure" >
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-        </junit>
+        <exec executable="gradle" failonerror="false" resultproperty="smokerw.exitcode">
+            <arg value="test" />
+            <arg value="-Psuite=SmokeTestsReadWrite" />
+        </exec>
+        <condition property="smoke.failure">
+            <not><equals arg1="${smokerw.exitcode}" arg2="0"/></not>
+        </condition>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestReadWriteFile}"/>
         </antcall>
+        <fail message="Smoke read-write tests failed" if="smoke.failure"/>
     </target>
 
     <target name="serviceTests" depends="build-tests" description="Unit tests for DataExchange module">

@@ -3,7 +3,7 @@ package org.zfin.gwt.root.dto;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import org.zfin.framework.api.View;
-import org.zfin.publication.Publication;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
