@@ -29,20 +29,23 @@ public class PriorityTag {
         @JsonProperty("indexing_priority_id")
         private Long indexingPriorityId;
 
-        @JsonProperty("indexing_priority")
-        private String indexingPriority;
+        @JsonProperty("predicted_indexing_priority")
+        private String predictedIndexingPriority;
+
+        @JsonProperty("predicted_indexing_priority_name")
+        private String predictedIndexingPriorityName;
+
+        @JsonProperty("curator_indexing_priority")
+        private String curatorIndexingPriority;
+
+        @JsonProperty("curator_indexing_priority_name")
+        private String curatorIndexingPriorityName;
 
         @JsonProperty("confidence_score")
         private Double confidenceScore;
 
-        @JsonProperty("validation_by_biocurator")
-        private String validationByBiocurator;
-
         @JsonProperty("date_updated")
         private LocalDateTime dateUpdated;
-
-        @JsonProperty("source_id")
-        private Long sourceId;
 
         @JsonProperty("reference_curie")
         private String referenceCurie;
@@ -59,12 +62,13 @@ public class PriorityTag {
         @JsonProperty("updated_by")
         private String updatedBy;
 
-        @JsonProperty("indexing_priority_name")
-        private String indexingPriorityName;
+        public String getIndexingPriority() {
+            return curatorIndexingPriority != null ? curatorIndexingPriority : predictedIndexingPriority;
+        }
 
         public String getPriority() {
-            return indexingPriority.substring(indexingPriority.length() - 1);
-
+            String priority = getIndexingPriority();
+            return priority.substring(priority.length() - 1);
         }
     }
 }
