@@ -20,7 +20,8 @@ public class TokenStorage implements TokenStorageInterface {
         ALLIANCE_API_TOKEN("alliance-api-token.txt"),
         NCBI_API_TOKEN("ncbi-token.txt"),
         OMIM_API_TOKEN("omim-token.txt"),
-        ADDGENE_API_TOKEN("addgene-token.txt");
+        ADDGENE_API_TOKEN("addgene-token.txt"),
+        ALLIANCE_LITERATURE_API_TOKEN("alliance-literature-api-token.txt");
 
         private final String filename;
 
