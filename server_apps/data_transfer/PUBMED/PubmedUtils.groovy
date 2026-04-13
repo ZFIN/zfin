@@ -70,7 +70,9 @@ class PubmedUtils {
         long delay = INITIAL_RETRY_DELAY_MS
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
-                println("[HTTP] $method $url" + (postBody != null ? " (with POST body)" : ""))
+                if (attempt > 1) {
+                    println("[HTTP Retry] $method $url (attempt $attempt/$MAX_RETRIES)")
+                }
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection()
                 connection.setRequestMethod(method)
                 connection.setConnectTimeout(30000)

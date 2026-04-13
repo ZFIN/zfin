@@ -7,6 +7,7 @@
  * If publication ZDB ID(s) are provided as command line arguments, it will only check for those.
  */
 
+import groovy.transform.Field
 import groovy.io.FileType
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
@@ -89,7 +90,7 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 }
 
-private static final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
+@Field final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
 
 def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear) {
     def timeStart = new Date()
@@ -104,13 +105,12 @@ def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear)
     keysToDownload.each { key ->
         def filename = key.split('/').last()
         def localPath = "$directoryPath/$filename"
-        println("Downloading S3: $key -> $localPath")
         PubmedUtils.downloadS3File(key, localPath)
     }
 
     def timeStop = new Date()
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println("S3 download duration for $zdbId: $duration (${keysToDownload.size()} files)")
+    println("  Downloaded ${keysToDownload.size()} files in $duration")
 }
 
 def recordPdfFromS3(String s3PdfKey, String pmcId, String zdbId, String pubYear) {
@@ -129,7 +129,7 @@ def recordPdfFromS3(String s3PdfKey, String pmcId, String zdbId, String pubYear)
         println("The file downloaded from S3 for $pmcId is not a PDF, it is a $mimetype. Deleting the file.")
         new File(expectedPath).delete()
     } else {
-        println("Successfully downloaded PDF from S3 for $pmcId")
+        println("  PDF: ${zdbId}.pdf")
         ADD_BASIC_PDFS_TO_DB.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|'))
     }
 }
@@ -142,6 +142,7 @@ def recordNonOpenPub(String pmcId, String zdbId) {
     }
     NON_OPEN_PUBS.append([pmcId, zdbId, ncbiUrl, zfinUrl].join(',') + "\n")
 }
+
 
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, String pubYear) {
     def article = pmcTextArticle.GetRecord.record.metadata.article
@@ -241,6 +242,11 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
             if (!FilenameUtils.getExtension(image)) {
                 image = image + ".jpg"
             }
+            File imageFile = new File(imageFilePath, image)
+            if (!imageFile.exists()) {
+                println("Skipping figure '$image' for $zdbId — file not found on disk (not available in S3)")
+                return
+            }
             println (image)
             String fileNameNoExtension = FilenameUtils.removeExtension(image)
             makeThumbnailAndMediumImage(image, fileNameNoExtension, zdbId, pubYear)
@@ -297,6 +303,9 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
 def fetchBundlesForExistingPubs(Map idsToGrab) {
 
     def failedIds = []
+    def skippedCount = 0
+    def downloadedCount = 0
+    def noPdfIds = []
     def processedCount = 0
 
     for (id in idsToGrab) {
@@ -314,17 +323,31 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
         }
 
         try {
-            println("Processing $pmcId for ZDB ID $zdbId")
-
             // List available files from the PMC Open Access S3 bucket
             def s3Files = PubmedUtils.listS3Files(pmcId)
             if (s3Files.isEmpty()) {
-                println("No files found in S3 for $pmcId")
-                recordNonOpenPub(pmcId, zdbId)
+                skippedCount++
                 processedCount++
                 continue
             }
-            println("Found ${s3Files.size()} files in S3 for $pmcId: ${s3Files.collect { it.split('/').last() }}")
+
+            // Check if S3 has any downloadable files (images or PDFs)
+            def hasDownloadableFiles = s3Files.any { key ->
+                def ext = key.split('\\.').last().toLowerCase()
+                DOWNLOADABLE_EXTENSIONS.contains(ext)
+            }
+            if (!hasDownloadableFiles) {
+                skippedCount++
+                processedCount++
+                continue
+            }
+
+            // This publication has downloadable files — log and process it
+            def downloadableFiles = s3Files.findAll { key ->
+                def ext = key.split('\\.').last().toLowerCase()
+                DOWNLOADABLE_EXTENSIONS.contains(ext)
+            }
+            println("Processing $pmcId ($zdbId): ${downloadableFiles.size()} downloadable files")
 
             // Download all files from S3 (PDF, images, etc.)
             downloadS3FilesForArticle(s3Files, zdbId, pubYear)
@@ -335,7 +358,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
             if (pdfKey) {
                 recordPdfFromS3(pdfKey, pmcId, zdbId, pubYear)
             } else {
-                println("No PDF available in S3 for $pmcId")
+                noPdfIds << [pmcId: pmcId, zdbId: zdbId]
                 recordNonOpenPub(pmcId, zdbId)
             }
 
@@ -343,6 +366,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
             def numericPmcId = pmcId.toString().replace("PMC", "")
             def fullTxt = PubmedUtils.getFullText(numericPmcId)
             processPMCText(fullTxt, zdbId, pmcId, pubYear)
+            downloadedCount++
 
         } catch (Exception e) {
             println("ERROR processing ${pmcId} (${zdbId}): ${e.message}")
@@ -357,11 +381,19 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
         }
     }
 
+    println("\n=== SUMMARY ===")
+    println("Total publications checked: ${idsToGrab.size()}")
+    println("Downloaded: $downloadedCount")
+    println("Skipped (not open access): $skippedCount")
     if (failedIds.size() > 0) {
-        println("\n=== FAILED PUBLICATIONS (${failedIds.size()}) ===")
-        failedIds.each { println("  ${it.pmcId} (${it.zdbId}): ${it.error}") }
-        println("===================================\n")
+        println("Failed: ${failedIds.size()}")
+        failedIds.each { println("  ERROR: ${it.pmcId} (${it.zdbId}): ${it.error}") }
     }
+    if (noPdfIds.size() > 0) {
+        println("WARNING — Open access but no PDF in S3 (${noPdfIds.size()}):")
+        noPdfIds.each { println("  ${it.pmcId} (${it.zdbId})") }
+    }
+    println("===============\n")
 }
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
@@ -406,10 +438,3 @@ loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ER
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadPubFiles.waitFor()
 
-if (NON_OPEN_PUBS.length() > 0) {
-    println("The following non-open access publications were not downloaded as PDFs:")
-    NON_OPEN_PUBS.eachLine { line ->
-        println(line)
-    }
-    System.exit(2)
-}
