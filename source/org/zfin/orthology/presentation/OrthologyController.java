@@ -38,7 +38,8 @@ public class OrthologyController {
                                        Model model) {
         Ortholog ortholog = getOrthologyRepository().getOrtholog(orthoID);
         if (ortholog == null) {
-            return LookupStrings.idNotFound(model, orthoID);
+            model.addAttribute(LookupStrings.ZDB_ID, orthoID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         EvidenceCode code = getOrthologyRepository().getEvidenceCode(evidenceCode);

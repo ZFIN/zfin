@@ -34,4 +34,8 @@ RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 
 USER zfishweb
 
-COPY ./postgresql-42.2.18.jar  /usr/local/tomcat/lib
+# The checksum is for the 42.7.8 version of the driver. If updating here, match it in the solr Dockerfile
+# and the build.gradle file (for the web app) as well. (Also update the checksum.)
+ADD --checksum=sha256:2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7 \
+    https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
+    /usr/local/tomcat/lib/postgresql-42.7.8.jar

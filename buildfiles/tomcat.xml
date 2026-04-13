@@ -141,9 +141,6 @@
         <copy todir="${tomcat-lib}">
             <fileset dir="${template-dir}/lib"/>
         </copy>
-        <copy todir="${tomcat-bin}">
-            <fileset dir="${template-dir}/bin"/>
-        </copy>
         <!--        Copy the conf files-->
         <copy todir="${tomcat-conf}">
             <fileset dir="${template-dir}/conf">
