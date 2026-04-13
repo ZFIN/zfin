@@ -296,6 +296,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro      
   metricbeat:
+    image: ghcr.io/zfin/zfin-metricbeat:${ZFIN_RELEASE}  
     build:
       context: ./metricbeat/
       args:
