@@ -13,23 +13,16 @@ interface DatabaseProperty {
     type: string;
 }
 
-interface FormState {
-    id: string;
-    name: string;
-    value: string;
-    type: string;
-}
-
 interface Message {
     type: 'success' | 'error';
     text: string;
 }
 
-const EMPTY_FORM: FormState = { id: '', name: '', value: '', type: '' };
+const EMPTY_FORM: DatabaseProperty = { id: 0, name: '', value: '', type: '' };
 
 const DatabaseProperties = () => {
     const { pending, rejected, value: properties, setValue: setProperties, refetch } = useFetch(API_URL);
-    const [form, setForm] = useState<FormState>(EMPTY_FORM);
+    const [form, setForm] = useState<DatabaseProperty>(EMPTY_FORM);
     const [editing, setEditing] = useState(false);
     const [message, setMessage] = useState<Message | null>(null);
 
@@ -43,12 +36,7 @@ const DatabaseProperties = () => {
     };
 
     const handleEdit = (prop: DatabaseProperty) => {
-        setForm({
-            id: String(prop.id),
-            name: prop.name || '',
-            value: prop.value || '',
-            type: prop.type || '',
-        });
+        setForm({ ...prop });
         setEditing(true);
     };
 
@@ -72,13 +60,13 @@ const DatabaseProperties = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const payload: Record<string, string | number> = {
+        const payload: Partial<DatabaseProperty> = {
             name: form.name,
             value: form.value,
             type: form.type,
         };
         if (form.id) {
-            payload.id = parseInt(form.id);
+            payload.id = form.id;
         }
         try {
             await http.post(API_URL, payload);
