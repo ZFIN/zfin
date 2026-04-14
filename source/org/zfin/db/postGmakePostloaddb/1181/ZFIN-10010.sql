@@ -17,9 +17,10 @@ SELECT
     COALESCE(sfclg_assembly,           '~~NULL~~')           as sfclg_assembly,
     COALESCE(sfclg_gbrowse_track,      '~~NULL~~')           as sfclg_gbrowse_track,
     COALESCE(sfclg_evidence_code,      '~~NULL~~')           as sfclg_evidence_code,
-    COALESCE(sfclg_strand,             '~')                  as sfclg_strand,
-    COALESCE(sfclg_date_created,       '1970-01-01 00:00:00+00'::timestamptz) as sfclg_date_created,
-    COUNT(*) as cnt
+    COALESCE(sfclg_strand,             '~')                  as sfclg_strand
+    COUNT(*) as cnt,
+    string_agg(sfclg_pk_id::text, '; ') as pk_ids,
+    string_agg(sfclg_date_created::text, '; ') as date_createds
 FROM sequence_feature_chromosome_location_generated
 GROUP BY
     sfclg_chromosome,
@@ -34,8 +35,7 @@ GROUP BY
     COALESCE(sfclg_assembly,           '~~NULL~~'),
     COALESCE(sfclg_gbrowse_track,      '~~NULL~~'),
     COALESCE(sfclg_evidence_code,      '~~NULL~~'),
-    COALESCE(sfclg_strand,             '~'),
-    COALESCE(sfclg_date_created,       '1970-01-01 00:00:00+00'::timestamptz)
+    COALESCE(sfclg_strand,             '~')
 HAVING COUNT(*) > 1
 ORDER BY cnt DESC;
 
@@ -61,8 +61,7 @@ WHERE sfclg_pk_id IN (
                        COALESCE(sfclg_assembly,           '~~NULL~~'),
                        COALESCE(sfclg_gbrowse_track,      '~~NULL~~'),
                        COALESCE(sfclg_evidence_code,      '~~NULL~~'),
-                       COALESCE(sfclg_strand,             '~'),
-                       COALESCE(sfclg_date_created,       '1970-01-01 00:00:00+00'::timestamptz)
+                       COALESCE(sfclg_strand,             '~')
                    ORDER BY sfclg_pk_id
                ) AS rn
         FROM sequence_feature_chromosome_location_generated
@@ -86,8 +85,7 @@ UNIQUE NULLS NOT DISTINCT (
     sfclg_assembly,
     sfclg_gbrowse_track,
     sfclg_evidence_code,
-    sfclg_strand,
-    sfclg_date_created
+    sfclg_strand
 );
 
 
