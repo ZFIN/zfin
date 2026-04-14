@@ -135,7 +135,7 @@ const DatabaseProperties = () => {
                         required
                     >
                         <option value=''>-- select --</option>
-                        {(keyNames || []).map(k => <option key={k} value={k}>{k}</option>)}
+                        {(keyNames || []).filter(k => editing || !(properties as DatabaseProperty[]).some(p => p.name === k)).map(k => <option key={k} value={k}>{k}</option>)}
                     </select>
                 </div>
                 <div className='form-group' style={{ marginRight: 10 }}>
