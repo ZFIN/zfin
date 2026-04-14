@@ -22,6 +22,7 @@ const EMPTY_FORM: DatabaseProperty = { id: 0, name: '', value: '', type: 'string
 
 const DatabaseProperties = () => {
     const { pending, rejected, value: properties, setValue: setProperties, refetch } = useFetch(API_URL);
+    const { value: keyNames } = useFetch(`${API_URL}/key-names`);
     const [form, setForm] = useState<DatabaseProperty>(EMPTY_FORM);
     const [editing, setEditing] = useState(false);
     const [message, setMessage] = useState<Message | null>(null);
@@ -31,7 +32,7 @@ const DatabaseProperties = () => {
         setTimeout(() => setMessage(null), 3000);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -124,8 +125,7 @@ const DatabaseProperties = () => {
             <form className='form-inline' style={{ marginBottom: 20 }} onSubmit={handleSubmit}>
                 <div className='form-group' style={{ marginRight: 10 }}>
                     <label htmlFor='form-name' style={{ marginRight: 5 }}>Name</label>
-                    <input
-                        type='text'
+                    <select
                         className='form-control'
                         id='form-name'
                         name='name'
@@ -133,7 +133,10 @@ const DatabaseProperties = () => {
                         onChange={handleChange}
                         disabled={editing}
                         required
-                    />
+                    >
+                        <option value=''>-- select --</option>
+                        {(keyNames || []).map(k => <option key={k} value={k}>{k}</option>)}
+                    </select>
                 </div>
                 <div className='form-group' style={{ marginRight: 10 }}>
                     <label htmlFor='form-value' style={{ marginRight: 5 }}>Value</label>

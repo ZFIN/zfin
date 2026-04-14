@@ -7,6 +7,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.properties.ZfinDatabaseProperty;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -19,6 +20,13 @@ public class DatabasePropertyController {
     @GetMapping("/home")
     public ModelAndView homePage() {
         return new ModelAndView("dev-tools/database-properties");
+    }
+
+    @GetMapping("/key-names")
+    public List<String> getKeyNames() {
+        return Arrays.stream(ZfinDatabaseProperty.KeyName.values())
+                .map(Enum::name)
+                .toList();
     }
 
     @GetMapping
