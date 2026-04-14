@@ -1,7 +1,10 @@
 package org.zfin.infrastructure;
 
 import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.ParamDef;
 import org.zfin.publication.Publication;
 
 import jakarta.persistence.*;
@@ -15,6 +18,10 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "data_alias")
+@FilterDef(name = "noSecondaryAliasesForAO",
+        parameters = @ParamDef(name = "group", type = String.class))
+@Filter(name = "noSecondaryAliasesForAO",
+        condition = "dalias_group_id not in (select ag.aliasgrp_pk_id from alias_group ag where ag.aliasgrp_name = :group)")
 @DiscriminatorFormula("CASE get_obj_type(dalias_data_zdb_id)" +
         "                                    WHEN 'ANAT' THEN 'Anatom'" +
         "                                    WHEN 'GENE' THEN 'Marker'" +

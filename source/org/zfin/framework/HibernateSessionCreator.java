@@ -125,8 +125,7 @@ public class HibernateSessionCreator {
         if (hibernateConfDir == null || !hibernateConfDir.exists()) {
             // a bit hacky...
             ClassLoader cl = HibernateSessionCreator.class.getClassLoader();
-            String directory = cl.getResource("org/zfin/filters.hbm.xml").toString();
-            directory = directory.substring(0, directory.lastIndexOf("/"));
+            String directory = cl.getResource("org/zfin").toString();
             directory = directory.replace("file:/", "/");
             hibernateConfDir = FileUtil.createFileFromStrings(directory);
         }
