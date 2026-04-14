@@ -23,11 +23,31 @@ WHERE
 ORDER BY
     pth_pub_zdb_id DESC, 2, 3, 4, 5, 6, 7, 8, 9;
 
+-- Reset curation topics to blank for publications about to be reopened
+-- (mirrors the resetCurationTopics behavior from manual reopen)
+UPDATE curation
+SET cur_opened_date = null,
+    cur_closed_date = null,
+    cur_data_found = 'f'
+WHERE cur_pub_zdb_id IN (
+    SELECT DISTINCT pth_pub_zdb_id
+    FROM pub_tracking_history pth
+             JOIN pub_tracking_status pts ON pth_status_id = pts_pk_id
+             JOIN publication_file pf ON pf_pub_zdb_id = pth_pub_zdb_id
+             JOIN publication pub ON pth_pub_zdb_id = pub.zdb_id
+    WHERE pth_status_is_current
+      AND pts_status_display = 'Closed, No PDF'
+      AND pf_file_type_id = 1
+      AND pf_date_entered > pth_status_insert_date
+      AND NOT pub_is_indexed
+)
+AND cur_topic != 'Linked Authors';
+
 -- Reopen matching publications by setting them to 'Ready for Processing'
 INSERT INTO pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_set_by, pth_status_insert_date)
 SELECT DISTINCT pth_pub_zdb_id,
        (SELECT pts_pk_id FROM pub_tracking_status WHERE pts_status_display = 'Ready for Processing'),
-       'ZDB-PERS-060413-1',
+       'ZDB-PERS-251216-1',
        now()
 FROM pub_tracking_history pth
          JOIN pub_tracking_status pts ON pth_status_id = pts_pk_id
