@@ -100,6 +100,8 @@ BEGIN
                  ('fpprotein_efg', 'fe_mrkr_zdb_id'),
                  ('gene_description', 'gd_gene_zdb_id'),
                  ('genedom_family_member', 'gfammem_mrkr_zdb_id'),
+                 ('linkage_membership', 'lnkgm_member_1_zdb_id'),
+                 ('linkage_membership', 'lnkgm_member_2_zdb_id'),
                  ('genotype_figure_fast_search', 'gffs_morph_zdb_id'),
                  ('marker_annotation_status', 'mas_mrkr_zdb_id'),
                  ('marker_assembly', 'ma_mrkr_zdb_id'),
