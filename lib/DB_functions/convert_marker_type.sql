@@ -72,16 +72,6 @@ BEGIN
                 markerName, markerAbbrev, 'ID changed from ' || oldGeneId || ' to ' || newGeneId, daliasId);
     -- end of alias / nomenclature
 
--- delete db_link for "AGR Gene" foreign DB
---     delete from zdb_active_data
---     where exists(select 1 from db_link
---                  where dblink_zdb_id = zactvd_zdb_id
---                    and dblink_linked_recid = newGeneId
---                    and dblink_acc_num = oldGeneId
---                    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-171018-1');
-
---     delete from zdb_replaced_data where zrepld_old_zdb_id = oldGeneId;
-
     update zfin_ensembl_gene
         set zeg_id_name = replace(zeg_id_name, 'gene_id=' || oldGeneId || ';', 'gene_id=' || newGeneId || ';'),
             zeg_gene_zdb_id = newGeneId
