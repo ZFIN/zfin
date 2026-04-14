@@ -19,7 +19,7 @@ import org.zfin.profile.presentation.*;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.PaginationResultFactory;
+
 import org.zfin.repository.RepositoryFactory;
 
 import jakarta.persistence.Tuple;
@@ -821,8 +821,12 @@ public class HibernateProfileRepository implements ProfileRepository {
             parameterMap.forEach((name, value) -> query.setParameter(name, ((String) value).toLowerCase()));
         }
 
-        PaginationResult<Company> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-            searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
+        List<Company> allResults = query.getResultList();
+        int start = searchBean.getFirstRecordOnPage() - 1;
+        int end = Math.min(searchBean.getLastRecordOnPage(), allResults.size());
+        PaginationResult<Company> paginationResult = new PaginationResult<>();
+        paginationResult.setPopulatedResults(new ArrayList<>(allResults.subList(start, end)));
+        paginationResult.setTotalCount(allResults.size());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
@@ -865,8 +869,12 @@ public class HibernateProfileRepository implements ProfileRepository {
             parameterMap.forEach((name, value) -> query.setParameter(name, ((String) value).toLowerCase()));
         }
 
-        PaginationResult<Lab> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-            searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
+        List<Lab> allResults = query.getResultList();
+        int start = searchBean.getFirstRecordOnPage() - 1;
+        int end = Math.min(searchBean.getLastRecordOnPage(), allResults.size());
+        PaginationResult<Lab> paginationResult = new PaginationResult<>();
+        paginationResult.setPopulatedResults(new ArrayList<>(allResults.subList(start, end)));
+        paginationResult.setTotalCount(allResults.size());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
@@ -976,8 +984,12 @@ public class HibernateProfileRepository implements ProfileRepository {
             parameterMap.forEach((name, value) -> query.setParameter(name, ((String) value).toLowerCase()));
         }
 
-        PaginationResult<Person> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-            searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
+        List<Person> allResults = query.getResultList();
+        int start = searchBean.getFirstRecordOnPage() - 1;
+        int end = Math.min(searchBean.getLastRecordOnPage(), allResults.size());
+        PaginationResult<Person> paginationResult = new PaginationResult<>();
+        paginationResult.setPopulatedResults(new ArrayList<>(allResults.subList(start, end)));
+        paginationResult.setTotalCount(allResults.size());
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
