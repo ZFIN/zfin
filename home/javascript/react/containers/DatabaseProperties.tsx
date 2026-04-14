@@ -18,7 +18,7 @@ interface Message {
     text: string;
 }
 
-const EMPTY_FORM: DatabaseProperty = { id: 0, name: '', value: '', type: '' };
+const EMPTY_FORM: DatabaseProperty = { id: 0, name: '', value: '', type: 'string' };
 
 const DatabaseProperties = () => {
     const { pending, rejected, value: properties, setValue: setProperties, refetch } = useFetch(API_URL);
@@ -63,7 +63,7 @@ const DatabaseProperties = () => {
         const payload: Partial<DatabaseProperty> = {
             name: form.name,
             value: form.value,
-            type: form.type,
+            type: 'string',
         };
         if (form.id) {
             payload.id = form.id;
@@ -101,7 +101,6 @@ const DatabaseProperties = () => {
                         <th>ID</th>
                         <th>Name</th>
                         <th>Value</th>
-                        <th>Type</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -111,7 +110,6 @@ const DatabaseProperties = () => {
                             <td>{prop.id}</td>
                             <td>{prop.name}</td>
                             <td>{prop.value}</td>
-                            <td>{prop.type}</td>
                             <td>
                                 <button className='btn btn-sm btn-info' onClick={() => handleEdit(prop)}>Edit</button>
                                 {' '}
@@ -147,17 +145,6 @@ const DatabaseProperties = () => {
                         value={form.value}
                         onChange={handleChange}
                         style={{ width: 400 }}
-                    />
-                </div>
-                <div className='form-group' style={{ marginRight: 10 }}>
-                    <label htmlFor='form-type' style={{ marginRight: 5 }}>Type</label>
-                    <input
-                        type='text'
-                        className='form-control'
-                        id='form-type'
-                        name='type'
-                        value={form.type}
-                        onChange={handleChange}
                     />
                 </div>
                 <button type='submit' className='btn btn-primary'>
