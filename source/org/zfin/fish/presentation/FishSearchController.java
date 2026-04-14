@@ -92,6 +92,7 @@ public class FishSearchController {
      * @param model Model
      * @return view page name
      */
+    @RequiresCaptcha
     @RequestMapping(value = "/search")
     protected String showSearchForm(Model model) {
         FishSearchFormBean formBean = new FishSearchFormBean();

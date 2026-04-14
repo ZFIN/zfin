@@ -7,14 +7,14 @@ from db_link as db
 where db.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
   and not exists(
         select *
-        from zfindb.public.sequence_feature_chromosome_location_generated
-        where db.dblink_linked_recid = sfclg_data_zdb_id
-          and sfclg_assembly = 'GRCz12tu'
+        from marker_assembly
+        where db.dblink_linked_recid = ma_mrkr_zdb_id
+          and ma_a_pk_id = 1
     )
   and exists(
         select *
         from gff3_ncbi
-        where gff_attributes like '%GeneID:' || db.dblink_acc_num || '%'
+        where regexp_like(gff_attributes, 'GeneID:' || db.dblink_acc_num || '(,|;|$)')
           AND gff_feature in ('gene', 'pseudogene')
     )
   and not exists(
@@ -60,7 +60,7 @@ from temp_new_gene,
      gff3_ncbi,
      gff3_ncbi_attribute
 where gna_key = 'Dbxref'
-  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
+  and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene')
   and not exists (
@@ -88,7 +88,7 @@ from temp_new_gene,
      gff3_ncbi,
      gff3_ncbi_attribute
 where gna_key = 'Dbxref'
-  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
+  and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene')
   and not exists (
@@ -108,7 +108,7 @@ from temp_new_gene,
      gff3_ncbi,
      gff3_ncbi_attribute
 where gna_key = 'Dbxref'
-  and (regexp_like(gna_value, '.*GeneID:' || accession || '$') OR regexp_like(gna_value, '.*GeneID:' || accession || ','))
+  and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene')
   ON CONFLICT (gna_pk_id) DO NOTHING; 
@@ -136,3 +136,4 @@ where gg.sfclg_assembly = 'GRCz11'
           and g.ma_a_pk_id =3
     )
 on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;
+

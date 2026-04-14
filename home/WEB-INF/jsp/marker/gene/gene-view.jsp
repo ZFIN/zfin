@@ -33,6 +33,7 @@
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}"><i class="fas fa-edit"></i> Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}"><i class="fa-solid fa-code-merge"></i> Merge</a>
+            <a class="dropdown-item" href="/action/marker/convert-type?zdbID=${formBean.marker.zdbID}"><i class="fas fa-exchange-alt"></i> Convert Type</a>
             <a class="dropdown-item" href="/action/updates/${formBean.marker.zdbID}"><i class="fas fa-clock"></i> History</a>
         </z:dataManagerDropdown>
 
