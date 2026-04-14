@@ -13,5 +13,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1180/ZFIN-10190.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1180/ZFIN-10185.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1180/ZFIN-9472.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1180/ZFIN-9911.sql" />
 
 </databaseChangeLog>
