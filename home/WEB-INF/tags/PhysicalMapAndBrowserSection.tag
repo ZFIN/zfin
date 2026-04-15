@@ -52,8 +52,16 @@
 
                                     <td>${genomeLocation.chromosome}</td>
                                     <td nowrap>
-                                        <fmt:formatNumber value="${genomeLocation.start}" pattern="##,###"/> -
-                                        <fmt:formatNumber value="${genomeLocation.end}" pattern="##,###"/>
+                                        <c:choose>
+                                            <c:when test="${not empty genomeLocation.start and not empty genomeLocation.end}">
+                                                <fmt:formatNumber value="${genomeLocation.start}" pattern="##,###"/> -
+                                                <fmt:formatNumber value="${genomeLocation.end}" pattern="##,###"/>
+                                            </c:when>
+                                            <c:when test="${not empty genomeLocation.accessionNumber}">
+                                                Based on ${genomeLocation.accessionNumber}
+                                            </c:when>
+                                            <c:otherwise>-</c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>${genomeLocation.assembly}</td>
 

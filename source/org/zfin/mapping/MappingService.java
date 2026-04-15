@@ -163,7 +163,8 @@ public class MappingService {
                 + "|" + genomeLocation.getStart()
                 + "|" + genomeLocation.getEnd()
                 + "|" + source
-                + "|" + genomeLocation.getAssembly();
+                + "|" + genomeLocation.getAssembly()
+                + "|" + genomeLocation.getAccessionNumber();
             if (seen.add(key)) {
                 finalGenomeList.add(genomeLocation);
             }
