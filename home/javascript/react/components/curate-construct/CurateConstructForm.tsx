@@ -4,7 +4,6 @@ import {
     Cassette,
     cassettesToSimplifiedCassettes,
     EditConstructFormDTO,
-    normalizeConstructCassette,
     normalizeConstructComponents,
     normalizeSimplifiedCassettes,
     simplifiedCassettesToCassettes,
@@ -116,11 +115,14 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     }
 
     function submitForm() {
+        // Use cassettesWithStagedCassette() to correctly handle add, edit, and no-op modes
+        const resolvedCassettes = cassettesWithStagedCassette();
+
         const submissionObject: EditConstructFormDTO = {
             constructName: {
                 type: typeAbbreviationToType(state.selectedConstruct.chosenType),
                 prefix: state.selectedConstruct.prefix,
-                cassettes: cassettesToSimplifiedCassettes(state.selectedConstruct.cassettes)
+                cassettes: cassettesToSimplifiedCassettes(resolvedCassettes)
             },
             synonyms: state.selectedConstruct.synonyms,
             sequences: state.selectedConstruct.sequences,
@@ -149,12 +151,13 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         }
 
         if (!isStagedCassetteBlank()) {
-            //if the last promoter has a separator of '-', change it to ''
-            const modifiedStagedCassette = normalizeConstructCassette(state.stagedCassette);
-
-            submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, modifiedStagedCassette]);
-            setStateByProxy(proxy => {proxy.selectedConstruct.cassettes.push(state.stagedCassette);});
-            setStateByProxy(proxy => {proxy.stagedCassette = blankCassette();});
+            setStateByProxy(proxy => {
+                proxy.selectedConstruct.cassettes = resolvedCassettes;
+                proxy.selectedConstruct.addCassetteMode = false;
+                proxy.selectedConstruct.editCassetteMode = false;
+                proxy.selectedConstruct.editCassetteIndex = null;
+                proxy.stagedCassette = blankCassette();
+            });
         }
 
         setSaving(true);
