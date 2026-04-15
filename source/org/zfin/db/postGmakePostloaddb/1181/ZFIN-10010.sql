@@ -17,7 +17,7 @@ SELECT
     COALESCE(sfclg_assembly,           '~~NULL~~')           as sfclg_assembly,
     COALESCE(sfclg_gbrowse_track,      '~~NULL~~')           as sfclg_gbrowse_track,
     COALESCE(sfclg_evidence_code,      '~~NULL~~')           as sfclg_evidence_code,
-    COALESCE(sfclg_strand,             '~')                  as sfclg_strand
+    COALESCE(sfclg_strand,             '~')                  as sfclg_strand,
     COUNT(*) as cnt,
     string_agg(sfclg_pk_id::text, '; ') as pk_ids,
     string_agg(sfclg_date_created::text, '; ') as date_createds
