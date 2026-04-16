@@ -156,8 +156,9 @@ public final class ZfinProperties {
      * Resolve the properties file path using the following precedence:
      * 1. System property: -Dzfin.properties.path=/path/to/file
      * 2. Environment variable: ZFIN_PROPERTIES_PATH
-     * 3. Web context: webRoot + /WEB-INF/zfin.properties (if running in servlet container)
-     * 4. Default: home/WEB-INF/zfin.properties (relative to working directory)
+     * 3. Web context: webRoot + /WEB-INF/zfin.properties (if running in servlet container and file exists)
+     * 4. SOURCEROOT env var: $SOURCEROOT/home/WEB-INF/zfin.properties
+     * 5. Default: home/WEB-INF/zfin.properties (relative to working directory)
      */
     private static String resolvePropertiesPath() {
         // 1. Check system property
@@ -178,11 +179,24 @@ public final class ZfinProperties {
         String webRoot = ZfinPropertiesLoadListener.getWebRoot();
         if (webRoot != null) {
             String webPath = webRoot + "/WEB-INF/zfin.properties";
-            logger.info("Using properties path from web context: {}", webPath);
-            return webPath;
+            if (new File(webPath).exists()) {
+                logger.info("Using properties path from web context: {}", webPath);
+                return webPath;
+            }
+            logger.warn("Web context path does not exist: {}, trying fallbacks", webPath);
         }
 
-        // 4. Default to relative path
+        // 4. Check SOURCEROOT environment variable
+        String sourceRoot = System.getenv("SOURCEROOT");
+        if (sourceRoot != null && !sourceRoot.isEmpty()) {
+            String sourceRootPath = sourceRoot + "/home/WEB-INF/zfin.properties";
+            if (new File(sourceRootPath).exists()) {
+                logger.info("Using properties path from SOURCEROOT: {}", sourceRootPath);
+                return sourceRootPath;
+            }
+        }
+
+        // 5. Default to relative path
         String defaultPath = "home/WEB-INF/zfin.properties";
         logger.info("Using default properties path: {}", defaultPath);
         return defaultPath;
