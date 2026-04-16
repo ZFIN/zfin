@@ -1706,12 +1706,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public String convertMarkerType(String oldZdbId, String newType) {
-        String sql = "SELECT convert_marker_type(:oldZdbId, :newType)";
+    public String convertMarkerType(String oldZdbId, String newType, String submitterId) {
+        String sql = "SELECT convert_marker_type(:oldZdbId, :newType, :submitterId)";
         return HibernateUtil.currentSession()
                 .createNativeQuery(sql, String.class)
                 .setParameter("oldZdbId", oldZdbId)
                 .setParameter("newType", newType)
+                .setParameter("submitterId", submitterId)
                 .getSingleResult();
     }
 

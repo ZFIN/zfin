@@ -11,6 +11,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collections;
@@ -60,9 +62,15 @@ public class ConvertMarkerTypeController {
 
         try {
             HibernateUtil.createTransaction();
-            String newZdbId = markerRepo.convertMarkerType(
-                    formBean.getZdbIDToConvert(), formBean.getNewMarkerTypeName());
-            formBean.setNewZdbId(newZdbId);
+            Person currentUser = ProfileService.getCurrentSecurityUser();
+            String submitterId = currentUser != null ? currentUser.getZdbID() : null;
+            String conversionResult = markerRepo.convertMarkerType(
+                    formBean.getZdbIDToConvert(), formBean.getNewMarkerTypeName(), submitterId);
+            String[] parts = conversionResult.split("\n\n", 2);
+            formBean.setNewZdbId(parts[0].trim());
+            if (parts.length > 1) {
+                formBean.setConversionSummary(parts[1]);
+            }
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             logger.error("Error converting marker [" + formBean.getZdbIDToConvert() + "] to type [" + formBean.getNewMarkerTypeName() + "]", e);
