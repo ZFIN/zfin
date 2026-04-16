@@ -15,5 +15,6 @@ public class ConvertMarkerTypeBean {
     private Marker marker;
     private String newMarkerTypeName;
     private String newZdbId;
+    private String conversionSummary;
     private List<MarkerType> availableTypes;
 }
