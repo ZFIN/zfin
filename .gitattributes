@@ -574,7 +574,6 @@
 /home/zf_info/zfin.gif filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/zfin_statistics.png filter=lfs diff=lfs merge=lfs -text
 /lib/Java/ontologies/robot-cleaned.jar filter=lfs diff=lfs merge=lfs -text
-/server_apps/jenkins/jenkins-2.541.3.war filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/antisamy-markup-formatter.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/apache-httpcomponents-client-4-api.jpi filter=lfs diff=lfs merge=lfs -text
