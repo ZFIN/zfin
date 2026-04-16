@@ -15,6 +15,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
+import java.util.Collections;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.marker.Marker;
@@ -29,6 +30,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
@@ -254,6 +256,7 @@ public class ExpressionSearchService {
                 .collect(Collectors.toList());
     }
 
+
     public List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
@@ -365,6 +368,78 @@ public class ExpressionSearchService {
         populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
         injectHighlighting(geneResult, response);
         return geneResult;
+    }
+
+    public JsonResultResponse<ImageResult> getImageResultsPaginated(ExpressionSearchCriteria criteria, int page, int limit) {
+        SolrQuery solrQuery = new SolrQuery();
+
+        solrQuery = applyCriteria(solrQuery, criteria, OR);
+
+        // We don't need Solr to return documents — just the facet
+        solrQuery.setRows(0);
+
+        // Use JSON facet to paginate individual images directly
+        String jsonFacet = "{" +
+                "  images: {" +
+                "    terms: {" +
+                "      field: " + FieldName.IMG_ZDB_ID.getName() + "," +
+                "      limit: " + limit + "," +
+                "      offset: " + ((page - 1) * limit) + "," +
+                "      numBuckets: true," +
+                "      sort: \"img_order desc\"," +
+                "      facet: {" +
+                "        img_order: \"max(expression_image_sort)\"" +
+                "      }" +
+                "    }" +
+                "  }" +
+                "}";
+        solrQuery.set("json.facet", jsonFacet);
+
+        QueryResponse queryResponse;
+        try {
+            queryResponse = SolrService.getSolrClient().query(solrQuery);
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException("Error querying Solr for expression images", e);
+        }
+
+        JsonResultResponse<ImageResult> response = new JsonResultResponse<>();
+
+        @SuppressWarnings("unchecked")
+        org.apache.solr.common.util.NamedList<Object> facets =
+                (org.apache.solr.common.util.NamedList<Object>) queryResponse.getResponse().get("facets");
+        @SuppressWarnings("unchecked")
+        org.apache.solr.common.util.NamedList<Object> imagesFacet =
+                (org.apache.solr.common.util.NamedList<Object>) facets.get("images");
+
+        if (imagesFacet == null) {
+            response.setTotal(0);
+            response.setResults(Collections.emptyList());
+            return response;
+        }
+
+        Integer total = (Integer) Optional.of(imagesFacet.get("numBuckets")).orElse(0);
+        @SuppressWarnings("unchecked")
+        List<org.apache.solr.common.util.NamedList<Object>> buckets =
+                (List<org.apache.solr.common.util.NamedList<Object>>) imagesFacet.get("buckets");
+
+        List<String> imageIds = buckets.stream()
+                .map(bucket -> bucket.get("val").toString())
+                .collect(Collectors.toList());
+
+        List<Image> images = figureRepository.getImages(imageIds);
+        List<ImageResult> results = images.stream()
+                .map(img -> {
+                    ImageResult result = new ImageResult();
+                    result.setImageZdbId(img.getZdbID());
+                    result.setImageThumbnail(img.getThumbnail());
+                    return result;
+                })
+                .collect(Collectors.toList());
+
+        response.setResults(results);
+        response.setTotal(total);
+        response.setReturnedRecords(results.size());
+        return response;
     }
 
     private List<ImageResult> buildImageResults(SolrDocument document) {
