@@ -379,20 +379,23 @@ public class ExpressionSearchService {
         solrQuery.setRows(0);
 
         // Use JSON facet to paginate individual images directly
-        String jsonFacet = "{" +
-                "  images: {" +
-                "    terms: {" +
-                "      field: " + FieldName.IMG_ZDB_ID.getName() + "," +
-                "      limit: " + limit + "," +
-                "      offset: " + ((page - 1) * limit) + "," +
-                "      numBuckets: true," +
-                "      sort: \"img_order desc\"," +
-                "      facet: {" +
-                "        img_order: \"max(expression_image_sort)\"" +
-                "      }" +
-                "    }" +
-                "  }" +
-                "}";
+        String jsonFacet = """
+                {
+                  images: {
+                    terms: {
+                      field: %s,
+                      limit: %d,
+                      offset: %d,
+                      numBuckets: true,
+                      sort: "img_order desc",
+                      facet: {
+                        img_order: "max(expression_image_sort)"
+                      }
+                    }
+                  }
+                }
+                """.formatted(FieldName.IMG_ZDB_ID.getName(), limit, (page - 1) * limit);
+
         solrQuery.set("json.facet", jsonFacet);
 
         QueryResponse queryResponse;
