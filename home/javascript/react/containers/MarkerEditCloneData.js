@@ -14,8 +14,6 @@ const CloneData = ({
     vectorList,
     digestList,
     polymeraseList,
-    cloneInsertSize,
-    clonePcrAmplification,
     cloneProblemTypeList,
 }) => {
     const {
@@ -129,9 +127,6 @@ const CloneData = ({
                 field='insertSize'
                 id='insertSize'
                 validate={(value, {debounce}) => debounce(async () => {
-                    if (value === cloneInsertSize) {
-                        return false;
-                    }
                     return Number.isNaN(value * 1) ? 'This must be an integer' : ''
                 }, 300)}
             />
@@ -141,9 +136,7 @@ const CloneData = ({
                 field='pcrAmplification'
                 id='pcrAmplification'
                 tag='textarea'
-            >
-                {clonePcrAmplification}
-            </FormGroup>
+            />
 
 
             <div className='form-group row'>
@@ -184,8 +177,6 @@ CloneData.propTypes = {
     digestList: PropTypes.string,
     polymeraseList: PropTypes.string,
     cloneProblemTypeList: PropTypes.string,
-    cloneInsertSize: PropTypes.string,
-    clonePcrAmplification: PropTypes.string,
 };
 
 export default CloneData;
