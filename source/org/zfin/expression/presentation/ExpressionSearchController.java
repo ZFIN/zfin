@@ -130,6 +130,9 @@ public class ExpressionSearchController {
         if (criteria.getPage() == null) {
             criteria.setPage(1);
         }
+        if (StringUtils.isNotEmpty(criteria.getGeneZdbID()) && criteria.getGene() == null) {
+            criteria.setGene(markerRepository.getMarkerByID(criteria.getGeneZdbID()));
+        }
         JsonResultResponse<ImageResult> response = expressionSearchService.getImageResultsPaginated(criteria, page, limit);
         response.setHttpServletRequest(request);
         return response;
