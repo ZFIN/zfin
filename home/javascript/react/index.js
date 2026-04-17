@@ -1,8 +1,7 @@
-/* eslint-disable react/no-render-return-value */
 /* eslint-disable no-console */
 import 'regenerator-runtime/runtime';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import * as navigationCounter from './state/NavigationCounter';
 import * as zfinEventBus from './state/ZfinEventBus';
 
@@ -30,7 +29,8 @@ document
             dataset.innerHTML = element.innerHTML;
         }
 
+        const root = createRoot(element);
         import(`./containers/${container}`)
-            .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))
+            .then(Module => root.render(<Module.default {...dataset} />))
             .catch((error) => console.error('Unable to load container named: ' + container, error));
     });

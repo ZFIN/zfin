@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import equal from 'fast-deep-equal';
-import { useForm } from 'react-form';
+import { useForm } from '../../hooks/useFormLite';
 import http from '../../utils/http';
 import LoadingButton from '../LoadingButton';
 import FormGroup from '../form/FormGroup';
