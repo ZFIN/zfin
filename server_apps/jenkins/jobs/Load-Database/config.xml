@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Load a database backup using gradle loaddb.
+
+By default, loads the latest backup from $DB_UNLOADS_PATH.
+Set BACKUP_PATH to load a specific file.
+Set LIST_ONLY to true to list available backups without loading.
+
+Note: This will drop and recreate the database. All existing data will be replaced.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+      <hudson.model.ParametersDefinitionProperty>
+          <parameterDefinitions>
+              <hudson.model.StringParameterDefinition>
+                  <name>BACKUP_PATH</name>
+                  <description>Full path to a specific backup file. Leave blank to use the latest backup from $DB_UNLOADS_PATH.</description>
+                  <defaultValue></defaultValue>
+                  <trim>true</trim>
+              </hudson.model.StringParameterDefinition>
+              <hudson.model.BooleanParameterDefinition>
+                  <name>LIST_ONLY</name>
+                  <description>List available backups and exit without loading.</description>
+                  <defaultValue>false</defaultValue>
+              </hudson.model.BooleanParameterDefinition>
+              <hudson.model.TextParameterDefinition>
+                  <name>NOTES</name>
+                  <description>Optional notes for the build history (e.g. reason for loading, ticket number).</description>
+                  <defaultValue></defaultValue>
+              </hudson.model.TextParameterDefinition>
+          </parameterDefinitions>
+      </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>$TARGETROOT</customWorkspace>
+  <builders>
+    <hudson.tasks.Shell>
+      <command><![CDATA[#!/bin/bash
+set -e
+
+echo "=============================="
+echo "Load-Database"
+echo "=============================="
+
+if [ -n "$NOTES" ]; then
+    echo ""
+    echo "Notes: $NOTES"
+    echo ""
+fi
+
+# List available backups
+if [ "$LIST_ONLY" = "true" ] || [ -z "$BACKUP_PATH" ]; then
+    echo ""
+    echo "Available backups in $DB_UNLOADS_PATH:"
+    echo "---------------------------------------"
+    for dir in $(ls -dt "$DB_UNLOADS_PATH"/20??.??.??.* 2>/dev/null); do
+        bak=$(ls "$dir"/*.bak 2>/dev/null | head -1)
+        if [ -n "$bak" ]; then
+            size=$(du -sh "$bak" | cut -f1)
+            date=$(stat -c '%y' "$bak" 2>/dev/null || stat -f '%Sm' "$bak" 2>/dev/null)
+            echo "  $bak  ($size, $date)"
+        fi
+    done
+    echo ""
+
+    if [ "$LIST_ONLY" = "true" ]; then
+        echo "LIST_ONLY=true, exiting without loading."
+        exit 0
+    fi
+fi
+
+# Build the gradle command
+GRADLE_ARGS=""
+if [ -n "$BACKUP_PATH" ]; then
+    echo "Loading specific backup: $BACKUP_PATH"
+    if [ ! -f "$BACKUP_PATH" ]; then
+        echo "ERROR: Backup file not found: $BACKUP_PATH"
+        exit 1
+    fi
+    GRADLE_ARGS="-Dunload=$BACKUP_PATH"
+else
+    echo "Loading latest backup from $DB_UNLOADS_PATH"
+fi
+
+echo ""
+echo "Starting database load..."
+echo ""
+
+cd $SOURCEROOT
+gradle loaddb $GRADLE_ARGS
+
+echo ""
+echo "Database load complete."
+]]></command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+      <recipientList></recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT
+
+${SCRIPT,template="console-output.template"}
+</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT
+
+${SCRIPT,template="console-output.template"}
+</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+        <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern></attachmentsPattern>
+      <presendScript></presendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>${DB_OWNER}@zfin.org</replyTo>
+      <saveOutput>false</saveOutput>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+  </buildWrappers>
+</project>
