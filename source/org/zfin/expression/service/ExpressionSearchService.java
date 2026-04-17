@@ -378,7 +378,8 @@ public class ExpressionSearchService {
         // We don't need Solr to return documents — just the facet
         solrQuery.setRows(0);
 
-        // Use JSON facet to paginate individual images directly
+        // Use JSON facet to paginate individual images directly.
+        // Sort by gene symbol (ascending) to match the gene results table order.
         String jsonFacet = """
                 {
                   images: {
@@ -387,14 +388,15 @@ public class ExpressionSearchService {
                       limit: %d,
                       offset: %d,
                       numBuckets: true,
-                      sort: "img_order desc",
+                      sort: "gene_order asc",
                       facet: {
-                        img_order: "max(expression_image_sort)"
+                        gene_order: "min(%s)"
                       }
                     }
                   }
                 }
-                """.formatted(FieldName.IMG_ZDB_ID.getName(), limit, (page - 1) * limit);
+                """.formatted(FieldName.IMG_ZDB_ID.getName(), limit, (page - 1) * limit,
+                              FieldName.GENE_SORT.getName());
 
         solrQuery.set("json.facet", jsonFacet);
 
