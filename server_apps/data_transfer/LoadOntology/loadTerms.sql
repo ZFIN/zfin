@@ -416,6 +416,14 @@ insert into term (term_zdb_id,
 	term_ontology_id
     from tmp_term ;
 
+!echo "Insert self-records for new terms into all_term_contains";
+
+insert into all_term_contains (alltermcon_container_zdb_id,
+                                alltermcon_contained_zdb_id,
+                                alltermcon_min_contain_distance)
+  select term_zdb_id, term_zdb_id, 0 from tmp_term
+  on conflict (alltermcon_container_zdb_id, alltermcon_contained_zdb_id) do nothing;
+
 --update statistics high for table term ;
 
 CREATE temp TABLE tmp_obsoletes
