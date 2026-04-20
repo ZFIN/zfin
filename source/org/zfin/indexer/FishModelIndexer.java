@@ -12,7 +12,11 @@ import org.zfin.ontology.service.OntologyService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
 public class FishModelIndexer extends UiIndexer<FishModelDisplay> {
@@ -87,6 +91,16 @@ public class FishModelIndexer extends UiIndexer<FishModelDisplay> {
                 order = 10 * increment;
             }
             fishModel.setOrder(order);
+        });
+        Set<String> termIds = diseaseModelsWithFishModelsGrouped.stream()
+            .filter(d -> d.getDisease() != null)
+            .map(d -> d.getDisease().getZdbID())
+            .collect(Collectors.toSet());
+        Map<String, String[]> ancestorMap = getOntologyRepository().getAncestorTermIdsBulk(termIds);
+        diseaseModelsWithFishModelsGrouped.forEach(d -> {
+            if (d.getDisease() != null) {
+                d.setAncestorTermIds(ancestorMap.getOrDefault(d.getDisease().getZdbID(), new String[0]));
+            }
         });
         return diseaseModelsWithFishModelsGrouped;
     }

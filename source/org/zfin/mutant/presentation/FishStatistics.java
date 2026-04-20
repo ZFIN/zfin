@@ -17,6 +17,8 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -83,6 +85,10 @@ public class FishStatistics extends EntityStatistics {
 
     @Column(name = "tpd_gene_search")
     private String geneSymbolSearch;
+
+    @Column(name = "tpd_ancestor_term_ids", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] ancestorTermIds;
 
     @Transient
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
