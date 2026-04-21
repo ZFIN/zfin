@@ -221,6 +221,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 errorSummary.processErrors(gafJobData.getErrors());
                 errorSummary.writeToFile(errorSummaryFile);
                 logger.info("Error summary written to: {}", errorSummaryFile.getAbsolutePath());
+                System.out.println("Error summary written to: " + errorSummaryFile.getAbsolutePath());
             } catch (Exception ex) {
                 logger.warn("Failed to generate error summary", ex);
             }
