@@ -152,11 +152,10 @@ public class FpInferenceGafParser {
         rejectionCounts.merge(reason, 1, Integer::sum);
     }
 
+    private static final Set<String> EXCLUDED_EVIDENCE_CODES = Set.of("ND", "NAS", "TAS", "EXP");
+
     private boolean isValidEvidenceCode(String evidenceCode) {
-        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(evidenceCode);
-        return !(goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
-                || goEvidenceCodeEnum == GoEvidenceCodeEnum.NAS
-                || goEvidenceCodeEnum == GoEvidenceCodeEnum.TAS);
+        return !EXCLUDED_EVIDENCE_CODES.contains(evidenceCode.trim());
     }
 
 
