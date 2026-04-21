@@ -110,7 +110,7 @@ public class FpInferenceGafParser {
      */
     private void updateSimilarRecord(GafEntry existingSimilarRecord, GafEntry gafEntry) {
         if (StringUtils.isEmpty(existingSimilarRecord.getGeneProductFormID()) && StringUtils.isNotEmpty(gafEntry.getGeneProductFormID())) {
-            logger.info("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            logger.debug("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
             existingSimilarRecord.setGeneProductFormID(gafEntry.getGeneProductFormID());
             existingSimilarRecord.setEntryId(gafEntry.getEntryId());
         }
