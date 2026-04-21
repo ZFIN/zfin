@@ -45,8 +45,7 @@
         <div class="__react-root"
              id="MarkerEditCloneData"
              data-clone-id='${clone.zdbID}'
-             data-clone=${clone}
-             data-cloning-site-list='${cloningSiteList}'-
+             data-cloning-site-list='${cloningSiteList}'
              data-library-list='${libraryList}'
              data-vector-list='${vectorList}'
              data-digest-list='${digestList}'

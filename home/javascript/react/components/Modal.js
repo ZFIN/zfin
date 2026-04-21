@@ -1,17 +1,36 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
-const Modal = ({ children, open = false, onClose, config={} }) => {
+const Modal = ({ children, open = false, onClose, config = {} }) => {
+    // Create a stable container element that serves as both the portal target
+    // and the element jQuery Modal operates on. React attaches event listeners
+    // to portal containers, so when jQuery moves this element into its blocker
+    // overlay, React's synthetic events (onClick, onSubmit, etc.) still work.
+    // This is necessary because React 18 attaches events to the root container
+    // instead of document, so elements moved outside the root by jQuery would
+    // otherwise lose all React event handling.
+    const [container] = useState(() => {
+        const el = document.createElement('div');
+        el.className = 'jq-modal';
+        return el;
+    });
     const [jqModal, setJqModal] = useState(null);
-    const modalRefCallback = useCallback(node => {
-        if (!node) {
-            return;
-        }
-        const $modal = $(node);
+
+    // Mount container to DOM and initialize jQuery modal reference
+    useEffect(() => {
+        document.body.appendChild(container);
+        const $modal = $(container);
         setJqModal($modal);
         $modal.on($.modal.AFTER_CLOSE, onClose);
+        return () => {
+            if (container.parentNode) {
+                container.parentNode.removeChild(container);
+            }
+        };
     }, []);
 
+    // Open/close the jQuery modal
     useEffect(() => {
         if (!jqModal) {
             return;
@@ -26,13 +45,9 @@ const Modal = ({ children, open = false, onClose, config={} }) => {
         } else {
             $.modal.close();
         }
-    }, [open]);
+    }, [open, jqModal]);
 
-    return (
-        <div className='jq-modal' ref={modalRefCallback}>
-            {children}
-        </div>
-    );
+    return createPortal(children, container);
 };
 
 Modal.propTypes = {

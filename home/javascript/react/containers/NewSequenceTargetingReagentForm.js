@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import PropTypes from 'prop-types';
 import MarkerInput from '../components/form/MarkerInput';
-import {useForm} from 'react-form';
+import {useForm} from '../hooks/useFormLite';
 import SequenceTargetingReagentSequenceFields from '../components/marker-edit/SequenceTargetingReagentSequenceFields';
 import InputField from '../components/form/InputField';
 
