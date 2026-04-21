@@ -30,7 +30,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.marker.Transcript;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.SequenceService;
@@ -221,25 +223,31 @@ public class GafService {
             returnGenes.add(gene);
         } else if (entryId.startsWith("URS")) {
             // RNAcentral IDs in the GAF file have a taxon suffix (e.g. URS0000005DE0_7955)
-            // but ZFIN stores them without it (e.g. URS0000005DE0)
+            // but ZFIN stores them without it (e.g. URS0000005DE0).
+            // These db_links point to transcripts (ZDB-TSCRIPT-*), which are mapped as
+            // TranscriptDBLink (discriminator 'TSCR'), not MarkerDBLink ('MARK').
+            // We query TranscriptDBLink and resolve to the parent gene.
             String lookupId = entryId.contains("_") ? entryId.substring(0, entryId.indexOf("_")) : entryId;
+            List<TranscriptDBLink> transcriptDBLinks = sequenceRepository.getTranscriptDBLinksForAccession(lookupId);
+            for (TranscriptDBLink tLink : transcriptDBLinks) {
+                Transcript transcript = tLink.getTranscript();
+                List<Marker> genes = markerRepository.getRelatedMarkersForTypes(
+                    transcript, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+                for (Marker gene : genes) {
+                    if (gene.getZdbID().startsWith("ZDB-GENE-") || gene.getZdbID().contains("RNAG")) {
+                        logger.info("RNACentral Match: {} -> transcript {} -> gene {} ({})",
+                            entryId, transcript.getAbbreviation(), gene.getZdbID(), gene.getAbbreviation());
+                        returnGenes.add(gene);
+                    }
+                }
+            }
+            // Also check MarkerDBLink in case some URS IDs link directly to genes
             List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(lookupId);
             for (MarkerDBLink markerDBLink : markerDBLinks) {
                 Marker linked = markerDBLink.getMarker();
                 if (linked.getZdbID().startsWith("ZDB-GENE-") || linked.getZdbID().contains("RNAG")) {
                     logger.info("RNACentral Match: {} -> {} ({})", entryId, linked.getZdbID(), linked.getAbbreviation());
                     returnGenes.add(linked);
-                } else if (linked.getZdbID().startsWith("ZDB-TSCRIPT-")) {
-                    // Transcript — find the parent gene via "gene produces transcript"
-                    List<Marker> genes = markerRepository.getRelatedMarkersForTypes(
-                        linked, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
-                    for (Marker gene : genes) {
-                        if (gene.getZdbID().startsWith("ZDB-GENE-") || gene.getZdbID().contains("RNAG")) {
-                            logger.info("RNACentral Match: {} -> transcript {} -> gene {} ({})",
-                                entryId, linked.getAbbreviation(), gene.getZdbID(), gene.getAbbreviation());
-                            returnGenes.add(gene);
-                        }
-                    }
                 }
             }
         } else {
