@@ -236,6 +236,9 @@ public class SequenceTargetingReagentAddController {
     public
     @ResponseBody
     String proposeNameByTypeAndGenes(@RequestParam("type") String type, @RequestParam("genes") String genes) {
+        if (type == null || type.isBlank() || genes == null || genes.isBlank()) {
+            return "";
+        }
         Set<String> geneSet = Set.of(genes.split(","));
         List<Marker> strList = mr.getMarkerWithRelationshipsBySecondMarkers(geneSet);
 

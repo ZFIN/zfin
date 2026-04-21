@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
-import {useForm} from 'react-form';
+import {useForm} from '../hooks/useFormLite';
 import http from '../utils/http';
 import FormGroup from '../components/form/FormGroup';
 import LoadingButton from '../components/LoadingButton';
@@ -14,7 +14,6 @@ const CloneData = ({
     vectorList,
     digestList,
     polymeraseList,
-    clone,
     cloneProblemTypeList,
 }) => {
     const {
@@ -128,9 +127,6 @@ const CloneData = ({
                 field='insertSize'
                 id='insertSize'
                 validate={(value, {debounce}) => debounce(async () => {
-                    if (value === clone.insertSize) {
-                        return false;
-                    }
                     return Number.isNaN(value * 1) ? 'This must be an integer' : ''
                 }, 300)}
             />
@@ -140,9 +136,7 @@ const CloneData = ({
                 field='pcrAmplification'
                 id='pcrAmplification'
                 tag='textarea'
-            >
-                {clone.pcrAmplification}
-            </FormGroup>
+            />
 
 
             <div className='form-group row'>
@@ -183,7 +177,6 @@ CloneData.propTypes = {
     digestList: PropTypes.string,
     polymeraseList: PropTypes.string,
     cloneProblemTypeList: PropTypes.string,
-    clone: PropTypes.object,
 };
 
 export default CloneData;

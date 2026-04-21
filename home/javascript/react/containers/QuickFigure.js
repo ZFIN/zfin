@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import PropTypes from 'prop-types';
 
 const QuickFigureDialog = ({pubId, toggle}) => {
@@ -96,12 +96,14 @@ const QuickFigure = ({ pubId }) => {
         $(popoverRef.current).popover('toggle');
     };
 
+    const popoverRootRef = useRef(null);
     const handlePopoverInserted = () => {
         if (!isInitialized) {
             setIsInitialized(true);
             const popoverEl = document.getElementById('popover-dialog-container');
+            popoverRootRef.current = createRoot(popoverEl);
             const dialog = <QuickFigureDialog pubId={pubId} toggle={() => toggle()}/>;
-            ReactDOM.render(dialog, popoverEl);
+            popoverRootRef.current.render(dialog);
         }
     }
 
@@ -118,7 +120,11 @@ const QuickFigure = ({ pubId }) => {
         }
 
         return () => {
-            // Clean up the popover when the component is unmounted
+            // Clean up the React root before disposing the popover
+            if (popoverRootRef.current) {
+                popoverRootRef.current.unmount();
+                popoverRootRef.current = null;
+            }
             if (popoverRef.current) {
                 $(popoverRef.current).popover('dispose');
             }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { publicationType } from '../../utils/types';
 import AddEditList from '../AddEditList';
 import Modal from '../Modal';
-import { useForm } from 'react-form';
+import { useForm } from '../../hooks/useFormLite';
 import PublicationInput from '../form/PublicationInput';
 import FormGroup from '../form/FormGroup';
 import CheckboxList from '../CheckboxList';

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
-import { useForm } from 'react-form';
+import { useForm } from '../hooks/useFormLite';
 import http from '../utils/http';
 import FormGroup from '../components/form/FormGroup';
 import LoadingButton from '../components/LoadingButton';
