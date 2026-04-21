@@ -31,6 +31,8 @@ public class FpInferenceGafParser {
     public int countPipes=0;
     public int countCommas=0;
     public int countBoth=0;
+    private int duplicateMergeCount=0;
+    private static final int DUPLICATE_MERGE_LOG_LIMIT = 5;
 
     @Getter
     private final Map<String, Integer> rejectionCounts = new LinkedHashMap<>();
@@ -76,6 +78,10 @@ public class FpInferenceGafParser {
         } finally {
             it.close();
         }
+        if (duplicateMergeCount > DUPLICATE_MERGE_LOG_LIMIT) {
+            logger.info((duplicateMergeCount - DUPLICATE_MERGE_LOG_LIMIT)
+                + " more 'Found match to update instead of adding potential duplicate' messages omitted");
+        }
         logger.info("Finishing parseGafFile at " + (new Date()) );
 
         return gafEntries;
@@ -110,7 +116,10 @@ public class FpInferenceGafParser {
      */
     private void updateSimilarRecord(GafEntry existingSimilarRecord, GafEntry gafEntry) {
         if (StringUtils.isEmpty(existingSimilarRecord.getGeneProductFormID()) && StringUtils.isNotEmpty(gafEntry.getGeneProductFormID())) {
-            logger.debug("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            duplicateMergeCount++;
+            if (duplicateMergeCount <= DUPLICATE_MERGE_LOG_LIMIT) {
+                logger.info("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            }
             existingSimilarRecord.setGeneProductFormID(gafEntry.getGeneProductFormID());
             existingSimilarRecord.setEntryId(gafEntry.getEntryId());
         }
