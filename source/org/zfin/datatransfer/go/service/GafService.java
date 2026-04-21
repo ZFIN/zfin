@@ -16,6 +16,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -218,6 +219,29 @@ public class GafService {
                 throw new GafValidationError("No gene found for ID: " + entryId);
             }
             returnGenes.add(gene);
+        } else if (entryId.startsWith("URS")) {
+            // RNAcentral IDs in the GAF file have a taxon suffix (e.g. URS0000005DE0_7955)
+            // but ZFIN stores them without it (e.g. URS0000005DE0)
+            String lookupId = entryId.contains("_") ? entryId.substring(0, entryId.indexOf("_")) : entryId;
+            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(lookupId);
+            for (MarkerDBLink markerDBLink : markerDBLinks) {
+                Marker linked = markerDBLink.getMarker();
+                if (linked.getZdbID().startsWith("ZDB-GENE-") || linked.getZdbID().contains("RNAG")) {
+                    logger.info("RNACentral Match: {} -> {} ({})", entryId, linked.getZdbID(), linked.getAbbreviation());
+                    returnGenes.add(linked);
+                } else if (linked.getZdbID().startsWith("ZDB-TSCRIPT-")) {
+                    // Transcript — find the parent gene via "gene produces transcript"
+                    List<Marker> genes = markerRepository.getRelatedMarkersForTypes(
+                        linked, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+                    for (Marker gene : genes) {
+                        if (gene.getZdbID().startsWith("ZDB-GENE-") || gene.getZdbID().contains("RNAG")) {
+                            logger.info("RNACentral Match: {} -> transcript {} -> gene {} ({})",
+                                entryId, linked.getAbbreviation(), gene.getZdbID(), gene.getAbbreviation());
+                            returnGenes.add(gene);
+                        }
+                    }
+                }
+            }
         } else {
             List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprotRelatedDatabases());
             for (MarkerDBLink markerDBLink : markerDBLinks) {
