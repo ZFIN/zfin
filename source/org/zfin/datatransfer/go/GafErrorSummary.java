@@ -20,6 +20,7 @@ public class GafErrorSummary {
     private final Map<String, List<String>> categoryExamples = new LinkedHashMap<>();
     private final Map<String, Integer> geneNotFoundIds = new LinkedHashMap<>();
     private final Map<String, Integer> geneNotFoundSources = new LinkedHashMap<>();
+    private Map<String, Integer> parserRejections = new LinkedHashMap<>();
 
     private static String categorize(String message) {
         if (message.startsWith("Annotations with IEA evidence must")) {
@@ -70,6 +71,13 @@ public class GafErrorSummary {
         if (categoryExamples.get(category).size() < 3) {
             categoryExamples.get(category).add(example);
         }
+    }
+
+    /**
+     * Set the parser rejection counts (entries filtered before validation).
+     */
+    public void setParserRejections(Map<String, Integer> rejections) {
+        this.parserRejections = rejections;
     }
 
     /**
@@ -125,7 +133,27 @@ public class GafErrorSummary {
         sb.append("GAF Load Error Summary\n");
         sb.append("=".repeat(60)).append("\n");
         sb.append(String.format("Total errors: %,d%n", totalErrors));
-        sb.append(String.format("Unique error categories: %d%n%n", categoryCounts.size()));
+        sb.append(String.format("Unique error categories: %d%n", categoryCounts.size()));
+
+        // Parser rejections (entries filtered before validation)
+        if (!parserRejections.isEmpty()) {
+            int totalRejected = parserRejections.values().stream().mapToInt(Integer::intValue).sum();
+            sb.append(String.format("Entries filtered during parsing: %,d%n", totalRejected));
+        }
+        sb.append("\n");
+
+        if (!parserRejections.isEmpty()) {
+            sb.append("Entries Filtered During Parsing\n");
+            sb.append("-".repeat(60)).append("\n");
+            int totalRejected = 0;
+            for (Map.Entry<String, Integer> e : parserRejections.entrySet().stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .collect(Collectors.toList())) {
+                sb.append(String.format("  %,6d  %s%n", e.getValue(), e.getKey()));
+                totalRejected += e.getValue();
+            }
+            sb.append(String.format("%n  %,6d  TOTAL filtered%n%n", totalRejected));
+        }
 
         List<Map.Entry<String, Integer>> sorted = categoryCounts.entrySet().stream()
             .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
