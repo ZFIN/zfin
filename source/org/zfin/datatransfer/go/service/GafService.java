@@ -454,7 +454,10 @@ public class GafService {
 
 
             try {
-                GoEvidenceValidator.validateEvidenceVsPub(goEvidenceCodeEnum, publicationZdbId, inferenceSet.iterator().next());
+                // Validate each accepted inference against its pub
+                for (InferenceGroupMember member : inferredFrom) {
+                    GoEvidenceValidator.validateEvidenceVsPub(goEvidenceCodeEnum, publicationZdbId, member.getInferredFrom());
+                }
                 GoEvidenceValidator.validateProteinBinding(goEvidenceCodeEnum, inferenceSet,
                     markerGoTermEvidence.getGoTerm().getOboID(),
                     markerGoTermEvidence.getGoTerm().getOntology().getOntologyName(),
