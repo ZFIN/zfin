@@ -1909,6 +1909,25 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public List<ZfinDatabaseProperty> getAllZfinDatabaseProperties() {
+        String hql = "from ZfinDatabaseProperty order by name";
+        return currentSession().createQuery(hql, ZfinDatabaseProperty.class).list();
+    }
+
+    @Override
+    public void saveZfinDatabaseProperty(ZfinDatabaseProperty property) {
+        currentSession().merge(property);
+    }
+
+    @Override
+    public void deleteZfinDatabaseProperty(Long id) {
+        ZfinDatabaseProperty property = currentSession().get(ZfinDatabaseProperty.class, id);
+        if (property != null) {
+            currentSession().remove(property);
+        }
+    }
+
+    @Override
     public String getReleaseNumber() {
         String release = getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName.RELEASE_NUMBER);
         return release != null ? release : "unknown";

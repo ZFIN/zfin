@@ -13,6 +13,7 @@ public class ZfinDatabaseProperty {
     public static enum KeyName {
         RELEASE_NUMBER,
         RELEASE_COMMIT_HASH,
+        MORE_CAPTCHA_BYPASS_IP_RANGES
     }
 
     @Id

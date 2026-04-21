@@ -204,6 +204,13 @@
                             <td>
                             </td>
                             <td>
+                                <a href="/action/devtool/database-properties/home">Database Properties</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
                                 <a href="/action/analytics/report/new">Analytics</a>
                             </td>
                         </tr>

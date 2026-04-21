@@ -49,6 +49,7 @@ public enum ZfinPropertiesEnum {
     BLAST_FILE_DIR,
     BLAST_SCRIPT_DIR,
     BUILD_EMAIL,
+    CAPTCHA_BYPASS_IP_RANGES,
     CATALINA_BASE,
     CATALINA_HOME,
     CATALINA_PID,

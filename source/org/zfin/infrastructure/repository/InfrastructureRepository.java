@@ -453,6 +453,12 @@ public interface InfrastructureRepository {
 
     String getZfinDatabaseProperty(ZfinDatabaseProperty.KeyName keyName);
 
+    List<ZfinDatabaseProperty> getAllZfinDatabaseProperties();
+
+    void saveZfinDatabaseProperty(ZfinDatabaseProperty property);
+
+    void deleteZfinDatabaseProperty(Long id);
+
     String getReleaseNumber();
 
     String getReleaseCommit();
