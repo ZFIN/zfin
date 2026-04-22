@@ -57,7 +57,9 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(AllTranscriptDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("rnaCentral.json"))) {
+        File jsonFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/RNACentral/rnaCentral.json");
+        jsonFile.getParentFile().mkdirs();
+        try (PrintStream out = new PrintStream(new FileOutputStream(jsonFile))) {
             out.print(jsonInString);
         }
     }
