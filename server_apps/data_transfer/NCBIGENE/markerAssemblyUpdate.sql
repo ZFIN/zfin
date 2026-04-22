@@ -62,7 +62,12 @@ from temp_new_gene,
 where gna_key = 'Dbxref'
   and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
-  and gff_feature in ('gene', 'pseudogene');
+  and gff_feature in ('gene', 'pseudogene')
+  and not exists (
+      select 1 from sequence_feature_chromosome_location_generated
+      where sfclg_data_zdb_id = gene_zdb_id
+        and sfclg_location_source = 'NCBILoader'
+  );
 
 -- insert ZFIN records matching NCBI
 insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
@@ -85,7 +90,13 @@ from temp_new_gene,
 where gna_key = 'Dbxref'
   and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
-  and gff_feature in ('gene', 'pseudogene');
+  and gff_feature in ('gene', 'pseudogene')
+  and not exists (
+      select 1 from sequence_feature_chromosome_location_generated
+      where sfclg_data_zdb_id = gene_zdb_id
+        and sfclg_location_source = 'ZFIN'
+        and sfclg_assembly = 'GRCz12tu'
+  );
 
 -- insert gene_id into gff3_ncbi_attribute
 

@@ -152,9 +152,20 @@ public class MappingService {
             Comparator.comparing(location -> assemblyOrder.getOrDefault(((GenomeLocation) location).getAssembly(), Integer.MAX_VALUE))
                 .thenComparing(location -> ((GenomeLocation) location).getSource()));
         List<GenomeLocation> finalGenomeList = new ArrayList<>(genomeLocationList.size());
+        Set<String> seen = new HashSet<>();
         for (GenomeLocation genomeLocation : genomeLocationList) {
             GenomeLocation.Source source = genomeLocation.getSource();
-            if (source != GenomeLocation.Source.GENERAL_LOAD) {
+            if (source == GenomeLocation.Source.GENERAL_LOAD) {
+                continue;
+            }
+            String key = genomeLocation.getEntityID()
+                + "|" + genomeLocation.getChromosome()
+                + "|" + genomeLocation.getStart()
+                + "|" + genomeLocation.getEnd()
+                + "|" + source
+                + "|" + genomeLocation.getAssembly()
+                + "|" + genomeLocation.getAccessionNumber();
+            if (seen.add(key)) {
                 finalGenomeList.add(genomeLocation);
             }
         }
