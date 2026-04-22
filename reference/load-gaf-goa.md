@@ -68,6 +68,101 @@ Output files written to `$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF
 
 The error summary and the regular summary are both included in the success email.
 
+## Example: Loading a Single Annotation
+
+Worked example for a real entry loaded after the IEA cardinality fix:
+
+**GAF line**
+```
+UniProtKB    A0A0G2KKC2    cnnm1    located_in    GO:0016020    GO_REF:0000104    IEA    UniRule:UR000732112|UniRule:UR001725762    C    Metal transporter    cnnm1    protein    taxon:7955    20260407    UniProt
+```
+
+**Console log**
+```
+Loaded IEA annotation with 2 inferences for A0A0G2KKC2: UniRule:UR001725762, UniRule:UR000732112 | GafEntry{entryId='A0A0G2KKC2', qualifier='located_in', goid='GO:0016020', pmid='GO_REF:0000104', evidenceCode='IEA', inferences='UniRule:UR000732112|UniRule:UR001725762', taxonID='taxon:7955', createdDate='20260407', createdBy='UniProt', ...}
+```
+
+### 1. Parse (`FpInferenceGafParser`)
+
+The tab-delimited line is split into a `GafEntry`:
+- `entryId` = `A0A0G2KKC2` (col 2)
+- `qualifier` = `located_in` (col 4)
+- `goid` = `GO:0016020` (col 5)
+- `pmid` = `GO_REF:0000104` (col 6)
+- `evidenceCode` = `IEA` (col 7)
+- `inferences` = `UniRule:UR000732112|UniRule:UR001725762` (col 8, pipe-delimited)
+- `taxonID` = `taxon:7955` (col 13)
+- `createdBy` = `UniProt` (col 15)
+
+`GoaGafParser.isValidGafEntry()` passes: IEA is not excluded, `GO_REF:0000104` is not excluded, taxon is zebrafish, `createdBy=UniProt` is accepted.
+
+### 2. Map to gene (`GafService.getGenes`)
+
+`A0A0G2KKC2` is not a `ZDB-GENE` / `RNAG` and not a `URS*`, so it falls through to:
+
+```java
+sequenceRepository.getMarkerDBLinksForAccession(
+    "A0A0G2KKC2",
+    ReferenceDatabase.UNIPROTKB, ReferenceDatabase.GENPEPT)
+```
+
+This queries `db_link` filtered by the `@DiscriminatorValue("MARK")` (rows where `get_obj_type(dblink_linked_recid) = 'MARK'`) and the two ref-db FKs. Returns one `MarkerDBLink` whose `marker` is the `cnnm1` gene.
+
+### 3. Build the annotation (`generateAnnotation`)
+
+A `MarkerGoTermEvidence` is constructed:
+- `marker` = `cnnm1`
+- `goTerm` = `GO:0016020` (`membrane`)
+- `qualifierRelation` = `LOCATED_IN`
+- `evidenceCode` = `IEA`
+- `source` = `ZDB-PUB-170525-1` (from `GoDefaultPublication.GOREF_UNIRULE`, because `GO_REF:0000104` is the UniRule default pub)
+- `organizationCreatedBy` = `UniProt`
+- `createdWhen` = `20260407`
+
+### 4. Validate inferences (`handleInferences`)
+
+The `inferences` field is split on `|` → `["UniRule:UR000732112", "UniRule:UR001725762"]`. For each:
+- `isValidCardinality(IEA, {...})`: IEA's cardinality is `CARDINALITY_ONE_OR_MORE`, size 2 → pass (this is the fix that unlocks this annotation)
+- `InferenceCategory.getInferenceCategoryByValue(...)` matches `UNIRULE`'s regex `UniRule:.*` → pass
+- `validateEvidenceVsPub(IEA, GOREF_UNIRULE, inference)`: the GOREF_UNIRULE pub requires `InferenceCategory.UNIRULE`, which matches → pass
+
+Both pass, two `InferenceGroupMember` objects are created, and the multi-inference log line fires.
+
+### 5. Duplicate check
+
+`getLikeMarkerGoTermEvidencesButGo` checks whether `cnnm1` already has a more specific annotation to a descendant of `GO:0016020` from the same pub + evidence + org. No such annotation exists, so the load proceeds.
+
+### 6. The resulting INSERTs
+
+The `MarkerGoTermEvidence` is `session.save()`d, cascading to its `inferenceGroupMembers` set.
+
+**marker_go_term_evidence** (1 row):
+```sql
+INSERT INTO marker_go_term_evidence (
+    mrkrgoev_zdb_id,                   -- ZDB-MRKRGOEV-<date>-<n>
+    mrkrgoev_mrkr_zdb_id,              -- ZDB-GENE-... (cnnm1)
+    mrkrgoev_term_zdb_id,              -- ZDB-TERM-... (GO:0016020)
+    mrkrgoev_source_zdb_id,            -- ZDB-PUB-170525-1
+    mrkrgoev_evidence_code,            -- 'IEA'
+    mrkrgoev_qualifier_relation,       -- 'located_in'
+    mrkrgoev_flag,                     -- null
+    mrkrgoev_organization_created_by,  -- 'UniProt'
+    mrkrgoev_date_entered,             -- now()
+    mrkrgoev_created_when              -- 2026-04-07
+) VALUES (...);
+```
+
+**inference_group_member** (2 rows — composite PK = `mrkrgoev_zdb_id` + `inferred_from`):
+```sql
+INSERT INTO inference_group_member (mrkrgoev_zdb_id, inferred_from)
+VALUES ('ZDB-MRKRGOEV-...', 'UniRule:UR000732112');
+
+INSERT INTO inference_group_member (mrkrgoev_zdb_id, inferred_from)
+VALUES ('ZDB-MRKRGOEV-...', 'UniRule:UR001725762');
+```
+
+Before the IEA cardinality fix (1 → 1+), step 4 would have rejected this annotation outright and no rows would have been inserted.
+
 ## Key Code Locations
 
 | File | Purpose |
