@@ -19,6 +19,8 @@ ADD --chown=gradle:gradle \
     --checksum=sha256:0000addfa8722963164137a4e0e60abc227d9d60710c4deb19481f9a751cf512 \
      https://updates.jenkins.io/download/war/2.541.3/jenkins.war /opt/jenkins/jenkins.war
 
+ADD --chown=gradle:gradle ./jenkins-cli-shim-wrapper.sh /usr/local/bin/jenkins-cli
+
 CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang=ALL-UNNAMED \
 	--add-opens java.base/java.lang.reflect=ALL-UNNAMED \
