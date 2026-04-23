@@ -138,9 +138,14 @@ public class GoEvidenceValidator {
             throw new ValidationException("Annotations with default pub " + GoDefaultPublication.ROOT.title() + " must have evidence code ND.");
         } else if (evidenceCode.equals(GoEvidenceCodeEnum.IEA)) {
             // if a go-ref pub, then
-            String errorString = GoDefaultPublication.validateInference(publicationZdbID, InferenceCategory.getInferenceCategoryByValue(firstInference));
-            if (errorString != null) {
-                throw new ValidationException(errorString);
+            try {
+                InferenceCategory inferenceCategory = InferenceCategory.getInferenceCategoryByValue(firstInference);
+                String errorString = GoDefaultPublication.validateInference(publicationZdbID, inferenceCategory);
+                if (errorString != null) {
+                    throw new ValidationException(errorString);
+                }
+            } catch (RuntimeException e) {
+                throw new ValidationException("Unrecognized inference category for value: " + firstInference);
             }
         }
         // not an IEA EC, but having an IEA pub

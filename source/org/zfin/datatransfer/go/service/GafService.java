@@ -16,6 +16,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -29,7 +30,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.marker.Transcript;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.SequenceService;
@@ -218,6 +221,35 @@ public class GafService {
                 throw new GafValidationError("No gene found for ID: " + entryId);
             }
             returnGenes.add(gene);
+        } else if (entryId.startsWith("URS")) {
+            // RNAcentral IDs in the GAF file have a taxon suffix (e.g. URS0000005DE0_7955)
+            // but ZFIN stores them without it (e.g. URS0000005DE0).
+            // These db_links point to transcripts (ZDB-TSCRIPT-*), which are mapped as
+            // TranscriptDBLink (discriminator 'TSCR'), not MarkerDBLink ('MARK').
+            // We query TranscriptDBLink and resolve to the parent gene.
+            String lookupId = entryId.contains("_") ? entryId.substring(0, entryId.indexOf("_")) : entryId;
+            List<TranscriptDBLink> transcriptDBLinks = sequenceRepository.getTranscriptDBLinksForAccession(lookupId);
+            for (TranscriptDBLink tLink : transcriptDBLinks) {
+                Transcript transcript = tLink.getTranscript();
+                List<Marker> genes = markerRepository.getRelatedMarkersForTypes(
+                    transcript, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+                for (Marker gene : genes) {
+                    if (gene.getZdbID().startsWith("ZDB-GENE-") || gene.getZdbID().contains("RNAG")) {
+                        logger.info("RNACentral Match: {} -> transcript {} -> gene {} ({})",
+                            entryId, transcript.getAbbreviation(), gene.getZdbID(), gene.getAbbreviation());
+                        returnGenes.add(gene);
+                    }
+                }
+            }
+            // Also check MarkerDBLink in case some URS IDs link directly to genes
+            List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(lookupId);
+            for (MarkerDBLink markerDBLink : markerDBLinks) {
+                Marker linked = markerDBLink.getMarker();
+                if (linked.getZdbID().startsWith("ZDB-GENE-") || linked.getZdbID().contains("RNAG")) {
+                    logger.info("RNACentral Match: {} -> {} ({})", entryId, linked.getZdbID(), linked.getAbbreviation());
+                    returnGenes.add(linked);
+                }
+            }
         } else {
             List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprotRelatedDatabases());
             for (MarkerDBLink markerDBLink : markerDBLinks) {
@@ -419,11 +451,22 @@ public class GafService {
                     inferredFrom.add(inferenceGroupMember);
                 }
             }
+            if (goEvidenceCodeEnum == GoEvidenceCodeEnum.IEA && inferredFrom.size() > 1) {
+                logger.info("Loaded IEA annotation with {} inferences for {}: {} | {}",
+                    inferredFrom.size(), gafEntry.getEntryId(),
+                    inferredFrom.stream()
+                        .map(InferenceGroupMember::getInferredFrom)
+                        .collect(java.util.stream.Collectors.joining(", ")),
+                    gafEntry);
+            }
             markerGoTermEvidence.setInferredFrom(inferredFrom);
 
 
             try {
-                GoEvidenceValidator.validateEvidenceVsPub(goEvidenceCodeEnum, publicationZdbId, inferenceSet.iterator().next());
+                // Validate each accepted inference against its pub
+                for (InferenceGroupMember member : inferredFrom) {
+                    GoEvidenceValidator.validateEvidenceVsPub(goEvidenceCodeEnum, publicationZdbId, member.getInferredFrom());
+                }
                 GoEvidenceValidator.validateProteinBinding(goEvidenceCodeEnum, inferenceSet,
                     markerGoTermEvidence.getGoTerm().getOboID(),
                     markerGoTermEvidence.getGoTerm().getOntology().getOntologyName(),

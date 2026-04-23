@@ -121,14 +121,20 @@ public class NCBIRequest {
         }
 
         (new TokenStorage()).getValue(TokenStorage.ServiceKey.NCBI_API_TOKEN)
-            .ifPresent(token -> nvps.add(new BasicNameValuePair("api_key", token)));
+            .ifPresent(token -> {
+                if (token.matches("[a-f0-9]{36}")) {
+                    nvps.add(new BasicNameValuePair("api_key", token));
+                } else {
+                    log.warn("NCBI API token appears invalid (expected 36 hex chars, got '{}'). Proceeding without API key.", token);
+                }
+            });
 
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
 
         String formContentsString = IOUtils.toString(urlEncodedFormEntity.getContent(), "UTF-8");
         //decoded form contents for logging
         String decodedFormContents = java.net.URLDecoder.decode(formContentsString, "UTF-8");
-        log.debug("Form contents: " + decodedFormContents);
+        log.debug("NCBI POST to {} form contents: {}", post.getURI(), decodedFormContents);
 
         post.setEntity(urlEncodedFormEntity);
         log.debug("Posting to URI: " + post.getURI());
@@ -139,6 +145,15 @@ public class NCBIRequest {
             String errorMessage = "Error response from NCBI: " + response.getStatusLine().getStatusCode() +
                                   " - " + response.getStatusLine().getReasonPhrase();
             log.error(errorMessage);
+            if (response.getStatusLine().getStatusCode() == 400) {
+                boolean hasApiKey = nvps.stream().anyMatch(p -> "api_key".equals(p.getName()));
+                if (hasApiKey) {
+                    log.error("A 400 error from NCBI may indicate an invalid API key. " +
+                              "Check the NCBI_API_TOKEN value with: gradle tokenStorage --args='read NCBI_API_TOKEN'");
+                } else {
+                    log.error("No NCBI API key is configured. Request may have been rejected for other reasons.");
+                }
+            }
             throw new IOException(errorMessage);
         }
 

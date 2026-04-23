@@ -72,7 +72,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case IDA:
                 return 0;
             case IEA:
-                return 1;
+                return CARDINALITY_ONE_OR_MORE;
             case IEP:
                 return 0;
             case IGI:

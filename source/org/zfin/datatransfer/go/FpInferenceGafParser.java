@@ -31,6 +31,11 @@ public class FpInferenceGafParser {
     public int countPipes=0;
     public int countCommas=0;
     public int countBoth=0;
+    private int duplicateMergeCount=0;
+    private static final int DUPLICATE_MERGE_LOG_LIMIT = 5;
+
+    @Getter
+    private final Map<String, Integer> rejectionCounts = new LinkedHashMap<>();
 
 
     @Getter
@@ -67,11 +72,15 @@ public class FpInferenceGafParser {
                 if (isValidGafEntry(gafEntry)) {
                     addGafEntryOrUpdateExisting(gafEntriesHash, gafEntries, gafEntry);
                 } else {
-                    logger.warn("not a valid gaf entry, ignoring: " + gafEntry);
+                    logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
                 }
             }
         } finally {
             it.close();
+        }
+        if (duplicateMergeCount > DUPLICATE_MERGE_LOG_LIMIT) {
+            logger.info((duplicateMergeCount - DUPLICATE_MERGE_LOG_LIMIT)
+                + " more 'Found match to update instead of adding potential duplicate' messages omitted");
         }
         logger.info("Finishing parseGafFile at " + (new Date()) );
 
@@ -107,7 +116,10 @@ public class FpInferenceGafParser {
      */
     private void updateSimilarRecord(GafEntry existingSimilarRecord, GafEntry gafEntry) {
         if (StringUtils.isEmpty(existingSimilarRecord.getGeneProductFormID()) && StringUtils.isNotEmpty(gafEntry.getGeneProductFormID())) {
-            logger.info("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            duplicateMergeCount++;
+            if (duplicateMergeCount <= DUPLICATE_MERGE_LOG_LIMIT) {
+                logger.info("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            }
             existingSimilarRecord.setGeneProductFormID(gafEntry.getGeneProductFormID());
             existingSimilarRecord.setEntryId(gafEntry.getEntryId());
         }
@@ -123,34 +135,36 @@ public class FpInferenceGafParser {
 
     protected boolean isValidGafEntry(GafEntry gafEntry) {
         if (!isValidEvidenceCode(gafEntry.getEvidenceCode())) {
-            logger.debug("invalid evidence code[" + gafEntry.getEvidenceCode() + " throwing out: " + gafEntry);
-            return false; // just ignore
+            reject("Excluded evidence code: " + gafEntry.getEvidenceCode());
+            return false;
         }
-        // will get a null-pointer if I don't have this in anyway
         if (StringUtils.isEmpty(gafEntry.getCreatedBy())) {
-            logger.error("createdby field may not be empty throwing out: " + gafEntry);
-            return false; // just ignore
+            reject("Empty createdBy field");
+            return false;
         }
         if (gafEntry.getCreatedBy().equals(ZFIN_CREATED_BY)) {
-            logger.debug("created by is zfin[" + gafEntry.getCreatedBy() + " throwing out: " + gafEntry);
-            return false; // just ignore
+            reject("Created by ZFIN (skip own annotations)");
+            return false;
         }
         if (!gafEntry.getTaxonId().equals(ZEBRAFISH_TAXID)) {
-            logger.debug("taxon id is not zebrafish [" + gafEntry.getTaxonId() + " throwing out: " + gafEntry);
-            return false; // just ignore
+            reject("Non-zebrafish taxon: " + gafEntry.getTaxonId());
+            return false;
         }
         if (goRefExcludePubMap.contains(gafEntry.getPubmedId())) {
-            logger.debug("excluding ref [" + gafEntry.getTaxonId() + " throwing out: " + gafEntry);
-            return false; // just ignore
+            reject("Excluded GO_REF: " + gafEntry.getPubmedId());
+            return false;
         }
         return true;
     }
 
+    private void reject(String reason) {
+        rejectionCounts.merge(reason, 1, Integer::sum);
+    }
+
+    private static final Set<String> EXCLUDED_EVIDENCE_CODES = Set.of("ND", "NAS", "TAS", "EXP");
+
     private boolean isValidEvidenceCode(String evidenceCode) {
-        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(evidenceCode);
-        return !(goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
-                || goEvidenceCodeEnum == GoEvidenceCodeEnum.NAS
-                || goEvidenceCodeEnum == GoEvidenceCodeEnum.TAS);
+        return !EXCLUDED_EVIDENCE_CODES.contains(evidenceCode.trim());
     }
 
 

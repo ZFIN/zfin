@@ -15,6 +15,26 @@ Those can be overridden by setting the environment variables:
 - GOA_GAF_URL2
 - GOA_GAF_URL3
 
+Steps:
+      1. Download the GOA (Gene Ontology Annotation) file for zebrafish from EBI — a GAF (Gene Association Format) file containing GO annotations from multiple sources (UniProt, Ensembl, GO_Central, RNAcentral, etc.)
+      2. Parse each line into a GafEntry — filtering out non-zebrafish entries and entries without valid taxon IDs
+      3. Map UniProt IDs to ZFIN genes — looks up the entryId (e.g., Q5XJQ7) in db_link to find the associated ZFIN gene. This is where the "Gene not found" errors come from.
+      4. Validate each annotation — checks evidence codes, inference fields, GO term validity (not obsolete, not in "Do Not Annotate" subset), publication mappings, protein binding rules, etc.
+      5. Generate MarkerGoTermEvidence records — for each valid entry, creates an annotation linking a ZFIN gene to a GO term with evidence code, publication, and inferences
+      6. Deduplicate — checks against existing annotations in the database. If a more specific annotation already exists, the new one is marked as "existing" and skipped.
+      7. Batch add new annotations to the database
+      8. Remove stale annotations — any previously-loaded annotations that aren't in the new GAF file are removed (these show up as "REMOVED" in the details file)
+      9. Write reports — details file (removed/added/updated/errors/existing), summary file, and now the error summary
+
+Input File Details:
+      goa_zebrafish.gaf.gz — The main file. Contains GO annotations for zebrafish proteins (UniProt accessions). Each row maps a protein to a GO term with evidence. Sources include UniProt (IEA — electronic annotations), GO_Central (IBA — phylogenetic), IntAct
+      (IPI — protein interactions), and manual curation from various groups. This is the bulk of the data — the annotations that map to genes via UniProt ID → db_link → ZFIN gene.
+
+      goa_zebrafish_isoform.gaf.gz — Annotations for specific protein isoforms (splice variants). Same format as the main file, but the geneProductFormID field (column 17) contains isoform-specific accessions like UniProtKB:E9QI36-1, UniProtKB:E9QI36-2. These
+      provide more granular annotations — e.g., isoform 1 of a protein localizes to the cytoplasm while isoform 2 localizes to the mitochondrion.
+
+      goa_zebrafish_rna.gaf.gz — Annotations for non-coding RNA sequences. These use RNAcentral IDs (URS*) rather than UniProt accessions.
+
   </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -50,6 +70,8 @@ Those can be overridden by setting the environment variables:
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_summary.txt&quot;}
+
+${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_error_summary.txt&quot;}
 
 See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_details.txt</body>
             <sendToDevelopers>false</sendToDevelopers>

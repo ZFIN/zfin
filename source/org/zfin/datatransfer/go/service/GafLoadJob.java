@@ -214,6 +214,19 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             details.flush();
             details.close();
 
+            // Generate categorized error summary
+            File errorSummaryFile = new File(new File(dataDirectory, jobName), jobName + "_error_summary.txt");
+            try {
+                GafErrorSummary errorSummary = new GafErrorSummary();
+                errorSummary.setParserRejections(gafParser.getRejectionCounts());
+                errorSummary.processErrors(gafJobData.getErrors());
+                errorSummary.writeToFile(errorSummaryFile);
+                logger.info("Error summary written to: {}", errorSummaryFile.getAbsolutePath());
+                System.out.println("Error summary written to: " + errorSummaryFile.getAbsolutePath());
+            } catch (Exception ex) {
+                logger.warn("Failed to generate error summary", ex);
+            }
+
             //throw an exception if parser encountered an error
             //do this at the end so the load works for records that are valid
             if (gafParser.isErrorEncountered()) {
