@@ -1,4 +1,4 @@
-FROM solr:8.11.3
+FROM solr:9.10.1
 
 # Download the postgresql jdbc driver and add it to the solr classpath for use in the dataimporthandler
 # The checksum is for the 42.7.8 version of the driver. If updating here, match it in the tomcat Dockerfile
