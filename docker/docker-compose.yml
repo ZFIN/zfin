@@ -94,7 +94,10 @@ services:
   solr:
     build: ./solr/
     image: ghcr.io/zfin/zfin-solr:${ZFIN_RELEASE}
+    ulimits:
+      nofile: 65536
     environment:
+      SOLR_MODULES: "scripting"
       SOLR_HEAP: 10g
       TZ: ${TZ}
     ports:
