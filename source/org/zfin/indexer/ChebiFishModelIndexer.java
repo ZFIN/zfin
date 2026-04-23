@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static org.zfin.repository.RepositoryFactory.getDiseasePageRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
 public class ChebiFishModelIndexer extends UiIndexer<ChebiFishModelDisplay> {
@@ -47,6 +48,16 @@ public class ChebiFishModelIndexer extends UiIndexer<ChebiFishModelDisplay> {
                     display.setChebi(chebiTerm);
                     resultList.add(display);
                 });
+        });
+        Set<String> termIds = resultList.stream()
+            .filter(d -> d.getChebi() != null)
+            .map(d -> d.getChebi().getZdbID())
+            .collect(toSet());
+        Map<String, String[]> ancestorMap = getOntologyRepository().getAncestorTermIdsBulk(termIds);
+        resultList.forEach(d -> {
+            if (d.getChebi() != null) {
+                d.setAncestorTermIds(ancestorMap.getOrDefault(d.getChebi().getZdbID(), new String[0]));
+            }
         });
         return resultList;
     }

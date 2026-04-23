@@ -15,6 +15,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
 @Log4j2
@@ -49,6 +50,16 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
             stat.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
             resultList.add(stat);
         }));
+        Set<String> termIds = resultList.stream()
+            .filter(s -> s.getTerm() != null)
+            .map(s -> s.getTerm().getZdbID())
+            .collect(Collectors.toSet());
+        Map<String, String[]> ancestorMap = getOntologyRepository().getAncestorTermIdsBulk(termIds);
+        resultList.forEach(s -> {
+            if (s.getTerm() != null) {
+                s.setAncestorTermIds(ancestorMap.getOrDefault(s.getTerm().getZdbID(), new String[0]));
+            }
+        });
         return resultList;
     }
 

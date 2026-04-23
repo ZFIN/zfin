@@ -152,6 +152,10 @@ public interface OntologyRepository {
 
     List<TransitiveClosure> getChildrenTransitiveClosures(GenericTerm term);
 
+    String[] getAncestorTermIds(String termZdbId);
+
+    Map<String, String[]> getAncestorTermIdsBulk(Collection<String> termZdbIds);
+
 //    Map<String,List<TermRelationship>> getTermRelationshipsForOntology(Ontology ontology);
 
     Ontology getProcessOrPhysicalObjectQualitySubOntologyForTerm(Term term);

@@ -568,6 +568,38 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return query.list();
     }
 
+    @Override
+    public String[] getAncestorTermIds(String termZdbId) {
+        String sql = "select alltermcon_container_zdb_id from all_term_contains where alltermcon_contained_zdb_id = :termId";
+        List<String> ids = HibernateUtil.currentSession().createNativeQuery(sql, String.class)
+            .setParameter("termId", termZdbId)
+            .list();
+        return ids.toArray(new String[0]);
+    }
+
+    @Override
+    public Map<String, String[]> getAncestorTermIdsBulk(Collection<String> termZdbIds) {
+        if (termZdbIds == null || termZdbIds.isEmpty()) {
+            return Map.of();
+        }
+        String sql = """
+            select alltermcon_contained_zdb_id, array_agg(alltermcon_container_zdb_id)
+            from all_term_contains
+            where alltermcon_contained_zdb_id in (:termIds)
+            group by alltermcon_contained_zdb_id
+            """;
+        List<Object[]> rows = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class)
+            .setParameter("termIds", termZdbIds)
+            .list();
+        Map<String, String[]> result = new HashMap<>();
+        for (Object[] row : rows) {
+            String termId = (String) row[0];
+            String[] ancestors = (String[]) row[1];
+            result.put(termId, ancestors);
+        }
+        return result;
+    }
+
     /**
      * Get the sub ontology for this term.
      * If ROOT is PATO:0001236 then QUALITY_PROCESS   // ZDB-TERM-070117-1237
