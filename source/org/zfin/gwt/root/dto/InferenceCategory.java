@@ -31,7 +31,7 @@ public enum InferenceCategory {
     UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
     UNIPATHWAY("UniPathway"),
     UNIRULE("UniRule"),
-    ENSEMBL("Ensembl"),
+    ENSEMBL("Ensembl", "(?i)ensembl:.*"),
     PANTHER("PANTHER",false),
     MGI("MGI"),
     RGD("RGD"),
