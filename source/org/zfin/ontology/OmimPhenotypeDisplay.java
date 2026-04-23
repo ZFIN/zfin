@@ -9,6 +9,8 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.sequence.DBLink;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,5 +77,9 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@Column(name = "opd_zfin_gene_symbols_search")
 	private String zfinGeneSymbolSearch;
+
+	@Column(name = "opd_ancestor_term_ids", columnDefinition = "text[]")
+	@JdbcTypeCode(SqlTypes.ARRAY)
+	private String[] ancestorTermIds;
 
 }

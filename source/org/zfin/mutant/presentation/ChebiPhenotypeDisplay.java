@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -104,6 +106,10 @@ public class ChebiPhenotypeDisplay {
     @JsonView(View.API.class)
     @Column(name = "cpd_exp_condition_chebi_search")
     private String expConditionChebiSearch;
+
+    @Column(name = "cpd_ancestor_term_ids", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] ancestorTermIds;
 
     @Transient
     private boolean includeSubstructures;

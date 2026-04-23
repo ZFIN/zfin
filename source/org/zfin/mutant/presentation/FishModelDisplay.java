@@ -12,6 +12,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +72,10 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	@Column(name = "zmd_condition_search")
 	private String conditionSearch;
+
+	@Column(name = "zmd_ancestor_term_ids", columnDefinition = "text[]")
+	@JdbcTypeCode(SqlTypes.ARRAY)
+	private String[] ancestorTermIds;
 
 	@Column(name = "zmd_order")
 	private Integer order;

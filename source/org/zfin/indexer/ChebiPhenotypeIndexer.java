@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
 public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
@@ -32,6 +33,16 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
     protected List<ChebiPhenotypeDisplay> inputOutput() {
         List<ChebiPhenotypeDisplay> resultList = getChebiPhenotypeDisplays();
         resultList.addAll(getChebiPhenotypeEQEDisplays());
+        Set<String> termIds = resultList.stream()
+            .filter(d -> d.getTerm() != null)
+            .map(d -> d.getTerm().getZdbID())
+            .collect(toSet());
+        Map<String, String[]> ancestorMap = getOntologyRepository().getAncestorTermIdsBulk(termIds);
+        resultList.forEach(d -> {
+            if (d.getTerm() != null) {
+                d.setAncestorTermIds(ancestorMap.getOrDefault(d.getTerm().getZdbID(), new String[0]));
+            }
+        });
         return resultList;
     }
 

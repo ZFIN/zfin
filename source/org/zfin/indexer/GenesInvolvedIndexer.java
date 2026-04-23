@@ -8,9 +8,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.ontology.service.OntologyService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
@@ -30,6 +29,16 @@ public class GenesInvolvedIndexer extends UiIndexer<OmimPhenotypeDisplay> {
             OntologyService.fixupSearchColumns(displayListSingle);
             resultList.addAll(displayListSingle);
         }
+        Set<String> termIds = resultList.stream()
+            .filter(d -> d.getDisease() != null)
+            .map(d -> d.getDisease().getZdbID())
+            .collect(Collectors.toSet());
+        Map<String, String[]> ancestorMap = getOntologyRepository().getAncestorTermIdsBulk(termIds);
+        resultList.forEach(d -> {
+            if (d.getDisease() != null) {
+                d.setAncestorTermIds(ancestorMap.getOrDefault(d.getDisease().getZdbID(), new String[0]));
+            }
+        });
         return resultList;
     }
 

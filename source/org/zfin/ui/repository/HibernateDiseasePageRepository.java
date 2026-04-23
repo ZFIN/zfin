@@ -35,8 +35,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         if (!includeChildren) {
             hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype join omimPhenotype.zfinGene as zfinGene where omimPhenotype.disease = :disease ";
         } else {
-            hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype, TransitiveClosure as clo join omimPhenotype.zfinGene as zfinGene " +
-                  "where clo.child = omimPhenotype.disease AND clo.root = :disease ";
+            hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype join omimPhenotype.zfinGene as zfinGene " +
+                  "where array_contains(omimPhenotype.ancestorTermIds, :diseaseId) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -46,7 +46,11 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         }
         hql += "order by omimPhenotype.homoSapiensGene.symbol";
         Query<OmimPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, OmimPhenotypeDisplay.class);
-        query.setParameter("disease", term);
+        if (includeChildren) {
+            query.setParameter("diseaseId", term.getZdbID());
+        } else {
+            query.setParameter("disease", term);
+        }
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
@@ -67,14 +71,14 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 """;
         } else {
             hql = """
-                select distinct fishStat from FishStatistics as fishStat, TransitiveClosure as clo
+                select distinct fishStat from FishStatistics as fishStat
                 left join fetch fishStat.fish
                 left join fetch fishStat.term
                 left join fetch fishStat.figure
                 left join fetch fishStat.publication
                 left join fetch fishStat.affectedGenes
                 left join fetch fishStat.phenotypeStatements as phenoStats
-                where clo.child = fishStat.term AND clo.root = :term
+                where array_contains(fishStat.ancestorTermIds, :termId)
                    """;
         }
         if (!isIncludeNormalPhenotype) {
@@ -88,7 +92,11 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         }
         hql += "order by fishStat.fish.order, fishStat.fish.nameOrder, fishStat.geneSymbolSearch";
         Query<FishStatistics> query = HibernateUtil.currentSession().createQuery(hql, FishStatistics.class);
-        query.setParameter("term", term);
+        if (includeChildren) {
+            query.setParameter("termId", term.getZdbID());
+        } else {
+            query.setParameter("term", term);
+        }
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
@@ -99,8 +107,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         if (!includeChildren) {
             hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay where fishModelDisplay.disease = :term ";
         } else {
-            hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay, TransitiveClosure as clo " +
-                  "where clo.child = fishModelDisplay.disease AND clo.root = :term ";
+            hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay " +
+                  "where array_contains(fishModelDisplay.ancestorTermIds, :termId) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -110,7 +118,11 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         }
         hql += " order by fishModelDisplay.order, fishModelDisplay.fish.order, upper(fishModelDisplay.fish.displayName) ";
         Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
-        query.setParameter("term", term);
+        if (includeChildren) {
+            query.setParameter("termId", term.getZdbID());
+        } else {
+            query.setParameter("term", term);
+        }
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
@@ -121,13 +133,16 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
             hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay " +
                   "where chebiDisplay.chebi = :chebiTerm ";
         } else {
-            hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay, TransitiveClosure as clo " +
-                  "where  " +
-                  "clo.child = chebiDisplay.chebi AND clo.root = :chebiTerm ";
+            hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay " +
+                  "where array_contains(chebiDisplay.ancestorTermIds, :chebiTermId) ";
         }
         hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
-        query.setParameter("chebiTerm", term);
+        if (includeChildren) {
+            query.setParameter("chebiTermId", term.getZdbID());
+        } else {
+            query.setParameter("chebiTerm", term);
+        }
         List<ChebiFishModelDisplay> list = query.list();
         return list;
     }
@@ -152,8 +167,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         if (!includeChildren) {
             hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins + " where chebiPhenotype.term = :term ";
         } else {
-            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins + ", TransitiveClosure as clo  " +
-                  "where clo.child = chebiPhenotype.term AND clo.root = :term ";
+            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins +
+                  " where array_contains(chebiPhenotype.ancestorTermIds, :termId) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -175,7 +190,11 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         }
         hql += "order by chebiPhenotype.fish.displayName";
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
-        query.setParameter("term", term);
+        if (includeChildren) {
+            query.setParameter("termId", term.getZdbID());
+        } else {
+            query.setParameter("term", term);
+        }
         PaginationResult<ChebiPhenotypeDisplay> result = PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
         // make phenotypeStatementWarehouse objects a unique list
         result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
