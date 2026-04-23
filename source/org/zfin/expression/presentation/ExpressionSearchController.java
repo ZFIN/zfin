@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.service.ExpressionSearchService;
+import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -100,9 +101,6 @@ public class ExpressionSearchController {
             }
         }
 
-        List<ImageResult> images = expressionSearchService.getImageResults(criteria);
-        criteria.setImageResults(images);
-
         if (criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));
             criteria.setLinkWithImagesOnly(generateImagesOnlyUrl(request.getQueryString()));
@@ -117,6 +115,27 @@ public class ExpressionSearchController {
         }
 
         return "expression/results";
+    }
+
+    @RequestMapping("/image-gallery")
+    public @org.springframework.web.bind.annotation.ResponseBody
+    JsonResultResponse<ImageResult> imageGallery(
+            ExpressionSearchCriteria criteria,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            HttpServletRequest request) {
+        if (criteria.getRows() == null) {
+            criteria.setRows(DEFAULT_PAGE_SIZE);
+        }
+        if (criteria.getPage() == null) {
+            criteria.setPage(1);
+        }
+        if (StringUtils.isNotEmpty(criteria.getGeneZdbID()) && criteria.getGene() == null) {
+            criteria.setGene(markerRepository.getMarkerByID(criteria.getGeneZdbID()));
+        }
+        JsonResultResponse<ImageResult> response = expressionSearchService.getImageResultsPaginated(criteria, page, limit);
+        response.setHttpServletRequest(request);
+        return response;
     }
 
     @RequestMapping("/xpatselect")
