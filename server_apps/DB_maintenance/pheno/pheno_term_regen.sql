@@ -212,12 +212,13 @@ ALTER INDEX pheno_term_fast_search_term_id_index_transient
 -- Add primary key
 ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
 
--- Reassign sequence ownership to the new live column. Without this the
--- sequence is still OWNED BY the renamed _old_ table's column, and cleanup's
--- DROP TABLE ... CASCADE would take the sequence with it, breaking the next
--- regen's nextval() call.
+-- Detach the sequence from the renamed _old_ table's column so cleanup's
+-- DROP TABLE ... CASCADE doesn't take the sequence with it. We use
+-- OWNED BY NONE rather than re-linking to the new live column because the
+-- sequence and the tmp-become-live table may have different role owners
+-- (PG requires matching owners to re-link OWNED BY a column).
 ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
-    OWNED BY pheno_term_fast_search.ptfs_pk_id;
+    OWNED BY NONE;
 
 -- Add foreign key constraints
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
