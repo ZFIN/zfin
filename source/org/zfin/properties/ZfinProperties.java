@@ -217,10 +217,23 @@ public final class ZfinProperties {
      * Load properties from the specified file and populate ZfinPropertiesEnum values.
      */
     public static void init(String propertiesFileName) {
+        File propertiesFile = new File(propertiesFileName);
+        if (!propertiesFile.exists()) {
+            String sourceRoot = System.getenv("SOURCEROOT");
+            if (sourceRoot != null && !sourceRoot.isEmpty()) {
+                File fallback = new File(sourceRoot, "home/WEB-INF/zfin.properties");
+                if (fallback.isFile()) {
+                    logger.warn("Properties file not found at {}; falling back to {}",
+                            propertiesFileName, fallback.getAbsolutePath());
+                    propertiesFile = fallback;
+                    propertiesFileName = fallback.getAbsolutePath();
+                }
+            }
+        }
         currentPropertyFile = propertiesFileName;
 
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(propertiesFileName)) {
+        try (FileInputStream fis = new FileInputStream(propertiesFile)) {
             props.load(fis);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load properties file: " + propertiesFileName, e);
