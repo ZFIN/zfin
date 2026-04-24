@@ -308,7 +308,6 @@ emails:
   GO_EMAIL_ERR: "leyla@zfin.org dhowe@zfin.org sramachandran@zfin.org"
   INDEXER_REPORT_EMAIL: "cmpich@zfin.org"
   LN54_CONTACT_EMAIL: "zfinadmn@zfin.org"
-  LOCUS_REGISTRATION_EMAIL: "locusreg@zfin.org"
   MICROARRAY_EMAIL: "cvanslyk@uoregon.edu"
   NEW_PUBLICATION_REPORT: "curators@zfin.org zfinadmn@zfin.org pubs@zfin.org"
   NOMEN_COORDINATOR: "nomenclature_coordinators@zfin.org"

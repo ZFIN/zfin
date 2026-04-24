@@ -20,7 +20,6 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 GENERICS = \
-	   send_request.perl \
        merge_markers.pl
 
 # ---------------  Production Rules  ------------------------------------
