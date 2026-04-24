@@ -41,8 +41,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
             'server_apps/Reports/PubTracking/runPaperlessPubTrackingDailyIndexedMetrics.sh',
             'server_apps/Reports/elsevier_report.pl',
             'server_apps/Reports/reportPubsForGeneAndFeature.pl',
-            'server_apps/WebSiteTools/signsoflife.sh',
-            'server_apps/cron/crontab.production',
             'server_apps/data_transfer/Downloads/GFF3/E_unload_ensembl_contig.sql',
             'server_apps/data_transfer/Downloads/generateStagedAnatomy.pl',
             'server_apps/data_transfer/ExternalSearch/CreateMarkerSearchPage.pl',
