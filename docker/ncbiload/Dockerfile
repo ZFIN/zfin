@@ -21,6 +21,16 @@ ADD zfindbdump.bak /tmp/zfindbdump.bak
 RUN /etc/init.d/postgresql start && \
     su - postgres -c "pg_restore -d zfindb -j 8 /tmp/zfindbdump.bak"
 
+# Schema patches that landed after the slim dump was last refreshed.
+# When zfindbdump.bak is regenerated past the corresponding changesets,
+# delete the matching files from post-dump-patches/.
+COPY post-dump-patches /tmp/post-dump-patches
+RUN /etc/init.d/postgresql start && \
+    for f in /tmp/post-dump-patches/*.sql; do \
+        echo "Applying $f"; \
+        su - postgres -c "psql -d zfindb -v ON_ERROR_STOP=1 -f $f" || exit 1; \
+    done
+
 #Modify sudoers to allow gradle to run sudo without a password
 RUN echo "gradle ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
