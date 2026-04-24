@@ -611,21 +611,35 @@ task getLatestPostgresFilesTrunk() {
 
 task getLatestSolrIndex() {
     doLast {
-        println 'Upgrade Solr index to the latest production one...'
-        println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
-
-        def folder = solrunloadspath
-        def baseDir = new File(folder)
-        def files = baseDir.listFiles()
-        Arrays.sort(files, new Comparator<File>() {
-            int compare(File f1, File f2) {
-                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+        def selectedIndex
+        if (project.hasProperty('solrIndex')) {
+            def raw = project.property('solrIndex').toString()
+            selectedIndex = new File(raw)
+            if (!selectedIndex.isAbsolute()) {
+                selectedIndex = new File(solrunloadspath, raw)
             }
-        })
-        def latestIndex = files[0]
-        println latestIndex
+            if (!selectedIndex.isDirectory()) {
+                throw new GradleException("solrIndex path not found or not a directory: " + selectedIndex)
+            }
+            println "Restoring Solr index from specified path: " + selectedIndex
+        } else {
+            println 'Upgrade Solr index to the latest production one... Use -PsolrIndex=/path/to/unload to load a specific index instead.'
+            println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
+
+            def folder = solrunloadspath
+            def baseDir = new File(folder)
+            def files = baseDir.listFiles()
+            Arrays.sort(files, new Comparator<File>() {
+                int compare(File f1, File f2) {
+                    return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+                }
+            })
+            selectedIndex = files[0]
+            println selectedIndex
+        }
+
         def sout = new StringBuilder(), serr = new StringBuilder()
-        def procString = "ant restore-solr-core -DRESTORE_FROM=" + latestIndex.getAbsolutePath()
+        def procString = "ant restore-solr-core -DRESTORE_FROM=" + selectedIndex.getAbsolutePath()
         def proc = procString.execute()
         def b = new StringBuffer()
         proc.consumeProcessErrorStream(b)
