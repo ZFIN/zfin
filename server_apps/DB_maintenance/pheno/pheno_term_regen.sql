@@ -11,6 +11,11 @@ BEGIN
 drop table if exists pheno_term_fast_search_tmp;
 
 create table pheno_term_fast_search_tmp as select * from pheno_term_fast_search where false;
+-- CREATE TABLE AS copies column types but not defaults, so restore the
+-- nextval() default on ptfs_pk_id; otherwise inserts leave it NULL and the
+-- ADD PRIMARY KEY below fails.
+ALTER TABLE pheno_term_fast_search_tmp
+    ALTER COLUMN ptfs_pk_id SET DEFAULT nextval('pheno_term_fast_search_ptfs_pk_id_seq');
 
 insert into pheno_term_fast_search_tmp
 (
@@ -20,7 +25,7 @@ insert into pheno_term_fast_search_tmp
    ptfs_is_direct_annotation,
    ptfs_phenos_created_date
 )
-select 
+select
    psg_id,
    psg_e1a_zdb_id,
    psg_tag,
@@ -206,6 +211,13 @@ ALTER INDEX pheno_term_fast_search_term_id_index_transient
 
 -- Add primary key
 ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
+
+-- Reassign sequence ownership to the new live column. Without this the
+-- sequence is still OWNED BY the renamed _old_ table's column, and cleanup's
+-- DROP TABLE ... CASCADE would take the sequence with it, breaking the next
+-- regen's nextval() call.
+ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
+    OWNED BY pheno_term_fast_search.ptfs_pk_id;
 
 -- Add foreign key constraints
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
