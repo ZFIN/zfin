@@ -29,10 +29,10 @@ public class LookupRPCServiceImplTest extends AbstractDatabaseTest {
         oldIoTempDir = System.getProperty("java.io.tmpdir");
         System.setProperty("java.io.tmpdir", AbstractOntologyTest.testTempDirectory);
         OntologyManager ontologyManager = OntologyManager.getEmptyInstance();
-        ontologyManager.deserializeOntology(Ontology.ANATOMY);
-        ontologyManager.deserializeOntology(Ontology.GO_CC);
-        ontologyManager.deserializeOntology(Ontology.GO_MF);
-        ontologyManager.deserializeOntology(Ontology.GO_BP);
+        AbstractOntologyTest.deserializeOrPrime(ontologyManager, Ontology.ANATOMY);
+        AbstractOntologyTest.deserializeOrPrime(ontologyManager, Ontology.GO_CC);
+        AbstractOntologyTest.deserializeOrPrime(ontologyManager, Ontology.GO_MF);
+        AbstractOntologyTest.deserializeOrPrime(ontologyManager, Ontology.GO_BP);
     }
 
     @After
