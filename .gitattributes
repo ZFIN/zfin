@@ -677,9 +677,3 @@
 /source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8230-filemaker-export-zebrafish-ish-database-2017.csv filter=lfs diff=lfs merge=lfs -text
 /source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8231-filemaker-export-database-plates-march2017.csv filter=lfs diff=lfs merge=lfs -text
 /source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8232-filemaker-export-database-screen-april-2017.csv filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/ANATOMY-lookup.ser filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/GO_BP-lookup.ser filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/GO_CC-lookup.ser filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/GO_MF-lookup.ser filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/QUALITY-lookup.ser filter=lfs diff=lfs merge=lfs -text
-/test/ontologies/data-transfer/SO-lookup.ser filter=lfs diff=lfs merge=lfs -text

@@ -72,3 +72,7 @@ temp-ai-*
 .vscode
 .windsurf
 CLAUDE.md
+
+# Ontology serialization caches written during test runs.
+# Tests prime them lazily via AbstractOntologyTest.deserializeOrPrime(...).
+test/ontologies/data-transfer/*.ser
