@@ -32,6 +32,7 @@
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+            <a class="dropdown-item" href="/action/marker/convert-type?zdbID=${formBean.marker.zdbID}"><i class="fas fa-exchange-alt"></i> Convert Type</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">

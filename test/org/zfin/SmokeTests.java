@@ -15,6 +15,7 @@ import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.mapping.MappingDetailSmokeTest;
 import org.zfin.marker.MarkerStrSmokeTest;
 import org.zfin.mutant.smoketest.ConstructSmokeTest;
+import org.zfin.profile.smoketest.ProfileSearchSmokeTest;
 import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
 
@@ -39,6 +40,7 @@ import org.zfin.webservice.MarkerRestSmokeTest;
     MarkerStrSmokeTest.class,
     MarkerViewSmokeTest.class,
     MarkerRestSmokeTest.class,
+    ProfileSearchSmokeTest.class,
 
 //TODO: fix these webspecs and uncomment them
 //        FigureViewWebSpec.class,

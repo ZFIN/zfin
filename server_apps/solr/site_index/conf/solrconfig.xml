@@ -6,6 +6,7 @@
   <luceneMatchVersion>8.6.3</luceneMatchVersion>
 
   <lib dir="${solr.install.dir:../../../..}/dist/" regex="solr-dataimporthandler-.*\.jar" />
+  <lib dir="${solr.install.dir:../../../..}/server/lib/" regex="postgresql-.*\.jar" />
 
   <dataDir>${solr.data.dir:}</dataDir>
 

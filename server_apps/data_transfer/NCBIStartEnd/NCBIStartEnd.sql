@@ -56,9 +56,15 @@ select distinct zdbID,
 		ncbiStart,
 		ncbiEnd,
 		'NCBIStartEndLoader',
-		10, 
+		10,
 		'ZDB-TERM-170419-250'
-  from tmp_ncbi_add;
+  from tmp_ncbi_add
+  where not exists (
+      select 1 from sequence_feature_chromosome_location_generated
+      where sfclg_data_zdb_id = zdbID
+        and sfclg_acc_num = accnum
+        and sfclg_location_source = 'NCBIStartEndLoader'
+  );
 
 commit work;
 

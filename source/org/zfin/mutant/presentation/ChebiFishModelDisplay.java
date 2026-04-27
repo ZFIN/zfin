@@ -7,6 +7,8 @@ import org.zfin.framework.api.View;
 import org.zfin.ontology.GenericTerm;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Disease model which groups by Publications
@@ -31,5 +33,9 @@ public class ChebiFishModelDisplay {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "omca_zebfrafish_model_id")
     FishModelDisplay fishModelDisplay;
+
+    @Column(name = "omca_ancestor_term_ids", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] ancestorTermIds;
 
 }

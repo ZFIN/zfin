@@ -173,21 +173,20 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = currentSession();
 
         String hql = """
-                select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, 
+                select distinct fishox.fish, fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox,
                     PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved,
-                    TransitiveClosure transitiveClosure 
-                    left outer join phenoObserved.e1a as e1a 
-                    left outer join phenoObserved.e1b as e1b 
-                    left outer join phenoObserved.e2a as e2a 
-                    left outer join phenoObserved.e2b as e2b 
-                    left outer join phenoObserved.quality as quality 
-                    WHERE phenoSource.fishExperiment = fishox 
-                    AND phenoObserved.phenotypeWarehouse = phenoSource 
-                    AND transitiveClosure.root = :aoTerm and 
-                    (e1a = transitiveClosure.child OR e1b = transitiveClosure.child OR 
-                     e2a = transitiveClosure.child OR e2b = transitiveClosure.child OR quality = transitiveClosure.child ) 
-                    AND phenoObserved.tag != :tag 
-                    AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) 
+                    PhenotypeTermFastSearch fastSearch
+                    left outer join phenoObserved.e1a as e1a
+                    left outer join phenoObserved.e1b as e1b
+                    left outer join phenoObserved.e2a as e2a
+                    left outer join phenoObserved.e2b as e2b
+                    left outer join phenoObserved.quality as quality
+                    WHERE phenoSource.fishExperiment = fishox
+                    AND phenoObserved.phenotypeWarehouse = phenoSource
+                    AND fastSearch.phenotypeObserved = phenoObserved
+                    AND fastSearch.term = :aoTerm
+                    AND phenoObserved.tag != :tag
+                    AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox)
             """;
 
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
@@ -872,7 +871,19 @@ public class HibernateMutantRepository implements MutantRepository {
             basicPhenos.add(basicPheno);
         }
 
-        return basicPhenos;
+        // Deduplicate: same objectId + phenotypeStatement + publication + primaryGeneticEntityIDs
+        List<BasicPhenotypeDTO> dedupedPhenos = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (BasicPhenotypeDTO pheno : basicPhenos) {
+            String key = pheno.getObjectId() + "|" + pheno.getPhenotypeStatement() + "|"
+                + (pheno.getEvidence() != null ? pheno.getEvidence().getPublicationId() : "") + "|"
+                + (pheno.getPrimaryGeneticEntityIDs() != null ? pheno.getPrimaryGeneticEntityIDs().toString() : "");
+            if (seen.add(key)) {
+                dedupedPhenos.add(pheno);
+            }
+        }
+
+        return dedupedPhenos;
     }
 
     @SuppressWarnings("unchecked")

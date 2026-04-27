@@ -1,6 +1,8 @@
 buildscript {
+    //If updating here, match it in the tomcat and solr Dockerfiles
+    ext.postgresqlVersion = '42.7.8'
     dependencies {
-        classpath 'org.postgresql:postgresql:42.7.8'
+        classpath "org.postgresql:postgresql:${postgresqlVersion}"
     }
 }
 
@@ -67,14 +69,12 @@ def localFileDependencies = [
         "home/WEB-INF/lib/rescu-2.1.0-eclipse-transformed.jar",
         "home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar",
         "home/WEB-INF/lib/taglibs-standard-impl-1.2.5-eclipse-transformed.jar",
-        "lib/Java/gwt/gwt-user-2.11.0.jar",
-        "lib/Java/gwt/jsinterop-annotations-2.0.0.jar"
 ];
 
 // ============================================================================
 // DEPENDENCY RESOLUTION STRATEGY (Conflict Resolution)
 // ============================================================================
-configurations.all {
+configurations.all { config ->
     // Exclude XML parsers provided by Tomcat from all dependencies
     exclude group: 'xpp3', module: 'xpp3'
     exclude group: 'pull-parser', module: 'pull-parser'
@@ -82,12 +82,16 @@ configurations.all {
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xml-apis', module: 'xml-apis'
 
-    resolutionStrategy {
-        // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
-        eachDependency { details ->
-            if (details.requested.group.startsWith("com.fasterxml.jackson")) {
-                details.useVersion(jacksonVersion)
-                details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+    // Skip Jackson version forcing for gwtSources — it must stay at 2.11.x
+    // because GWT can't compile jackson-annotations 2.12+ (uses String.format).
+    if (config.name != 'gwtSources') {
+        resolutionStrategy {
+            // Force consistent Jackson version across all dependencies to avoid NoSuchMethodError
+            eachDependency { details ->
+                if (details.requested.group.startsWith("com.fasterxml.jackson")) {
+                    details.useVersion(jacksonVersion)
+                    details.because("Force consistent Jackson version to avoid BufferRecycler.releaseToPool() incompatibility")
+                }
             }
         }
     }
@@ -671,27 +675,21 @@ task getBlast(type: GradleBuild) {
     ]
 }
 
+// Requires GraphViz 'dot' command to render diagrams. Install graphviz in the compile container if needed.
 task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
         javaexec {
-            main = "-jar"
+            classpath = configurations.schemaspy
+            mainClass = 'org.schemaspy.Main'
             args = [
-                    "lib/Java/schemaSpy_5.0.0.jar",
-                    "-t",
-                    "pgsql",
-                    "-db",
-                    ttNameMap.get('DB_NAME'),
-                    "-u",
-                    ttNameMap.get('USER'),
-                    "-host",
-                    pghost,
-                    "-dp",
-                    "lib/Java/postgresql-42.2.18.jar",
-                    "-s",
-                    "public",
-                    "-o",
-                    ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
+                    "-t", "pgsql11",
+                    "-db", ttNameMap.get('DB_NAME'),
+                    "-u", env['PGUSER'],
+                    "-host", pghost,
+                    "-dp", configurations.runtimeClasspath.find { it.name.startsWith('postgresql-') }.absolutePath,
+                    "-s", "public",
+                    "-o", ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
             ]
         }
     }
@@ -739,6 +737,19 @@ task tagGHCRImages() {
     }
 }
 
+task tagLatestGHCRImages() {
+    doLast {
+        println 'Tagging images for Github Container Registry'
+        for (container in containerList) {
+            println container
+            exec {
+                commandLine 'docker','tag',"ghcr.io/zfin/zfin-"+container+":"+release,"ghcr.io/zfin/zfin-"+container+":latest"
+                workingDir 'docker/'
+            }
+        }
+    }
+}
+
 task pushGHCRImages() {
     doLast {
         println 'Pushing images to Github Container Registry'
@@ -760,6 +771,19 @@ task pushGHCRImages() {
     }
 }
 
+task pushLatestGHCRImages() {
+    doLast {
+        println 'Pushing images to Github Container Registry'
+        for (container in containerList) {
+            println container
+            exec {
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":latest"
+                workingDir 'docker/'
+            }
+        }
+    }
+}
+
 task dumpTomcatStack() {
     doLast {
         exec {
@@ -775,12 +799,26 @@ repositories {
     maven { url 'https://jitpack.io' }  // For GitHub-hosted dependencies
 }
 
+configurations {
+    // Jackson-annotations 2.12+ uses String.format() which GWT's JRE emulation doesn't support.
+    // This configuration pulls the newest GWT-compatible sources jar (2.11.x) from Maven.
+    // See lib/Java/gwt/GWT-JACKSON-NOTES.md for details.
+    gwtSources
+    schemaspy
+}
+
 dependencies {
+    gwtSources("com.fasterxml.jackson.core:jackson-annotations:2.11.4") { artifact { classifier = 'sources' } }
+    schemaspy "org.schemaspy:schemaspy:6.2.4"
+
     annotationProcessor "org.projectlombok:lombok:1.18.42"
     compileOnly "com.github.nmorel.gwtjackson:gwt-jackson:0.15.4"
     compileOnly "com.google.jsinterop:jsinterop-annotations:2.0.0"
     compileOnly "jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1"
     compileOnly "org.gwtproject:gwt-dev:2.11.0"
+    compileOnly "org.gwtproject:gwt-user:2.11.0"
+    compileOnly("javax.validation:validation-api:1.0.0.GA") { artifact { classifier = 'sources' } }
+    compileOnly "org.w3c.css:sac:1.3"
     compileOnly "org.projectlombok:lombok:1.18.42"
     compileOnly "xalan:xalan:2.7.0"
     compileOnly "xerces:xercesImpl:2.12.2"
@@ -1189,6 +1227,7 @@ test {
             includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
             includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
             includeTestsMatching "org.zfin.framework.presentation.HealthEndpointSmokeTest"
+            includeTestsMatching "org.zfin.profile.smoketest.ProfileSearchSmokeTest"
             //include specific method in any of the tests
             //        includeTestsMatching "*ActiveDataTest"
             }
@@ -1423,7 +1462,14 @@ task compileGwtModule(type: JavaExec) {
     def gwtTarget = project.hasProperty('gwtTarget') ? project.property('gwtTarget') : targetroot + '/home/gwt'
 
     mainClass = 'com.google.gwt.dev.Compiler'
-    classpath = configurations.compileClasspath + files('source')
+    def filteredCompileClasspath = configurations.compileClasspath.filter { file ->
+        !file.name.matches('jackson-annotations-.*-sources\\.jar')
+    }
+    classpath = files('source') +
+                files('home/WEB-INF/classes') +
+                filteredCompileClasspath +
+                configurations.gwtSources +
+                fileTree(dir: 'lib/Java/gwt', include: '*.jar')
     args = [
         '-war', gwtTarget,
         '-style', 'DETAILED',
@@ -1460,11 +1506,16 @@ task gwtCompile {
             javaexec {
                 mainClass = 'com.google.gwt.dev.Compiler'
 
-                // Match the working command line classpath: home/WEB-INF/classes:lib/Java/gwt/*:source
-                classpath = files('home/WEB-INF/classes') +
-                            fileTree(dir: 'lib/Java/gwt', include: '*.jar') +
-                            files('home/WEB-INF/lib/restygwt-2.2.7-eclipse-transformed.jar') +
-                            files('source')
+                // Filter out jackson-annotations-*-sources.jar from Maven (2.15.2 uses
+                // String.format which GWT can't compile); use gwtSources config instead.
+                def filteredCompileClasspath = configurations.compileClasspath.filter { file ->
+                    !file.name.matches('jackson-annotations-.*-sources\\.jar')
+                }
+                classpath = files('source') +
+                            files('home/WEB-INF/classes') +
+                            filteredCompileClasspath +
+                            configurations.gwtSources +
+                            fileTree(dir: 'lib/Java/gwt', include: '*.jar')
 
                 args = [
                     '-war', gwtTarget,
@@ -1496,7 +1547,7 @@ task npmInstall(type: Exec) {
     description = 'Install npm dependencies'
     group = 'build'
 
-    commandLine 'npm', 'install'
+    commandLine 'npm', 'ci'
 
     inputs.file 'package.json'
     inputs.file 'package-lock.json'

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-form';
+import { useForm } from '../../hooks/useFormLite';
 import http from '../../utils/http';
 import equal from 'fast-deep-equal';
 import InputField from '../form/InputField';

@@ -102,7 +102,7 @@
         <z:attributeListItem label="Files">
             <c:forEach items="${publication.files}" var="file" varStatus="loop">
                 <a href="${ZfinPropertiesEnum.PDF_LOAD.value()}/${file.fileName}">
-                        ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
+                        ${file.originalFileName}
                 </a>${loop.last ? " &mdash; " : ", "}
             </c:forEach>
             <a href="/action/publication/${publication.zdbID}/edit#files">Add/Update Files</a>

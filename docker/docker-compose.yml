@@ -74,7 +74,7 @@ services:
   db:
     build: ./postgresql/
     image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}
-    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
+    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
@@ -83,8 +83,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       TZ: ${TZ}
     shm_size: 1g
-#    ports:
-#      - "127.0.0.1:5444:5432"
+    ports:
+      - "${DOCKER_DB_PORT:-127.0.0.1:5432}:5432"
     volumes:
       - pg_data:/var/lib/postgresql/
       - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro
@@ -225,6 +225,7 @@ services:
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
+      - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
@@ -296,6 +297,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro      
   metricbeat:
+    image: ghcr.io/zfin/zfin-metricbeat:${ZFIN_RELEASE}  
     build:
       context: ./metricbeat/
       args:

@@ -1,5 +1,5 @@
 import React from 'react';
-import { splitFormProps, useField } from 'react-form';
+import { splitFormProps, useField } from '../../hooks/useFormLite';
 
 const InputCheckbox = React.forwardRef((props, ref) => {
     const [field, fieldOptions, rest] = splitFormProps(props);

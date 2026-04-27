@@ -24,8 +24,10 @@ public class ShowPublicationController {
                                    Model model) throws Exception {
 
         List<Publication> list = getPublicationRepository().getPubsForDisplay(zdbID);
-        if (list == null)
-            return LookupStrings.idNotFound(model, zdbID);
+        if (list == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
         ShowPublicationBean bean = new ShowPublicationBean(list);
         bean.setEntityID(zdbID);
         bean.setEntity(ActiveData.getType(zdbID).getEntity(zdbID));

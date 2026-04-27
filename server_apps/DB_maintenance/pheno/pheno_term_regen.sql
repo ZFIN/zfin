@@ -1,14 +1,16 @@
-begin work;
+-- Regenerate pheno_term_fast_search using rename-and-recreate pattern
+-- to avoid deadlocks with the indexer during the swap.
+-- Old tables are renamed with a timestamp suffix for later cleanup.
 
--- delete from pheno_term_fast_search_tmp;
+DO $$
+DECLARE
+    old_name text;
+    ts text := to_char(now(), 'YYMMDDHH24MI') || '_' || substring(md5(random()::text), 1, 4);
+BEGIN
+
 drop table if exists pheno_term_fast_search_tmp;
 
-commit work ;
-
-begin work ;
-
--- create empty temp table
-create temp table pheno_term_fast_search_tmp as select * from pheno_term_fast_search where false;
+create table pheno_term_fast_search_tmp as select * from pheno_term_fast_search where false;
 
 insert into pheno_term_fast_search_tmp
 (
@@ -37,7 +39,7 @@ insert into pheno_term_fast_search_tmp
    ptfs_is_direct_annotation,
    ptfs_phenos_created_date
 )
-select 
+select
    psg_id,
    psg_e1b_zdb_id,
    psg_tag,
@@ -172,23 +174,43 @@ where
 ;
 
 
-delete from pheno_term_fast_search;
+-- Build indexes on the staging table before the swap
+create index pheno_term_fast_search_psg_id_index_transient
+    on pheno_term_fast_search_tmp (ptfs_psg_id);
+create index pheno_term_fast_search_term_id_index_transient
+    on pheno_term_fast_search_tmp (ptfs_term_zdb_id);
 
-insert into pheno_term_fast_search (
-	ptfs_psg_id , 
-	ptfs_term_zdb_id ,
-	ptfs_tag ,
-	ptfs_is_direct_annotation ,
-	ptfs_phenos_created_date )
-select 
-	ptfs_psg_id , 
-	ptfs_term_zdb_id ,
-	ptfs_tag ,
-	ptfs_is_direct_annotation ,
-	ptfs_phenos_created_date
-from pheno_term_fast_search_tmp;	
+-- Swap: rename old table out, promote new table
 
+IF EXISTS (SELECT 1 FROM information_schema.tables
+           WHERE table_name = 'pheno_term_fast_search' AND table_schema = 'public') THEN
+    old_name := 'pheno_term_fast_search_old_' || ts;
+    RAISE NOTICE 'Renaming pheno_term_fast_search to %', old_name;
+    EXECUTE 'ALTER TABLE pheno_term_fast_search RENAME TO ' || old_name;
+    EXECUTE 'TRUNCATE ' || old_name;
 
-commit work;
+    -- Rename indexes to avoid collisions
+    EXECUTE 'ALTER INDEX IF EXISTS pheno_term_fast_search_pkey RENAME TO ' || old_name || '_pkey';
+    EXECUTE 'ALTER INDEX IF EXISTS pheno_term_fast_search_psg_id_index RENAME TO ' || old_name || '_psg_id_index';
+    EXECUTE 'ALTER INDEX IF EXISTS pheno_term_fast_search_term_id_index RENAME TO ' || old_name || '_term_id_index';
+END IF;
 
+-- Promote staging table to live
+ALTER TABLE pheno_term_fast_search_tmp RENAME TO pheno_term_fast_search;
 
+-- Rename transient indexes to permanent names
+ALTER INDEX pheno_term_fast_search_psg_id_index_transient
+    RENAME TO pheno_term_fast_search_psg_id_index;
+ALTER INDEX pheno_term_fast_search_term_id_index_transient
+    RENAME TO pheno_term_fast_search_term_id_index;
+
+-- Add primary key
+ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
+
+-- Add foreign key constraints
+ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
+    FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id);
+ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_term_fk
+    FOREIGN KEY (ptfs_term_zdb_id) REFERENCES term (term_zdb_id);
+
+END $$;
