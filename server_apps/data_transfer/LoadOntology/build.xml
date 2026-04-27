@@ -515,12 +515,12 @@
             <echo message="Connecting to ontofox.hegroup.org..."/>
 
             <!-- Generate owl file at ontofox.hegroup.org from source file-->
-            <exec executable="curl">
+            <exec executable="curl" failonerror="true">
                 <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl https://ontofox.hegroup.org/service.php"/>
             </exec>
 
             <!-- convert owl file into an obo file -->
-            <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot-cleaned.jar">
+            <java fork="true" failonerror="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot-cleaned.jar">
                 <arg value="convert"/>
                 <arg value="--input"/>
                 <arg value="obo-files/@{file-name}.owl"/>
