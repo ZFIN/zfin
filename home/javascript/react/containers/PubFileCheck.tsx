@@ -1,7 +1,12 @@
 import React, {StrictMode, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-const PubFileCheck = ({ pubId, initialFiles}) => {
+interface PubFileCheckProps {
+    pubId: string;
+    initialFiles: unknown[];
+}
+
+const PubFileCheck = ({ pubId, initialFiles}: PubFileCheckProps) => {
     const [files, setFiles] = useState([]);
     const [emptyFiles, setEmptyFiles] = useState([]);
     const url = `/action/publication/${pubId}/files`;

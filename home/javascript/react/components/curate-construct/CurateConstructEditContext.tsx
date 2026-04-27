@@ -15,7 +15,7 @@ interface ConstructUnderEdit {
     addCassetteMode: boolean;
 }
 
-interface CurateConstructEditState {
+export interface CurateConstructEditState {
     publicationId: string;
     selectedConstructId: string;
     selectedConstruct: ConstructUnderEdit;
@@ -64,7 +64,13 @@ function blankState() {
     };
 }
 
-export const CurateConstructEditProvider = ({publicationId, selectedConstructId, children}) => {
+interface CurateConstructEditProviderProps {
+    publicationId: string;
+    selectedConstructId: string;
+    children: React.ReactNode;
+}
+
+export const CurateConstructEditProvider = ({publicationId, selectedConstructId, children}: CurateConstructEditProviderProps) => {
     const blank = blankState();
     const [state, setState] = useState<CurateConstructEditState>({...blank, publicationId, selectedConstructId});
 
@@ -77,8 +83,9 @@ export const CurateConstructEditProvider = ({publicationId, selectedConstructId,
         });
     }, [publicationId, selectedConstructId]);
 
-    function setStateByProxy(fn) {
-        return setState(produce(fn));
+    function setStateByProxy(fn: (draft: CurateConstructEditState) => void) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return setState(produce(fn) as unknown as React.SetStateAction<CurateConstructEditState>);
     }
 
     return (
