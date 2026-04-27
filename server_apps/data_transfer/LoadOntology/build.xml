@@ -520,7 +520,7 @@
             </exec>
 
             <!-- convert owl file into an obo file -->
-            <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot.jar">
+            <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot-cleaned.jar">
                 <arg value="convert"/>
                 <arg value="--input"/>
                 <arg value="obo-files/@{file-name}.owl"/>
