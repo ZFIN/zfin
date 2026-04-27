@@ -61,13 +61,6 @@
             </td>
         </tr>
         <tr>
-            <td class="sectionTitle">Construct Add</td>
-            <td>
-
-                <a href="/action/devtool/gwt/construct-curation">Construct Add</a>
-            </td>
-        </tr>
-        <tr>
             <td class="sectionTitle">Image Edit Test</td>
             <td>
                 <a href="/action/devtool/gwt/image-edit-test">Image Edit Test</a>

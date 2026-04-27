@@ -140,10 +140,10 @@ function typeAbbreviationToType(typeAbbreviation: string): string {
     }
 }
 
-function normalizeSimplifiedCassettes(simplifiedCassettes) {
-    return simplifiedCassettes.map((cassette, i) => ({
+function normalizeSimplifiedCassettes(simplifiedCassettes: SimplifiedCassette[]) {
+    return simplifiedCassettes.map((cassette: SimplifiedCassette, i: number) => ({
         cassetteNumber: cassette.cassetteNumber,
-        promoter: cassette.promoter.filter((component, j) => !(j === 0 && i > 0 && component === ',')),
+        promoter: cassette.promoter.filter((component: string, j: number) => !(j === 0 && i > 0 && component === ',')),
         coding: [...cassette.coding]
     }));
 }

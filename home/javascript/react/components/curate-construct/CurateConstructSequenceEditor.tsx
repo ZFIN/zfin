@@ -5,11 +5,11 @@ function CurateConstructSequenceEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
-    function setSequenceTextValue(value) {
+    function setSequenceTextValue(value: string) {
         setStateByProxy(proxy => {proxy.stagedSequence = value;});
     }
 
-    function handleRemoveSequence(index) {
+    function handleRemoveSequence(index: number) {
         const newSequences = [...state.selectedConstruct.sequences];
         newSequences.splice(index, 1);
         setStateByProxy(proxy => {proxy.selectedConstruct.sequences = newSequences;});
@@ -24,7 +24,7 @@ function CurateConstructSequenceEditor() {
         setSequenceTextValue('');
     }
 
-    function handleAddSequenceKeyDown(event) {
+    function handleAddSequenceKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key === 'Enter') {
             handleAddSequence();
         }
@@ -40,7 +40,7 @@ function CurateConstructSequenceEditor() {
         <input
             autoComplete='off'
             type='text'
-            size='50'
+            size={50}
             value={state.stagedSequence}
             onChange={e => setSequenceTextValue(e.target.value)}
             onKeyDown={handleAddSequenceKeyDown}

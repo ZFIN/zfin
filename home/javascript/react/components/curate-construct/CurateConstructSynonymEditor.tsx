@@ -7,11 +7,11 @@ function CurateConstructSynonymEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
-    function setSynonymTextValue(value) {
+    function setSynonymTextValue(value: string) {
         setStateByProxy(proxy => {proxy.stagedSynonym = value;});
     }
 
-    function handleRemoveSynonym(index) {
+    function handleRemoveSynonym(index: number) {
         const newSynonyms = [...state.selectedConstruct.synonyms];
         const removedSynonym = newSynonyms[index];
         newSynonyms.splice(index, 1);
@@ -30,7 +30,7 @@ function CurateConstructSynonymEditor() {
         setSynonymTextValue('');
     }
 
-    function handleAddSynonymKeyDown(event) {
+    function handleAddSynonymKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key === 'Enter') {
             handleAddSynonym();
         }
@@ -46,7 +46,7 @@ function CurateConstructSynonymEditor() {
         <input
             autoComplete='off'
             type='text'
-            size='50'
+            size={50}
             value={state.stagedSynonym}
             onChange={e => setSynonymTextValue(e.target.value)}
             onKeyDown={handleAddSynonymKeyDown}

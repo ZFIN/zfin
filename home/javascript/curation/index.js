@@ -1,2 +1,0 @@
-require('./constructAdd');
-require('./constructUpdate');

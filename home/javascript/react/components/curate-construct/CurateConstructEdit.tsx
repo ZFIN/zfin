@@ -10,32 +10,20 @@ interface CurateConstructEditProps {
     publicationId: string;
 }
 
-type DisplayMode = 'new' | 'edit' | 'list' | 'none';
-
 const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     const [selectedConstructID, setSelectedConstructID] = useState<string>('');
     const [constructList, setConstructList] = useState<MarkerLabelAndZdbId[]>([]);
-    const [errorMessage, setErrorMessage] = useState<string>('');
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [displayMode, setDisplayMode] = useState<DisplayMode>('none');
+    const [showNew, setShowNew] = useState<boolean>(false);
+    const [showEdit, setShowEdit] = useState<boolean>(false);
+    const [newErrorMessage, setNewErrorMessage] = useState<string>('');
+    const [newSuccessMessage, setNewSuccessMessage] = useState<string>('');
+    const [editErrorMessage, setEditErrorMessage] = useState<string>('');
+    const [editSuccessMessage, setEditSuccessMessage] = useState<string>('');
     const [lastCreatedConstructID, setLastCreatedConstructID] = useState<string>('');
+    const [newFormKey, setNewFormKey] = useState<number>(0);
     const [pending, setPending] = useState<boolean>(true);
 
     useCurationTabLoadEvent('CONSTRUCT', pending);
-
-    function toggleDisplayMode(newMode: DisplayMode) {
-        setErrorMessage('');
-        setSuccessMessage('');
-        if (newMode === 'new') {
-            setSelectedConstructID('');
-            resetSelectedConstruct();
-        }
-        // Clear the lastCreatedConstructID when changing modes
-        if (newMode !== 'new') {
-            setLastCreatedConstructID('');
-        }
-        setDisplayMode(newMode);
-    }
 
     async function loadConstructList() {
         const response = await fetch(`${calculatedDomain}/action/api/publication/${publicationId}/constructs`);
@@ -63,14 +51,11 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
         return uniqueConstructIdLabelList;
     }
 
-    async function submitForm(submissionObject : EditConstructFormDTO) {
-        setSuccessMessage('');
-        setErrorMessage('');
+    async function submitNewForm(submissionObject : EditConstructFormDTO) {
+        setNewSuccessMessage('');
+        setNewErrorMessage('');
         try {
-            let url = `${calculatedDomain}/action/construct/create-and-update`;
-            if (selectedConstructID) {
-                url = `${calculatedDomain}/action/construct/update/${selectedConstructID}`;
-            }
+            const url = `${calculatedDomain}/action/construct/create-and-update`;
             const result = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -80,62 +65,77 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
             });
             const bodyJson = await result.json();
             if (bodyJson.success === false) {
-                setErrorMessage('Error updating construct: ' + bodyJson.message);
+                setNewErrorMessage('Error creating construct: ' + bodyJson.message);
             } else {
                 loadConstructList();
-                setSuccessMessage(bodyJson.message);
-                setErrorMessage('');
-
-                // Store the newly created construct ID for the "Edit" link
+                setNewSuccessMessage(bodyJson.message);
+                setNewErrorMessage('');
                 if (bodyJson.zdbID) {
                     setLastCreatedConstructID(bodyJson.zdbID);
                 }
-
-                resetSelectedConstruct();
+                setNewFormKey(prev => prev + 1);
             }
         } catch (error) {
-            setErrorMessage('Error updating construct');
+            setNewErrorMessage('Error creating construct');
         }
     }
 
-    async function handleConstructSelected(constructId: string) {
-        setSuccessMessage('');
-        setErrorMessage('');
+    async function submitEditForm(submissionObject : EditConstructFormDTO) {
+        setEditSuccessMessage('');
+        setEditErrorMessage('');
+        try {
+            const url = `${calculatedDomain}/action/construct/update/${selectedConstructID}`;
+            const result = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submissionObject),
+            });
+            const bodyJson = await result.json();
+            if (bodyJson.success === false) {
+                setEditErrorMessage('Error updating construct: ' + bodyJson.message);
+            } else {
+                loadConstructList();
+                setEditSuccessMessage(bodyJson.message);
+                setEditErrorMessage('');
+                // Force re-render of the edit form to reload updated data
+                const currentId = selectedConstructID;
+                setSelectedConstructID('');
+                setTimeout(() => setSelectedConstructID(currentId), 0);
+            }
+        } catch (error) {
+            setEditErrorMessage('Error updating construct');
+        }
+    }
+
+    function handleConstructSelected(constructId: string) {
+        setEditSuccessMessage('');
+        setEditErrorMessage('');
         setSelectedConstructID(constructId);
-        toggleDisplayMode('edit');
+    }
+
+    function cancelNew() {
+        setShowNew(false);
+        setNewErrorMessage('');
+        setNewSuccessMessage('');
+        setLastCreatedConstructID('');
     }
 
     function cancelEdit() {
-        toggleDisplayMode('none');
+        setShowEdit(false);
         setSelectedConstructID('');
-        resetSelectedConstruct();
+        setEditErrorMessage('');
+        setEditSuccessMessage('');
     }
 
     function activateEditMode() {
         if (lastCreatedConstructID) {
             setSelectedConstructID(lastCreatedConstructID);
-            setDisplayMode('edit');
-            setSuccessMessage(''); // Clear success message when transitioning to edit mode
+            setShowEdit(true);
+            setLastCreatedConstructID('');
+            setNewSuccessMessage('');
         }
-    }
-
-    function resetSelectedConstruct() {
-        //force re-render of form by setting selectedConstruct to null (or empty string if already null)
-        if (selectedConstructID === '') {
-            setSelectedConstructID(null);
-        } else if (selectedConstructID === null) {
-            setSelectedConstructID('');
-        } else {
-            //this means we are updating an existing construct, so we should reset it to the same construct after re-rendering
-            const currentSelectedConstructID = selectedConstructID;
-            setSelectedConstructID('');
-            setTimeout(() => {
-                if (displayMode === 'edit') {
-                    setSelectedConstructID(currentSelectedConstructID);
-                }
-            }, 0);
-        }
-
     }
 
     useEffect(() => {
@@ -143,61 +143,73 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
     }, []);
 
     return <>
-        <div className={`mb-3 pub-${publicationId} construct-mode-${displayMode}`}>
-            {displayMode === 'none' && <>
+        <div className={`mb-3 pub-${publicationId}`}>
+            {/* NEW CONSTRUCT section */}
+            <div>
                 <span className='bold'>NEW CONSTRUCT: </span>
-                <a onClick={() => toggleDisplayMode('new')} style={{textDecoration: 'underline'}}>Show</a>
-                <br/>
-                <span className='bold'>EDIT CONSTRUCT: </span>
-                <a onClick={() => toggleDisplayMode('list')} style={{textDecoration: 'underline'}}>Show</a>
-            </>}
+                <a
+                    onClick={() => {
+                        setShowNew(!showNew);
+                        if (showNew) { setNewErrorMessage(''); setNewSuccessMessage(''); setLastCreatedConstructID(''); }
+                    }}
+                    style={{textDecoration: 'underline'}}
+                >
+                    {showNew ? 'Hide' : 'Show'}
+                </a>
+            </div>
+            {showNew && <div className='mt-2'>
+                <CurateConstructForm
+                    key={`new-${newFormKey}`}
+                    publicationId={publicationId}
+                    constructId=''
+                    submitButtonLabel='Save'
+                    onCancel={cancelNew}
+                    onSubmit={submitNewForm}
+                />
+                <div className='mt-2'>
+                    {newSuccessMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: newSuccessMessage}}/>}
+                    {newSuccessMessage && lastCreatedConstructID && <div><a onClick={() => activateEditMode()} style={{textDecoration: 'underline'}}>Edit this construct</a></div>}
+                    {newErrorMessage && <div className='alert alert-danger'>{newErrorMessage}</div>}
+                </div>
+            </div>}
 
-            {displayMode === 'list' && <div className='mt-2'>
+            {/* EDIT CONSTRUCT section */}
+            <div className='mt-2'>
                 <span className='bold'>EDIT CONSTRUCT: </span>
-                <div>
+                <a
+                    onClick={() => {
+                        setShowEdit(!showEdit);
+                        if (showEdit) { setSelectedConstructID(''); setEditErrorMessage(''); setEditSuccessMessage(''); }
+                    }}
+                    style={{textDecoration: 'underline'}}
+                >
+                    {showEdit ? 'Hide' : 'Show'}
+                </a>
+            </div>
+            {showEdit && <div className='mt-2'>
+                <div className='mb-2'>
                     <select onChange={(e) => handleConstructSelected(e.target.value)} value={selectedConstructID}>
-                        <option>Select a construct</option>
+                        <option value=''>Select a construct</option>
                         {constructList.map((row: MarkerLabelAndZdbId) => {
-                            return <option key={row.zdbID} value={row.zdbID} >{row.label}</option>
+                            return <option key={row.zdbID} value={row.zdbID}>{row.label}</option>
                         })}
                     </select>
                 </div>
-                <div>
-                    <button onClick={cancelEdit}>Cancel</button>
-                </div>
-            </div>}
-
-            {displayMode === 'edit' && <div className='mt-2'>
-                <span className='bold'>EDIT CONSTRUCT: </span>
-                <CurateConstructForm
-                    key={selectedConstructID}
-                    publicationId={publicationId}
-                    constructId={selectedConstructID}
-                    submitButtonLabel='Update'
-                    onCancel={cancelEdit}
-                    onSubmit={submitForm}
-                />
-                <div className='mt-2'>
-                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
-                    {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
-                </div>
-            </div>}
-
-            {displayMode === 'new' && <div className='mt-2'>
-                <span className='bold'>NEW CONSTRUCT: </span>
-                <CurateConstructForm
-                    key={selectedConstructID}
-                    publicationId={publicationId}
-                    constructId={selectedConstructID}
-                    submitButtonLabel='Save'
-                    onCancel={cancelEdit}
-                    onSubmit={submitForm}
-                />
-                <div className='mt-2'>
-                    {successMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: successMessage}}/>}
-                    {successMessage && lastCreatedConstructID && <div><a onClick={() => activateEditMode()} style={{textDecoration: 'underline'}}>Edit this construct</a></div>}
-                    {errorMessage && <div className='alert alert-danger'>{errorMessage}</div>}
-                </div>
+                {selectedConstructID && <>
+                    <CurateConstructForm
+                        key={selectedConstructID}
+                        publicationId={publicationId}
+                        constructId={selectedConstructID}
+                        submitButtonLabel='Update'
+                        onCancel={cancelEdit}
+                        onSubmit={submitEditForm}
+                    />
+                    <div className='mt-2'>
+                        {editSuccessMessage && <div className='alert alert-success' dangerouslySetInnerHTML={{__html: editSuccessMessage}}/>}
+                        {editErrorMessage && <div className='alert alert-danger'>{editErrorMessage}</div>}
+                    </div>
+                </>}
+                {!selectedConstructID && constructList.length === 0 && <div>No constructs available for this publication.</div>}
             </div>}
         </div>
     </>;

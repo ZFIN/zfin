@@ -5,11 +5,11 @@ export default function CurateConstructNoteEditor() {
 
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
-    function setNoteTextValue(value) {
+    function setNoteTextValue(value: string) {
         setStateByProxy(proxy => {proxy.stagedNote = value;});
     }
 
-    function handleRemoveNote(index) {
+    function handleRemoveNote(index: number) {
         const newNotes = [...state.selectedConstruct.notes];
         newNotes.splice(index, 1);
         setStateByProxy(proxy => {proxy.selectedConstruct.notes = newNotes;});

@@ -4,13 +4,13 @@ import {Cassette, ConstructComponent, normalizeConstructComponents} from './Cons
 import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructCassetteEditorProps {
-    onChange: (cassette: Cassette) => void;
+    onChange?: (cassette: Cassette) => void;
     onSave: (cassette: Cassette) => void;
     onCancel: () => void;
 }
 
 const ConstructCassetteEditor = ({onChange, onSave, onCancel}: ConstructCassetteEditorProps) => {
-    const blankCassette = () => {return {promoter: [], coding: []};};
+    const blankCassette = (): Cassette => {return {promoter: [], coding: []};};
     const [rerenderKey, setRerenderKey] = useState<number>(0); // Key to force rerender
     const {state, setStateByProxy} = useCurateConstructEditContext();
 
@@ -20,7 +20,7 @@ const ConstructCassetteEditor = ({onChange, onSave, onCancel}: ConstructCassette
         });
     }
 
-    const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type) => {
+    const handleRegulatoryCodingUnitChange = (constructComponents: ConstructComponent[], type: keyof Pick<Cassette, 'promoter' | 'coding'>) => {
         //the last item should have its separator set to ''
         const transformedConstructComponents = normalizeConstructComponents(constructComponents);
         const newState = {
@@ -68,7 +68,7 @@ const ConstructCassetteEditor = ({onChange, onSave, onCancel}: ConstructCassette
 }
 
 
-const isValidCassette = (cassette) => {
+const isValidCassette = (cassette: Cassette) => {
     if (!cassette) {
         return false;
     }

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import ConstructCassetteListEditor, {cassetteHumanReadableList} from './ConstructCassetteListEditor';
 import {
+    Cassette,
     cassettesToSimplifiedCassettes,
     EditConstructFormDTO,
-    normalizeConstructCassette,
     normalizeConstructComponents,
     normalizeSimplifiedCassettes,
     simplifiedCassettesToCassettes,
@@ -14,6 +14,7 @@ import {
     blankCassette,
     blankConstruct,
     CurateConstructEditProvider,
+    CurateConstructEditState,
     useCurateConstructEditContext
 } from './CurateConstructEditContext';
 import CurateConstructSynonymEditor from './CurateConstructSynonymEditor';
@@ -68,24 +69,29 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
 
             return [...state.selectedConstruct.cassettes, stagedCassette];
         } else if (state.selectedConstruct.editCassetteMode) {
-            //ignore the staged cassette if we are editing a cassette
-            return state.selectedConstruct.cassettes;
+            const stagedCassette = {...state.stagedCassette};
+            stagedCassette.coding = normalizeConstructComponents(stagedCassette.coding);
+            stagedCassette.promoter = normalizeConstructComponents(stagedCassette.promoter);
+            const updatedCassettes = [...state.selectedConstruct.cassettes];
+            updatedCassettes[state.selectedConstruct.editCassetteIndex] = stagedCassette;
+            return updatedCassettes;
         } else {
             return state.selectedConstruct.cassettes;
         }
     }
 
-    const handleCassettesChanged = (cassettesChanged) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _handleCassettesChanged = (cassettesChanged: Cassette[]) => {
         setStateByProxy(proxy => {
             proxy.selectedConstruct.cassettes = cassettesChanged;
         });
     }
 
-    const isDirty = (stateObject) => {
+    const isDirty = (stateObject: CurateConstructEditState) => {
         return captureStateForDirtyCheck(stateObject) !== initialState;
     }
 
-    const captureStateForDirtyCheck = (stateObject) => {
+    const captureStateForDirtyCheck = (stateObject: CurateConstructEditState) => {
         return JSON.stringify(
             { selectedConstruct: stateObject.selectedConstruct,
                 stagedSynonym: stateObject.stagedSynonym,
@@ -109,11 +115,14 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
     }
 
     function submitForm() {
+        // Use cassettesWithStagedCassette() to correctly handle add, edit, and no-op modes
+        const resolvedCassettes = cassettesWithStagedCassette();
+
         const submissionObject: EditConstructFormDTO = {
             constructName: {
                 type: typeAbbreviationToType(state.selectedConstruct.chosenType),
                 prefix: state.selectedConstruct.prefix,
-                cassettes: cassettesToSimplifiedCassettes(state.selectedConstruct.cassettes)
+                cassettes: cassettesToSimplifiedCassettes(resolvedCassettes)
             },
             synonyms: state.selectedConstruct.synonyms,
             sequences: state.selectedConstruct.sequences,
@@ -142,12 +151,13 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         }
 
         if (!isStagedCassetteBlank()) {
-            //if the last promoter has a separator of '-', change it to ''
-            const modifiedStagedCassette = normalizeConstructCassette(state.stagedCassette);
-
-            submissionObject.constructName.cassettes = cassettesToSimplifiedCassettes([...state.selectedConstruct.cassettes, modifiedStagedCassette]);
-            setStateByProxy(proxy => {proxy.selectedConstruct.cassettes.push(state.stagedCassette);});
-            setStateByProxy(proxy => {proxy.stagedCassette = blankCassette();});
+            setStateByProxy(proxy => {
+                proxy.selectedConstruct.cassettes = resolvedCassettes;
+                proxy.selectedConstruct.addCassetteMode = false;
+                proxy.selectedConstruct.editCassetteMode = false;
+                proxy.selectedConstruct.editCassetteIndex = null;
+                proxy.stagedCassette = blankCassette();
+            });
         }
 
         setSaving(true);
@@ -158,7 +168,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
         });
     }
 
-    const initializeDataForConstructID = async (constructId) => {
+    const initializeDataForConstructID = async (constructId: string) => {
         try {
             const response = await fetch(`${calculatedDomain}/action/construct/json/${constructId}`);
             const constructNameData = await response.json();
@@ -175,7 +185,6 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     chosenType: constructNameData.typeAbbreviation,
                     prefix: constructNameData.prefix,
                     publicNote: constructNameData.publicNote,
-                    curatorNote: constructNameData.curatorNote,
                     cassettes: fullCassettes,
                     editCassetteMode: false,
                     editCassetteIndex: null,
@@ -187,7 +196,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     const constructData = constructDetailsArray[0];
 
                     // Initialize synonyms
-                    proxy.selectedConstruct.synonyms = constructData.constructAliases.map(syn => ({
+                    proxy.selectedConstruct.synonyms = constructData.constructAliases.map((syn: {alias: string; aliasZdbID: string}) => ({
                         label: syn.alias,
                         zdbID: syn.aliasZdbID
                     }));
@@ -196,13 +205,13 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     proxy.selectedConstruct.publicNote = constructData.constructComments || '';
 
                     // Initialize sequences
-                    proxy.selectedConstruct.sequences = constructData.constructSequences.map(seq => ({
+                    proxy.selectedConstruct.sequences = constructData.constructSequences.map((seq: {view: string; zdbID: string}) => ({
                         label: seq.view,
                         zdbID: seq.zdbID
                     }));
 
                     // Initialize notes
-                    proxy.selectedConstruct.notes = constructData.constructCuratorNotes.map(note => ({
+                    proxy.selectedConstruct.notes = constructData.constructCuratorNotes.map((note: {noteData: string; zdbID: string}) => ({
                         label: note.noteData,
                         zdbID: note.zdbID
                     }));
@@ -268,7 +277,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                                 <label htmlFor='prefix'><b>Prefix:</b></label>{' '}
                                 <input
                                     id='prefix'
-                                    size='15'
+                                    size={15}
                                     className='prefix'
                                     name='prefix'
                                     value={state.selectedConstruct.prefix || ''}
@@ -298,7 +307,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                     </tbody>
                 </table>
                 <div className='mb-3'>
-                    <ConstructCassetteListEditor onChange={handleCassettesChanged} />
+                    <ConstructCassetteListEditor />
                 </div>
                 <div className='mb-3'>
                     <p>
@@ -308,7 +317,7 @@ const CurateConstructFormInner = ({submitButtonLabel, onCancel, onSubmit}: Curat
                             disabled={true}
                             type='text'
                             value={constructDisplayName || ''}
-                            size='150'
+                            size={150}
                         />
                     </p>
                 </div>

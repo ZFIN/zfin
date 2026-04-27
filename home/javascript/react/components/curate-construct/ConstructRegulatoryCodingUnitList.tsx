@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import type {ConstructComponent} from './ConstructTypes';
+import type {Cassette, ConstructComponent} from './ConstructTypes';
 import ConstructMarkerAutocomplete from './ConstructMarkerAutocomplete';
 import {useCurateConstructEditContext} from './CurateConstructEditContext';
 
 interface ConstructRegulatoryCodingUnitListProps {
     onChange?: (value: ConstructComponent[]) => void;
-    type: string;
+    type: keyof Pick<Cassette, 'promoter' | 'coding'>;
 }
 
 
@@ -22,8 +22,10 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     const [rcUnitItems, setRcUnitItems] = useState<ConstructComponent[]>([]);
     const defaultSeparator = '-';
     const [activeTextBoxValue, setActiveTextBoxValue] = useState<ConstructComponent>(null);
+    const [insertAtIndex, setInsertAtIndex] = useState<number | null>(null);
+    const [preInsertItems, setPreInsertItems] = useState<ConstructComponent[] | null>(null);
 
-    const setStagedCassette = (value) => {
+    const setStagedCassette = (value: Cassette) => {
         setStateByProxy(proxy => {
             proxy.stagedCassette = value;
         });
@@ -38,6 +40,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
             const cassette = state.selectedConstruct.cassettes[state.selectedConstruct.editCassetteIndex];
             setRcUnitItems(cassette[type]);
         }
+        setInsertAtIndex(null);
     }, [state.selectedConstruct]);
 
     const styles = {
@@ -70,12 +73,52 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         setRcUnitItemsAndNotify(newItems);
     }
 
-    const handleItemRemoved = (itemToRemove) => {
-        const newItems = rcUnitItems.filter((existingItem) => existingItem !== itemToRemove);
+    const handleInsertItemSelected = (item: ConstructComponent) => {
+        if (insertAtIndex === null) { return; }
+        const itemWithSeparator = {...item, separator: defaultSeparator};
+        const newItems = [
+            ...rcUnitItems.slice(0, insertAtIndex),
+            itemWithSeparator,
+            ...rcUnitItems.slice(insertAtIndex)
+        ];
+        setInsertAtIndex(null);
+        setPreInsertItems(null);
         setRcUnitItemsAndNotify(newItems);
     }
 
-    const handleSeparatorChange = (index, separator) => {
+    const handleInsertAutoCompleteChange = (item: ConstructComponent) => {
+        if (insertAtIndex === null) { return; }
+        const itemWithSeparator = {...item, separator: ''};
+        if (item.value === '') {
+            setStagedCassette({...getStagedCassette(), [type]: rcUnitItems});
+            onChange(rcUnitItems);
+            return;
+        }
+        const newItems = [
+            ...rcUnitItems.slice(0, insertAtIndex),
+            itemWithSeparator,
+            ...rcUnitItems.slice(insertAtIndex)
+        ];
+        setStagedCassette({...getStagedCassette(), [type]: newItems});
+        onChange(newItems);
+    }
+
+    const handleCancelInsert = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (preInsertItems) {
+            setRcUnitItemsAndNotify(preInsertItems);
+        }
+        setInsertAtIndex(null);
+        setPreInsertItems(null);
+    }
+
+    const handleItemRemoved = (itemToRemove: ConstructComponent) => {
+        const newItems = rcUnitItems.filter((existingItem) => existingItem !== itemToRemove);
+        setInsertAtIndex(null);
+        setRcUnitItemsAndNotify(newItems);
+    }
+
+    const handleSeparatorChange = (index: number, separator: string) => {
         const changedPart = {...rcUnitItems[index], separator: separator};
         const newItems = [...rcUnitItems.slice(0, index), changedPart, ...rcUnitItems.slice(index + 1)];
         setRcUnitItemsAndNotify(newItems);
@@ -85,7 +128,7 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
         }
     }
 
-    const setRcUnitItemsAndNotify = (items) => {
+    const setRcUnitItemsAndNotify = (items: ConstructComponent[]) => {
         setStagedCassette({...getStagedCassette(), [type]: items});
         setRcUnitItems(items);
         onChange(items);
@@ -94,6 +137,21 @@ const ConstructRegulatoryCodingUnitList = ({onChange, type}: ConstructRegulatory
     return <div className='promoters' style={styles.rcUnitItems}>
         {rcUnitItems.map((part, index) => (
             <React.Fragment key={index}>
+                {insertAtIndex === index ? (
+                    <div className='promoter-autocomplete' style={{display: 'inline-flex', alignItems: 'center'}}>
+                        <ConstructMarkerAutocomplete
+                            onSelect={handleInsertItemSelected}
+                            onChangeWithObject={handleInsertAutoCompleteChange}
+                        />
+                        <a href='#' onClick={handleCancelInsert} title='Cancel insert'>
+                            <i className='fa fa-times' aria-hidden='true'/>
+                        </a>
+                    </div>
+                ) : (
+                    <a href='#' onClick={(e) => {e.preventDefault(); setPreInsertItems([...rcUnitItems]); setInsertAtIndex(index)}} title='Insert component here'>
+                        <i className='fa fa-plus-circle' aria-hidden='true' style={{color: '#5cb85c', fontSize: '14px'}}/>
+                    </a>
+                )}
                 <span className={part.id === null ? 'construct-unit-no-id' : 'construct-unit-has-id'}>{part.value}</span>
                 <a href='#' onClick={(e) => {e.preventDefault(); handleItemRemoved(part)}}>
                     <i className='fa fa-trash' aria-hidden='true'/>

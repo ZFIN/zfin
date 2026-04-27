@@ -1,7 +1,7 @@
 import React from 'react';
 
-const ConstructModal = ({children}) => {
-    const modalOverlayCss = {
+const ConstructModal = ({children}: {children: React.ReactNode}) => {
+    const modalOverlayCss: React.CSSProperties = {
         position: 'fixed',
         top: 0,
         left: 0,

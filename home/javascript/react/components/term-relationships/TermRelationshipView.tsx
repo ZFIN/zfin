@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import TermRelationshipInlineView, {RelatedOntologyTermsProps} from './TermRelationshipInlineView';
+import TermRelationshipInlineView from './TermRelationshipInlineView';
 import TermRelationshipTable from './TermRelationshipTable';
+import {TermRelationshipTypeStat} from '../../containers/TermRelationshipListView';
 
 export interface RelatedTerm {
     zdbID: string;
@@ -9,7 +10,12 @@ export interface RelatedTerm {
     abbreviation: string;
 }
 
-export default function TermRelationshipView({relationshipType, termId,}: RelatedOntologyTermsProps) {
+interface TermRelationshipViewProps {
+    relationshipType: TermRelationshipTypeStat;
+    termId: string;
+}
+
+export default function TermRelationshipView({relationshipType, termId,}: TermRelationshipViewProps) {
     const [isTableView, setIsTableView] = useState(false);
 
     function displayAllTerms() {

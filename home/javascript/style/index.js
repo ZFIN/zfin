@@ -1,7 +1,6 @@
 require('jquery.tipsy/src/jquery.tipsy.css');
 require('@fortawesome/fontawesome-free/css/all.css');
 
-require('../../css/constructAdd.css');
 require('../../css/searchresults.css');
 require('../../css/summary.css');
 require('../../css/Lookup.css');
