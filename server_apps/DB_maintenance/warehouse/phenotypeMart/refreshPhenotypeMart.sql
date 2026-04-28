@@ -119,6 +119,13 @@ END IF;
 -- Recreate phenotype_source_generated
 CREATE TABLE phenotype_source_generated (LIKE phenotype_source_generated_temp INCLUDING ALL);
 ALTER TABLE phenotype_source_generated ADD PRIMARY KEY (pg_id);
+-- Detach the sequence so cleanup's DROP of the renamed _old_ table can't
+-- cascade-drop it. OWNED BY NONE avoids PG's role-ownership-must-match
+-- check that re-linking OWNED BY <col> would impose.
+IF pg_get_serial_sequence('phenotype_source_generated', 'pg_id') IS NOT NULL THEN
+    EXECUTE 'ALTER SEQUENCE ' || pg_get_serial_sequence('phenotype_source_generated', 'pg_id')
+        || ' OWNED BY NONE';
+END IF;
 CREATE INDEX phenotype_source_generated_genox ON phenotype_source_generated (pg_genox_zdb_id);
 CREATE INDEX phenotype_source_generated_fig ON phenotype_source_generated (pg_fig_zdb_id);
 CREATE INDEX phenotype_source_generated_start ON phenotype_source_generated (pg_start_stg_zdb_id);
@@ -139,6 +146,11 @@ select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zd
 -- Recreate phenotype_observation_generated
 CREATE TABLE phenotype_observation_generated (LIKE phenotype_observation_generated_temp INCLUDING ALL);
 ALTER TABLE phenotype_observation_generated ADD PRIMARY KEY (psg_id);
+-- Detach the sequence (see note above).
+IF pg_get_serial_sequence('phenotype_observation_generated', 'psg_id') IS NOT NULL THEN
+    EXECUTE 'ALTER SEQUENCE ' || pg_get_serial_sequence('phenotype_observation_generated', 'psg_id')
+        || ' OWNED BY NONE';
+END IF;
 ALTER TABLE phenotype_observation_generated ADD CONSTRAINT phenotype_warehouse_foreign_key FOREIGN KEY (psg_pg_id) REFERENCES phenotype_source_generated (pg_id);
 ALTER TABLE phenotype_observation_generated ADD CONSTRAINT marker_foreign_key FOREIGN KEY (psg_mrkr_zdb_id) REFERENCES marker (mrkr_zdb_id);
 ALTER TABLE phenotype_observation_generated ADD CONSTRAINT e1a_foreign_key FOREIGN KEY (psg_e1a_zdb_id) REFERENCES term (term_zdb_id);

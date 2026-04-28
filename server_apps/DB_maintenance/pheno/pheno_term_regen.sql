@@ -11,6 +11,11 @@ BEGIN
 drop table if exists pheno_term_fast_search_tmp;
 
 create table pheno_term_fast_search_tmp as select * from pheno_term_fast_search where false;
+-- CREATE TABLE AS copies column types but not defaults, so restore the
+-- nextval() default on ptfs_pk_id; otherwise inserts leave it NULL and the
+-- ADD PRIMARY KEY below fails.
+ALTER TABLE pheno_term_fast_search_tmp
+    ALTER COLUMN ptfs_pk_id SET DEFAULT nextval('pheno_term_fast_search_ptfs_pk_id_seq');
 
 insert into pheno_term_fast_search_tmp
 (
@@ -20,7 +25,7 @@ insert into pheno_term_fast_search_tmp
    ptfs_is_direct_annotation,
    ptfs_phenos_created_date
 )
-select 
+select
    psg_id,
    psg_e1a_zdb_id,
    psg_tag,
@@ -206,6 +211,14 @@ ALTER INDEX pheno_term_fast_search_term_id_index_transient
 
 -- Add primary key
 ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
+
+-- Detach the sequence from the renamed _old_ table's column so cleanup's
+-- DROP TABLE ... CASCADE doesn't take the sequence with it. We use
+-- OWNED BY NONE rather than re-linking to the new live column because the
+-- sequence and the tmp-become-live table may have different role owners
+-- (PG requires matching owners to re-link OWNED BY a column).
+ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
+    OWNED BY NONE;
 
 -- Add foreign key constraints
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
