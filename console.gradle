@@ -328,6 +328,24 @@ task downloadZecoTaxonomyOwl(type: Exec) {
         '-F', "file=@${zecoTaxonomySource}",
         '-o', zecoTaxonomyOwl,
         'https://ontofox.hegroup.org/service.php'
+
+    doLast {
+        // curl's -f catches HTTP 4xx/5xx, but ontofox.hegroup.org returns 200
+        // even when its body is a tiny plain-text error string (overloaded,
+        // connection failed, etc.) instead of an OWL document. A real
+        // zeco-taxonomy.owl is ~150 KB; error responses are a few hundred
+        // bytes. Anything smaller than a few KB means the upstream service
+        // sent an error in disguise -- fail loudly so we don't feed garbage
+        // into the loader.
+        def minBytes = 5000
+        if (zecoTaxonomyOwl.length() < minBytes) {
+            throw new GradleException(
+                "ontofox.hegroup.org returned ${zecoTaxonomyOwl.length()} bytes " +
+                "(< ${minBytes} byte threshold) -- likely an error response. " +
+                "Service is often transiently overloaded; retry later.\n" +
+                "Body:\n" + zecoTaxonomyOwl.text.take(500))
+        }
+    }
 }
 
 task prepareZecoTaxonomyObo(type: JavaExec) {
