@@ -290,3 +290,47 @@ task checkFeatureGeneAttributionTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.task.CheckFeatureGeneAttributionTask'
 }
+
+// Isolated classpath for ROBOT (org.obolibrary.robot). Used by the
+// prepareZecoTaxonomyObo task below; never enters WEB-INF/lib.
+configurations {
+    robotCli {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    robotCli "org.obolibrary.robot:robot-command:1.9.10"
+}
+
+// Pipeline replacing the old Ant create-obo-file / create-zeco-taxonomy-owl-file
+// targets in server_apps/data_transfer/LoadOntology/build.xml. The
+// Load-Zeco-Taxonomy-Ontology Jenkins job invokes prepareZecoTaxonomyObo
+// before the Ant load-zeco-taxonomy target.
+ext {
+    zecoTaxonomySource = '/research/zusers/informix/Curation/zeco-taxonomy-source.txt'
+    zecoTaxonomyOboDir = file("${projectDir}/server_apps/data_transfer/LoadOntology/obo-files")
+    zecoTaxonomyOwl    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.owl")
+    zecoTaxonomyObo    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.obo")
+}
+
+task downloadZecoTaxonomyOwl(type: Exec) {
+    description = 'Upload zeco-taxonomy-source.txt to ontofox.hegroup.org and save the returned .owl'
+    group = 'data transfer'
+    doFirst { zecoTaxonomyOboDir.mkdirs() }
+    commandLine 'curl', '-fSL',
+        '-F', "file=@${zecoTaxonomySource}",
+        '-o', zecoTaxonomyOwl,
+        'https://ontofox.hegroup.org/service.php'
+}
+
+task prepareZecoTaxonomyObo(type: JavaExec) {
+    description = 'Download zeco-taxonomy from ontofox and convert OWL -> OBO via ROBOT'
+    group = 'data transfer'
+    dependsOn downloadZecoTaxonomyOwl
+    classpath = configurations.robotCli
+    mainClass = 'org.obolibrary.robot.CommandLineInterface'
+    args = ['convert', '--input', zecoTaxonomyOwl.absolutePath,
+                       '--output', zecoTaxonomyObo.absolutePath]
+}
