@@ -308,9 +308,14 @@ dependencies {
 // targets in server_apps/data_transfer/LoadOntology/build.xml. The
 // Load-Zeco-Taxonomy-Ontology Jenkins job invokes prepareZecoTaxonomyObo
 // before the Ant load-zeco-taxonomy target.
+//
+// Output paths live under $TARGETROOT so they sit alongside the load-step's
+// per-job report directory (the Ant load-ontology macro now uses
+// -Djob.output.basedir=$TARGETROOT/... and forks the Java loader from there).
+def zecoTaxonomyTargetRoot = System.getenv('TARGETROOT') ?: "${projectDir}"
 ext {
     zecoTaxonomySource = '/research/zusers/informix/Curation/zeco-taxonomy-source.txt'
-    zecoTaxonomyOboDir = file("${projectDir}/server_apps/data_transfer/LoadOntology/obo-files")
+    zecoTaxonomyOboDir = file("${zecoTaxonomyTargetRoot}/server_apps/data_transfer/LoadOntology/obo-files")
     zecoTaxonomyOwl    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.owl")
     zecoTaxonomyObo    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.obo")
 }

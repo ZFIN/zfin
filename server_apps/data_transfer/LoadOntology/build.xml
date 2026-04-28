@@ -43,6 +43,14 @@
     <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=log4j2.xml"/>
     <property name="jvm.mem" value="-Xmx4g"/>
     <property name="run-directory" value="./obo-files"/>
+    <!-- Where the per-job report directory (named by ${JobName}) is created and
+         where the Java loader runs. Defaults to ${basedir} (= this build file's
+         dir under SOURCEROOT) for backwards compatibility. Override per-job by
+         passing -Djob.output.basedir=<absolute-path> to ant; e.g. the
+         Load-Zeco-Taxonomy-Ontology Jenkins job sets it to its TARGETROOT
+         counterpart so Jenkins's workspace-relative archive patterns find the
+         outputs. -->
+    <property name="job.output.basedir" value="${basedir}"/>
 
     <property environment="env"/>
 
@@ -345,7 +353,7 @@
             <echo>base.dir Files: ${basedir}</echo>
             <antcall target="clear-output-directory"/>
             <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="4g"
-                  failonerror="true">
+                  failonerror="true" dir="${job.output.basedir}">
                 <classpath refid="combined.classpath"/>
                 <arg value="-localOboFileName"/>
                 <arg value="@{oboDirectory}/@{oboFileName}"/>
@@ -367,8 +375,8 @@
     </macrodef>
 
     <target name="clear-output-directory">
-        <delete dir="${JobName}"/>
-        <mkdir dir="${JobName}"/>
+        <delete dir="${job.output.basedir}/${JobName}"/>
+        <mkdir dir="${job.output.basedir}/${JobName}"/>
     </target>
 
 
@@ -377,7 +385,7 @@
         <property name="dbScriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
-              failonerror="true">
+              failonerror="true" dir="${job.output.basedir}">
             <classpath refid="combined.classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="${localOboFilePath}"/>
