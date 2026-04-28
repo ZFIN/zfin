@@ -367,7 +367,12 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             } else {
                 int startOfSelect = getQuery().toLowerCase().indexOf(SELECT.toLowerCase());
                 statement.comment = getQuery().substring(0, startOfSelect).trim();
-                statement.query = new StringBuilder(getQuery().substring(startOfSelect));
+                // ON CONFLICT and RETURNING are valid only on INSERT; strip them when
+                // synthesizing the debug SELECT so it parses on its own.
+                String selectOnly = getQuery().substring(startOfSelect)
+                        .replaceFirst("(?is)\\s+on\\s+conflict\\b.*$", "")
+                        .replaceFirst("(?is)\\s+returning\\b.*$", "");
+                statement.query = new StringBuilder(selectOnly);
             }
         } else if (isDeleteStatement()) {
             statement.comment = "DELETE from " + getDeleteTable().toUpperCase();
