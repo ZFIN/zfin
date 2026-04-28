@@ -69,6 +69,7 @@
             -->
         <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
             <analyzer type="index">
+                <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
@@ -81,6 +82,7 @@
                 <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
             </analyzer>
             <analyzer type="query">
+                <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
@@ -432,6 +434,7 @@
 
         <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
             <analyzer type="index">
+                <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
@@ -439,6 +442,7 @@
                 <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
             </analyzer>
             <analyzer type="query">
+                <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
@@ -448,6 +452,7 @@
 
         <fieldType name="simplified-international-text" class="solr.TextField" positionIncrementGap="100">
             <analyzer>
+                <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
