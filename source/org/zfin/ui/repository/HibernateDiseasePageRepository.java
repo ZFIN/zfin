@@ -19,6 +19,7 @@ import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.repository.PaginationResultFactory;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -31,12 +32,19 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     @Override
     public PaginationResult<OmimPhenotypeDisplay> getGenesInvolved(GenericTerm term, Pagination pagination, boolean includeChildren) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+        List<Long> matchingIds = null;
+        if (includeChildren) {
+            matchingIds = findIdsByAncestor("ui.omim_phenotype_display", "opd_id", "opd_ancestor_term_ids", term.getZdbID());
+            if (matchingIds.isEmpty()) {
+                return new PaginationResult<>(0, Collections.emptyList());
+            }
+        }
         String hql;
         if (!includeChildren) {
             hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype join omimPhenotype.zfinGene as zfinGene where omimPhenotype.disease = :disease ";
         } else {
             hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype join omimPhenotype.zfinGene as zfinGene " +
-                  "where array_contains(omimPhenotype.ancestorTermIds, :diseaseId) ";
+                  "where omimPhenotype.id in :ids ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -47,7 +55,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += "order by omimPhenotype.homoSapiensGene.symbol";
         Query<OmimPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, OmimPhenotypeDisplay.class);
         if (includeChildren) {
-            query.setParameter("diseaseId", term.getZdbID());
+            query.setParameterList("ids", matchingIds);
         } else {
             query.setParameter("disease", term);
         }
@@ -57,6 +65,13 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     @Override
     public PaginationResult<FishStatistics> getPhenotype(GenericTerm term, Pagination pagination, Boolean includeChildren, Boolean isIncludeNormalPhenotype) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+        List<Long> matchingIds = null;
+        if (includeChildren) {
+            matchingIds = findIdsByAncestor("ui.term_phenotype_display", "tpd_id", "tpd_ancestor_term_ids", term.getZdbID());
+            if (matchingIds.isEmpty()) {
+                return new PaginationResult<>(0, Collections.emptyList());
+            }
+        }
         String hql;
         if (!includeChildren) {
             hql = """
@@ -78,7 +93,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 left join fetch fishStat.publication
                 left join fetch fishStat.affectedGenes
                 left join fetch fishStat.phenotypeStatements as phenoStats
-                where array_contains(fishStat.ancestorTermIds, :termId)
+                where fishStat.id in :ids
                    """;
         }
         if (!isIncludeNormalPhenotype) {
@@ -93,7 +108,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += "order by fishStat.fish.order, fishStat.fish.nameOrder, fishStat.geneSymbolSearch";
         Query<FishStatistics> query = HibernateUtil.currentSession().createQuery(hql, FishStatistics.class);
         if (includeChildren) {
-            query.setParameter("termId", term.getZdbID());
+            query.setParameterList("ids", matchingIds);
         } else {
             query.setParameter("term", term);
         }
@@ -103,12 +118,19 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     @Override
     public PaginationResult<FishModelDisplay> getFishDiseaseModels(GenericTerm term, Pagination pagination, boolean includeChildren) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+        List<Long> matchingIds = null;
+        if (includeChildren) {
+            matchingIds = findIdsByAncestor("ui.zebrafish_models_display", "zmd_id", "zmd_ancestor_term_ids", term.getZdbID());
+            if (matchingIds.isEmpty()) {
+                return new PaginationResult<>(0, Collections.emptyList());
+            }
+        }
         String hql;
         if (!includeChildren) {
             hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay where fishModelDisplay.disease = :term ";
         } else {
             hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay " +
-                  "where array_contains(fishModelDisplay.ancestorTermIds, :termId) ";
+                  "where fishModelDisplay.id in :ids ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -119,7 +141,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += " order by fishModelDisplay.order, fishModelDisplay.fish.order, upper(fishModelDisplay.fish.displayName) ";
         Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
         if (includeChildren) {
-            query.setParameter("termId", term.getZdbID());
+            query.setParameterList("ids", matchingIds);
         } else {
             query.setParameter("term", term);
         }
@@ -128,18 +150,25 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
 
     @Override
     public List<ChebiFishModelDisplay> getFishDiseaseChebiModels(GenericTerm term, boolean includeChildren) {
+        List<Long> matchingIds = null;
+        if (includeChildren) {
+            matchingIds = findIdsByAncestor("ui.zebrafish_models_chebi_association", "omca_id", "omca_ancestor_term_ids", term.getZdbID());
+            if (matchingIds.isEmpty()) {
+                return Collections.emptyList();
+            }
+        }
         String hql;
         if (!includeChildren) {
             hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay " +
                   "where chebiDisplay.chebi = :chebiTerm ";
         } else {
             hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay " +
-                  "where array_contains(chebiDisplay.ancestorTermIds, :chebiTermId) ";
+                  "where chebiDisplay.id in :ids ";
         }
         hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         if (includeChildren) {
-            query.setParameter("chebiTermId", term.getZdbID());
+            query.setParameterList("ids", matchingIds);
         } else {
             query.setParameter("chebiTerm", term);
         }
@@ -158,6 +187,13 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     @Override
     public PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, String filterPhenotype, boolean includeChildren) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+        List<Long> matchingIds = null;
+        if (includeChildren) {
+            matchingIds = findIdsByAncestor("ui.chebi_phenotype_display", "cpd_id", "cpd_ancestor_term_ids", term.getZdbID());
+            if (matchingIds.isEmpty()) {
+                return new PaginationResult<>(0, Collections.emptyList());
+            }
+        }
         String hql;
         String fetchJoins = " join fetch chebiPhenotype.fish" +
                 " join fetch chebiPhenotype.term" +
@@ -168,7 +204,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
             hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins + " where chebiPhenotype.term = :term ";
         } else {
             hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype" + fetchJoins +
-                  " where array_contains(chebiPhenotype.ancestorTermIds, :termId) ";
+                  " where chebiPhenotype.id in :ids ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -191,7 +227,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += "order by chebiPhenotype.fish.displayName";
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         if (includeChildren) {
-            query.setParameter("termId", term.getZdbID());
+            query.setParameterList("ids", matchingIds);
         } else {
             query.setParameter("term", term);
         }
@@ -206,6 +242,20 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
             chebiPhenotypeDisplay.setPhenotypeStatements(psws);
         });
         return result;
+    }
+
+    // Returns PKs of rows whose ancestor-term-ids array contains termId. Native SQL with an
+    // explicit text[] cast (CAST(...) form, NOT ::text[] — the latter confuses Hibernate's
+    // named-parameter parser since `:` is the parameter prefix). Hibernate 6's HQL array_contains
+    // binds the wrap as varchar[], which Postgres refuses to coerce to text[] for the @> operator.
+    private List<Long> findIdsByAncestor(String tableName, String pkColumn, String ancestorColumn, String termId) {
+        String sql = "SELECT " + pkColumn + " FROM " + tableName +
+                     " WHERE " + ancestorColumn + " @> CAST(ARRAY[:termId] AS text[])";
+        List<?> rows = HibernateUtil.currentSession()
+            .createNativeQuery(sql)
+            .setParameter("termId", termId)
+            .getResultList();
+        return rows.stream().map(r -> ((Number) r).longValue()).toList();
     }
 
     // empty out fast search tables (starting with ui.)
