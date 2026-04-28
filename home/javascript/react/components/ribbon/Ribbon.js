@@ -32,9 +32,7 @@ const Ribbon = ({subjects, categories, itemClick, selected}) => {
                 if (subject && group) {
                     itemClick(subject, group);
                 }
-            // TODO(ZFIN-9922): drop unused catch param (event chaining safety net)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (e) {
+            } catch {
                 //in case event.detail.subjects[0] chaining fails.
             }
         });

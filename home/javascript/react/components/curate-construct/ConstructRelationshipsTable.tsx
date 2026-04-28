@@ -214,9 +214,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             const newRelationshipFromServer = await submitConstructRelationship(selectedConstruct, selectedMarker, RELATIONSHIP_TO_ADD, publicationId);
             insertNewRelationshipRow(newRelationshipFromServer);
-        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
+        } catch {
             //ignore linting rule for this alert
             //eslint-disable-next-line
             alert('Failed to add construct marker relationship');
@@ -228,9 +226,7 @@ const ConstructRelationshipsTable = ({publicationId}: ConstructRelationshipsTabl
         try {
             await deleteConstructMarkerRelationship(rel);
             removeRelationshipRow(rel);
-        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
+        } catch {
             //ignore linting rule for this alert
             //eslint-disable-next-line
             alert('Failed to delete construct marker relationship');
