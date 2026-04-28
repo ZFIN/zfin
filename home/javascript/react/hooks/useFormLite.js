@@ -194,6 +194,8 @@ function useForm({ defaultValues = {}, onSubmit, validate }) {
                 isSubmitting: false,
                 isSubmitted: true,
             }));
+        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             setMetaState(prev => ({
                 ...prev,

@@ -36,6 +36,8 @@ const PubFileEditModal = ({ file, fileTypeOptions, pubHasOriginalArticle, onClos
         try {
             await onDelete(file);
             onClose();
+        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setError('Unable to delete file. Try again later.')
         }
@@ -51,6 +53,8 @@ const PubFileEditModal = ({ file, fileTypeOptions, pubHasOriginalArticle, onClos
                 type: formType,
             });
             onClose();
+        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setError('Unable to save update. Try again later.')
         }

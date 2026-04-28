@@ -75,6 +75,8 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 }
                 setNewFormKey(prev => prev + 1);
             }
+        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             setNewErrorMessage('Error creating construct');
         }
@@ -104,6 +106,8 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 setSelectedConstructID('');
                 setTimeout(() => setSelectedConstructID(currentId), 0);
             }
+        // TODO(ZFIN-9922): drop unused catch param or surface the error properly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             setEditErrorMessage('Error updating construct');
         }
