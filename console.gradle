@@ -333,4 +333,16 @@ task prepareZecoTaxonomyObo(type: JavaExec) {
     mainClass = 'org.obolibrary.robot.CommandLineInterface'
     args = ['convert', '--input', zecoTaxonomyOwl.absolutePath,
                        '--output', zecoTaxonomyObo.absolutePath]
+
+    doLast {
+        // ROBOT writes "ontology: vo/external/NCBITaxon_ZFIN" by default but
+        // LoadOntology.java looks up the value in its Ontology enum and chokes
+        // on anything other than "zeco_taxonomy" for this load. Replace the
+        // header to match what the loader expects (mirrors the old Ant
+        // setHeaderForObo macrodef).
+        def now = new Date().format('dd:MM:yyyy HH:mm')
+        def text = zecoTaxonomyObo.text.replaceFirst(/(?m)^ontology: .*$/,
+            "ontology: zeco_taxonomy\ndefault-namespace: zeco_taxonomy\ndate: ${now}")
+        zecoTaxonomyObo.text = text
+    }
 }
