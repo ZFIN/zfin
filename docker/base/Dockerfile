@@ -19,14 +19,14 @@ ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
     && apt update && apt install -y postgresql-client-18
 
-# Copy Node + npm from the multi-stage source. node is a native binary
-# (architecture-correct via Docker's manifest selection); npm and npx are
-# JS-only entrypoints under node_modules.
-COPY --from=node-source /usr/local/bin/node /usr/local/bin/node
-COPY --from=node-source /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
-    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x \
+  nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
 
+RUN apt update && apt install -y --no-install-recommends \
+       nodejs && \
+       npm install -g npm
 
 RUN cpanm Devel::Camelcadedb
 RUN cpanm JSON
