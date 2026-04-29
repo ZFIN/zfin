@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.gff.Assembly;
 
 import java.io.Serializable;
 
@@ -95,6 +96,10 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
         if (getAccessionNumber().startsWith("NM_")) {
             return null;
         }
-        return getReferenceDatabase().isRefSeq() ? marker.getLatestAssembly().getName() : null;
+        if (!getReferenceDatabase().isRefSeq()) {
+            return null;
+        }
+        Assembly latestAssembly = marker.getLatestAssembly();
+        return latestAssembly == null ? null : latestAssembly.getName();     
     }
 }
