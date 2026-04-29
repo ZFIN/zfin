@@ -1,3 +1,9 @@
+# Pull Node from the official multi-arch Docker image. Avoids NodeSource's
+# arm64 packaging issues (their Node 22 deb shipped a broken npm bundle) and
+# automatically picks the right binary for the build platform via Docker's
+# manifest resolver.
+FROM node:22-bookworm-slim AS node-source
+
 FROM gradle:8-jdk21
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -13,20 +19,13 @@ ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
     && apt update && apt install -y postgresql-client-18
 
-#RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-#RUN echo \
-#  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-#  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x \
-  nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
-
-RUN apt update && apt install -y --no-install-recommends \
-       nodejs && \
-       npm install -g npm
-# removed: docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# Copy Node + npm from the multi-stage source. node is a native binary
+# (architecture-correct via Docker's manifest selection); npm and npx are
+# JS-only entrypoints under node_modules.
+COPY --from=node-source /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-source /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 
 RUN cpanm Devel::Camelcadedb
