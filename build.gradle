@@ -715,7 +715,7 @@ task uploadGHCRImages(dependsOn: ['buildGHCRImages',
     description "Build and upload containers to Github Container Registry"
 }
 
-def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat']
+def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat', 'metricbeat']
 
 task buildGHCRImages() {
     doLast {
