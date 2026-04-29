@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -442,7 +443,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void ndReplace() throws GafValidationError {
-        String hql = """ 
+        Assume.assumeTrue("Skipped until 2026-07-01 due to third-party issue at GO", !LocalDate.now().isBefore(LocalDate.of(2026, 7, 1)));
+
+        String hql = """
                 select ev from MarkerGoTermEvidence ev
                 where ev.evidenceCode.code = :code
                 order by ev.zdbID

@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.properties.ZfinProperties;
 
 import java.util.Iterator;
@@ -44,6 +45,25 @@ public abstract class AbstractOntologyTest {
             logger.error("failed to load from file: " + ontologyManager,e);
             initHibernate();
             ontologyManager.reLoadOntologies();
+        }
+    }
+
+    /**
+     * Try to deserialize a serialized ontology lookup; if the file is missing or
+     * unreadable, populate the manager from the database and write the lookup so
+     * subsequent runs hit the fast path. Used by tests that previously relied on
+     * pre-existing committed .ser fixtures.
+     */
+    public static void deserializeOrPrime(OntologyManager mgr, Ontology ontology) {
+        try {
+            mgr.deserializeOntology(ontology);
+        } catch (Exception e) {
+            logger.info("Priming ontology {} from database (no usable serialized lookup)", ontology.name());
+            mgr.initOntologyMapFast(ontology);
+            OntologySerializationService service = new OntologySerializationService(mgr);
+            service.serializeObject(
+                mgr.getOntologyMap().get(DTOConversionService.convertToOntologyDTO(ontology)),
+                ontology.name() + OntologySerializationService.SERIALIZED_LOOKUP_SUFFIX);
         }
     }
 

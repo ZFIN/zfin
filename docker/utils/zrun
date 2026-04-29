@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT=$(basename "$0")
+
+usage() {
+  case "$SCRIPT" in
+    zrun)
+      echo "Usage: zrun [service] [bash_args...]"
+      echo "  service     Compose service to run (default: compile)"
+      echo "  bash_args   Extra arguments passed to bash (e.g. -c 'ls -la')"
+      echo "  Env: ZFIN_COMPOSE          path to docker-compose.yml"
+      echo "  Env: COMPOSE_PROJECT_NAMES comma-separated project name prefixes (default: zfin_org,test,trunk,cell,crick,franklin,schlapp)"
+      ;;
+    zexec)
+      echo "Usage: zexec [service] [bash_args...]"
+      echo "  service     Container name pattern to match (default: compile)"
+      echo "  bash_args   Extra arguments passed to bash (e.g. -c 'ls -la')"
+      echo "  Env: COMPOSE_PROJECT_NAMES comma-separated project name prefixes (default: zfin_org,test,trunk,cell,crick,franklin,schlapp)"
+      ;;
+    zup)
+      echo "Usage: zup [service...]"
+      echo "  service     One or more services to start (default: all)"
+      echo "  Env: ZFIN_COMPOSE  path to docker-compose.yml"
+      ;;
+    zdown)
+      echo "Usage: zdown [service...]"
+      echo "  service     One or more services to stop (default: all)"
+      echo "  Env: ZFIN_COMPOSE  path to docker-compose.yml"
+      ;;
+    zpull)
+      echo "Usage: zpull [service...]"
+      echo "  service     One or more services to pull (default: all)"
+      echo "  Env: ZFIN_COMPOSE  path to docker-compose.yml"
+      ;;
+    zlog)
+      echo "Usage: zlog [service...]"
+      echo "  service     One or more services to tail logs for (default: all)"
+      echo "  Env: ZFIN_COMPOSE  path to docker-compose.yml"
+      ;;
+    *)
+      echo "Must be invoked as 'zrun', 'zexec', 'zup', 'zdown', 'zlog', or 'zpull'" >&2
+      ;;
+  esac
+  exit 1
+}
+
+[[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && usage
+
+# If first arg looks like a flag, treat it as a bash arg, not a service name
+if [[ "${1:-}" == -* ]]; then
+  SERVICE="compile"
+else
+  SERVICE="${1:-compile}"
+  [[ $# -gt 0 ]] && shift
+fi
+
+compose_file() {
+  local f="${ZFIN_COMPOSE:-$HOME/zfin/docker/docker-compose.yml}"
+  if [[ ! -f "$f" ]]; then
+    echo "Error: compose file not found: $f" >&2
+    echo "  Set ZFIN_COMPOSE=/path/to/docker-compose.yml to override" >&2
+    exit 1
+  fi
+  echo "$f"
+}
+
+case "$SCRIPT" in
+  zrun)
+    exec docker compose -f "$(compose_file)" run --rm "$SERVICE" bash -l "$@"
+    ;;
+  zexec)
+    IFS=',' read -ra PROJECT_NAMES <<< "${COMPOSE_PROJECT_NAMES:-zfin_org,test,trunk,cell,crick,franklin,schlapp}"
+    CONTAINER_ID=""
+    for project in "${PROJECT_NAMES[@]}"; do
+      CONTAINER_ID=$(docker ps --filter "name=${project}-${SERVICE}" --format '{{.ID}}' | head -1)
+      [[ -n "$CONTAINER_ID" ]] && break
+    done
+    if [[ -z "$CONTAINER_ID" ]]; then
+      echo "Error: no running container found for service '${SERVICE}'" >&2
+      echo "  Searched prefixes: ${PROJECT_NAMES[*]}" >&2
+      echo "  Set COMPOSE_PROJECT_NAMES=a,b,c to override" >&2
+      echo "" >&2
+      echo "Running containers:" >&2
+      docker ps --format '  {{.Names}}\t{{.Status}}' >&2
+      exit 1
+    fi
+    CONTAINER_NAME=$(docker ps --format '{{.Names}}' --filter "id=$CONTAINER_ID")
+    echo "Connecting to: $CONTAINER_NAME" >&2
+    TTY_FLAG=()
+    [[ -t 0 ]] && TTY_FLAG=(-t)
+    exec docker exec -i "${TTY_FLAG[@]}" "$CONTAINER_ID" bash -l "$@"
+    ;;
+  zup)
+    exec docker compose -f "$(compose_file)" up -d "$SERVICE" "$@"
+    ;;
+  zdown)
+    exec docker compose -f "$(compose_file)" stop "$SERVICE" "$@"
+    ;;
+  zpull)
+    exec docker compose -f "$(compose_file)" pull "$SERVICE" "$@"
+    ;;
+  zlog)
+    exec docker compose -f "$(compose_file)" logs -f "$SERVICE" "$@"
+    ;;
+  *)
+    echo "Error: must be invoked as 'zrun', 'zexec', 'zup', 'zdown', or 'zpull'" >&2
+    exit 1
+    ;;
+esac

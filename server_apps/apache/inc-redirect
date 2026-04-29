@@ -1,6 +1,6 @@
 RewriteEngine On
 
-RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
+RewriteMap viewmap txt:/opt/zfin/www_homes/zfin.org/server_apps/apache/view-page-url-map.txt
 
 #ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix
 RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
@@ -28,8 +28,8 @@ Redirect 301 /warranty.html https://zfin.atlassian.net/wiki/spaces/general/pages
 Redirect 301 /ZFIN/misc_html/tips.html https://zfin.atlassian.net/wiki/spaces/general/pages/1919656548/ZFIN+Tips
 
 #version independent gbrowse link
-RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
-RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
+RewriteRule ^/genome-browser    /action/gbrowse/  [NC,R=301]
+RewriteRule ^/cgi-perl/gbrowse  /action/gbrowse/  [NC,R=301]
 
 #Require https on some pages
 RewriteCond %{HTTPS} =off
@@ -232,25 +232,15 @@ RewriteRule ^/downloads /action/unload/downloads [NC,L,PT]
 
 RewriteRule ^/zf_info/(.*).html /action/zf_info/$1.html [NC,L,PT]
 
-#Allow use of same cgi-bin/webdriver path on all dev sites,
 #this rule should be below anything else webdriver related,
 #This passthrough is required so that any url altered in
 #this file actually is passed through to webdriver
-RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
-RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
-RewriteCond <!--|MUTANT_NAME|--> =zfin.org
 RewriteRule ^/cgi-bin/webdriver(.*) /cgi-bin/webdriver$1 [PT]
 
 #we also need to pass through any url that gets altered above and
 #needs to go to proxy.  Any url created in the url mapping needs to
 #be handled here.
 RewriteRule ^/action/(.*) /action/$1 [PT]
-
-
-#also need to 301 redirect anything that came in with mutant name as the webdriver
-#path so that they're still supported
-RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
-RewriteRule ^/<!--|MUTANT_NAME|-->/webdriver(.*) /cgi-bin/webdriver$1 [R=301]
 
 #Rewrite anything from /gb2/gbrowse/... to /action/gbrowse/ transparently (no redirect)
 #That page has a message about the switch from gbrowse to jbrowse
