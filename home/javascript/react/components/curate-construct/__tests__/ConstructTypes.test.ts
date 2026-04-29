@@ -1,3 +1,5 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
 import {
     cassettesToSimplifiedCassettes,
     simplifiedCassettesToCassettes,
@@ -35,7 +37,7 @@ describe('cassettesToSimplifiedCassettes', () => {
             ]
         };
         const result = cassettesToSimplifiedCassettes([cassette]);
-        expect(result).toEqual([{
+        assert.deepEqual(result, [{
             cassetteNumber: undefined,
             promoter: ['hsp70l', '-', 'GFP'],
             coding: ['EGFP', '-', 'CAAX']
@@ -48,14 +50,14 @@ describe('cassettesToSimplifiedCassettes', () => {
             coding: []
         };
         const result = cassettesToSimplifiedCassettes([cassette]);
-        expect(result[0].promoter).toEqual(['hsp70l', 'GFP']);
+        assert.deepEqual(result[0].promoter, ['hsp70l', 'GFP']);
     });
 
     it('handles empty cassette', () => {
         const cassette: Cassette = { promoter: [], coding: [] };
         const result = cassettesToSimplifiedCassettes([cassette]);
-        expect(result[0].promoter).toEqual([]);
-        expect(result[0].coding).toEqual([]);
+        assert.deepEqual(result[0].promoter, []);
+        assert.deepEqual(result[0].coding, []);
     });
 
     it('handles multiple cassettes', () => {
@@ -64,9 +66,9 @@ describe('cassettesToSimplifiedCassettes', () => {
             { promoter: [makeComponent('ubi', '')], coding: [makeComponent('mCherry', '')] }
         ];
         const result = cassettesToSimplifiedCassettes(cassettes);
-        expect(result.length).toBe(2);
-        expect(result[0].promoter).toEqual(['hsp70l', '-']);
-        expect(result[1].coding).toEqual(['mCherry']);
+        assert.equal(result.length, 2);
+        assert.deepEqual(result[0].promoter, ['hsp70l', '-']);
+        assert.deepEqual(result[1].coding, ['mCherry']);
     });
 });
 
@@ -77,11 +79,11 @@ describe('simplifiedCassettesToCassettes', () => {
             coding: ['EGFP']
         };
         const result = simplifiedCassettesToCassettes([simplified]);
-        expect(result[0].promoter.length).toBe(2);
-        expect(result[0].promoter[0].value).toBe('hsp70l');
-        expect(result[0].promoter[0].separator).toBe('-');
-        expect(result[0].promoter[1].value).toBe('GFP');
-        expect(result[0].promoter[1].separator).toBe('');
+        assert.equal(result[0].promoter.length, 2);
+        assert.equal(result[0].promoter[0].value, 'hsp70l');
+        assert.equal(result[0].promoter[0].separator, '-');
+        assert.equal(result[0].promoter[1].value, 'GFP');
+        assert.equal(result[0].promoter[1].separator, '');
     });
 
     it('recognizes all separator types: dash, comma, period', () => {
@@ -90,10 +92,10 @@ describe('simplifiedCassettesToCassettes', () => {
             coding: []
         };
         const result = simplifiedCassettesToCassettes([simplified]);
-        expect(result[0].promoter[0].separator).toBe('-');
-        expect(result[0].promoter[1].separator).toBe(',');
-        expect(result[0].promoter[2].separator).toBe('.');
-        expect(result[0].promoter[3].separator).toBe('');
+        assert.equal(result[0].promoter[0].separator, '-');
+        assert.equal(result[0].promoter[1].separator, ',');
+        assert.equal(result[0].promoter[2].separator, '.');
+        assert.equal(result[0].promoter[3].separator, '');
     });
 
     it('roundtrips: cassette -> simplified -> cassette preserves data', () => {
@@ -103,12 +105,12 @@ describe('simplifiedCassettesToCassettes', () => {
         };
         const simplified = cassettesToSimplifiedCassettes([original]);
         const roundtripped = simplifiedCassettesToCassettes(simplified);
-        expect(roundtripped[0].promoter[0].value).toBe('hsp70l');
-        expect(roundtripped[0].promoter[0].separator).toBe('-');
-        expect(roundtripped[0].promoter[1].value).toBe('GFP');
-        expect(roundtripped[0].coding[0].value).toBe('EGFP');
-        expect(roundtripped[0].coding[0].separator).toBe(',');
-        expect(roundtripped[0].coding[1].value).toBe('CAAX');
+        assert.equal(roundtripped[0].promoter[0].value, 'hsp70l');
+        assert.equal(roundtripped[0].promoter[0].separator, '-');
+        assert.equal(roundtripped[0].promoter[1].value, 'GFP');
+        assert.equal(roundtripped[0].coding[0].value, 'EGFP');
+        assert.equal(roundtripped[0].coding[0].separator, ',');
+        assert.equal(roundtripped[0].coding[1].value, 'CAAX');
     });
 });
 
@@ -120,20 +122,20 @@ describe('normalizeConstructComponents', () => {
             makeComponent('c', '-')
         ];
         const result = normalizeConstructComponents(items);
-        expect(result[0].separator).toBe('-');
-        expect(result[1].separator).toBe('-');
-        expect(result[2].separator).toBe('');
+        assert.equal(result[0].separator, '-');
+        assert.equal(result[1].separator, '-');
+        assert.equal(result[2].separator, '');
     });
 
     it('handles single component', () => {
         const items: ConstructComponent[] = [makeComponent('a', '-')];
         const result = normalizeConstructComponents(items);
-        expect(result[0].separator).toBe('');
+        assert.equal(result[0].separator, '');
     });
 
     it('handles empty array', () => {
         const result = normalizeConstructComponents([]);
-        expect(result).toEqual([]);
+        assert.deepEqual(result, []);
     });
 });
 
@@ -144,11 +146,11 @@ describe('normalizeConstructCassette', () => {
             coding: [makeComponent('c', ','), makeComponent('d', ',')]
         };
         const result = normalizeConstructCassette(cassette);
-        expect(result.promoter[1].separator).toBe('');
-        expect(result.coding[1].separator).toBe('');
+        assert.equal(result.promoter[1].separator, '');
+        assert.equal(result.coding[1].separator, '');
         // first items keep their separators
-        expect(result.promoter[0].separator).toBe('-');
-        expect(result.coding[0].separator).toBe(',');
+        assert.equal(result.promoter[0].separator, '-');
+        assert.equal(result.coding[0].separator, ',');
     });
 });
 
@@ -159,8 +161,8 @@ describe('normalizeSimplifiedCassettes', () => {
             { promoter: [',', 'c'], coding: ['d'] }
         ];
         const result = normalizeSimplifiedCassettes(cassettes);
-        expect(result[0].promoter).toEqual(['a']);
-        expect(result[1].promoter).toEqual(['c']);
+        assert.deepEqual(result[0].promoter, ['a']);
+        assert.deepEqual(result[1].promoter, ['c']);
     });
 
     it('does not remove comma from first cassette', () => {
@@ -168,6 +170,6 @@ describe('normalizeSimplifiedCassettes', () => {
             { promoter: [',', 'a'], coding: [] }
         ];
         const result = normalizeSimplifiedCassettes(cassettes);
-        expect(result[0].promoter).toEqual([',', 'a']);
+        assert.deepEqual(result[0].promoter, [',', 'a']);
     });
 });

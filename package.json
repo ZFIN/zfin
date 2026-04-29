@@ -13,7 +13,7 @@
     "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-webpack-plugin": "^6.0.0",
-    "jest": "^30.3.0",
+    "tsx": "^4.21.0",
     "webpack-dev-server": "^5.2.3"
   },
   "scripts": {
@@ -21,7 +21,7 @@
     "compile": "webpack",
     "build": "npm run clean && npm run compile",
     "lint": "eslint home/javascript/react/** --max-warnings 0",
-    "test": "jest"
+    "test": "node --import tsx --test home/javascript/__tests__/*.test.js home/javascript/react/components/curate-construct/__tests__/*.test.ts"
   },
   "overrides": {
     "uuid": "^14.0.0"
