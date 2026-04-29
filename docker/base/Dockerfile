@@ -1,9 +1,3 @@
-# Pull Node from the official multi-arch Docker image. Avoids NodeSource's
-# arm64 packaging issues (their Node 22 deb shipped a broken npm bundle) and
-# automatically picks the right binary for the build platform via Docker's
-# manifest resolver.
-FROM node:22-bookworm-slim AS node-source
-
 FROM gradle:8-jdk21
 
 ENV DEBIAN_FRONTEND=noninteractive
