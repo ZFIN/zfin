@@ -4,6 +4,7 @@
                 driver="org.postgresql.Driver"
                 url="jdbc:postgresql://db:5432/zfindb"
                 user="postgres"
+                password="ignored"
                 transactionIsolation="TRANSACTION_READ_UNCOMMITTED"
     />
 
