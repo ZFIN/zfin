@@ -284,6 +284,7 @@ task fetchNcbiReplacedGeneIDs(type: JavaExec) {
 task runPriorityPipeline(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.PriorityPipelineTask'
+    systemProperty "priority.useAuth", System.getProperty("priority.useAuth", "false")
 }
 
 task checkFeatureGeneAttributionTask(type: JavaExec) {
