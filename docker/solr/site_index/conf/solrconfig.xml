@@ -3,10 +3,7 @@
 <config>
 
   <schemaFactory class="ClassicIndexSchemaFactory"/>
-  <luceneMatchVersion>8.6.3</luceneMatchVersion>
-
-  <lib dir="${solr.install.dir:../../../..}/dist/" regex="solr-dataimporthandler-.*\.jar" />
-  <lib dir="${solr.install.dir:../../../..}/server/lib/" regex="postgresql-.*\.jar" />
+  <luceneMatchVersion>9.10.1</luceneMatchVersion>
 
   <dataDir>${solr.data.dir:}</dataDir>
 

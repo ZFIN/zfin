@@ -15,7 +15,6 @@ services:
     environment:
       PGHOST: db
       PGUSER: postgres
-      SOLR_HOME: /var/solr
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       SSH_USER: ${DOCKER_SSH_USER}
       SSH_HOST: ${DOCKER_SSH_HOST}
@@ -65,7 +64,6 @@ services:
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
-      - solr_data:/var/solr
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
@@ -103,7 +101,9 @@ services:
     ports:
       - "8983-8992:8983"
     volumes:
-      - solr_data:/var/solr
+      - solr_index:/var/solr/data/site_index/data/index
+      - solr_tlog:/var/solr/data/site_index/data/tlog
+      - solr_snapshots:/var/solr/data/site_index/data/snapshot_metadata
   httpd:
     hostname: zfin.org
     build: ./httpd/
@@ -223,7 +223,6 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - downloads_data:/opt/zfin/download-files
-      - solr_data:/var/solr
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
@@ -360,7 +359,9 @@ volumes:
   keystore:
   catalina_base:
   pg_data:
-  solr_data:
+  solr_index:
+  solr_tlog:
+  solr_snapshots:
   downloads_data:
   jenkins_data:
   fail2ban_config:
