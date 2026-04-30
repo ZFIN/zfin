@@ -37,6 +37,7 @@ def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
 def pghost = env['PGHOST']
 def dbunloadspath = env['DB_UNLOADS_PATH']
+def solrunloadspath = env['SOLR_UNLOADS_PATH']
 def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 def zfinrelease = env['ZFIN_RELEASE']
 String targetroot = env['TARGETROOT']
@@ -550,6 +551,27 @@ task createEmptyDirsIfNotExists() {
     }
 }
 
+// Pull the latest snapshot.* directory from the production solr unloads on the
+// remote host into the local solrunloadspath. Pair with `loadsolr` to restore
+// it into the running Solr container via the /replication API.
+task getLatestSolrUnload() {
+    doLast {
+        def instance = env['INSTANCE']
+        if (!instance) throw new GradleException("INSTANCE env var not set")
+        def remoteDir = "/research/zunloads/solr/${instance}"
+        def localDir  = "${solrunloadspath}/${instance}"
+        def cmd = "ssh ${env['SSH_USER']}@${env['SSH_HOST']} ls -dt ${remoteDir}/snapshot.* | head -n 1"
+        def filepath = cmd.execute().text.trim()
+        if (!filepath) throw new GradleException("no snapshot.* dirs found at ${remoteDir} on ${env['SSH_HOST']}")
+        println "Getting " + filepath
+        exec { commandLine "mkdir", "-p", localDir }
+        exec {
+            ignoreExitValue = true
+            commandLine "scp", "-r", "${env['SSH_USER']}@${env['SSH_HOST']}:${filepath}", localDir
+        }
+    }
+}
+
 task getLatestDatabaseUnload() {
     doLast {
         if (dbunloadspath != '/research/zunloads/databases/zfindb') {
@@ -574,6 +596,40 @@ task getLatestPostgresFilesTrunk() {
         }
     }
 }
+
+// Restore the most recent snapshot.<NAME> dir from the local solrunloadspath
+// into the running Solr container via /replication?command=restore. Pass
+// -PsolrIndex=<NAME> to pick a specific snapshot.
+task getLatestSolrIndex() {
+    doLast {
+        def instance = env['INSTANCE']
+        if (!instance) throw new GradleException("INSTANCE env var not set")
+        def selectedName
+        if (project.hasProperty('solrIndex')) {
+            selectedName = project.property('solrIndex').toString()
+            println "Restoring Solr snapshot.${selectedName}"
+        } else {
+            def baseDir = new File("${solrunloadspath}/${instance}")
+            if (!baseDir.isDirectory()) {
+                throw new GradleException("no snapshots at ${baseDir}; run `gradle getsolr` first or pass -PsolrIndex=<name>")
+            }
+            def snaps = baseDir.listFiles().findAll { it.isDirectory() && it.name.startsWith('snapshot.') }
+            if (!snaps) throw new GradleException("no snapshot.* dirs in ${baseDir}")
+            snaps.sort { -it.lastModified() }
+            selectedName = snaps[0].name.replaceFirst(/^snapshot\./, '')
+            println "Latest snapshot: ${snaps[0].name} -> restoring as ${selectedName}"
+        }
+        def proc = ["ant", "restore-solr-index", "-DsolrIndex=${selectedName}"].execute()
+        proc.waitForProcessOutput(System.out, System.err)
+        if (proc.exitValue() != 0) throw new GradleException("restore-solr-index failed (exit ${proc.exitValue()})")
+    }
+}
+
+// getsolr as alias for getLatestSolrUnload
+task getsolr(dependsOn: getLatestSolrUnload)
+
+// loadsolr as alias for getLatestSolrIndex
+task loadsolr(dependsOn: getLatestSolrIndex)
 
 task getBlastAllDatabases() {
     doLast {

@@ -2,9 +2,40 @@
 
 <project name="Solr" default="reload-solr-core" basedir="../">
 
+    <!-- Idempotent when this file is imported by build.xml; needed when invoked standalone. -->
+    <property environment="env"/>
+
     <target name="build-solr-index-jenkins">
         <antcall target="build-solr-index"/>
         <antcall target="check-indexer"/>
+        <antcall target="backup-solr-index"/>
+    </target>
+
+    <target name="backup-solr-index"
+            description="Snapshot the Solr index via /replication?command=backup">
+        <tstamp><format property="solr.backup.stamp" pattern="yyyy.MM.dd-HH.mm"/></tstamp>
+        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/${env.INSTANCE}"/>
+        <exec executable="${SOURCEROOT}/server_apps/solr/scripts/solr-backup.sh"
+              failonerror="true">
+            <env key="SOLR" value="http://${SOLR_HOST}:${SOLR_PORT}/solr"/>
+            <env key="CORE" value="${SOLR_CORE}"/>
+            <env key="LOCATION" value="${solr.unloads.dir}"/>
+            <env key="NAME" value="${solr.backup.stamp}"/>
+        </exec>
+    </target>
+
+    <target name="restore-solr-index"
+            description="Restore the Solr index from a snapshot. Pass -DsolrIndex=&lt;name&gt; to pick the snapshot.">
+        <fail unless="solrIndex"
+              message="Set -DsolrIndex=&lt;name&gt; to pick a snapshot.&lt;name&gt; to restore from. Run via 'gradle loadsolr' for auto-selection of the latest."/>
+        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/${env.INSTANCE}"/>
+        <exec executable="${SOURCEROOT}/server_apps/solr/scripts/solr-restore.sh"
+              failonerror="true">
+            <env key="SOLR" value="http://${SOLR_HOST}:${SOLR_PORT}/solr"/>
+            <env key="CORE" value="${SOLR_CORE}"/>
+            <env key="LOCATION" value="${solr.unloads.dir}"/>
+            <env key="NAME" value="${solrIndex}"/>
+        </exec>
     </target>
 
 

@@ -97,6 +97,7 @@ services:
     environment:
       SOLR_MODULES: "scripting"
       SOLR_HEAP: 10g
+      SOLR_OPTS: "-Dsolr.allowPaths=/opt/zfin/unloads/solr"
       TZ: ${TZ}
     ports:
       - "8983-8992:8983"
@@ -104,6 +105,7 @@ services:
       - solr_index:/var/solr/data/site_index/data/index
       - solr_tlog:/var/solr/data/site_index/data/tlog
       - solr_snapshots:/var/solr/data/site_index/data/snapshot_metadata
+      - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
   httpd:
     hostname: zfin.org
     build: ./httpd/
@@ -228,6 +230,7 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
+      - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
