@@ -98,6 +98,10 @@ services:
       SOLR_MODULES: "scripting"
       SOLR_HEAP: 10g
       SOLR_OPTS: "-Dsolr.allowPaths=/opt/zfin/unloads/solr"
+      # Solr 9 enables a Java Security Manager that blocks the postgres JDBC
+      # driver from reading ~/.pgpass during URL parsing, killing DIH. The
+      # security manager is deprecated and slated for removal upstream.
+      SOLR_SECURITY_MANAGER_ENABLED: "false"
       TZ: ${TZ}
     ports:
       - "8983-8992:8983"

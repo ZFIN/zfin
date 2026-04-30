@@ -1,8 +1,9 @@
 <dataConfig>
 
     <dataSource name="db"
-                driver="${jdbc.driver:org.postgresql.Driver}"
-                url="${jdbc.url:jdbc:postgresql://db:5432/zfindb}"
+                driver="org.postgresql.Driver"
+                url="jdbc:postgresql://db:5432/zfindb"
+                user="postgres"
                 transactionIsolation="TRANSACTION_READ_UNCOMMITTED"
     />
 
