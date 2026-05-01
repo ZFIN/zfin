@@ -216,12 +216,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
         handleChanges();
         presenter.fetchReferenceSequenceIfReady();
+        presenter.autoCalcDeletionLength();
     }
 
     @UiHandler("featureEndLoc")
     void onChangeEndLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
         presenter.fetchReferenceSequenceIfReady();
+        presenter.autoCalcDeletionLength();
     }
 
 
@@ -412,6 +414,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
+        presenter.autoCalcDeletionLength();
     }
 
     public void resetGUI() {
