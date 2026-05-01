@@ -39,8 +39,8 @@
                                     <td>${loop.count}</td>
                                     <td><a href="/action/zirc/submit/${sub.id}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
-                                    <td>${sub.status}</td>
-                                    <td>${sub.owner.fullName}</td>
+                                    <td>&mdash;</td>
+                                    <td>&mdash;</td>
                                 </tr>
                             </c:forEach>
                         </c:otherwise>
@@ -73,8 +73,8 @@
                                     <td>${loop.count}</td>
                                     <td><a href="/action/zirc/submit/${sub.id}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
-                                    <td>${sub.status}</td>
-                                    <td>${sub.owner.fullName}</td>
+                                    <td>&mdash;</td>
+                                    <td>&mdash;</td>
                                 </tr>
                             </c:forEach>
                         </c:otherwise>
