@@ -36,19 +36,29 @@ begin
   raise notice 'Inserted % new term self-records', v_count;
 
   -- Part 2: Process new relationships (bulk)
-  -- All new closure paths through all new edges at once
+  -- All new closure paths through all new edges at once.
+  --
+  -- The inner SELECT can emit the same (container, contained) pair more than once
+  -- when multiple new edges connect overlapping ancestor / descendant sets, each
+  -- with a different +1+ distance sum. INSERT ... ON CONFLICT DO UPDATE refuses to
+  -- touch the same target row twice in one statement, so we pre-aggregate with
+  -- GROUP BY ... MIN(distance) before handing rows to ON CONFLICT.
   insert into all_term_contains (alltermcon_container_zdb_id,
                                   alltermcon_contained_zdb_id,
                                   alltermcon_min_contain_distance)
-  select a.alltermcon_container_zdb_id,
-         d.alltermcon_contained_zdb_id,
-         a.alltermcon_min_contain_distance + 1 + d.alltermcon_min_contain_distance
-  from tmp_zfin_rels nr
-  join all_term_contains a on a.alltermcon_contained_zdb_id = nr.termrel_term_1_zdb_id
-  join all_term_contains d on d.alltermcon_container_zdb_id = nr.termrel_term_2_zdb_id
-  where nr.termrel_type in ('is_a', 'part_of', 'part of',
-                             'positively regulates', 'negatively regulates',
-                             'regulates', 'occurs in')
+  select container_id, contained_id, min(new_distance)
+  from (
+    select a.alltermcon_container_zdb_id  as container_id,
+           d.alltermcon_contained_zdb_id  as contained_id,
+           a.alltermcon_min_contain_distance + 1 + d.alltermcon_min_contain_distance as new_distance
+    from tmp_zfin_rels nr
+    join all_term_contains a on a.alltermcon_contained_zdb_id = nr.termrel_term_1_zdb_id
+    join all_term_contains d on d.alltermcon_container_zdb_id = nr.termrel_term_2_zdb_id
+    where nr.termrel_type in ('is_a', 'part_of', 'part of',
+                               'positively regulates', 'negatively regulates',
+                               'regulates', 'occurs in')
+  ) candidate_paths
+  group by container_id, contained_id
   on conflict (alltermcon_container_zdb_id, alltermcon_contained_zdb_id)
   do update set alltermcon_min_contain_distance =
     least(all_term_contains.alltermcon_min_contain_distance, excluded.alltermcon_min_contain_distance);
