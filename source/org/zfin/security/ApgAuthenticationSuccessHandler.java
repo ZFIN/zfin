@@ -100,4 +100,31 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
         this.sessionRegistry = sessionRegistry;
     }
 
+    @Override
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
+        String url = super.determineTargetUrl(request, response);
+        if (!isLocalUrl(url, request)) {
+            return getDefaultTargetUrl();
+        }
+        return url;
+    }
+
+    private static boolean isLocalUrl(String url, HttpServletRequest request) {
+        // Prevent open redirects via the targetUrlParameter. Accept either a site-relative
+        // path or an absolute URL whose host matches the current request's host.
+        if (url == null) {
+            return false;
+        }
+        if (url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")) {
+            return true;
+        }
+        try {
+            java.net.URI uri = java.net.URI.create(url);
+            String host = uri.getHost();
+            return host != null && host.equalsIgnoreCase(request.getServerName());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
 }

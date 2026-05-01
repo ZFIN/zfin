@@ -19,7 +19,7 @@
                     </p>
 
                     <form id="captcha-form" method="post" action="/action/captcha/challenge">
-                        <input type="hidden" name="redirect" value="${captchaRedirect}"/>
+                        <input type="hidden" name="redirect" value="${fn:escapeXml(captchaRedirect)}"/>
                         <altcha-widget
                                 challengeurl="/action/altcha/challenge"
                         ></altcha-widget>
@@ -27,6 +27,15 @@
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
+
+                    <hr/>
+                    <p class="mb-2">Have a ZFIN account? You can sign in instead to skip the verification.</p>
+                    <c:url var="loginUrl" value="/action/login">
+                        <c:if test="${not empty captchaRedirect}">
+                            <c:param name="redirect" value="${captchaRedirect}"/>
+                        </c:if>
+                    </c:url>
+                    <a class="btn btn-outline-secondary" href="${loginUrl}">Log in</a>
                 </div>
             </div>
         </div>
