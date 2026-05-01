@@ -40,6 +40,8 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     @UiField
     RevertibleTextArea<String> seqVariant;
     @UiField
+    StringTextBox seqVariantSmall;
+    @UiField
     Button reverseComplVarButton;
     @UiField
     TableRowElement sequenceOfReferenceRow;
@@ -49,6 +51,8 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     TextBox seqReferenceSmall;
     @UiField
     TableRowElement sequenceOfVariantRow;
+    @UiField
+    TableRowElement sequenceOfVariantSmallRow;
 
     public GenomicMutationDetailView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -57,13 +61,21 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
     @UiHandler("seqVariant")
     void onKeyChangeSeqVar(@SuppressWarnings("unused") KeyUpEvent event) {
+        seqVariantSmall.setText(seqVariant.getText());
+        handleChanges();
+    }
+
+    @UiHandler("seqVariantSmall")
+    void onKeyChangeSeqVarSmall(@SuppressWarnings("unused") KeyUpEvent event) {
+        seqVariant.setText(seqVariantSmall.getText());
         handleChanges();
     }
 
     @UiHandler("reverseComplVarButton")
     void onClickComplSeqButton(@SuppressWarnings("unused") ClickEvent event) {
-        seqVariant.setText(reverseComplement(seqVariant.getText().toUpperCase()));
-
+        String complemented = reverseComplement(seqVariant.getText().toUpperCase());
+        seqVariant.setText(complemented);
+        seqVariantSmall.setText(complemented);
     }
 
 
@@ -107,10 +119,18 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         return seqReference.getText();
     }
 
+    private String getVarSeqText() {
+        boolean smallVisible = sequenceOfVariantSmallRow.getStyle().getDisplay().equals(Style.Display.TABLE_ROW.getCssName());
+        if (smallVisible) {
+            return seqVariantSmall.getText();
+        }
+        return seqVariant.getText();
+    }
+
     public FeatureGenomeMutationDetailChangeDTO getDto() {
         String currentRefText = getRefSeqText();
         boolean hasRefSeq = currentRefText != null && !currentRefText.trim().isEmpty();
-        String currentVarText = seqVariant.getText();
+        String currentVarText = getVarSeqText();
         boolean hasVarSeq = currentVarText != null && !currentVarText.trim().isEmpty();
         if (!hasRefSeq && !hasVarSeq)
             return null;
@@ -159,6 +179,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         seqReference.setText("");
         seqReferenceSmall.setText("");
         seqVariant.setText("");
+        seqVariantSmall.setText("");
 
         clearError();
     }
@@ -176,12 +197,14 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         showRow(sequenceOfReferenceRow, false);
         showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfVariantRow, true);
+        showRow(sequenceOfVariantSmallRow, false);
 
     }
 
     public void showReferenceSeq() {
 
         showRow(sequenceOfVariantRow, false);
+        showRow(sequenceOfVariantSmallRow, false);
         showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfReferenceRow, true);
 
@@ -190,6 +213,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void showBoth() {
 
         showRow(sequenceOfVariantRow, true);
+        showRow(sequenceOfVariantSmallRow, false);
         showRow(sequenceOfReferenceSmallRow, false);
         showRow(sequenceOfReferenceRow, true);
 
@@ -197,7 +221,8 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
     public void showBothPointMutation() {
 
-        showRow(sequenceOfVariantRow, true);
+        showRow(sequenceOfVariantRow, false);
+        showRow(sequenceOfVariantSmallRow, true);
         showRow(sequenceOfReferenceRow, false);
         showRow(sequenceOfReferenceSmallRow, true);
 
@@ -206,6 +231,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     public void showTgFields() {
 
         showRow(sequenceOfVariantRow, false);
+        showRow(sequenceOfVariantSmallRow, false);
         showRow(sequenceOfReferenceRow, false);
         showRow(sequenceOfReferenceSmallRow, false);
 
@@ -228,11 +254,14 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
             seqReference.setText("");
             seqReferenceSmall.setText("");
             seqVariant.setText("");
+            seqVariantSmall.setText("");
             return;
         }
         seqReference.setText(dto.getFgmdSeqRef());
         seqReferenceSmall.setText(dto.getFgmdSeqRef() != null ? dto.getFgmdSeqRef() : "");
-        seqVariant.setText(dto.getFgmdSeqVar() != null ? dto.getFgmdSeqVar() : "");
+        String varValue = dto.getFgmdSeqVar() != null ? dto.getFgmdSeqVar() : "";
+        seqVariant.setText(varValue);
+        seqVariantSmall.setText(varValue);
         switch (type) {
             case POINT_MUTATION:
 

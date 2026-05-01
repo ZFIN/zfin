@@ -88,6 +88,11 @@
                                 <td><zfin:RevertibleTextArea ui:field="seqVariant" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
                             </tr>
+
+                            <tr ui:field="sequenceOfVariantSmallRow">
+                                <td class="{style.seq-label-column}">Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
+                                <td colspan="2"><zfin:StringTextBox ui:field="seqVariantSmall" visibleLength="4" addStyleNames="{style.uppercase}"/></td>
+                            </tr>
                         </table>
                     </g:HTMLPanel>
                 </g:customCell>
