@@ -38,6 +38,12 @@
             text-transform: uppercase;
         }
 
+        .grey-text {
+            color: darkgrey;
+            font-style: italic;
+            font-size: small;
+        }
+
         @external .seq-detail-table;
         .seq-detail-table {
             width: 100%;
@@ -74,12 +80,12 @@
                     <g:HTMLPanel visible="true">
                         <table class="{style.seq-detail-table}">
                             <tr ui:field="sequenceOfReferenceRow">
-                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td class="{style.seq-label-column}">Sequence of Reference<br/><span class="{style.grey-text}">(auto-calculated)</span></td>
                                 <td colspan="2"><g:TextArea ui:field="seqReference" readOnly="true" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
                             </tr>
 
                             <tr ui:field="sequenceOfReferenceSmallRow">
-                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td class="{style.seq-label-column}">Sequence of Reference<br/><span class="{style.grey-text}">(auto-calculated)</span></td>
                                 <td colspan="2"><g:TextBox ui:field="seqReferenceSmall" readOnly="true" addStyleNames="{style.uppercase}"/></td>
                             </tr>
 
