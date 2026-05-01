@@ -291,3 +291,82 @@ task checkFeatureGeneAttributionTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.task.CheckFeatureGeneAttributionTask'
 }
+
+// Isolated classpath for ROBOT (org.obolibrary.robot). Used by the
+// prepareZecoTaxonomyObo task below; never enters WEB-INF/lib.
+configurations {
+    robotCli {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    robotCli "org.obolibrary.robot:robot-command:1.9.10"
+}
+
+// Pipeline replacing the old Ant create-obo-file / create-zeco-taxonomy-owl-file
+// targets in server_apps/data_transfer/LoadOntology/build.xml. The
+// Load-Zeco-Taxonomy-Ontology Jenkins job invokes prepareZecoTaxonomyObo
+// before the Ant load-zeco-taxonomy target.
+//
+// Output paths live under $TARGETROOT so they sit alongside the load-step's
+// per-job report directory (the Ant load-ontology macro now uses
+// -Djob.output.basedir=$TARGETROOT/... and forks the Java loader from there).
+def zecoTaxonomyTargetRoot = System.getenv('TARGETROOT') ?: "${projectDir}"
+ext {
+    zecoTaxonomySource = '/research/zusers/informix/Curation/zeco-taxonomy-source.txt'
+    zecoTaxonomyOboDir = file("${zecoTaxonomyTargetRoot}/server_apps/data_transfer/LoadOntology/obo-files")
+    zecoTaxonomyOwl    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.owl")
+    zecoTaxonomyObo    = file("${zecoTaxonomyOboDir}/zeco-taxonomy.obo")
+}
+
+task downloadZecoTaxonomyOwl(type: Exec) {
+    description = 'Upload zeco-taxonomy-source.txt to ontofox.hegroup.org and save the returned .owl'
+    group = 'data transfer'
+    doFirst { zecoTaxonomyOboDir.mkdirs() }
+    commandLine 'curl', '-fSL',
+        '-F', "file=@${zecoTaxonomySource}",
+        '-o', zecoTaxonomyOwl,
+        'https://ontofox.hegroup.org/service.php'
+
+    doLast {
+        // curl's -f catches HTTP 4xx/5xx, but ontofox.hegroup.org returns 200
+        // even when its body is a tiny plain-text error string (overloaded,
+        // connection failed, etc.) instead of an OWL document. A real
+        // zeco-taxonomy.owl is ~150 KB; error responses are a few hundred
+        // bytes. Anything smaller than a few KB means the upstream service
+        // sent an error in disguise -- fail loudly so we don't feed garbage
+        // into the loader.
+        def minBytes = 5000
+        if (zecoTaxonomyOwl.length() < minBytes) {
+            throw new GradleException(
+                "ontofox.hegroup.org returned ${zecoTaxonomyOwl.length()} bytes " +
+                "(< ${minBytes} byte threshold) -- likely an error response. " +
+                "Service is often transiently overloaded; retry later.\n" +
+                "Body:\n" + zecoTaxonomyOwl.text.take(500))
+        }
+    }
+}
+
+task prepareZecoTaxonomyObo(type: JavaExec) {
+    description = 'Download zeco-taxonomy from ontofox and convert OWL -> OBO via ROBOT'
+    group = 'data transfer'
+    dependsOn downloadZecoTaxonomyOwl
+    classpath = configurations.robotCli
+    mainClass = 'org.obolibrary.robot.CommandLineInterface'
+    args = ['convert', '--input', zecoTaxonomyOwl.absolutePath,
+                       '--output', zecoTaxonomyObo.absolutePath]
+
+    doLast {
+        // ROBOT writes "ontology: vo/external/NCBITaxon_ZFIN" by default but
+        // LoadOntology.java looks up the value in its Ontology enum and chokes
+        // on anything other than "zeco_taxonomy" for this load. Replace the
+        // header to match what the loader expects (mirrors the old Ant
+        // setHeaderForObo macrodef).
+        def now = new Date().format('dd:MM:yyyy HH:mm')
+        def text = zecoTaxonomyObo.text.replaceFirst(/(?m)^ontology: .*$/,
+            "ontology: zeco_taxonomy\ndefault-namespace: zeco_taxonomy\ndate: ${now}")
+        zecoTaxonomyObo.text = text
+    }
+}
