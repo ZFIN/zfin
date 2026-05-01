@@ -85,7 +85,7 @@
 
                             <tr ui:field="sequenceOfVariantRow">
                                 <td class="{style.seq-label-column}">Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
-                                <td><zfin:StringTextBox ui:field="seqVariant" addStyleNames="{style.uppercase}"/></td>
+                                <td><zfin:RevertibleTextArea ui:field="seqVariant" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
                             </tr>
                         </table>
