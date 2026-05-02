@@ -1,9 +1,12 @@
 package org.zfin.zirc.presentation;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.server.ResponseStatusException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.zirc.entity.LineSubmission;
@@ -25,6 +28,17 @@ public class ZircDashboardController {
         model.addAttribute("closedSubmissions", Collections.emptyList());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission Dashboard");
         return "zirc/dashboard";
+    }
+
+    @RequestMapping(value = "/line-submission/{zdbID}", method = RequestMethod.GET)
+    public String viewLineSubmission(@PathVariable String zdbID, Model model) {
+        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
+        if (submission == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
+        }
+        model.addAttribute("submission", submission);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission: " + submission.getName());
+        return "zirc/line-submission-detail";
     }
 
 }

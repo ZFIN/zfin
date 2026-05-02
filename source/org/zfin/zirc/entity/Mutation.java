@@ -37,7 +37,7 @@ public class Mutation implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "m_line_submission_id", referencedColumnName = "ls_id", nullable = false)
+    @JoinColumn(name = "m_line_submission_id", referencedColumnName = "ls_zdb_id", nullable = false)
     private LineSubmission lineSubmission;
 
     @Column(name = "m_sort_order", nullable = false)

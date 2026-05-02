@@ -11,6 +11,9 @@
 
     <jsp:body>
 
+        <div class="small text-uppercase text-muted">ZIRC</div>
+        <h1>Line Submission Dashboard</h1>
+
         <p>
             <a href="/action/zirc/submit" class="btn btn-primary">Start a new line submission</a>
         </p>
@@ -37,10 +40,15 @@
                             <c:forEach items="${activeSubmissions}" var="sub" varStatus="loop">
                                 <tr>
                                     <td>${loop.count}</td>
-                                    <td><a href="/action/zirc/submit/${sub.id}">${sub.name}</a></td>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
                                     <td>&mdash;</td>
-                                    <td>&mdash;</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty sub.ownerPerson}">${sub.ownerPerson.fullName}</c:when>
+                                            <c:otherwise>&mdash;</c:otherwise>
+                                        </c:choose>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </c:otherwise>
@@ -71,7 +79,7 @@
                             <c:forEach items="${closedSubmissions}" var="sub" varStatus="loop">
                                 <tr>
                                     <td>${loop.count}</td>
-                                    <td><a href="/action/zirc/submit/${sub.id}">${sub.name}</a></td>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
                                     <td>&mdash;</td>
                                     <td>&mdash;</td>

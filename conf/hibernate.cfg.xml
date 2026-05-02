@@ -331,6 +331,7 @@
 
         <!-- ZIRC line submission entities -->
         <mapping class="org.zfin.zirc.entity.LineSubmission"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionPerson"/>
         <mapping class="org.zfin.zirc.entity.Mutation"/>
         <mapping class="org.zfin.zirc.entity.Gene"/>
         <mapping class="org.zfin.zirc.entity.Lesion"/>
