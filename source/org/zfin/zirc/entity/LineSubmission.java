@@ -42,7 +42,7 @@ public class LineSubmission implements Serializable {
         strategy = "org.zfin.database.ZdbIdGenerator",
         parameters = {
             @org.hibernate.annotations.Parameter(name = "type", value = "LINESUBMISSION"),
-            @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+            @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
         })
     @Column(name = "ls_zdb_id", updatable = false, nullable = false)
     private String zdbID;
