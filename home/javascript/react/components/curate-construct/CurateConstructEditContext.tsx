@@ -84,7 +84,7 @@ export const CurateConstructEditProvider = ({publicationId, selectedConstructId,
     }, [publicationId, selectedConstructId]);
 
     function setStateByProxy(fn: (draft: CurateConstructEditState) => void) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         return setState(produce(fn) as unknown as React.SetStateAction<CurateConstructEditState>);
     }
 

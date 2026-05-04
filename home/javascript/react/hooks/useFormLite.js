@@ -194,7 +194,7 @@ function useForm({ defaultValues = {}, onSubmit, validate }) {
                 isSubmitting: false,
                 isSubmitted: true,
             }));
-        } catch (error) {
+        } catch {
             setMetaState(prev => ({
                 ...prev,
                 isSubmitting: false,

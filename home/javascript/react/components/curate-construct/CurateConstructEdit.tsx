@@ -75,7 +75,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 }
                 setNewFormKey(prev => prev + 1);
             }
-        } catch (error) {
+        } catch {
             setNewErrorMessage('Error creating construct');
         }
     }
@@ -104,7 +104,7 @@ const CurateConstructEdit = ({publicationId}: CurateConstructEditProps) => {
                 setSelectedConstructID('');
                 setTimeout(() => setSelectedConstructID(currentId), 0);
             }
-        } catch (error) {
+        } catch {
             setEditErrorMessage('Error updating construct');
         }
     }

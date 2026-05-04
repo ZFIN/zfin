@@ -5,7 +5,8 @@ export const splitEmailRecipientListString = (list) => (
 export const buildRecipientList = (authors) => {
     const recipients = [];
     authors.forEach(author => {
-        author.email && splitEmailRecipientListString(author.email).forEach(email => {
+        if (!author.email) { return; }
+        splitEmailRecipientListString(author.email).forEach(email => {
             if (!email) { return; }
             recipients.push({
                 email,
