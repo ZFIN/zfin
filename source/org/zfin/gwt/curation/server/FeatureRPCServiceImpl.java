@@ -351,6 +351,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            validateDeletionLength(detail, fgl, feature.getType());
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
                 if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair()) {
                     if (detail.getNumberRemovedBasePair() > 1) {
@@ -1225,6 +1226,24 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         GenomicLocationService genomicLocationService = new GenomicLocationService();
         return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
+    }
+
+    private void validateDeletionLength(FeatureDnaMutationDetail detail, FeatureLocation fgl, FeatureTypeEnum featureType) throws ValidationException {
+        if (detail == null || detail.getNumberRemovedBasePair() == null) {
+            return;
+        }
+        if (fgl == null || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
+            return;
+        }
+        if (featureType != FeatureTypeEnum.DELETION
+                && featureType != FeatureTypeEnum.INDEL
+                && featureType != FeatureTypeEnum.MNV) {
+            return;
+        }
+        int expected = fgl.getEndLocation() - fgl.getStartLocation() + 1;
+        if (detail.getNumberRemovedBasePair() != expected) {
+            throw new ValidationException("Deletion size does not match the auto-calculated value from the start/end locations");
+        }
     }
 
     private void validateReferenceSequence(FeatureGenomicMutationDetail fgmd, FeatureLocation fgl) throws ValidationException {

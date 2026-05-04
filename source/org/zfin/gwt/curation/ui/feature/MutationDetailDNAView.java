@@ -249,6 +249,10 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         row.getStyle().setDisplay(show ? Style.Display.TABLE_ROW : Style.Display.NONE);
     }
 
+    public void setDeletionLength(Integer length) {
+        minusBasePair.setNumber(length);
+    }
+
     public MutationDetailDnaChangeDTO getDto() {
         if (!hasEnteredValues())
             return null;
