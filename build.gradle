@@ -1573,9 +1573,13 @@ task npmBuild(type: Exec) {
 
     commandLine 'npm', 'run', 'build'
 
-    inputs.dir 'home/javascript/react'
+    inputs.dir 'home/javascript'
+    inputs.dir 'home/css'
     inputs.file 'webpack.config.js'
     inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+    inputs.file '.babelrc'
+    inputs.file 'tsconfig.json'
     outputs.dir targetroot + '/home/dist'
 }
 

@@ -38,6 +38,12 @@
             text-transform: uppercase;
         }
 
+        .grey-text {
+            color: darkgrey;
+            font-style: italic;
+            font-size: small;
+        }
+
         @external .seq-detail-table;
         .seq-detail-table {
             width: 100%;
@@ -74,19 +80,24 @@
                     <g:HTMLPanel visible="true">
                         <table class="{style.seq-detail-table}">
                             <tr ui:field="sequenceOfReferenceRow">
-                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td class="{style.seq-label-column}">Sequence of Reference<br/><span class="{style.grey-text}">(auto-calculated)</span></td>
                                 <td colspan="2"><g:TextArea ui:field="seqReference" readOnly="true" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
                             </tr>
 
                             <tr ui:field="sequenceOfReferenceSmallRow">
-                                <td class="{style.seq-label-column}">Sequence of Reference (auto-generated)</td>
+                                <td class="{style.seq-label-column}">Sequence of Reference<br/><span class="{style.grey-text}">(auto-calculated)</span></td>
                                 <td colspan="2"><g:TextBox ui:field="seqReferenceSmall" readOnly="true" addStyleNames="{style.uppercase}"/></td>
                             </tr>
 
                             <tr ui:field="sequenceOfVariantRow">
                                 <td class="{style.seq-label-column}">Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
-                                <td><zfin:StringTextBox ui:field="seqVariant" addStyleNames="{style.uppercase}"/></td>
+                                <td><zfin:RevertibleTextArea ui:field="seqVariant" addStyleNames="{style.uppercase} {style.seq-textarea}"/></td>
                                 <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
+                            </tr>
+
+                            <tr ui:field="sequenceOfVariantSmallRow">
+                                <td class="{style.seq-label-column}">Sequence of Variant<br/><i>Please enter data from the + strand</i></td>
+                                <td colspan="2"><zfin:StringTextBox ui:field="seqVariantSmall" visibleLength="4" addStyleNames="{style.uppercase}"/></td>
                             </tr>
                         </table>
                     </g:HTMLPanel>

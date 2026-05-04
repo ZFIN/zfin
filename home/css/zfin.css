@@ -156,6 +156,17 @@ table.data_manager a.root {
     background-color: lightblue;
 }
 
+/** read-only inputs read as muted; .dirty wins via specificity below */
+input[readonly], textarea[readonly] {
+    background-color: #e8e8e8;
+    color: #888;
+}
+
+input[readonly].dirty, textarea[readonly].dirty {
+    background-color: lightblue;
+    color: inherit;
+}
+
 .search-result-table-header {
     background: rgb(204, 204, 204) none repeat scroll 0%;
     font-weight: bold;
