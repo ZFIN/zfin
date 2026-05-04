@@ -205,3 +205,19 @@ CREATE INDEX lesion_mutation_idx                   ON zirc.lesion               
 CREATE INDEX genotyping_assay_mutation_idx         ON zirc.genotyping_assay      (ga_mutation_id);
 CREATE INDEX phenotype_mutation_idx                ON zirc.phenotype             (p_mutation_id);
 CREATE INDEX line_submission_person_person_idx     ON zirc.line_submission_person (lsp_person_zdb_id);
+
+-- ZDB ID wiring for LINESUBMISSION. get_id('LINESUBMISSION') needs both a row
+-- in zdb_object_type and a matching <type>_seq sequence; without these the
+-- ZdbIdGenerator throws at the SQL level and the controller returns 500
+-- (manifesting as an empty 200 response after the global exception handler).
+-- Idempotent so it's safe to run on environments where the wiring was already
+-- applied manually (e.g. via the sample-data script).
+--changeset cmpich:ZIRC-line-submission-id-wiring
+INSERT INTO zdb_object_type (
+    zobjtype_name, zobjtype_day, zobjtype_home_table,
+    zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source)
+VALUES ('LINESUBMISSION', current_date - 1, 'line_submission',
+        'ls_zdb_id', true, false)
+ON CONFLICT (zobjtype_name) DO NOTHING;
+
+CREATE SEQUENCE IF NOT EXISTS linesubmission_seq START 1;
