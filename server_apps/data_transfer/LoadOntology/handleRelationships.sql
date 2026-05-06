@@ -1,5 +1,26 @@
 !echo "now deal with relationships" ;
 
+-- Holds every relationship removed during this load (both the merged-term
+-- cleanup just below AND the targeted removals near the end of this script).
+-- update_all_term_contains_batch_remove() is called once at the end against it,
+-- so the closure stays consistent with term_relationship.
+create temp table tmp_removed_rels (
+    termrel_term_1_zdb_id varchar(50),
+    termrel_term_2_zdb_id varchar(50),
+    termrel_type varchar(100)
+);
+
+!echo "Capture merged-term relationships for closure update";
+
+insert into tmp_removed_rels (termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type)
+select termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
+from term_relationship
+where exists(
+select 'x' from term
+where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
+term_is_secondary = 't'
+);
+
 !echo "Remove term relationships that use merged terms";
 
 unload to removed_term_relationships_with_merged_terms.unl
@@ -195,12 +216,9 @@ WHERE  NOT EXISTS (SELECT 'x'
 
 !echo "Capturing removed relationships for closure update";
 
-create temp table tmp_removed_rels (
-	termrel_term_1_zdb_id varchar(50),
-	termrel_term_2_zdb_id varchar(50),
-	termrel_type varchar(100)
-);
-
+-- tmp_removed_rels was created at the top of this script and already holds the
+-- merged-term cleanup rows; this INSERT appends the targeted removals scoped
+-- to terms in this load.
 insert into tmp_removed_rels (termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type)
 select termrel_term_1_zdb_id, termrel_term_2_zdb_id, termrel_type
 from term_relationship

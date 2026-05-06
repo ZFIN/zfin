@@ -21,6 +21,9 @@ create or replace function update_all_term_contains_for_removed_relationship(
   returns int as $$
 declare
   v_affected int;
+  v_count int;
+  v_changed int;
+  v_iterations int := 0;
   v_closure_types text[] := array['is_a', 'part_of', 'part of',
                                    'positively regulates', 'negatively regulates',
                                    'regulates', 'occurs in'];
@@ -72,25 +75,65 @@ begin
   where termrel_type = any(v_closure_types)
     and termrel_term_2_zdb_id in (select term_id from _tmp_affected_descendants);
 
-  -- Expand iteratively through the full closure
-  -- Each iteration adds one more hop via existing closure entries
-  loop
-    insert into _tmp_recompute
-    select distinct
-      atc.alltermcon_container_zdb_id,
-      r.contained_zdb_id,
-      atc.alltermcon_min_contain_distance + r.min_distance
-    from all_term_contains atc
-    join _tmp_recompute r on r.container_zdb_id = atc.alltermcon_contained_zdb_id
-    where atc.alltermcon_container_zdb_id != atc.alltermcon_contained_zdb_id
-      and not exists (
-        select 1 from _tmp_recompute existing
-        where existing.container_zdb_id = atc.alltermcon_container_zdb_id
-          and existing.contained_zdb_id = r.contained_zdb_id
-      );
+  -- Expand iteratively through the full closure (Bellman-Ford-like relaxation).
+  -- Each iteration prepends one ancestor hop via existing closure. Both new
+  -- pairs AND strictly-shorter paths to existing pairs count as progress;
+  -- earlier versions skipped shorter paths once any path for a pair existed,
+  -- recording whichever distance happened to be found first.
+  while v_iterations < 20 loop
+    v_iterations := v_iterations + 1;
+    v_changed := 0;
 
-    exit when not found;
+    drop table if exists _tmp_candidates;
+    -- Candidates come from two sources:
+    --   1. atc (left) ⨝ _tmp_recompute (right): walk one hop UP through the
+    --      *remaining* closure to extend an ancestor chain.
+    --   2. _tmp_recompute (left) ⨝ _tmp_recompute (right): chain two seed
+    --      edges within the affected subgraph. Necessary because closure rows
+    --      among affected_ancestors × affected_descendants were just deleted,
+    --      so atc no longer carries them — we must rebuild via direct edges.
+    create temp table _tmp_candidates as
+    select container_zdb_id, contained_zdb_id, min(min_distance) as min_distance
+    from (
+      select atc.alltermcon_container_zdb_id as container_zdb_id,
+             r.contained_zdb_id              as contained_zdb_id,
+             atc.alltermcon_min_contain_distance + r.min_distance as min_distance
+      from all_term_contains atc
+      join _tmp_recompute r on r.container_zdb_id = atc.alltermcon_contained_zdb_id
+      where atc.alltermcon_container_zdb_id != atc.alltermcon_contained_zdb_id
+      union all
+      select l.container_zdb_id  as container_zdb_id,
+             r.contained_zdb_id  as contained_zdb_id,
+             l.min_distance + r.min_distance as min_distance
+      from _tmp_recompute l
+      join _tmp_recompute r on r.container_zdb_id = l.contained_zdb_id
+      where l.container_zdb_id <> r.contained_zdb_id
+    ) all_paths
+    group by container_zdb_id, contained_zdb_id;
+
+    update _tmp_recompute t
+       set min_distance = c.min_distance
+      from _tmp_candidates c
+     where t.container_zdb_id = c.container_zdb_id
+       and t.contained_zdb_id = c.contained_zdb_id
+       and t.min_distance > c.min_distance;
+    get diagnostics v_count = row_count;
+    v_changed := v_changed + v_count;
+
+    insert into _tmp_recompute (container_zdb_id, contained_zdb_id, min_distance)
+    select c.container_zdb_id, c.contained_zdb_id, c.min_distance
+      from _tmp_candidates c
+     where not exists (
+       select 1 from _tmp_recompute t
+       where t.container_zdb_id = c.container_zdb_id
+         and t.contained_zdb_id = c.contained_zdb_id
+     );
+    get diagnostics v_count = row_count;
+    v_changed := v_changed + v_count;
+
+    exit when v_changed = 0;
   end loop;
+  drop table if exists _tmp_candidates;
 
   -- Insert recomputed closure rows back, keeping minimum distance
   insert into all_term_contains (alltermcon_container_zdb_id,
