@@ -94,10 +94,17 @@ delete from tmp_new_pubs where pubtype='preprint';
 \copy (select * from tmp_new_pubs) to 'existingPublicationsUpdating.txt' delimiter '|';
 \copy (select zdb_id, pmid, title from tmp_new_pubs) to 'updatedPubSummary.txt' delimiter '|';
 
--- update authors only for indicated publications
+-- Refresh authors plus volume/pages for existing publications.
+-- COALESCE+NULLIF: never overwrite an existing populated value with a blank
+-- string from PubMed (avoids regressing data on a transient empty response),
+-- but do refresh when PubMed has new info — needed because Epub-ahead-of-print
+-- pubs are inserted without volume/pages and would otherwise stay empty
+-- forever once the journal issue is published.
 UPDATE publication
-SET authors = t.authors
-    FROM tmp_pubs t
+SET authors    = t.authors,
+    pub_volume = COALESCE(NULLIF(t.volume, ''), publication.pub_volume),
+    pub_pages  = COALESCE(NULLIF(t.pages,  ''), publication.pub_pages)
+FROM tmp_pubs t
 WHERE t.pmid = accession_no;
 
 commit work;
