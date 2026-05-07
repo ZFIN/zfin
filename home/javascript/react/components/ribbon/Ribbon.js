@@ -32,7 +32,7 @@ const Ribbon = ({subjects, categories, itemClick, selected}) => {
                 if (subject && group) {
                     itemClick(subject, group);
                 }
-            } catch (e) {
+            } catch {
                 //in case event.detail.subjects[0] chaining fails.
             }
         });

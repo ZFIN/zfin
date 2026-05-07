@@ -1,5 +1,4 @@
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -27,7 +26,8 @@ const config = {
     output: {
         path: path.resolve(process.env.TARGETROOT, 'home/dist'),
         filename: '[name].[contenthash].js',
-        publicPath: '/dist/'
+        publicPath: '/dist/',
+        clean: true,
     },
     module: {
         rules: [
@@ -76,7 +76,6 @@ const config = {
         extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
-        new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].bundle.[contenthash].css'
         }),
