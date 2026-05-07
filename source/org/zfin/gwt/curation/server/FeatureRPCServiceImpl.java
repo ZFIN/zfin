@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.genomebrowser.GenomeBrowserBuild.CURRENT;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
@@ -145,13 +144,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             HibernateUtil.currentSession().delete(fl);
             return;
         }
-        // If the assembly is changing, only allow changing to GRCz12tu
+        // If the assembly is changing, only allow changing to a current assembly (GRCz12tu or GRCz11)
         String previousAssembly = fl.getAssembly();
         String newAssembly = dto.getFeatureAssembly();
         if (previousAssembly != null && newAssembly != null
                 && !previousAssembly.equals(newAssembly)
-                && !AssemblyEnum.GRCZ12TU.getName().equals(newAssembly)) {
-            throw new ValidationException("Assembly can only be changed to " + AssemblyEnum.GRCZ12TU.getName());
+                && currentAssemblyEnum(newAssembly) == null) {
+            throw new ValidationException("Assembly can only be changed to "
+                    + AssemblyEnum.GRCZ12TU.getName() + " or " + AssemblyEnum.GRCZ11.getName());
         }
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
@@ -307,15 +307,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         boolean variationExists = featureDTO.getFgmdChangeDTO() != null;
-        // calculate and save flanking sequences for GRCz12tu
-        if ((variationExists || locationUpdated) && fgl.getAssembly() != null && fgl.getAssembly().equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService();
-            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        // calculate and save flanking sequences for current assemblies (GRCz12tu, GRCz11)
+        AssemblyEnum currentAssembly = currentAssemblyEnum(fgl.getAssembly());
+        if ((variationExists || locationUpdated) && currentAssembly != null) {
+            new GenomicLocationService().upsertFlankingSequence(feature, currentAssembly);
         }
         // clean up flanking sequences when location is deleted
-        if (locationDeleted && previousAssembly != null && previousAssembly.equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService();
-            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        AssemblyEnum prevAssembly = currentAssemblyEnum(previousAssembly);
+        if (locationDeleted && prevAssembly != null) {
+            new GenomicLocationService().upsertFlankingSequence(feature, prevAssembly);
         }
 
 
@@ -719,9 +719,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
                 currentSession().save(pa);
 
-                if (fgl.getAssembly() != null && fgl.getAssembly().equals(AssemblyEnum.GRCZ12TU.getName())) {
-                    GenomicLocationService service = new GenomicLocationService();
-                    service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+                AssemblyEnum addedAssembly = currentAssemblyEnum(fgl.getAssembly());
+                if (addedAssembly != null) {
+                    new GenomicLocationService().upsertFlankingSequence(feature, addedAssembly);
                 }
 
 
@@ -1211,6 +1211,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             pubs.size(), pubs.size() == 1 ? "" : "s");
     }
 
+
+    // Assemblies for which we generate/refresh flanking sequences and accept new
+    // location entries on the curation form. Other AssemblyEnum values (GRCz10, Zv9)
+    // are read-only legacy options shown in the edit dropdown only.
+    private static AssemblyEnum currentAssemblyEnum(String name) {
+        if (name == null) return null;
+        if (AssemblyEnum.GRCZ12TU.getName().equals(name)) return AssemblyEnum.GRCZ12TU;
+        if (AssemblyEnum.GRCZ11.getName().equals(name)) return AssemblyEnum.GRCZ11;
+        return null;
+    }
 
     @Override
     public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
