@@ -55,13 +55,13 @@ const Jbrowse2Image = ({imageUrl, build, chromosome, landmark, color}) => {
                 if (configJbrowse.tracks) {
                     setTracks(configJbrowse.tracks);
                 } else {
-                    // eslint-disable-next-line no-console
+                     
                     console.warn('No tracks found in config, using empty array');
                     setTracks([]);
                 }
                 
             } catch (err) {
-                // eslint-disable-next-line no-console
+                 
                 console.error('Error loading JBrowse config:', err);
                 setError(err.message);
             } finally {

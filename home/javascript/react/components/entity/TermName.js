@@ -23,7 +23,7 @@ const EntityAbbreviation = ({entity}) => {
 
     if (match) {
         type = match[1];
-        for (const typeClass of TYPE_CLASSES) { // eslint-disable-line no-unused-vars
+        for (const typeClass of TYPE_CLASSES) {  
             if (typeClass.types.indexOf(type) >= 0) {
                 className = typeClass.className;
                 break;
