@@ -532,6 +532,14 @@ public class GafService {
         if (relationTerm == null) {
             throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
         }
+        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+            // ZFIN-10230: this row previously would have failed under getTermByName lookup.
+            logger.info("ZFIN-10230 recovered annotExtn: entryId={} goid={} qualifier={} pmid={} evidence={} annotExtnPiece='{}' relation={} -> {} ({}) identifier={}",
+                gafEntry.getEntryId(), gafEntry.getGoTermId(), gafEntry.getQualifier(),
+                gafEntry.getPubmedId(), gafEntry.getEvidenceCode(),
+                annotationExtensionString, relationName,
+                relationTerm.getZdbID(), relationTerm.getTermName(), identifierText);
+        }
         MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn(relationTerm.getZdbID(), identifierText);
         mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
         if (identifierText.startsWith("GO")) {
