@@ -508,6 +508,14 @@ public class GafService {
         }
     }
 
+    private static GenericTerm lookupRelationTerm(String relationName, Collection<Ontology> ontologies) {
+        OntologyRepository repo = RepositoryFactory.getOntologyRepository();
+        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+            return repo.getTermByOboID(relationName);
+        }
+        return repo.getTermByName(relationName, ontologies);
+    }
+
     protected void saveAnnoExtns(String annotationExtensionString, MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
         throws GafValidationError {
 
@@ -520,12 +528,7 @@ public class GafService {
         int closeParanIndex = annotationExtensionString.indexOf(")");
         String relationName = annotationExtensionString.substring(0, openParanIndex);
         String identifierText = annotationExtensionString.substring(openParanIndex + 1, closeParanIndex);
-        Term relationTerm;
-        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
-            relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
-        } else {
-            relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
-        }
+        GenericTerm relationTerm = lookupRelationTerm(relationName, ontologies);
         if (relationTerm == null) {
             throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
         }
@@ -606,11 +609,7 @@ public class GafService {
             if (relationName.contains("negative")) {
                 relationName = relationName.replace("_negative", ",_negative");
             }
-            if (relationName.contains("RO:") || relationName.contains("BFO:")) {
-                relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
-            } else {
-                relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
-            }
+            relationTerm = lookupRelationTerm(relationName, ontologies);
 
             if (relationTerm == null) {
                 throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
