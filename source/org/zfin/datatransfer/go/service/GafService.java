@@ -520,7 +520,12 @@ public class GafService {
         int closeParanIndex = annotationExtensionString.indexOf(")");
         String relationName = annotationExtensionString.substring(0, openParanIndex);
         String identifierText = annotationExtensionString.substring(openParanIndex + 1, closeParanIndex);
-        Term relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+        Term relationTerm;
+        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+            relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
+        } else {
+            relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+        }
         if (relationTerm == null) {
             throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
         }
