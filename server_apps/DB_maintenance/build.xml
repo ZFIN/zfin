@@ -150,6 +150,17 @@
 
         <property name="parserClassName" value="org.zfin.datatransfer.go.GpadParser"/>
 
+        <!-- ZFIN-10230: archive a byte-identical copy of the source GPAD as a build artifact
+             for forensic investigation. Filename matches the Jenkins archive pattern
+             (Load-GPAD-Noctua*) so it ships with the build. ignoreerrors keeps a transient
+             upstream hiccup from failing the load, which has its own download path. -->
+        <mkdir dir="${validateData}/gafLoad/${jobName}"/>
+        <get src="${downloadUrl}"
+             dest="${validateData}/gafLoad/${jobName}/${jobName}-source.gpad.gz"
+             verbose="false"
+             usetimestamp="true"
+             ignoreerrors="true"/>
+
         <echo message="Running GafLoadJob with arguments:"/>
         <echo message="  propertyFilePath: ${web-inf.dir}/zfin.properties"/>
         <echo message="  baseDir: ${validateData}/gafLoad"/>
