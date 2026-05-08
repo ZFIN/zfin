@@ -8,8 +8,8 @@
 --
 -- Each zdb_id below was individually validated against PubMed via efetch:
 -- the proposed half exactly matches PubMed's <MedlinePgn>. The structural
--- predicate (even-length doubled string) is kept as a defensive guard, so this
--- changeset only writes when both conditions hold.
+-- predicate (even-length doubled string) is kept as a defensive guard, so
+-- this update only writes when both conditions hold.
 --
 -- Out of 6,198 candidates that matched the structural predicate (post-2020,
 -- non-null PMID), 6,162 were confirmed MATCH against PubMed; 24 MISMATCH and
