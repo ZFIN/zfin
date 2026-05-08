@@ -3,11 +3,7 @@ package org.zfin.zirc.presentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
@@ -56,7 +52,7 @@ public class ZircDashboardController {
      * The currently logged-in user is automatically linked as a "submitter" so the new
      * row already has a person association; if no one is logged in we skip the link.
      */
-    @RequestMapping(value = "/line-submission/new", method = RequestMethod.GET)
+    @GetMapping("/line-submission/new")
     public String newLineSubmission() {
         LineSubmission submission = new LineSubmission();
         HibernateUtil.createTransaction();
@@ -79,7 +75,7 @@ public class ZircDashboardController {
         return "redirect:/action/zirc/line-submission/" + submission.getZdbID() + "/edit";
     }
 
-    @RequestMapping(value = "/line-submission/{zdbID}/edit", method = RequestMethod.GET)
+    @GetMapping("/line-submission/{zdbID}/edit")
     public String editLineSubmission(@PathVariable String zdbID, Model model) {
         LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
         if (submission == null) {
@@ -90,6 +86,20 @@ public class ZircDashboardController {
                 ? submission.getName() : zdbID;
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Line Submission: " + label);
         return "zirc/line-submission-edit";
+    }
+
+    /**
+     * JSON snapshot of a line submission's editable scalar fields, consumed by the
+     * React-driven edit page.
+     */
+    @GetMapping("/line-submission/{zdbID}.json")
+    @ResponseBody
+    public LineSubmissionDTO getLineSubmissionJson(@PathVariable String zdbID) {
+        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
+        if (submission == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
+        }
+        return LineSubmissionDTO.from(submission);
     }
 
     /**
@@ -211,3 +221,4 @@ public class ZircDashboardController {
     }
 
 }
+
