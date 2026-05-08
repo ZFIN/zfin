@@ -11,11 +11,9 @@ echo 'select regen_genox(); ' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
 echo "Starting regen_anatomy_counts at `date`"
 echo 'select regen_anatomy_counts();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
 
-echo "Starting regen_term at `date`"
-echo 'select regen_term();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
-
-echo "Starting regen_term_indexes at `date`"
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
+# regen_term() and the paired index rebuild are removed — all_term_contains is
+# now maintained incrementally by the ontology load (see ZFIN-10189), so the
+# daily drop-and-rebuild is no longer needed.
 
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'select regen_expression_term_fast_search();' | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME}
