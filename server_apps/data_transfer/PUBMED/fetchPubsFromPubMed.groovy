@@ -64,7 +64,10 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
 
     article = medlineCitation.Article
     row.add(getTextWithMarkup(article.ArticleTitle).replaceAll(/\.+$/, ''))
-    row.add(article.Pagination.text())
+    // Pagination has multiple children (StartPage/EndPage/MedlinePgn/ELocationID)
+    // for article-number papers; .text() on the parent concatenates them all,
+    // producing 'eadf5142eadf5142'. Pull the canonical MedlinePgn child explicitly.
+    row.add(article.Pagination.MedlinePgn.text())
 
     fullAbstract = ''
     article.Abstract.AbstractText.each { abstractText ->
