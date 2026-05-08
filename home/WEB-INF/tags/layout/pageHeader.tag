@@ -204,6 +204,7 @@
                                 </form>
                             </li>
                             <li><a href="/action/reno/run-list">ReNo Pipeline</a></li>
+                            <li><a href="/action/zirc/dashboard">Line Submission Dashboard</a></li>
                         </ul>
                     </div>
 
