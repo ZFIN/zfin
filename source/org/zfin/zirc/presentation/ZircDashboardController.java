@@ -1,5 +1,6 @@
 package org.zfin.zirc.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +12,9 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
+import org.zfin.zirc.service.LineSubmissionService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +24,15 @@ import java.util.Map;
 @RequestMapping("/zirc")
 public class ZircDashboardController {
 
-    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+    @Autowired
+    private LineSubmissionService lineSubmissionService;
+
+    @GetMapping("/dashboard")
     public String viewDashboard(Model model) {
         List<LineSubmission> submissions = HibernateUtil.currentSession()
-                .createQuery("from ZircLineSubmission order by createdAt desc", LineSubmission.class)
+                .createQuery(
+                    "from ZircLineSubmission where deletedAt is null order by createdAt desc",
+                    LineSubmission.class)
                 .list();
         // No status column on LineSubmission yet, so everything lands in "Active".
         model.addAttribute("activeSubmissions", submissions);
@@ -33,7 +41,7 @@ public class ZircDashboardController {
         return "zirc/dashboard";
     }
 
-    @RequestMapping(value = "/line-submission/{zdbID}", method = RequestMethod.GET)
+    @GetMapping("/line-submission/{zdbID}")
     public String viewLineSubmission(@PathVariable String zdbID, Model model) {
         LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
         if (submission == null) {
@@ -45,34 +53,17 @@ public class ZircDashboardController {
     }
 
     /**
-     * Create-on-render: persists an empty LineSubmission so the ZdbIdGenerator mints a
-     * fresh ZDB ID, then redirects to the edit page. Visiting and abandoning the edit
-     * page leaves an unnamed stub row in the DB by design.
-     *
-     * The currently logged-in user is automatically linked as a "submitter" so the new
-     * row already has a person association; if no one is logged in we skip the link.
+     * Render the edit page for a brand-new submission. No row is persisted here —
+     * the React component starts with empty fields and {@link #saveField} creates
+     * the row on the first save. The {@code submission} model attribute is a
+     * transient (un-persisted) entity so the JSP can use the same EL access
+     * patterns as for existing submissions.
      */
     @GetMapping("/line-submission/new")
-    public String newLineSubmission() {
-        LineSubmission submission = new LineSubmission();
-        HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().persist(submission);
-
-        Person currentUser = ProfileService.getCurrentSecurityUser();
-        if (currentUser != null && currentUser.getZdbID() != null) {
-            // Re-attach: getCurrentSecurityUser() returns a Person from the security context
-            // that's detached from this session, which would trip the @Id @ManyToOne cascade.
-            Person attachedUser = HibernateUtil.currentSession().getReference(Person.class, currentUser.getZdbID());
-            LineSubmissionPerson lsp = new LineSubmissionPerson();
-            lsp.setLineSubmission(submission);
-            lsp.setPerson(attachedUser);
-            lsp.setRole("submitter");
-            lsp.setSortOrder(1);
-            HibernateUtil.currentSession().persist(lsp);
-        }
-
-        HibernateUtil.flushAndCommitCurrentSession();
-        return "redirect:/action/zirc/line-submission/" + submission.getZdbID() + "/edit";
+    public String newLineSubmission(Model model) {
+        model.addAttribute("submission", new LineSubmission());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "New Line Submission");
+        return "zirc/line-submission-edit";
     }
 
     @GetMapping("/line-submission/{zdbID}/edit")
@@ -103,52 +94,22 @@ public class ZircDashboardController {
     }
 
     /**
-     * Per-field save endpoint for the edit page. The {@code field} parameter is the entity
-     * property name; mapped through an explicit switch so we never accept arbitrary column
-     * updates. Empty strings collapse to null so the DB sees real NULLs.
+     * Per-field save endpoint. If {@code zdbID} is omitted (or blank), a new
+     * submission is created on the fly and returned with its freshly minted ZDB
+     * ID — this is how the React form's "new submission" flow lands its first
+     * save without a prior stub row. Returns the full DTO so the client can
+     * pick up the new ID and any server-derived state.
      */
-    @RequestMapping(value = "/line-submission/{zdbID}/update-field", method = RequestMethod.POST)
+    @PostMapping("/line-submission/save-field")
     @ResponseBody
-    public Map<String, Object> updateField(@PathVariable String zdbID,
-                                           @RequestParam("field") String field,
-                                           @RequestParam(value = "value", required = false) String value) {
-        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
-        if (submission == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
-        }
-
-        String s = (value != null && !value.isBlank()) ? value.trim() : null;
-
+    public LineSubmissionDTO saveField(@RequestParam(value = "zdbID", required = false) String zdbID,
+                                       @RequestParam("field") String field,
+                                       @RequestParam(value = "value", required = false) String value) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
         HibernateUtil.createTransaction();
-        switch (field) {
-            case "name":                       submission.setName(s); break;
-            case "abbreviation":               submission.setAbbreviation(s); break;
-            case "previousNames":              submission.setPreviousNames(s); break;
-            case "featuresLinked":             submission.setFeaturesLinked(parseTriBool(s)); break;
-            case "maternalBackground":         submission.setMaternalBackground(s); break;
-            case "paternalBackground":         submission.setPaternalBackground(s); break;
-            case "backgroundChangeable":       submission.setBackgroundChangeable(parseTriBool(s)); break;
-            case "backgroundChangeConcerns":   submission.setBackgroundChangeConcerns(s); break;
-            case "unreportedFeaturesDetails":  submission.setUnreportedFeaturesDetails(s); break;
-            case "additionalInfo":             submission.setAdditionalInfo(s); break;
-            default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown field: " + field);
-        }
-        HibernateUtil.currentSession().merge(submission);
+        LineSubmission submission = lineSubmissionService.saveField(zdbID, field, value, currentUser);
         HibernateUtil.flushAndCommitCurrentSession();
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("status", "ok");
-        result.put("field", field);
-        result.put("value", s);
-        return result;
-    }
-
-    private static Boolean parseTriBool(String s) {
-        if (s == null || s.isBlank()) return null;
-        if ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s)) return Boolean.TRUE;
-        if ("false".equalsIgnoreCase(s) || "no".equalsIgnoreCase(s)) return Boolean.FALSE;
-        return null;
+        return LineSubmissionDTO.from(submission);
     }
 
     /**
@@ -158,7 +119,7 @@ public class ZircDashboardController {
      * the person's full name (placed back into the input), and "fullName"/"zdbID" are picked
      * up by the select-handler to POST the add request.
      */
-    @RequestMapping(value = "/persons/search", method = RequestMethod.GET)
+    @GetMapping("/persons/search")
     @ResponseBody
     public List<Map<String, String>> searchPersons(@RequestParam(value = "term", required = false) String term) {
         if (term == null || term.isBlank()) {
@@ -171,7 +132,7 @@ public class ZircDashboardController {
                 .setParameter("q", "%" + term.toLowerCase() + "%")
                 .setMaxResults(20)
                 .list();
-        List<Map<String, String>> out = new java.util.ArrayList<>();
+        List<Map<String, String>> out = new ArrayList<>();
         for (Person p : people) {
             Map<String, String> entry = new HashMap<>();
             entry.put("label", p.getFullName() + " (" + p.getZdbID() + ")");
@@ -187,7 +148,7 @@ public class ZircDashboardController {
      * Add a person to a line submission as a submitter (POST). Idempotent — returns silently
      * if the (submission, person, role) tuple already exists.
      */
-    @RequestMapping(value = "/line-submission/{zdbID}/add-submitter", method = RequestMethod.POST)
+    @PostMapping("/line-submission/{zdbID}/add-submitter")
     @ResponseBody
     public Map<String, String> addSubmitter(@PathVariable String zdbID,
                                             @RequestParam("personZdbID") String personZdbID) {
@@ -221,4 +182,3 @@ public class ZircDashboardController {
     }
 
 }
-

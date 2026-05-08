@@ -77,6 +77,17 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_additional_info")
     private String additionalInfo;
 
+    // Default applied here (not just at the DB level) because Hibernate writes
+    // an explicit NULL in INSERT for null fields, bypassing the column DEFAULT.
+    @Column(name = "ls_is_draft", nullable = false)
+    private Boolean isDraft = Boolean.TRUE;
+
+    @Column(name = "ls_deleted_at")
+    private Date deletedAt;
+
+    @Column(name = "ls_submitted_at")
+    private Date submittedAt;
+
     @Column(name = "ls_created_at", insertable = false, updatable = false)
     private Date createdAt;
 

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
 
 interface LineSubmissionDTO {
     zdbID: string;
@@ -12,13 +13,14 @@ interface LineSubmissionDTO {
     backgroundChangeConcerns: string | null;
     unreportedFeaturesDetails: string | null;
     additionalInfo: string | null;
+    isDraft?: boolean | null;
 }
 
-type ScalarField = Exclude<keyof LineSubmissionDTO, 'zdbID'>;
+type ScalarField = Exclude<keyof LineSubmissionDTO, 'zdbID' | 'isDraft'>;
 type FieldType = 'text' | 'textarea' | 'bool';
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 interface LineSubmissionEditProps {
+    /** Empty string for the /new flow — the first save creates the row. */
     submissionId: string;
 }
 
@@ -47,7 +49,9 @@ const ADDITIONAL_FIELDS: FieldDef[] = [
     {field: 'additionalInfo',            label: 'Additional Info',             type: 'textarea'},
 ];
 
-function valueToInputString(v: string | boolean | null | undefined): string {
+const ALL_FIELDS: FieldDef[] = [...OVERVIEW_FIELDS, ...BACKGROUND_FIELDS, ...ADDITIONAL_FIELDS];
+
+export function valueToInputString(v: string | boolean | null | undefined): string {
     if (v === null || v === undefined) {
         return '';
     }
@@ -57,24 +61,22 @@ function valueToInputString(v: string | boolean | null | undefined): string {
     return v;
 }
 
-interface SaveState {
-    status: SaveStatus;
-    error: string;
-}
-
 interface FieldRowProps {
     def: FieldDef;
     value: string;
-    saveState: SaveState;
     onChange: (next: string) => void;
     onCommit: (next: string) => void;
 }
 
-const FieldRow = ({def, value, saveState, onChange, onCommit}: FieldRowProps) => {
+const FieldRow = ({def, value, onChange, onCommit}: FieldRowProps) => {
+    const inputId = `ls-field-${def.field}`;
+    const labelId = `ls-label-${def.field}`;
+
     function renderInput() {
         if (def.type === 'textarea') {
             return (
                 <textarea
+                    id={inputId}
                     className='form-control'
                     rows={3}
                     value={value}
@@ -85,27 +87,36 @@ const FieldRow = ({def, value, saveState, onChange, onCommit}: FieldRowProps) =>
         }
         if (def.type === 'bool') {
             const groupName = `field-${def.field}`;
-            const options: Array<[string, string]> = [['true', 'Yes'], ['false', 'No'], ['', '—']];
+            // Two-state radio: Yes / No. Initial null shows nothing checked, but
+            // once the user picks a value there's no way to unset it (matches
+            // the YAML form spec — null is a "not yet answered" state, not a
+            // long-lived choice).
+            const options: Array<[string, string]> = [['true', 'Yes'], ['false', 'No']];
             return (
-                <div>
-                    {options.map(([v, lbl]) => (
-                        <div className='form-check form-check-inline' key={v}>
-                            <input
-                                type='radio'
-                                className='form-check-input'
-                                name={groupName}
-                                value={v}
-                                checked={value === v}
-                                onChange={() => { onChange(v); onCommit(v); }}
-                            />
-                            <label className='form-check-label'>{lbl}</label>
-                        </div>
-                    ))}
+                <div role='radiogroup' aria-labelledby={labelId}>
+                    {options.map(([v, lbl]) => {
+                        const radioId = `${inputId}-${v}`;
+                        return (
+                            <div className='form-check form-check-inline' key={v}>
+                                <input
+                                    type='radio'
+                                    id={radioId}
+                                    className='form-check-input'
+                                    name={groupName}
+                                    value={v}
+                                    checked={value === v}
+                                    onChange={() => { onChange(v); onCommit(v); }}
+                                />
+                                <label className='form-check-label' htmlFor={radioId}>{lbl}</label>
+                            </div>
+                        );
+                    })}
                 </div>
             );
         }
         return (
             <input
+                id={inputId}
                 type='text'
                 className='form-control'
                 value={value}
@@ -117,15 +128,12 @@ const FieldRow = ({def, value, saveState, onChange, onCommit}: FieldRowProps) =>
 
     return (
         <tr>
-            <th className='w-25'>{def.label}</th>
-            <td>
-                {renderInput()}
-                <div className='small mt-1' style={{minHeight: '1.25em'}}>
-                    {saveState.status === 'saving' && <span className='text-muted'>Saving…</span>}
-                    {saveState.status === 'saved'  && <span className='text-success'>Saved</span>}
-                    {saveState.status === 'error'  && <span className='text-danger'>Error: {saveState.error}</span>}
-                </div>
-            </td>
+            <th className='w-25' scope='row' id={labelId}>
+                {def.type === 'bool'
+                    ? def.label
+                    : <label htmlFor={inputId} className='mb-0'>{def.label}</label>}
+            </th>
+            <td>{renderInput()}</td>
         </tr>
     );
 };
@@ -137,8 +145,8 @@ interface SectionProps {
 }
 
 const Section = ({id, title, children}: SectionProps) => (
-    <section className='section' id={id}>
-        <div className='heading'>{title}</div>
+    <section className='section' id={id} aria-labelledby={`${id}-heading`}>
+        <h2 id={`${id}-heading`} className='heading'>{title}</h2>
         <table className='table table-borderless'>
             <tbody>{children}</tbody>
         </table>
@@ -146,12 +154,17 @@ const Section = ({id, title, children}: SectionProps) => (
 );
 
 const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
-    const [values, setValues] = useState<Record<string, string> | null>(null);
-    const [committed, setCommitted] = useState<Record<string, string>>({});
-    const [saveStates, setSaveStates] = useState<Record<string, SaveState>>({});
+    const [zdbID, setZdbID] = useState<string>(submissionId);
+    const [values, setValues] = useState<Record<string, string> | null>(submissionId ? null : emptyValues());
+    const [committed, setCommitted] = useState<Record<string, string>>(submissionId ? {} : emptyValues());
     const [loadError, setLoadError] = useState<string>('');
+    const [saveEvent, setSaveEvent] = useState<SaveEvent | null>(null);
+    const [saveSeq, setSaveSeq] = useState<number>(0);
 
     useEffect(() => {
+        if (!submissionId) {
+            return;
+        }
         let cancelled = false;
         fetch(`/action/zirc/line-submission/${submissionId}.json`)
             .then(r => {
@@ -164,12 +177,7 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
                 if (cancelled) {
                     return;
                 }
-                const initial: Record<string, string> = {};
-                ([...OVERVIEW_FIELDS, ...BACKGROUND_FIELDS, ...ADDITIONAL_FIELDS]).forEach(d => {
-                    initial[d.field] = valueToInputString(data[d.field]);
-                });
-                setValues({...initial, zdbID: data.zdbID});
-                setCommitted(initial);
+                applyDTO(data);
             })
             .catch(e => {
                 if (!cancelled) {
@@ -179,24 +187,39 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         return () => { cancelled = true; };
     }, [submissionId]);
 
+    function applyDTO(data: LineSubmissionDTO) {
+        const initial: Record<string, string> = {};
+        ALL_FIELDS.forEach(d => {
+            initial[d.field] = valueToInputString(data[d.field]);
+        });
+        setValues(initial);
+        setCommitted(initial);
+        setZdbID(data.zdbID);
+    }
+
     function setFieldValue(field: ScalarField, next: string) {
         setValues(prev => prev ? {...prev, [field]: next} : prev);
     }
 
-    function setSaveState(field: ScalarField, state: SaveState) {
-        setSaveStates(prev => ({...prev, [field]: state}));
+    function emit(event: Omit<SaveEvent, 'seq'>) {
+        const seq = saveSeq + 1;
+        setSaveSeq(seq);
+        setSaveEvent({...event, seq});
     }
 
-    async function commit(field: ScalarField, next: string) {
-        if (next === committed[field]) {
+    async function commit(field: FieldDef, next: string) {
+        if (next === committed[field.field]) {
             return;
         }
-        setSaveState(field, {status: 'saving', error: ''});
+        emit({status: 'saving', label: field.label});
         try {
             const body = new URLSearchParams();
-            body.append('field', field);
+            if (zdbID) {
+                body.append('zdbID', zdbID);
+            }
+            body.append('field', field.field);
             body.append('value', next);
-            const resp = await fetch(`/action/zirc/line-submission/${submissionId}/update-field`, {
+            const resp = await fetch('/action/zirc/line-submission/save-field', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: body.toString(),
@@ -204,13 +227,15 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
             if (!resp.ok) {
                 throw new Error(`HTTP ${resp.status}`);
             }
-            const data = await resp.json();
-            const serverValue = data.value == null ? '' : String(data.value);
-            setCommitted(prev => ({...prev, [field]: serverValue}));
-            setFieldValue(field, serverValue);
-            setSaveState(field, {status: 'saved', error: ''});
+            const data = await resp.json() as LineSubmissionDTO;
+            const wasNew = !zdbID;
+            applyDTO(data);
+            if (wasNew && data.zdbID) {
+                window.history.replaceState(null, '', `/action/zirc/line-submission/${data.zdbID}/edit`);
+            }
+            emit({status: 'saved', label: field.label});
         } catch (e) {
-            setSaveState(field, {status: 'error', error: e instanceof Error ? e.message : 'Save failed'});
+            emit({status: 'error', label: field.label, message: e instanceof Error ? e.message : 'Save failed'});
         }
     }
 
@@ -226,9 +251,8 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
             key={def.field}
             def={def}
             value={values[def.field]}
-            saveState={saveStates[def.field] || {status: 'idle', error: ''}}
             onChange={next => setFieldValue(def.field, next)}
-            onCommit={next => commit(def.field, next)}
+            onCommit={next => commit(def, next)}
         />
     );
 
@@ -236,7 +260,11 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         <Section id='overview' title='Overview'>
             <tr>
                 <th className='w-25'>ID</th>
-                <td><code>{values.zdbID}</code></td>
+                <td>
+                    {zdbID
+                        ? <code>{zdbID}</code>
+                        : <span className='text-muted small'>(assigned on first save)</span>}
+                </td>
             </tr>
             {OVERVIEW_FIELDS.map(renderRow)}
         </Section>
@@ -246,7 +274,14 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         <Section id='additional-info' title='Additional Info'>
             {ADDITIONAL_FIELDS.map(renderRow)}
         </Section>
+        <SaveToast event={saveEvent}/>
     </>;
 };
+
+function emptyValues(): Record<string, string> {
+    const out: Record<string, string> = {};
+    ALL_FIELDS.forEach(d => { out[d.field] = ''; });
+    return out;
+}
 
 export default LineSubmissionEdit;

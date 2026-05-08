@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.zirc.entity.LineSubmission;
 
+import java.util.Date;
+
 /**
  * Wire format for the editable scalar fields of a {@link LineSubmission}.
  * Relationships (mutations, persons) are intentionally omitted — they have
@@ -24,6 +26,11 @@ public class LineSubmissionDTO {
     private String backgroundChangeConcerns;
     private String unreportedFeaturesDetails;
     private String additionalInfo;
+    private Boolean isDraft;
+    private Date deletedAt;
+    private Date submittedAt;
+    private Date createdAt;
+    private Date updatedAt;
 
     public static LineSubmissionDTO from(LineSubmission submission) {
         LineSubmissionDTO dto = new LineSubmissionDTO();
@@ -38,6 +45,11 @@ public class LineSubmissionDTO {
         dto.setBackgroundChangeConcerns(submission.getBackgroundChangeConcerns());
         dto.setUnreportedFeaturesDetails(submission.getUnreportedFeaturesDetails());
         dto.setAdditionalInfo(submission.getAdditionalInfo());
+        dto.setIsDraft(submission.getIsDraft());
+        dto.setDeletedAt(submission.getDeletedAt());
+        dto.setSubmittedAt(submission.getSubmittedAt());
+        dto.setCreatedAt(submission.getCreatedAt());
+        dto.setUpdatedAt(submission.getUpdatedAt());
         return dto;
     }
 }

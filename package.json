@@ -20,7 +20,7 @@
     "compile": "webpack",
     "build": "npm run clean && npm run compile",
     "lint": "eslint home/javascript/react/** --max-warnings 0",
-    "test": "node --import tsx --test home/javascript/__tests__/*.test.js home/javascript/react/components/curate-construct/__tests__/*.test.ts"
+    "test": "node --import tsx --test home/javascript/__tests__/*.test.js home/javascript/react/components/curate-construct/__tests__/*.test.ts home/javascript/react/components/zirc/__tests__/*.test.ts"
   },
   "overrides": {
     "uuid": "^14.0.0"
