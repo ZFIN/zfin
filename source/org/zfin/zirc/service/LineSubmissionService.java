@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
+import org.zfin.marker.Marker;
+import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.LinkedFeature;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.presentation.GeneDTO;
 import org.zfin.zirc.presentation.LinkedFeatureDTO;
 
 import java.util.HashMap;
@@ -140,6 +143,71 @@ public class LineSubmissionService {
         // Detach from parent collection so orphanRemoval fires.
         m.getLineSubmission().getMutations().remove(m);
         HibernateUtil.currentSession().remove(m);
+    }
+
+    /**
+     * Replace-all save for a mutation's per-row gene list. Diff is keyed on
+     * the persistent gene id so existing rows can be updated in place,
+     * tolerate row reorder, and we don't churn FKs unnecessarily. Rows
+     * without an id are inserted; rows whose id is no longer in the
+     * incoming list are removed (orphan removal).
+     *
+     * <p>{@code mutatedGeneZdbId} is resolved against
+     * {@link org.zfin.marker.Marker}. A blank value clears the FK; a
+     * non-blank value that doesn't resolve to an existing marker raises
+     * a 400 (saving null silently would lose the user's intent).
+     */
+    public Mutation saveGenes(Long mutationId, List<GeneDTO> incoming, Person currentUser) {
+        Mutation mutation = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (mutation == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        Map<Long, Gene> existing = new HashMap<>();
+        for (Gene g : mutation.getGenes()) {
+            existing.put(g.getId(), g);
+        }
+        Set<Long> incomingIds = new HashSet<>();
+        int order = 0;
+
+        if (incoming != null) {
+            for (GeneDTO dto : incoming) {
+                order += 1;
+                Gene g = (dto.getId() != null) ? existing.get(dto.getId()) : null;
+                if (g == null) {
+                    g = new Gene();
+                    g.setMutation(mutation);
+                    mutation.getGenes().add(g);
+                } else {
+                    incomingIds.add(g.getId());
+                }
+                g.setSortOrder(order);
+                g.setMutatedGene(resolveMarker(dto.getMutatedGeneZdbId()));
+                g.setLinkageGroup(blankToNull(dto.getLinkageGroup()));
+                g.setGenbankGenomicDna(blankToNull(dto.getGenbankGenomicDna()));
+                g.setGenbankCdna(blankToNull(dto.getGenbankCdna()));
+            }
+        }
+
+        // Drop existing rows that didn't appear in the incoming list.
+        mutation.getGenes().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
+        return mutation;
+    }
+
+    private Marker resolveMarker(String zdbId) {
+        if (zdbId == null || zdbId.isBlank()) {
+            return null;
+        }
+        String trimmed = zdbId.trim();
+        Marker marker = HibernateUtil.currentSession().get(Marker.class, trimmed);
+        if (marker == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Marker not found: " + trimmed);
+        }
+        return marker;
+    }
+
+    private static String blankToNull(String s) {
+        return (s != null && !s.isBlank()) ? s.trim() : null;
     }
 
     /**

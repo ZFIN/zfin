@@ -235,6 +235,30 @@ public class ZircDashboardController {
     }
 
     /**
+     * Replace-all save for a mutation's per-row gene list. Body is a JSON
+     * array of {@link GeneDTO} rows; existing rows are diffed by persistent
+     * id (preserving FK identity for unchanged rows). Returns the full
+     * mutation DTO so the React form can refresh its gene list (and pick
+     * up server-resolved Marker abbreviations) without a separate GET.
+     */
+    @PostMapping(value = "/mutation/{mutationId}/save-genes",
+                 consumes = "application/json")
+    @ResponseBody
+    public MutationDTO saveGenes(@PathVariable Long mutationId,
+                                 @RequestBody List<GeneDTO> genes) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.saveGenes(mutationId, genes, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
      * Delete a mutation. Returns the updated parent submission DTO so the
      * React form on the parent edit page can refresh its mutations list
      * without a separate GET.

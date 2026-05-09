@@ -3,7 +3,11 @@ package org.zfin.zirc.presentation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.Mutation;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Wire format for one mutation. Used both for the per-mutation editor
@@ -40,6 +44,8 @@ public class MutationDTO {
     private String mutationDiscoverer;
     private String mutationInstitution;
 
+    private List<GeneDTO> genes;
+
     public static MutationDTO from(Mutation m) {
         MutationDTO dto = new MutationDTO();
         dto.setId(m.getId());
@@ -59,6 +65,12 @@ public class MutationDTO {
         dto.setCellGenomicFeature(m.getCellGenomicFeature());
         dto.setMutationDiscoverer(m.getMutationDiscoverer());
         dto.setMutationInstitution(m.getMutationInstitution());
+        dto.setGenes(
+            m.getGenes().stream()
+                .sorted(Comparator.comparing(Gene::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(GeneDTO::from)
+                .toList());
         return dto;
     }
 }

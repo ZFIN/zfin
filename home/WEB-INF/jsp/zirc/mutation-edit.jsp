@@ -1,9 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="GENERAL"   value="General"/>
+<c:set var="GENES"     value="Genes"/>
 <c:set var="LETHALITY" value="Lethality"/>
 
-<c:set var="sections" value="${[GENERAL, LETHALITY]}"/>
+<c:set var="sections" value="${[GENERAL, GENES, LETHALITY]}"/>
 
 <c:choose>
     <c:when test="${not empty mutation.alleleDesignation}">
