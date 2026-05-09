@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
-import {FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
+import {Autocomplete, FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
 
 // ─── Wire types ────────────────────────────────────────────────────────────
 
@@ -59,7 +59,10 @@ interface MutationDTO {
     lineSubmissionId: string;
     sortOrder: number | null;
     alleleDesignation: string | null;
+    alleleInZfin: boolean | null;
+    mutagenesisStage: string | null;
     mutagenesisProtocol: string | null;
+    mutagenesisProtocolOther: string | null;
     molecularlyCharacterized: boolean | null;
     mutationType: string | null;
     homozygousLethal: boolean | null;
@@ -76,11 +79,12 @@ interface MutationDTO {
     lesions?: LesionWire[] | null;
     genotypingAssays?: GenotypingAssayWire[] | null;
     phenotypes?: PhenotypeWire[] | null;
+    publications?: string[] | null;
 }
 
 type ScalarField = Exclude<keyof MutationDTO,
     'id' | 'lineSubmissionId' | 'sortOrder'
-    | 'genes' | 'lesions' | 'genotypingAssays' | 'phenotypes'>;
+    | 'genes' | 'lesions' | 'genotypingAssays' | 'phenotypes' | 'publications'>;
 
 interface MutationEditProps {
     mutationId: string;
@@ -88,13 +92,52 @@ interface MutationEditProps {
 
 // ─── Scalar field defs ─────────────────────────────────────────────────────
 
+const MUTAGENESIS_STAGE_OPTIONS = [
+    {value: 'adult_females', label: 'Adult females'},
+    {value: 'adult_males',   label: 'Adult males'},
+    {value: 'embryos',       label: 'Embryos'},
+    {value: 'sperm',         label: 'Sperm'},
+];
+
+const MUTAGENESIS_PROTOCOL_OPTIONS = [
+    {value: 'crispr',              label: 'CRISPR'},
+    {value: 'ems',                 label: 'EMS'},
+    {value: 'enu',                 label: 'ENU'},
+    {value: 'g_rays',              label: 'g-rays'},
+    {value: 'spontaneous',         label: 'Spontaneous'},
+    {value: 'talen',               label: 'TALEN'},
+    {value: 'tmp',                 label: 'TMP'},
+    {value: 'zinc_finger_nuclease', label: 'Zinc finger nuclease'},
+    {value: 'other',               label: 'Other'},
+];
+
 const GENERAL_FIELDS: FieldDef<ScalarField>[] = [
-    {field: 'alleleDesignation',        label: 'Allele Designation',     type: 'text',     idPrefix: 'mut'},
-    {field: 'mutagenesisProtocol',      label: 'Mutagenesis Protocol',   type: 'text',     idPrefix: 'mut'},
+    {field: 'alleleInZfin',             label: 'Allele in ZFIN',         type: 'bool',     idPrefix: 'mut'},
+    // Two FieldDefs share `field: 'alleleDesignation'` but are gated on the
+    // `alleleInZfin` checkbox: when checked, render the marker autocomplete;
+    // when not, free text. `rowKey` keeps React happy about distinct keys.
+    {rowKey: 'alleleDesignationAuto', field: 'alleleDesignation',
+        label: 'Allele Designation', type: 'autocomplete', idPrefix: 'mut',
+        autocompleteUrl: '/action/zirc/markers/search',
+        placeholder: 'Search ZFIN markers…',
+        visible: v => v.alleleInZfin === 'true'},
+    {rowKey: 'alleleDesignationFree', field: 'alleleDesignation',
+        label: 'Allele Designation', type: 'text', idPrefix: 'mut',
+        visible: v => v.alleleInZfin !== 'true'},
+    {field: 'mutagenesisStage',         label: 'Mutagenesis Stage',      type: 'select',   idPrefix: 'mut',
+        options: MUTAGENESIS_STAGE_OPTIONS},
+    {field: 'mutagenesisProtocol',      label: 'Mutagenesis Protocol',   type: 'select',   idPrefix: 'mut',
+        options: MUTAGENESIS_PROTOCOL_OPTIONS},
+    // Conditional companion when "Other" is picked above.
+    {field: 'mutagenesisProtocolOther', label: 'Other Protocol',         type: 'text',     idPrefix: 'mut',
+        visible: v => v.mutagenesisProtocol === 'other'},
     {field: 'molecularlyCharacterized', label: 'Molecularly Characterized', type: 'bool',  idPrefix: 'mut'},
     {field: 'mutationType',             label: 'Mutation Type',          type: 'text',     idPrefix: 'mut'},
     {field: 'zfinRecordEstablished',    label: 'ZFIN Record Established', type: 'bool',    idPrefix: 'mut'},
-    {field: 'cellGenomicFeature',       label: 'Cell Genomic Feature',   type: 'text',     idPrefix: 'mut'},
+    // Per the form spec: only show the ZDB feature # input when "ZFIN
+    // record established" is Yes.
+    {field: 'cellGenomicFeature',       label: 'ZDB Genomic Feature #',  type: 'text',     idPrefix: 'mut',
+        visible: v => v.zfinRecordEstablished === 'true'},
     {field: 'mutationDiscoverer',       label: 'Discoverer',             type: 'text',     idPrefix: 'mut'},
     {field: 'mutationInstitution',      label: 'Institution',            type: 'text',     idPrefix: 'mut'},
 ];
@@ -377,6 +420,28 @@ const PHENOTYPE_ADAPTER: ChildAdapter<PhenotypeWire, PhenotypeRow> = {
     }),
 };
 
+interface PublicationRow {
+    rowId: string;
+    publication: string;
+}
+
+// Publications wire as a flat string[] (the @ElementCollection on the
+// server side handles the per-row sort-order column under the hood).
+const PUBLICATION_ADAPTER: ChildAdapter<string, PublicationRow> = {
+    label: 'Publications',
+    endpoint: 'save-publications',
+    extractWire: dto => dto.publications,
+    emptyRow: () => ({
+        rowId: freshRowId('pub'),
+        publication: '',
+    }),
+    wireToRow: w => ({
+        rowId: freshRowId('pub'),
+        publication: w ?? '',
+    }),
+    rowToWire: r => r.publication.trim(),
+};
+
 // ─── Generic child-collection hook ────────────────────────────────────────
 
 interface ChildAdapter<W, R extends {rowId: string}> {
@@ -598,6 +663,32 @@ const BoolRowField = ({groupName, label, value, onChange, onCommit}: BoolRowFiel
     );
 };
 
+interface AutocompleteRowFieldProps {
+    id: string;
+    label: string;
+    value: string;
+    fetchUrl: string;
+    placeholder?: string;
+    onChange: (next: string) => void;
+    onCommit: () => void;
+}
+
+const AutocompleteRowField = ({id, label, value, fetchUrl, placeholder, onChange, onCommit}: AutocompleteRowFieldProps) => (
+    <div className='form-group row'>
+        <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
+        <div className='col-sm-9'>
+            <Autocomplete
+                id={id}
+                value={value}
+                placeholder={placeholder}
+                fetchUrl={fetchUrl}
+                onChange={onChange}
+                onCommit={() => onCommit()}
+            />
+        </div>
+    </div>
+);
+
 interface SelectRowFieldProps {
     id: string;
     label: string;
@@ -674,7 +765,15 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
                             )}
                         </div>
                     </div>
-                    <TextRowField id={`gene-lg-${row.rowId}`}    label='Linkage Group' value={row.linkageGroup}      onChange={v => onChange(row.rowId, {linkageGroup: v})}      onCommit={onCommit}/>
+                    <AutocompleteRowField
+                        id={`gene-lg-${row.rowId}`}
+                        label='Linkage Group'
+                        value={row.linkageGroup}
+                        fetchUrl='/action/zirc/chromosomes/search'
+                        placeholder='1, 2, …, MT'
+                        onChange={v => onChange(row.rowId, {linkageGroup: v})}
+                        onCommit={onCommit}
+                    />
                     <TextRowField id={`gene-gdna-${row.rowId}`}  label='GenBank gDNA'  value={row.genbankGenomicDna} onChange={v => onChange(row.rowId, {genbankGenomicDna: v})} onCommit={onCommit}/>
                     <TextAreaRowField id={`gene-cdna-${row.rowId}`} label='GenBank cDNA' value={row.genbankCdna} onChange={v => onChange(row.rowId, {genbankCdna: v})} onCommit={onCommit}/>
                 </RowFieldset>
@@ -767,6 +866,45 @@ const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionL
     );
 };
 
+const PublicationsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<PublicationRow>) => {
+    if (rows.length === 0) {
+        return <div><p className='text-muted'>No publications recorded for this mutation.</p><AddButton label='publication' onAdd={onAdd}/></div>;
+    }
+    return (
+        <div>
+            {rows.map((row, idx) => {
+                const inputId = `pub-${row.rowId}`;
+                return (
+                    <div className='form-group row align-items-center' key={row.rowId}>
+                        <label htmlFor={inputId} className='col-sm-3 col-form-label'>
+                            Publication {idx + 1}
+                        </label>
+                        <div className='col-sm-9 d-flex align-items-center' style={{gap: 8}}>
+                            <input
+                                type='text'
+                                id={inputId}
+                                className='form-control'
+                                placeholder='PMID, DOI, or citation'
+                                value={row.publication}
+                                onChange={e => onChange(row.rowId, {publication: e.target.value})}
+                                onBlur={onCommit}
+                            />
+                            <button
+                                type='button'
+                                className='btn btn-sm btn-outline-danger'
+                                onClick={() => onRemove(row.rowId)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
+            <AddButton label='publication' onAdd={onAdd}/>
+        </div>
+    );
+};
+
 // ─── Main container ────────────────────────────────────────────────────────
 
 const MutationEdit = ({mutationId}: MutationEditProps) => {
@@ -789,10 +927,11 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
     }
 
     const childDeps = {mutationId, enqueueSave, emit};
-    const genes      = useChildCollection(GENE_ADAPTER,      childDeps);
-    const lesions    = useChildCollection(LESION_ADAPTER,    childDeps);
-    const assays     = useChildCollection(ASSAY_ADAPTER,     childDeps);
-    const phenotypes = useChildCollection(PHENOTYPE_ADAPTER, childDeps);
+    const genes        = useChildCollection(GENE_ADAPTER,        childDeps);
+    const lesions      = useChildCollection(LESION_ADAPTER,      childDeps);
+    const assays       = useChildCollection(ASSAY_ADAPTER,       childDeps);
+    const phenotypes   = useChildCollection(PHENOTYPE_ADAPTER,   childDeps);
+    const publications = useChildCollection(PUBLICATION_ADAPTER, childDeps);
 
     useEffect(() => {
         if (!mutationId) {
@@ -831,6 +970,7 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
         lesions.apply(data);
         assays.apply(data);
         phenotypes.apply(data);
+        publications.apply(data);
     }
 
     function setFieldValue(field: ScalarField, next: string) {
@@ -878,7 +1018,7 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
 
     const renderRow = (def: FieldDef<ScalarField>) => (
         <FieldRow
-            key={def.field}
+            key={def.rowKey ?? def.field}
             def={def}
             value={values[def.field]}
             onChange={next => setFieldValue(def.field, next)}
@@ -886,9 +1026,14 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
         />
     );
 
+    // Filter visible rows up-front so React keys stay unique among rendered
+    // children (two FieldDefs may share a field — see allele designation).
+    const visibleFields = (defs: FieldDef<ScalarField>[]) =>
+        defs.filter(d => !d.visible || d.visible(values));
+
     return <>
         <Section id='general' title='General'>
-            <FieldsTable>{GENERAL_FIELDS.map(renderRow)}</FieldsTable>
+            <FieldsTable>{visibleFields(GENERAL_FIELDS).map(renderRow)}</FieldsTable>
         </Section>
         <Section id='genes' title='Genes'>
             <GenesSection rows={genes.rows} onAdd={genes.add} onRemove={genes.remove} onChange={genes.change} onCommit={genes.commit}/>
@@ -902,8 +1047,11 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
         <Section id='phenotypes' title='Phenotypes'>
             <PhenotypesSection rows={phenotypes.rows} onAdd={phenotypes.add} onRemove={phenotypes.remove} onChange={phenotypes.change} onCommit={phenotypes.commit}/>
         </Section>
+        <Section id='publications' title='Publications'>
+            <PublicationsSection rows={publications.rows} onAdd={publications.add} onRemove={publications.remove} onChange={publications.change} onCommit={publications.commit}/>
+        </Section>
         <Section id='lethality' title='Lethality'>
-            <FieldsTable>{LETHALITY_FIELDS.map(renderRow)}</FieldsTable>
+            <FieldsTable>{visibleFields(LETHALITY_FIELDS).map(renderRow)}</FieldsTable>
         </Section>
         <SaveToast event={saveEvent}/>
     </>;

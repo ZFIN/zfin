@@ -328,6 +328,35 @@ public class LineSubmissionService {
         return mutation;
     }
 
+    /**
+     * Replace-all save for a mutation's publication references. Each row
+     * is just a free-text citation (PMID / DOI / "Smith et al. 2024").
+     * Empty / blank entries are dropped; duplicates are deduped (first
+     * occurrence wins). Backed by the {@code mutation_publication}
+     * @ElementCollection on {@link Mutation}.
+     */
+    public Mutation savePublications(Long mutationId, List<String> incoming, Person currentUser) {
+        Mutation mutation = requireMutation(mutationId);
+        List<String> normalized = new java.util.ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        if (incoming != null) {
+            for (String pub : incoming) {
+                if (pub == null || pub.isBlank()) {
+                    continue;
+                }
+                String trimmed = pub.trim();
+                if (seen.add(trimmed)) {
+                    normalized.add(trimmed);
+                }
+            }
+        }
+        // Replace contents of the @ElementCollection. clear() + addAll()
+        // is the canonical way; Hibernate handles the diff.
+        mutation.getPublications().clear();
+        mutation.getPublications().addAll(normalized);
+        return mutation;
+    }
+
     private Mutation requireMutation(Long mutationId) {
         Mutation m = HibernateUtil.currentSession().get(Mutation.class, mutationId);
         if (m == null) {
@@ -373,7 +402,10 @@ public class LineSubmissionService {
     static void applyMutationField(Mutation m, String fieldName, String value) {
         switch (fieldName) {
             case "alleleDesignation":          m.setAlleleDesignation(value); break;
+            case "alleleInZfin":               m.setAlleleInZfin(Boolean.TRUE.equals(parseTriBool(value))); break;
+            case "mutagenesisStage":           m.setMutagenesisStage(value); break;
             case "mutagenesisProtocol":        m.setMutagenesisProtocol(value); break;
+            case "mutagenesisProtocolOther":   m.setMutagenesisProtocolOther(value); break;
             case "molecularlyCharacterized":   m.setMolecularlyCharacterized(parseTriBool(value)); break;
             case "mutationType":               m.setMutationType(value); break;
             case "homozygousLethal":           m.setHomozygousLethal(parseTriBool(value)); break;

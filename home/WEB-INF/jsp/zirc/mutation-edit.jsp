@@ -5,9 +5,10 @@
 <c:set var="LESIONS"   value="Lesions"/>
 <c:set var="ASSAYS"    value="Genotyping Assays"/>
 <c:set var="PHENOS"    value="Phenotypes"/>
+<c:set var="PUBS"      value="Publications"/>
 <c:set var="LETHALITY" value="Lethality"/>
 
-<c:set var="sections" value="${[GENERAL, GENES, LESIONS, ASSAYS, PHENOS, LETHALITY]}"/>
+<c:set var="sections" value="${[GENERAL, GENES, LESIONS, ASSAYS, PHENOS, PUBS, LETHALITY]}"/>
 
 <c:choose>
     <c:when test="${not empty mutation.alleleDesignation}">

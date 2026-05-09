@@ -31,7 +31,10 @@ public class MutationDTO {
     private Integer sortOrder;
 
     private String alleleDesignation;
+    private Boolean alleleInZfin;
+    private String mutagenesisStage;
     private String mutagenesisProtocol;
+    private String mutagenesisProtocolOther;
     private Boolean molecularlyCharacterized;
     private String mutationType;
 
@@ -51,6 +54,7 @@ public class MutationDTO {
     private List<LesionDTO> lesions;
     private List<GenotypingAssayDTO> genotypingAssays;
     private List<PhenotypeDTO> phenotypes;
+    private List<String> publications;
 
     public static MutationDTO from(Mutation m) {
         MutationDTO dto = new MutationDTO();
@@ -58,7 +62,10 @@ public class MutationDTO {
         dto.setLineSubmissionId(m.getLineSubmission() != null ? m.getLineSubmission().getZdbID() : null);
         dto.setSortOrder(m.getSortOrder());
         dto.setAlleleDesignation(m.getAlleleDesignation());
+        dto.setAlleleInZfin(m.getAlleleInZfin());
+        dto.setMutagenesisStage(m.getMutagenesisStage());
         dto.setMutagenesisProtocol(m.getMutagenesisProtocol());
+        dto.setMutagenesisProtocolOther(m.getMutagenesisProtocolOther());
         dto.setMolecularlyCharacterized(m.getMolecularlyCharacterized());
         dto.setMutationType(m.getMutationType());
         dto.setHomozygousLethal(m.getHomozygousLethal());
@@ -95,6 +102,7 @@ public class MutationDTO {
                         Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(PhenotypeDTO::from)
                 .toList());
+        dto.setPublications(List.copyOf(m.getPublications()));
         return dto;
     }
 }

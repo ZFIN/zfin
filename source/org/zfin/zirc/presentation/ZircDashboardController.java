@@ -309,6 +309,23 @@ public class ZircDashboardController {
         }
     }
 
+    @PostMapping(value = "/mutation/{mutationId}/save-publications",
+                 consumes = "application/json")
+    @ResponseBody
+    public MutationDTO savePublications(@PathVariable Long mutationId,
+                                        @RequestBody List<String> publications) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.savePublications(mutationId, publications, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
     /**
      * Delete a mutation. Returns the updated parent submission DTO so the
      * React form on the parent edit page can refresh its mutations list
@@ -340,6 +357,67 @@ public class ZircDashboardController {
      * the person's full name (placed back into the input), and "fullName"/"zdbID" are picked
      * up by the select-handler to POST the add request.
      */
+    /**
+     * Marker autocomplete for the mutation editor's "allele designation"
+     * field (when "exists in ZFIN" is checked) and the gene rows' mutated
+     * gene picker. Same shape as {@link #searchPersons}: returns a small
+     * list of {label, value, zdbID} entries suitable for any typeahead
+     * client.
+     *
+     * <p>Matches by abbreviation prefix or substring. Caps at 20 results.
+     */
+    @GetMapping("/markers/search")
+    @ResponseBody
+    public List<Map<String, String>> searchMarkers(@RequestParam(value = "term", required = false) String term) {
+        if (term == null || term.isBlank()) {
+            return Collections.emptyList();
+        }
+        List<org.zfin.marker.Marker> markers = HibernateUtil.currentSession()
+                .createQuery(
+                    "from Marker where lower(abbreviation) like :q order by abbreviation",
+                    org.zfin.marker.Marker.class)
+                .setParameter("q", "%" + term.toLowerCase() + "%")
+                .setMaxResults(20)
+                .list();
+        List<Map<String, String>> out = new ArrayList<>();
+        for (org.zfin.marker.Marker m : markers) {
+            Map<String, String> entry = new HashMap<>();
+            entry.put("label", m.getAbbreviation() + " (" + m.getZdbID() + ")");
+            entry.put("value", m.getAbbreviation());
+            entry.put("zdbID", m.getZdbID());
+            out.add(entry);
+        }
+        return out;
+    }
+
+    /**
+     * Chromosome-name autocomplete for the per-gene "linkage group" field.
+     * Returns names from {@code public.chromosome} ordered by chrom_order.
+     * The Linkage Group column is varchar(10) and accepts free-text values
+     * like "NT" too — the autocomplete is a hint, not a constraint.
+     */
+    @GetMapping("/chromosomes/search")
+    @ResponseBody
+    public List<Map<String, String>> searchChromosomes(@RequestParam(value = "term", required = false) String term) {
+        String t = term == null ? "" : term.trim().toLowerCase();
+        String sql = t.isEmpty()
+                ? "select chrom_name from chromosome order by chrom_order"
+                : "select chrom_name from chromosome where lower(chrom_name) like :q order by chrom_order";
+        var query = HibernateUtil.currentSession().createNativeQuery(sql, String.class);
+        if (!t.isEmpty()) {
+            query.setParameter("q", t + "%");
+        }
+        List<String> names = query.setMaxResults(30).list();
+        List<Map<String, String>> out = new ArrayList<>();
+        for (String name : names) {
+            Map<String, String> entry = new HashMap<>();
+            entry.put("label", name);
+            entry.put("value", name);
+            out.add(entry);
+        }
+        return out;
+    }
+
     @GetMapping("/persons/search")
     @ResponseBody
     public List<Map<String, String>> searchPersons(@RequestParam(value = "term", required = false) String term) {
