@@ -29,21 +29,38 @@ public class LineSubmissionService {
      */
     public LineSubmission saveField(String zdbID, String fieldName, String rawValue, Person currentUser) {
         String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
-
-        LineSubmission submission;
-        if (zdbID == null || zdbID.isBlank()) {
-            submission = new LineSubmission();
-            HibernateUtil.currentSession().persist(submission);
-            linkSubmitter(submission, currentUser);
-        } else {
-            submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
-            if (submission == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
-            }
-        }
-
+        LineSubmission submission = loadOrCreate(zdbID, currentUser);
         applyField(submission, fieldName, value);
         HibernateUtil.currentSession().merge(submission);
+        return submission;
+    }
+
+    /**
+     * Persist the acceptance-reasons section: an array of canonical snake_case
+     * option values plus a single optional free-text "Other" entry. As with
+     * {@link #saveField}, a new submission is created on the fly when
+     * {@code zdbID} is null/blank.
+     */
+    public LineSubmission saveReasons(String zdbID, String[] reasons, String reasonsOther, Person currentUser) {
+        LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        submission.setReasons(reasons != null ? reasons : new String[0]);
+        String trimmed = (reasonsOther != null && !reasonsOther.isBlank()) ? reasonsOther.trim() : null;
+        submission.setReasonsOther(trimmed);
+        HibernateUtil.currentSession().merge(submission);
+        return submission;
+    }
+
+    private LineSubmission loadOrCreate(String zdbID, Person currentUser) {
+        if (zdbID == null || zdbID.isBlank()) {
+            LineSubmission submission = new LineSubmission();
+            HibernateUtil.currentSession().persist(submission);
+            linkSubmitter(submission, currentUser);
+            return submission;
+        }
+        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
+        if (submission == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
+        }
         return submission;
     }
 

@@ -107,9 +107,38 @@ public class ZircDashboardController {
                                        @RequestParam(value = "value", required = false) String value) {
         Person currentUser = ProfileService.getCurrentSecurityUser();
         HibernateUtil.createTransaction();
-        LineSubmission submission = lineSubmissionService.saveField(zdbID, field, value, currentUser);
-        HibernateUtil.flushAndCommitCurrentSession();
-        return LineSubmissionDTO.from(submission);
+        try {
+            LineSubmission submission = lineSubmissionService.saveField(zdbID, field, value, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return LineSubmissionDTO.from(submission);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
+     * Replace-all endpoint for the Acceptance Reasons section. Takes the full
+     * desired list of canonical reason values (form-encoded multivalued
+     * {@code reasons} param) plus the single free-text {@code reasonsOther}
+     * entry. Like {@link #saveField}, an empty {@code zdbID} triggers
+     * create-on-first-save.
+     */
+    @PostMapping("/line-submission/save-reasons")
+    @ResponseBody
+    public LineSubmissionDTO saveReasons(@RequestParam(value = "zdbID", required = false) String zdbID,
+                                         @RequestParam(value = "reasons", required = false) String[] reasons,
+                                         @RequestParam(value = "reasonsOther", required = false) String reasonsOther) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            LineSubmission submission = lineSubmissionService.saveReasons(zdbID, reasons, reasonsOther, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return LineSubmissionDTO.from(submission);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
     }
 
     /**
@@ -171,8 +200,13 @@ public class ZircDashboardController {
             lsp.setRole("submitter");
             lsp.setSortOrder(submission.getPersons().size() + 1);
             HibernateUtil.createTransaction();
-            HibernateUtil.currentSession().persist(lsp);
-            HibernateUtil.flushAndCommitCurrentSession();
+            try {
+                HibernateUtil.currentSession().persist(lsp);
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (RuntimeException e) {
+                HibernateUtil.rollbackTransaction();
+                throw e;
+            }
         }
         Map<String, String> result = new HashMap<>();
         result.put("status", "ok");

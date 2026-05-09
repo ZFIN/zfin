@@ -1,12 +1,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="OVERVIEW"  value="Overview"/>
-<c:set var="BACKGROUND" value="Background"/>
-<c:set var="PEOPLE"    value="People"/>
-<c:set var="MUTATIONS" value="Mutations"/>
-<c:set var="ADDITIONAL" value="Additional Info"/>
+<c:set var="OVERVIEW"           value="Overview"/>
+<c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
+<c:set var="BACKGROUND"         value="Background"/>
+<c:set var="PEOPLE"             value="People"/>
+<c:set var="MUTATIONS"          value="Mutations"/>
+<c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, BACKGROUND, PEOPLE, MUTATIONS, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, BACKGROUND, PEOPLE, MUTATIONS, ADDITIONAL]}"/>
 
 <z:dataPage sections="${sections}" title="Line Submission: ${submission.name}">
 
@@ -108,6 +109,35 @@
                     </tr>
                 </tbody>
             </table>
+        </z:section>
+
+        <z:section title="${ACCEPTANCE_REASONS}">
+            <c:choose>
+                <c:when test="${empty submission.reasons and empty submission.reasonsOther}">
+                    <p class="text-muted">No reasons selected.</p>
+                </c:when>
+                <c:otherwise>
+                    <ul>
+                        <c:forEach items="${submission.reasons}" var="r">
+                            <li>
+                                <c:choose>
+                                    <c:when test="${r == 'frequently_requested'}">Currently frequently requested</c:when>
+                                    <c:when test="${r == 'expect_high_demand'}">Expect high demand</c:when>
+                                    <c:when test="${r == 'interesting_gene'}">Interesting gene</c:when>
+                                    <c:when test="${r == 'community_resource'}">Community resource/tool</c:when>
+                                    <c:when test="${r == 'mutant_gene_cloned'}">Mutant gene cloned</c:when>
+                                    <c:when test="${r == 'danger_of_losing'}">Danger of losing line</c:when>
+                                    <c:when test="${r == 'lack_of_space_or_funding'}">Lack of space or funding to maintain line</c:when>
+                                    <c:otherwise><code>${r}</code></c:otherwise>
+                                </c:choose>
+                            </li>
+                        </c:forEach>
+                        <c:if test="${not empty submission.reasonsOther}">
+                            <li>Other: <c:out value="${submission.reasonsOther}"/></li>
+                        </c:if>
+                    </ul>
+                </c:otherwise>
+            </c:choose>
         </z:section>
 
         <z:section title="${BACKGROUND}">

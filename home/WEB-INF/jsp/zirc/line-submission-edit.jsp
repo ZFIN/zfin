@@ -1,10 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="OVERVIEW"   value="Overview"/>
-<c:set var="BACKGROUND" value="Background"/>
-<c:set var="ADDITIONAL" value="Additional Info"/>
+<c:set var="OVERVIEW"           value="Overview"/>
+<c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
+<c:set var="BACKGROUND"         value="Background"/>
+<c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, BACKGROUND, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, BACKGROUND, ADDITIONAL]}"/>
 
 <c:set var="isNewSubmission" value="${empty submission.zdbID}"/>
 <c:set var="entityLabel" value="${not empty submission.name
@@ -39,7 +40,7 @@
         <div class="small text-uppercase text-muted">${isNewSubmission ? 'New Line Submission' : 'Edit Line Submission'}</div>
         <h1>${entityLabel}</h1>
 
-        <%-- Single mount; the React component renders all three <section> blocks
+        <%-- Single mount; the React component renders the section <section> blocks
              with anchor IDs that match the dataPage side nav. data-submission-id
              is empty for /new — the component creates the row on first save. --%>
         <div class="__react-root" id="LineSubmissionEdit"

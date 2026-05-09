@@ -15,6 +15,8 @@ import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.zfin.profile.Person;
 
 import java.io.Serializable;
@@ -76,6 +78,21 @@ public class LineSubmission implements Serializable {
 
     @Column(name = "ls_additional_info")
     private String additionalInfo;
+
+    /**
+     * Acceptance reasons as a postgres text[] of snake_case option values
+     * (e.g. {@code {"frequently_requested","expect_high_demand"}}). The
+     * canonical option list lives in the React form; the column has no FK
+     * or check constraint so renaming labels doesn't require DB churn. The
+     * companion {@link #reasonsOther} field holds the single free-text
+     * "Other" entry when the user picks the Other checkbox.
+     */
+    @Column(name = "ls_reasons", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] reasons = new String[0];
+
+    @Column(name = "ls_reasons_other")
+    private String reasonsOther;
 
     // Default applied here (not just at the DB level) because Hibernate writes
     // an explicit NULL in INSERT for null fields, bypassing the column DEFAULT.

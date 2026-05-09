@@ -26,6 +26,8 @@ public class LineSubmissionDTO {
     private String backgroundChangeConcerns;
     private String unreportedFeaturesDetails;
     private String additionalInfo;
+    private String[] reasons;
+    private String reasonsOther;
     private Boolean isDraft;
     private Date deletedAt;
     private Date submittedAt;
@@ -45,6 +47,8 @@ public class LineSubmissionDTO {
         dto.setBackgroundChangeConcerns(submission.getBackgroundChangeConcerns());
         dto.setUnreportedFeaturesDetails(submission.getUnreportedFeaturesDetails());
         dto.setAdditionalInfo(submission.getAdditionalInfo());
+        dto.setReasons(submission.getReasons());
+        dto.setReasonsOther(submission.getReasonsOther());
         dto.setIsDraft(submission.getIsDraft());
         dto.setDeletedAt(submission.getDeletedAt());
         dto.setSubmittedAt(submission.getSubmittedAt());
