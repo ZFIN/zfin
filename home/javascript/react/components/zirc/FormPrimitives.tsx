@@ -10,6 +10,8 @@ export interface FieldDef<T extends string = string> {
      *  on the page would otherwise collide on `ls-field-name` etc. Defaults
      *  to "ls-field" for the line-submission form. */
     idPrefix?: string;
+    /** HTML placeholder; only meaningful for `text` and `textarea`. */
+    placeholder?: string;
 }
 
 /**
@@ -46,6 +48,7 @@ export const FieldRow = <T extends string>({def, value, onChange, onCommit}: Fie
                     id={inputId}
                     className='form-control'
                     rows={3}
+                    placeholder={def.placeholder}
                     value={value}
                     onChange={e => onChange(e.target.value)}
                     onBlur={() => onCommit(value)}
@@ -85,6 +88,7 @@ export const FieldRow = <T extends string>({def, value, onChange, onCommit}: Fie
                 id={inputId}
                 type='text'
                 className='form-control'
+                placeholder={def.placeholder}
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 onBlur={() => onCommit(value)}

@@ -53,14 +53,15 @@ interface LineSubmissionEditProps {
 
 const OVERVIEW_FIELDS: FieldDef<ScalarField>[] = [
     {field: 'name',           label: 'Name',           type: 'text'},
-    {field: 'abbreviation',   label: 'Abbreviation',   type: 'text'},
     {field: 'previousNames',  label: 'Previous Names', type: 'text'},
     {field: 'featuresLinked', label: 'Features Linked', type: 'bool'},
 ];
 
 const BACKGROUND_FIELDS: FieldDef<ScalarField>[] = [
-    {field: 'maternalBackground',       label: 'Maternal',              type: 'text'},
-    {field: 'paternalBackground',       label: 'Paternal',              type: 'text'},
+    {field: 'maternalBackground',       label: 'Maternal',              type: 'text',
+        placeholder: 'AB, TU, unknown, …'},
+    {field: 'paternalBackground',       label: 'Paternal',              type: 'text',
+        placeholder: 'AB, TU, unknown, …'},
     {field: 'backgroundChangeable',     label: 'Background Changeable', type: 'bool'},
     {field: 'backgroundChangeConcerns', label: 'Concerns',              type: 'textarea'},
 ];
@@ -158,9 +159,10 @@ interface LinkedFeatureRow {
     mutationBId: string;
     /** '' = unanswered, 'true' / 'false' = picked. Matches the bool radio convention. */
     distanceKnown: '' | 'true' | 'false';
-    /** Stored as strings so users can type partial numbers ("1.5" while typing "1."). */
-    distanceCentimorgans: string;
-    distanceMegabases: string;
+    /** One distance input + a unit selector (per the form spec). On the wire
+     *  we still store it in the matching of the two schema columns. */
+    distanceValue: string;
+    distanceUnit: '' | 'cM' | 'Mb';
     additionalInfo: string;
 }
 
@@ -175,13 +177,25 @@ function emptyLinkedFeatureRow(): LinkedFeatureRow {
         mutationAId: '',
         mutationBId: '',
         distanceKnown: '',
-        distanceCentimorgans: '',
-        distanceMegabases: '',
+        distanceValue: '',
+        distanceUnit: '',
         additionalInfo: '',
     };
 }
 
 function wireToRow(w: LinkedFeatureWire): LinkedFeatureRow {
+    // Schema stores cM and Mb as separate columns; UI exposes one input
+    // + unit selector. Read whichever column is populated; if (somehow)
+    // both, prefer cM and the user can re-pick the unit.
+    let distanceValue = '';
+    let distanceUnit: '' | 'cM' | 'Mb' = '';
+    if (w.distanceCentimorgans != null) {
+        distanceValue = String(w.distanceCentimorgans);
+        distanceUnit = 'cM';
+    } else if (w.distanceMegabases != null) {
+        distanceValue = String(w.distanceMegabases);
+        distanceUnit = 'Mb';
+    }
     return {
         rowId: freshRowId(),
         mutationAId: w.mutationAId == null ? '' : String(w.mutationAId),
@@ -189,8 +203,8 @@ function wireToRow(w: LinkedFeatureWire): LinkedFeatureRow {
         distanceKnown: w.distanceKnown === true ? 'true'
             : w.distanceKnown === false ? 'false'
                 : '',
-        distanceCentimorgans: w.distanceCentimorgans == null ? '' : String(w.distanceCentimorgans),
-        distanceMegabases: w.distanceMegabases == null ? '' : String(w.distanceMegabases),
+        distanceValue,
+        distanceUnit,
         additionalInfo: w.additionalInfo ?? '',
     };
 }
@@ -210,6 +224,7 @@ function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
         const n = Number(s);
         return Number.isFinite(n) ? n : null;
     }
+    const value = parseFloatOrNull(r.distanceValue);
     return {
         mutationAId: parseInt10OrNull(r.mutationAId),
         mutationBId: parseInt10OrNull(r.mutationBId),
@@ -218,8 +233,11 @@ function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
         distanceKnown: r.distanceKnown === 'true' ? true
             : r.distanceKnown === 'false' ? false
                 : null,
-        distanceCentimorgans: parseFloatOrNull(r.distanceCentimorgans),
-        distanceMegabases: parseFloatOrNull(r.distanceMegabases),
+        // Map the single value into the matching schema column based on
+        // unit; clear the other column so we don't leave stale data when
+        // the unit changes.
+        distanceCentimorgans: r.distanceUnit === 'cM' ? value : null,
+        distanceMegabases:    r.distanceUnit === 'Mb' ? value : null,
         additionalInfo: r.additionalInfo.trim() || null,
     };
 }
@@ -347,8 +365,9 @@ const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCo
                 const bId = `ls-lf-mutB-${row.rowId}`;
                 const knownGroup = `ls-lf-known-${row.rowId}`;
                 const knownLabelId = `ls-lf-known-label-${row.rowId}`;
-                const cmId = `ls-lf-cm-${row.rowId}`;
-                const mbId = `ls-lf-mb-${row.rowId}`;
+                const distId = `ls-lf-dist-${row.rowId}`;
+                const unitGroup = `ls-lf-unit-${row.rowId}`;
+                const unitLabelId = `ls-lf-unit-label-${row.rowId}`;
                 const infoId = `ls-lf-info-${row.rowId}`;
                 const showDistance = row.distanceKnown === 'true';
                 return (
@@ -423,32 +442,41 @@ const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCo
                         </div>
                         {showDistance && (
                             <div className='form-group row'>
-                                <span className='col-sm-3 col-form-label'>Distance</span>
+                                <label htmlFor={distId} className='col-sm-3 col-form-label'>Distance</label>
                                 <div className='col-sm-9'>
-                                    <div className='form-row'>
-                                        <div className='col-sm-6'>
-                                            <label htmlFor={cmId} className='small text-muted mb-0'>Centimorgans</label>
-                                            <input
-                                                type='number'
-                                                id={cmId}
-                                                step='any'
-                                                className='form-control'
-                                                value={row.distanceCentimorgans}
-                                                onChange={e => onChange(row.rowId, {distanceCentimorgans: e.target.value})}
-                                                onBlur={() => onCommitRow()}
-                                            />
-                                        </div>
-                                        <div className='col-sm-6'>
-                                            <label htmlFor={mbId} className='small text-muted mb-0'>Megabases</label>
-                                            <input
-                                                type='number'
-                                                id={mbId}
-                                                step='any'
-                                                className='form-control'
-                                                value={row.distanceMegabases}
-                                                onChange={e => onChange(row.rowId, {distanceMegabases: e.target.value})}
-                                                onBlur={() => onCommitRow()}
-                                            />
+                                    <div className='d-flex align-items-center' style={{gap: 12}}>
+                                        <input
+                                            type='number'
+                                            id={distId}
+                                            step='any'
+                                            className='form-control'
+                                            style={{maxWidth: 160}}
+                                            value={row.distanceValue}
+                                            onChange={e => onChange(row.rowId, {distanceValue: e.target.value})}
+                                            onBlur={() => onCommitRow()}
+                                        />
+                                        <span id={unitLabelId} className='sr-only'>Distance unit</span>
+                                        <div role='radiogroup' aria-labelledby={unitLabelId}>
+                                            {[['cM', 'cM'], ['Mb', 'Mb']].map(([v, lbl]) => {
+                                                const id = `${unitGroup}-${v}`;
+                                                return (
+                                                    <div className='form-check form-check-inline' key={v}>
+                                                        <input
+                                                            type='radio'
+                                                            id={id}
+                                                            className='form-check-input'
+                                                            name={unitGroup}
+                                                            value={v}
+                                                            checked={row.distanceUnit === v}
+                                                            onChange={() => {
+                                                                onChange(row.rowId, {distanceUnit: v as 'cM' | 'Mb'});
+                                                                onCommitRow();
+                                                            }}
+                                                        />
+                                                        <label className='form-check-label' htmlFor={id}>{lbl}</label>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>

@@ -52,15 +52,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Abbreviation</th>
-                        <td>
-                            <c:choose>
-                                <c:when test="${not empty submission.abbreviation}"><c:out value="${submission.abbreviation}"/></c:when>
-                                <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>Previous Names</th>
                         <td>
                             <c:choose>
@@ -210,8 +201,7 @@
                                 <th>Mutation A</th>
                                 <th>Mutation B</th>
                                 <th>Distance Known</th>
-                                <th>cM</th>
-                                <th>Mb</th>
+                                <th>Distance</th>
                                 <th>Additional Info</th>
                             </tr>
                         </thead>
@@ -239,13 +229,8 @@
                                     </td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${not empty lf.distanceCentimorgans}">${lf.distanceCentimorgans}</c:when>
-                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty lf.distanceMegabases}">${lf.distanceMegabases}</c:when>
+                                            <c:when test="${not empty lf.distanceCentimorgans}">${lf.distanceCentimorgans} cM</c:when>
+                                            <c:when test="${not empty lf.distanceMegabases}">${lf.distanceMegabases} Mb</c:when>
                                             <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                         </c:choose>
                                     </td>

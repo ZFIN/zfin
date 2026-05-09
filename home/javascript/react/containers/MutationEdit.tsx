@@ -191,6 +191,17 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
     }),
 };
 
+// Restricted per the form-spec PDF: "Don't include translocation, inversion,
+// duplication." The schema column is still a free-text varchar, but the UI
+// only offers this list.
+const LESION_TYPE_OPTIONS: Array<{value: string; label: string}> = [
+    {value: 'point_mutation', label: 'Point mutation'},
+    {value: 'deletion',       label: 'Deletion'},
+    {value: 'insertion',      label: 'Insertion'},
+    {value: 'indel',          label: 'Indel (delins)'},
+    {value: 'transgene',      label: 'Transgene'},
+];
+
 interface LesionRow {
     rowId: string;
     id: number | null;
@@ -505,24 +516,31 @@ interface TextRowFieldProps {
     value: string;
     type?: 'text' | 'number';
     placeholder?: string;
+    /** Right-side unit label (e.g. "bp"). When set, the input gets a tighter
+     *  max-width so the unit reads naturally next to a short numeric value. */
+    suffix?: string;
     onChange: (next: string) => void;
     onCommit: () => void;
 }
 
-const TextRowField = ({id, label, value, type = 'text', placeholder, onChange, onCommit}: TextRowFieldProps) => (
+const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, onChange, onCommit}: TextRowFieldProps) => (
     <div className='form-group row'>
         <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
         <div className='col-sm-9'>
-            <input
-                type={type}
-                id={id}
-                className='form-control'
-                placeholder={placeholder}
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                onBlur={onCommit}
-                step={type === 'number' ? 'any' : undefined}
-            />
+            <div className='d-flex align-items-center' style={{gap: 8}}>
+                <input
+                    type={type}
+                    id={id}
+                    className='form-control'
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    onBlur={onCommit}
+                    step={type === 'number' ? 'any' : undefined}
+                    style={suffix ? {maxWidth: 180} : undefined}
+                />
+                {suffix && <span className='text-muted small'>{suffix}</span>}
+            </div>
         </div>
     </div>
 );
@@ -579,6 +597,34 @@ const BoolRowField = ({groupName, label, value, onChange, onCommit}: BoolRowFiel
         </div>
     );
 };
+
+interface SelectRowFieldProps {
+    id: string;
+    label: string;
+    value: string;
+    options: Array<{value: string; label: string}>;
+    onChange: (next: string) => void;
+    onCommit: () => void;
+}
+
+const SelectRowField = ({id, label, value, options, onChange, onCommit}: SelectRowFieldProps) => (
+    <div className='form-group row'>
+        <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
+        <div className='col-sm-9'>
+            <select
+                id={id}
+                className='form-control'
+                value={value}
+                onChange={e => { onChange(e.target.value); onCommit(); }}
+            >
+                <option value=''>(select)</option>
+                {options.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+            </select>
+        </div>
+    </div>
+);
 
 interface AddButtonProps {
     label: string;
@@ -646,7 +692,14 @@ const LesionsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionList
         <div>
             {rows.map((row, idx) => (
                 <RowFieldset key={row.rowId} title={`Lesion ${idx + 1}`} onRemove={() => onRemove(row.rowId)}>
-                    <TextRowField id={`les-type-${row.rowId}`}   label='Type'                  value={row.lesionType}         onChange={v => onChange(row.rowId, {lesionType: v})}         onCommit={onCommit} placeholder='deletion, insertion, indel, …'/>
+                    <SelectRowField
+                        id={`les-type-${row.rowId}`}
+                        label='Type'
+                        value={row.lesionType}
+                        options={LESION_TYPE_OPTIONS}
+                        onChange={v => onChange(row.rowId, {lesionType: v})}
+                        onCommit={onCommit}
+                    />
                     <TextRowField id={`les-delpos-${row.rowId}`} label='Index Deletion Pos'    value={row.indexDeletionPos}   onChange={v => onChange(row.rowId, {indexDeletionPos: v})}   onCommit={onCommit} type='number'/>
                     <TextRowField id={`les-inssz-${row.rowId}`}  label='Index Insertion Size'  value={row.indexInsertionSize} onChange={v => onChange(row.rowId, {indexInsertionSize: v})} onCommit={onCommit} type='number'/>
                     <TextRowField id={`les-delbp-${row.rowId}`}  label='Deleted Base Pairs'    value={row.deletedBasePairs}   onChange={v => onChange(row.rowId, {deletedBasePairs: v})}   onCommit={onCommit}/>
@@ -672,12 +725,12 @@ const GenotypingAssaysSection = ({rows, onAdd, onRemove, onChange, onCommit}: Se
                     <TextRowField id={`asy-type-${row.rowId}`}    label='Assay Type'         value={row.assayType}          onChange={v => onChange(row.rowId, {assayType: v})}          onCommit={onCommit} placeholder='pcr_gel, rflp, kasp, …'/>
                     <TextRowField id={`asy-fwd-${row.rowId}`}     label='Forward Primer'     value={row.forwardPrimer}      onChange={v => onChange(row.rowId, {forwardPrimer: v})}      onCommit={onCommit}/>
                     <TextRowField id={`asy-rev-${row.rowId}`}     label='Reverse Primer'     value={row.reversePrimer}      onChange={v => onChange(row.rowId, {reversePrimer: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-wtpcr-${row.rowId}`}   label='Expected WT PCR'    value={row.expectedWtPcr}      onChange={v => onChange(row.rowId, {expectedWtPcr: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-mutpcr-${row.rowId}`}  label='Expected Mut PCR'   value={row.expectedMutPcr}     onChange={v => onChange(row.rowId, {expectedMutPcr: v})}     onCommit={onCommit}/>
+                    <TextRowField id={`asy-wtpcr-${row.rowId}`}   label='Expected WT PCR'    value={row.expectedWtPcr}      onChange={v => onChange(row.rowId, {expectedWtPcr: v})}      onCommit={onCommit} suffix='bp'/>
+                    <TextRowField id={`asy-mutpcr-${row.rowId}`}  label='Expected Mut PCR'   value={row.expectedMutPcr}     onChange={v => onChange(row.rowId, {expectedMutPcr: v})}     onCommit={onCommit} suffix='bp'/>
                     <TextRowField id={`asy-renz-${row.rowId}`}    label='Restriction Enzyme' value={row.restrictionEnzyme}  onChange={v => onChange(row.rowId, {restrictionEnzyme: v})}  onCommit={onCommit}/>
                     <TextRowField id={`asy-cleav-${row.rowId}`}   label='Enzyme Cleaves'     value={row.enzymeCleaves}      onChange={v => onChange(row.rowId, {enzymeCleaves: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-wtdig-${row.rowId}`}   label='Expected WT Digest' value={row.expectedWtDigest}   onChange={v => onChange(row.rowId, {expectedWtDigest: v})}   onCommit={onCommit}/>
-                    <TextRowField id={`asy-mutdig-${row.rowId}`}  label='Expected Mut Digest' value={row.expectedMutDigest} onChange={v => onChange(row.rowId, {expectedMutDigest: v})}  onCommit={onCommit}/>
+                    <TextRowField id={`asy-wtdig-${row.rowId}`}   label='Expected WT Digest' value={row.expectedWtDigest}   onChange={v => onChange(row.rowId, {expectedWtDigest: v})}   onCommit={onCommit} suffix='bp'/>
+                    <TextRowField id={`asy-mutdig-${row.rowId}`}  label='Expected Mut Digest' value={row.expectedMutDigest} onChange={v => onChange(row.rowId, {expectedMutDigest: v})}  onCommit={onCommit} suffix='bp'/>
                     <TextAreaRowField id={`asy-info-${row.rowId}`} label='Additional Info'    value={row.additionalInfo}     onChange={v => onChange(row.rowId, {additionalInfo: v})}     onCommit={onCommit}/>
                 </RowFieldset>
             ))}
