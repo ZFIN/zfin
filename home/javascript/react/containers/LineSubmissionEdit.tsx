@@ -1,6 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
 
+interface LinkedFeatureWire {
+    feature: string;
+    distanceKnown: boolean | null;
+    distanceCentimorgans: number | null;
+    distanceMegabases: number | null;
+    additionalInfo: string | null;
+}
+
 interface LineSubmissionDTO {
     zdbID: string;
     name: string | null;
@@ -15,11 +23,12 @@ interface LineSubmissionDTO {
     additionalInfo: string | null;
     reasons?: string[] | null;
     reasonsOther?: string | null;
+    linkedFeatures?: LinkedFeatureWire[] | null;
     isDraft?: boolean | null;
 }
 
 type ScalarField = Exclude<keyof LineSubmissionDTO,
-    'zdbID' | 'isDraft' | 'reasons' | 'reasonsOther'>;
+    'zdbID' | 'isDraft' | 'reasons' | 'reasonsOther' | 'linkedFeatures'>;
 type FieldType = 'text' | 'textarea' | 'bool';
 
 interface LineSubmissionEditProps {
@@ -238,6 +247,205 @@ const ReasonsSection = ({
     );
 };
 
+interface LinkedFeatureRow {
+    /** Local-only React key. Stable across re-renders so input focus isn't lost. */
+    rowId: string;
+    feature: string;
+    /** '' = unanswered, 'true' / 'false' = picked. Matches the bool radio convention. */
+    distanceKnown: '' | 'true' | 'false';
+    /** Stored as strings so users can type partial numbers ("1.5" while typing "1."). */
+    distanceCentimorgans: string;
+    distanceMegabases: string;
+    additionalInfo: string;
+}
+
+let nextRowId = 1;
+function freshRowId(): string {
+    return `lf-${nextRowId++}`;
+}
+
+function emptyLinkedFeatureRow(): LinkedFeatureRow {
+    return {
+        rowId: freshRowId(),
+        feature: '',
+        distanceKnown: '',
+        distanceCentimorgans: '',
+        distanceMegabases: '',
+        additionalInfo: '',
+    };
+}
+
+function wireToRow(w: LinkedFeatureWire): LinkedFeatureRow {
+    return {
+        rowId: freshRowId(),
+        feature: w.feature ?? '',
+        distanceKnown: w.distanceKnown === true ? 'true'
+            : w.distanceKnown === false ? 'false'
+                : '',
+        distanceCentimorgans: w.distanceCentimorgans == null ? '' : String(w.distanceCentimorgans),
+        distanceMegabases: w.distanceMegabases == null ? '' : String(w.distanceMegabases),
+        additionalInfo: w.additionalInfo ?? '',
+    };
+}
+
+function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
+    function parseNum(s: string): number | null {
+        if (!s.trim()) {
+            return null;
+        }
+        const n = Number(s);
+        return Number.isFinite(n) ? n : null;
+    }
+    return {
+        feature: r.feature.trim(),
+        distanceKnown: r.distanceKnown === 'true' ? true
+            : r.distanceKnown === 'false' ? false
+                : null,
+        distanceCentimorgans: parseNum(r.distanceCentimorgans),
+        distanceMegabases: parseNum(r.distanceMegabases),
+        additionalInfo: r.additionalInfo.trim() || null,
+    };
+}
+
+interface LinkedFeaturesSectionProps {
+    rows: LinkedFeatureRow[];
+    onAdd: () => void;
+    onRemove: (rowId: string) => void;
+    onChange: (rowId: string, patch: Partial<LinkedFeatureRow>) => void;
+    /** Called when a row's input loses focus or a radio is picked. The
+     *  parent reads the latest state from a ref, so no rowId is needed. */
+    onCommitRow: () => void;
+}
+
+const LinkedFeaturesSection = ({rows, onAdd, onRemove, onChange, onCommitRow}: LinkedFeaturesSectionProps) => {
+    if (rows.length === 0) {
+        return (
+            <div>
+                <p className='text-muted'>No linked features.</p>
+                <button type='button' className='btn btn-sm btn-outline-secondary' onClick={onAdd}>
+                    + Add linked feature
+                </button>
+            </div>
+        );
+    }
+    return (
+        <div>
+            {rows.map((row, idx) => {
+                const featureId = `ls-lf-feature-${row.rowId}`;
+                const knownGroup = `ls-lf-known-${row.rowId}`;
+                const knownLabelId = `ls-lf-known-label-${row.rowId}`;
+                const cmId = `ls-lf-cm-${row.rowId}`;
+                const mbId = `ls-lf-mb-${row.rowId}`;
+                const infoId = `ls-lf-info-${row.rowId}`;
+                const showDistance = row.distanceKnown === 'true';
+                return (
+                    <fieldset key={row.rowId} className='border rounded p-3 mb-3'>
+                        <legend className='h6 px-2' style={{width: 'auto'}}>
+                            Linked feature {idx + 1}
+                        </legend>
+                        <div className='form-group row'>
+                            <label htmlFor={featureId} className='col-sm-3 col-form-label'>Feature</label>
+                            <div className='col-sm-9'>
+                                <input
+                                    type='text'
+                                    id={featureId}
+                                    className='form-control'
+                                    value={row.feature}
+                                    onChange={e => onChange(row.rowId, {feature: e.target.value})}
+                                    onBlur={() => onCommitRow()}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-group row'>
+                            <span id={knownLabelId} className='col-sm-3 col-form-label'>Distance known?</span>
+                            <div className='col-sm-9' role='radiogroup' aria-labelledby={knownLabelId}>
+                                {[['true', 'Yes'], ['false', 'No']].map(([v, lbl]) => {
+                                    const id = `${knownGroup}-${v}`;
+                                    return (
+                                        <div className='form-check form-check-inline' key={v}>
+                                            <input
+                                                type='radio'
+                                                id={id}
+                                                className='form-check-input'
+                                                name={knownGroup}
+                                                value={v}
+                                                checked={row.distanceKnown === v}
+                                                onChange={() => {
+                                                    onChange(row.rowId, {distanceKnown: v as 'true' | 'false'});
+                                                    onCommitRow();
+                                                }}
+                                            />
+                                            <label className='form-check-label' htmlFor={id}>{lbl}</label>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        {showDistance && (
+                            <div className='form-group row'>
+                                <span className='col-sm-3 col-form-label'>Distance</span>
+                                <div className='col-sm-9'>
+                                    <div className='form-row'>
+                                        <div className='col-sm-6'>
+                                            <label htmlFor={cmId} className='small text-muted mb-0'>Centimorgans</label>
+                                            <input
+                                                type='number'
+                                                id={cmId}
+                                                step='any'
+                                                className='form-control'
+                                                value={row.distanceCentimorgans}
+                                                onChange={e => onChange(row.rowId, {distanceCentimorgans: e.target.value})}
+                                                onBlur={() => onCommitRow()}
+                                            />
+                                        </div>
+                                        <div className='col-sm-6'>
+                                            <label htmlFor={mbId} className='small text-muted mb-0'>Megabases</label>
+                                            <input
+                                                type='number'
+                                                id={mbId}
+                                                step='any'
+                                                className='form-control'
+                                                value={row.distanceMegabases}
+                                                onChange={e => onChange(row.rowId, {distanceMegabases: e.target.value})}
+                                                onBlur={() => onCommitRow()}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div className='form-group row mb-0'>
+                            <label htmlFor={infoId} className='col-sm-3 col-form-label'>Additional info</label>
+                            <div className='col-sm-9'>
+                                <textarea
+                                    id={infoId}
+                                    className='form-control'
+                                    rows={2}
+                                    value={row.additionalInfo}
+                                    onChange={e => onChange(row.rowId, {additionalInfo: e.target.value})}
+                                    onBlur={() => onCommitRow()}
+                                />
+                            </div>
+                        </div>
+                        <div className='text-right mt-2'>
+                            <button
+                                type='button'
+                                className='btn btn-sm btn-outline-danger'
+                                onClick={() => onRemove(row.rowId)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </fieldset>
+                );
+            })}
+            <button type='button' className='btn btn-sm btn-outline-secondary' onClick={onAdd}>
+                + Add linked feature
+            </button>
+        </div>
+    );
+};
+
 const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
     const [zdbID, setZdbID] = useState<string>(submissionId);
     const [values, setValues] = useState<Record<string, string> | null>(submissionId ? null : emptyValues());
@@ -246,6 +454,16 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
     const [reasonsOther, setReasonsOther] = useState<string>('');
     const [otherChecked, setOtherChecked] = useState<boolean>(false);
     const [committedReasonsOther, setCommittedReasonsOther] = useState<string>('');
+    const [linkedFeatures, setLinkedFeaturesState] = useState<LinkedFeatureRow[]>([]);
+    /** JSON of the wire-format linked features as they last appeared on the server. */
+    const [committedLinkedFeaturesJSON, setCommittedLinkedFeaturesJSON] = useState<string>('[]');
+    /**
+     * Mirror of {@link linkedFeatures}. Read from this ref inside save logic so
+     * synchronous change-then-commit handlers (e.g. the radio's onChange that
+     * fires both `change` and `commit` in one event) see the post-change array
+     * even before React re-renders.
+     */
+    const linkedFeaturesRef = useRef<LinkedFeatureRow[]>([]);
     const [loadError, setLoadError] = useState<string>('');
     const [saveEvent, setSaveEvent] = useState<SaveEvent | null>(null);
 
@@ -308,6 +526,24 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         setReasonsOther(loadedOther);
         setOtherChecked(loadedOther.trim().length > 0);
         setCommittedReasonsOther(loadedOther);
+        applyLinkedFeaturesFromDTO(data.linkedFeatures ?? []);
+    }
+
+    function setLinkedFeatures(next: LinkedFeatureRow[]) {
+        linkedFeaturesRef.current = next;
+        setLinkedFeaturesState(next);
+    }
+
+    function applyLinkedFeaturesFromDTO(wire: LinkedFeatureWire[]) {
+        setLinkedFeatures(wire.map(wireToRow));
+        // Snapshot the wire-format JSON so subsequent commits can dedupe no-ops.
+        setCommittedLinkedFeaturesJSON(JSON.stringify(wire.map(w => ({
+            feature: w.feature,
+            distanceKnown: w.distanceKnown ?? null,
+            distanceCentimorgans: w.distanceCentimorgans ?? null,
+            distanceMegabases: w.distanceMegabases ?? null,
+            additionalInfo: w.additionalInfo ?? null,
+        }))));
     }
 
     function setFieldValue(field: ScalarField, next: string) {
@@ -446,6 +682,62 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         commitReasons(reasons, reasonsOther);
     }
 
+    /**
+     * Commit the linked-features list to the server. Always reads from
+     * {@link linkedFeaturesRef} so synchronous change-then-commit flows (radio
+     * onChange) see the post-change array even before React re-renders. Sends
+     * the list as JSON; a single-shot replace is the natural shape for this
+     * section.
+     */
+    async function commitLinkedFeatures() {
+        const wire = linkedFeaturesRef.current.map(rowToWire).filter(w => w.feature.length > 0);
+        const wireJSON = JSON.stringify(wire);
+        if (wireJSON === committedLinkedFeaturesJSON) {
+            return;
+        }
+        emit({status: 'saving', label: 'Linked Features'});
+        try {
+            await enqueueSave(async () => {
+                const wasNew = !zdbIDRef.current;
+                const url = '/action/zirc/line-submission/save-linked-features'
+                    + (zdbIDRef.current ? `?zdbID=${encodeURIComponent(zdbIDRef.current)}` : '');
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: wireJSON,
+                });
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+                const data = await resp.json() as LineSubmissionDTO;
+                applyLinkedFeaturesFromDTO(data.linkedFeatures ?? []);
+                captureNewIdIfAny(data, wasNew);
+            });
+            emit({status: 'saved', label: 'Linked Features'});
+        } catch (e) {
+            emit({status: 'error', label: 'Linked Features',
+                message: e instanceof Error ? e.message : 'Save failed'});
+        }
+    }
+
+    function handleAddLinkedFeature() {
+        // Don't commit on add — empty rows are filtered out server-side anyway.
+        setLinkedFeatures([...linkedFeaturesRef.current, emptyLinkedFeatureRow()]);
+    }
+
+    function handleRemoveLinkedFeature(rowId: string) {
+        setLinkedFeatures(linkedFeaturesRef.current.filter(r => r.rowId !== rowId));
+        commitLinkedFeatures();
+    }
+
+    function handleChangeLinkedFeature(rowId: string, patch: Partial<LinkedFeatureRow>) {
+        setLinkedFeatures(linkedFeaturesRef.current.map(r => r.rowId === rowId ? {...r, ...patch} : r));
+    }
+
+    function handleCommitLinkedFeatureRow() {
+        commitLinkedFeatures();
+    }
+
     if (loadError) {
         return <div className='alert alert-danger'>Failed to load submission: {loadError}</div>;
     }
@@ -486,6 +778,15 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
                 onToggleOther={handleToggleOther}
                 onChangeOther={setReasonsOther}
                 onCommitOther={handleCommitOther}
+            />
+        </Section>
+        <Section id='linked-features' title='Linked Features'>
+            <LinkedFeaturesSection
+                rows={linkedFeatures}
+                onAdd={handleAddLinkedFeature}
+                onRemove={handleRemoveLinkedFeature}
+                onChange={handleChangeLinkedFeature}
+                onCommitRow={handleCommitLinkedFeatureRow}
             />
         </Section>
         <Section id='background' title='Background'>

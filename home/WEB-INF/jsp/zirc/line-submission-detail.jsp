@@ -2,12 +2,13 @@
 
 <c:set var="OVERVIEW"           value="Overview"/>
 <c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
+<c:set var="LINKED_FEATURES"    value="Linked Features"/>
 <c:set var="BACKGROUND"         value="Background"/>
 <c:set var="PEOPLE"             value="People"/>
 <c:set var="MUTATIONS"          value="Mutations"/>
 <c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, BACKGROUND, PEOPLE, MUTATIONS, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, LINKED_FEATURES, BACKGROUND, PEOPLE, MUTATIONS, ADDITIONAL]}"/>
 
 <z:dataPage sections="${sections}" title="Line Submission: ${submission.name}">
 
@@ -136,6 +137,59 @@
                             <li>Other: <c:out value="${submission.reasonsOther}"/></li>
                         </c:if>
                     </ul>
+                </c:otherwise>
+            </c:choose>
+        </z:section>
+
+        <z:section title="${LINKED_FEATURES}">
+            <c:choose>
+                <c:when test="${empty submission.linkedFeatures}">
+                    <p class="text-muted">No linked features.</p>
+                </c:when>
+                <c:otherwise>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Distance Known</th>
+                                <th>cM</th>
+                                <th>Mb</th>
+                                <th>Additional Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${submission.linkedFeatures}" var="lf">
+                                <tr>
+                                    <td><c:out value="${lf.feature}"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${lf.distanceKnown == true}">Yes</c:when>
+                                            <c:when test="${lf.distanceKnown == false}">No</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty lf.distanceCentimorgans}">${lf.distanceCentimorgans}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty lf.distanceMegabases}">${lf.distanceMegabases}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty lf.additionalInfo}"><c:out value="${lf.additionalInfo}"/></c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
                 </c:otherwise>
             </c:choose>
         </z:section>

@@ -3,8 +3,11 @@ package org.zfin.zirc.presentation;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.zirc.entity.LineSubmission;
+import org.zfin.zirc.entity.LinkedFeature;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Wire format for the editable scalar fields of a {@link LineSubmission}.
@@ -28,6 +31,7 @@ public class LineSubmissionDTO {
     private String additionalInfo;
     private String[] reasons;
     private String reasonsOther;
+    private List<LinkedFeatureDTO> linkedFeatures;
     private Boolean isDraft;
     private Date deletedAt;
     private Date submittedAt;
@@ -49,6 +53,11 @@ public class LineSubmissionDTO {
         dto.setAdditionalInfo(submission.getAdditionalInfo());
         dto.setReasons(submission.getReasons());
         dto.setReasonsOther(submission.getReasonsOther());
+        dto.setLinkedFeatures(
+            submission.getLinkedFeatures().stream()
+                .sorted(Comparator.comparing(LinkedFeature::getFeature))
+                .map(LinkedFeatureDTO::from)
+                .toList());
         dto.setIsDraft(submission.getIsDraft());
         dto.setDeletedAt(submission.getDeletedAt());
         dto.setSubmittedAt(submission.getSubmittedAt());

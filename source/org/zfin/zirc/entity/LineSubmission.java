@@ -127,6 +127,14 @@ public class LineSubmission implements Serializable {
     @OrderBy("sortOrder")
     private Set<LineSubmissionPerson> persons = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "lineSubmission",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @OrderBy("feature")
+    private Set<LinkedFeature> linkedFeatures = new HashSet<>();
+
     /**
      * Convenience accessor for the dashboard. Returns the {@link Person} associated with
      * this submission whose role is "owner", or null if no such association exists.

@@ -8,6 +8,14 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
+import org.zfin.zirc.entity.LinkedFeature;
+import org.zfin.zirc.presentation.LinkedFeatureDTO;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Single entry point for mutating a line submission. Centralized so future
@@ -47,6 +55,53 @@ public class LineSubmissionService {
         String trimmed = (reasonsOther != null && !reasonsOther.isBlank()) ? reasonsOther.trim() : null;
         submission.setReasonsOther(trimmed);
         HibernateUtil.currentSession().merge(submission);
+        return submission;
+    }
+
+    /**
+     * Replace-all save for the linked-features section. Diffs the incoming
+     * list against the current collection (keyed on feature name) so we
+     * update existing rows in place, insert new ones, and remove the rest —
+     * avoiding the PK-violation hazard of clear() + add() with cascade
+     * orphan removal.
+     *
+     * <p>Empty / blank feature names are dropped; duplicate feature names
+     * are deduped (last write wins for the row's distance fields).
+     */
+    public LineSubmission saveLinkedFeatures(String zdbID, List<LinkedFeatureDTO> incoming, Person currentUser) {
+        LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        Map<String, LinkedFeature> existing = new HashMap<>();
+        for (LinkedFeature lf : submission.getLinkedFeatures()) {
+            existing.put(lf.getFeature(), lf);
+        }
+        Set<String> incomingFeatures = new HashSet<>();
+
+        if (incoming != null) {
+            for (LinkedFeatureDTO dto : incoming) {
+                if (dto.getFeature() == null || dto.getFeature().isBlank()) {
+                    continue;
+                }
+                String feature = dto.getFeature().trim();
+                if (!incomingFeatures.add(feature)) {
+                    continue;
+                }
+                LinkedFeature lf = existing.get(feature);
+                if (lf == null) {
+                    lf = new LinkedFeature();
+                    lf.setLineSubmission(submission);
+                    lf.setFeature(feature);
+                    submission.getLinkedFeatures().add(lf);
+                }
+                lf.setDistanceKnown(dto.getDistanceKnown());
+                lf.setDistanceCentimorgans(dto.getDistanceCentimorgans());
+                lf.setDistanceMegabases(dto.getDistanceMegabases());
+                String info = dto.getAdditionalInfo();
+                lf.setAdditionalInfo(info != null && !info.isBlank() ? info.trim() : null);
+            }
+        }
+
+        // Drop any existing rows that didn't appear in the incoming list.
+        submission.getLinkedFeatures().removeIf(lf -> !incomingFeatures.contains(lf.getFeature()));
         return submission;
     }
 

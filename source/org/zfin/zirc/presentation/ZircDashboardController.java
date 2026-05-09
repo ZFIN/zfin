@@ -142,6 +142,30 @@ public class ZircDashboardController {
     }
 
     /**
+     * Replace-all endpoint for the Linked Features section. Body is a JSON
+     * array of {@link LinkedFeatureDTO} rows; {@code zdbID} comes via query
+     * string so the React client uses the same create-on-first-save flow as
+     * the other save endpoints. Empty / blank feature names are dropped
+     * server-side.
+     */
+    @PostMapping(value = "/line-submission/save-linked-features",
+                 consumes = "application/json")
+    @ResponseBody
+    public LineSubmissionDTO saveLinkedFeatures(@RequestParam(value = "zdbID", required = false) String zdbID,
+                                                @RequestBody List<LinkedFeatureDTO> linkedFeatures) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            LineSubmission submission = lineSubmissionService.saveLinkedFeatures(zdbID, linkedFeatures, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return LineSubmissionDTO.from(submission);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
      * JSON autocomplete for the "add submitter" modal on the line-submission detail page.
      * Returns a list of {label, value, fullName} entries suitable for jQuery UI autocomplete:
      * "label" is shown in the dropdown ("Pich, Christian (ZDB-PERS-060413-1)"), "value" is
