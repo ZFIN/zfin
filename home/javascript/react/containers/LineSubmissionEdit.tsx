@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
+import {FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
 
 interface LinkedFeatureWire {
     feature: string;
@@ -7,6 +8,15 @@ interface LinkedFeatureWire {
     distanceCentimorgans: number | null;
     distanceMegabases: number | null;
     additionalInfo: string | null;
+}
+
+interface MutationSummary {
+    id: number;
+    sortOrder: number | null;
+    alleleDesignation: string | null;
+    mutagenesisProtocol: string | null;
+    mutationType: string | null;
+    mutationDiscoverer: string | null;
 }
 
 interface LineSubmissionDTO {
@@ -24,44 +34,39 @@ interface LineSubmissionDTO {
     reasons?: string[] | null;
     reasonsOther?: string | null;
     linkedFeatures?: LinkedFeatureWire[] | null;
+    mutations?: MutationSummary[] | null;
     isDraft?: boolean | null;
 }
 
 type ScalarField = Exclude<keyof LineSubmissionDTO,
-    'zdbID' | 'isDraft' | 'reasons' | 'reasonsOther' | 'linkedFeatures'>;
-type FieldType = 'text' | 'textarea' | 'bool';
+    'zdbID' | 'isDraft' | 'reasons' | 'reasonsOther'
+    | 'linkedFeatures' | 'mutations'>;
 
 interface LineSubmissionEditProps {
     /** Empty string for the /new flow — the first save creates the row. */
     submissionId: string;
 }
 
-interface FieldDef {
-    field: ScalarField;
-    label: string;
-    type: FieldType;
-}
-
-const OVERVIEW_FIELDS: FieldDef[] = [
+const OVERVIEW_FIELDS: FieldDef<ScalarField>[] = [
     {field: 'name',           label: 'Name',           type: 'text'},
     {field: 'abbreviation',   label: 'Abbreviation',   type: 'text'},
     {field: 'previousNames',  label: 'Previous Names', type: 'text'},
     {field: 'featuresLinked', label: 'Features Linked', type: 'bool'},
 ];
 
-const BACKGROUND_FIELDS: FieldDef[] = [
+const BACKGROUND_FIELDS: FieldDef<ScalarField>[] = [
     {field: 'maternalBackground',       label: 'Maternal',              type: 'text'},
     {field: 'paternalBackground',       label: 'Paternal',              type: 'text'},
     {field: 'backgroundChangeable',     label: 'Background Changeable', type: 'bool'},
     {field: 'backgroundChangeConcerns', label: 'Concerns',              type: 'textarea'},
 ];
 
-const ADDITIONAL_FIELDS: FieldDef[] = [
+const ADDITIONAL_FIELDS: FieldDef<ScalarField>[] = [
     {field: 'unreportedFeaturesDetails', label: 'Unreported Features Details', type: 'textarea'},
     {field: 'additionalInfo',            label: 'Additional Info',             type: 'textarea'},
 ];
 
-const ALL_FIELDS: FieldDef[] = [...OVERVIEW_FIELDS, ...BACKGROUND_FIELDS, ...ADDITIONAL_FIELDS];
+const ALL_FIELDS: FieldDef<ScalarField>[] = [...OVERVIEW_FIELDS, ...BACKGROUND_FIELDS, ...ADDITIONAL_FIELDS];
 
 const REASON_OPTIONS: Array<{value: string; label: string}> = [
     {value: 'frequently_requested',     label: 'Currently frequently requested'},
@@ -72,112 +77,6 @@ const REASON_OPTIONS: Array<{value: string; label: string}> = [
     {value: 'danger_of_losing',         label: 'Danger of losing line'},
     {value: 'lack_of_space_or_funding', label: 'Lack of space or funding to maintain line'},
 ];
-
-export function valueToInputString(v: string | boolean | null | undefined): string {
-    if (v === null || v === undefined) {
-        return '';
-    }
-    if (typeof v === 'boolean') {
-        return v ? 'true' : 'false';
-    }
-    return v;
-}
-
-interface FieldRowProps {
-    def: FieldDef;
-    value: string;
-    onChange: (next: string) => void;
-    onCommit: (next: string) => void;
-}
-
-const FieldRow = ({def, value, onChange, onCommit}: FieldRowProps) => {
-    const inputId = `ls-field-${def.field}`;
-    const labelId = `ls-label-${def.field}`;
-
-    function renderInput() {
-        if (def.type === 'textarea') {
-            return (
-                <textarea
-                    id={inputId}
-                    className='form-control'
-                    rows={3}
-                    value={value}
-                    onChange={e => onChange(e.target.value)}
-                    onBlur={() => onCommit(value)}
-                />
-            );
-        }
-        if (def.type === 'bool') {
-            const groupName = `field-${def.field}`;
-            // Two-state radio: Yes / No. Initial null shows nothing checked, but
-            // once the user picks a value there's no way to unset it (matches
-            // the YAML form spec — null is a "not yet answered" state, not a
-            // long-lived choice).
-            const options: Array<[string, string]> = [['true', 'Yes'], ['false', 'No']];
-            return (
-                <div role='radiogroup' aria-labelledby={labelId}>
-                    {options.map(([v, lbl]) => {
-                        const radioId = `${inputId}-${v}`;
-                        return (
-                            <div className='form-check form-check-inline' key={v}>
-                                <input
-                                    type='radio'
-                                    id={radioId}
-                                    className='form-check-input'
-                                    name={groupName}
-                                    value={v}
-                                    checked={value === v}
-                                    onChange={() => { onChange(v); onCommit(v); }}
-                                />
-                                <label className='form-check-label' htmlFor={radioId}>{lbl}</label>
-                            </div>
-                        );
-                    })}
-                </div>
-            );
-        }
-        return (
-            <input
-                id={inputId}
-                type='text'
-                className='form-control'
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                onBlur={() => onCommit(value)}
-            />
-        );
-    }
-
-    return (
-        <tr>
-            <th className='w-25' scope='row' id={labelId}>
-                {def.type === 'bool'
-                    ? def.label
-                    : <label htmlFor={inputId} className='mb-0'>{def.label}</label>}
-            </th>
-            <td>{renderInput()}</td>
-        </tr>
-    );
-};
-
-interface SectionProps {
-    id: string;
-    title: string;
-    children: React.ReactNode;
-}
-
-const Section = ({id, title, children}: SectionProps) => (
-    <section className='section' id={id} aria-labelledby={`${id}-heading`}>
-        <h2 id={`${id}-heading`} className='heading'>{title}</h2>
-        {children}
-    </section>
-);
-
-const FieldsTable = ({children}: {children: React.ReactNode}) => (
-    <table className='table table-borderless'>
-        <tbody>{children}</tbody>
-    </table>
-);
 
 interface ReasonsSectionProps {
     reasons: string[];
@@ -306,6 +205,80 @@ function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
         additionalInfo: r.additionalInfo.trim() || null,
     };
 }
+
+interface MutationsSectionProps {
+    submissionId: string;
+    mutations: MutationSummary[];
+    onRemove: (id: number, label: string) => void;
+}
+
+const MutationsSection = ({submissionId, mutations, onRemove}: MutationsSectionProps) => {
+    const addUrl = submissionId
+        ? `/action/zirc/line-submission/${encodeURIComponent(submissionId)}/mutation/new`
+        : null;
+    return (
+        <div>
+            {mutations.length === 0
+                ? <p className='text-muted'>No mutations recorded for this submission.</p>
+                : <table className='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Allele Designation</th>
+                            <th>Mutagenesis Protocol</th>
+                            <th>Mutation Type</th>
+                            <th>Discoverer</th>
+                            <th className='text-right'>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {mutations.map(m => {
+                            const label = m.alleleDesignation && m.alleleDesignation.trim()
+                                ? m.alleleDesignation
+                                : `#${m.sortOrder ?? '?'}`;
+                            return (
+                                <tr key={m.id}>
+                                    <td>{m.sortOrder ?? '—'}</td>
+                                    <td>{m.alleleDesignation ?? <span className='text-muted'>—</span>}</td>
+                                    <td>{m.mutagenesisProtocol ?? <span className='text-muted'>—</span>}</td>
+                                    <td>{m.mutationType ?? <span className='text-muted'>—</span>}</td>
+                                    <td>{m.mutationDiscoverer ?? <span className='text-muted'>—</span>}</td>
+                                    <td className='text-right'>
+                                        <a
+                                            className='btn btn-sm btn-outline-primary mr-2'
+                                            href={`/action/zirc/mutation/${m.id}/edit`}
+                                        >
+                                            Edit
+                                        </a>
+                                        <button
+                                            type='button'
+                                            className='btn btn-sm btn-outline-danger'
+                                            onClick={() => onRemove(m.id, label)}
+                                        >
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            }
+            {addUrl
+                ? <a href={addUrl} className='btn btn-sm btn-outline-secondary'>+ Add mutation</a>
+                : (
+                    <button
+                        type='button'
+                        className='btn btn-sm btn-outline-secondary'
+                        disabled
+                        title='Save a field on this submission first'
+                    >
+                        + Add mutation
+                    </button>
+                )}
+        </div>
+    );
+};
 
 interface LinkedFeaturesSectionProps {
     rows: LinkedFeatureRow[];
@@ -457,6 +430,7 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
     const [linkedFeatures, setLinkedFeaturesState] = useState<LinkedFeatureRow[]>([]);
     /** JSON of the wire-format linked features as they last appeared on the server. */
     const [committedLinkedFeaturesJSON, setCommittedLinkedFeaturesJSON] = useState<string>('[]');
+    const [mutations, setMutations] = useState<MutationSummary[]>([]);
     /**
      * Mirror of {@link linkedFeatures}. Read from this ref inside save logic so
      * synchronous change-then-commit handlers (e.g. the radio's onChange that
@@ -527,6 +501,7 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         setOtherChecked(loadedOther.trim().length > 0);
         setCommittedReasonsOther(loadedOther);
         applyLinkedFeaturesFromDTO(data.linkedFeatures ?? []);
+        setMutations(data.mutations ?? []);
     }
 
     function setLinkedFeatures(next: LinkedFeatureRow[]) {
@@ -738,6 +713,33 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         commitLinkedFeatures();
     }
 
+    async function handleRemoveMutation(mutationId: number, label: string) {
+        // eslint-disable-next-line no-alert
+        if (!window.confirm(`Remove mutation "${label}"? This cannot be undone.`)) {
+            return;
+        }
+        emit({status: 'saving', label: `Mutation ${label}`});
+        try {
+            await enqueueSave(async () => {
+                const resp = await fetch(`/action/zirc/mutation/${mutationId}/delete`, {
+                    method: 'POST',
+                });
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+                const data = await resp.json() as LineSubmissionDTO;
+                // The delete endpoint returns the parent submission DTO so we
+                // can refresh the mutations list (and any other server-derived
+                // state) without a separate GET.
+                setMutations(data.mutations ?? []);
+            });
+            emit({status: 'saved', label: `Mutation ${label}`});
+        } catch (e) {
+            emit({status: 'error', label: `Mutation ${label}`,
+                message: e instanceof Error ? e.message : 'Delete failed'});
+        }
+    }
+
     if (loadError) {
         return <div className='alert alert-danger'>Failed to load submission: {loadError}</div>;
     }
@@ -745,7 +747,7 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
         return <div className='text-muted'>Loading…</div>;
     }
 
-    const renderRow = (def: FieldDef) => (
+    const renderRow = (def: FieldDef<ScalarField>) => (
         <FieldRow
             key={def.field}
             def={def}
@@ -787,6 +789,13 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
                 onRemove={handleRemoveLinkedFeature}
                 onChange={handleChangeLinkedFeature}
                 onCommitRow={handleCommitLinkedFeatureRow}
+            />
+        </Section>
+        <Section id='mutations' title='Mutations'>
+            <MutationsSection
+                submissionId={zdbID}
+                mutations={mutations}
+                onRemove={handleRemoveMutation}
             />
         </Section>
         <Section id='background' title='Background'>

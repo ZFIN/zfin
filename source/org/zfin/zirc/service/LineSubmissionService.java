@@ -9,6 +9,7 @@ import org.zfin.profile.Person;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.LinkedFeature;
+import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.presentation.LinkedFeatureDTO;
 
 import java.util.HashMap;
@@ -103,6 +104,80 @@ public class LineSubmissionService {
         // Drop any existing rows that didn't appear in the incoming list.
         submission.getLinkedFeatures().removeIf(lf -> !incomingFeatures.contains(lf.getFeature()));
         return submission;
+    }
+
+    /**
+     * Append a new mutation to the given submission. Creates the parent
+     * submission too if {@code lsId} is null/blank — same flow as
+     * {@link #saveField}, just initiated from the Mutations section's "Add"
+     * button before the user has typed any scalar fields.
+     *
+     * @return the newly persisted mutation (with its IDENTITY-assigned id).
+     */
+    public Mutation addMutation(String lsId, Person currentUser) {
+        LineSubmission submission = loadOrCreate(lsId, currentUser);
+        Mutation m = new Mutation();
+        m.setLineSubmission(submission);
+        m.setSortOrder(nextMutationSortOrder(submission));
+        HibernateUtil.currentSession().persist(m);
+        submission.getMutations().add(m);
+        return m;
+    }
+
+    private int nextMutationSortOrder(LineSubmission submission) {
+        return submission.getMutations().stream()
+                .map(Mutation::getSortOrder)
+                .filter(java.util.Objects::nonNull)
+                .max(Integer::compareTo)
+                .orElse(0) + 1;
+    }
+
+    public void removeMutation(Long mutationId) {
+        Mutation m = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (m == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        // Detach from parent collection so orphanRemoval fires.
+        m.getLineSubmission().getMutations().remove(m);
+        HibernateUtil.currentSession().remove(m);
+    }
+
+    /**
+     * Per-field save for a mutation. Mirrors {@link #saveField} but on a
+     * mutation by primary-key id (no create-on-first-save here — mutations
+     * are created via {@link #addMutation}).
+     */
+    public Mutation saveMutationField(Long mutationId, String fieldName, String rawValue, Person currentUser) {
+        Mutation m = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (m == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
+        applyMutationField(m, fieldName, value);
+        HibernateUtil.currentSession().merge(m);
+        return m;
+    }
+
+    /** Package-private for unit testing. */
+    static void applyMutationField(Mutation m, String fieldName, String value) {
+        switch (fieldName) {
+            case "alleleDesignation":          m.setAlleleDesignation(value); break;
+            case "mutagenesisProtocol":        m.setMutagenesisProtocol(value); break;
+            case "molecularlyCharacterized":   m.setMolecularlyCharacterized(parseTriBool(value)); break;
+            case "mutationType":               m.setMutationType(value); break;
+            case "homozygousLethal":           m.setHomozygousLethal(parseTriBool(value)); break;
+            case "lethalityStageTypical":      m.setLethalityStageTypical(value); break;
+            case "lethalitySpecificTimepoint": m.setLethalitySpecificTimepoint(value); break;
+            case "lethalityWindowStart":       m.setLethalityWindowStart(value); break;
+            case "lethalityWindowEnd":         m.setLethalityWindowEnd(value); break;
+            case "lethalityAdditionalInfo":    m.setLethalityAdditionalInfo(value); break;
+            case "zfinRecordEstablished":      m.setZfinRecordEstablished(parseTriBool(value)); break;
+            case "cellGenomicFeature":         m.setCellGenomicFeature(value); break;
+            case "mutationDiscoverer":         m.setMutationDiscoverer(value); break;
+            case "mutationInstitution":        m.setMutationInstitution(value); break;
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown mutation field: " + fieldName);
+        }
     }
 
     private LineSubmission loadOrCreate(String zdbID, Person currentUser) {

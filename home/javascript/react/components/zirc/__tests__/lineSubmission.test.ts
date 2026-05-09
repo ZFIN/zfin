@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { valueToInputString } from '../../../containers/LineSubmissionEdit';
+import { valueToInputString } from '../FormPrimitives';
 
 describe('valueToInputString', () => {
     it('returns empty string for null', () => {

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LinkedFeature;
+import org.zfin.zirc.entity.Mutation;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class LineSubmissionDTO {
     private String[] reasons;
     private String reasonsOther;
     private List<LinkedFeatureDTO> linkedFeatures;
+    private List<MutationDTO> mutations;
     private Boolean isDraft;
     private Date deletedAt;
     private Date submittedAt;
@@ -57,6 +59,12 @@ public class LineSubmissionDTO {
             submission.getLinkedFeatures().stream()
                 .sorted(Comparator.comparing(LinkedFeature::getFeature))
                 .map(LinkedFeatureDTO::from)
+                .toList());
+        dto.setMutations(
+            submission.getMutations().stream()
+                .sorted(Comparator.comparing(Mutation::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(MutationDTO::from)
                 .toList());
         dto.setIsDraft(submission.getIsDraft());
         dto.setDeletedAt(submission.getDeletedAt());

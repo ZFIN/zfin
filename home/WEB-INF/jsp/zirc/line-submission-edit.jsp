@@ -3,10 +3,11 @@
 <c:set var="OVERVIEW"           value="Overview"/>
 <c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
 <c:set var="LINKED_FEATURES"    value="Linked Features"/>
+<c:set var="MUTATIONS"          value="Mutations"/>
 <c:set var="BACKGROUND"         value="Background"/>
 <c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, LINKED_FEATURES, BACKGROUND, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, LINKED_FEATURES, MUTATIONS, BACKGROUND, ADDITIONAL]}"/>
 
 <c:set var="isNewSubmission" value="${empty submission.zdbID}"/>
 <c:set var="entityLabel" value="${not empty submission.name

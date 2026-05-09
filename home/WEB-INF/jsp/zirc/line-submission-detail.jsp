@@ -280,6 +280,7 @@
                                 <th>Mutagenesis Protocol</th>
                                 <th>Mutation Type</th>
                                 <th>Discoverer</th>
+                                <th class="text-right">Edit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -309,6 +310,10 @@
                                             <c:when test="${not empty m.mutationDiscoverer}">${m.mutationDiscoverer}</c:when>
                                             <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td class="text-right">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="/action/zirc/mutation/${m.id}/edit">Edit</a>
                                     </td>
                                 </tr>
                             </c:forEach>

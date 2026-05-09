@@ -12,6 +12,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
+import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.service.LineSubmissionService;
 
 import java.util.ArrayList;
@@ -159,6 +160,98 @@ public class ZircDashboardController {
             LineSubmission submission = lineSubmissionService.saveLinkedFeatures(zdbID, linkedFeatures, currentUser);
             HibernateUtil.flushAndCommitCurrentSession();
             return LineSubmissionDTO.from(submission);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Mutations: editor sub-page + per-field save + add/remove.
+    // The parent line submission's edit page links here; mutations get their
+    // own URL because the per-mutation field set is large enough that
+    // expanding inline on the parent would be unwieldy.
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Create-and-redirect: persists a fresh empty mutation under {@code lsId}
+     * (creating the parent submission too if it doesn't exist yet, just like
+     * {@link #saveField}), then sends the user to the mutation editor.
+     */
+    @GetMapping("/line-submission/{lsId}/mutation/new")
+    public String newMutation(@PathVariable String lsId) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.addMutation(lsId, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return "redirect:/action/zirc/mutation/" + m.getId() + "/edit";
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    @GetMapping("/mutation/{mutationId}/edit")
+    public String editMutation(@PathVariable Long mutationId, Model model) {
+        Mutation mutation = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (mutation == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        model.addAttribute("mutation", mutation);
+        model.addAttribute("submission", mutation.getLineSubmission());
+        String label = (mutation.getAlleleDesignation() != null && !mutation.getAlleleDesignation().isBlank())
+                ? mutation.getAlleleDesignation()
+                : "Mutation #" + mutation.getSortOrder();
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Mutation: " + label);
+        return "zirc/mutation-edit";
+    }
+
+    @GetMapping("/mutation/{mutationId}.json")
+    @ResponseBody
+    public MutationDTO getMutationJson(@PathVariable Long mutationId) {
+        Mutation mutation = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (mutation == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        return MutationDTO.from(mutation);
+    }
+
+    @PostMapping("/mutation/save-field")
+    @ResponseBody
+    public MutationDTO saveMutationField(@RequestParam("mutationId") Long mutationId,
+                                         @RequestParam("field") String field,
+                                         @RequestParam(value = "value", required = false) String value) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.saveMutationField(mutationId, field, value, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
+     * Delete a mutation. Returns the updated parent submission DTO so the
+     * React form on the parent edit page can refresh its mutations list
+     * without a separate GET.
+     */
+    @PostMapping("/mutation/{mutationId}/delete")
+    @ResponseBody
+    public LineSubmissionDTO deleteMutation(@PathVariable Long mutationId) {
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+            if (m == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+            }
+            LineSubmission parent = m.getLineSubmission();
+            lineSubmissionService.removeMutation(mutationId);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return LineSubmissionDTO.from(parent);
         } catch (RuntimeException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
