@@ -258,6 +258,57 @@ public class ZircDashboardController {
         }
     }
 
+    @PostMapping(value = "/mutation/{mutationId}/save-lesions",
+                 consumes = "application/json")
+    @ResponseBody
+    public MutationDTO saveLesions(@PathVariable Long mutationId,
+                                   @RequestBody List<LesionDTO> lesions) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.saveLesions(mutationId, lesions, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    @PostMapping(value = "/mutation/{mutationId}/save-genotyping-assays",
+                 consumes = "application/json")
+    @ResponseBody
+    public MutationDTO saveGenotypingAssays(@PathVariable Long mutationId,
+                                            @RequestBody List<GenotypingAssayDTO> assays) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.saveGenotypingAssays(mutationId, assays, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    @PostMapping(value = "/mutation/{mutationId}/save-phenotypes",
+                 consumes = "application/json")
+    @ResponseBody
+    public MutationDTO savePhenotypes(@PathVariable Long mutationId,
+                                      @RequestBody List<PhenotypeDTO> phenotypes) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            Mutation m = lineSubmissionService.savePhenotypes(mutationId, phenotypes, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
     /**
      * Delete a mutation. Returns the updated parent submission DTO so the
      * React form on the parent edit page can refresh its mutations list

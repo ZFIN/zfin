@@ -8,12 +8,18 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.marker.Marker;
 import org.zfin.zirc.entity.Gene;
+import org.zfin.zirc.entity.GenotypingAssay;
+import org.zfin.zirc.entity.Lesion;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.LinkedFeature;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.entity.Phenotype;
 import org.zfin.zirc.presentation.GeneDTO;
+import org.zfin.zirc.presentation.GenotypingAssayDTO;
+import org.zfin.zirc.presentation.LesionDTO;
 import org.zfin.zirc.presentation.LinkedFeatureDTO;
+import org.zfin.zirc.presentation.PhenotypeDTO;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -191,6 +197,122 @@ public class LineSubmissionService {
         // Drop existing rows that didn't appear in the incoming list.
         mutation.getGenes().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
         return mutation;
+    }
+
+    /**
+     * Replace-all save for a mutation's per-row lesion list. Same diff
+     * shape as {@link #saveGenes} (insert by null-id, update existing in
+     * place, remove rows whose id no longer appears).
+     */
+    public Mutation saveLesions(Long mutationId, List<LesionDTO> incoming, Person currentUser) {
+        Mutation mutation = requireMutation(mutationId);
+        Map<Long, Lesion> existing = new HashMap<>();
+        for (Lesion l : mutation.getLesions()) {
+            existing.put(l.getId(), l);
+        }
+        Set<Long> incomingIds = new HashSet<>();
+        int order = 0;
+        if (incoming != null) {
+            for (LesionDTO dto : incoming) {
+                order += 1;
+                Lesion l = (dto.getId() != null) ? existing.get(dto.getId()) : null;
+                if (l == null) {
+                    l = new Lesion();
+                    l.setMutation(mutation);
+                    mutation.getLesions().add(l);
+                } else {
+                    incomingIds.add(l.getId());
+                }
+                l.setSortOrder(order);
+                l.setLesionType(blankToNull(dto.getLesionType()));
+                l.setIndexDeletionPos(dto.getIndexDeletionPos());
+                l.setIndexInsertionSize(dto.getIndexInsertionSize());
+                l.setDeletedBasePairs(blankToNull(dto.getDeletedBasePairs()));
+                l.setInsertedBasePairs(blankToNull(dto.getInsertedBasePairs()));
+                l.setWtGenomicSequence(blankToNull(dto.getWtGenomicSequence()));
+                l.setMutatedAminoAcids(blankToNull(dto.getMutatedAminoAcids()));
+                l.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
+            }
+        }
+        mutation.getLesions().removeIf(l -> l.getId() != null && !incomingIds.contains(l.getId()));
+        return mutation;
+    }
+
+    public Mutation saveGenotypingAssays(Long mutationId, List<GenotypingAssayDTO> incoming, Person currentUser) {
+        Mutation mutation = requireMutation(mutationId);
+        Map<Long, GenotypingAssay> existing = new HashMap<>();
+        for (GenotypingAssay g : mutation.getGenotypingAssays()) {
+            existing.put(g.getId(), g);
+        }
+        Set<Long> incomingIds = new HashSet<>();
+        int order = 0;
+        if (incoming != null) {
+            for (GenotypingAssayDTO dto : incoming) {
+                order += 1;
+                GenotypingAssay g = (dto.getId() != null) ? existing.get(dto.getId()) : null;
+                if (g == null) {
+                    g = new GenotypingAssay();
+                    g.setMutation(mutation);
+                    mutation.getGenotypingAssays().add(g);
+                } else {
+                    incomingIds.add(g.getId());
+                }
+                g.setSortOrder(order);
+                g.setAssayType(blankToNull(dto.getAssayType()));
+                g.setForwardPrimer(blankToNull(dto.getForwardPrimer()));
+                g.setReversePrimer(blankToNull(dto.getReversePrimer()));
+                g.setExpectedWtPcr(blankToNull(dto.getExpectedWtPcr()));
+                g.setExpectedMutPcr(blankToNull(dto.getExpectedMutPcr()));
+                g.setRestrictionEnzyme(blankToNull(dto.getRestrictionEnzyme()));
+                g.setEnzymeCleaves(blankToNull(dto.getEnzymeCleaves()));
+                g.setExpectedWtDigest(blankToNull(dto.getExpectedWtDigest()));
+                g.setExpectedMutDigest(blankToNull(dto.getExpectedMutDigest()));
+                g.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
+            }
+        }
+        mutation.getGenotypingAssays().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
+        return mutation;
+    }
+
+    public Mutation savePhenotypes(Long mutationId, List<PhenotypeDTO> incoming, Person currentUser) {
+        Mutation mutation = requireMutation(mutationId);
+        Map<Long, Phenotype> existing = new HashMap<>();
+        for (Phenotype p : mutation.getPhenotypes()) {
+            existing.put(p.getId(), p);
+        }
+        Set<Long> incomingIds = new HashSet<>();
+        int order = 0;
+        if (incoming != null) {
+            for (PhenotypeDTO dto : incoming) {
+                order += 1;
+                Phenotype p = (dto.getId() != null) ? existing.get(dto.getId()) : null;
+                if (p == null) {
+                    p = new Phenotype();
+                    p.setMutation(mutation);
+                    mutation.getPhenotypes().add(p);
+                } else {
+                    incomingIds.add(p.getId());
+                }
+                p.setSortOrder(order);
+                p.setDescription(blankToNull(dto.getDescription()));
+                p.setHoursPostFertilization(dto.getHoursPostFertilization());
+                p.setStage(blankToNull(dto.getStage()));
+                p.setZfinImagePermission(dto.getZfinImagePermission());
+                p.setNonMendelianPercentage(dto.getNonMendelianPercentage());
+                p.setSegregation(dto.getSegregation() != null ? dto.getSegregation() : new String[0]);
+                p.setType(dto.getType() != null ? dto.getType() : new String[0]);
+            }
+        }
+        mutation.getPhenotypes().removeIf(p -> p.getId() != null && !incomingIds.contains(p.getId()));
+        return mutation;
+    }
+
+    private Mutation requireMutation(Long mutationId) {
+        Mutation m = HibernateUtil.currentSession().get(Mutation.class, mutationId);
+        if (m == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
+        }
+        return m;
     }
 
     private Marker resolveMarker(String zdbId) {

@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.zfin.zirc.entity.Gene;
+import org.zfin.zirc.entity.GenotypingAssay;
+import org.zfin.zirc.entity.Lesion;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.entity.Phenotype;
 
 import java.util.Comparator;
 import java.util.List;
@@ -45,6 +48,9 @@ public class MutationDTO {
     private String mutationInstitution;
 
     private List<GeneDTO> genes;
+    private List<LesionDTO> lesions;
+    private List<GenotypingAssayDTO> genotypingAssays;
+    private List<PhenotypeDTO> phenotypes;
 
     public static MutationDTO from(Mutation m) {
         MutationDTO dto = new MutationDTO();
@@ -70,6 +76,24 @@ public class MutationDTO {
                 .sorted(Comparator.comparing(Gene::getSortOrder,
                         Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(GeneDTO::from)
+                .toList());
+        dto.setLesions(
+            m.getLesions().stream()
+                .sorted(Comparator.comparing(Lesion::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(LesionDTO::from)
+                .toList());
+        dto.setGenotypingAssays(
+            m.getGenotypingAssays().stream()
+                .sorted(Comparator.comparing(GenotypingAssay::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(GenotypingAssayDTO::from)
+                .toList());
+        dto.setPhenotypes(
+            m.getPhenotypes().stream()
+                .sorted(Comparator.comparing(Phenotype::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(PhenotypeDTO::from)
                 .toList());
         return dto;
     }

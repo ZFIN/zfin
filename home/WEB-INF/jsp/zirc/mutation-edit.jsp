@@ -2,9 +2,12 @@
 
 <c:set var="GENERAL"   value="General"/>
 <c:set var="GENES"     value="Genes"/>
+<c:set var="LESIONS"   value="Lesions"/>
+<c:set var="ASSAYS"    value="Genotyping Assays"/>
+<c:set var="PHENOS"    value="Phenotypes"/>
 <c:set var="LETHALITY" value="Lethality"/>
 
-<c:set var="sections" value="${[GENERAL, GENES, LETHALITY]}"/>
+<c:set var="sections" value="${[GENERAL, GENES, LESIONS, ASSAYS, PHENOS, LETHALITY]}"/>
 
 <c:choose>
     <c:when test="${not empty mutation.alleleDesignation}">
