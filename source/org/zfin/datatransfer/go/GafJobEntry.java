@@ -10,13 +10,30 @@ public class GafJobEntry {
     private String zdbID;
     private String entryString;
 
+    // Captured at construction time so downstream consumers (e.g. report builders)
+    // can render structured columns without re-parsing the toString() blob.
+    private String marker;
+    private String evidenceCode;
+    private String qualifierRelation;
+    private String source;
+    private String goTermName;
+    private String goTermID;
+    private String organizationCreatedBy;
+
     public GafJobEntry(String zdbID) {
         this.zdbID = zdbID;
     }
 
-    public GafJobEntry(MarkerGoTermEvidence markerGoTermEvidence) {
-        zdbID = markerGoTermEvidence.getZdbID();
-        entryString = markerGoTermEvidence.toString();
+    public GafJobEntry(MarkerGoTermEvidence m) {
+        this.zdbID       = m.getZdbID();
+        this.entryString = m.toString();
+        this.marker                = m.getMarker()            != null ? m.getMarker().getAbbreviation()       : null;
+        this.evidenceCode          = m.getEvidenceCode()      != null ? m.getEvidenceCode().getName()         : null;
+        this.qualifierRelation     = m.getQualifierRelation() != null ? m.getQualifierRelation().getTermName(): null;
+        this.source                = m.getSource()            != null ? m.getSource().getZdbID()              : null;
+        this.goTermName            = m.getGoTerm()            != null ? m.getGoTerm().getTermName()           : null;
+        this.goTermID              = m.getGoTerm()            != null ? m.getGoTerm().getOboID()              : null;
+        this.organizationCreatedBy = m.getOrganizationCreatedBy();
     }
 
     public String getZdbID() {
@@ -34,6 +51,14 @@ public class GafJobEntry {
     public void setEntryString(String entryString) {
         this.entryString = entryString;
     }
+
+    public String getMarker()                { return marker; }
+    public String getEvidenceCode()          { return evidenceCode; }
+    public String getQualifierRelation()     { return qualifierRelation; }
+    public String getSource()                { return source; }
+    public String getGoTermName()            { return goTermName; }
+    public String getGoTermID()              { return goTermID; }
+    public String getOrganizationCreatedBy() { return organizationCreatedBy; }
 
     @Override
     public boolean equals(Object o) {

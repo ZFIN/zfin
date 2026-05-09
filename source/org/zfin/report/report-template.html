@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Report</title>
+
+    <!-- Embedded minified Preact + htm bundle.
+         Source:  https://esm.sh/v131/htm@3.1.1/es2022/preact/standalone.js
+         Edit:    swap `export{A as b...}` for `return {b: A...}` so it works without modules.
+         Kept embedded on purpose — the report file is meant to be self-contained
+         (Jenkins HTML Publisher CSP blocks remote scripts) and we want zero npm/build deps. -->
+    <script> window.preactStandalone = (function () {var N,f,en,D,tn,B,_n,F={},rn=[],yn=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;function C(e,n){for(var t in n)e[t]=n[t];return e}function on(e){var n=e.parentNode;n&&n.removeChild(e)}function ln(e,n,t){var _,l,r,u={};for(r in n)r=="key"?_=n[r]:r=="ref"?l=n[r]:u[r]=n[r];if(arguments.length>2&&(u.children=arguments.length>3?N.call(arguments,2):t),typeof e=="function"&&e.defaultProps!=null)for(r in e.defaultProps)u[r]===void 0&&(u[r]=e.defaultProps[r]);return U(e,u,_,l,null)}function U(e,n,t,_,l){var r={type:e,props:n,key:t,ref:_,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,__h:null,constructor:void 0,__v:l??++en};return f.vnode!=null&&f.vnode(r),r}function W(e){return e.children}function A(e,n){this.props=e,this.context=n}function E(e,n){if(n==null)return e.__?E(e.__,e.__.__k.indexOf(e)+1):null;for(var t;n<e.__k.length;n++)if((t=e.__k[n])!=null&&t.__e!=null)return t.__e;return typeof e.type=="function"?E(e):null}function un(e){var n,t;if((e=e.__)!=null&&e.__c!=null){for(e.__e=e.__c.base=null,n=0;n<e.__k.length;n++)if((t=e.__k[n])!=null&&t.__e!=null){e.__e=e.__c.base=t.__e;break}return un(e)}}function R(e){(!e.__d&&(e.__d=!0)&&D.push(e)&&!L.__r++||B!==f.debounceRendering)&&((B=f.debounceRendering)||tn)(L)}function L(){for(var e;L.__r=D.length;)e=D.sort(function(n,t){return n.__v.__b-t.__v.__b}),D=[],e.some(function(n){var t,_,l,r,u,a;n.__d&&(u=(r=(t=n).__v).__e,(a=t.__P)&&(_=[],(l=C({},r)).__v=r.__v+1,V(a,r,l,t.__n,a.ownerSVGElement!==void 0,r.__h!=null?[u]:null,_,u??E(r),r.__h),an(_,r),r.__e!=u&&un(r)))})}function cn(e,n,t,_,l,r,u,a,s,h){var o,m,c,i,p,b,v,y=_&&_.__k||rn,k=y.length;for(t.__k=[],o=0;o<n.length;o++)if((i=t.__k[o]=(i=n[o])==null||typeof i=="boolean"?null:typeof i=="string"||typeof i=="number"||typeof i=="bigint"?U(null,i,null,null,i):Array.isArray(i)?U(W,{children:i},null,null,null):i.__b>0?U(i.type,i.props,i.key,null,i.__v):i)!=null){if(i.__=t,i.__b=t.__b+1,(c=y[o])===null||c&&i.key==c.key&&i.type===c.type)y[o]=void 0;else for(m=0;m<k;m++){if((c=y[m])&&i.key==c.key&&i.type===c.type){y[m]=void 0;break}c=null}V(e,i,c=c||F,l,r,u,a,s,h),p=i.__e,(m=i.ref)&&c.ref!=m&&(v||(v=[]),c.ref&&v.push(c.ref,null,i),v.push(m,i.__c||p,i)),p!=null?(b==null&&(b=p),typeof i.type=="function"&&i.__k!=null&&i.__k===c.__k?i.__d=s=sn(i,s,e):s=fn(e,i,c,y,p,s),h||t.type!=="option"?typeof t.type=="function"&&(t.__d=s):e.value=""):s&&c.__e==s&&s.parentNode!=e&&(s=E(c))}for(t.__e=b,o=k;o--;)y[o]!=null&&(typeof t.type=="function"&&y[o].__e!=null&&y[o].__e==t.__d&&(t.__d=E(_,o+1)),hn(y[o],y[o]));if(v)for(o=0;o<v.length;o++)pn(v[o],v[++o],v[++o])}function sn(e,n,t){var _,l;for(_=0;_<e.__k.length;_++)(l=e.__k[_])&&(l.__=e,n=typeof l.type=="function"?sn(l,n,t):fn(t,l,l,e.__k,l.__e,n));return n}function fn(e,n,t,_,l,r){var u,a,s;if(n.__d!==void 0)u=n.__d,n.__d=void 0;else if(t==null||l!=r||l.parentNode==null)n:if(r==null||r.parentNode!==e)e.appendChild(l),u=null;else{for(a=r,s=0;(a=a.nextSibling)&&s<_.length;s+=2)if(a==l)break n;e.insertBefore(l,r),u=r}return u!==void 0?u:l.nextSibling}function $(e,n,t){n[0]==="-"?e.setProperty(n,t):e[n]=t==null?"":typeof t!="number"||yn.test(n)?t:t+"px"}function T(e,n,t,_,l){var r;n:if(n==="style")if(typeof t=="string")e.style.cssText=t;else{if(typeof _=="string"&&(e.style.cssText=_=""),_)for(n in _)t&&n in t||$(e.style,n,"");if(t)for(n in t)_&&t[n]===_[n]||$(e.style,n,t[n])}else if(n[0]==="o"&&n[1]==="n")r=n!==(n=n.replace(/Capture$/,"")),n=n.toLowerCase()in e?n.toLowerCase().slice(2):n.slice(2),e.l||(e.l={}),e.l[n+r]=t,t?_||e.addEventListener(n,r?G:j,r):e.removeEventListener(n,r?G:j,r);else if(n!=="dangerouslySetInnerHTML"){if(l)n=n.replace(/xlink[H:h]/,"h").replace(/sName$/,"s");else if(n!=="href"&&n!=="list"&&n!=="form"&&n!=="tabIndex"&&n!=="download"&&n in e)try{e[n]=t??"";break n}catch{}typeof t=="function"||(t!=null&&(t!==!1||n[0]==="a"&&n[1]==="r")?e.setAttribute(n,t):e.removeAttribute(n))}}function j(e){this.l[e.type+!1](f.event?f.event(e):e)}function G(e){this.l[e.type+!0](f.event?f.event(e):e)}function V(e,n,t,_,l,r,u,a,s){var h,o,m,c,i,p,b,v,y,k,H,d=n.type;if(n.constructor!==void 0)return null;t.__h!=null&&(s=t.__h,a=n.__e=t.__e,n.__h=null,r=[a]),(h=f.__b)&&h(n);try{n:if(typeof d=="function"){if(v=n.props,y=(h=d.contextType)&&_[h.__c],k=h?y?y.props.value:h.__:_,t.__c?b=(o=n.__c=t.__c).__=o.__E:("prototype"in d&&d.prototype.render?n.__c=o=new d(v,k):(n.__c=o=new A(v,k),o.constructor=d,o.render=kn),y&&y.sub(o),o.props=v,o.state||(o.state={}),o.context=k,o.__n=_,m=o.__d=!0,o.__h=[]),o.__s==null&&(o.__s=o.state),d.getDerivedStateFromProps!=null&&(o.__s==o.state&&(o.__s=C({},o.__s)),C(o.__s,d.getDerivedStateFromProps(v,o.__s))),c=o.props,i=o.state,m)d.getDerivedStateFromProps==null&&o.componentWillMount!=null&&o.componentWillMount(),o.componentDidMount!=null&&o.__h.push(o.componentDidMount);else{if(d.getDerivedStateFromProps==null&&v!==c&&o.componentWillReceiveProps!=null&&o.componentWillReceiveProps(v,k),!o.__e&&o.shouldComponentUpdate!=null&&o.shouldComponentUpdate(v,o.__s,k)===!1||n.__v===t.__v){o.props=v,o.state=o.__s,n.__v!==t.__v&&(o.__d=!1),o.__v=n,n.__e=t.__e,n.__k=t.__k,n.__k.forEach(function(w){w&&(w.__=n)}),o.__h.length&&u.push(o);break n}o.componentWillUpdate!=null&&o.componentWillUpdate(v,o.__s,k),o.componentDidUpdate!=null&&o.__h.push(function(){o.componentDidUpdate(c,i,p)})}o.context=k,o.props=v,o.state=o.__s,(h=f.__r)&&h(n),o.__d=!1,o.__v=n,o.__P=e,h=o.render(o.props,o.state,o.context),o.state=o.__s,o.getChildContext!=null&&(_=C(C({},_),o.getChildContext())),m||o.getSnapshotBeforeUpdate==null||(p=o.getSnapshotBeforeUpdate(c,i)),H=h!=null&&h.type===W&&h.key==null?h.props.children:h,cn(e,Array.isArray(H)?H:[H],n,t,_,l,r,u,a,s),o.base=n.__e,n.__h=null,o.__h.length&&u.push(o),b&&(o.__E=o.__=null),o.__e=!1}else r==null&&n.__v===t.__v?(n.__k=t.__k,n.__e=t.__e):n.__e=gn(t.__e,n,t,_,l,r,u,s);(h=f.diffed)&&h(n)}catch(w){n.__v=null,(s||r!=null)&&(n.__e=a,n.__h=!!s,r[r.indexOf(a)]=null),f.__e(w,n,t)}}function an(e,n){f.__c&&f.__c(n,e),e.some(function(t){try{e=t.__h,t.__h=[],e.some(function(_){_.call(t)})}catch(_){f.__e(_,t.__v)}})}function gn(e,n,t,_,l,r,u,a){var s,h,o,m=t.props,c=n.props,i=n.type,p=0;if(i==="svg"&&(l=!0),r!=null){for(;p<r.length;p++)if((s=r[p])&&(s===e||(i?s.localName==i:s.nodeType==3))){e=s,r[p]=null;break}}if(e==null){if(i===null)return document.createTextNode(c);e=l?document.createElementNS("http://www.w3.org/2000/svg",i):document.createElement(i,c.is&&c),r=null,a=!1}if(i===null)m===c||a&&e.data===c||(e.data=c);else{if(r=r&&N.call(e.childNodes),h=(m=t.props||F).dangerouslySetInnerHTML,o=c.dangerouslySetInnerHTML,!a){if(r!=null)for(m={},p=0;p<e.attributes.length;p++)m[e.attributes[p].name]=e.attributes[p].value;(o||h)&&(o&&(h&&o.__html==h.__html||o.__html===e.innerHTML)||(e.innerHTML=o&&o.__html||""))}if(function(b,v,y,k,H){var d;for(d in y)d==="children"||d==="key"||d in v||T(b,d,null,y[d],k);for(d in v)H&&typeof v[d]!="function"||d==="children"||d==="key"||d==="value"||d==="checked"||y[d]===v[d]||T(b,d,v[d],y[d],k)}(e,c,m,l,a),o)n.__k=[];else if(p=n.props.children,cn(e,Array.isArray(p)?p:[p],n,t,_,l&&i!=="foreignObject",r,u,r?r[0]:t.__k&&E(t,0),a),r!=null)for(p=r.length;p--;)r[p]!=null&&on(r[p]);a||("value"in c&&(p=c.value)!==void 0&&(p!==e.value||i==="progress"&&!p)&&T(e,"value",p,m.value,!1),"checked"in c&&(p=c.checked)!==void 0&&p!==e.checked&&T(e,"checked",p,m.checked,!1))}return e}function pn(e,n,t){try{typeof e=="function"?e(n):e.current=n}catch(_){f.__e(_,t)}}function hn(e,n,t){var _,l;if(f.unmount&&f.unmount(e),(_=e.ref)&&(_.current&&_.current!==e.__e||pn(_,null,n)),(_=e.__c)!=null){if(_.componentWillUnmount)try{_.componentWillUnmount()}catch(r){f.__e(r,n)}_.base=_.__P=null}if(_=e.__k)for(l=0;l<_.length;l++)_[l]&&hn(_[l],n,typeof e.type!="function");t||e.__e==null||on(e.__e),e.__e=e.__d=void 0}function kn(e,n,t){return this.constructor(e,t)}function En(e,n,t){var _,l,r;f.__&&f.__(e,n),l=(_=typeof t=="function")?null:t&&t.__k||n.__k,r=[],V(n,e=(!_&&t||n).__k=ln(W,null,[e]),l||F,F,n.ownerSVGElement!==void 0,!_&&t?[t]:l?null:n.firstChild?N.call(n.childNodes):null,r,!_&&t?t:l?l.__e:n.firstChild,_),an(r,e)}function Sn(e,n){var t={__c:n="__cC"+_n++,__:e,Consumer:function(_,l){return _.children(l)},Provider:function(_){var l,r;return this.getChildContext||(l=[],(r={})[n]=this,this.getChildContext=function(){return r},this.shouldComponentUpdate=function(u){this.props.value!==u.value&&l.some(R)},this.sub=function(u){l.push(u);var a=u.componentWillUnmount;u.componentWillUnmount=function(){l.splice(l.indexOf(u),1),a&&a.call(u)}}),_.children}};return t.Provider.__=t.Consumer.contextType=t}N=rn.slice,f={__e:function(e,n){for(var t,_,l;n=n.__;)if((t=n.__c)&&!t.__)try{if((_=t.constructor)&&_.getDerivedStateFromError!=null&&(t.setState(_.getDerivedStateFromError(e)),l=t.__d),t.componentDidCatch!=null&&(t.componentDidCatch(e),l=t.__d),l)return t.__E=t}catch(r){e=r}throw e}},en=0,A.prototype.setState=function(e,n){var t;t=this.__s!=null&&this.__s!==this.state?this.__s:this.__s=C({},this.state),typeof e=="function"&&(e=e(C({},t),this.props)),e&&C(t,e),e!=null&&this.__v&&(n&&this.__h.push(n),R(this))},A.prototype.forceUpdate=function(e){this.__v&&(this.__e=!0,e&&this.__h.push(e),R(this))},A.prototype.render=W,D=[],tn=typeof Promise=="function"?Promise.prototype.then.bind(Promise.resolve()):setTimeout,L.__r=0,_n=0;var x,g,z,S=0,I=[],J=f.__b,K=f.__r,Q=f.diffed,X=f.__c,Y=f.unmount;function P(e,n){f.__h&&f.__h(g,e,S||n),S=0;var t=g.__H||(g.__H={__:[],__h:[]});return e>=t.__.length&&t.__.push({}),t.__[e]}function bn(e){return S=1,Cn(vn,e)}function Cn(e,n,t){var _=P(x++,2);return _.t=e,_.__c||(_.__=[t?t(n):vn(void 0,n),function(l){var r=_.t(_.__[0],l);_.__[0]!==r&&(_.__=[r,_.__[1]],_.__c.setState({}))}],_.__c=g),_.__}function Pn(e,n){var t=P(x++,3);!f.__s&&q(t.__H,n)&&(t.__=e,t.__H=n,g.__H.__h.push(t))}function xn(e,n){var t=P(x++,4);!f.__s&&q(t.__H,n)&&(t.__=e,t.__H=n,g.__h.push(t))}function Dn(e){return S=5,dn(function(){return{current:e}},[])}function wn(e,n,t){S=6,xn(function(){typeof e=="function"?e(n()):e&&(e.current=n())},t==null?t:t.concat(e))}function dn(e,n){var t=P(x++,7);return q(t.__H,n)&&(t.__=e(),t.__H=n,t.__h=e),t.__}function Tn(e,n){return S=8,dn(function(){return e},n)}function Un(e){var n=g.context[e.__c],t=P(x++,9);return t.c=e,n?(t.__==null&&(t.__=!0,n.sub(g)),n.props.value):e.__}function An(e,n){f.useDebugValue&&f.useDebugValue(n?n(e):e)}function Mn(e){var n=P(x++,10),t=bn();return n.__=e,g.componentDidCatch||(g.componentDidCatch=function(_){n.__&&n.__(_),t[1](_)}),[t[0],function(){t[1](void 0)}]}function Hn(){I.forEach(function(e){if(e.__P)try{e.__H.__h.forEach(M),e.__H.__h.forEach(O),e.__H.__h=[]}catch(n){e.__H.__h=[],f.__e(n,e.__v)}}),I=[]}f.__b=function(e){g=null,J&&J(e)},f.__r=function(e){K&&K(e),x=0;var n=(g=e.__c).__H;n&&(n.__h.forEach(M),n.__h.forEach(O),n.__h=[])},f.diffed=function(e){Q&&Q(e);var n=e.__c;n&&n.__H&&n.__H.__h.length&&(I.push(n)!==1&&z===f.requestAnimationFrame||((z=f.requestAnimationFrame)||function(t){var _,l=function(){clearTimeout(r),Z&&cancelAnimationFrame(_),setTimeout(t)},r=setTimeout(l,100);Z&&(_=requestAnimationFrame(l))})(Hn)),g=void 0},f.__c=function(e,n){n.some(function(t){try{t.__h.forEach(M),t.__h=t.__h.filter(function(_){return!_.__||O(_)})}catch(_){n.some(function(l){l.__h&&(l.__h=[])}),n=[],f.__e(_,t.__v)}}),X&&X(e,n)},f.unmount=function(e){Y&&Y(e);var n=e.__c;if(n&&n.__H)try{n.__H.__.forEach(M)}catch(t){f.__e(t,n.__v)}};var Z=typeof requestAnimationFrame=="function";function M(e){var n=g;typeof e.__c=="function"&&e.__c(),g=n}function O(e){var n=g;e.__c=e.__(),g=n}function q(e,n){return!e||e.length!==n.length||n.some(function(t,_){return t!==e[_]})}function vn(e,n){return typeof n=="function"?n(e):n}var mn=function(e,n,t,_){var l;n[0]=0;for(var r=1;r<n.length;r++){var u=n[r++],a=n[r]?(n[0]|=u?1:2,t[n[r++]]):n[++r];u===3?_[0]=a:u===4?_[1]=Object.assign(_[1]||{},a):u===5?(_[1]=_[1]||{})[n[++r]]=a:u===6?_[1][n[++r]]+=a+"":u?(l=e.apply(a,mn(e,a,t,["",null])),_.push(l),a[0]?n[0]|=2:(n[r-2]=0,n[r]=l)):_.push(a)}return _},nn=new Map,Fn=function(e){var n=nn.get(this);return n||(n=new Map,nn.set(this,n)),(n=mn(this,n.get(e)||(n.set(e,n=function(t){for(var _,l,r=1,u="",a="",s=[0],h=function(c){r===1&&(c||(u=u.replace(/^\s*\n\s*|\s*\n\s*$/g,"")))?s.push(0,c,u):r===3&&(c||u)?(s.push(3,c,u),r=2):r===2&&u==="..."&&c?s.push(4,c,0):r===2&&u&&!c?s.push(5,0,!0,u):r>=5&&((u||!c&&r===5)&&(s.push(r,0,u,l),r=6),c&&(s.push(r,c,0,l),r=6)),u=""},o=0;o<t.length;o++){o&&(r===1&&h(),h(o));for(var m=0;m<t[o].length;m++)_=t[o][m],r===1?_==="<"?(h(),s=[s],r=3):u+=_:r===4?u==="--"&&_===">"?(r=1,u=""):u=_+u[0]:a?_===a?a="":u+=_:_==='"'||_==="'"?a=_:_===">"?(h(),r=1):r&&(_==="="?(r=5,l=u,u=""):_==="/"&&(r<5||t[o][m+1]===">")?(h(),r===3&&(s=s[0]),r=s,(s=s[0]).push(2,0,r),r=0):_===" "||_==="	"||_===` `||_==="\r"?(h(),r=2):u+=_),r===3&&u==="!--"&&(r=4,s=s[0])}return h(),s}(e)),n),arguments,[])).length>1?n:n[0]}.bind(ln);return{Component: A, createContext: Sn, h: ln, html: Fn, render: En, useCallback: Tn, useContext: Un, useDebugValue: An, useEffect: Pn, useErrorBoundary: Mn, useImperativeHandle: wn, useLayoutEffect: xn, useMemo: dn, useReducer: Cn, useRef: Dn, useState: bn};})();</script>
+
+    <script>
+        //PLACEHOLDER_START
+        window.REPORT_DATA = JSON_GOES_HERE;
+        //PLACEHOLDER_END
+    </script>
+
+    <style>
+        html, body {
+            font: 14px/1.4 'Helvetica Neue', arial, sans-serif;
+            color: #333;
+            margin: 0;
+            background-color: #c9e0e0;
+        }
+        h1, h2, h3, h4 { color: #234; }
+        a { color: #035361; }
+
+        #header {
+            background: #fff;
+            padding: 18px 20px 14px;
+            border-bottom: 5px solid #c9e0e0;
+        }
+        #header h1 { margin: 0; font-size: 26px; text-align: center; }
+        #header .subtitle { color: #666; text-align: center; margin-top: 4px; }
+
+        #breadcrumb {
+            background: #c9e0e0;
+            padding: 8px 20px;
+        }
+        #breadcrumb ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        #breadcrumb li { display: flex; align-items: center; }
+        #breadcrumb li::before {
+            content: "\00BB";
+            color: #888;
+            padding: 0 8px;
+        }
+        #breadcrumb li:first-child::before { content: ""; padding: 0; }
+        .breadcrumb-button {
+            text-decoration: none;
+            background: #f7fbfb;
+            color: #345;
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid #99bcbc;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .breadcrumb-button:hover { background: #fff; }
+        .breadcrumb-current {
+            font-weight: 600;
+            padding: 4px 12px;
+            color: #234;
+        }
+
+        #content {
+            display: flex;
+            background: #fff;
+            min-height: 500px;
+        }
+        #left-nav {
+            width: 290px;
+            padding: 15px;
+            border-right: 5px solid #c9e0e0;
+            background: #fafdfd;
+            overflow-x: hidden;
+        }
+        #left-nav h3 { margin: 0 0 10px; }
+        #right-content {
+            flex: 1;
+            padding: 18px 30px 30px;
+            min-width: 0;
+        }
+        #footer {
+            background: #c9e0e0;
+            padding: 8px 20px;
+            color: #466;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .tree-row {
+            padding: 3px 4px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .tree-row:hover { background: #eef4f4; }
+        .tree-row.selected {
+            background: #d4e9e9;
+            font-weight: 600;
+        }
+        .tree-row a {
+            text-decoration: none;
+            color: #234;
+            flex: 1;
+            padding: 1px 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tree-toggle {
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            color: #888;
+            font-size: 10px;
+        }
+        .cat-icon { margin-right: 4px; }
+        .tree-row .count { color: #888; font-weight: normal; font-size: 11px; }
+
+        .node-view h2 { margin: 0 0 8px; }
+        .node-view .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 0 12px;
+            min-height: 28px;
+        }
+        .node-view .nav-buttons button {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            width: 32px;
+            height: 28px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            color: #345;
+        }
+        .node-view .nav-buttons button:hover { background: #e0e0e0; }
+        .node-view .nav-buttons .spacer { flex: 1; }
+
+        .category-description {
+            background: #f0f6f6;
+            padding: 8px 12px;
+            border-left: 3px solid #4c8f98;
+            margin: 0 0 14px;
+            color: #345;
+        }
+        .body { margin: 12px 0; line-height: 1.5; }
+        .body[data-format="text"] { white-space: pre-wrap; }
+        .tags { margin: 4px 0 12px; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            border: 1px solid rgba(0,0,0,.15);
+            margin-right: 4px;
+            border-radius: 3px;
+            background: #aeaeff;
+        }
+
+        .fields-table {
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .fields-table th, .fields-table td {
+            text-align: left;
+            padding: 5px 12px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        .fields-table th {
+            background: #f0f6f6;
+            font-weight: 600;
+            min-width: 140px;
+            color: #345;
+        }
+
+        .report-table { margin: 18px 0; }
+        .report-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 0 0 4px;
+            min-height: 24px;
+        }
+        .report-table-header h4 { margin: 0; }
+        .table-description { color: #666; font-size: 13px; margin: 0 0 6px; }
+        .csv-download-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 3px;
+            color: #678;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .csv-download-btn:hover { background: #eef4f4; color: #035361; }
+        .csv-download-btn svg { display: block; }
+        .table-search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 4px 0 8px;
+        }
+        .filter-info { color: #678; font-size: 12px; }
+
+        .data-table {
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+            /* Size to content — small tables shouldn't stretch the full pane,
+               making it harder to trace a row across mostly-empty space. */
+        }
+        .data-table th, .data-table td {
+            text-align: left;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        .data-table th { background: #c9e0e0; }
+        .data-table tr:nth-child(even) { background: #f6fafa; }
+        /* The children-list is the main navigation surface for a structural
+           node; keep it full width so titles + columns line up across siblings. */
+        .children-list .data-table { width: 100%; }
+
+        .children-list {
+            margin-top: 24px;
+            padding-top: 14px;
+            border-top: 2px solid #c9e0e0;
+        }
+        .children-list h3 { margin: 0 0 8px; }
+        .search {
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 280px;
+        }
+
+        .blob {
+            background: #fafafa;
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .edges-section ul, .links-section ul { margin-top: 4px; padding-left: 20px; }
+        .edge-type {
+            font-style: italic;
+            color: #678;
+            font-size: 12px;
+            margin-right: 4px;
+        }
+
+        .error {
+            padding: 20px;
+            background: #fee;
+            border-left: 5px solid #c33;
+            margin: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+(function () {
+    const { html, render, useState, useMemo, useEffect } = window.preactStandalone;
+
+    function indexNodes(root) {
+        const byId = new Map();
+        const parentOf = new Map();
+        (function walk(node, parent) {
+            if (!node || !node.id) return;
+            byId.set(node.id, node);
+            if (parent) parentOf.set(node.id, parent.id);
+            (node.children || []).forEach(c => walk(c, node));
+        })(root, null);
+        return { byId, parentOf };
+    }
+
+    function indexEdges(edges) {
+        const outgoing = new Map();
+        const incoming = new Map();
+        for (const e of (edges || [])) {
+            if (!outgoing.has(e.from)) outgoing.set(e.from, []);
+            outgoing.get(e.from).push(e);
+            if (!incoming.has(e.to)) incoming.set(e.to, []);
+            incoming.get(e.to).push(e);
+        }
+        return { outgoing, incoming };
+    }
+
+    function pathFromRoot(parentOf, targetId) {
+        const path = [];
+        let cur = targetId;
+        // Bound the walk so a cyclic parent map can't lock the UI.
+        for (let i = 0; cur && i < 1000; i++) {
+            path.unshift(cur);
+            cur = parentOf.get(cur);
+        }
+        return path;
+    }
+
+    // Use the node's explicit count if set; otherwise sum the explicit counts
+    // of descendants. Returns null if no count info is available, so the renderer
+    // can suppress the parenthetical entirely.
+    function displayCount(node) {
+        if (!node) return null;
+        if (node.count != null) return node.count;
+        let sum = 0, anySet = false;
+        for (const c of (node.children || [])) {
+            const cc = displayCount(c);
+            if (cc != null) { sum += cc; anySet = true; }
+        }
+        return anySet ? sum : null;
+    }
+
+    // A node belongs in the tree if it has children, tables, or an explicit
+    // count — i.e. it's a meaningful drill-down target. Body alone isn't enough
+    // (a body is a leaf-detail kind of thing); a 20k-leaf action tree would
+    // otherwise blow up the sidebar. Producers that want a body-only node
+    // visible in the tree can set count=N to opt in.
+    function isStructural(node) {
+        return (node.children && node.children.length > 0)
+            || (node.tables   && node.tables.length   > 0)
+            || node.count != null;
+    }
+
+    function sortByCategory(children, categoryDefs) {
+        if (!categoryDefs) return children;
+        return children.slice().sort((a, b) => {
+            const ao = (a.categoryRef && categoryDefs[a.categoryRef] && categoryDefs[a.categoryRef].order) || 999;
+            const bo = (b.categoryRef && categoryDefs[b.categoryRef] && categoryDefs[b.categoryRef].order) || 999;
+            return ao - bo;
+        });
+    }
+
+    function formatField(value, fieldDef) {
+        if (value === null || value === undefined || value === '') return '';
+        const type = (fieldDef && fieldDef.type) || 'text';
+        switch (type) {
+            case 'link': {
+                const tpl = (fieldDef && fieldDef.hrefTemplate) || '#';
+                const href = tpl.replace('{value}', encodeURIComponent(String(value)));
+                return html`<a href=${href} target="_blank" rel="noopener">${value}</a>`;
+            }
+            case 'date':
+                return new Date(value).toLocaleString();
+            case 'number':
+                return Number(value).toLocaleString();
+            case 'boolean':
+                return value ? '✓' : '✗';
+            case 'html':
+                return html`<span dangerouslySetInnerHTML=${{ __html: String(value) }}></span>`;
+            default:
+                return String(value);
+        }
+    }
+
+    function csvEscape(v) {
+        const s = (v == null) ? '' : String(v);
+        // Defuse CSV formula injection: values starting with =, +, -, @, tab or CR
+        // get interpreted as formulas by Excel/Sheets. Prepend a single quote so
+        // the spreadsheet renders them as literal text.
+        const needsFormulaGuard = /^[=+\-@\t\r]/.test(s);
+        const guarded = needsFormulaGuard ? "'" + s : s;
+        return /[",\n]/.test(guarded) ? '"' + guarded.replace(/"/g, '""') + '"' : guarded;
+    }
+
+    function downloadCsv(columns, rows, filename) {
+        const lines = [columns.map(c => csvEscape(c.title)).join(',')];
+        for (const row of rows) {
+            lines.push(columns.map(c => csvEscape(row[c.key])).join(','));
+        }
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename || 'table.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    const downloadIcon = html`
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+    `;
+
+    function Body({ body }) {
+        if (!body || !body.content) return null;
+        const format = body.format || 'text';
+        if (format === 'html') {
+            return html`<div className="body" data-format="html"
+                            dangerouslySetInnerHTML=${{ __html: body.content }}></div>`;
+        }
+        return html`<div className="body" data-format="text">${body.content}</div>`;
+    }
+
+    function Tag({ name, def }) {
+        const color = (def && def.color) || '#aeaeff';
+        const label = (def && def.label) || name;
+        const title = (def && def.description) || '';
+        return html`<span className="tag" style=${{ backgroundColor: color }} title=${title}>${label}</span>`;
+    }
+
+    const TABLE_SEARCH_THRESHOLD = 10;
+
+    function ReportTable({ table, definitions }) {
+        const [search, setSearch] = useState('');
+
+        let columns = table.columns;
+        let description = table.description;
+        const schemaRef = table.schemaRef;
+        const schema = schemaRef && definitions && definitions.tableSchemas && definitions.tableSchemas[schemaRef];
+        if (schema) {
+            columns = columns || schema.columns;
+            description = description || schema.description;
+        }
+        if (!columns || !table.rows || table.rows.length === 0) return null;
+
+        const filename = ((table.title || description || 'table')
+            .replace(/[^a-z0-9]+/gi, '_')
+            .toLowerCase()) + '.csv';
+
+        const heading = table.title || description || null;
+        const showDescription = description && description !== heading;
+        const fieldDefs = (definitions && definitions.fields) || {};
+
+        const q = search.trim().toLowerCase();
+        const filteredRows = q
+            ? table.rows.filter(row => columns.some(col => {
+                const v = row[col.key];
+                return v != null && String(v).toLowerCase().includes(q);
+            }))
+            : table.rows;
+        const showSearch = table.rows.length > TABLE_SEARCH_THRESHOLD;
+
+        return html`
+            <div className="report-table">
+                <div className="report-table-header">
+                    ${heading ? html`<h4>${heading}</h4>` : html`<span></span>`}
+                    <button className="csv-download-btn" title="Download as CSV"
+                            onClick=${() => downloadCsv(columns, table.rows, filename)}>${downloadIcon}</button>
+                </div>
+                ${showDescription && html`<p className="table-description">${description}</p>`}
+                ${showSearch && html`
+                    <div className="table-search-row">
+                        <input type="text" className="search" placeholder="Filter rows..."
+                               onInput=${(e) => setSearch(e.target.value)} />
+                        ${q && html`<span className="filter-info">${filteredRows.length.toLocaleString()} of ${table.rows.length.toLocaleString()}</span>`}
+                    </div>
+                `}
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            ${columns.map(col => html`<th>${col.title}</th>`)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredRows.map((row, idx) => html`
+                            <tr key=${idx}>
+                                ${columns.map(col => html`
+                                    <td>${formatField(row[col.key], col.fieldRef ? fieldDefs[col.fieldRef] : null)}</td>
+                                `)}
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function FieldList({ fields, definitions }) {
+        if (!fields) return null;
+        const keys = Object.keys(fields);
+        if (keys.length === 0) return null;
+        const fieldDefs = (definitions && definitions.fields) || {};
+        return html`
+            <table className="fields-table">
+                <tbody>
+                    ${keys.map(key => {
+                        const def = fieldDefs[key] || {};
+                        return html`
+                            <tr key=${key}>
+                                <th>${def.label || key}</th>
+                                <td>${formatField(fields[key], def)}</td>
+                            </tr>
+                        `;
+                    })}
+                </tbody>
+            </table>
+        `;
+    }
+
+    function TreeNode({ node, selectedId, onSelect, definitions, depth, pathSet }) {
+        const onPath = pathSet.has(node.id);
+        const [userOpen, setUserOpen] = useState(null);
+        useEffect(() => { if (onPath) setUserOpen(true); }, [onPath]);
+
+        const open = userOpen !== null ? userOpen : (depth === 0 || onPath);
+        const isSelected = node.id === selectedId;
+        const allChildren = sortByCategory(node.children || [],
+            definitions && definitions.categories);
+        const children = allChildren.filter(isStructural);
+        const hasChildren = children.length > 0;
+        const cat = node.categoryRef && definitions && definitions.categories
+            && definitions.categories[node.categoryRef];
+        const count = displayCount(node);
+
+        return html`
+            <div className="tree-node">
+                <div className=${'tree-row' + (isSelected ? ' selected' : '')} style=${{ paddingLeft: (depth * 12) + 'px' }}>
+                    ${hasChildren
+                        ? html`<span className="tree-toggle"
+                                onClick=${() => setUserOpen(!open)}>${open ? '▾' : '▸'}</span>`
+                        : html`<span className="tree-toggle"> </span>`}
+                    <a href="#" onClick=${(e) => { e.preventDefault(); onSelect(node.id); }}>
+                        ${cat && cat.icon && html`<span className="cat-icon">${cat.icon}</span>`}
+                        ${node.title || node.id}
+                        ${count != null && html` <span className="count">(${count.toLocaleString()})</span>`}
+                    </a>
+                </div>
+                ${open && hasChildren && html`
+                    <div className="tree-children">
+                        ${children.map(child => html`
+                            <${TreeNode} key=${child.id} node=${child} selectedId=${selectedId} onSelect=${onSelect} definitions=${definitions} depth=${depth + 1} pathSet=${pathSet} />
+                        `)}
+                    </div>
+                `}
+            </div>
+        `;
+    }
+
+    function ChildrenList({ node, definitions, onSelect }) {
+        const [search, setSearch] = useState('');
+        const children = sortByCategory(node.children || [],
+            definitions && definitions.categories);
+        if (children.length === 0) return null;
+
+        // Only show field columns when every child is a leaf — otherwise we're
+        // looking at a category-of-categories view (e.g. type → subType) where
+        // some children may carry fields (single-action collapse) and others
+        // don't (multi-action structural), giving a column union that's mostly
+        // empty. At those intermediate levels, just show title + items count.
+        const childrenAreLeaves = children.every(c => !c.children || c.children.length === 0);
+        const fieldKeys = [];
+        if (childrenAreLeaves) {
+            const seenFields = new Set();
+            for (const c of children) {
+                if (!c.fields) continue;
+                for (const k of Object.keys(c.fields)) {
+                    if (!seenFields.has(k)) { seenFields.add(k); fieldKeys.push(k); }
+                }
+            }
+        }
+        const anyTags = childrenAreLeaves && children.some(c => (c.tags || []).length > 0);
+        const anyChildCounts = children.some(c => displayCount(c) != null);
+
+        const q = search.toLowerCase();
+        const filtered = q ? children.filter(c => nodeText(c).toLowerCase().includes(q)) : children;
+
+        const fieldDefs = (definitions && definitions.fields) || {};
+        const tagDefs = (definitions && definitions.tags) || {};
+        const catDefs = (definitions && definitions.categories) || {};
+
+        return html`
+            <div className="children-list">
+                <h3>Items (${filtered.length.toLocaleString()})</h3>
+                <input type="text" className="search" placeholder="Search..."
+                       onInput=${(e) => setSearch(e.target.value)} />
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            ${fieldKeys.map(k => {
+                                const def = fieldDefs[k] || {};
+                                return html`<th key=${k}>${def.label || k}</th>`;
+                            })}
+                            ${anyTags && html`<th>Tags</th>`}
+                            ${anyChildCounts && html`<th>Items</th>`}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(child => {
+                            const cat = child.categoryRef && catDefs[child.categoryRef];
+                            const cnt = displayCount(child);
+                            return html`
+                                <tr key=${child.id}>
+                                    <td>
+                                        ${cat && cat.icon && html`<span className="cat-icon">${cat.icon}</span>`}
+                                        <a href="#" onClick=${(e) => { e.preventDefault(); onSelect(child.id); }}>
+                                            ${child.title || child.id}
+                                        </a>
+                                    </td>
+                                    ${fieldKeys.map(k => {
+                                        const def = fieldDefs[k] || {};
+                                        const v = child.fields ? child.fields[k] : '';
+                                        return html`<td key=${k}>${formatField(v, def)}</td>`;
+                                    })}
+                                    ${anyTags && html`<td>
+                                        ${(child.tags || []).map(t => html`<${Tag} key=${t} name=${t} def=${tagDefs[t]} />`)}
+                                    </td>`}
+                                    ${anyChildCounts && html`<td>${cnt != null ? cnt.toLocaleString() : ''}</td>`}
+                                </tr>
+                            `;
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function nodeText(node) {
+        const parts = [node.title || '', node.id || ''];
+        if (node.fields) parts.push(...Object.values(node.fields).map(v => v == null ? '' : String(v)));
+        if (node.tags) parts.push(...node.tags);
+        return parts.join(' ');
+    }
+
+    function NodeView({ node, data, nodeIndex, edgesIndex, onSelect }) {
+        if (!node) return html`<div className="error"><h3>Node not found</h3></div>`;
+        const definitions = data.definitions || {};
+        const blobs = data.blobs || {};
+
+        const cat = node.categoryRef && definitions.categories && definitions.categories[node.categoryRef];
+
+        const parentId = nodeIndex.parentOf.get(node.id);
+        const parent = parentId ? nodeIndex.byId.get(parentId) : null;
+        const siblings = parent ? sortByCategory(parent.children || [], definitions.categories) : [];
+        const myIdx = siblings.findIndex(c => c.id === node.id);
+        const prev = myIdx > 0 ? siblings[myIdx - 1] : null;
+        const next = (myIdx >= 0 && myIdx < siblings.length - 1) ? siblings[myIdx + 1] : null;
+
+        const outEdges = edgesIndex.outgoing.get(node.id) || [];
+        const inEdges = edgesIndex.incoming.get(node.id) || [];
+
+        // Arrow keys mirror the prev/next buttons so the user can hammer
+        // through siblings without reaching for the mouse. We skip when an
+        // input/textarea is focused so search boxes still work normally.
+        useEffect(() => {
+            function onKey(e) {
+                if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+                const t = e.target;
+                if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+                if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); onSelect(prev.id); }
+                else if (e.key === 'ArrowRight' && next) { e.preventDefault(); onSelect(next.id); }
+            }
+            window.addEventListener('keydown', onKey);
+            return () => window.removeEventListener('keydown', onKey);
+        }, [prev && prev.id, next && next.id]);
+
+        return html`
+            <div className="node-view">
+                ${(prev || next) && html`
+                    <div className="nav-buttons">
+                        ${prev
+                            ? html`<button onClick=${() => onSelect(prev.id)} title=${'Previous: ' + (prev.title || prev.id)} aria-label="Previous">←</button>`
+                            : html`<span className="spacer"></span>`}
+                        ${next
+                            ? html`<button onClick=${() => onSelect(next.id)} title=${'Next: ' + (next.title || next.id)} aria-label="Next">→</button>`
+                            : html`<span className="spacer"></span>`}
+                    </div>
+                `}
+                <h2>
+                    ${cat && cat.icon && html`<span className="cat-icon">${cat.icon}</span> `}
+                    ${node.title || node.id}
+                </h2>
+                ${cat && cat.description && html`<div className="category-description">${cat.description}</div>`}
+                ${node.tags && node.tags.length > 0 && html`
+                    <div className="tags">
+                        ${node.tags.map(t => html`<${Tag} key=${t} name=${t} def=${definitions.tags && definitions.tags[t]} />`)}
+                    </div>
+                `}
+                <${Body} body=${node.body} />
+                ${node.fields && Object.keys(node.fields).length > 0 && html`
+                    <${FieldList} fields=${node.fields} definitions=${definitions} />
+                `}
+                ${(node.tables || []).map((t, i) => html`
+                    <${ReportTable} key=${i} table=${t} definitions=${definitions} />
+                `)}
+                ${(node.blobRefs || []).filter(k => blobs[k] != null).map(k => html`
+                    <pre key=${k} className="blob">${blobs[k]}</pre>
+                `)}
+                ${node.links && node.links.length > 0 && html`
+                    <div className="links-section">
+                        <h4>Links</h4>
+                        <ul>
+                            ${node.links.map((l, i) => html`<li key=${i}>
+                                <a href=${l.href} target="_blank" rel="noopener">${l.title}</a>
+                            </li>`)}
+                        </ul>
+                    </div>
+                `}
+                ${(outEdges.length > 0 || inEdges.length > 0) && html`
+                    <div className="edges-section">
+                        <h4>Related</h4>
+                        <ul>
+                            ${outEdges.map((e, i) => {
+                                const t = nodeIndex.byId.get(e.to);
+                                return html`<li key=${'o' + i}>
+                                    <span className="edge-type">${e.type || 'related'}:</span>
+                                    <a href="#" onClick=${(ev) => { ev.preventDefault(); onSelect(e.to); }}>
+                                        ${t ? (t.title || t.id) : e.to}
+                                    </a>
+                                </li>`;
+                            })}
+                            ${inEdges.map((e, i) => {
+                                const f = nodeIndex.byId.get(e.from);
+                                return html`<li key=${'i' + i}>
+                                    <span className="edge-type">← ${e.type || 'related'}:</span>
+                                    <a href="#" onClick=${(ev) => { ev.preventDefault(); onSelect(e.from); }}>
+                                        ${f ? (f.title || f.id) : e.from}
+                                    </a>
+                                </li>`;
+                            })}
+                        </ul>
+                    </div>
+                `}
+                ${node.children && node.children.length > 0 && html`
+                    <${ChildrenList} node=${node} definitions=${definitions} onSelect=${onSelect} />
+                `}
+            </div>
+        `;
+    }
+
+    function Breadcrumbs({ path, nodeIndex, onSelect }) {
+        if (!path || path.length === 0) return null;
+        return html`
+            <div id="breadcrumb">
+                <ul>
+                    ${path.map((id, i) => {
+                        const n = nodeIndex.byId.get(id);
+                        const label = n ? (n.title || n.id) : id;
+                        const isLast = i === path.length - 1;
+                        return html`<li key=${id}>
+                            ${isLast
+                                ? html`<span className="breadcrumb-current">${label}</span>`
+                                : html`<a className="breadcrumb-button" href="#" onClick=${(e) => { e.preventDefault(); onSelect(id); }}>${label}</a>`}
+                        </li>`;
+                    })}
+                </ul>
+            </div>
+        `;
+    }
+
+    function Header({ meta }) {
+        return html`
+            <div id="header">
+                <h1>${meta.title}</h1>
+                ${meta.subtitle && html`<div className="subtitle">${meta.subtitle}</div>`}
+            </div>
+        `;
+    }
+
+    function App({ data }) {
+        if (!data || !data.root) {
+            return html`<div className="error"><h2>Error</h2><p>No report data found.</p></div>`;
+        }
+        const nodeIndex = useMemo(() => indexNodes(data.root), [data]);
+        const edgesIndex = useMemo(() => indexEdges(data.edges || []), [data]);
+        const [selectedId, setSelectedId] = useState(data.root.id);
+
+        const selectedNode = nodeIndex.byId.get(selectedId) || data.root;
+        const path = pathFromRoot(nodeIndex.parentOf, selectedId);
+        const pathSet = new Set(path);
+
+        return html`
+            <div id="report">
+                <${Header} meta=${data.meta || {}} />
+                <${Breadcrumbs} path=${path} nodeIndex=${nodeIndex} onSelect=${setSelectedId} />
+                <div id="content">
+                    <div id="left-nav">
+                        <h3>Navigation</h3>
+                        <${TreeNode} node=${data.root} selectedId=${selectedId} onSelect=${setSelectedId} definitions=${data.definitions} depth=${0} pathSet=${pathSet} />
+                    </div>
+                    <div id="right-content">
+                        <${NodeView} node=${selectedNode} data=${data} nodeIndex=${nodeIndex} edgesIndex=${edgesIndex} onSelect=${setSelectedId} />
+                    </div>
+                </div>
+                <div id="footer">
+                    ${data.meta && data.meta.createdAt && html`Created ${new Date(data.meta.createdAt).toLocaleString()}`}
+                    ${data.meta && data.meta.schemaVersion && html` · schema v${data.meta.schemaVersion}`}
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const root = document.getElementById('root');
+        root.innerHTML = '';
+        render(html`<${App} data=${window.REPORT_DATA} />`, root);
+    });
+})();
+</script>
+
+<div id="root">
+    <div class="error">
+        <h2>Error Loading Report</h2>
+        <p>If you are viewing this report in Jenkins, you may have to download the file first by pressing ctrl+s or cmd+s</p>
+    </div>
+</div>
+
+</body>
+</html>

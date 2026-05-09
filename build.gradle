@@ -1342,12 +1342,13 @@ def copyWebAppFiles(String webappRoot) {
         include 'mchange-log.properties'
     }
 
-    // Copy Hibernate mappings and properties from source
+    // Copy Hibernate mappings, properties, and HTML templates from source
     copy {
         from 'source'
         into webappRoot + '/WEB-INF/classes'
         include '**/*.hbm.xml'
         include '**/*.properties'
+        include '**/*.html'
     }
 
     // Copy asset manifest from TARGETROOT
@@ -1455,6 +1456,24 @@ compileJava {
     options.fork = true
     options.forkOptions.memoryMaximumSize = '556m'
 }
+
+// Copy classpath-loaded templates next to their compiled consumers so they
+// resolve via getResourceAsStream from both the Ant DB_maintenance runtime
+// (which only has home/WEB-INF/classes on its classpath) and the deployed
+// webapp. Scoped narrowly to the org.zfin.report package so unrelated HTML
+// assets dropped under source/ later don't silently land on the classpath.
+task copyClasspathTemplates(type: Copy) {
+    from('source') {
+        include 'org/zfin/report/*.html'
+    }
+    into 'home/WEB-INF/classes'
+}
+compileJava.finalizedBy copyClasspathTemplates
+// compileTestJava reads from home/WEB-INF/classes (the same dir that
+// copyClasspathTemplates writes into), so Gradle needs the dependency
+// declared explicitly. Same applies to test runtime / processTestResources.
+compileTestJava.dependsOn copyClasspathTemplates
+processTestResources.dependsOn copyClasspathTemplates
 
 // ============================================================================
 // GWT COMPILATION TASKS
@@ -1584,7 +1603,7 @@ task npmBuild(type: Exec) {
 task dirtycopy {
     description = 'Incremental sync of classes, JSPs, and configs to Tomcat (no lib jars)'
     group = 'development'
-    dependsOn compileJava
+    dependsOn compileJava, copyClasspathTemplates
 
     def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
     def webappRoot = catBase + '/webapps/ROOT'
@@ -1595,6 +1614,7 @@ task dirtycopy {
     inputs.files fileTree('source') {
         include '**/*.hbm.xml'
         include '**/*.properties'
+        include '**/*.html'
     }
 
     doLast {

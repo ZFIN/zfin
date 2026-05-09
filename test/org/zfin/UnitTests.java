@@ -9,6 +9,8 @@ import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.database.DatabaseServiceTest;
+import org.zfin.datatransfer.go.GafErrorSummaryTest;
+import org.zfin.datatransfer.go.service.GafReportBuilderTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
@@ -47,6 +49,7 @@ import org.zfin.ontology.service.OntologyServiceTest;
 import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
+import org.zfin.report.LegacyReportAdapterTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.PublicationTest;
 import org.zfin.sequence.blast.SequenceTest;
@@ -72,6 +75,9 @@ import org.zfin.util.*;
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
+        LegacyReportAdapterTest.class,
+        GafErrorSummaryTest.class,
+        GafReportBuilderTest.class,
         DbScriptFileParserTest.class,
         DiseaseDisplayComparatorTest.class,
         EntityPresentationTest.class,
