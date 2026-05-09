@@ -7,12 +7,15 @@ import org.zfin.datatransfer.go.GafEntry;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.go.GoaGafParser;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
+import org.zfin.mutant.MarkerGoTermEvidence;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 
 /**
@@ -60,6 +63,22 @@ public class GafServiceTest extends AbstractDatabaseTest {
         assertEquals(12, size);
         gafService.replaceMergedZDBIds(gafEntries);
         assertTrue(gafEntries.size() == size);
+    }
+
+    // ZFIN-10230: GPAD-Noctua emits relations as OBO IDs (e.g. RO:0002327), not names.
+    // saveAnnoExtns must look these up by OBO ID, mirroring getRelQualifier's branching.
+    @Test
+    public void saveAnnoExtnsResolvesRelationByOboId() throws Exception {
+        GafEntry entry = new GafEntry();
+        entry.setEntryId("ZDB-GENE-990630-14");
+
+        MarkerGoTermAnnotationExtnGroup group = new MarkerGoTermAnnotationExtnGroup();
+        MarkerGoTermEvidence evidence = new MarkerGoTermEvidence();
+
+        gafService.saveAnnoExtns("RO:0002327(ZFIN:foo)", group, entry, evidence);
+
+        assertThat(group.getMgtAnnoExtns(), is(notNullValue()));
+        assertEquals(1, group.getMgtAnnoExtns().size());
     }
 
 }
