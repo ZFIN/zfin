@@ -3,7 +3,11 @@ import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
 import {FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
 
 interface LinkedFeatureWire {
-    feature: string;
+    mutationAId: number | null;
+    mutationBId: number | null;
+    /** Server-supplied display echo. Null on outbound. */
+    mutationALabel: string | null;
+    mutationBLabel: string | null;
     distanceKnown: boolean | null;
     distanceCentimorgans: number | null;
     distanceMegabases: number | null;
@@ -149,7 +153,9 @@ const ReasonsSection = ({
 interface LinkedFeatureRow {
     /** Local-only React key. Stable across re-renders so input focus isn't lost. */
     rowId: string;
-    feature: string;
+    /** Empty string when the dropdown hasn't been picked yet. */
+    mutationAId: string;
+    mutationBId: string;
     /** '' = unanswered, 'true' / 'false' = picked. Matches the bool radio convention. */
     distanceKnown: '' | 'true' | 'false';
     /** Stored as strings so users can type partial numbers ("1.5" while typing "1."). */
@@ -166,7 +172,8 @@ function freshRowId(): string {
 function emptyLinkedFeatureRow(): LinkedFeatureRow {
     return {
         rowId: freshRowId(),
-        feature: '',
+        mutationAId: '',
+        mutationBId: '',
         distanceKnown: '',
         distanceCentimorgans: '',
         distanceMegabases: '',
@@ -177,7 +184,8 @@ function emptyLinkedFeatureRow(): LinkedFeatureRow {
 function wireToRow(w: LinkedFeatureWire): LinkedFeatureRow {
     return {
         rowId: freshRowId(),
-        feature: w.feature ?? '',
+        mutationAId: w.mutationAId == null ? '' : String(w.mutationAId),
+        mutationBId: w.mutationBId == null ? '' : String(w.mutationBId),
         distanceKnown: w.distanceKnown === true ? 'true'
             : w.distanceKnown === false ? 'false'
                 : '',
@@ -188,7 +196,14 @@ function wireToRow(w: LinkedFeatureWire): LinkedFeatureRow {
 }
 
 function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
-    function parseNum(s: string): number | null {
+    function parseInt10OrNull(s: string): number | null {
+        if (!s.trim()) {
+            return null;
+        }
+        const n = parseInt(s, 10);
+        return Number.isFinite(n) ? n : null;
+    }
+    function parseFloatOrNull(s: string): number | null {
         if (!s.trim()) {
             return null;
         }
@@ -196,14 +211,24 @@ function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
         return Number.isFinite(n) ? n : null;
     }
     return {
-        feature: r.feature.trim(),
+        mutationAId: parseInt10OrNull(r.mutationAId),
+        mutationBId: parseInt10OrNull(r.mutationBId),
+        mutationALabel: null,
+        mutationBLabel: null,
         distanceKnown: r.distanceKnown === 'true' ? true
             : r.distanceKnown === 'false' ? false
                 : null,
-        distanceCentimorgans: parseNum(r.distanceCentimorgans),
-        distanceMegabases: parseNum(r.distanceMegabases),
+        distanceCentimorgans: parseFloatOrNull(r.distanceCentimorgans),
+        distanceMegabases: parseFloatOrNull(r.distanceMegabases),
         additionalInfo: r.additionalInfo.trim() || null,
     };
+}
+
+function mutationLabel(m: MutationSummary): string {
+    if (m.alleleDesignation && m.alleleDesignation.trim()) {
+        return m.alleleDesignation;
+    }
+    return `#${m.sortOrder ?? '?'}`;
 }
 
 interface MutationsSectionProps {
@@ -282,6 +307,8 @@ const MutationsSection = ({submissionId, mutations, onRemove}: MutationsSectionP
 
 interface LinkedFeaturesSectionProps {
     rows: LinkedFeatureRow[];
+    /** Mutations on this submission, used to populate the per-row dropdowns. */
+    mutations: MutationSummary[];
     onAdd: () => void;
     onRemove: (rowId: string) => void;
     onChange: (rowId: string, patch: Partial<LinkedFeatureRow>) => void;
@@ -290,12 +317,24 @@ interface LinkedFeaturesSectionProps {
     onCommitRow: () => void;
 }
 
-const LinkedFeaturesSection = ({rows, onAdd, onRemove, onChange, onCommitRow}: LinkedFeaturesSectionProps) => {
+const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCommitRow}: LinkedFeaturesSectionProps) => {
+    const noMutations = mutations.length < 2;
     if (rows.length === 0) {
         return (
             <div>
-                <p className='text-muted'>No linked features.</p>
-                <button type='button' className='btn btn-sm btn-outline-secondary' onClick={onAdd}>
+                {noMutations
+                    ? <p className='text-muted'>
+                        Linked features pair two mutations on this submission.
+                        Add at least two mutations above to get started.
+                    </p>
+                    : <p className='text-muted'>No linked features.</p>}
+                <button
+                    type='button'
+                    className='btn btn-sm btn-outline-secondary'
+                    onClick={onAdd}
+                    disabled={noMutations}
+                    title={noMutations ? 'Add at least two mutations first' : undefined}
+                >
                     + Add linked feature
                 </button>
             </div>
@@ -304,7 +343,8 @@ const LinkedFeaturesSection = ({rows, onAdd, onRemove, onChange, onCommitRow}: L
     return (
         <div>
             {rows.map((row, idx) => {
-                const featureId = `ls-lf-feature-${row.rowId}`;
+                const aId = `ls-lf-mutA-${row.rowId}`;
+                const bId = `ls-lf-mutB-${row.rowId}`;
                 const knownGroup = `ls-lf-known-${row.rowId}`;
                 const knownLabelId = `ls-lf-known-label-${row.rowId}`;
                 const cmId = `ls-lf-cm-${row.rowId}`;
@@ -317,16 +357,43 @@ const LinkedFeaturesSection = ({rows, onAdd, onRemove, onChange, onCommitRow}: L
                             Linked feature {idx + 1}
                         </legend>
                         <div className='form-group row'>
-                            <label htmlFor={featureId} className='col-sm-3 col-form-label'>Feature</label>
+                            <label htmlFor={aId} className='col-sm-3 col-form-label'>Mutation A</label>
                             <div className='col-sm-9'>
-                                <input
-                                    type='text'
-                                    id={featureId}
+                                <select
+                                    id={aId}
                                     className='form-control'
-                                    value={row.feature}
-                                    onChange={e => onChange(row.rowId, {feature: e.target.value})}
-                                    onBlur={() => onCommitRow()}
-                                />
+                                    value={row.mutationAId}
+                                    onChange={e => {
+                                        onChange(row.rowId, {mutationAId: e.target.value});
+                                        onCommitRow();
+                                    }}
+                                >
+                                    <option value=''>(select mutation)</option>
+                                    {mutations.map(m => (
+                                        <option key={m.id} value={String(m.id)}>{mutationLabel(m)}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className='form-group row'>
+                            <label htmlFor={bId} className='col-sm-3 col-form-label'>Mutation B</label>
+                            <div className='col-sm-9'>
+                                <select
+                                    id={bId}
+                                    className='form-control'
+                                    value={row.mutationBId}
+                                    onChange={e => {
+                                        onChange(row.rowId, {mutationBId: e.target.value});
+                                        onCommitRow();
+                                    }}
+                                >
+                                    <option value=''>(select mutation)</option>
+                                    {mutations
+                                        .filter(m => String(m.id) !== row.mutationAId)
+                                        .map(m => (
+                                            <option key={m.id} value={String(m.id)}>{mutationLabel(m)}</option>
+                                        ))}
+                                </select>
                             </div>
                         </div>
                         <div className='form-group row'>
@@ -412,7 +479,13 @@ const LinkedFeaturesSection = ({rows, onAdd, onRemove, onChange, onCommitRow}: L
                     </fieldset>
                 );
             })}
-            <button type='button' className='btn btn-sm btn-outline-secondary' onClick={onAdd}>
+            <button
+                type='button'
+                className='btn btn-sm btn-outline-secondary'
+                onClick={onAdd}
+                disabled={noMutations}
+                title={noMutations ? 'Add at least two mutations first' : undefined}
+            >
                 + Add linked feature
             </button>
         </div>
@@ -782,20 +855,21 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
                 onCommitOther={handleCommitOther}
             />
         </Section>
-        <Section id='linked-features' title='Linked Features'>
-            <LinkedFeaturesSection
-                rows={linkedFeatures}
-                onAdd={handleAddLinkedFeature}
-                onRemove={handleRemoveLinkedFeature}
-                onChange={handleChangeLinkedFeature}
-                onCommitRow={handleCommitLinkedFeatureRow}
-            />
-        </Section>
         <Section id='mutations' title='Mutations'>
             <MutationsSection
                 submissionId={zdbID}
                 mutations={mutations}
                 onRemove={handleRemoveMutation}
+            />
+        </Section>
+        <Section id='linked-features' title='Linked Features'>
+            <LinkedFeaturesSection
+                rows={linkedFeatures}
+                mutations={mutations}
+                onAdd={handleAddLinkedFeature}
+                onRemove={handleRemoveLinkedFeature}
+                onChange={handleChangeLinkedFeature}
+                onCommitRow={handleCommitLinkedFeatureRow}
             />
         </Section>
         <Section id='background' title='Background'>

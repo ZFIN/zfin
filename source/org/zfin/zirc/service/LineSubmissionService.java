@@ -69,37 +69,58 @@ public class LineSubmissionService {
     }
 
     /**
-     * Replace-all save for the linked-features section. Diffs the incoming
-     * list against the current collection (keyed on feature name) so we
-     * update existing rows in place, insert new ones, and remove the rest —
-     * avoiding the PK-violation hazard of clear() + add() with cascade
-     * orphan removal.
+     * Replace-all save for the linked-features section. Each row pairs two
+     * mutations on the same submission with optional distance metadata.
+     * Pairs are normalized so that {@code mutationA.id < mutationB.id}
+     * before lookup / insert — the DB CHECK constraint enforces the same
+     * ordering, so the on-disk identity of {@code (X, Y)} and {@code (Y, X)}
+     * is the same row regardless of the order the user picked them.
      *
-     * <p>Empty / blank feature names are dropped; duplicate feature names
-     * are deduped (last write wins for the row's distance fields).
+     * <p>Rows that omit either mutation, reference a mutation not on this
+     * submission, or self-link ({@code A == B}) are silently dropped.
+     * Duplicate pairs in the incoming list are deduped (last write wins).
      */
     public LineSubmission saveLinkedFeatures(String zdbID, List<LinkedFeatureDTO> incoming, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
-        Map<String, LinkedFeature> existing = new HashMap<>();
-        for (LinkedFeature lf : submission.getLinkedFeatures()) {
-            existing.put(lf.getFeature(), lf);
+
+        // Index this submission's mutations by id for the FK lookup.
+        Map<Long, Mutation> mutationsById = new HashMap<>();
+        for (Mutation m : submission.getMutations()) {
+            mutationsById.put(m.getId(), m);
         }
-        Set<String> incomingFeatures = new HashSet<>();
+
+        // Existing rows keyed by their normalized (a, b) tuple.
+        Map<List<Long>, LinkedFeature> existing = new HashMap<>();
+        for (LinkedFeature lf : submission.getLinkedFeatures()) {
+            existing.put(List.of(lf.getMutationA().getId(), lf.getMutationB().getId()), lf);
+        }
+        Set<List<Long>> incomingKeys = new HashSet<>();
 
         if (incoming != null) {
             for (LinkedFeatureDTO dto : incoming) {
-                if (dto.getFeature() == null || dto.getFeature().isBlank()) {
+                if (dto.getMutationAId() == null || dto.getMutationBId() == null
+                        || dto.getMutationAId().equals(dto.getMutationBId())) {
                     continue;
                 }
-                String feature = dto.getFeature().trim();
-                if (!incomingFeatures.add(feature)) {
+                Mutation mA = mutationsById.get(dto.getMutationAId());
+                Mutation mB = mutationsById.get(dto.getMutationBId());
+                if (mA == null || mB == null) {
+                    continue; // mutation isn't on this submission — drop
+                }
+                // Normalize so id(A) < id(B). The DB CHECK enforces the same.
+                if (mA.getId() > mB.getId()) {
+                    Mutation tmp = mA; mA = mB; mB = tmp;
+                }
+                List<Long> key = List.of(mA.getId(), mB.getId());
+                if (!incomingKeys.add(key)) {
                     continue;
                 }
-                LinkedFeature lf = existing.get(feature);
+                LinkedFeature lf = existing.get(key);
                 if (lf == null) {
                     lf = new LinkedFeature();
                     lf.setLineSubmission(submission);
-                    lf.setFeature(feature);
+                    lf.setMutationA(mA);
+                    lf.setMutationB(mB);
                     submission.getLinkedFeatures().add(lf);
                 }
                 lf.setDistanceKnown(dto.getDistanceKnown());
@@ -110,8 +131,8 @@ public class LineSubmissionService {
             }
         }
 
-        // Drop any existing rows that didn't appear in the incoming list.
-        submission.getLinkedFeatures().removeIf(lf -> !incomingFeatures.contains(lf.getFeature()));
+        submission.getLinkedFeatures().removeIf(lf -> !incomingKeys.contains(
+                List.of(lf.getMutationA().getId(), lf.getMutationB().getId())));
         return submission;
     }
 

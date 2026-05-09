@@ -8,7 +8,7 @@
 <c:set var="MUTATIONS"          value="Mutations"/>
 <c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, LINKED_FEATURES, BACKGROUND, PEOPLE, MUTATIONS, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, MUTATIONS, LINKED_FEATURES, BACKGROUND, PEOPLE, ADDITIONAL]}"/>
 
 <z:dataPage sections="${sections}" title="Line Submission: ${submission.name}">
 
@@ -141,6 +141,63 @@
             </c:choose>
         </z:section>
 
+        <z:section title="${MUTATIONS}">
+            <c:choose>
+                <c:when test="${empty submission.mutations}">
+                    <p class="text-muted">No mutations recorded for this submission.</p>
+                </c:when>
+                <c:otherwise>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Allele Designation</th>
+                                <th>Mutagenesis Protocol</th>
+                                <th>Mutation Type</th>
+                                <th>Discoverer</th>
+                                <th class="text-right">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${submission.mutations}" var="m" varStatus="loop">
+                                <tr>
+                                    <td>${loop.count}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty m.alleleDesignation}">${m.alleleDesignation}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty m.mutagenesisProtocol}">${m.mutagenesisProtocol}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty m.mutationType}">${m.mutationType}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty m.mutationDiscoverer}">${m.mutationDiscoverer}</c:when>
+                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="text-right">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="/action/zirc/mutation/${m.id}/edit">Edit</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </z:section>
+
         <z:section title="${LINKED_FEATURES}">
             <c:choose>
                 <c:when test="${empty submission.linkedFeatures}">
@@ -150,7 +207,8 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Feature</th>
+                                <th>Mutation A</th>
+                                <th>Mutation B</th>
                                 <th>Distance Known</th>
                                 <th>cM</th>
                                 <th>Mb</th>
@@ -160,7 +218,18 @@
                         <tbody>
                             <c:forEach items="${submission.linkedFeatures}" var="lf">
                                 <tr>
-                                    <td><c:out value="${lf.feature}"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty lf.mutationA.alleleDesignation}"><c:out value="${lf.mutationA.alleleDesignation}"/></c:when>
+                                            <c:otherwise>#${lf.mutationA.sortOrder}</c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty lf.mutationB.alleleDesignation}"><c:out value="${lf.mutationB.alleleDesignation}"/></c:when>
+                                            <c:otherwise>#${lf.mutationB.sortOrder}</c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${lf.distanceKnown == true}">Yes</c:when>
@@ -258,63 +327,6 @@
                                     <td>${lsp.role}</td>
                                     <td><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a></td>
                                     <td><code>${lsp.person.zdbID}</code></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-            </c:choose>
-        </z:section>
-
-        <z:section title="${MUTATIONS}">
-            <c:choose>
-                <c:when test="${empty submission.mutations}">
-                    <p class="text-muted">No mutations recorded for this submission.</p>
-                </c:when>
-                <c:otherwise>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Allele Designation</th>
-                                <th>Mutagenesis Protocol</th>
-                                <th>Mutation Type</th>
-                                <th>Discoverer</th>
-                                <th class="text-right">Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${submission.mutations}" var="m" varStatus="loop">
-                                <tr>
-                                    <td>${loop.count}</td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty m.alleleDesignation}">${m.alleleDesignation}</c:when>
-                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty m.mutagenesisProtocol}">${m.mutagenesisProtocol}</c:when>
-                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty m.mutationType}">${m.mutationType}</c:when>
-                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty m.mutationDiscoverer}">${m.mutationDiscoverer}</c:when>
-                                            <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td class="text-right">
-                                        <a class="btn btn-sm btn-outline-primary"
-                                           href="/action/zirc/mutation/${m.id}/edit">Edit</a>
-                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>

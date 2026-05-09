@@ -55,9 +55,13 @@ public class LineSubmissionDTO {
         dto.setAdditionalInfo(submission.getAdditionalInfo());
         dto.setReasons(submission.getReasons());
         dto.setReasonsOther(submission.getReasonsOther());
+        // Order by (mutationA.id, mutationB.id) — already the on-disk order
+        // since the CHECK constraint enforces it.
         dto.setLinkedFeatures(
             submission.getLinkedFeatures().stream()
-                .sorted(Comparator.comparing(LinkedFeature::getFeature))
+                .sorted(Comparator
+                    .comparing((LinkedFeature lf) -> lf.getMutationA().getId())
+                    .thenComparing(lf -> lf.getMutationB().getId()))
                 .map(LinkedFeatureDTO::from)
                 .toList());
         dto.setMutations(

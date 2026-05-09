@@ -15,15 +15,13 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * One linked-feature entry on a {@link LineSubmission}. Composite PK:
- * (lineSubmission, feature).
+ * One linkage relationship between two mutations on the same
+ * {@link LineSubmission}. Composite PK: (lineSubmission, mutationA, mutationB).
  *
- * <p>The {@code feature} string is plain text — there's deliberately no FK
- * to {@code public.feature}, since linked features can include lines being
- * established as part of this submission that don't exist as ZFIN features
- * yet. Distance fields are independent: {@code distanceKnown} gates the
- * UI's display of {@code distanceCentimorgans} / {@code distanceMegabases},
- * but at the storage level all three are nullable.
+ * <p>The DB enforces {@code mutationA.id &lt; mutationB.id} via a CHECK
+ * constraint so the pair is symmetric (i.e. {@code (A, B)} and {@code (B, A)}
+ * cannot both exist). The service normalizes incoming pairs before save —
+ * the swap is invisible to the user but keeps storage consistent.
  */
 @Entity(name = "ZircLinkedFeature")
 @Table(schema = "zirc", name = "line_submission_linked_feature")
@@ -39,8 +37,14 @@ public class LinkedFeature implements Serializable {
     private LineSubmission lineSubmission;
 
     @Id
-    @Column(name = "lslf_feature", nullable = false)
-    private String feature;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "lslf_mutation_a_id", referencedColumnName = "m_id", nullable = false)
+    private Mutation mutationA;
+
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "lslf_mutation_b_id", referencedColumnName = "m_id", nullable = false)
+    private Mutation mutationB;
 
     @Column(name = "lslf_distance_known")
     private Boolean distanceKnown;

@@ -132,7 +132,11 @@ public class LineSubmission implements Serializable {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    @OrderBy("feature")
+    // Ordered by the on-disk pair identity. The DB CHECK constraint on
+    // line_submission_linked_feature ensures mutationA.id < mutationB.id, so
+    // sorting by mutationA.id alone gives a stable order; mutationB.id is
+    // a tiebreaker for rows that share mutationA.
+    @OrderBy("mutationA.id, mutationB.id")
     private Set<LinkedFeature> linkedFeatures = new HashSet<>();
 
     /**
