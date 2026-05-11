@@ -79,6 +79,12 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_additional_info")
     private String additionalInfo;
 
+    @Column(name = "ls_single_allelic")
+    private Boolean singleAllelic;
+
+    @Column(name = "ls_husbandry_info")
+    private String husbandryInfo;
+
     /**
      * Acceptance reasons as a postgres text[] of snake_case option values
      * (e.g. {@code {"frequently_requested","expect_high_demand"}}). The

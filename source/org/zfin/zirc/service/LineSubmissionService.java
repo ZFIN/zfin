@@ -465,6 +465,8 @@ public class LineSubmissionService {
             case "backgroundChangeConcerns":   s.setBackgroundChangeConcerns(value); break;
             case "unreportedFeaturesDetails":  s.setUnreportedFeaturesDetails(value); break;
             case "additionalInfo":             s.setAdditionalInfo(value); break;
+            case "singleAllelic":              s.setSingleAllelic(parseTriBool(value)); break;
+            case "husbandryInfo":              s.setHusbandryInfo(value); break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown field: " + fieldName);
         }

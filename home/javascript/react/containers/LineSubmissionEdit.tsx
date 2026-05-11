@@ -35,6 +35,8 @@ interface LineSubmissionDTO {
     backgroundChangeConcerns: string | null;
     unreportedFeaturesDetails: string | null;
     additionalInfo: string | null;
+    singleAllelic: boolean | null;
+    husbandryInfo: string | null;
     reasons?: string[] | null;
     reasonsOther?: string | null;
     linkedFeatures?: LinkedFeatureWire[] | null;
@@ -58,20 +60,44 @@ const OVERVIEW_FIELDS: FieldDef<ScalarField>[] = [
 ];
 
 const BACKGROUND_FIELDS: FieldDef<ScalarField>[] = [
-    {field: 'maternalBackground',       label: 'Maternal',              type: 'text',
-        placeholder: 'AB, TU, unknown, …'},
-    {field: 'paternalBackground',       label: 'Paternal',              type: 'text',
-        placeholder: 'AB, TU, unknown, …'},
+    {field: 'singleAllelic',            label: 'Single-allelic submission', type: 'bool'},
     {field: 'backgroundChangeable',     label: 'Background Changeable', type: 'bool'},
     {field: 'backgroundChangeConcerns', label: 'Concerns',              type: 'textarea'},
 ];
 
+// Maternal / paternal background render as dropdown-with-Other instead of
+// plain text fields, but the data still lives in the same free-text column
+// so we keep them in ALL_FIELDS for the seeding pass. The render order is
+// hand-stitched in the Background section JSX.
+const BACKGROUND_DROPDOWN_FIELDS: FieldDef<ScalarField>[] = [
+    {field: 'maternalBackground', label: 'Maternal', type: 'text'},
+    {field: 'paternalBackground', label: 'Paternal', type: 'text'},
+];
+
+// Canonical-but-revisable list. Picking "Other" reveals a free-text input
+// that writes to the same column. The ZIRC team is expected to refine this
+// enum; once stable, B10 will lock it down with a check constraint.
+const BACKGROUND_OPTIONS: Array<{value: string; label: string}> = [
+    {value: 'AB',      label: 'AB'},
+    {value: 'TU',      label: 'TU'},
+    {value: 'WIK',     label: 'WIK'},
+    {value: 'AB/TU',   label: 'AB/TU'},
+    {value: 'unknown', label: 'unknown'},
+];
+
 const ADDITIONAL_FIELDS: FieldDef<ScalarField>[] = [
     {field: 'unreportedFeaturesDetails', label: 'Unreported Features Details', type: 'textarea'},
+    {field: 'husbandryInfo',             label: 'Husbandry Info',              type: 'textarea',
+        placeholder: 'Husbandry-specific information, e.g. special feeding regime'},
     {field: 'additionalInfo',            label: 'Additional Info',             type: 'textarea'},
 ];
 
-const ALL_FIELDS: FieldDef<ScalarField>[] = [...OVERVIEW_FIELDS, ...BACKGROUND_FIELDS, ...ADDITIONAL_FIELDS];
+const ALL_FIELDS: FieldDef<ScalarField>[] = [
+    ...OVERVIEW_FIELDS,
+    ...BACKGROUND_FIELDS,
+    ...BACKGROUND_DROPDOWN_FIELDS,
+    ...ADDITIONAL_FIELDS,
+];
 
 const REASON_OPTIONS: Array<{value: string; label: string}> = [
     {value: 'frequently_requested',     label: 'Currently frequently requested'},
@@ -148,6 +174,90 @@ const ReasonsSection = ({
                 </div>
             )}
         </fieldset>
+    );
+};
+
+interface DropdownWithOtherRowProps {
+    field: ScalarField;
+    label: string;
+    value: string;
+    options: Array<{value: string; label: string}>;
+    onChange: (next: string) => void;
+    onCommit: (next: string) => void;
+}
+
+/**
+ * Single-select dropdown of canonical values plus an "Other" option that
+ * reveals a free-text input. The wire value is a single string column —
+ * picking a canonical writes that value, picking Other writes whatever
+ * the user types. Used for maternal / paternal background where the
+ * canonical enum isn't yet locked down. Lives in a <tr> for FieldsTable.
+ */
+const DropdownWithOtherRow = ({field, label, value, options, onChange, onCommit}: DropdownWithOtherRowProps) => {
+    const inputId = `ls-field-${field}`;
+    const otherInputId = `${inputId}-other`;
+    const labelId = `ls-field-label-${field}`;
+    const isCanonical = !!value && options.some(o => o.value === value);
+    // otherMode is derived (non-blank, non-canonical value), with an
+    // additional manual override for "user just picked Other but hasn't
+    // typed yet" — without it the text input would disappear the moment
+    // the user clears it.
+    const [otherPicked, setOtherPicked] = useState<boolean>(false);
+    const otherMode = otherPicked || (!isCanonical && !!value);
+    const selectValue = otherMode ? '__other' : (isCanonical ? value : '');
+
+    function handleSelectChange(picked: string) {
+        if (picked === '__other') {
+            setOtherPicked(true);
+            // If the user was on a canonical value, clear it so the Other
+            // text input starts empty rather than echoing the canonical.
+            if (isCanonical) {
+                onChange('');
+                onCommit('');
+            }
+            return;
+        }
+        setOtherPicked(false);
+        onChange(picked);
+        onCommit(picked);
+    }
+
+    return (
+        <tr>
+            <th className='w-25' scope='row' id={labelId}>
+                <label htmlFor={inputId} className='mb-0'>{label}</label>
+            </th>
+            <td>
+                <div className='d-flex' style={{gap: 8}}>
+                    <select
+                        id={inputId}
+                        className='form-control'
+                        value={selectValue}
+                        onChange={e => handleSelectChange(e.target.value)}
+                        style={{maxWidth: 200}}
+                    >
+                        <option value=''>(select)</option>
+                        {options.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                        <option value='__other'>Other</option>
+                    </select>
+                    {otherMode && (
+                        <input
+                            type='text'
+                            id={otherInputId}
+                            className='form-control'
+                            placeholder='Other background'
+                            value={value}
+                            onChange={e => onChange(e.target.value)}
+                            onBlur={() => onCommit(value)}
+                            aria-label={`${label} (other)`}
+                            autoFocus={otherPicked}
+                        />
+                    )}
+                </div>
+            </td>
+        </tr>
     );
 };
 
@@ -982,7 +1092,23 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
             />
         </Section>
         <Section id='background' title='Background'>
-            <FieldsTable>{BACKGROUND_FIELDS.map(renderRow)}</FieldsTable>
+            <FieldsTable>
+                {/* Order: single-allelic flag, maternal/paternal dropdowns, then the
+                    background-changeable Yes/No and its concerns textarea. */}
+                {renderRow(BACKGROUND_FIELDS[0])}
+                {BACKGROUND_DROPDOWN_FIELDS.map(def => (
+                    <DropdownWithOtherRow
+                        key={def.field}
+                        field={def.field}
+                        label={def.label}
+                        value={values[def.field]}
+                        options={BACKGROUND_OPTIONS}
+                        onChange={next => setFieldValue(def.field, next)}
+                        onCommit={next => commit(def, next)}
+                    />
+                ))}
+                {BACKGROUND_FIELDS.slice(1).map(renderRow)}
+            </FieldsTable>
         </Section>
         <Section id='additional-info' title='Additional Info'>
             <FieldsTable>{ADDITIONAL_FIELDS.map(renderRow)}</FieldsTable>

@@ -30,6 +30,8 @@ public class LineSubmissionDTO {
     private String backgroundChangeConcerns;
     private String unreportedFeaturesDetails;
     private String additionalInfo;
+    private Boolean singleAllelic;
+    private String husbandryInfo;
     private String[] reasons;
     private String reasonsOther;
     private List<LinkedFeatureDTO> linkedFeatures;
@@ -53,6 +55,8 @@ public class LineSubmissionDTO {
         dto.setBackgroundChangeConcerns(submission.getBackgroundChangeConcerns());
         dto.setUnreportedFeaturesDetails(submission.getUnreportedFeaturesDetails());
         dto.setAdditionalInfo(submission.getAdditionalInfo());
+        dto.setSingleAllelic(submission.getSingleAllelic());
+        dto.setHusbandryInfo(submission.getHusbandryInfo());
         dto.setReasons(submission.getReasons());
         dto.setReasonsOther(submission.getReasonsOther());
         // Order by (mutationA.id, mutationB.id) — already the on-disk order
