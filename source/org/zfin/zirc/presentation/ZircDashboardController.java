@@ -446,23 +446,73 @@ public class ZircDashboardController {
      */
     @GetMapping("/markers/search")
     @ResponseBody
-    public List<Map<String, String>> searchMarkers(@RequestParam(value = "term", required = false) String term) {
+    public List<Map<String, String>> searchMarkers(
+            @RequestParam(value = "term", required = false) String term,
+            @RequestParam(value = "typeGroup", required = false) String typeGroup) {
         if (term == null || term.isBlank()) {
             return Collections.emptyList();
         }
-        List<org.zfin.marker.Marker> markers = HibernateUtil.currentSession()
-                .createQuery(
-                    "from Marker where lower(abbreviation) like :q order by abbreviation",
-                    org.zfin.marker.Marker.class)
-                .setParameter("q", "%" + term.toLowerCase() + "%")
-                .setMaxResults(20)
-                .list();
+        // typeGroup narrows results to a Marker.TypeGroup (e.g. GENEDOM,
+        // SSLP). When unset, every marker abbreviation is searchable —
+        // matches the prior behaviour. Bad group names get an empty list
+        // (no 400) so the dropdown stays quiet rather than yelling at
+        // the curator mid-type.
+        org.zfin.marker.Marker.TypeGroup group = null;
+        if (typeGroup != null && !typeGroup.isBlank()) {
+            try {
+                group = org.zfin.marker.Marker.TypeGroup.valueOf(typeGroup);
+            } catch (IllegalArgumentException e) {
+                return Collections.emptyList();
+            }
+        }
+        String hql = group == null
+                ? "from Marker where lower(abbreviation) like :q order by abbreviation"
+                : "select m from Marker m join m.markerType.typeGroups tg"
+                        + " where lower(m.abbreviation) like :q and tg = :group"
+                        + " order by m.abbreviation";
+        var query = HibernateUtil.currentSession()
+                .createQuery(hql, org.zfin.marker.Marker.class)
+                .setParameter("q", "%" + term.toLowerCase() + "%");
+        if (group != null) {
+            query.setParameter("group", group);
+        }
+        List<org.zfin.marker.Marker> markers = query.setMaxResults(20).list();
         List<Map<String, String>> out = new ArrayList<>();
         for (org.zfin.marker.Marker m : markers) {
             Map<String, String> entry = new HashMap<>();
             entry.put("label", m.getAbbreviation() + " (" + m.getZdbID() + ")");
             entry.put("value", m.getAbbreviation());
             entry.put("zdbID", m.getZdbID());
+            out.add(entry);
+        }
+        return out;
+    }
+
+    /**
+     * Feature (allele) autocomplete. Backs the mutation editor's
+     * "Allele Designation" field when "exists in ZFIN" is checked.
+     * Searches the Feature table by abbreviation prefix or substring.
+     * Same wire shape as {@link #searchMarkers}.
+     */
+    @GetMapping("/features/search")
+    @ResponseBody
+    public List<Map<String, String>> searchFeatures(@RequestParam(value = "term", required = false) String term) {
+        if (term == null || term.isBlank()) {
+            return Collections.emptyList();
+        }
+        List<org.zfin.feature.Feature> features = HibernateUtil.currentSession()
+                .createQuery(
+                        "from Feature where lower(abbreviation) like :q order by abbreviationOrder",
+                        org.zfin.feature.Feature.class)
+                .setParameter("q", "%" + term.toLowerCase() + "%")
+                .setMaxResults(20)
+                .list();
+        List<Map<String, String>> out = new ArrayList<>();
+        for (org.zfin.feature.Feature f : features) {
+            Map<String, String> entry = new HashMap<>();
+            entry.put("label", f.getAbbreviation() + " (" + f.getZdbID() + ")");
+            entry.put("value", f.getAbbreviation());
+            entry.put("zdbID", f.getZdbID());
             out.add(entry);
         }
         return out;

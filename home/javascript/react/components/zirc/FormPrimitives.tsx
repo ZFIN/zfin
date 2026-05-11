@@ -81,7 +81,10 @@ export const Autocomplete = ({id, value, placeholder, fetchUrl, onChange, onComm
         }
         debounceRef.current = window.setTimeout(() => {
             const seq = ++reqSeqRef.current;
-            fetch(`${fetchUrl}?term=${encodeURIComponent(term)}`)
+            // Use '&' when the caller already has query params in
+            // fetchUrl (e.g. a typeGroup filter), '?' otherwise.
+            const sep = fetchUrl.includes('?') ? '&' : '?';
+            fetch(`${fetchUrl}${sep}term=${encodeURIComponent(term)}`)
                 .then(r => r.ok ? r.json() : [])
                 .then((data: AutocompleteSuggestion[]) => {
                     // Drop stale responses if a newer request was kicked off.

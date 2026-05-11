@@ -550,17 +550,38 @@ public class LineSubmissionService {
         return m;
     }
 
-    private Marker resolveMarker(String zdbId) {
-        if (zdbId == null || zdbId.isBlank()) {
+    /**
+     * Resolve a marker reference from a curator-supplied string. Accepts
+     * either a ZDB ID (e.g. {@code ZDB-GENE-980526-388}) or a gene
+     * abbreviation (e.g. {@code fgf8a}) — the marker autocomplete sends
+     * the abbreviation back, so the server can't insist on the formal
+     * ID. Abbreviation lookups are case-insensitive; the first match
+     * wins. Returns null for blank inputs; 400 if neither lookup
+     * resolves.
+     */
+    private Marker resolveMarker(String value) {
+        if (value == null || value.isBlank()) {
             return null;
         }
-        String trimmed = zdbId.trim();
-        Marker marker = HibernateUtil.currentSession().get(Marker.class, trimmed);
-        if (marker == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Marker not found: " + trimmed);
+        String trimmed = value.trim();
+        if (trimmed.startsWith("ZDB-")) {
+            Marker byPk = HibernateUtil.currentSession().get(Marker.class, trimmed);
+            if (byPk != null) {
+                return byPk;
+            }
+        } else {
+            Marker byAbbrev = HibernateUtil.currentSession()
+                    .createQuery("from Marker where lower(abbreviation) = :a",
+                            Marker.class)
+                    .setParameter("a", trimmed.toLowerCase())
+                    .setMaxResults(1)
+                    .uniqueResult();
+            if (byAbbrev != null) {
+                return byAbbrev;
+            }
         }
-        return marker;
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Marker not found: " + trimmed);
     }
 
     private static String blankToNull(String s) {

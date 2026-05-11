@@ -163,8 +163,8 @@ const GENERAL_FIELDS: FieldDef<ScalarField>[] = [
     // when not, free text. `rowKey` keeps React happy about distinct keys.
     {rowKey: 'alleleDesignationAuto', field: 'alleleDesignation',
         label: 'Allele Designation', type: 'autocomplete', idPrefix: 'mut',
-        autocompleteUrl: '/action/zirc/markers/search',
-        placeholder: 'Search ZFIN markers…',
+        autocompleteUrl: '/action/zirc/features/search',
+        placeholder: 'Search ZFIN features…',
         infoHref: 'https://wiki.zfin.org/display/general/ZFIN+Nomenclature+Conventions',
         visible: v => v.alleleInZfin === 'true'},
     {rowKey: 'alleleDesignationFree', field: 'alleleDesignation',
@@ -1216,8 +1216,8 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
                         id={`gene-zdb-${row.rowId}`}
                         label='Mutated Gene'
                         value={row.mutatedGeneZdbId}
-                        fetchUrl='/action/zirc/markers/search'
-                        placeholder='Search ZFIN markers…'
+                        fetchUrl='/action/zirc/markers/search?typeGroup=GENEDOM'
+                        placeholder='Search ZFIN genes…'
                         helpText={row.mutatedGeneAbbreviation ? <>Resolved: <em>{row.mutatedGeneAbbreviation}</em></> : undefined}
                         onChange={v => onChange(row.rowId, {mutatedGeneZdbId: v})}
                         onCommit={onCommit}
