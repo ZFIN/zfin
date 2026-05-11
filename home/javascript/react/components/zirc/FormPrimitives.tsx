@@ -33,6 +33,12 @@ export interface FieldDef<T extends string = string> {
      *  true (or is absent). The predicate is given the current value map
      *  so conditional rendering can branch on sibling field values. */
     visible?: (values: Record<string, string>) => boolean;
+    /** Optional URL for a small "(i)" link rendered next to the label.
+     *  Use for technical fields that benefit from an external reference
+     *  (HGVS nomenclature, allele-designation conventions, …). */
+    infoHref?: string;
+    /** Optional hint rendered below the input as muted help text. */
+    helpText?: string;
 }
 
 interface AutocompleteSuggestion {
@@ -283,14 +289,35 @@ export const FieldRow = <T extends string>({def, value, onChange, onCommit}: Fie
         );
     }
 
+    const labelContent = (
+        <>
+            {def.label}
+            {def.infoHref && (
+                <a
+                    href={def.infoHref}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-info small ml-1'
+                    title={`More about ${def.label}`}
+                    style={{textDecoration: 'none'}}
+                >
+                    (i)
+                </a>
+            )}
+        </>
+    );
+
     return (
         <tr>
             <th className='w-25' scope='row' id={labelId}>
                 {def.type === 'bool'
-                    ? def.label
-                    : <label htmlFor={inputId} className='mb-0'>{def.label}</label>}
+                    ? labelContent
+                    : <label htmlFor={inputId} className='mb-0'>{labelContent}</label>}
             </th>
-            <td>{renderInput()}</td>
+            <td>
+                {renderInput()}
+                {def.helpText && <small className='form-text text-muted'>{def.helpText}</small>}
+            </td>
         </tr>
     );
 };

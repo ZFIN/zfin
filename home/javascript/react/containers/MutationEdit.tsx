@@ -148,7 +148,8 @@ const MUTAGENESIS_PROTOCOL_OPTIONS = [
 ];
 
 const GENERAL_FIELDS: FieldDef<ScalarField>[] = [
-    {field: 'alleleInZfin',             label: 'Allele in ZFIN',         type: 'bool',     idPrefix: 'mut'},
+    {field: 'alleleInZfin',             label: 'Allele in ZFIN',         type: 'bool',     idPrefix: 'mut',
+        helpText: 'When "Yes", the field below searches existing ZFIN markers.'},
     // Two FieldDefs share `field: 'alleleDesignation'` but are gated on the
     // `alleleInZfin` checkbox: when checked, render the marker autocomplete;
     // when not, free text. `rowKey` keeps React happy about distinct keys.
@@ -156,9 +157,11 @@ const GENERAL_FIELDS: FieldDef<ScalarField>[] = [
         label: 'Allele Designation', type: 'autocomplete', idPrefix: 'mut',
         autocompleteUrl: '/action/zirc/markers/search',
         placeholder: 'Search ZFIN markers…',
+        infoHref: 'https://wiki.zfin.org/display/general/ZFIN+Nomenclature+Conventions',
         visible: v => v.alleleInZfin === 'true'},
     {rowKey: 'alleleDesignationFree', field: 'alleleDesignation',
         label: 'Allele Designation', type: 'text', idPrefix: 'mut',
+        infoHref: 'https://wiki.zfin.org/display/general/ZFIN+Nomenclature+Conventions',
         visible: v => v.alleleInZfin !== 'true'},
     {field: 'mutagenesisStage',         label: 'Mutagenesis Stage',      type: 'select',   idPrefix: 'mut',
         options: MUTAGENESIS_STAGE_OPTIONS},
@@ -1009,18 +1012,23 @@ const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, pat
     </div>
 );
 
-const TextAreaRowField = ({id, label, value, onChange, onCommit}: TextRowFieldProps) => (
+const TextAreaRowField = ({id, label, value, placeholder, helpText, infoHref, onChange, onCommit}: TextRowFieldProps) => (
     <div className='form-group row mb-0'>
-        <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
+        <label htmlFor={id} className='col-sm-3 col-form-label'>
+            {label}
+            {infoHref && <InfoLink href={infoHref} label={label}/>}
+        </label>
         <div className='col-sm-9'>
             <textarea
                 id={id}
                 className='form-control'
                 rows={2}
+                placeholder={placeholder}
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 onBlur={onCommit}
             />
+            {helpText && <small className='form-text text-muted'>{helpText}</small>}
         </div>
     </div>
 );
@@ -1358,6 +1366,8 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
                                             label={def.label}
                                             value={(row[fieldKey] as string) ?? ''}
                                             placeholder={def.placeholder}
+                                            helpText={def.helpText}
+                                            infoHref={def.infoHref}
                                             onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<LesionRow>)}
                                             onCommit={onCommit}
                                         />
