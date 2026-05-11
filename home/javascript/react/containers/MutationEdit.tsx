@@ -48,8 +48,9 @@ interface GenotypingAssayWire {
     reversePrimer: string | null;
     expectedWtPcr: string | null;
     expectedMutPcr: string | null;
-    restrictionEnzyme: string | null;
-    enzymeCleaves: string | null;
+    restrictionEnzymeName: string | null;
+    restrictionEnzymeCatalog: string | null;
+    enzymeCleaves: string[] | null;
     expectedWtDigest: string | null;
     expectedMutDigest: string | null;
     additionalInfo: string | null;
@@ -363,8 +364,11 @@ interface GenotypingAssayRow {
     reversePrimer: string;
     expectedWtPcr: string;
     expectedMutPcr: string;
-    restrictionEnzyme: string;
-    enzymeCleaves: string;
+    restrictionEnzymeName: string;
+    restrictionEnzymeCatalog: string;
+    /** Subset of {'WT', 'MUT'} — the enzyme can cleave either or both. */
+    enzymeCleavesWt: boolean;
+    enzymeCleavesMut: boolean;
     expectedWtDigest: string;
     expectedMutDigest: string;
     additionalInfo: string;
@@ -408,8 +412,10 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         reversePrimer: '',
         expectedWtPcr: '',
         expectedMutPcr: '',
-        restrictionEnzyme: '',
-        enzymeCleaves: '',
+        restrictionEnzymeName: '',
+        restrictionEnzymeCatalog: '',
+        enzymeCleavesWt: false,
+        enzymeCleavesMut: false,
         expectedWtDigest: '',
         expectedMutDigest: '',
         additionalInfo: '',
@@ -439,8 +445,10 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         reversePrimer: w.reversePrimer ?? '',
         expectedWtPcr: w.expectedWtPcr ?? '',
         expectedMutPcr: w.expectedMutPcr ?? '',
-        restrictionEnzyme: w.restrictionEnzyme ?? '',
-        enzymeCleaves: w.enzymeCleaves ?? '',
+        restrictionEnzymeName: w.restrictionEnzymeName ?? '',
+        restrictionEnzymeCatalog: w.restrictionEnzymeCatalog ?? '',
+        enzymeCleavesWt: (w.enzymeCleaves ?? []).includes('wt'),
+        enzymeCleavesMut: (w.enzymeCleaves ?? []).includes('mut'),
         expectedWtDigest: w.expectedWtDigest ?? '',
         expectedMutDigest: w.expectedMutDigest ?? '',
         additionalInfo: w.additionalInfo ?? '',
@@ -470,8 +478,12 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         reversePrimer: trimOrNull(r.reversePrimer),
         expectedWtPcr: trimOrNull(r.expectedWtPcr),
         expectedMutPcr: trimOrNull(r.expectedMutPcr),
-        restrictionEnzyme: trimOrNull(r.restrictionEnzyme),
-        enzymeCleaves: trimOrNull(r.enzymeCleaves),
+        restrictionEnzymeName: trimOrNull(r.restrictionEnzymeName),
+        restrictionEnzymeCatalog: trimOrNull(r.restrictionEnzymeCatalog),
+        enzymeCleaves: [
+            ...(r.enzymeCleavesWt ? ['wt'] : []),
+            ...(r.enzymeCleavesMut ? ['mut'] : []),
+        ],
         expectedWtDigest: trimOrNull(r.expectedWtDigest),
         expectedMutDigest: trimOrNull(r.expectedMutDigest),
         additionalInfo: trimOrNull(r.additionalInfo),
@@ -940,11 +952,17 @@ interface TextRowFieldProps {
     /** Right-side unit label (e.g. "bp"). When set, the input gets a tighter
      *  max-width so the unit reads naturally next to a short numeric value. */
     suffix?: string;
+    /** Optional HTML5 pattern attribute (regex). Drives the browser's
+     *  built-in validity styling — invalid input gets the :invalid
+     *  pseudo-class red border. The server is still authoritative. */
+    pattern?: string;
+    /** Hint rendered as muted help text under the input. */
+    helpText?: string;
     onChange: (next: string) => void;
     onCommit: () => void;
 }
 
-const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, onChange, onCommit}: TextRowFieldProps) => (
+const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, pattern, helpText, onChange, onCommit}: TextRowFieldProps) => (
     <div className='form-group row'>
         <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
         <div className='col-sm-9'>
@@ -958,10 +976,12 @@ const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, onC
                     onChange={e => onChange(e.target.value)}
                     onBlur={onCommit}
                     step={type === 'number' ? 'any' : undefined}
+                    pattern={pattern}
                     style={suffix ? {maxWidth: 180} : undefined}
                 />
                 {suffix && <span className='text-muted small'>{suffix}</span>}
             </div>
+            {helpText && <small className='form-text text-muted'>{helpText}</small>}
         </div>
     </div>
 );
@@ -1018,6 +1038,36 @@ const BoolRowField = ({groupName, label, value, onChange, onCommit}: BoolRowFiel
         </div>
     );
 };
+
+interface CheckboxRowFieldProps {
+    id: string;
+    label: string;
+    value: boolean;
+    onChange: (next: boolean) => void;
+    onCommit: () => void;
+}
+
+/** Binary checkbox row. Use for fields that are genuinely true/false
+ *  (no "unanswered" state) — e.g. "enzyme cleaves WT?" / "enzyme
+ *  cleaves MUT?", both of which can be independently on. For tri-state
+ *  Yes/No/unanswered, use {@link BoolRowField}. */
+const CheckboxRowField = ({id, label, value, onChange, onCommit}: CheckboxRowFieldProps) => (
+    <div className='form-group row'>
+        <span className='col-sm-3 col-form-label'>{label}</span>
+        <div className='col-sm-9'>
+            <div className='form-check'>
+                <input
+                    type='checkbox'
+                    id={id}
+                    className='form-check-input'
+                    checked={value}
+                    onChange={e => { onChange(e.target.checked); onCommit(); }}
+                />
+                <label className='form-check-label' htmlFor={id}>Yes</label>
+            </div>
+        </div>
+    </div>
+);
 
 interface AutocompleteRowFieldProps {
     id: string;
@@ -1316,8 +1366,10 @@ const ASSAY_TYPE_SPECIFIC_PATCH: Partial<GenotypingAssayRow> = {
     reversePrimer: '',
     expectedWtPcr: '',
     expectedMutPcr: '',
-    restrictionEnzyme: '',
-    enzymeCleaves: '',
+    restrictionEnzymeName: '',
+    restrictionEnzymeCatalog: '',
+    enzymeCleavesWt: false,
+    enzymeCleavesMut: false,
     expectedWtDigest: '',
     expectedMutDigest: '',
     sequencingPrimer: '',
@@ -1391,6 +1443,18 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                             {fields.map(fieldKey => {
                                 const def = ASSAY_FIELD_DEFS[fieldKey];
                                 const id = `asy-${fieldKey}-${row.rowId}`;
+                                if (def.type === 'checkbox') {
+                                    return (
+                                        <CheckboxRowField
+                                            key={fieldKey}
+                                            id={id}
+                                            label={def.label}
+                                            value={row[fieldKey] as boolean}
+                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
                                 if (def.type === 'bool') {
                                     return (
                                         <BoolRowField
@@ -1424,6 +1488,8 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                         value={(row[fieldKey] as string) ?? ''}
                                         placeholder={def.placeholder}
                                         suffix={def.suffix}
+                                        pattern={def.pattern}
+                                        helpText={def.helpText}
                                         onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
                                         onCommit={onCommit}
                                     />

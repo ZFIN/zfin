@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -52,11 +54,15 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_expected_mut_pcr")
     private String expectedMutPcr;
 
-    @Column(name = "ga_restriction_enzyme")
-    private String restrictionEnzyme;
+    @Column(name = "ga_restriction_enzyme_name")
+    private String restrictionEnzymeName;
 
-    @Column(name = "ga_enzyme_cleaves")
-    private String enzymeCleaves;
+    @Column(name = "ga_restriction_enzyme_catalog")
+    private String restrictionEnzymeCatalog;
+
+    @Column(name = "ga_enzyme_cleaves", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] enzymeCleaves = new String[0];
 
     @Column(name = "ga_expected_wt_digest")
     private String expectedWtDigest;

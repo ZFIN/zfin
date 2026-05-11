@@ -22,8 +22,9 @@ public class GenotypingAssayDTO {
     private String reversePrimer;
     private String expectedWtPcr;
     private String expectedMutPcr;
-    private String restrictionEnzyme;
-    private String enzymeCleaves;
+    private String restrictionEnzymeName;
+    private String restrictionEnzymeCatalog;
+    private String[] enzymeCleaves;
     private String expectedWtDigest;
     private String expectedMutDigest;
     private String additionalInfo;
@@ -54,7 +55,8 @@ public class GenotypingAssayDTO {
         dto.setReversePrimer(g.getReversePrimer());
         dto.setExpectedWtPcr(g.getExpectedWtPcr());
         dto.setExpectedMutPcr(g.getExpectedMutPcr());
-        dto.setRestrictionEnzyme(g.getRestrictionEnzyme());
+        dto.setRestrictionEnzymeName(g.getRestrictionEnzymeName());
+        dto.setRestrictionEnzymeCatalog(g.getRestrictionEnzymeCatalog());
         dto.setEnzymeCleaves(g.getEnzymeCleaves());
         dto.setExpectedWtDigest(g.getExpectedWtDigest());
         dto.setExpectedMutDigest(g.getExpectedMutDigest());

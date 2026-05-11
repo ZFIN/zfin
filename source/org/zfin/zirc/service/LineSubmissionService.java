@@ -286,20 +286,21 @@ public class LineSubmissionService {
                 }
                 g.setSortOrder(order);
                 g.setAssayType(blankToNull(dto.getAssayType()));
-                g.setForwardPrimer(blankToNull(dto.getForwardPrimer()));
-                g.setReversePrimer(blankToNull(dto.getReversePrimer()));
+                g.setForwardPrimer(validatedPrimer(dto.getForwardPrimer(), "forwardPrimer"));
+                g.setReversePrimer(validatedPrimer(dto.getReversePrimer(), "reversePrimer"));
                 g.setExpectedWtPcr(blankToNull(dto.getExpectedWtPcr()));
                 g.setExpectedMutPcr(blankToNull(dto.getExpectedMutPcr()));
-                g.setRestrictionEnzyme(blankToNull(dto.getRestrictionEnzyme()));
-                g.setEnzymeCleaves(blankToNull(dto.getEnzymeCleaves()));
+                g.setRestrictionEnzymeName(blankToNull(dto.getRestrictionEnzymeName()));
+                g.setRestrictionEnzymeCatalog(blankToNull(dto.getRestrictionEnzymeCatalog()));
+                g.setEnzymeCleaves(dto.getEnzymeCleaves() != null ? dto.getEnzymeCleaves() : new String[0]);
                 g.setExpectedWtDigest(blankToNull(dto.getExpectedWtDigest()));
                 g.setExpectedMutDigest(blankToNull(dto.getExpectedMutDigest()));
                 g.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
-                g.setSequencingPrimer(blankToNull(dto.getSequencingPrimer()));
-                g.setDcapsMismatchPrimer(blankToNull(dto.getDcapsMismatchPrimer()));
-                g.setWtSpecificPrimer(blankToNull(dto.getWtSpecificPrimer()));
-                g.setMutSpecificPrimer(blankToNull(dto.getMutSpecificPrimer()));
-                g.setCommonPrimer(blankToNull(dto.getCommonPrimer()));
+                g.setSequencingPrimer(validatedPrimer(dto.getSequencingPrimer(), "sequencingPrimer"));
+                g.setDcapsMismatchPrimer(validatedPrimer(dto.getDcapsMismatchPrimer(), "dcapsMismatchPrimer"));
+                g.setWtSpecificPrimer(validatedPrimer(dto.getWtSpecificPrimer(), "wtSpecificPrimer"));
+                g.setMutSpecificPrimer(validatedPrimer(dto.getMutSpecificPrimer(), "mutSpecificPrimer"));
+                g.setCommonPrimer(validatedPrimer(dto.getCommonPrimer(), "commonPrimer"));
                 g.setKaspGenomicSequence(blankToNull(dto.getKaspGenomicSequence()));
                 g.setSslpMarkerName(blankToNull(dto.getSslpMarkerName()));
                 g.setSslpDistance(blankToNull(dto.getSslpDistance()));
@@ -429,6 +430,26 @@ public class LineSubmissionService {
 
     private static String blankToNull(String s) {
         return (s != null && !s.isBlank()) ? s.trim() : null;
+    }
+
+    private static final java.util.regex.Pattern PRIMER_PATTERN =
+            java.util.regex.Pattern.compile("^[ACTGNactgn]+$");
+
+    /**
+     * Trim + null-blank a primer field, additionally rejecting any
+     * sequence that isn't pure ACTGN (case-insensitive). The form has a
+     * matching client-side pattern, but the server is authoritative —
+     * curators can still hit this path via raw HTTP, paste a string with
+     * a stray space, etc. Returns a 400 with a curator-friendly message
+     * naming the offending field.
+     */
+    private static String validatedPrimer(String raw, String fieldName) {
+        String trimmed = blankToNull(raw);
+        if (trimmed != null && !PRIMER_PATTERN.matcher(trimmed).matches()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Primer field '" + fieldName + "' must contain only ACTGN nucleotides.");
+        }
+        return trimmed;
     }
 
     /**
