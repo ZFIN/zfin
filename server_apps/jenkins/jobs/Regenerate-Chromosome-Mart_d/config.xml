@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>&lt;ul&gt;&#xd;
+  &lt;li&gt;Triggered downstream of Refresh-GBrowse-Tracks_d (no own cron). Runs as an additive layer on top of that job's writes to sequence_feature_chromosome_location_generated.&lt;/li&gt;&#xd;
+  &lt;li&gt;Regenerates the chromosome_mart aggregation tables (regenChromosomeMart.sh -&amp;gt; runChromosomeMart.sh against the chromosomeMartPostgres scripts).&lt;/li&gt;&#xd;
+  &lt;li&gt;Adds ENSDARG-fallback EnsemblStartEndLoader rows for genes whose ENSDARG accession has no ENSDART transcript link (warehouse-unique work).&lt;/li&gt;&#xd;
+  &lt;li&gt;Re-tags the zmp gbrowse-track for both ZMP pubs (belt-and-suspenders for ZDB-PUB-130425-4, which Refresh-GBrowse-Tracks_d also tags; sole tagger of ZDB-PUB-250905-18).&lt;/li&gt;&#xd;
+  &lt;li&gt;Prunes UCSCStartEndLoader rows whose accession is missing from UCSC's danRer11 refGene track (those would 404 on the mapping detail page). The allowlist is fetched live from api.genome.ucsc.edu; the prune step bails without deleting if the API is unreachable or returns &amp;lt; 10000 accessions.&lt;/li&gt;&#xd;
+&lt;/ul&gt;</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
