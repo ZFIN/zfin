@@ -453,28 +453,30 @@ public class ZircDashboardController {
             return Collections.emptyList();
         }
         // typeGroup narrows results to a Marker.TypeGroup (e.g. GENEDOM,
-        // SSLP). When unset, every marker abbreviation is searchable —
-        // matches the prior behaviour. Bad group names get an empty list
-        // (no 400) so the dropdown stays quiet rather than yelling at
-        // the curator mid-type.
-        org.zfin.marker.Marker.TypeGroup group = null;
+        // SSLP). Compared against MarkerType.typeGroupStrings — the
+        // typed enum-Set property is @Transient and unqueryable, but
+        // the underlying join table behind typeGroupStrings is fully
+        // mapped. Validate via the enum to reject random input and let
+        // bad group names quietly return [] (the dropdown stays quiet
+        // rather than 4xxing mid-type).
+        String groupString = null;
         if (typeGroup != null && !typeGroup.isBlank()) {
             try {
-                group = org.zfin.marker.Marker.TypeGroup.valueOf(typeGroup);
+                groupString = org.zfin.marker.Marker.TypeGroup.valueOf(typeGroup).name();
             } catch (IllegalArgumentException e) {
                 return Collections.emptyList();
             }
         }
-        String hql = group == null
+        String hql = groupString == null
                 ? "from Marker where lower(abbreviation) like :q order by abbreviation"
-                : "select m from Marker m join m.markerType.typeGroups tg"
+                : "select m from Marker m join m.markerType.typeGroupStrings tg"
                         + " where lower(m.abbreviation) like :q and tg = :group"
                         + " order by m.abbreviation";
         var query = HibernateUtil.currentSession()
                 .createQuery(hql, org.zfin.marker.Marker.class)
                 .setParameter("q", "%" + term.toLowerCase() + "%");
-        if (group != null) {
-            query.setParameter("group", group);
+        if (groupString != null) {
+            query.setParameter("group", groupString);
         }
         List<org.zfin.marker.Marker> markers = query.setMaxResults(20).list();
         List<Map<String, String>> out = new ArrayList<>();
