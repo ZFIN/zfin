@@ -475,30 +475,32 @@ public class LineSubmissionService {
         String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "upload";
         String sanitized = original.replaceAll("[^A-Za-z0-9._-]", "_");
 
+        // Write the bytes first, then create the DB row. Filename uniqueness
+        // comes from a short random suffix (not the af_id, which we don't
+        // have yet — and would force a 2-phase insert / update fighting
+        // the NOT NULL on af_stored_path). If the DB insert fails, we leak
+        // a file on disk; preferable to a half-saved DB row.
+        String randomSuffix = java.util.UUID.randomUUID().toString().substring(0, 8);
+        String storedFilename = "assay-" + assayId + "-" + randomSuffix + "-" + sanitized;
+        Path dir = zircFileDirFor(submissionId);
+        Files.createDirectories(dir);
+        Path destination = dir.resolve(storedFilename);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
         GenotypingAssayFile entity = new GenotypingAssayFile();
         entity.setAssay(assay);
         entity.setKind(kind);
         entity.setOriginalFilename(original);
         entity.setContentType(file.getContentType());
         entity.setFileSize(file.getSize());
+        // Store path relative to TARGETROOT so the row stays valid if
+        // TARGETROOT is reconfigured later.
+        entity.setStoredPath(zircFileRelativePath(submissionId, storedFilename));
         if (currentUser != null && currentUser.getZdbID() != null) {
             entity.setUploadedBy(HibernateUtil.currentSession()
                     .getReference(Person.class, currentUser.getZdbID()));
         }
-        // Persist now to mint af_id; the on-disk filename uses it for
-        // uniqueness across same-named uploads on the same assay.
         HibernateUtil.currentSession().persist(entity);
-        HibernateUtil.currentSession().flush();
-
-        Path dir = zircFileDirFor(submissionId);
-        Files.createDirectories(dir);
-        String storedFilename = "assay-" + assayId + "-" + entity.getId() + "-" + sanitized;
-        Path destination = dir.resolve(storedFilename);
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-        // Store path relative to TARGETROOT so the row stays valid if
-        // TARGETROOT is reconfigured later.
-        entity.setStoredPath(zircFileRelativePath(submissionId, storedFilename));
         return entity;
     }
 
