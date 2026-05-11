@@ -67,4 +67,55 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_additional_info")
     private String additionalInfo;
 
+    @Column(name = "ga_sequencing_primer")
+    private String sequencingPrimer;
+
+    @Column(name = "ga_dcaps_mismatch_primer")
+    private String dcapsMismatchPrimer;
+
+    @Column(name = "ga_wt_specific_primer")
+    private String wtSpecificPrimer;
+
+    @Column(name = "ga_mut_specific_primer")
+    private String mutSpecificPrimer;
+
+    @Column(name = "ga_common_primer")
+    private String commonPrimer;
+
+    @Column(name = "ga_kasp_genomic_sequence")
+    private String kaspGenomicSequence;
+
+    @Column(name = "ga_sslp_marker_name")
+    private String sslpMarkerName;
+
+    @Column(name = "ga_sslp_distance")
+    private String sslpDistance;
+
+    @Column(name = "ga_sslp_genomic_location")
+    private String sslpGenomicLocation;
+
+    @Column(name = "ga_sslp_induced_background")
+    private String sslpInducedBackground;
+
+    @Column(name = "ga_sslp_outcrossed_background")
+    private String sslpOutcrossedBackground;
+
+    @Column(name = "ga_sslp_induced_pcr")
+    private String sslpInducedPcr;
+
+    @Column(name = "ga_sslp_outcrossed_pcr")
+    private String sslpOutcrossedPcr;
+
+    @Column(name = "ga_chromatogram_files_available")
+    private Boolean chromatogramFilesAvailable;
+
+    @Column(name = "ga_gel_images_available")
+    private Boolean gelImagesAvailable;
+
+    @Column(name = "ga_result_images_available")
+    private Boolean resultImagesAvailable;
+
+    @Column(name = "ga_melt_curve_files_available")
+    private Boolean meltCurveFilesAvailable;
+
 }

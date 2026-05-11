@@ -1,7 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
 import {Autocomplete, FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
-import {LESION_FIELD_DEFS, LESION_TYPE_OPTIONS, visibleLesionFields} from '../components/zirc/typeMatrices';
+import {
+    ASSAY_FIELD_DEFS,
+    ASSAY_TYPE_OPTIONS,
+    LESION_FIELD_DEFS,
+    LESION_TYPE_OPTIONS,
+    visibleAssayFields,
+    visibleLesionFields,
+} from '../components/zirc/typeMatrices';
 
 // ─── Wire types ────────────────────────────────────────────────────────────
 
@@ -45,6 +52,23 @@ interface GenotypingAssayWire {
     expectedWtDigest: string | null;
     expectedMutDigest: string | null;
     additionalInfo: string | null;
+    sequencingPrimer: string | null;
+    dcapsMismatchPrimer: string | null;
+    wtSpecificPrimer: string | null;
+    mutSpecificPrimer: string | null;
+    commonPrimer: string | null;
+    kaspGenomicSequence: string | null;
+    sslpMarkerName: string | null;
+    sslpDistance: string | null;
+    sslpGenomicLocation: string | null;
+    sslpInducedBackground: string | null;
+    sslpOutcrossedBackground: string | null;
+    sslpInducedPcr: string | null;
+    sslpOutcrossedPcr: string | null;
+    chromatogramFilesAvailable: boolean | null;
+    gelImagesAvailable: boolean | null;
+    resultImagesAvailable: boolean | null;
+    meltCurveFilesAvailable: boolean | null;
 }
 
 interface PhenotypeWire {
@@ -330,6 +354,32 @@ interface GenotypingAssayRow {
     expectedWtDigest: string;
     expectedMutDigest: string;
     additionalInfo: string;
+    sequencingPrimer: string;
+    dcapsMismatchPrimer: string;
+    wtSpecificPrimer: string;
+    mutSpecificPrimer: string;
+    commonPrimer: string;
+    kaspGenomicSequence: string;
+    sslpMarkerName: string;
+    sslpDistance: string;
+    sslpGenomicLocation: string;
+    sslpInducedBackground: string;
+    sslpOutcrossedBackground: string;
+    sslpInducedPcr: string;
+    sslpOutcrossedPcr: string;
+    /** '' / 'true' / 'false' — same as bool radios elsewhere. */
+    chromatogramFilesAvailable: '' | 'true' | 'false';
+    gelImagesAvailable: '' | 'true' | 'false';
+    resultImagesAvailable: '' | 'true' | 'false';
+    meltCurveFilesAvailable: '' | 'true' | 'false';
+}
+
+function triBoolFromWire(b: boolean | null): '' | 'true' | 'false' {
+    return b === true ? 'true' : b === false ? 'false' : '';
+}
+
+function triBoolToWire(s: '' | 'true' | 'false'): boolean | null {
+    return s === 'true' ? true : s === 'false' ? false : null;
 }
 
 const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
@@ -349,6 +399,23 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         expectedWtDigest: '',
         expectedMutDigest: '',
         additionalInfo: '',
+        sequencingPrimer: '',
+        dcapsMismatchPrimer: '',
+        wtSpecificPrimer: '',
+        mutSpecificPrimer: '',
+        commonPrimer: '',
+        kaspGenomicSequence: '',
+        sslpMarkerName: '',
+        sslpDistance: '',
+        sslpGenomicLocation: '',
+        sslpInducedBackground: '',
+        sslpOutcrossedBackground: '',
+        sslpInducedPcr: '',
+        sslpOutcrossedPcr: '',
+        chromatogramFilesAvailable: '',
+        gelImagesAvailable: '',
+        resultImagesAvailable: '',
+        meltCurveFilesAvailable: '',
     }),
     wireToRow: w => ({
         rowId: freshRowId('assay'),
@@ -363,6 +430,23 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         expectedWtDigest: w.expectedWtDigest ?? '',
         expectedMutDigest: w.expectedMutDigest ?? '',
         additionalInfo: w.additionalInfo ?? '',
+        sequencingPrimer: w.sequencingPrimer ?? '',
+        dcapsMismatchPrimer: w.dcapsMismatchPrimer ?? '',
+        wtSpecificPrimer: w.wtSpecificPrimer ?? '',
+        mutSpecificPrimer: w.mutSpecificPrimer ?? '',
+        commonPrimer: w.commonPrimer ?? '',
+        kaspGenomicSequence: w.kaspGenomicSequence ?? '',
+        sslpMarkerName: w.sslpMarkerName ?? '',
+        sslpDistance: w.sslpDistance ?? '',
+        sslpGenomicLocation: w.sslpGenomicLocation ?? '',
+        sslpInducedBackground: w.sslpInducedBackground ?? '',
+        sslpOutcrossedBackground: w.sslpOutcrossedBackground ?? '',
+        sslpInducedPcr: w.sslpInducedPcr ?? '',
+        sslpOutcrossedPcr: w.sslpOutcrossedPcr ?? '',
+        chromatogramFilesAvailable: triBoolFromWire(w.chromatogramFilesAvailable),
+        gelImagesAvailable: triBoolFromWire(w.gelImagesAvailable),
+        resultImagesAvailable: triBoolFromWire(w.resultImagesAvailable),
+        meltCurveFilesAvailable: triBoolFromWire(w.meltCurveFilesAvailable),
     }),
     rowToWire: r => ({
         id: r.id,
@@ -377,6 +461,23 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         expectedWtDigest: trimOrNull(r.expectedWtDigest),
         expectedMutDigest: trimOrNull(r.expectedMutDigest),
         additionalInfo: trimOrNull(r.additionalInfo),
+        sequencingPrimer: trimOrNull(r.sequencingPrimer),
+        dcapsMismatchPrimer: trimOrNull(r.dcapsMismatchPrimer),
+        wtSpecificPrimer: trimOrNull(r.wtSpecificPrimer),
+        mutSpecificPrimer: trimOrNull(r.mutSpecificPrimer),
+        commonPrimer: trimOrNull(r.commonPrimer),
+        kaspGenomicSequence: trimOrNull(r.kaspGenomicSequence),
+        sslpMarkerName: trimOrNull(r.sslpMarkerName),
+        sslpDistance: trimOrNull(r.sslpDistance),
+        sslpGenomicLocation: trimOrNull(r.sslpGenomicLocation),
+        sslpInducedBackground: trimOrNull(r.sslpInducedBackground),
+        sslpOutcrossedBackground: trimOrNull(r.sslpOutcrossedBackground),
+        sslpInducedPcr: trimOrNull(r.sslpInducedPcr),
+        sslpOutcrossedPcr: trimOrNull(r.sslpOutcrossedPcr),
+        chromatogramFilesAvailable: triBoolToWire(r.chromatogramFilesAvailable),
+        gelImagesAvailable: triBoolToWire(r.gelImagesAvailable),
+        resultImagesAvailable: triBoolToWire(r.resultImagesAvailable),
+        meltCurveFilesAvailable: triBoolToWire(r.meltCurveFilesAvailable),
     }),
     getId: r => r.id,
 };
@@ -1153,41 +1254,146 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
 };
 
 function summarizeAssay(row: GenotypingAssayRow): string {
-    const head = row.assayType || '(no type)';
-    const primers = [row.forwardPrimer, row.reversePrimer].filter(Boolean).join(' / ');
-    return primers ? `${head} · ${primers}` : head;
+    const typeLabel = ASSAY_TYPE_OPTIONS.find(o => o.value === row.assayType)?.label
+        ?? row.assayType;
+    const head = typeLabel || '(no type)';
+    const detail = row.forwardPrimer || row.wtSpecificPrimer || row.sslpMarkerName;
+    return detail ? `${head} · ${detail}` : head;
 }
 
-const GenotypingAssaysSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<GenotypingAssayRow>) => {
-    const expansion = useRowExpansion<typeof rows[number]>();
-    if (rows.length === 0) {
-        return <div><p className='text-muted'>No genotyping assays recorded for this mutation.</p><AddButton label='genotyping assay' onAdd={onAdd}/></div>;
+// Cleared on an assay type change so stale type-specific data doesn't
+// linger across types. assayType itself is set by the caller; additionalInfo
+// is left alone (it applies to every type).
+const ASSAY_TYPE_SPECIFIC_PATCH: Partial<GenotypingAssayRow> = {
+    forwardPrimer: '',
+    reversePrimer: '',
+    expectedWtPcr: '',
+    expectedMutPcr: '',
+    restrictionEnzyme: '',
+    enzymeCleaves: '',
+    expectedWtDigest: '',
+    expectedMutDigest: '',
+    sequencingPrimer: '',
+    dcapsMismatchPrimer: '',
+    wtSpecificPrimer: '',
+    mutSpecificPrimer: '',
+    commonPrimer: '',
+    kaspGenomicSequence: '',
+    sslpMarkerName: '',
+    sslpDistance: '',
+    sslpGenomicLocation: '',
+    sslpInducedBackground: '',
+    sslpOutcrossedBackground: '',
+    sslpInducedPcr: '',
+    sslpOutcrossedPcr: '',
+    chromatogramFilesAvailable: '',
+    gelImagesAvailable: '',
+    resultImagesAvailable: '',
+    meltCurveFilesAvailable: '',
+};
+
+interface GenotypingAssaysSectionProps {
+    rows: GenotypingAssayRow[];
+    onAddWithType: (type: string) => void;
+    onRemove: (rowId: string) => void;
+    onChange: (rowId: string, patch: Partial<GenotypingAssayRow>) => void;
+    onCommit: () => void;
+}
+
+const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: GenotypingAssaysSectionProps) => {
+    const expansion = useRowExpansion<GenotypingAssayRow>();
+    const [pickerOpen, setPickerOpen] = useState(false);
+
+    function handlePick(type: string) {
+        setPickerOpen(false);
+        onAddWithType(type);
     }
+
+    function handleTypeChange(row: GenotypingAssayRow, newType: string) {
+        if (newType === row.assayType) {
+            return;
+        }
+        onChange(row.rowId, {...ASSAY_TYPE_SPECIFIC_PATCH, assayType: newType});
+        onCommit();
+    }
+
     return (
         <div>
-            {rows.map((row, idx) => (
-                <RowFieldset
-                    key={row.rowId}
-                    title={`Genotyping Assay ${idx + 1}`}
-                    collapsed={!expansion.isExpanded(row)}
-                    summary={summarizeAssay(row)}
-                    onEdit={() => expansion.expand(row.rowId)}
-                    onDone={() => expansion.collapse(row.rowId)}
-                    onRemove={() => onRemove(row.rowId)}
-                >
-                    <TextRowField id={`asy-type-${row.rowId}`}    label='Assay Type'         value={row.assayType}          onChange={v => onChange(row.rowId, {assayType: v})}          onCommit={onCommit} placeholder='pcr_gel, rflp, kasp, …'/>
-                    <TextRowField id={`asy-fwd-${row.rowId}`}     label='Forward Primer'     value={row.forwardPrimer}      onChange={v => onChange(row.rowId, {forwardPrimer: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-rev-${row.rowId}`}     label='Reverse Primer'     value={row.reversePrimer}      onChange={v => onChange(row.rowId, {reversePrimer: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-wtpcr-${row.rowId}`}   label='Expected WT PCR'    value={row.expectedWtPcr}      onChange={v => onChange(row.rowId, {expectedWtPcr: v})}      onCommit={onCommit} suffix='bp'/>
-                    <TextRowField id={`asy-mutpcr-${row.rowId}`}  label='Expected Mut PCR'   value={row.expectedMutPcr}     onChange={v => onChange(row.rowId, {expectedMutPcr: v})}     onCommit={onCommit} suffix='bp'/>
-                    <TextRowField id={`asy-renz-${row.rowId}`}    label='Restriction Enzyme' value={row.restrictionEnzyme}  onChange={v => onChange(row.rowId, {restrictionEnzyme: v})}  onCommit={onCommit}/>
-                    <TextRowField id={`asy-cleav-${row.rowId}`}   label='Enzyme Cleaves'     value={row.enzymeCleaves}      onChange={v => onChange(row.rowId, {enzymeCleaves: v})}      onCommit={onCommit}/>
-                    <TextRowField id={`asy-wtdig-${row.rowId}`}   label='Expected WT Digest' value={row.expectedWtDigest}   onChange={v => onChange(row.rowId, {expectedWtDigest: v})}   onCommit={onCommit} suffix='bp'/>
-                    <TextRowField id={`asy-mutdig-${row.rowId}`}  label='Expected Mut Digest' value={row.expectedMutDigest} onChange={v => onChange(row.rowId, {expectedMutDigest: v})}  onCommit={onCommit} suffix='bp'/>
-                    <TextAreaRowField id={`asy-info-${row.rowId}`} label='Additional Info'    value={row.additionalInfo}     onChange={v => onChange(row.rowId, {additionalInfo: v})}     onCommit={onCommit}/>
-                </RowFieldset>
-            ))}
-            <AddButton label='genotyping assay' onAdd={onAdd}/>
+            {rows.length === 0
+                ? <p className='text-muted'>No genotyping assays recorded for this mutation.</p>
+                : rows.map((row, idx) => {
+                    const fields = visibleAssayFields(row.assayType);
+                    return (
+                        <RowFieldset
+                            key={row.rowId}
+                            title={`Genotyping Assay ${idx + 1}`}
+                            collapsed={!expansion.isExpanded(row)}
+                            summary={summarizeAssay(row)}
+                            onEdit={() => expansion.expand(row.rowId)}
+                            onDone={() => expansion.collapse(row.rowId)}
+                            onRemove={() => onRemove(row.rowId)}
+                        >
+                            <SelectRowField
+                                id={`asy-type-${row.rowId}`}
+                                label='Type'
+                                value={row.assayType}
+                                options={ASSAY_TYPE_OPTIONS as Array<{value: string; label: string}>}
+                                onChange={v => handleTypeChange(row, v)}
+                                onCommit={() => { /* committed by handleTypeChange */ }}
+                            />
+                            {fields.map(fieldKey => {
+                                const def = ASSAY_FIELD_DEFS[fieldKey];
+                                const id = `asy-${fieldKey}-${row.rowId}`;
+                                if (def.type === 'bool') {
+                                    return (
+                                        <BoolRowField
+                                            key={fieldKey}
+                                            groupName={id}
+                                            label={def.label}
+                                            value={row[fieldKey] as '' | 'true' | 'false'}
+                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
+                                if (def.type === 'textarea') {
+                                    return (
+                                        <TextAreaRowField
+                                            key={fieldKey}
+                                            id={id}
+                                            label={def.label}
+                                            value={(row[fieldKey] as string) ?? ''}
+                                            placeholder={def.placeholder}
+                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
+                                return (
+                                    <TextRowField
+                                        key={fieldKey}
+                                        id={id}
+                                        label={def.label}
+                                        value={(row[fieldKey] as string) ?? ''}
+                                        placeholder={def.placeholder}
+                                        suffix={def.suffix}
+                                        onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
+                                        onCommit={onCommit}
+                                    />
+                                );
+                            })}
+                        </RowFieldset>
+                    );
+                })}
+            <AddButton label='genotyping assay' onAdd={() => setPickerOpen(true)}/>
+            <TypePickerModal
+                open={pickerOpen}
+                title='Add a genotyping assay'
+                description='Pick the assay type — the form will then show only the fields that apply.'
+                options={ASSAY_TYPE_OPTIONS as Array<{value: string; label: string}>}
+                onPick={handlePick}
+                onCancel={() => setPickerOpen(false)}
+            />
         </div>
     );
 };
@@ -1417,7 +1623,13 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
             />
         </Section>
         <Section id='genotyping-assays' title='Genotyping Assays'>
-            <GenotypingAssaysSection rows={assays.rows} onAdd={assays.add} onRemove={assays.remove} onChange={assays.change} onCommit={assays.commit}/>
+            <GenotypingAssaysSection
+                rows={assays.rows}
+                onAddWithType={type => assays.addWithPatch({assayType: type})}
+                onRemove={assays.remove}
+                onChange={assays.change}
+                onCommit={assays.commit}
+            />
         </Section>
         <Section id='phenotypes' title='Phenotypes'>
             <PhenotypesSection rows={phenotypes.rows} onAdd={phenotypes.add} onRemove={phenotypes.remove} onChange={phenotypes.change} onCommit={phenotypes.commit}/>

@@ -293,6 +293,23 @@ public class LineSubmissionService {
                 g.setExpectedWtDigest(blankToNull(dto.getExpectedWtDigest()));
                 g.setExpectedMutDigest(blankToNull(dto.getExpectedMutDigest()));
                 g.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
+                g.setSequencingPrimer(blankToNull(dto.getSequencingPrimer()));
+                g.setDcapsMismatchPrimer(blankToNull(dto.getDcapsMismatchPrimer()));
+                g.setWtSpecificPrimer(blankToNull(dto.getWtSpecificPrimer()));
+                g.setMutSpecificPrimer(blankToNull(dto.getMutSpecificPrimer()));
+                g.setCommonPrimer(blankToNull(dto.getCommonPrimer()));
+                g.setKaspGenomicSequence(blankToNull(dto.getKaspGenomicSequence()));
+                g.setSslpMarkerName(blankToNull(dto.getSslpMarkerName()));
+                g.setSslpDistance(blankToNull(dto.getSslpDistance()));
+                g.setSslpGenomicLocation(blankToNull(dto.getSslpGenomicLocation()));
+                g.setSslpInducedBackground(blankToNull(dto.getSslpInducedBackground()));
+                g.setSslpOutcrossedBackground(blankToNull(dto.getSslpOutcrossedBackground()));
+                g.setSslpInducedPcr(blankToNull(dto.getSslpInducedPcr()));
+                g.setSslpOutcrossedPcr(blankToNull(dto.getSslpOutcrossedPcr()));
+                g.setChromatogramFilesAvailable(dto.getChromatogramFilesAvailable());
+                g.setGelImagesAvailable(dto.getGelImagesAvailable());
+                g.setResultImagesAvailable(dto.getResultImagesAvailable());
+                g.setMeltCurveFilesAvailable(dto.getMeltCurveFilesAvailable());
             }
         }
         mutation.getGenotypingAssays().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));

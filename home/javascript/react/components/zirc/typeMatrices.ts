@@ -106,3 +106,144 @@ export function visibleLesionFields(type: string, hasLargeVariant: boolean): Les
     }
     return base;
 }
+
+// ─── Genotyping assays ────────────────────────────────────────────────────
+
+export type AssayTypeKey =
+    | 'pcr_gel'
+    | 'pcr_sequencing'
+    | 'rflp'
+    | 'dcaps'
+    | 'asa'
+    | 'kasp'
+    | 'hrma'
+    | 'sslp';
+
+export interface AssayTypeOption {
+    value: AssayTypeKey;
+    label: string;
+}
+
+export const ASSAY_TYPE_OPTIONS: AssayTypeOption[] = [
+    {value: 'pcr_gel',        label: 'PCR + gel electrophoresis'},
+    {value: 'pcr_sequencing', label: 'PCR + sequencing'},
+    {value: 'rflp',           label: 'RFLP'},
+    {value: 'dcaps',          label: 'dCAPS'},
+    {value: 'asa',            label: 'ASA'},
+    {value: 'kasp',           label: 'KASP'},
+    {value: 'hrma',           label: 'HRMA'},
+    {value: 'sslp',           label: 'SSLP'},
+];
+
+export type AssayFieldKey =
+    | 'forwardPrimer'
+    | 'reversePrimer'
+    | 'expectedWtPcr'
+    | 'expectedMutPcr'
+    | 'sequencingPrimer'
+    | 'chromatogramFilesAvailable'
+    | 'dcapsMismatchPrimer'
+    | 'restrictionEnzyme'
+    | 'enzymeCleaves'
+    | 'expectedWtDigest'
+    | 'expectedMutDigest'
+    | 'wtSpecificPrimer'
+    | 'mutSpecificPrimer'
+    | 'commonPrimer'
+    | 'kaspGenomicSequence'
+    | 'gelImagesAvailable'
+    | 'resultImagesAvailable'
+    | 'meltCurveFilesAvailable'
+    | 'sslpMarkerName'
+    | 'sslpDistance'
+    | 'sslpGenomicLocation'
+    | 'sslpInducedBackground'
+    | 'sslpOutcrossedBackground'
+    | 'sslpInducedPcr'
+    | 'sslpOutcrossedPcr'
+    | 'additionalInfo';
+
+export interface AssayFieldDef {
+    key: AssayFieldKey;
+    label: string;
+    type: 'text' | 'textarea' | 'bool';
+    placeholder?: string;
+    suffix?: string;
+}
+
+export const ASSAY_FIELD_DEFS: Record<AssayFieldKey, AssayFieldDef> = {
+    forwardPrimer:              {key: 'forwardPrimer',              label: 'Forward primer',                  type: 'text'},
+    reversePrimer:              {key: 'reversePrimer',              label: 'Reverse primer',                  type: 'text'},
+    expectedWtPcr:              {key: 'expectedWtPcr',              label: 'Expected wild-type PCR product',  type: 'text',     suffix: 'bp'},
+    expectedMutPcr:             {key: 'expectedMutPcr',             label: 'Expected mutant PCR product',     type: 'text',     suffix: 'bp'},
+    sequencingPrimer:           {key: 'sequencingPrimer',           label: 'Sequencing primer',               type: 'text'},
+    chromatogramFilesAvailable: {key: 'chromatogramFilesAvailable', label: 'Chromatogram files available?',   type: 'bool'},
+    dcapsMismatchPrimer:        {key: 'dcapsMismatchPrimer',        label: 'Primer with introduced mismatch', type: 'text'},
+    restrictionEnzyme:          {key: 'restrictionEnzyme',          label: 'Restriction enzyme',              type: 'text'},
+    enzymeCleaves:              {key: 'enzymeCleaves',              label: 'Enzyme cleaves WT or MUT',        type: 'text'},
+    expectedWtDigest:           {key: 'expectedWtDigest',           label: 'Expected WT product after digest', type: 'text', suffix: 'bp'},
+    expectedMutDigest:          {key: 'expectedMutDigest',          label: 'Expected MUT product after digest', type: 'text', suffix: 'bp'},
+    wtSpecificPrimer:           {key: 'wtSpecificPrimer',           label: 'WT-specific primer',              type: 'text'},
+    mutSpecificPrimer:          {key: 'mutSpecificPrimer',          label: 'Mutant-specific primer',          type: 'text'},
+    commonPrimer:               {key: 'commonPrimer',               label: 'Common primer',                   type: 'text'},
+    kaspGenomicSequence:        {key: 'kaspGenomicSequence',        label: 'Genomic DNA sequence (KASP design)', type: 'textarea'},
+    gelImagesAvailable:         {key: 'gelImagesAvailable',         label: 'Annotated gel images available?', type: 'bool'},
+    resultImagesAvailable:      {key: 'resultImagesAvailable',      label: 'Annotated result images available?', type: 'bool'},
+    meltCurveFilesAvailable:    {key: 'meltCurveFilesAvailable',    label: 'Annotated melt curve files available?', type: 'bool'},
+    sslpMarkerName:             {key: 'sslpMarkerName',             label: 'SSLP marker name',                type: 'text'},
+    sslpDistance:               {key: 'sslpDistance',               label: 'Distance marker → mutation',      type: 'text'},
+    sslpGenomicLocation:        {key: 'sslpGenomicLocation',        label: 'Genomic location of marker',      type: 'text'},
+    sslpInducedBackground:      {key: 'sslpInducedBackground',      label: 'Background mutation was induced on', type: 'text'},
+    sslpOutcrossedBackground:   {key: 'sslpOutcrossedBackground',   label: 'Recommended outcrossing background', type: 'text'},
+    sslpInducedPcr:             {key: 'sslpInducedPcr',             label: 'PCR product on induced background', type: 'text',  suffix: 'bp'},
+    sslpOutcrossedPcr:          {key: 'sslpOutcrossedPcr',          label: 'PCR product on outcrossing background', type: 'text', suffix: 'bp'},
+    additionalInfo:             {key: 'additionalInfo',             label: 'Additional info',                 type: 'textarea'},
+};
+
+const ASSAY_FIELDS_BY_TYPE: Record<AssayTypeKey, AssayFieldKey[]> = {
+    pcr_gel: [
+        'forwardPrimer', 'reversePrimer', 'expectedWtPcr', 'expectedMutPcr',
+        'gelImagesAvailable', 'additionalInfo',
+    ],
+    pcr_sequencing: [
+        'forwardPrimer', 'reversePrimer', 'expectedWtPcr', 'expectedMutPcr',
+        'sequencingPrimer', 'chromatogramFilesAvailable', 'additionalInfo',
+    ],
+    rflp: [
+        'forwardPrimer', 'reversePrimer', 'expectedWtPcr', 'expectedMutPcr',
+        'restrictionEnzyme', 'enzymeCleaves', 'expectedWtDigest', 'expectedMutDigest',
+        'gelImagesAvailable', 'additionalInfo',
+    ],
+    dcaps: [
+        'forwardPrimer', 'reversePrimer', 'expectedWtPcr', 'expectedMutPcr',
+        'dcapsMismatchPrimer', 'restrictionEnzyme', 'enzymeCleaves',
+        'expectedWtDigest', 'expectedMutDigest',
+        'gelImagesAvailable', 'additionalInfo',
+    ],
+    asa: [
+        'expectedWtPcr', 'expectedMutPcr',
+        'wtSpecificPrimer', 'mutSpecificPrimer', 'commonPrimer',
+        'resultImagesAvailable', 'additionalInfo',
+    ],
+    kasp: [
+        'expectedWtPcr', 'expectedMutPcr',
+        'wtSpecificPrimer', 'mutSpecificPrimer', 'commonPrimer',
+        'kaspGenomicSequence',
+        'resultImagesAvailable', 'additionalInfo',
+    ],
+    hrma: [
+        'forwardPrimer', 'reversePrimer', 'expectedWtPcr', 'expectedMutPcr',
+        'meltCurveFilesAvailable', 'additionalInfo',
+    ],
+    sslp: [
+        'forwardPrimer', 'reversePrimer',
+        'sslpMarkerName', 'sslpDistance', 'sslpGenomicLocation',
+        'sslpInducedBackground', 'sslpOutcrossedBackground',
+        'sslpInducedPcr', 'sslpOutcrossedPcr',
+        'gelImagesAvailable', 'additionalInfo',
+    ],
+};
+
+export function visibleAssayFields(type: string): AssayFieldKey[] {
+    return ASSAY_FIELDS_BY_TYPE[type as AssayTypeKey] ?? [];
+}
