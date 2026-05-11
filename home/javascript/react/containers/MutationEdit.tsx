@@ -9,6 +9,7 @@ import {
     visibleAssayFields,
     visibleLesionFields,
 } from '../components/zirc/typeMatrices';
+import ZircAssayFileUpload from '../components/zirc/ZircAssayFileUpload';
 
 // ─── Wire types ────────────────────────────────────────────────────────────
 
@@ -1435,9 +1436,12 @@ interface GenotypingAssaysSectionProps {
     onRemove: (rowId: string) => void;
     onChange: (rowId: string, patch: Partial<GenotypingAssayRow>) => void;
     onCommit: () => void;
+    /** Called by the file-upload widget with the server-returned
+     *  MutationDTO so the parent can refresh all sub-collections. */
+    onApplyDTO: (dto: MutationDTO) => void;
 }
 
-const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: GenotypingAssaysSectionProps) => {
+const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCommit, onApplyDTO}: GenotypingAssaysSectionProps) => {
     const expansion = useRowExpansion<GenotypingAssayRow>();
     const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -1496,18 +1500,32 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                     );
                                 }
                                 if (def.type === 'files') {
-                                    // Actual react-dropzone widget lands in a
-                                    // follow-up commit; for now show the count
-                                    // of attached files of this kind.
+                                    // The widget needs a persisted assay id —
+                                    // for unsaved (just-added) rows it shows
+                                    // a "save first" hint instead.
+                                    if (row.id == null) {
+                                        return (
+                                            <div key={fieldKey} className='form-group row'>
+                                                <span className='col-sm-3 col-form-label'>{def.label}</span>
+                                                <div className='col-sm-9'>
+                                                    <span className='text-muted small'>
+                                                        Fill in a field and blur to save this assay; file uploads enable after.
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
                                     const kindFiles = row.files.filter(f => f.kind === def.fileKind);
                                     return (
                                         <div key={fieldKey} className='form-group row'>
                                             <span className='col-sm-3 col-form-label'>{def.label}</span>
                                             <div className='col-sm-9'>
-                                                <span className='text-muted small'>
-                                                    {kindFiles.length} file{kindFiles.length === 1 ? '' : 's'} uploaded
-                                                    {' '}<em>(upload widget coming)</em>
-                                                </span>
+                                                <ZircAssayFileUpload
+                                                    assayId={row.id}
+                                                    fileKind={def.fileKind ?? ''}
+                                                    files={kindFiles}
+                                                    onMutationRefresh={dto => onApplyDTO(dto as MutationDTO)}
+                                                />
                                             </div>
                                         </div>
                                     );
@@ -1919,6 +1937,7 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
                 onRemove={assays.remove}
                 onChange={assays.change}
                 onCommit={assays.commit}
+                onApplyDTO={applyDTO}
             />
         </Section>
         <Section id='phenotypes' title='Phenotypes'>
