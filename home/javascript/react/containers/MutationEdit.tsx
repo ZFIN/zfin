@@ -232,6 +232,7 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
         genbankGenomicDna: trimOrNull(r.genbankGenomicDna),
         genbankCdna: trimOrNull(r.genbankCdna),
     }),
+    getId: r => r.id,
 };
 
 // Restricted per the form-spec PDF: "Don't include translocation, inversion,
@@ -298,6 +299,7 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
         mutatedAminoAcids: trimOrNull(r.mutatedAminoAcids),
         additionalInfo: trimOrNull(r.additionalInfo),
     }),
+    getId: r => r.id,
 };
 
 interface GenotypingAssayRow {
@@ -361,6 +363,7 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         expectedMutDigest: trimOrNull(r.expectedMutDigest),
         additionalInfo: trimOrNull(r.additionalInfo),
     }),
+    getId: r => r.id,
 };
 
 interface PhenotypeRow {
@@ -418,6 +421,7 @@ const PHENOTYPE_ADAPTER: ChildAdapter<PhenotypeWire, PhenotypeRow> = {
         segregation: csvToArray(r.segregationCsv),
         type: csvToArray(r.typeCsv),
     }),
+    getId: r => r.id,
 };
 
 interface PublicationRow {
@@ -452,6 +456,13 @@ interface ChildAdapter<W, R extends {rowId: string}> {
     wireToRow: (w: W) => R;
     rowToWire: (r: R) => W;
     emptyRow: () => R;
+    /** Optional persistent identifier accessor. When the apply() reconciler
+     *  finds the same id on both sides, it preserves the local rowId so any
+     *  per-row UI state (collapse, focus) survives the save roundtrip.
+     *  Adapters whose rows don't carry an id (e.g. publications, where each
+     *  row is just a string) can omit this; reconciliation falls back to
+     *  pairing by list index. */
+    getId?: (r: R) => number | null;
 }
 
 interface ChildCollection<R extends {rowId: string}> {
@@ -491,7 +502,35 @@ function useChildCollection<W, R extends {rowId: string}>(
 
     function apply(dto: MutationDTO) {
         const wire = adapter.extractWire(dto) ?? [];
-        const next = wire.map(adapter.wireToRow);
+        const prev = rowsRef.current;
+        const prevById = new Map<number, R>();
+        if (adapter.getId) {
+            for (const r of prev) {
+                const id = adapter.getId(r);
+                if (id != null) {
+                    prevById.set(id, r);
+                }
+            }
+        }
+        // Reconcile incoming rows against the previous state so rowIds
+        // stay stable across save roundtrips:
+        //   (1) match by id when both sides have one
+        //   (2) for new rows that don't yet have an id, pair with the
+        //       prev row at the same index if it had no id either
+        //       (covers the just-saved-for-the-first-time case)
+        //   (3) otherwise mint a fresh rowId
+        const next = wire.map((w, idx) => {
+            const fresh = adapter.wireToRow(w);
+            const id = adapter.getId ? adapter.getId(fresh) : null;
+            if (id != null && prevById.has(id)) {
+                return {...fresh, rowId: prevById.get(id)!.rowId};
+            }
+            const prevAtIdx = prev[idx];
+            if (prevAtIdx && (!adapter.getId || adapter.getId(prevAtIdx) == null)) {
+                return {...fresh, rowId: prevAtIdx.rowId};
+            }
+            return fresh;
+        });
         setRows(next);
         // Snapshot in the same canonical form rowToWire produces so future
         // commits can dedupe by exact JSON equality.
@@ -556,24 +595,100 @@ function useChildCollection<W, R extends {rowId: string}>(
 interface RowFieldsetProps {
     title: string;
     onRemove: () => void;
+    /** Optional callback for the Done button; only rendered when supplied
+     *  and the row is expanded. */
+    onDone?: () => void;
+    /** When true, the row renders compactly: title + summary + Edit/Remove
+     *  buttons, no fieldset body. */
+    collapsed?: boolean;
+    /** Required when `collapsed` is true; rendered in place of children. */
+    summary?: React.ReactNode;
+    /** Required when `collapsed` is true; called by the Edit button. */
+    onEdit?: () => void;
     children: React.ReactNode;
 }
 
-const RowFieldset = ({title, onRemove, children}: RowFieldsetProps) => (
-    <fieldset className='border rounded p-3 mb-3'>
-        <legend className='h6 px-2' style={{width: 'auto'}}>{title}</legend>
-        {children}
-        <div className='text-right mt-2'>
-            <button
-                type='button'
-                className='btn btn-sm btn-outline-danger'
-                onClick={onRemove}
-            >
-                Remove
-            </button>
-        </div>
-    </fieldset>
-);
+const RowFieldset = ({title, onRemove, onDone, collapsed, summary, onEdit, children}: RowFieldsetProps) => {
+    if (collapsed) {
+        return (
+            <div className='border rounded p-2 mb-2 d-flex align-items-center'>
+                <div className='flex-grow-1' style={{minWidth: 0}}>
+                    <span className='text-muted small mr-2'>{title}</span>
+                    <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                        {summary ?? <span className='text-muted'>(empty)</span>}
+                    </span>
+                </div>
+                <div style={{flexShrink: 0}}>
+                    {onEdit && (
+                        <button type='button' className='btn btn-sm btn-outline-secondary mr-2' onClick={onEdit}>
+                            Edit
+                        </button>
+                    )}
+                    <button type='button' className='btn btn-sm btn-outline-danger' onClick={onRemove}>
+                        Remove
+                    </button>
+                </div>
+            </div>
+        );
+    }
+    return (
+        <fieldset className='border rounded p-3 mb-3'>
+            <legend className='h6 px-2' style={{width: 'auto'}}>{title}</legend>
+            {children}
+            <div className='text-right mt-2'>
+                {onDone && (
+                    <button
+                        type='button'
+                        className='btn btn-sm btn-outline-primary mr-2'
+                        onClick={onDone}
+                    >
+                        Done
+                    </button>
+                )}
+                <button
+                    type='button'
+                    className='btn btn-sm btn-outline-danger'
+                    onClick={onRemove}
+                >
+                    Remove
+                </button>
+            </div>
+        </fieldset>
+    );
+};
+
+/**
+ * Per-section expansion state. New rows (id == null) default to expanded;
+ * rows already on the server default to collapsed. Explicit user choices
+ * (Done / Edit) override the default and persist for the component's
+ * lifetime.
+ */
+function useRowExpansion<R extends {rowId: string, id: number | null}>() {
+    const [expandedSet, setExpandedSet] = useState<Set<string>>(new Set());
+    const [collapsedSet, setCollapsedSet] = useState<Set<string>>(new Set());
+
+    function isExpanded(row: R): boolean {
+        if (expandedSet.has(row.rowId)) {
+            return true;
+        }
+        if (collapsedSet.has(row.rowId)) {
+            return false;
+        }
+        return row.id == null; // default: new → expanded, persisted → collapsed
+    }
+
+    function collapse(rowId: string) {
+        setExpandedSet(prev => { const next = new Set(prev); next.delete(rowId); return next; });
+        setCollapsedSet(prev => new Set(prev).add(rowId));
+    }
+
+    function expand(rowId: string) {
+        setCollapsedSet(prev => { const next = new Set(prev); next.delete(rowId); return next; });
+        setExpandedSet(prev => new Set(prev).add(rowId));
+    }
+
+    return {isExpanded, collapse, expand};
+}
 
 interface TextRowFieldProps {
     id: string;
@@ -738,14 +853,29 @@ interface SectionListProps<R> {
     onCommit: () => void;
 }
 
+function summarizeGene(row: GeneRow): string {
+    const id = row.mutatedGeneAbbreviation || row.mutatedGeneZdbId || '(no gene selected)';
+    const lg = row.linkageGroup ? ` · LG ${row.linkageGroup}` : '';
+    return `${id}${lg}`;
+}
+
 const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<GeneRow>) => {
+    const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
         return <div><p className='text-muted'>No genes recorded for this mutation.</p><AddButton label='gene' onAdd={onAdd}/></div>;
     }
     return (
         <div>
             {rows.map((row, idx) => (
-                <RowFieldset key={row.rowId} title={`Gene ${idx + 1}`} onRemove={() => onRemove(row.rowId)}>
+                <RowFieldset
+                    key={row.rowId}
+                    title={`Gene ${idx + 1}`}
+                    collapsed={!expansion.isExpanded(row)}
+                    summary={summarizeGene(row)}
+                    onEdit={() => expansion.expand(row.rowId)}
+                    onDone={() => expansion.collapse(row.rowId)}
+                    onRemove={() => onRemove(row.rowId)}
+                >
                     <div className='form-group row'>
                         <label htmlFor={`gene-zdb-${row.rowId}`} className='col-sm-3 col-form-label'>Mutated Gene ZDB ID</label>
                         <div className='col-sm-9'>
@@ -783,14 +913,32 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
     );
 };
 
+function summarizeLesion(row: LesionRow): string {
+    const typeLabel = LESION_TYPE_OPTIONS.find(o => o.value === row.lesionType)?.label
+        ?? row.lesionType
+        ?? '';
+    const head = typeLabel || '(no type)';
+    const detail = row.deletedBasePairs || row.insertedBasePairs || row.wtGenomicSequence;
+    return detail ? `${head} · ${detail}` : head;
+}
+
 const LesionsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<LesionRow>) => {
+    const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
         return <div><p className='text-muted'>No lesions recorded for this mutation.</p><AddButton label='lesion' onAdd={onAdd}/></div>;
     }
     return (
         <div>
             {rows.map((row, idx) => (
-                <RowFieldset key={row.rowId} title={`Lesion ${idx + 1}`} onRemove={() => onRemove(row.rowId)}>
+                <RowFieldset
+                    key={row.rowId}
+                    title={`Lesion ${idx + 1}`}
+                    collapsed={!expansion.isExpanded(row)}
+                    summary={summarizeLesion(row)}
+                    onEdit={() => expansion.expand(row.rowId)}
+                    onDone={() => expansion.collapse(row.rowId)}
+                    onRemove={() => onRemove(row.rowId)}
+                >
                     <SelectRowField
                         id={`les-type-${row.rowId}`}
                         label='Type'
@@ -813,14 +961,29 @@ const LesionsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionList
     );
 };
 
+function summarizeAssay(row: GenotypingAssayRow): string {
+    const head = row.assayType || '(no type)';
+    const primers = [row.forwardPrimer, row.reversePrimer].filter(Boolean).join(' / ');
+    return primers ? `${head} · ${primers}` : head;
+}
+
 const GenotypingAssaysSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<GenotypingAssayRow>) => {
+    const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
         return <div><p className='text-muted'>No genotyping assays recorded for this mutation.</p><AddButton label='genotyping assay' onAdd={onAdd}/></div>;
     }
     return (
         <div>
             {rows.map((row, idx) => (
-                <RowFieldset key={row.rowId} title={`Genotyping Assay ${idx + 1}`} onRemove={() => onRemove(row.rowId)}>
+                <RowFieldset
+                    key={row.rowId}
+                    title={`Genotyping Assay ${idx + 1}`}
+                    collapsed={!expansion.isExpanded(row)}
+                    summary={summarizeAssay(row)}
+                    onEdit={() => expansion.expand(row.rowId)}
+                    onDone={() => expansion.collapse(row.rowId)}
+                    onRemove={() => onRemove(row.rowId)}
+                >
                     <TextRowField id={`asy-type-${row.rowId}`}    label='Assay Type'         value={row.assayType}          onChange={v => onChange(row.rowId, {assayType: v})}          onCommit={onCommit} placeholder='pcr_gel, rflp, kasp, …'/>
                     <TextRowField id={`asy-fwd-${row.rowId}`}     label='Forward Primer'     value={row.forwardPrimer}      onChange={v => onChange(row.rowId, {forwardPrimer: v})}      onCommit={onCommit}/>
                     <TextRowField id={`asy-rev-${row.rowId}`}     label='Reverse Primer'     value={row.reversePrimer}      onChange={v => onChange(row.rowId, {reversePrimer: v})}      onCommit={onCommit}/>
@@ -838,14 +1001,29 @@ const GenotypingAssaysSection = ({rows, onAdd, onRemove, onChange, onCommit}: Se
     );
 };
 
+function summarizePhenotype(row: PhenotypeRow): string {
+    const desc = row.description || '(no description)';
+    const stage = row.stage || (row.hoursPostFertilization ? `${row.hoursPostFertilization} hpf` : '');
+    return stage ? `${desc} · ${stage}` : desc;
+}
+
 const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<PhenotypeRow>) => {
+    const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
         return <div><p className='text-muted'>No phenotypes recorded for this mutation.</p><AddButton label='phenotype' onAdd={onAdd}/></div>;
     }
     return (
         <div>
             {rows.map((row, idx) => (
-                <RowFieldset key={row.rowId} title={`Phenotype ${idx + 1}`} onRemove={() => onRemove(row.rowId)}>
+                <RowFieldset
+                    key={row.rowId}
+                    title={`Phenotype ${idx + 1}`}
+                    collapsed={!expansion.isExpanded(row)}
+                    summary={summarizePhenotype(row)}
+                    onEdit={() => expansion.expand(row.rowId)}
+                    onDone={() => expansion.collapse(row.rowId)}
+                    onRemove={() => onRemove(row.rowId)}
+                >
                     <TextRowField id={`phn-desc-${row.rowId}`}     label='Description'              value={row.description}             onChange={v => onChange(row.rowId, {description: v})}             onCommit={onCommit}/>
                     <TextRowField id={`phn-hpf-${row.rowId}`}      label='Hours Post Fertilization' value={row.hoursPostFertilization}  onChange={v => onChange(row.rowId, {hoursPostFertilization: v})}  onCommit={onCommit} type='number'/>
                     <TextRowField id={`phn-stage-${row.rowId}`}    label='Stage'                    value={row.stage}                   onChange={v => onChange(row.rowId, {stage: v})}                   onCommit={onCommit}/>

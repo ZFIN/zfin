@@ -38,9 +38,12 @@ const SaveToast = ({event}: SaveToastProps) => {
     const variant = event.status === 'error' ? 'danger'
         : event.status === 'saving' ? 'secondary'
             : 'success';
-    const text = event.status === 'saving' ? `Saving ${event.label}…`
-        : event.status === 'saved' ? `Saved ${event.label}`
-            : `Error saving ${event.label}: ${event.message ?? ''}`;
+    // Field label is intentionally not surfaced — the toast just confirms
+    // that *something* saved. The label is still kept on SaveEvent for
+    // telemetry / debugging.
+    const text = event.status === 'saving' ? 'Saving…'
+        : event.status === 'saved' ? 'Saved'
+            : `Error saving: ${event.message ?? ''}`;
 
     const style: React.CSSProperties = {
         position: 'fixed',

@@ -335,7 +335,53 @@ interface LinkedFeaturesSectionProps {
     onCommitRow: () => void;
 }
 
+function summarizeLinkedFeature(row: LinkedFeatureRow, mutations: MutationSummary[]): string {
+    const lookup = (idStr: string) => mutations.find(m => String(m.id) === idStr);
+    const a = lookup(row.mutationAId);
+    const b = lookup(row.mutationBId);
+    const aLabel = a ? mutationLabel(a) : '?';
+    const bLabel = b ? mutationLabel(b) : '?';
+    const pair = `${aLabel} ↔ ${bLabel}`;
+    if (row.distanceKnown === 'true' && row.distanceValue && row.distanceUnit) {
+        return `${pair} · ${row.distanceValue} ${row.distanceUnit}`;
+    }
+    return pair;
+}
+
+/**
+ * Per-row collapse state for the linked-features section. Rows whose pair
+ * isn't fully picked default to expanded; complete rows default to
+ * collapsed. Explicit Done / Edit overrides take precedence.
+ */
+function useLinkedFeatureExpansion() {
+    const [expandedSet, setExpandedSet] = useState<Set<string>>(new Set());
+    const [collapsedSet, setCollapsedSet] = useState<Set<string>>(new Set());
+
+    function isExpanded(row: LinkedFeatureRow): boolean {
+        if (expandedSet.has(row.rowId)) {
+            return true;
+        }
+        if (collapsedSet.has(row.rowId)) {
+            return false;
+        }
+        return !row.mutationAId || !row.mutationBId;
+    }
+
+    function collapse(rowId: string) {
+        setExpandedSet(prev => { const next = new Set(prev); next.delete(rowId); return next; });
+        setCollapsedSet(prev => new Set(prev).add(rowId));
+    }
+
+    function expand(rowId: string) {
+        setCollapsedSet(prev => { const next = new Set(prev); next.delete(rowId); return next; });
+        setExpandedSet(prev => new Set(prev).add(rowId));
+    }
+
+    return {isExpanded, collapse, expand};
+}
+
 const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCommitRow}: LinkedFeaturesSectionProps) => {
+    const expansion = useLinkedFeatureExpansion();
     const noMutations = mutations.length < 2;
     if (rows.length === 0) {
         return (
@@ -370,6 +416,34 @@ const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCo
                 const unitLabelId = `ls-lf-unit-label-${row.rowId}`;
                 const infoId = `ls-lf-info-${row.rowId}`;
                 const showDistance = row.distanceKnown === 'true';
+                if (!expansion.isExpanded(row)) {
+                    return (
+                        <div key={row.rowId} className='border rounded p-2 mb-2 d-flex align-items-center'>
+                            <div className='flex-grow-1' style={{minWidth: 0}}>
+                                <span className='text-muted small mr-2'>Linked feature {idx + 1}</span>
+                                <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                                    {summarizeLinkedFeature(row, mutations)}
+                                </span>
+                            </div>
+                            <div style={{flexShrink: 0}}>
+                                <button
+                                    type='button'
+                                    className='btn btn-sm btn-outline-secondary mr-2'
+                                    onClick={() => expansion.expand(row.rowId)}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    type='button'
+                                    className='btn btn-sm btn-outline-danger'
+                                    onClick={() => onRemove(row.rowId)}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
                 return (
                     <fieldset key={row.rowId} className='border rounded p-3 mb-3'>
                         <legend className='h6 px-2' style={{width: 'auto'}}>
@@ -496,6 +570,13 @@ const LinkedFeaturesSection = ({rows, mutations, onAdd, onRemove, onChange, onCo
                             </div>
                         </div>
                         <div className='text-right mt-2'>
+                            <button
+                                type='button'
+                                className='btn btn-sm btn-outline-primary mr-2'
+                                onClick={() => expansion.collapse(row.rowId)}
+                            >
+                                Done
+                            </button>
                             <button
                                 type='button'
                                 className='btn btn-sm btn-outline-danger'
