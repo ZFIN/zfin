@@ -234,7 +234,12 @@ public class LineSubmissionService {
         for (Gene g : mutation.getGenes()) {
             existing.put(g.getId(), g);
         }
-        Set<Long> incomingIds = new HashSet<>();
+        // Track entity references rather than ids. Auto-flushes triggered
+        // inside the loop (e.g. resolveMarker runs a HQL query that
+        // forces a flush) populate newly-created rows' IDENTITY ids, so
+        // an id-based "keep" check would mis-classify them as "existing
+        // but not in incoming" and drop them on the removeIf below.
+        Set<Gene> keep = new HashSet<>();
         int order = 0;
 
         if (incoming != null) {
@@ -245,9 +250,8 @@ public class LineSubmissionService {
                     g = new Gene();
                     g.setMutation(mutation);
                     mutation.getGenes().add(g);
-                } else {
-                    incomingIds.add(g.getId());
                 }
+                keep.add(g);
                 g.setSortOrder(order);
                 g.setMutatedGene(resolveMarker(dto.getMutatedGeneZdbId()));
                 g.setLinkageGroup(blankToNull(dto.getLinkageGroup()));
@@ -257,8 +261,8 @@ public class LineSubmissionService {
             }
         }
 
-        // Drop existing rows that didn't appear in the incoming list.
-        mutation.getGenes().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
+        // Drop rows that didn't appear in the incoming list.
+        mutation.getGenes().removeIf(g -> !keep.contains(g));
         return mutation;
     }
 
@@ -274,7 +278,9 @@ public class LineSubmissionService {
         for (Lesion l : mutation.getLesions()) {
             existing.put(l.getId(), l);
         }
-        Set<Long> incomingIds = new HashSet<>();
+        // Reference-keyed so freshly-inserted rows survive auto-flushes
+        // that mid-loop give them their IDENTITY id (cf. saveGenes).
+        Set<Lesion> keep = new HashSet<>();
         int order = 0;
         if (incoming != null) {
             for (LesionDTO dto : incoming) {
@@ -284,9 +290,8 @@ public class LineSubmissionService {
                     l = new Lesion();
                     l.setMutation(mutation);
                     mutation.getLesions().add(l);
-                } else {
-                    incomingIds.add(l.getId());
                 }
+                keep.add(l);
                 l.setSortOrder(order);
                 l.setLesionType(blankToNull(dto.getLesionType()));
                 l.setLesionSizeBp(dto.getLesionSizeBp());
@@ -303,7 +308,7 @@ public class LineSubmissionService {
                 l.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
             }
         }
-        mutation.getLesions().removeIf(l -> l.getId() != null && !incomingIds.contains(l.getId()));
+        mutation.getLesions().removeIf(l -> !keep.contains(l));
         return mutation;
     }
 
@@ -314,7 +319,8 @@ public class LineSubmissionService {
         for (GenotypingAssay g : mutation.getGenotypingAssays()) {
             existing.put(g.getId(), g);
         }
-        Set<Long> incomingIds = new HashSet<>();
+        // Reference-keyed; see saveGenes for rationale.
+        Set<GenotypingAssay> keep = new HashSet<>();
         int order = 0;
         if (incoming != null) {
             for (GenotypingAssayDTO dto : incoming) {
@@ -324,9 +330,8 @@ public class LineSubmissionService {
                     g = new GenotypingAssay();
                     g.setMutation(mutation);
                     mutation.getGenotypingAssays().add(g);
-                } else {
-                    incomingIds.add(g.getId());
                 }
+                keep.add(g);
                 g.setSortOrder(order);
                 g.setAssayType(blankToNull(dto.getAssayType()));
                 g.setForwardPrimer(validatedPrimer(dto.getForwardPrimer(), "forwardPrimer"));
@@ -357,7 +362,7 @@ public class LineSubmissionService {
                 // multipart endpoints.
             }
         }
-        mutation.getGenotypingAssays().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
+        mutation.getGenotypingAssays().removeIf(g -> !keep.contains(g));
         return mutation;
     }
 
@@ -368,7 +373,8 @@ public class LineSubmissionService {
         for (Phenotype p : mutation.getPhenotypes()) {
             existing.put(p.getId(), p);
         }
-        Set<Long> incomingIds = new HashSet<>();
+        // Reference-keyed; see saveGenes for rationale.
+        Set<Phenotype> keep = new HashSet<>();
         int order = 0;
         if (incoming != null) {
             for (PhenotypeDTO dto : incoming) {
@@ -378,9 +384,8 @@ public class LineSubmissionService {
                     p = new Phenotype();
                     p.setMutation(mutation);
                     mutation.getPhenotypes().add(p);
-                } else {
-                    incomingIds.add(p.getId());
                 }
+                keep.add(p);
                 p.setSortOrder(order);
                 p.setDescription(blankToNull(dto.getDescription()));
                 p.setHpfStart(dto.getHpfStart());
@@ -396,7 +401,7 @@ public class LineSubmissionService {
                 p.setType(dto.getType() != null ? dto.getType() : new String[0]);
             }
         }
-        mutation.getPhenotypes().removeIf(p -> p.getId() != null && !incomingIds.contains(p.getId()));
+        mutation.getPhenotypes().removeIf(p -> !keep.contains(p));
         return mutation;
     }
 
@@ -584,8 +589,13 @@ public class LineSubmissionService {
                 return byPk;
             }
         } else {
+            // ORDER BY zdbID makes the result deterministic when two
+            // markers share an abbreviation (rare but possible — the
+            // column has no UNIQUE constraint). Without it, setMaxResults
+            // can return either match arbitrarily and the persisted FK
+            // becomes inconsistent across saves.
             Marker byAbbrev = HibernateUtil.currentSession()
-                    .createQuery("from Marker where lower(abbreviation) = :a",
+                    .createQuery("from Marker where lower(abbreviation) = :a order by zdbID",
                             Marker.class)
                     .setParameter("a", trimmed.toLowerCase())
                     .setMaxResults(1)

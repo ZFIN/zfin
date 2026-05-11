@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * One linkage relationship between two mutations on the same
@@ -57,4 +58,44 @@ public class LinkedFeature implements Serializable {
 
     @Column(name = "lslf_additional_info")
     private String additionalInfo;
+
+    // Natural-key-based equals/hashCode. Without them, default Object
+    // identity governs membership in the parent submission's Set<>,
+    // which trips Hibernate when two transient-then-persisted entities
+    // for the same pair coexist in a session (NonUniqueObjectException
+    // on flush). The id fields of the joined entities can be null on
+    // unpersisted rows; the equals here is null-safe and falls back to
+    // identity equality for transient-vs-transient comparisons.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LinkedFeature other)) {
+            return false;
+        }
+        return Objects.equals(submissionZdbID(), other.submissionZdbID())
+                && Objects.equals(mutationAId(), other.mutationAId())
+                && Objects.equals(mutationBId(), other.mutationBId());
+    }
+
+    @Override
+    public int hashCode() {
+        // Stable across the entity's lifetime: any null component (e.g.
+        // unsaved Mutation) hashes to 0 so transient rows still aggregate
+        // sensibly until they get their ids.
+        return Objects.hash(submissionZdbID(), mutationAId(), mutationBId());
+    }
+
+    private String submissionZdbID() {
+        return lineSubmission != null ? lineSubmission.getZdbID() : null;
+    }
+
+    private Long mutationAId() {
+        return mutationA != null ? mutationA.getId() : null;
+    }
+
+    private Long mutationBId() {
+        return mutationB != null ? mutationB.getId() : null;
+    }
 }

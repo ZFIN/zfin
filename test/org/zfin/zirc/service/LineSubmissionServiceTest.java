@@ -82,4 +82,21 @@ public class LineSubmissionServiceTest {
             // pass
         }
     }
+
+    /*
+     * The replace-all save methods (saveGenes / saveLesions /
+     * saveGenotypingAssays / savePhenotypes) used to track "rows to
+     * keep" by entity id. A mid-loop Hibernate auto-flush (triggered
+     * by resolveMarker's HQL query) would assign an IDENTITY id to a
+     * just-created row; that new id wasn't in the incomingIds set, so
+     * the trailing removeIf would delete the row. Net result: new
+     * rows on the first save with a gene reference would silently
+     * disappear.
+     *
+     * The fix switched to a Set<EntityType> keep keyed on entity
+     * reference identity, immune to mid-loop id assignment. The
+     * pure-helper structure here doesn't exercise the diff (needs
+     * Hibernate), so this comment is the regression marker until a
+     * proper integration test gets written.
+     */
 }

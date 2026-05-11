@@ -403,7 +403,15 @@ public class ZircDashboardController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "File missing from disk: " + onDisk.getPath());
         }
-        response.setContentType(f.getContentType() != null ? f.getContentType() : "application/octet-stream");
+        // Force a non-rendering content type. The persisted f.getContentType()
+        // was taken verbatim from the upload's multipart Content-Type, which
+        // a malicious uploader controls. Even with Content-Disposition:
+        // attachment, some clients (Safari, embed elements, mis-configured
+        // proxies) honour the original type — echoing it could enable
+        // XSS-on-download. application/octet-stream forces a download path
+        // regardless. Curators rarely need inline render; they download to
+        // a known location and open with the right local viewer.
+        response.setContentType("application/octet-stream");
         // Strip CR/LF/control characters and double quotes from the
         // filename before writing it into a response header — otherwise
         // a curator-supplied filename could split the header (CRLF

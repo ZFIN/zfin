@@ -884,17 +884,58 @@ interface TypePickerModalProps {
  * the page).
  */
 const TypePickerModal = ({open, title, description, options, onPick, onCancel}: TypePickerModalProps) => {
+    const firstButtonRef = useRef<HTMLButtonElement | null>(null);
+    const dialogRef = useRef<HTMLDivElement | null>(null);
+    const returnFocusRef = useRef<Element | null>(null);
+
     useEffect(() => {
         if (!open) {
             return;
         }
+        // Remember what was focused before the modal opened so we can
+        // hand focus back when it closes.
+        returnFocusRef.current = document.activeElement;
+        // Defer one frame so the first button is in the DOM when we focus it.
+        const t = window.setTimeout(() => firstButtonRef.current?.focus(), 0);
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onCancel();
+                return;
+            }
+            if (e.key !== 'Tab' || !dialogRef.current) {
+                return;
+            }
+            // Focus trap: wrap Tab / Shift+Tab within the dialog's
+            // focusable descendants. Anything tabbable but disabled is
+            // filtered out so users don't land on dead buttons.
+            const focusables = Array.from(
+                dialogRef.current.querySelectorAll<HTMLElement>(
+                    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+                ),
+            );
+            if (focusables.length === 0) {
+                return;
+            }
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            const active = document.activeElement;
+            if (e.shiftKey && active === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && active === last) {
+                e.preventDefault();
+                first.focus();
             }
         };
         window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
+        return () => {
+            window.clearTimeout(t);
+            window.removeEventListener('keydown', onKey);
+            // Return focus to whatever was focused before the modal opened.
+            if (returnFocusRef.current instanceof HTMLElement) {
+                returnFocusRef.current.focus();
+            }
+        };
     }, [open, onCancel]);
 
     if (!open) {
@@ -902,6 +943,7 @@ const TypePickerModal = ({open, title, description, options, onPick, onCancel}: 
     }
     return (
         <div
+            ref={dialogRef}
             role='dialog'
             aria-modal='true'
             aria-label={title}
@@ -920,9 +962,10 @@ const TypePickerModal = ({open, title, description, options, onPick, onCancel}: 
                     <h5 className='card-title mb-2'>{title}</h5>
                     {description && <p className='text-muted small mb-3'>{description}</p>}
                     <div className='list-group'>
-                        {options.map(opt => (
+                        {options.map((opt, idx) => (
                             <button
                                 key={opt.value}
+                                ref={idx === 0 ? firstButtonRef : undefined}
                                 type='button'
                                 className='list-group-item list-group-item-action text-left'
                                 onClick={() => onPick(opt.value)}
