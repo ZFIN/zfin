@@ -6,6 +6,7 @@ rm -f "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/ru
 rm -f "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt"
 rm -f "$ROOT_PATH/reports/tests/chromosomeMartUnitTestsPostgres.txt"
 rm -f "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTestsPostgres.txt"
+rm -f "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinksReport.txt"
 
 echo "done with file delete"
 
@@ -19,6 +20,19 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "done with runchromosomemart on $DB_NAME"
+
+# Drop UCSCStartEndLoader rows whose accession isn't in UCSC's danRer11 refGene
+# track (those would 404 on the mapping detail page).
+chmod +x "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinks.sh"
+"$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinks.sh" \
+  &> "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinksReport.txt"
+
+if [ $? -ne 0 ]; then
+  echo "UCSC link prune failed; see pruneUcscLinksReport.txt"
+  exit 1
+fi
+
+echo "done pruning UCSC links"
 
 # Run the validation tests via Ant
 cd "$SOURCEROOT" || exit 1
