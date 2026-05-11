@@ -44,5 +44,11 @@
         <div class="__react-root" id="MutationEdit"
              data-mutation-id="${mutation.id}"></div>
 
+        <nav class="navbar navbar-light admin text-center border-top mt-4">
+            <a class="col-sm" href="/action/zirc/dashboard">Dashboard</a>
+            <a class="col-sm" href="/action/zirc/line-submission/${submission.zdbID}/edit">&laquo; Back to Submission</a>
+            <span class="col-sm">Mutation</span>
+        </nav>
+
     </jsp:body>
 </z:dataPage>
