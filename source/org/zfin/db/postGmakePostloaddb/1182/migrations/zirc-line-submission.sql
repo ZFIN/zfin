@@ -213,9 +213,9 @@ CREATE INDEX line_submission_person_person_idx     ON zirc.line_submission_perso
 -- The home_table lives in the zirc schema, so zobjtype_home_schema must be
 -- set explicitly; the column was added by 01-zdb-object-type-home-schema.sql.
 -- runOnChange:true so environments that applied an earlier version of this
--- changeset (which omitted zobjtype_home_schema) re-run with the corrected
+-- file (which omitted zobjtype_home_schema) re-run with the corrected
 -- body — the ON CONFLICT clause makes the re-run idempotent.
---changeset cmpich:ZIRC-line-submission-id-wiring runOnChange:true
+-- changeset cmpich:ZIRC-line-submission-id-wiring runOnChange:true
 INSERT INTO zdb_object_type (
     zobjtype_name, zobjtype_day, zobjtype_home_schema, zobjtype_home_table,
     zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source)
