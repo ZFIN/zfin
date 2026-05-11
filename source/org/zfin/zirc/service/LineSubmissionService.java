@@ -37,6 +37,12 @@ import java.util.Set;
 @Log4j2
 public class LineSubmissionService {
 
+    /** Caps from the form spec. Surfaced to clients via /caps (see
+     *  ZircDashboardController) so the React form can disable "+ Add"
+     *  buttons before the user hits the server. */
+    public static final int MAX_MUTATIONS_PER_SUBMISSION = 5;
+    public static final int MAX_CHILD_ROWS_PER_MUTATION = 10;
+
     /**
      * Persist a single field change on a line submission. If {@code zdbID} is
      * null/blank, a new submission is created with {@code is_draft = true} (DB
@@ -147,12 +153,25 @@ public class LineSubmissionService {
      */
     public Mutation addMutation(String lsId, Person currentUser) {
         LineSubmission submission = loadOrCreate(lsId, currentUser);
+        if (submission.getMutations().size() >= MAX_MUTATIONS_PER_SUBMISSION) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Submission already has the maximum of "
+                            + MAX_MUTATIONS_PER_SUBMISSION + " mutations.");
+        }
         Mutation m = new Mutation();
         m.setLineSubmission(submission);
         m.setSortOrder(nextMutationSortOrder(submission));
         HibernateUtil.currentSession().persist(m);
         submission.getMutations().add(m);
         return m;
+    }
+
+    private static void requireWithinChildCap(List<?> incoming, String childKind) {
+        if (incoming != null && incoming.size() > MAX_CHILD_ROWS_PER_MUTATION) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Maximum " + MAX_CHILD_ROWS_PER_MUTATION + " "
+                            + childKind + " rows per mutation; got " + incoming.size() + ".");
+        }
     }
 
     private int nextMutationSortOrder(LineSubmission submission) {
@@ -190,6 +209,7 @@ public class LineSubmissionService {
         if (mutation == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
         }
+        requireWithinChildCap(incoming, "gene");
         Map<Long, Gene> existing = new HashMap<>();
         for (Gene g : mutation.getGenes()) {
             existing.put(g.getId(), g);
@@ -229,6 +249,7 @@ public class LineSubmissionService {
      */
     public Mutation saveLesions(Long mutationId, List<LesionDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
+        requireWithinChildCap(incoming, "lesion");
         Map<Long, Lesion> existing = new HashMap<>();
         for (Lesion l : mutation.getLesions()) {
             existing.put(l.getId(), l);
@@ -268,6 +289,7 @@ public class LineSubmissionService {
 
     public Mutation saveGenotypingAssays(Long mutationId, List<GenotypingAssayDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
+        requireWithinChildCap(incoming, "genotyping assay");
         Map<Long, GenotypingAssay> existing = new HashMap<>();
         for (GenotypingAssay g : mutation.getGenotypingAssays()) {
             existing.put(g.getId(), g);
@@ -322,6 +344,7 @@ public class LineSubmissionService {
 
     public Mutation savePhenotypes(Long mutationId, List<PhenotypeDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
+        requireWithinChildCap(incoming, "phenotype");
         Map<Long, Phenotype> existing = new HashMap<>();
         for (Phenotype p : mutation.getPhenotypes()) {
             existing.put(p.getId(), p);
@@ -388,6 +411,7 @@ public class LineSubmissionService {
      */
     public Mutation savePublications(Long mutationId, List<String> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
+        requireWithinChildCap(incoming, "publication");
         List<String> normalized = new java.util.ArrayList<>();
         java.util.Set<String> seen = new java.util.HashSet<>();
         if (incoming != null) {

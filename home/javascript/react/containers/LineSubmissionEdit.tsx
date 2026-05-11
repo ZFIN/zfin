@@ -365,10 +365,15 @@ interface MutationsSectionProps {
     onRemove: (id: number, label: string) => void;
 }
 
+/** Mirrors LineSubmissionService.MAX_MUTATIONS_PER_SUBMISSION. */
+const MAX_MUTATIONS = 5;
+
 const MutationsSection = ({submissionId, mutations, onRemove}: MutationsSectionProps) => {
     const addUrl = submissionId
         ? `/action/zirc/line-submission/${encodeURIComponent(submissionId)}/mutation/new`
         : null;
+    const atCap = mutations.length >= MAX_MUTATIONS;
+    const capReason = `Maximum ${MAX_MUTATIONS} mutations per submission.`;
     return (
         <div>
             {mutations.length === 0
@@ -417,14 +422,14 @@ const MutationsSection = ({submissionId, mutations, onRemove}: MutationsSectionP
                     </tbody>
                 </table>
             }
-            {addUrl
+            {addUrl && !atCap
                 ? <a href={addUrl} className='btn btn-sm btn-outline-secondary'>+ Add mutation</a>
                 : (
                     <button
                         type='button'
                         className='btn btn-sm btn-outline-secondary'
                         disabled
-                        title='Save a field on this submission first'
+                        title={atCap ? capReason : 'Save a field on this submission first'}
                     >
                         + Add mutation
                     </button>

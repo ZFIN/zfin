@@ -1146,16 +1146,36 @@ const SelectRowField = ({id, label, value, options, onChange, onCommit}: SelectR
     </div>
 );
 
+/** Mirrors LineSubmissionService.MAX_CHILD_ROWS_PER_MUTATION. */
+const MAX_CHILD_ROWS = 10;
+
 interface AddButtonProps {
     label: string;
     onAdd: () => void;
+    /** When true, the button is disabled with an explanatory tooltip. */
+    disabled?: boolean;
+    /** Tooltip shown when disabled. */
+    disabledReason?: string;
 }
 
-const AddButton = ({label, onAdd}: AddButtonProps) => (
-    <button type='button' className='btn btn-sm btn-outline-secondary' onClick={onAdd}>
+const AddButton = ({label, onAdd, disabled, disabledReason}: AddButtonProps) => (
+    <button
+        type='button'
+        className='btn btn-sm btn-outline-secondary'
+        onClick={onAdd}
+        disabled={disabled}
+        title={disabled ? disabledReason : undefined}
+    >
         + Add {label}
     </button>
 );
+
+function capProps(rows: unknown[], kind: string): {disabled: boolean; disabledReason?: string} {
+    if (rows.length >= MAX_CHILD_ROWS) {
+        return {disabled: true, disabledReason: `Maximum ${MAX_CHILD_ROWS} ${kind} rows per mutation.`};
+    }
+    return {disabled: false};
+}
 
 // ─── Per-collection section components ────────────────────────────────────
 
@@ -1176,7 +1196,7 @@ function summarizeGene(row: GeneRow): string {
 const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<GeneRow>) => {
     const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
-        return <div><p className='text-muted'>No genes recorded for this mutation.</p><AddButton label='gene' onAdd={onAdd}/></div>;
+        return <div><p className='text-muted'>No genes recorded for this mutation.</p><AddButton label='gene' onAdd={onAdd} {...capProps(rows, 'gene')}/></div>;
     }
     return (
         <div>
@@ -1229,7 +1249,7 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
                     />
                 </RowFieldset>
             ))}
-            <AddButton label='gene' onAdd={onAdd}/>
+            <AddButton label='gene' onAdd={onAdd} {...capProps(rows, 'gene')}/>
         </div>
     );
 };
@@ -1362,7 +1382,7 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
                         </RowFieldset>
                     );
                 })}
-            <AddButton label='lesion' onAdd={() => setPickerOpen(true)}/>
+            <AddButton label='lesion' onAdd={() => setPickerOpen(true)} {...capProps(rows, 'lesion')}/>
             <TypePickerModal
                 open={pickerOpen}
                 title='Add a lesion'
@@ -1523,7 +1543,7 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                         </RowFieldset>
                     );
                 })}
-            <AddButton label='genotyping assay' onAdd={() => setPickerOpen(true)}/>
+            <AddButton label='genotyping assay' onAdd={() => setPickerOpen(true)} {...capProps(rows, 'genotyping assay')}/>
             <TypePickerModal
                 open={pickerOpen}
                 title='Add a genotyping assay'
@@ -1650,7 +1670,7 @@ const PhenotypeTimingRow = ({rowId, hpfStart, hpfEnd, unit, stage, onChange, onC
 const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<PhenotypeRow>) => {
     const expansion = useRowExpansion<typeof rows[number]>();
     if (rows.length === 0) {
-        return <div><p className='text-muted'>No phenotypes recorded for this mutation.</p><AddButton label='phenotype' onAdd={onAdd}/></div>;
+        return <div><p className='text-muted'>No phenotypes recorded for this mutation.</p><AddButton label='phenotype' onAdd={onAdd} {...capProps(rows, 'phenotype')}/></div>;
     }
     return (
         <div>
@@ -1694,14 +1714,14 @@ const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionL
                     <TextAreaRowField id={`phn-type-${row.rowId}`} label='Type (CSV)'           value={row.typeCsv}                onChange={v => onChange(row.rowId, {typeCsv: v})}                onCommit={onCommit}/>
                 </RowFieldset>
             ))}
-            <AddButton label='phenotype' onAdd={onAdd}/>
+            <AddButton label='phenotype' onAdd={onAdd} {...capProps(rows, 'phenotype')}/>
         </div>
     );
 };
 
 const PublicationsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<PublicationRow>) => {
     if (rows.length === 0) {
-        return <div><p className='text-muted'>No publications recorded for this mutation.</p><AddButton label='publication' onAdd={onAdd}/></div>;
+        return <div><p className='text-muted'>No publications recorded for this mutation.</p><AddButton label='publication' onAdd={onAdd} {...capProps(rows, 'publication')}/></div>;
     }
     return (
         <div>
@@ -1733,7 +1753,7 @@ const PublicationsSection = ({rows, onAdd, onRemove, onChange, onCommit}: Sectio
                     </div>
                 );
             })}
-            <AddButton label='publication' onAdd={onAdd}/>
+            <AddButton label='publication' onAdd={onAdd} {...capProps(rows, 'publication')}/>
         </div>
     );
 };
