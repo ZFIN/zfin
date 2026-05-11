@@ -351,6 +351,84 @@ public class ZircDashboardController {
     }
 
     /**
+     * Upload a file attached to a genotyping assay. {@code kind} categorizes
+     * the upload (chromatogram / gel_image / result_image / melt_curve)
+     * per the xlsx field matrix. The server writes the bytes under
+     * {@code $TARGETROOT/server_apps/data_transfer/ZIRC/<submission>/}
+     * and returns the parent assay's mutation DTO so the React form can
+     * refresh its file list.
+     */
+    @PostMapping("/assay/{assayId}/file")
+    @ResponseBody
+    public MutationDTO uploadAssayFile(@PathVariable Long assayId,
+                                       @RequestParam("kind") String kind,
+                                       @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        HibernateUtil.createTransaction();
+        try {
+            org.zfin.zirc.entity.GenotypingAssayFile saved =
+                    lineSubmissionService.addAssayFile(assayId, kind, file, currentUser);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(saved.getAssay().getMutation());
+        } catch (java.io.IOException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to store uploaded file: " + e.getMessage());
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
+     * Stream a previously uploaded file's bytes back to the client. Used
+     * for the per-row "download" link next to each attachment.
+     */
+    @GetMapping("/assay-file/{fileId}/download")
+    public void downloadAssayFile(@PathVariable Long fileId,
+                                  jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        HibernateUtil.createTransaction();
+        org.zfin.zirc.entity.GenotypingAssayFile f;
+        try {
+            f = lineSubmissionService.requireAssayFile(fileId);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+        java.io.File onDisk = lineSubmissionService.absoluteFilePath(f);
+        if (!onDisk.exists()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "File missing from disk: " + onDisk.getPath());
+        }
+        response.setContentType(f.getContentType() != null ? f.getContentType() : "application/octet-stream");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + f.getOriginalFilename().replace("\"", "_") + "\"");
+        response.setContentLengthLong(onDisk.length());
+        try (var in = new java.io.FileInputStream(onDisk)) {
+            in.transferTo(response.getOutputStream());
+        }
+    }
+
+    /** Remove an uploaded file (DB row + disk file). Returns the parent
+     *  mutation DTO so the React form can refresh. */
+    @DeleteMapping("/assay-file/{fileId}")
+    @ResponseBody
+    public MutationDTO deleteAssayFile(@PathVariable Long fileId) {
+        HibernateUtil.createTransaction();
+        try {
+            org.zfin.zirc.entity.GenotypingAssayFile f = lineSubmissionService.requireAssayFile(fileId);
+            Mutation parent = f.getAssay().getMutation();
+            lineSubmissionService.removeAssayFile(fileId);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return MutationDTO.from(parent);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    /**
      * JSON autocomplete for the "add submitter" modal on the line-submission detail page.
      * Returns a list of {label, value, fullName} entries suitable for jQuery UI autocomplete:
      * "label" is shown in the dropdown ("Pich, Christian (ZDB-PERS-060413-1)"), "value" is

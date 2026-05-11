@@ -68,10 +68,17 @@ interface GenotypingAssayWire {
     sslpOutcrossedBackground: string | null;
     sslpInducedPcr: string | null;
     sslpOutcrossedPcr: string | null;
-    chromatogramFilesAvailable: boolean | null;
-    gelImagesAvailable: boolean | null;
-    resultImagesAvailable: boolean | null;
-    meltCurveFilesAvailable: boolean | null;
+    files: GenotypingAssayFileWire[] | null;
+}
+
+export interface GenotypingAssayFileWire {
+    id: number;
+    kind: string;
+    originalFilename: string;
+    contentType: string | null;
+    fileSize: number | null;
+    uploadedAt: string | null;
+    uploadedBy: string | null;
 }
 
 interface PhenotypeWire {
@@ -393,19 +400,9 @@ interface GenotypingAssayRow {
     sslpOutcrossedBackground: string;
     sslpInducedPcr: string;
     sslpOutcrossedPcr: string;
-    /** '' / 'true' / 'false' — same as bool radios elsewhere. */
-    chromatogramFilesAvailable: '' | 'true' | 'false';
-    gelImagesAvailable: '' | 'true' | 'false';
-    resultImagesAvailable: '' | 'true' | 'false';
-    meltCurveFilesAvailable: '' | 'true' | 'false';
-}
-
-function triBoolFromWire(b: boolean | null): '' | 'true' | 'false' {
-    return b === true ? 'true' : b === false ? 'false' : '';
-}
-
-function triBoolToWire(s: '' | 'true' | 'false'): boolean | null {
-    return s === 'true' ? true : s === 'false' ? false : null;
+    /** Uploaded files for this assay; read-only on the row. Mutations
+     *  happen through dedicated multipart endpoints. */
+    files: GenotypingAssayFileWire[];
 }
 
 const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
@@ -440,10 +437,7 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         sslpOutcrossedBackground: '',
         sslpInducedPcr: '',
         sslpOutcrossedPcr: '',
-        chromatogramFilesAvailable: '',
-        gelImagesAvailable: '',
-        resultImagesAvailable: '',
-        meltCurveFilesAvailable: '',
+        files: [],
     }),
     wireToRow: w => ({
         rowId: freshRowId('assay'),
@@ -473,10 +467,7 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         sslpOutcrossedBackground: w.sslpOutcrossedBackground ?? '',
         sslpInducedPcr: w.sslpInducedPcr ?? '',
         sslpOutcrossedPcr: w.sslpOutcrossedPcr ?? '',
-        chromatogramFilesAvailable: triBoolFromWire(w.chromatogramFilesAvailable),
-        gelImagesAvailable: triBoolFromWire(w.gelImagesAvailable),
-        resultImagesAvailable: triBoolFromWire(w.resultImagesAvailable),
-        meltCurveFilesAvailable: triBoolFromWire(w.meltCurveFilesAvailable),
+        files: w.files ?? [],
     }),
     rowToWire: r => ({
         id: r.id,
@@ -508,10 +499,9 @@ const ASSAY_ADAPTER: ChildAdapter<GenotypingAssayWire, GenotypingAssayRow> = {
         sslpOutcrossedBackground: trimOrNull(r.sslpOutcrossedBackground),
         sslpInducedPcr: trimOrNull(r.sslpInducedPcr),
         sslpOutcrossedPcr: trimOrNull(r.sslpOutcrossedPcr),
-        chromatogramFilesAvailable: triBoolToWire(r.chromatogramFilesAvailable),
-        gelImagesAvailable: triBoolToWire(r.gelImagesAvailable),
-        resultImagesAvailable: triBoolToWire(r.resultImagesAvailable),
-        meltCurveFilesAvailable: triBoolToWire(r.meltCurveFilesAvailable),
+        // Files are read-only on the row; uploads go through dedicated
+        // multipart endpoints (see ZircDashboardController.uploadAssayFile).
+        files: null,
     }),
     getId: r => r.id,
 };
@@ -1358,7 +1348,7 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
                                             key={fieldKey}
                                             id={id}
                                             label={def.label}
-                                            value={(row[fieldKey] as string) ?? ''}
+                                            value={((row as unknown as Record<string, unknown>)[fieldKey] as string) ?? ''}
                                             placeholder={def.placeholder}
                                             helpText={def.helpText}
                                             infoHref={def.infoHref}
@@ -1372,7 +1362,7 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
                                         key={fieldKey}
                                         id={id}
                                         label={def.label}
-                                        value={(row[fieldKey] as string) ?? ''}
+                                        value={((row as unknown as Record<string, unknown>)[fieldKey] as string) ?? ''}
                                         type={def.type === 'int' ? 'number' : 'text'}
                                         placeholder={def.placeholder}
                                         suffix={def.suffix}
@@ -1434,10 +1424,9 @@ const ASSAY_TYPE_SPECIFIC_PATCH: Partial<GenotypingAssayRow> = {
     sslpOutcrossedBackground: '',
     sslpInducedPcr: '',
     sslpOutcrossedPcr: '',
-    chromatogramFilesAvailable: '',
-    gelImagesAvailable: '',
-    resultImagesAvailable: '',
-    meltCurveFilesAvailable: '',
+    // Note: row.files is not cleared on type change. Uploaded files persist
+    // through type switches; if the new type doesn't surface that file
+    // kind it just won't render. Curator can remove manually.
 };
 
 interface GenotypingAssaysSectionProps {
@@ -1498,12 +1487,29 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                             key={fieldKey}
                                             id={id}
                                             label={def.label}
-                                            value={(row[fieldKey] as string) ?? ''}
+                                            value={((row as unknown as Record<string, unknown>)[fieldKey] as string) ?? ''}
                                             fetchUrl={def.autocompleteUrl ?? ''}
                                             placeholder={def.placeholder}
                                             onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
                                             onCommit={onCommit}
                                         />
+                                    );
+                                }
+                                if (def.type === 'files') {
+                                    // Actual react-dropzone widget lands in a
+                                    // follow-up commit; for now show the count
+                                    // of attached files of this kind.
+                                    const kindFiles = row.files.filter(f => f.kind === def.fileKind);
+                                    return (
+                                        <div key={fieldKey} className='form-group row'>
+                                            <span className='col-sm-3 col-form-label'>{def.label}</span>
+                                            <div className='col-sm-9'>
+                                                <span className='text-muted small'>
+                                                    {kindFiles.length} file{kindFiles.length === 1 ? '' : 's'} uploaded
+                                                    {' '}<em>(upload widget coming)</em>
+                                                </span>
+                                            </div>
+                                        </div>
                                     );
                                 }
                                 if (def.type === 'checkbox') {
@@ -1512,19 +1518,7 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                             key={fieldKey}
                                             id={id}
                                             label={def.label}
-                                            value={row[fieldKey] as boolean}
-                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
-                                            onCommit={onCommit}
-                                        />
-                                    );
-                                }
-                                if (def.type === 'bool') {
-                                    return (
-                                        <BoolRowField
-                                            key={fieldKey}
-                                            groupName={id}
-                                            label={def.label}
-                                            value={row[fieldKey] as '' | 'true' | 'false'}
+                                            value={(row as unknown as Record<string, unknown>)[fieldKey] as boolean}
                                             onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
                                             onCommit={onCommit}
                                         />
@@ -1536,7 +1530,7 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                             key={fieldKey}
                                             id={id}
                                             label={def.label}
-                                            value={(row[fieldKey] as string) ?? ''}
+                                            value={((row as unknown as Record<string, unknown>)[fieldKey] as string) ?? ''}
                                             placeholder={def.placeholder}
                                             onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
                                             onCommit={onCommit}
@@ -1548,7 +1542,7 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                                         key={fieldKey}
                                         id={id}
                                         label={def.label}
-                                        value={(row[fieldKey] as string) ?? ''}
+                                        value={((row as unknown as Record<string, unknown>)[fieldKey] as string) ?? ''}
                                         placeholder={def.placeholder}
                                         suffix={def.suffix}
                                         pattern={def.pattern}

@@ -1,6 +1,7 @@
 package org.zfin.zirc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +19,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Per-mutation PCR / RFLP assay parameters used to genotype the line.
@@ -112,16 +117,12 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_sslp_outcrossed_pcr")
     private String sslpOutcrossedPcr;
 
-    @Column(name = "ga_chromatogram_files_available")
-    private Boolean chromatogramFilesAvailable;
-
-    @Column(name = "ga_gel_images_available")
-    private Boolean gelImagesAvailable;
-
-    @Column(name = "ga_result_images_available")
-    private Boolean resultImagesAvailable;
-
-    @Column(name = "ga_melt_curve_files_available")
-    private Boolean meltCurveFilesAvailable;
+    @JsonIgnore
+    @OneToMany(mappedBy = "assay",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @OrderBy("uploadedAt")
+    private Set<GenotypingAssayFile> files = new HashSet<>();
 
 }

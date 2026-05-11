@@ -4,12 +4,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.marker.Marker;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.GenotypingAssay;
+import org.zfin.zirc.entity.GenotypingAssayFile;
 import org.zfin.zirc.entity.Lesion;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
@@ -22,6 +25,11 @@ import org.zfin.zirc.presentation.LesionDTO;
 import org.zfin.zirc.presentation.LinkedFeatureDTO;
 import org.zfin.zirc.presentation.PhenotypeDTO;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -332,10 +340,9 @@ public class LineSubmissionService {
                 g.setSslpOutcrossedBackground(blankToNull(dto.getSslpOutcrossedBackground()));
                 g.setSslpInducedPcr(blankToNull(dto.getSslpInducedPcr()));
                 g.setSslpOutcrossedPcr(blankToNull(dto.getSslpOutcrossedPcr()));
-                g.setChromatogramFilesAvailable(dto.getChromatogramFilesAvailable());
-                g.setGelImagesAvailable(dto.getGelImagesAvailable());
-                g.setResultImagesAvailable(dto.getResultImagesAvailable());
-                g.setMeltCurveFilesAvailable(dto.getMeltCurveFilesAvailable());
+                // Files aren't roundtripped here; uploads/deletes go
+                // through addAssayFile / removeAssayFile via dedicated
+                // multipart endpoints.
             }
         }
         mutation.getGenotypingAssays().removeIf(g -> g.getId() != null && !incomingIds.contains(g.getId()));
@@ -430,6 +437,107 @@ public class LineSubmissionService {
         mutation.getPublications().clear();
         mutation.getPublications().addAll(normalized);
         return mutation;
+    }
+
+    // ─── Genotyping-assay file uploads ────────────────────────────────────
+
+    private static final Set<String> VALID_ASSAY_FILE_KINDS =
+            Set.of("chromatogram", "gel_image", "result_image", "melt_curve");
+
+    /**
+     * Persist an uploaded file alongside its {@link GenotypingAssay}. The
+     * file lands on disk at
+     * {@code $TARGETROOT/server_apps/data_transfer/ZIRC/<submission>/
+     * assay-<assayId>-<af_id>-<sanitized original name>}; the DB row
+     * carries the relative path so the bytes can be served back later.
+     *
+     * <p>Order is: persist DB row first (to mint the id), use that id in
+     * the on-disk filename, then write the bytes. A failure to write
+     * after the row is persisted leaves a dangling DB row, which is
+     * preferable to a file on disk with no metadata.
+     */
+    public GenotypingAssayFile addAssayFile(Long assayId, String kind, MultipartFile file, Person currentUser) throws IOException {
+        if (kind == null || !VALID_ASSAY_FILE_KINDS.contains(kind)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Unknown assay file kind: " + kind);
+        }
+        if (file == null || file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Uploaded file is empty.");
+        }
+        GenotypingAssay assay = HibernateUtil.currentSession().get(GenotypingAssay.class, assayId);
+        if (assay == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Genotyping assay " + assayId + " not found");
+        }
+
+        String submissionId = assay.getMutation().getLineSubmission().getZdbID();
+        String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "upload";
+        String sanitized = original.replaceAll("[^A-Za-z0-9._-]", "_");
+
+        GenotypingAssayFile entity = new GenotypingAssayFile();
+        entity.setAssay(assay);
+        entity.setKind(kind);
+        entity.setOriginalFilename(original);
+        entity.setContentType(file.getContentType());
+        entity.setFileSize(file.getSize());
+        if (currentUser != null && currentUser.getZdbID() != null) {
+            entity.setUploadedBy(HibernateUtil.currentSession()
+                    .getReference(Person.class, currentUser.getZdbID()));
+        }
+        // Persist now to mint af_id; the on-disk filename uses it for
+        // uniqueness across same-named uploads on the same assay.
+        HibernateUtil.currentSession().persist(entity);
+        HibernateUtil.currentSession().flush();
+
+        Path dir = zircFileDirFor(submissionId);
+        Files.createDirectories(dir);
+        String storedFilename = "assay-" + assayId + "-" + entity.getId() + "-" + sanitized;
+        Path destination = dir.resolve(storedFilename);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+        // Store path relative to TARGETROOT so the row stays valid if
+        // TARGETROOT is reconfigured later.
+        entity.setStoredPath(zircFileRelativePath(submissionId, storedFilename));
+        return entity;
+    }
+
+    /** Resolve a file row to its on-disk location, or 404 if missing. */
+    public GenotypingAssayFile requireAssayFile(Long fileId) {
+        GenotypingAssayFile f = HibernateUtil.currentSession().get(GenotypingAssayFile.class, fileId);
+        if (f == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Assay file " + fileId + " not found");
+        }
+        return f;
+    }
+
+    public void removeAssayFile(Long fileId) {
+        GenotypingAssayFile f = requireAssayFile(fileId);
+        Path onDisk = Path.of(ZfinPropertiesEnum.TARGETROOT.value(), f.getStoredPath());
+        try {
+            Files.deleteIfExists(onDisk);
+        } catch (IOException e) {
+            // Disk delete failed but we still want to remove the DB row.
+            // The orphan file would be cosmetic; manual cleanup is fine.
+            log.warn("Failed to delete assay file on disk: {}", onDisk, e);
+        }
+        f.getAssay().getFiles().remove(f);
+        HibernateUtil.currentSession().remove(f);
+    }
+
+    private static Path zircFileDirFor(String submissionZdbID) {
+        return Path.of(ZfinPropertiesEnum.TARGETROOT.value(),
+                "server_apps", "data_transfer", "ZIRC", submissionZdbID);
+    }
+
+    private static String zircFileRelativePath(String submissionZdbID, String storedFilename) {
+        return "server_apps/data_transfer/ZIRC/" + submissionZdbID + "/" + storedFilename;
+    }
+
+    /** Absolute on-disk path for serving the file back. */
+    public File absoluteFilePath(GenotypingAssayFile f) {
+        return new File(ZfinPropertiesEnum.TARGETROOT.value(), f.getStoredPath());
     }
 
     private Mutation requireMutation(Long mutationId) {

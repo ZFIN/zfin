@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.zfin.zirc.entity.GenotypingAssay;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Wire format for one per-mutation genotyping-assay row. The assayType
  * selects which subset of fields is meaningful — see typeMatrices.ts on
@@ -41,10 +44,7 @@ public class GenotypingAssayDTO {
     private String sslpOutcrossedBackground;
     private String sslpInducedPcr;
     private String sslpOutcrossedPcr;
-    private Boolean chromatogramFilesAvailable;
-    private Boolean gelImagesAvailable;
-    private Boolean resultImagesAvailable;
-    private Boolean meltCurveFilesAvailable;
+    private List<GenotypingAssayFileDTO> files;
 
     public static GenotypingAssayDTO from(GenotypingAssay g) {
         GenotypingAssayDTO dto = new GenotypingAssayDTO();
@@ -74,10 +74,14 @@ public class GenotypingAssayDTO {
         dto.setSslpOutcrossedBackground(g.getSslpOutcrossedBackground());
         dto.setSslpInducedPcr(g.getSslpInducedPcr());
         dto.setSslpOutcrossedPcr(g.getSslpOutcrossedPcr());
-        dto.setChromatogramFilesAvailable(g.getChromatogramFilesAvailable());
-        dto.setGelImagesAvailable(g.getGelImagesAvailable());
-        dto.setResultImagesAvailable(g.getResultImagesAvailable());
-        dto.setMeltCurveFilesAvailable(g.getMeltCurveFilesAvailable());
+        // Files come back ordered by upload time. Server-side renames /
+        // additions during a save still surface on the next DTO read.
+        dto.setFiles(g.getFiles().stream()
+                .sorted(Comparator.comparing(
+                        f -> f.getUploadedAt(),
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(GenotypingAssayFileDTO::from)
+                .toList());
         return dto;
     }
 }
