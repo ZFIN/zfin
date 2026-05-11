@@ -246,11 +246,15 @@ public class LineSubmissionService {
                 }
                 l.setSortOrder(order);
                 l.setLesionType(blankToNull(dto.getLesionType()));
-                l.setIndexDeletionPos(dto.getIndexDeletionPos());
-                l.setIndexInsertionSize(dto.getIndexInsertionSize());
-                l.setDeletedBasePairs(blankToNull(dto.getDeletedBasePairs()));
-                l.setInsertedBasePairs(blankToNull(dto.getInsertedBasePairs()));
-                l.setWtGenomicSequence(blankToNull(dto.getWtGenomicSequence()));
+                l.setLesionSizeBp(dto.getLesionSizeBp());
+                l.setNucleotideChange(blankToNull(dto.getNucleotideChange()));
+                l.setDeletedSequence(blankToNull(dto.getDeletedSequence()));
+                l.setInsertedSequence(blankToNull(dto.getInsertedSequence()));
+                l.setTransgeneSequence(blankToNull(dto.getTransgeneSequence()));
+                l.setLocationInline(blankToNull(dto.getLocationInline()));
+                l.setFivePrimeFlank(blankToNull(dto.getFivePrimeFlank()));
+                l.setThreePrimeFlank(blankToNull(dto.getThreePrimeFlank()));
+                l.setHasLargeVariant(dto.getHasLargeVariant());
                 l.setMutatedAminoAcids(blankToNull(dto.getMutatedAminoAcids()));
                 l.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
             }

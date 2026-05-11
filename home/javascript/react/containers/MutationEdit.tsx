@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SaveToast, {SaveEvent} from '../components/zirc/SaveToast';
 import {Autocomplete, FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../components/zirc/FormPrimitives';
+import {LESION_FIELD_DEFS, LESION_TYPE_OPTIONS, visibleLesionFields} from '../components/zirc/typeMatrices';
 
 // ─── Wire types ────────────────────────────────────────────────────────────
 
@@ -18,11 +19,15 @@ interface LesionWire {
     id: number | null;
     sortOrder: number | null;
     lesionType: string | null;
-    indexDeletionPos: number | null;
-    indexInsertionSize: number | null;
-    deletedBasePairs: string | null;
-    insertedBasePairs: string | null;
-    wtGenomicSequence: string | null;
+    lesionSizeBp: number | null;
+    nucleotideChange: string | null;
+    deletedSequence: string | null;
+    insertedSequence: string | null;
+    transgeneSequence: string | null;
+    locationInline: string | null;
+    fivePrimeFlank: string | null;
+    threePrimeFlank: string | null;
+    hasLargeVariant: boolean | null;
     mutatedAminoAcids: string | null;
     additionalInfo: string | null;
 }
@@ -235,26 +240,20 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
     getId: r => r.id,
 };
 
-// Restricted per the form-spec PDF: "Don't include translocation, inversion,
-// duplication." The schema column is still a free-text varchar, but the UI
-// only offers this list.
-const LESION_TYPE_OPTIONS: Array<{value: string; label: string}> = [
-    {value: 'point_mutation', label: 'Point mutation'},
-    {value: 'deletion',       label: 'Deletion'},
-    {value: 'insertion',      label: 'Insertion'},
-    {value: 'indel',          label: 'Indel (delins)'},
-    {value: 'transgene',      label: 'Transgene'},
-];
-
 interface LesionRow {
     rowId: string;
     id: number | null;
     lesionType: string;
-    indexDeletionPos: string;
-    indexInsertionSize: string;
-    deletedBasePairs: string;
-    insertedBasePairs: string;
-    wtGenomicSequence: string;
+    lesionSizeBp: string;
+    nucleotideChange: string;
+    deletedSequence: string;
+    insertedSequence: string;
+    transgeneSequence: string;
+    locationInline: string;
+    fivePrimeFlank: string;
+    threePrimeFlank: string;
+    /** '' / 'true' / 'false' — same as bool radios elsewhere. */
+    hasLargeVariant: '' | 'true' | 'false';
     mutatedAminoAcids: string;
     additionalInfo: string;
 }
@@ -267,11 +266,15 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
         rowId: freshRowId('lesion'),
         id: null,
         lesionType: '',
-        indexDeletionPos: '',
-        indexInsertionSize: '',
-        deletedBasePairs: '',
-        insertedBasePairs: '',
-        wtGenomicSequence: '',
+        lesionSizeBp: '',
+        nucleotideChange: '',
+        deletedSequence: '',
+        insertedSequence: '',
+        transgeneSequence: '',
+        locationInline: '',
+        fivePrimeFlank: '',
+        threePrimeFlank: '',
+        hasLargeVariant: '',
         mutatedAminoAcids: '',
         additionalInfo: '',
     }),
@@ -279,11 +282,17 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
         rowId: freshRowId('lesion'),
         id: w.id,
         lesionType: w.lesionType ?? '',
-        indexDeletionPos: w.indexDeletionPos == null ? '' : String(w.indexDeletionPos),
-        indexInsertionSize: w.indexInsertionSize == null ? '' : String(w.indexInsertionSize),
-        deletedBasePairs: w.deletedBasePairs ?? '',
-        insertedBasePairs: w.insertedBasePairs ?? '',
-        wtGenomicSequence: w.wtGenomicSequence ?? '',
+        lesionSizeBp: w.lesionSizeBp == null ? '' : String(w.lesionSizeBp),
+        nucleotideChange: w.nucleotideChange ?? '',
+        deletedSequence: w.deletedSequence ?? '',
+        insertedSequence: w.insertedSequence ?? '',
+        transgeneSequence: w.transgeneSequence ?? '',
+        locationInline: w.locationInline ?? '',
+        fivePrimeFlank: w.fivePrimeFlank ?? '',
+        threePrimeFlank: w.threePrimeFlank ?? '',
+        hasLargeVariant: w.hasLargeVariant === true ? 'true'
+            : w.hasLargeVariant === false ? 'false'
+                : '',
         mutatedAminoAcids: w.mutatedAminoAcids ?? '',
         additionalInfo: w.additionalInfo ?? '',
     }),
@@ -291,11 +300,17 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
         id: r.id,
         sortOrder: null,
         lesionType: trimOrNull(r.lesionType),
-        indexDeletionPos: parseIntOrNull(r.indexDeletionPos),
-        indexInsertionSize: parseIntOrNull(r.indexInsertionSize),
-        deletedBasePairs: trimOrNull(r.deletedBasePairs),
-        insertedBasePairs: trimOrNull(r.insertedBasePairs),
-        wtGenomicSequence: trimOrNull(r.wtGenomicSequence),
+        lesionSizeBp: parseIntOrNull(r.lesionSizeBp),
+        nucleotideChange: trimOrNull(r.nucleotideChange),
+        deletedSequence: trimOrNull(r.deletedSequence),
+        insertedSequence: trimOrNull(r.insertedSequence),
+        transgeneSequence: trimOrNull(r.transgeneSequence),
+        locationInline: trimOrNull(r.locationInline),
+        fivePrimeFlank: trimOrNull(r.fivePrimeFlank),
+        threePrimeFlank: trimOrNull(r.threePrimeFlank),
+        hasLargeVariant: r.hasLargeVariant === 'true' ? true
+            : r.hasLargeVariant === 'false' ? false
+                : null,
         mutatedAminoAcids: trimOrNull(r.mutatedAminoAcids),
         additionalInfo: trimOrNull(r.additionalInfo),
     }),
@@ -469,6 +484,10 @@ interface ChildCollection<R extends {rowId: string}> {
     rows: R[];
     apply: (dto: MutationDTO) => void;
     add: () => void;
+    /** Like {@link add}, but seeds the new row with the given patch first.
+     *  Used by the "pick type first" modal flow where the new row appears
+     *  with the type the curator picked already set. */
+    addWithPatch: (patch: Partial<R>) => void;
     remove: (rowId: string) => void;
     change: (rowId: string, patch: Partial<R>) => void;
     /** Commit the current rowsRef to the server (no-op if unchanged since last apply). */
@@ -578,6 +597,10 @@ function useChildCollection<W, R extends {rowId: string}>(
         setRows([...rowsRef.current, adapter.emptyRow()]);
     }
 
+    function addWithPatch(patch: Partial<R>) {
+        setRows([...rowsRef.current, {...adapter.emptyRow(), ...patch}]);
+    }
+
     function remove(rowId: string) {
         setRows(rowsRef.current.filter(r => r.rowId !== rowId));
         commit();
@@ -587,7 +610,7 @@ function useChildCollection<W, R extends {rowId: string}>(
         setRows(rowsRef.current.map(r => r.rowId === rowId ? {...r, ...patch} : r));
     }
 
-    return {rows, apply, add, remove, change, commit};
+    return {rows, apply, add, addWithPatch, remove, change, commit};
 }
 
 // ─── Per-row UI helpers ────────────────────────────────────────────────────
@@ -689,6 +712,83 @@ function useRowExpansion<R extends {rowId: string, id: number | null}>() {
 
     return {isExpanded, collapse, expand};
 }
+
+interface TypePickerModalProps {
+    open: boolean;
+    title: string;
+    description?: string;
+    options: Array<{value: string; label: string}>;
+    onPick: (value: string) => void;
+    onCancel: () => void;
+}
+
+/**
+ * Self-contained "pick the type first" modal for adding a new lesion or
+ * genotyping assay. The PDF spec calls for the curator to pick a type
+ * before the type-specific field set appears; the modal makes that step
+ * explicit. No jQuery dependency — just a controlled overlay with
+ * Escape-to-cancel and a backdrop click that doesn't dismiss (so a
+ * mis-click doesn't lose the half-typed picker context elsewhere on
+ * the page).
+ */
+const TypePickerModal = ({open, title, description, options, onPick, onCancel}: TypePickerModalProps) => {
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onCancel();
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [open, onCancel]);
+
+    if (!open) {
+        return null;
+    }
+    return (
+        <div
+            role='dialog'
+            aria-modal='true'
+            aria-label={title}
+            style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.4)',
+                zIndex: 1060,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <div className='card shadow' style={{minWidth: 320, maxWidth: 480}}>
+                <div className='card-body'>
+                    <h5 className='card-title mb-2'>{title}</h5>
+                    {description && <p className='text-muted small mb-3'>{description}</p>}
+                    <div className='list-group'>
+                        {options.map(opt => (
+                            <button
+                                key={opt.value}
+                                type='button'
+                                className='list-group-item list-group-item-action text-left'
+                                onClick={() => onPick(opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                    <div className='text-right mt-3'>
+                        <button type='button' className='btn btn-outline-secondary' onClick={onCancel}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 interface TextRowFieldProps {
     id: string;
@@ -915,48 +1015,139 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
 
 function summarizeLesion(row: LesionRow): string {
     const typeLabel = LESION_TYPE_OPTIONS.find(o => o.value === row.lesionType)?.label
-        ?? row.lesionType
-        ?? '';
+        ?? row.lesionType;
     const head = typeLabel || '(no type)';
-    const detail = row.deletedBasePairs || row.insertedBasePairs || row.wtGenomicSequence;
-    return detail ? `${head} · ${detail}` : head;
+    const size = row.lesionSizeBp ? `${row.lesionSizeBp} bp` : '';
+    const detail = row.nucleotideChange
+        || row.deletedSequence
+        || row.insertedSequence
+        || row.transgeneSequence
+        || row.locationInline;
+    const parts = [head, size, detail].filter(Boolean);
+    return parts.join(' · ');
 }
 
-const LesionsSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<LesionRow>) => {
-    const expansion = useRowExpansion<typeof rows[number]>();
-    if (rows.length === 0) {
-        return <div><p className='text-muted'>No lesions recorded for this mutation.</p><AddButton label='lesion' onAdd={onAdd}/></div>;
+// Cleared on a lesion type change so stale type-specific fields don't leak
+// across types. The two genuinely cross-type fields (mutatedAminoAcids,
+// additionalInfo) survive. hasLargeVariant resets too — the new type may
+// not even surface the toggle.
+const LESION_TYPE_SPECIFIC_PATCH: Partial<LesionRow> = {
+    lesionSizeBp: '',
+    nucleotideChange: '',
+    deletedSequence: '',
+    insertedSequence: '',
+    transgeneSequence: '',
+    locationInline: '',
+    fivePrimeFlank: '',
+    threePrimeFlank: '',
+    hasLargeVariant: '',
+};
+
+interface LesionsSectionProps {
+    rows: LesionRow[];
+    onAddWithType: (type: string) => void;
+    onRemove: (rowId: string) => void;
+    onChange: (rowId: string, patch: Partial<LesionRow>) => void;
+    onCommit: () => void;
+}
+
+const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: LesionsSectionProps) => {
+    const expansion = useRowExpansion<LesionRow>();
+    const [pickerOpen, setPickerOpen] = useState(false);
+
+    function handlePick(type: string) {
+        setPickerOpen(false);
+        onAddWithType(type);
     }
+
+    function handleTypeChange(row: LesionRow, newType: string) {
+        if (newType === row.lesionType) {
+            return;
+        }
+        // Clear type-specific fields so stale data from the previous type
+        // doesn't end up persisted under the new type's interpretation.
+        onChange(row.rowId, {...LESION_TYPE_SPECIFIC_PATCH, lesionType: newType});
+        onCommit();
+    }
+
     return (
         <div>
-            {rows.map((row, idx) => (
-                <RowFieldset
-                    key={row.rowId}
-                    title={`Lesion ${idx + 1}`}
-                    collapsed={!expansion.isExpanded(row)}
-                    summary={summarizeLesion(row)}
-                    onEdit={() => expansion.expand(row.rowId)}
-                    onDone={() => expansion.collapse(row.rowId)}
-                    onRemove={() => onRemove(row.rowId)}
-                >
-                    <SelectRowField
-                        id={`les-type-${row.rowId}`}
-                        label='Type'
-                        value={row.lesionType}
-                        options={LESION_TYPE_OPTIONS}
-                        onChange={v => onChange(row.rowId, {lesionType: v})}
-                        onCommit={onCommit}
-                    />
-                    <TextRowField id={`les-delpos-${row.rowId}`} label='Index Deletion Pos'    value={row.indexDeletionPos}   onChange={v => onChange(row.rowId, {indexDeletionPos: v})}   onCommit={onCommit} type='number'/>
-                    <TextRowField id={`les-inssz-${row.rowId}`}  label='Index Insertion Size'  value={row.indexInsertionSize} onChange={v => onChange(row.rowId, {indexInsertionSize: v})} onCommit={onCommit} type='number'/>
-                    <TextRowField id={`les-delbp-${row.rowId}`}  label='Deleted Base Pairs'    value={row.deletedBasePairs}   onChange={v => onChange(row.rowId, {deletedBasePairs: v})}   onCommit={onCommit}/>
-                    <TextRowField id={`les-insbp-${row.rowId}`}  label='Inserted Base Pairs'   value={row.insertedBasePairs}  onChange={v => onChange(row.rowId, {insertedBasePairs: v})}  onCommit={onCommit}/>
-                    <TextRowField id={`les-wtgs-${row.rowId}`}   label='WT Genomic Sequence'   value={row.wtGenomicSequence}  onChange={v => onChange(row.rowId, {wtGenomicSequence: v})}  onCommit={onCommit}/>
-                    <TextRowField id={`les-aa-${row.rowId}`}     label='Mutated Amino Acids'   value={row.mutatedAminoAcids}  onChange={v => onChange(row.rowId, {mutatedAminoAcids: v})}  onCommit={onCommit}/>
-                    <TextAreaRowField id={`les-info-${row.rowId}`} label='Additional Info'      value={row.additionalInfo}     onChange={v => onChange(row.rowId, {additionalInfo: v})}     onCommit={onCommit}/>
-                </RowFieldset>
-            ))}
-            <AddButton label='lesion' onAdd={onAdd}/>
+            {rows.length === 0
+                ? <p className='text-muted'>No lesions recorded for this mutation.</p>
+                : rows.map((row, idx) => {
+                    const fields = visibleLesionFields(row.lesionType, row.hasLargeVariant === 'true');
+                    return (
+                        <RowFieldset
+                            key={row.rowId}
+                            title={`Lesion ${idx + 1}`}
+                            collapsed={!expansion.isExpanded(row)}
+                            summary={summarizeLesion(row)}
+                            onEdit={() => expansion.expand(row.rowId)}
+                            onDone={() => expansion.collapse(row.rowId)}
+                            onRemove={() => onRemove(row.rowId)}
+                        >
+                            <SelectRowField
+                                id={`les-type-${row.rowId}`}
+                                label='Type'
+                                value={row.lesionType}
+                                options={LESION_TYPE_OPTIONS as Array<{value: string; label: string}>}
+                                onChange={v => handleTypeChange(row, v)}
+                                onCommit={() => { /* type change already committed by handleTypeChange */ }}
+                            />
+                            {fields.map(fieldKey => {
+                                const def = LESION_FIELD_DEFS[fieldKey];
+                                const id = `les-${fieldKey}-${row.rowId}`;
+                                if (def.type === 'bool') {
+                                    return (
+                                        <BoolRowField
+                                            key={fieldKey}
+                                            groupName={id}
+                                            label={def.label}
+                                            value={row.hasLargeVariant}
+                                            onChange={v => onChange(row.rowId, {hasLargeVariant: v})}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
+                                if (def.type === 'textarea') {
+                                    return (
+                                        <TextAreaRowField
+                                            key={fieldKey}
+                                            id={id}
+                                            label={def.label}
+                                            value={(row[fieldKey] as string) ?? ''}
+                                            placeholder={def.placeholder}
+                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<LesionRow>)}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
+                                return (
+                                    <TextRowField
+                                        key={fieldKey}
+                                        id={id}
+                                        label={def.label}
+                                        value={(row[fieldKey] as string) ?? ''}
+                                        type={def.type === 'int' ? 'number' : 'text'}
+                                        placeholder={def.placeholder}
+                                        suffix={def.suffix}
+                                        onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<LesionRow>)}
+                                        onCommit={onCommit}
+                                    />
+                                );
+                            })}
+                        </RowFieldset>
+                    );
+                })}
+            <AddButton label='lesion' onAdd={() => setPickerOpen(true)}/>
+            <TypePickerModal
+                open={pickerOpen}
+                title='Add a lesion'
+                description='Pick the lesion type — the form will then show only the fields that apply.'
+                options={LESION_TYPE_OPTIONS as Array<{value: string; label: string}>}
+                onPick={handlePick}
+                onCancel={() => setPickerOpen(false)}
+            />
         </div>
     );
 };
@@ -1217,7 +1408,13 @@ const MutationEdit = ({mutationId}: MutationEditProps) => {
             <GenesSection rows={genes.rows} onAdd={genes.add} onRemove={genes.remove} onChange={genes.change} onCommit={genes.commit}/>
         </Section>
         <Section id='lesions' title='Lesions'>
-            <LesionsSection rows={lesions.rows} onAdd={lesions.add} onRemove={lesions.remove} onChange={lesions.change} onCommit={lesions.commit}/>
+            <LesionsSection
+                rows={lesions.rows}
+                onAddWithType={type => lesions.addWithPatch({lesionType: type})}
+                onRemove={lesions.remove}
+                onChange={lesions.change}
+                onCommit={lesions.commit}
+            />
         </Section>
         <Section id='genotyping-assays' title='Genotyping Assays'>
             <GenotypingAssaysSection rows={assays.rows} onAdd={assays.add} onRemove={assays.remove} onChange={assays.change} onCommit={assays.commit}/>
