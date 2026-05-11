@@ -24,6 +24,7 @@ public class GeneDTO {
     private String linkageGroup;
     private String genbankGenomicDna;
     private String genbankCdna;
+    private Boolean sectionComplete;
 
     public static GeneDTO from(Gene g) {
         GeneDTO dto = new GeneDTO();
@@ -37,6 +38,7 @@ public class GeneDTO {
         dto.setLinkageGroup(g.getLinkageGroup());
         dto.setGenbankGenomicDna(g.getGenbankGenomicDna());
         dto.setGenbankCdna(g.getGenbankCdna());
+        dto.setSectionComplete(g.getSectionComplete());
         return dto;
     }
 }

@@ -20,6 +20,7 @@ interface GeneWire {
     linkageGroup: string | null;
     genbankGenomicDna: string | null;
     genbankCdna: string | null;
+    sectionComplete: boolean | null;
 }
 
 interface LesionWire {
@@ -75,10 +76,14 @@ interface PhenotypeWire {
     id: number | null;
     sortOrder: number | null;
     description: string | null;
-    hoursPostFertilization: number | null;
+    hpfStart: number | null;
+    hpfEnd: number | null;
+    /** Server-managed cache derived from hpfStart. Read-only on the client. */
     stage: string | null;
     zfinImagePermission: boolean | null;
+    zircImagePermission: boolean | null;
     nonMendelianPercentage: number | null;
+    nonMendelianComment: string | null;
     segregation: string[] | null;
     type: string[] | null;
 }
@@ -228,6 +233,8 @@ interface GeneRow {
     linkageGroup: string;
     genbankGenomicDna: string;
     genbankCdna: string;
+    /** '' / 'true' / 'false' — optional curator flag for "section done". */
+    sectionComplete: '' | 'true' | 'false';
 }
 
 const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
@@ -242,6 +249,7 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
         linkageGroup: '',
         genbankGenomicDna: '',
         genbankCdna: '',
+        sectionComplete: '',
     }),
     wireToRow: w => ({
         rowId: freshRowId('gene'),
@@ -251,6 +259,9 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
         linkageGroup: w.linkageGroup ?? '',
         genbankGenomicDna: w.genbankGenomicDna ?? '',
         genbankCdna: w.genbankCdna ?? '',
+        sectionComplete: w.sectionComplete === true ? 'true'
+            : w.sectionComplete === false ? 'false'
+                : '',
     }),
     rowToWire: r => ({
         id: r.id,
@@ -260,6 +271,9 @@ const GENE_ADAPTER: ChildAdapter<GeneWire, GeneRow> = {
         linkageGroup: trimOrNull(r.linkageGroup),
         genbankGenomicDna: trimOrNull(r.genbankGenomicDna),
         genbankCdna: trimOrNull(r.genbankCdna),
+        sectionComplete: r.sectionComplete === 'true' ? true
+            : r.sectionComplete === 'false' ? false
+                : null,
     }),
     getId: r => r.id,
 };
@@ -486,11 +500,21 @@ interface PhenotypeRow {
     rowId: string;
     id: number | null;
     description: string;
-    hoursPostFertilization: string;
+    /** Timing as integer hpf in storage. The UI exposes a hpf/dpf unit
+     *  toggle as a display convenience; on commit, dpf entries are
+     *  multiplied by 24 before going on the wire. End is optional —
+     *  empty means a single-point observation. */
+    hpfStart: string;
+    hpfEnd: string;
+    /** Local-only display unit for the input. Doesn't go on the wire. */
+    hpfUnit: 'hpf' | 'dpf';
+    /** Server-derived from hpfStart. Rendered read-only. */
     stage: string;
     /** '' / 'true' / 'false' — same as bool radios elsewhere. */
     zfinImagePermission: '' | 'true' | 'false';
+    zircImagePermission: '' | 'true' | 'false';
     nonMendelianPercentage: string;
+    nonMendelianComment: string;
     /** Comma-separated for now; checkbox-group polish deferred. */
     segregationCsv: string;
     typeCsv: string;
@@ -504,10 +528,14 @@ const PHENOTYPE_ADAPTER: ChildAdapter<PhenotypeWire, PhenotypeRow> = {
         rowId: freshRowId('phen'),
         id: null,
         description: '',
-        hoursPostFertilization: '',
+        hpfStart: '',
+        hpfEnd: '',
+        hpfUnit: 'hpf',
         stage: '',
         zfinImagePermission: '',
+        zircImagePermission: '',
         nonMendelianPercentage: '',
+        nonMendelianComment: '',
         segregationCsv: '',
         typeCsv: '',
     }),
@@ -515,12 +543,18 @@ const PHENOTYPE_ADAPTER: ChildAdapter<PhenotypeWire, PhenotypeRow> = {
         rowId: freshRowId('phen'),
         id: w.id,
         description: w.description ?? '',
-        hoursPostFertilization: w.hoursPostFertilization == null ? '' : String(w.hoursPostFertilization),
+        hpfStart: w.hpfStart == null ? '' : String(w.hpfStart),
+        hpfEnd: w.hpfEnd == null ? '' : String(w.hpfEnd),
+        hpfUnit: 'hpf',
         stage: w.stage ?? '',
         zfinImagePermission: w.zfinImagePermission === true ? 'true'
             : w.zfinImagePermission === false ? 'false'
                 : '',
+        zircImagePermission: w.zircImagePermission === true ? 'true'
+            : w.zircImagePermission === false ? 'false'
+                : '',
         nonMendelianPercentage: w.nonMendelianPercentage == null ? '' : String(w.nonMendelianPercentage),
+        nonMendelianComment: w.nonMendelianComment ?? '',
         segregationCsv: arrayToCsv(w.segregation),
         typeCsv: arrayToCsv(w.type),
     }),
@@ -528,12 +562,18 @@ const PHENOTYPE_ADAPTER: ChildAdapter<PhenotypeWire, PhenotypeRow> = {
         id: r.id,
         sortOrder: null,
         description: trimOrNull(r.description),
-        hoursPostFertilization: parseIntOrNull(r.hoursPostFertilization),
-        stage: trimOrNull(r.stage),
+        hpfStart: parseIntOrNull(r.hpfStart),
+        hpfEnd: parseIntOrNull(r.hpfEnd),
+        // Stage is server-managed; client doesn't echo it back.
+        stage: null,
         zfinImagePermission: r.zfinImagePermission === 'true' ? true
             : r.zfinImagePermission === 'false' ? false
                 : null,
+        zircImagePermission: r.zircImagePermission === 'true' ? true
+            : r.zircImagePermission === 'false' ? false
+                : null,
         nonMendelianPercentage: parseFloatOrNull(r.nonMendelianPercentage),
+        nonMendelianComment: trimOrNull(r.nonMendelianComment),
         segregation: csvToArray(r.segregationCsv),
         type: csvToArray(r.typeCsv),
     }),
@@ -1107,6 +1147,13 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
                     />
                     <TextRowField id={`gene-gdna-${row.rowId}`}  label='GenBank gDNA'  value={row.genbankGenomicDna} onChange={v => onChange(row.rowId, {genbankGenomicDna: v})} onCommit={onCommit}/>
                     <TextAreaRowField id={`gene-cdna-${row.rowId}`} label='GenBank cDNA' value={row.genbankCdna} onChange={v => onChange(row.rowId, {genbankCdna: v})} onCommit={onCommit}/>
+                    <BoolRowField
+                        groupName={`gene-done-${row.rowId}`}
+                        label='Section complete?'
+                        value={row.sectionComplete}
+                        onChange={v => onChange(row.rowId, {sectionComplete: v})}
+                        onCommit={onCommit}
+                    />
                 </RowFieldset>
             ))}
             <AddButton label='gene' onAdd={onAdd}/>
@@ -1400,9 +1447,114 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
 
 function summarizePhenotype(row: PhenotypeRow): string {
     const desc = row.description || '(no description)';
-    const stage = row.stage || (row.hoursPostFertilization ? `${row.hoursPostFertilization} hpf` : '');
-    return stage ? `${desc} · ${stage}` : desc;
+    const timing = row.hpfEnd && row.hpfStart
+        ? `${row.hpfStart}–${row.hpfEnd} hpf`
+        : row.hpfStart ? `${row.hpfStart} hpf`
+            : row.stage || '';
+    return timing ? `${desc} · ${timing}` : desc;
 }
+
+// Convert a stored-as-hpf string into the display unit (lossless when
+// dpf divides evenly; rounded to 2 decimals otherwise).
+function hpfStringInUnit(hpfStr: string, unit: 'hpf' | 'dpf'): string {
+    const s = hpfStr.trim();
+    if (!s) {
+        return '';
+    }
+    const h = Number(s);
+    if (!Number.isFinite(h)) {
+        return s;
+    }
+    if (unit === 'hpf') {
+        return String(h);
+    }
+    const d = h / 24;
+    return Number.isInteger(d) ? String(d) : d.toFixed(2);
+}
+
+function inputToHpfString(input: string, unit: 'hpf' | 'dpf'): string {
+    const s = input.trim();
+    if (!s) {
+        return '';
+    }
+    const n = Number(s);
+    if (!Number.isFinite(n)) {
+        return s; // keep raw, will fall out as null in parseIntOrNull
+    }
+    return String(Math.round(unit === 'dpf' ? n * 24 : n));
+}
+
+interface PhenotypeTimingRowProps {
+    rowId: string;
+    hpfStart: string;
+    hpfEnd: string;
+    unit: 'hpf' | 'dpf';
+    stage: string;
+    onChange: (patch: Partial<PhenotypeRow>) => void;
+    onCommit: () => void;
+}
+
+const PhenotypeTimingRow = ({rowId, hpfStart, hpfEnd, unit, stage, onChange, onCommit}: PhenotypeTimingRowProps) => {
+    const unitGroupName = `phn-unit-${rowId}`;
+    const startId = `phn-hpf-start-${rowId}`;
+    const endId   = `phn-hpf-end-${rowId}`;
+    return (
+        <div className='form-group row'>
+            <span className='col-sm-3 col-form-label'>Timing</span>
+            <div className='col-sm-9'>
+                <div className='d-flex align-items-center flex-wrap' style={{gap: 12}}>
+                    <div role='radiogroup' aria-label='Unit'>
+                        {(['hpf', 'dpf'] as const).map(u => {
+                            const id = `${unitGroupName}-${u}`;
+                            return (
+                                <div className='form-check form-check-inline' key={u}>
+                                    <input
+                                        type='radio'
+                                        id={id}
+                                        className='form-check-input'
+                                        name={unitGroupName}
+                                        value={u}
+                                        checked={unit === u}
+                                        onChange={() => onChange({hpfUnit: u})}
+                                    />
+                                    <label className='form-check-label' htmlFor={id}>{u}</label>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <label htmlFor={startId} className='mb-0 small text-muted'>Start</label>
+                    <input
+                        id={startId}
+                        type='number'
+                        step='any'
+                        className='form-control'
+                        style={{maxWidth: 120}}
+                        value={hpfStringInUnit(hpfStart, unit)}
+                        onChange={e => onChange({hpfStart: inputToHpfString(e.target.value, unit)})}
+                        onBlur={onCommit}
+                    />
+                    <label htmlFor={endId} className='mb-0 small text-muted'>End</label>
+                    <input
+                        id={endId}
+                        type='number'
+                        step='any'
+                        className='form-control'
+                        style={{maxWidth: 120}}
+                        placeholder='(optional)'
+                        value={hpfStringInUnit(hpfEnd, unit)}
+                        onChange={e => onChange({hpfEnd: inputToHpfString(e.target.value, unit)})}
+                        onBlur={onCommit}
+                    />
+                </div>
+                {stage && (
+                    <small className='form-text text-muted'>
+                        Stage at 28.5°C: <em>{stage}</em>
+                    </small>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListProps<PhenotypeRow>) => {
     const expansion = useRowExpansion<typeof rows[number]>();
@@ -1421,19 +1573,34 @@ const PhenotypesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionL
                     onDone={() => expansion.collapse(row.rowId)}
                     onRemove={() => onRemove(row.rowId)}
                 >
-                    <TextRowField id={`phn-desc-${row.rowId}`}     label='Description'              value={row.description}             onChange={v => onChange(row.rowId, {description: v})}             onCommit={onCommit}/>
-                    <TextRowField id={`phn-hpf-${row.rowId}`}      label='Hours Post Fertilization' value={row.hoursPostFertilization}  onChange={v => onChange(row.rowId, {hoursPostFertilization: v})}  onCommit={onCommit} type='number'/>
-                    <TextRowField id={`phn-stage-${row.rowId}`}    label='Stage'                    value={row.stage}                   onChange={v => onChange(row.rowId, {stage: v})}                   onCommit={onCommit}/>
+                    <TextRowField id={`phn-desc-${row.rowId}`} label='Description' value={row.description} onChange={v => onChange(row.rowId, {description: v})} onCommit={onCommit}/>
+                    <PhenotypeTimingRow
+                        rowId={row.rowId}
+                        hpfStart={row.hpfStart}
+                        hpfEnd={row.hpfEnd}
+                        unit={row.hpfUnit}
+                        stage={row.stage}
+                        onChange={patch => onChange(row.rowId, patch)}
+                        onCommit={onCommit}
+                    />
                     <BoolRowField
-                        groupName={`phn-imgperm-${row.rowId}`}
-                        label='ZFIN Image Permission'
+                        groupName={`phn-zfin-imgperm-${row.rowId}`}
+                        label='ZFIN image permission'
                         value={row.zfinImagePermission}
                         onChange={v => onChange(row.rowId, {zfinImagePermission: v})}
                         onCommit={onCommit}
                     />
-                    <TextRowField id={`phn-pct-${row.rowId}`}      label='Non-Mendelian %'          value={row.nonMendelianPercentage}  onChange={v => onChange(row.rowId, {nonMendelianPercentage: v})}  onCommit={onCommit} type='number'/>
-                    <TextRowField id={`phn-seg-${row.rowId}`}      label='Segregation (CSV)'        value={row.segregationCsv}          onChange={v => onChange(row.rowId, {segregationCsv: v})}          onCommit={onCommit} placeholder='mendelian_recessive, …'/>
-                    <TextAreaRowField id={`phn-type-${row.rowId}`} label='Type (CSV)'               value={row.typeCsv}                 onChange={v => onChange(row.rowId, {typeCsv: v})}                 onCommit={onCommit}/>
+                    <BoolRowField
+                        groupName={`phn-zirc-imgperm-${row.rowId}`}
+                        label='ZIRC image permission'
+                        value={row.zircImagePermission}
+                        onChange={v => onChange(row.rowId, {zircImagePermission: v})}
+                        onCommit={onCommit}
+                    />
+                    <TextRowField id={`phn-pct-${row.rowId}`}     label='Non-Mendelian %'      value={row.nonMendelianPercentage} onChange={v => onChange(row.rowId, {nonMendelianPercentage: v})} onCommit={onCommit} type='number' suffix='%'/>
+                    <TextAreaRowField id={`phn-pctcomment-${row.rowId}`} label='Non-Mendelian comment' value={row.nonMendelianComment} onChange={v => onChange(row.rowId, {nonMendelianComment: v})} onCommit={onCommit}/>
+                    <TextRowField id={`phn-seg-${row.rowId}`}     label='Segregation (CSV)'    value={row.segregationCsv}         onChange={v => onChange(row.rowId, {segregationCsv: v})}         onCommit={onCommit} placeholder='mendelian_recessive, …'/>
+                    <TextAreaRowField id={`phn-type-${row.rowId}`} label='Type (CSV)'           value={row.typeCsv}                onChange={v => onChange(row.rowId, {typeCsv: v})}                onCommit={onCommit}/>
                 </RowFieldset>
             ))}
             <AddButton label='phenotype' onAdd={onAdd}/>

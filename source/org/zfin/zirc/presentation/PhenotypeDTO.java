@@ -11,6 +11,14 @@ import org.zfin.zirc.entity.Phenotype;
  * (e.g. {@code "mendelian_recessive"}, {@code "zygotic"}). The form spec
  * eventually wants checkbox groups; for now the React side accepts any
  * strings and the server stores them verbatim.
+ *
+ * <p>hpfStart / hpfEnd: timing as either a single point ({@code hpfEnd}
+ * null) or a range. Storage is always integer hpf; the client's hpf/dpf
+ * unit toggle is purely a display convenience.
+ *
+ * <p>stage: server-managed cache derived from hpfStart via the STAGE
+ * table. Inbound DTO values are ignored; the saved value is whatever
+ * the lookup returns.
  */
 @Getter
 @Setter
@@ -20,10 +28,13 @@ public class PhenotypeDTO {
     private Long id;
     private Integer sortOrder;
     private String description;
-    private Integer hoursPostFertilization;
+    private Integer hpfStart;
+    private Integer hpfEnd;
     private String stage;
     private Boolean zfinImagePermission;
+    private Boolean zircImagePermission;
     private Double nonMendelianPercentage;
+    private String nonMendelianComment;
     private String[] segregation;
     private String[] type;
 
@@ -32,10 +43,13 @@ public class PhenotypeDTO {
         dto.setId(p.getId());
         dto.setSortOrder(p.getSortOrder());
         dto.setDescription(p.getDescription());
-        dto.setHoursPostFertilization(p.getHoursPostFertilization());
+        dto.setHpfStart(p.getHpfStart());
+        dto.setHpfEnd(p.getHpfEnd());
         dto.setStage(p.getStage());
         dto.setZfinImagePermission(p.getZfinImagePermission());
+        dto.setZircImagePermission(p.getZircImagePermission());
         dto.setNonMendelianPercentage(p.getNonMendelianPercentage());
+        dto.setNonMendelianComment(p.getNonMendelianComment());
         dto.setSegregation(p.getSegregation());
         dto.setType(p.getType());
         return dto;

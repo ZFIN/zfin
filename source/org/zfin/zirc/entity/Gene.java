@@ -52,4 +52,7 @@ public class Gene implements Serializable {
     @Column(name = "g_genbank_cdna")
     private String genbankCdna;
 
+    @Column(name = "g_section_complete")
+    private Boolean sectionComplete;
+
 }

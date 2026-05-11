@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.marker.Marker;
@@ -212,6 +213,7 @@ public class LineSubmissionService {
                 g.setLinkageGroup(blankToNull(dto.getLinkageGroup()));
                 g.setGenbankGenomicDna(blankToNull(dto.getGenbankGenomicDna()));
                 g.setGenbankCdna(blankToNull(dto.getGenbankCdna()));
+                g.setSectionComplete(dto.getSectionComplete());
             }
         }
 
@@ -337,16 +339,42 @@ public class LineSubmissionService {
                 }
                 p.setSortOrder(order);
                 p.setDescription(blankToNull(dto.getDescription()));
-                p.setHoursPostFertilization(dto.getHoursPostFertilization());
-                p.setStage(blankToNull(dto.getStage()));
+                p.setHpfStart(dto.getHpfStart());
+                p.setHpfEnd(dto.getHpfEnd());
+                // Stage is a server-managed cache derived from hpfStart;
+                // dto.getStage() is ignored on the inbound side.
+                p.setStage(lookupStageName(dto.getHpfStart()));
                 p.setZfinImagePermission(dto.getZfinImagePermission());
+                p.setZircImagePermission(dto.getZircImagePermission());
                 p.setNonMendelianPercentage(dto.getNonMendelianPercentage());
+                p.setNonMendelianComment(blankToNull(dto.getNonMendelianComment()));
                 p.setSegregation(dto.getSegregation() != null ? dto.getSegregation() : new String[0]);
                 p.setType(dto.getType() != null ? dto.getType() : new String[0]);
             }
         }
         mutation.getPhenotypes().removeIf(p -> p.getId() != null && !incomingIds.contains(p.getId()));
         return mutation;
+    }
+
+    /**
+     * Resolve an hpf value to a stage name via the {@code STAGE} table.
+     * Picks the row whose {@code hoursStart <= h < hoursEnd}, excluding
+     * the {@code Unknown} catch-all. Returns null when the input is null
+     * or no row matches (e.g. a value past the table's coverage).
+     */
+    private static String lookupStageName(Integer hpf) {
+        if (hpf == null) {
+            return null;
+        }
+        DevelopmentStage stage = (DevelopmentStage) HibernateUtil.currentSession()
+                .createQuery("FROM DevelopmentStage "
+                        + "WHERE hoursStart <= :h AND hoursEnd > :h AND name <> :unknown "
+                        + "ORDER BY hoursStart DESC")
+                .setParameter("h", hpf.floatValue())
+                .setParameter("unknown", DevelopmentStage.UNKNOWN)
+                .setMaxResults(1)
+                .uniqueResult();
+        return stage != null ? stage.getName() : null;
     }
 
     /**
