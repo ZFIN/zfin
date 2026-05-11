@@ -180,14 +180,19 @@ export interface AssayFieldDef {
     label: string;
     /** 'bool' is the tri-state Yes/No radio (for "Are X files available?"
      *  questions). 'checkbox' is a binary always-on/always-off (for the
-     *  WT / MUT cleaves toggles which can be independently set). */
-    type: 'text' | 'textarea' | 'bool' | 'checkbox';
+     *  WT / MUT cleaves toggles which can be independently set).
+     *  'autocomplete' fetches matching suggestions from autocompleteUrl. */
+    type: 'text' | 'textarea' | 'bool' | 'checkbox' | 'autocomplete';
     placeholder?: string;
     suffix?: string;
     /** Optional HTML5 pattern attribute for client-side validation hint. */
     pattern?: string;
     /** Hint rendered as muted help text under the input. */
     helpText?: string;
+    /** Required for 'autocomplete' fields. The component fetches matches
+     *  from `${autocompleteUrl}?term=…` and expects a JSON array of
+     *  `{label, value}`. */
+    autocompleteUrl?: string;
 }
 
 export const ASSAY_FIELD_DEFS: Record<AssayFieldKey, AssayFieldDef> = {
@@ -211,7 +216,9 @@ export const ASSAY_FIELD_DEFS: Record<AssayFieldKey, AssayFieldDef> = {
     gelImagesAvailable:         {key: 'gelImagesAvailable',         label: 'Annotated gel images available?', type: 'bool'},
     resultImagesAvailable:      {key: 'resultImagesAvailable',      label: 'Annotated result images available?', type: 'bool'},
     meltCurveFilesAvailable:    {key: 'meltCurveFilesAvailable',    label: 'Annotated melt curve files available?', type: 'bool'},
-    sslpMarkerName:             {key: 'sslpMarkerName',             label: 'SSLP marker name',                type: 'text'},
+    sslpMarkerName:             {key: 'sslpMarkerName',             label: 'SSLP marker name',                type: 'autocomplete',
+        autocompleteUrl: '/action/zirc/markers/search',
+        placeholder: 'Search ZFIN markers…'},
     sslpDistance:               {key: 'sslpDistance',               label: 'Distance marker → mutation',      type: 'text'},
     sslpGenomicLocation:        {key: 'sslpGenomicLocation',        label: 'Genomic location of marker',      type: 'text'},
     sslpInducedBackground:      {key: 'sslpInducedBackground',      label: 'Background mutation was induced on', type: 'text'},

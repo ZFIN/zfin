@@ -1106,11 +1106,13 @@ interface AutocompleteRowFieldProps {
     value: string;
     fetchUrl: string;
     placeholder?: string;
+    /** Optional hint rendered below the input (e.g. "Resolved: <name>"). */
+    helpText?: React.ReactNode;
     onChange: (next: string) => void;
     onCommit: () => void;
 }
 
-const AutocompleteRowField = ({id, label, value, fetchUrl, placeholder, onChange, onCommit}: AutocompleteRowFieldProps) => (
+const AutocompleteRowField = ({id, label, value, fetchUrl, placeholder, helpText, onChange, onCommit}: AutocompleteRowFieldProps) => (
     <div className='form-group row'>
         <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
         <div className='col-sm-9'>
@@ -1122,6 +1124,7 @@ const AutocompleteRowField = ({id, label, value, fetchUrl, placeholder, onChange
                 onChange={onChange}
                 onCommit={() => onCommit()}
             />
+            {helpText && <small className='form-text text-muted'>{helpText}</small>}
         </div>
     </div>
 );
@@ -1218,25 +1221,16 @@ const GenesSection = ({rows, onAdd, onRemove, onChange, onCommit}: SectionListPr
                     onDone={() => expansion.collapse(row.rowId)}
                     onRemove={() => onRemove(row.rowId)}
                 >
-                    <div className='form-group row'>
-                        <label htmlFor={`gene-zdb-${row.rowId}`} className='col-sm-3 col-form-label'>Mutated Gene ZDB ID</label>
-                        <div className='col-sm-9'>
-                            <input
-                                type='text'
-                                id={`gene-zdb-${row.rowId}`}
-                                className='form-control'
-                                placeholder='ZDB-GENE-…'
-                                value={row.mutatedGeneZdbId}
-                                onChange={e => onChange(row.rowId, {mutatedGeneZdbId: e.target.value})}
-                                onBlur={onCommit}
-                            />
-                            {row.mutatedGeneAbbreviation && (
-                                <small className='form-text text-muted'>
-                                    Resolved: <em>{row.mutatedGeneAbbreviation}</em>
-                                </small>
-                            )}
-                        </div>
-                    </div>
+                    <AutocompleteRowField
+                        id={`gene-zdb-${row.rowId}`}
+                        label='Mutated Gene'
+                        value={row.mutatedGeneZdbId}
+                        fetchUrl='/action/zirc/markers/search'
+                        placeholder='Search ZFIN markers…'
+                        helpText={row.mutatedGeneAbbreviation ? <>Resolved: <em>{row.mutatedGeneAbbreviation}</em></> : undefined}
+                        onChange={v => onChange(row.rowId, {mutatedGeneZdbId: v})}
+                        onCommit={onCommit}
+                    />
                     <AutocompleteRowField
                         id={`gene-lg-${row.rowId}`}
                         label='Linkage Group'
@@ -1498,6 +1492,20 @@ const GenotypingAssaysSection = ({rows, onAddWithType, onRemove, onChange, onCom
                             {fields.map(fieldKey => {
                                 const def = ASSAY_FIELD_DEFS[fieldKey];
                                 const id = `asy-${fieldKey}-${row.rowId}`;
+                                if (def.type === 'autocomplete') {
+                                    return (
+                                        <AutocompleteRowField
+                                            key={fieldKey}
+                                            id={id}
+                                            label={def.label}
+                                            value={(row[fieldKey] as string) ?? ''}
+                                            fetchUrl={def.autocompleteUrl ?? ''}
+                                            placeholder={def.placeholder}
+                                            onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<GenotypingAssayRow>)}
+                                            onCommit={onCommit}
+                                        />
+                                    );
+                                }
                                 if (def.type === 'checkbox') {
                                     return (
                                         <CheckboxRowField
