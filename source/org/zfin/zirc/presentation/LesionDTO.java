@@ -28,6 +28,7 @@ public class LesionDTO {
     private String threePrimeFlank;
     private Boolean hasLargeVariant;
     private String mutatedAminoAcids;
+    private String mutatedAminoAcidsHgvs;
     private String additionalInfo;
 
     public static LesionDTO from(Lesion l) {
@@ -45,6 +46,7 @@ public class LesionDTO {
         dto.setThreePrimeFlank(l.getThreePrimeFlank());
         dto.setHasLargeVariant(l.getHasLargeVariant());
         dto.setMutatedAminoAcids(l.getMutatedAminoAcids());
+        dto.setMutatedAminoAcidsHgvs(l.getMutatedAminoAcidsHgvs());
         dto.setAdditionalInfo(l.getAdditionalInfo());
         return dto;
     }

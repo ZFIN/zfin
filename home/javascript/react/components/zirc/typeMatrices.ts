@@ -42,6 +42,7 @@ export type LesionFieldKey =
     | 'threePrimeFlank'
     | 'hasLargeVariant'
     | 'mutatedAminoAcids'
+    | 'mutatedAminoAcidsHgvs'
     | 'additionalInfo';
 
 // Display + input metadata per field. `suffix` is for the bp-style right-side
@@ -55,6 +56,9 @@ export interface LesionFieldDef {
     suffix?: string;
     /** Optional helper line under the input. */
     helpText?: string;
+    /** Optional "i" link target. When set, an info link rendered next to
+     *  the field opens this URL. */
+    infoHref?: string;
 }
 
 export const LESION_FIELD_DEFS: Record<LesionFieldKey, LesionFieldDef> = {
@@ -71,20 +75,24 @@ export const LESION_FIELD_DEFS: Record<LesionFieldKey, LesionFieldDef> = {
     threePrimeFlank:   {key: 'threePrimeFlank',   label: '3′ flank',                    type: 'textarea',
         helpText: 'At least 20 nt directly following the lesion.'},
     hasLargeVariant:   {key: 'hasLargeVariant',   label: 'Large variant?',              type: 'bool'},
-    mutatedAminoAcids: {key: 'mutatedAminoAcids', label: 'Mutated amino acids',         type: 'text'},
-    additionalInfo:    {key: 'additionalInfo',    label: 'Additional info',             type: 'textarea'},
+    mutatedAminoAcids:     {key: 'mutatedAminoAcids',     label: 'Mutated amino acids',  type: 'text',
+        helpText: 'Free-text description (frameshift, etc.).'},
+    mutatedAminoAcidsHgvs: {key: 'mutatedAminoAcidsHgvs', label: 'Mutated amino acids (HGVS.P)', type: 'text',
+        helpText: 'Formal HGVS.P nomenclature, e.g. p.Arg54Ter.',
+        infoHref: 'https://hgvs-nomenclature.org/stable/recommendations/protein/'},
+    additionalInfo:        {key: 'additionalInfo',        label: 'Additional info',      type: 'textarea'},
 };
 
 // Base field order per type. The Large-variant toggle (hasLargeVariant) is
 // listed for Deletion / Insertion / Indel; visibleLesionFields() splices in
 // the structured 5'/3' flank rows when it's checked.
 const BASE_LESION_FIELDS_BY_TYPE: Record<LesionTypeKey, LesionFieldKey[]> = {
-    point_mutation: ['lesionSizeBp', 'nucleotideChange', 'locationInline', 'mutatedAminoAcids', 'additionalInfo'],
-    deletion:       ['lesionSizeBp', 'deletedSequence', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'additionalInfo'],
-    insertion:      ['lesionSizeBp', 'insertedSequence', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'additionalInfo'],
-    indel:          ['lesionSizeBp', 'nucleotideChange', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'additionalInfo'],
-    transgene:      ['lesionSizeBp', 'transgeneSequence', 'fivePrimeFlank', 'threePrimeFlank', 'mutatedAminoAcids', 'additionalInfo'],
-    other:          ['mutatedAminoAcids', 'additionalInfo'],
+    point_mutation: ['lesionSizeBp', 'nucleotideChange', 'locationInline', 'mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
+    deletion:       ['lesionSizeBp', 'deletedSequence', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
+    insertion:      ['lesionSizeBp', 'insertedSequence', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
+    indel:          ['lesionSizeBp', 'nucleotideChange', 'locationInline', 'hasLargeVariant', 'mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
+    transgene:      ['lesionSizeBp', 'transgeneSequence', 'fivePrimeFlank', 'threePrimeFlank', 'mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
+    other:          ['mutatedAminoAcids', 'mutatedAminoAcidsHgvs', 'additionalInfo'],
     unknown:        ['additionalInfo'],
 };
 

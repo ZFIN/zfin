@@ -37,6 +37,7 @@ interface LesionWire {
     threePrimeFlank: string | null;
     hasLargeVariant: boolean | null;
     mutatedAminoAcids: string | null;
+    mutatedAminoAcidsHgvs: string | null;
     additionalInfo: string | null;
 }
 
@@ -294,6 +295,7 @@ interface LesionRow {
     /** '' / 'true' / 'false' — same as bool radios elsewhere. */
     hasLargeVariant: '' | 'true' | 'false';
     mutatedAminoAcids: string;
+    mutatedAminoAcidsHgvs: string;
     additionalInfo: string;
 }
 
@@ -315,6 +317,7 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
         threePrimeFlank: '',
         hasLargeVariant: '',
         mutatedAminoAcids: '',
+        mutatedAminoAcidsHgvs: '',
         additionalInfo: '',
     }),
     wireToRow: w => ({
@@ -333,6 +336,7 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
             : w.hasLargeVariant === false ? 'false'
                 : '',
         mutatedAminoAcids: w.mutatedAminoAcids ?? '',
+        mutatedAminoAcidsHgvs: w.mutatedAminoAcidsHgvs ?? '',
         additionalInfo: w.additionalInfo ?? '',
     }),
     rowToWire: r => ({
@@ -351,6 +355,7 @@ const LESION_ADAPTER: ChildAdapter<LesionWire, LesionRow> = {
             : r.hasLargeVariant === 'false' ? false
                 : null,
         mutatedAminoAcids: trimOrNull(r.mutatedAminoAcids),
+        mutatedAminoAcidsHgvs: trimOrNull(r.mutatedAminoAcidsHgvs),
         additionalInfo: trimOrNull(r.additionalInfo),
     }),
     getId: r => r.id,
@@ -958,13 +963,31 @@ interface TextRowFieldProps {
     pattern?: string;
     /** Hint rendered as muted help text under the input. */
     helpText?: string;
+    /** When set, an "i" link rendered next to the label opens this URL. */
+    infoHref?: string;
     onChange: (next: string) => void;
     onCommit: () => void;
 }
 
-const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, pattern, helpText, onChange, onCommit}: TextRowFieldProps) => (
+const InfoLink = ({href, label}: {href: string; label: string}) => (
+    <a
+        href={href}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='text-info small ml-1'
+        title={`More about ${label}`}
+        style={{textDecoration: 'none'}}
+    >
+        (i)
+    </a>
+);
+
+const TextRowField = ({id, label, value, type = 'text', placeholder, suffix, pattern, helpText, infoHref, onChange, onCommit}: TextRowFieldProps) => (
     <div className='form-group row'>
-        <label htmlFor={id} className='col-sm-3 col-form-label'>{label}</label>
+        <label htmlFor={id} className='col-sm-3 col-form-label'>
+            {label}
+            {infoHref && <InfoLink href={infoHref} label={label}/>}
+        </label>
         <div className='col-sm-9'>
             <div className='d-flex align-items-center' style={{gap: 8}}>
                 <input
@@ -1329,6 +1352,8 @@ const LesionsSection = ({rows, onAddWithType, onRemove, onChange, onCommit}: Les
                                         type={def.type === 'int' ? 'number' : 'text'}
                                         placeholder={def.placeholder}
                                         suffix={def.suffix}
+                                        helpText={def.helpText}
+                                        infoHref={def.infoHref}
                                         onChange={v => onChange(row.rowId, {[fieldKey]: v} as Partial<LesionRow>)}
                                         onCommit={onCommit}
                                     />

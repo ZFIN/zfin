@@ -258,6 +258,7 @@ public class LineSubmissionService {
                 l.setThreePrimeFlank(blankToNull(dto.getThreePrimeFlank()));
                 l.setHasLargeVariant(dto.getHasLargeVariant());
                 l.setMutatedAminoAcids(blankToNull(dto.getMutatedAminoAcids()));
+                l.setMutatedAminoAcidsHgvs(blankToNull(dto.getMutatedAminoAcidsHgvs()));
                 l.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
             }
         }

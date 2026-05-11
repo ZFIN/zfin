@@ -70,6 +70,9 @@ public class Lesion implements Serializable {
     @Column(name = "l_mutated_amino_acids")
     private String mutatedAminoAcids;
 
+    @Column(name = "l_mutated_amino_acids_hgvs")
+    private String mutatedAminoAcidsHgvs;
+
     @Column(name = "l_additional_info")
     private String additionalInfo;
 
