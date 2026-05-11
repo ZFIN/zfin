@@ -1,5 +1,5 @@
 SELECT zobjtype_name,
-       zobjtype_home_table,
+       zobjtype_home_schema || '.' || zobjtype_home_table,
        zobjtype_home_zdb_id_column
 FROM   zdb_object_type
 subquery
@@ -7,4 +7,4 @@ list query
 not exists
 select get_obj_name($2)
 from $1 limit 1;
-              
+
