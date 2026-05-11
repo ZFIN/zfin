@@ -21,15 +21,17 @@
 -- Prerequisites for get_id('LINESUBMISSION'): the type must exist in
 -- zdb_object_type and have a matching <type>_seq sequence. Both are created
 -- here so this seed is self-contained.
--- The trigger on zdb_object_type validates the home-table name against
--- pg_tables.tablename (unqualified). Pass just 'line_submission'; it resolves
--- to zirc.line_submission via pg_tables regardless of schema.
+-- The trigger on zdb_object_type validates the (schema, table) pair against
+-- pg_tables, so zobjtype_home_schema = 'zirc' is required for line_submission.
 INSERT INTO zdb_object_type (
-    zobjtype_name, zobjtype_day, zobjtype_home_table,
+    zobjtype_name, zobjtype_day, zobjtype_home_schema, zobjtype_home_table,
     zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source)
-VALUES ('LINESUBMISSION', current_date - 1, 'line_submission',
+VALUES ('LINESUBMISSION', current_date - 1, 'zirc', 'line_submission',
         'ls_zdb_id', true, false)
-ON CONFLICT (zobjtype_name) DO NOTHING;
+ON CONFLICT (zobjtype_name) DO UPDATE SET
+    zobjtype_home_schema = EXCLUDED.zobjtype_home_schema,
+    zobjtype_home_table = EXCLUDED.zobjtype_home_table,
+    zobjtype_home_zdb_id_column = EXCLUDED.zobjtype_home_zdb_id_column;
 
 CREATE SEQUENCE IF NOT EXISTS linesubmission_seq START 1;
 

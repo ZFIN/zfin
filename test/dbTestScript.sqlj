@@ -1,7 +1,7 @@
 --begin work;
 
 select zobjtype_name,
-       zobjtype_home_table,
+       zobjtype_home_schema || '.' || zobjtype_home_table,
        zobjtype_home_zdb_id_column
 from  zdb_object_type
 subquery

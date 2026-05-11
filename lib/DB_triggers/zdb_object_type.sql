@@ -5,7 +5,8 @@ returns trigger as
 $BODY$
 begin
 
-   perform p_check_zdb_object_table(NEW.zobjtype_home_table,
+   perform p_check_zdb_object_table(NEW.zobjtype_home_schema,
+				NEW.zobjtype_home_table,
 				NEW.zobjtype_home_zdb_id_column);
 
 

@@ -210,14 +210,20 @@ CREATE INDEX line_submission_person_person_idx     ON zirc.line_submission_perso
 -- in zdb_object_type and a matching <type>_seq sequence; without these the
 -- ZdbIdGenerator throws at the SQL level and the controller returns 500
 -- (manifesting as an empty 200 response after the global exception handler).
--- Idempotent so it's safe to run on environments where the wiring was already
--- applied manually (e.g. via the sample-data script).
---changeset cmpich:ZIRC-line-submission-id-wiring
+-- The home_table lives in the zirc schema, so zobjtype_home_schema must be
+-- set explicitly; the column was added by 01-zdb-object-type-home-schema.sql.
+-- runOnChange:true so environments that applied an earlier version of this
+-- changeset (which omitted zobjtype_home_schema) re-run with the corrected
+-- body — the ON CONFLICT clause makes the re-run idempotent.
+--changeset cmpich:ZIRC-line-submission-id-wiring runOnChange:true
 INSERT INTO zdb_object_type (
-    zobjtype_name, zobjtype_day, zobjtype_home_table,
+    zobjtype_name, zobjtype_day, zobjtype_home_schema, zobjtype_home_table,
     zobjtype_home_zdb_id_column, zobjtype_is_data, zobjtype_is_source)
-VALUES ('LINESUBMISSION', current_date - 1, 'line_submission',
+VALUES ('LINESUBMISSION', current_date - 1, 'zirc', 'line_submission',
         'ls_zdb_id', true, false)
-ON CONFLICT (zobjtype_name) DO NOTHING;
+ON CONFLICT (zobjtype_name) DO UPDATE SET
+    zobjtype_home_schema = EXCLUDED.zobjtype_home_schema,
+    zobjtype_home_table = EXCLUDED.zobjtype_home_table,
+    zobjtype_home_zdb_id_column = EXCLUDED.zobjtype_home_zdb_id_column;
 
 CREATE SEQUENCE IF NOT EXISTS linesubmission_seq START 1;
