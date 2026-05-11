@@ -93,8 +93,12 @@ public class LineSubmissionService {
      *
      * <p>Rows that omit either mutation, reference a mutation not on this
      * submission, or self-link ({@code A == B}) are silently dropped.
-     * Duplicate pairs in the incoming list are deduped (first occurrence
-     * wins — subsequent matches on the normalized (a, b) key are skipped).
+     * Duplicate pairs in the incoming list are deduped with last-write-
+     * wins semantics — the later row's distance / additional info
+     * overwrites the earlier row's. This matches the curator-intuitive
+     * "I edited that row a second time, the second edit should stick"
+     * outcome when the UI ends up with two rows sharing a (mutationA,
+     * mutationB) pair.
      */
     public LineSubmission saveLinkedFeatures(String zdbID, List<LinkedFeatureDTO> incoming, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
@@ -105,10 +109,14 @@ public class LineSubmissionService {
             mutationsById.put(m.getId(), m);
         }
 
-        // Existing rows keyed by their normalized (a, b) tuple.
-        Map<List<Long>, LinkedFeature> existing = new HashMap<>();
+        // Existing rows keyed by their normalized (a, b) tuple. Same map
+        // is reused to look up the LinkedFeature created on a duplicate's
+        // first occurrence so the second occurrence can overwrite it
+        // rather than fight on a freshly-created sibling row (which the
+        // DB CHECK would reject anyway).
+        Map<List<Long>, LinkedFeature> byKey = new HashMap<>();
         for (LinkedFeature lf : submission.getLinkedFeatures()) {
-            existing.put(List.of(lf.getMutationA().getId(), lf.getMutationB().getId()), lf);
+            byKey.put(List.of(lf.getMutationA().getId(), lf.getMutationB().getId()), lf);
         }
         Set<List<Long>> incomingKeys = new HashSet<>();
 
@@ -128,17 +136,20 @@ public class LineSubmissionService {
                     Mutation tmp = mA; mA = mB; mB = tmp;
                 }
                 List<Long> key = List.of(mA.getId(), mB.getId());
-                if (!incomingKeys.add(key)) {
-                    continue;
-                }
-                LinkedFeature lf = existing.get(key);
+                incomingKeys.add(key);
+                LinkedFeature lf = byKey.get(key);
                 if (lf == null) {
                     lf = new LinkedFeature();
                     lf.setLineSubmission(submission);
                     lf.setMutationA(mA);
                     lf.setMutationB(mB);
                     submission.getLinkedFeatures().add(lf);
+                    byKey.put(key, lf);
                 }
+                // Last-write-wins on duplicates: each occurrence of the
+                // same key re-applies its values to the same lf, so the
+                // final iteration's distance / additional info is what
+                // sticks.
                 lf.setDistanceKnown(dto.getDistanceKnown());
                 lf.setDistanceCentimorgans(dto.getDistanceCentimorgans());
                 lf.setDistanceMegabases(dto.getDistanceMegabases());
