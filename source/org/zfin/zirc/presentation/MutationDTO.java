@@ -18,8 +18,10 @@ import java.util.List;
  * mutations list (where most fields are unused but the payload is small
  * enough — submissions cap at five mutations per the form spec).
  *
- * <p>Nested children (genes, lesions, genotyping assays, phenotypes)
- * are deferred to a follow-up — they'll get their own DTOs and endpoints.
+ * <p>Nested children — genes, lesions, genotyping assays, phenotypes,
+ * publications — are included as their own DTO lists and round-trip
+ * through dedicated per-collection save endpoints (save-genes,
+ * save-lesions, …) with replace-all semantics on the server side.
  */
 @Getter
 @Setter

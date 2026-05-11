@@ -144,10 +144,12 @@ public class ZircDashboardController {
 
     /**
      * Replace-all endpoint for the Linked Features section. Body is a JSON
-     * array of {@link LinkedFeatureDTO} rows; {@code zdbID} comes via query
-     * string so the React client uses the same create-on-first-save flow as
-     * the other save endpoints. Empty / blank feature names are dropped
-     * server-side.
+     * array of {@link LinkedFeatureDTO} rows pairing two mutations on this
+     * submission. {@code zdbID} comes via query string so the React client
+     * uses the same create-on-first-save flow as the other save endpoints.
+     * Rows missing either mutation, self-links (A == B), or referencing a
+     * mutation not on this submission are dropped server-side; see
+     * {@link LineSubmissionService#saveLinkedFeatures}.
      */
     @PostMapping(value = "/line-submission/save-linked-features",
                  consumes = "application/json")
@@ -402,8 +404,18 @@ public class ZircDashboardController {
                     "File missing from disk: " + onDisk.getPath());
         }
         response.setContentType(f.getContentType() != null ? f.getContentType() : "application/octet-stream");
+        // Strip CR/LF/control characters and double quotes from the
+        // filename before writing it into a response header — otherwise
+        // a curator-supplied filename could split the header (CRLF
+        // injection). The fallback to "file" handles a sanitized
+        // name that's empty after stripping.
+        String safeFilename = f.getOriginalFilename()
+                .replaceAll("[\\p{Cntrl}\"]", "_");
+        if (safeFilename.isBlank()) {
+            safeFilename = "file";
+        }
         response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + f.getOriginalFilename().replace("\"", "_") + "\"");
+                "attachment; filename=\"" + safeFilename + "\"");
         response.setContentLengthLong(onDisk.length());
         try (var in = new java.io.FileInputStream(onDisk)) {
             in.transferTo(response.getOutputStream());

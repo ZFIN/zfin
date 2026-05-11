@@ -93,7 +93,8 @@ public class LineSubmissionService {
      *
      * <p>Rows that omit either mutation, reference a mutation not on this
      * submission, or self-link ({@code A == B}) are silently dropped.
-     * Duplicate pairs in the incoming list are deduped (last write wins).
+     * Duplicate pairs in the incoming list are deduped (first occurrence
+     * wins — subsequent matches on the normalized (a, b) key are skipped).
      */
     public LineSubmission saveLinkedFeatures(String zdbID, List<LinkedFeatureDTO> incoming, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
@@ -448,13 +449,15 @@ public class LineSubmissionService {
      * Persist an uploaded file alongside its {@link GenotypingAssay}. The
      * file lands on disk at
      * {@code $TARGETROOT/server_apps/data_transfer/ZIRC/<submission>/
-     * assay-<assayId>-<af_id>-<sanitized original name>}; the DB row
-     * carries the relative path so the bytes can be served back later.
+     * assay-<assayId>-<random suffix>-<sanitized original name>}; the
+     * DB row carries the relative path so the bytes can be served
+     * back later.
      *
-     * <p>Order is: persist DB row first (to mint the id), use that id in
-     * the on-disk filename, then write the bytes. A failure to write
-     * after the row is persisted leaves a dangling DB row, which is
-     * preferable to a file on disk with no metadata.
+     * <p>Order is: write the file first, then create the DB row.
+     * Filename uniqueness comes from a random suffix rather than
+     * af_id, so storedPath can be set before persist (af_stored_path
+     * is NOT NULL). If the DB insert fails we leak a file on disk,
+     * which is preferable to a half-saved row with a null path.
      */
     public GenotypingAssayFile addAssayFile(Long assayId, String kind, MultipartFile file, Person currentUser) throws IOException {
         if (kind == null || !VALID_ASSAY_FILE_KINDS.contains(kind)) {

@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -67,9 +69,11 @@ public class Phenotype implements Serializable {
     private String nonMendelianComment;
 
     @Column(name = "p_segregation", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] segregation;
 
     @Column(name = "p_type", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] type;
 
 }

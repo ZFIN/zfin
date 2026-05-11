@@ -5,9 +5,9 @@ import {FieldDef, FieldRow, FieldsTable, Section, valueToInputString} from '../c
 interface LinkedFeatureWire {
     mutationAId: number | null;
     mutationBId: number | null;
-    /** Server-supplied display echo. Null on outbound. */
-    mutationALabel: string | null;
-    mutationBLabel: string | null;
+    /** Server-supplied display echo; absent on outbound. */
+    mutationALabel?: string | null;
+    mutationBLabel?: string | null;
     distanceKnown: boolean | null;
     distanceCentimorgans: number | null;
     distanceMegabases: number | null;
@@ -338,8 +338,6 @@ function rowToWire(r: LinkedFeatureRow): LinkedFeatureWire {
     return {
         mutationAId: parseInt10OrNull(r.mutationAId),
         mutationBId: parseInt10OrNull(r.mutationBId),
-        mutationALabel: null,
-        mutationBLabel: null,
         distanceKnown: r.distanceKnown === 'true' ? true
             : r.distanceKnown === 'false' ? false
                 : null,
@@ -809,8 +807,12 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
     function applyLinkedFeaturesFromDTO(wire: LinkedFeatureWire[]) {
         setLinkedFeatures(wire.map(wireToRow));
         // Snapshot the wire-format JSON so subsequent commits can dedupe no-ops.
+        // Include exactly the fields commitLinkedFeatures() sends so the dedup
+        // compares apples to apples — labels are server-supplied echoes and
+        // must not appear in either snapshot.
         setCommittedLinkedFeaturesJSON(JSON.stringify(wire.map(w => ({
-            feature: w.feature,
+            mutationAId: w.mutationAId ?? null,
+            mutationBId: w.mutationBId ?? null,
             distanceKnown: w.distanceKnown ?? null,
             distanceCentimorgans: w.distanceCentimorgans ?? null,
             distanceMegabases: w.distanceMegabases ?? null,
@@ -878,7 +880,8 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
                 // edits to other fields if responses arrived out of order.
                 // (Serialization makes that less likely, but per-field
                 // updates remove the foot-gun entirely.)
-                const normalized = valueToInputString(data[field.field]);
+                const normalized = valueToInputString(
+                    (data as unknown as Record<string, string | boolean | null | undefined>)[field.field]);
                 setValues(prev => prev ? {...prev, [field.field]: normalized} : prev);
                 setCommitted(prev => ({...prev, [field.field]: normalized}));
                 captureNewIdIfAny(data, wasNew);
@@ -962,7 +965,12 @@ const LineSubmissionEdit = ({submissionId}: LineSubmissionEditProps) => {
      * section.
      */
     async function commitLinkedFeatures() {
-        const wire = linkedFeaturesRef.current.map(rowToWire).filter(w => w.feature.length > 0);
+        // A row is sendable when both mutations are picked. The server
+        // does a stricter validation (same-submission, no self-link) and
+        // is the authoritative drop policy; this is just the client-side
+        // backstop so we don't send obvious garbage.
+        const wire = linkedFeaturesRef.current.map(rowToWire)
+            .filter(w => w.mutationAId != null && w.mutationBId != null);
         const wireJSON = JSON.stringify(wire);
         if (wireJSON === committedLinkedFeaturesJSON) {
             return;

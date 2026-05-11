@@ -11,9 +11,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Wire format for the editable scalar fields of a {@link LineSubmission}.
- * Relationships (mutations, persons) are intentionally omitted — they have
- * dedicated UIs on the detail page.
+ * Wire format for a {@link LineSubmission}. Mixes editable scalar fields
+ * (name, backgrounds, reasons, …) with server-managed metadata (zdbID,
+ * isDraft, createdAt / updatedAt / submittedAt / deletedAt). The
+ * metadata is read-only on the client — saves only update the scalar
+ * fields via {@code /save-field}, {@code /save-reasons},
+ * {@code /save-linked-features}, etc. Relationships include the nested
+ * mutations list (summary view for the parent edit page) and linked
+ * features; persons live on the parent detail page UI.
  */
 @Getter
 @Setter
