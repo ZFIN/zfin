@@ -435,11 +435,6 @@ task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludes = ['Makefile']
 }
 
-task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/sysexecs'
-    excludes = ['Makefile', 'build.gradle']
-}
-
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
     excludes = ['Makefile', 'build.gradle']
@@ -531,7 +526,6 @@ task make(type: GradleBuild) {
              'home;zf_info;deployFiles',
              'home;ZFIN;deployFiles',
              'server_apps;apache;deployFiles',
-             'server_apps;sysexecs;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
              'server_apps;data_transfer;Downloads;createSymlink',
