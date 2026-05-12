@@ -40,23 +40,38 @@ public class Lesion implements Serializable {
     @Column(name = "l_lesion_type")
     private String lesionType;
 
-    @Column(name = "l_index_deletion_pos")
-    private Integer indexDeletionPos;
+    @Column(name = "l_lesion_size_bp")
+    private Integer lesionSizeBp;
 
-    @Column(name = "l_index_insertion_size")
-    private Integer indexInsertionSize;
+    @Column(name = "l_nucleotide_change")
+    private String nucleotideChange;
 
-    @Column(name = "l_deleted_base_pairs")
-    private String deletedBasePairs;
+    @Column(name = "l_deleted_sequence")
+    private String deletedSequence;
 
-    @Column(name = "l_inserted_base_pairs")
-    private String insertedBasePairs;
+    @Column(name = "l_inserted_sequence")
+    private String insertedSequence;
 
-    @Column(name = "l_wt_genomic_sequence")
-    private String wtGenomicSequence;
+    @Column(name = "l_transgene_sequence")
+    private String transgeneSequence;
+
+    @Column(name = "l_location_inline")
+    private String locationInline;
+
+    @Column(name = "l_5prime_flank")
+    private String fivePrimeFlank;
+
+    @Column(name = "l_3prime_flank")
+    private String threePrimeFlank;
+
+    @Column(name = "l_has_large_variant")
+    private Boolean hasLargeVariant;
 
     @Column(name = "l_mutated_amino_acids")
     private String mutatedAminoAcids;
+
+    @Column(name = "l_mutated_amino_acids_hgvs")
+    private String mutatedAminoAcidsHgvs;
 
     @Column(name = "l_additional_info")
     private String additionalInfo;

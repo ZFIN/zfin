@@ -2,7 +2,9 @@ package org.zfin.zirc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,12 +14,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,8 +51,19 @@ public class Mutation implements Serializable {
     @Column(name = "m_allele_designation")
     private String alleleDesignation;
 
+    // Default applied here (not just at the DB level) because Hibernate writes
+    // an explicit NULL in INSERT for null fields, bypassing the column DEFAULT.
+    @Column(name = "m_allele_in_zfin", nullable = false)
+    private Boolean alleleInZfin = Boolean.FALSE;
+
+    @Column(name = "m_mutagenesis_stage")
+    private String mutagenesisStage;
+
     @Column(name = "m_mutagenesis_protocol")
     private String mutagenesisProtocol;
+
+    @Column(name = "m_mutagenesis_protocol_other")
+    private String mutagenesisProtocolOther;
 
     @Column(name = "m_molecularly_characterized")
     private Boolean molecularlyCharacterized;
@@ -112,5 +128,19 @@ public class Mutation implements Serializable {
             fetch = FetchType.LAZY)
     @OrderBy("sortOrder")
     private Set<Phenotype> phenotypes = new HashSet<>();
+
+    /**
+     * Publication references for this mutation. Each row is a free-text
+     * citation/PMID/DOI; we don't validate against ZFIN's publication
+     * table on the way in. {@link OrderColumn} writes list index into
+     * the {@code mp_sort_order} column so the on-disk order matches
+     * the in-memory list order.
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(schema = "zirc", name = "mutation_publication",
+            joinColumns = @JoinColumn(name = "mp_mutation_id", referencedColumnName = "m_id"))
+    @Column(name = "mp_publication", nullable = false)
+    @OrderColumn(name = "mp_sort_order")
+    private List<String> publications = new ArrayList<>();
 
 }
