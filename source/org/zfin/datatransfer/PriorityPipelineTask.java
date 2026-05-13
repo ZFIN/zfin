@@ -1,11 +1,8 @@
 package org.zfin.datatransfer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.util.ProcessDisplayHelper;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import java.lang.reflect.Field;
@@ -16,7 +13,6 @@ import org.zfin.curation.presentation.PersonDTO;
 import org.zfin.curation.repository.HibernateCurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.PublicationTrackingService;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.presentation.DashboardPublicationList;
@@ -25,6 +21,7 @@ import org.zfin.publication.presentation.PublicationTrackingController;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.load.EnsemblLoadSummaryItemDTO;
 import org.zfin.sequence.load.LoadAction;
+import org.zfin.sequence.load.LoadActionReportAdapter;
 import org.zfin.sequence.load.LoadActionsContainer;
 import org.zfin.sequence.load.LoadLink;
 
@@ -144,33 +141,22 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
         }
     }
 
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
-    public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
     Set<LoadAction> actions = new HashSet<>();
     EnsemblLoadSummaryItemDTO dto;
 
 
     protected void writeOutputReportFile() {
-        String reportFile = "priority-pipeline-report.html";
-
+        File reportFile = new File("priority-pipeline-report.html");
         log.info("Creating report file: " + reportFile);
         try {
-            LoadActionsContainer actionsContainer = LoadActionsContainer.builder()
+            LoadActionsContainer container = LoadActionsContainer.builder()
                 .actions(actions)
                 .summary(dto)
                 .build();
-            String jsonContents = actionsToJson(actionsContainer);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + REPORT_HOME_DIRECTORY + "/priority-pipeline-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
+            new LoadActionReportAdapter().writeHtmlReport("ABC Priority Pipeline", container, reportFile);
         } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+            log.error("Error creating report (" + reportFile + ")\n" + e.getMessage(), e);
         }
-    }
-
-    private String actionsToJson(LoadActionsContainer actions) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actions);
     }
 
 
