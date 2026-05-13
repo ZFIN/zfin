@@ -135,12 +135,40 @@ def failedBuilds = []
 def unstableBuilds = []
 def successfulBuilds = []
 def buildStreaks = [:]
+def buildHistories = [:]
+def historyDepth = 4
+
+// Walk back from a Run and return its last n results, newest first.
+def collectHistory = { startRun, int n ->
+    def results = []
+    def cursor = startRun
+    while (cursor != null && results.size() < n) {
+        results.add(cursor.result)
+        cursor = cursor.getPreviousBuild()
+    }
+    results
+}
+
+// Render a list of Result values (newest first) as colored dots using inline styles.
+def renderSparkline = { List results ->
+    if (!results) return ""
+    def sb = new StringBuilder("<span style=\"margin-left:8px;white-space:nowrap;\">")
+    results.each { r ->
+        def color = "#9e9e9e" // null / aborted
+        if (r == Result.SUCCESS)      color = "#4caf50"
+        else if (r == Result.UNSTABLE) color = "#ff9800"
+        else if (r == Result.FAILURE)  color = "#d32f2f"
+        sb.append("<span style=\"display:inline-block;width:9px;height:9px;border-radius:50%;background-color:${color};margin-right:3px;\"></span>")
+    }
+    sb.append("</span>")
+    sb.toString()
+}
 
 recentBuilds.each { buildInfo ->
     // Resolve Run object
     def job = Jenkins.get().getItemByFullName(buildInfo.jobName)
     def run = job.getBuildByNumber(buildInfo.buildNumber)
-    
+
     int streak = 0
     if (run != null) {
         def tempRun = run
@@ -150,9 +178,11 @@ recentBuilds.each { buildInfo ->
             tempRun = tempRun.getPreviousBuild()
         }
     }
-    
-    // Store streak using unique key
-    buildStreaks["${buildInfo.jobName}#${buildInfo.buildNumber}"] = streak
+
+    // Store streak and history using unique key
+    def key = "${buildInfo.jobName}#${buildInfo.buildNumber}"
+    buildStreaks[key] = streak
+    buildHistories[key] = collectHistory(run, historyDepth)
     
     if (buildInfo.status == "FAILED") {
         if (streak == 1) {
@@ -165,6 +195,29 @@ recentBuilds.each { buildInfo ->
     } else {
         successfulBuilds.add(buildInfo)
     }
+}
+
+// Collect jobs whose last completed build failed but fell outside the time window
+def jobsAlreadyReportedAsFailing = (newFailingBuilds + failedBuilds).collect { it.jobName } as Set
+def outsideWindowFailures = []
+
+for (job in Jenkins.get().allItems(hudson.model.Job)) {
+    if (!job.isBuildable()) continue
+    if (jobsAlreadyReportedAsFailing.contains(job.fullName)) continue
+
+    def lastBuild = job.getLastCompletedBuild()
+    if (lastBuild == null) continue
+    if (lastBuild.result != Result.FAILURE) continue
+    if (lastBuild.getTimeInMillis() >= timeFrameStart) continue // already covered by in-window logic
+
+    outsideWindowFailures.add([
+        jobName: job.fullName,
+        buildNumber: lastBuild.number,
+        status: "FAILED",
+        result: lastBuild.result,
+        url: lastBuild.absoluteUrl
+    ])
+    buildHistories["${job.fullName}#${lastBuild.number}"] = collectHistory(lastBuild, historyDepth)
 }
 
 // Print results to console
@@ -199,6 +252,14 @@ if (successfulBuilds.size() > 0) {
     println "SUCCESSFUL JOBS:"
     successfulBuilds.each { build ->
         println "  ${build.jobName} #${build.buildNumber} - ${build.status} (succeeded ${buildStreaks[build.jobName + '#' + build.buildNumber]} times in a row)"
+    }
+    println ""
+}
+
+if (outsideWindowFailures.size() > 0) {
+    println "FAILING JOBS (last run failed, outside window):"
+    outsideWindowFailures.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status}"
     }
 }
 
@@ -260,7 +321,7 @@ if (newFailingBuilds.size() > 0) {
   <tr><th>Job Name</th><th>Build #</th><th>Status</th></tr>
 """)
     newFailingBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"new-failing\">FAILED (new)</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"new-failing\">FAILED (new)</td></tr>\n")
     }
     html.append("</table>\n")
 }
@@ -272,7 +333,7 @@ if (failedBuilds.size() > 0) {
   <tr><th>Job Name</th><th>Build #</th><th>Failure Streak</th></tr>
 """)
     failedBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"failed\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"failed\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
     }
     html.append("</table>\n")
 }
@@ -284,7 +345,7 @@ if (unstableBuilds.size() > 0) {
   <tr><th>Job Name</th><th>Build #</th><th>Unstable Streak</th></tr>
 """)
     unstableBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"unstable\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"unstable\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
     }
     html.append("</table>\n")
 }
@@ -296,7 +357,20 @@ if (successfulBuilds.size() > 0) {
   <tr><th>Job Name</th><th>Build #</th><th>Success Streak</th></tr>
 """)
     successfulBuilds.each { build ->
-        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a></td><td>${build.buildNumber}</td><td class=\"success\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"success\">${buildStreaks[build.jobName + '#' + build.buildNumber]} times</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+if (outsideWindowFailures.size() > 0) {
+    html.append("""
+<h2 class="new-failing">Failing Jobs (last run failed, ${outsideWindowFailures.size()})</h2>
+<p class="timestamp">Jobs whose most recent build failed prior to this reporting window.</p>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Status</th></tr>
+""")
+    outsideWindowFailures.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"new-failing\">FAILED</td></tr>\n")
     }
     html.append("</table>\n")
 }
