@@ -4,11 +4,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.hibernate.query.Query;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureGenomicMutationDetail;
+import org.hibernate.query.NativeQuery;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.GenomicLocationService;
 import org.zfin.sequence.gff.AssemblyEnum;
 
@@ -39,7 +36,6 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
         clearReportDirectory();
         setLoggerFile();
 
-        HibernateUtil.currentSession().beginTransaction();
         List<List<String>> mismatches = new ArrayList<>();
         List<String> errorMessages = new ArrayList<>();
         int examined = 0;
@@ -47,29 +43,45 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
         int skippedFasta = 0;
 
         try {
-            // Single HQL pass: every FGMD with a sequence of reference, joined to its
-            // Feature. We pull FeatureLocation separately via fl-on-feature criteria,
-            // since FeatureLocation isn't mapped as an association on Feature.
-            String hql = "from FeatureGenomicMutationDetail fgmd " +
-                    "where fgmd.fgmdSeqRef is not null " +
-                    "order by fgmd.feature.zdbID";
-            Query<FeatureGenomicMutationDetail> query = HibernateUtil.currentSession()
-                    .createQuery(hql, FeatureGenomicMutationDetail.class);
+            // Native projection — no Hibernate entity loading. Loading entities
+            // (FeatureGenomicMutationDetail with lazy associations) attached every
+            // row to the persistence context, and the session-close cascade walk
+            // ground the JVM to a halt over the full dataset.
+            String sql = "select fgmd.fgmd_feature_zdb_id, " +
+                    "       f.feature_abbrev, " +
+                    "       f.feature_type, " +
+                    "       sfcl.sfcl_assembly, " +
+                    "       sfcl.sfcl_chromosome, " +
+                    "       sfcl.sfcl_start_position, " +
+                    "       sfcl.sfcl_end_position, " +
+                    "       fgmd.fgmd_sequence_of_reference " +
+                    "  from feature_genomic_mutation_detail fgmd " +
+                    "  join feature f on f.feature_zdb_id = fgmd.fgmd_feature_zdb_id " +
+                    "  left join sequence_feature_chromosome_location sfcl " +
+                    "         on sfcl.sfcl_feature_zdb_id = fgmd.fgmd_feature_zdb_id " +
+                    " where fgmd.fgmd_sequence_of_reference is not null " +
+                    " order by fgmd.fgmd_feature_zdb_id";
 
+            NativeQuery<Object[]> query = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class);
             GenomicLocationService glService = new GenomicLocationService();
 
-            for (FeatureGenomicMutationDetail fgmd : query.list()) {
+            for (Object[] row : query.list()) {
                 examined++;
-                Feature feature = fgmd.getFeature();
-                FeatureLocation fl = featureLocationFor(feature);
+                String featureZdbId = (String) row[0];
+                String featureAbbrev = (String) row[1];
+                String featureType = (String) row[2];
+                String assemblyName = (String) row[3];
+                String chromosome = (String) row[4];
+                Integer startLoc = row[5] != null ? ((Number) row[5]).intValue() : null;
+                Integer endLoc = row[6] != null ? ((Number) row[6]).intValue() : null;
+                String storedSeqRef = (String) row[7];
 
-                if (fl == null || fl.getStartLocation() == null || fl.getEndLocation() == null
-                        || fl.getAssembly() == null || fl.getChromosome() == null) {
+                if (assemblyName == null || chromosome == null || startLoc == null || endLoc == null) {
                     skippedNoCoords++;
                     continue;
                 }
 
-                AssemblyEnum assembly = assemblyFor(fl.getAssembly());
+                AssemblyEnum assembly = assemblyFor(assemblyName);
                 if (assembly == null) {
                     skippedFasta++;
                     continue;
@@ -78,42 +90,32 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
                 String expected;
                 try {
                     expected = new String(glService.getReferenceSequence(
-                            assembly,
-                            fl.getChromosome(),
-                            fl.getStartLocation(),
-                            fl.getEndLocation()).getBases()).toUpperCase();
+                            assembly, chromosome, startLoc, endLoc).getBases()).toUpperCase();
                 } catch (RuntimeException e) {
-                    // FASTA file missing for this assembly, chromosome not in the
-                    // index, or coordinates out of range — log + skip; not a
-                    // sequence-of-reference drift per se.
                     skippedFasta++;
-                    LOG.info("Skipping " + feature.getZdbID()
-                            + " (" + fl.getAssembly() + " " + fl.getChromosome() + ":"
-                            + fl.getStartLocation() + "-" + fl.getEndLocation()
+                    LOG.info("Skipping " + featureZdbId
+                            + " (" + assemblyName + " " + chromosome + ":" + startLoc + "-" + endLoc
                             + "): " + e.getMessage());
                     continue;
                 }
 
-                String stored = fgmd.getFgmdSeqRef().toUpperCase();
+                String stored = storedSeqRef.toUpperCase();
                 if (!expected.equals(stored)) {
-                    List<String> row = new ArrayList<>(9);
-                    row.add(feature.getZdbID());
-                    row.add(feature.getAbbreviation() == null ? "" : feature.getAbbreviation());
-                    row.add(feature.getType() == null ? "" : feature.getType().name());
-                    row.add(fl.getAssembly());
-                    row.add(fl.getChromosome());
-                    row.add(String.valueOf(fl.getStartLocation()));
-                    row.add(String.valueOf(fl.getEndLocation()));
-                    row.add(stored);
-                    row.add(expected);
-                    mismatches.add(row);
+                    List<String> outRow = new ArrayList<>(9);
+                    outRow.add(featureZdbId);
+                    outRow.add(featureAbbrev == null ? "" : featureAbbrev);
+                    outRow.add(featureType == null ? "" : featureType);
+                    outRow.add(assemblyName);
+                    outRow.add(chromosome);
+                    outRow.add(String.valueOf(startLoc));
+                    outRow.add(String.valueOf(endLoc));
+                    outRow.add(stored);
+                    outRow.add(expected);
+                    mismatches.add(outRow);
                 }
             }
-
-            HibernateUtil.currentSession().getTransaction().commit();
         } catch (Exception e) {
             LOG.error("Drift check failed", e);
-            HibernateUtil.rollbackTransaction();
             errorMessages.add(e.getClass().getSimpleName() + ": " + e.getMessage());
         } finally {
             HibernateUtil.closeSession();
@@ -126,15 +128,6 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
 
         createErrorReport(errorMessages, mismatches);
         return 0;
-    }
-
-    private FeatureLocation featureLocationFor(Feature feature) {
-        // Avoid pulling the whole repository; one targeted HQL.
-        List<FeatureLocation> matches = HibernateUtil.currentSession()
-                .createQuery("from FeatureLocation where feature.zdbID = :id", FeatureLocation.class)
-                .setParameter("id", feature.getZdbID())
-                .list();
-        return matches.isEmpty() ? null : matches.get(0);
     }
 
     private AssemblyEnum assemblyFor(String name) {
