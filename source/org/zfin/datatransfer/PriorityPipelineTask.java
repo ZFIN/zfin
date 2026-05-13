@@ -23,7 +23,6 @@ import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationTrackingController;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.gff.ReportBuilder;
 import org.zfin.sequence.load.EnsemblLoadSummaryItemDTO;
 import org.zfin.sequence.load.LoadAction;
 import org.zfin.sequence.load.LoadActionsContainer;
@@ -56,7 +55,6 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
     @SneakyThrows
     private void run() {
         dto = getEnsemblLoadSummaryItemDTO();
-        ReportBuilder builder = prepareReports();
 
         DashboardPublicationList list = RepositoryFactory.getPublicationRepository().getPublicationsByStatus(2L, 0L, null, 1000, 0, "date");
         PublicationTrackingService trackingService = new PublicationTrackingService();
@@ -146,7 +144,6 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
         }
     }
 
-    private ReportBuilder.SummaryTable summaryTableLoad;
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
     Set<LoadAction> actions = new HashSet<>();
@@ -176,13 +173,5 @@ public class PriorityPipelineTask extends AbstractScriptWrapper {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
 
-
-    private ReportBuilder prepareReports() {
-        ReportBuilder builder = new ReportBuilder();
-        builder.setTitle("ABC Priority Pipeline Report");
-        summaryTableLoad = builder.addSummaryTable("Publication Records");
-        //summaryTableLoad.setHeaders(List.of("Record Type", "Count"));
-        return builder;
-    }
 
 }
