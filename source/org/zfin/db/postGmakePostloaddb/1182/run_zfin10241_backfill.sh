@@ -7,7 +7,7 @@
 # been deployed:
 #   - server_apps/data_transfer/PUBMED/fetchPubsFromPubMed.groovy   (Patch 1)
 #   - server_apps/data_transfer/PUBMED/updateExistingPubs.sql       (Patch 2)
-#   - source/org/zfin/db/postGmakePostloaddb/1182/migrations/ZFIN-10241.sql  (Patch 3)
+#   - source/org/zfin/db/postGmakePostloaddb/1182/migrations/0030-ZFIN-10241-pub-pages-dedup.sql  (Patch 3)
 #   - tests + build.gradle registration
 #
 # The PMID list lives at:

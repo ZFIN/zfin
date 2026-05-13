@@ -35,6 +35,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
@@ -414,15 +417,63 @@ public class ZfinJSPFunctions {
     }
 
 
+    private static final ObjectMapper MANIFEST_MAPPER = new ObjectMapper();
+    private static volatile long cachedManifestMtime = -1L;
+    private static volatile Map<?, ?> cachedManifest;
+
+    /**
+     * Resolve a webpack bundle's content-hashed filename via {@code
+     * asset-manifest.json}. Reads directly from {@code $TARGETROOT/home/}
+     * — the same directory httpd serves the hashed bundles from — so a
+     * React-only rebuild (webpack output → $TARGETROOT/home/) is picked
+     * up immediately without a {@code dirtycopy} or WAR redeploy.
+     *
+     * <p>The parsed manifest is cached by file mtime; a stat-only check
+     * runs on each call so we don't re-parse JSON for every JSP render
+     * but do notice a new build the next request after webpack writes.
+     *
+     * <p>Falls back to the classpath read for test / standalone-WAR
+     * deployments where {@code TARGETROOT} isn't configured.
+     */
     public static String getAssetPath(String name) {
-        ObjectMapper mapper = new ObjectMapper();
-        // Path relative to org/zfin/framework/presentation/ → up 4 levels to WEB-INF/classes/
-        InputStream stream = ZfinJSPFunctions.class.getResourceAsStream("../../../../asset-manifest.json");
-        try {
-            Map manifest = mapper.readValue(stream, Map.class);
-            return String.valueOf(manifest.get(name));
-        } catch (IOException e) {
+        Map<?, ?> manifest = loadManifest();
+        if (manifest == null) {
             return "";
+        }
+        Object value = manifest.get(name);
+        return value == null ? "" : String.valueOf(value);
+    }
+
+    private static Map<?, ?> loadManifest() {
+        String targetRoot = ZfinPropertiesEnum.TARGETROOT.value();
+        if (targetRoot != null && !targetRoot.isBlank()) {
+            Path path = Paths.get(targetRoot, "home/asset-manifest.json");
+            try {
+                long mtime = Files.getLastModifiedTime(path).toMillis();
+                Map<?, ?> cached = cachedManifest;
+                if (cached != null && mtime == cachedManifestMtime) {
+                    return cached;
+                }
+                try (InputStream stream = Files.newInputStream(path)) {
+                    Map<?, ?> parsed = MANIFEST_MAPPER.readValue(stream, Map.class);
+                    cachedManifest = parsed;
+                    cachedManifestMtime = mtime;
+                    return parsed;
+                }
+            } catch (IOException e) {
+                // Fall through to the classpath fallback below.
+            }
+        }
+        // Classpath fallback for environments without TARGETROOT (tests,
+        // self-contained WAR deployments). Uncached — these paths are rare.
+        try (InputStream stream = ZfinJSPFunctions.class.getResourceAsStream(
+                "../../../../asset-manifest.json")) {
+            if (stream == null) {
+                return null;
+            }
+            return MANIFEST_MAPPER.readValue(stream, Map.class);
+        } catch (IOException e) {
+            return null;
         }
     }
 

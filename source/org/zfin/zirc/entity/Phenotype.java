@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -42,22 +44,36 @@ public class Phenotype implements Serializable {
     @Column(name = "p_description")
     private String description;
 
-    @Column(name = "p_hours_post_fertilization")
-    private Integer hoursPostFertilization;
+    @Column(name = "p_hpf_start")
+    private Integer hpfStart;
 
+    @Column(name = "p_hpf_end")
+    private Integer hpfEnd;
+
+    // Server-managed cache: LineSubmissionService.savePhenotypes derives
+    // this from hpfStart via the STAGE table on every save. Clients render
+    // it read-only.
     @Column(name = "p_stage")
     private String stage;
 
     @Column(name = "p_zfin_image_permission")
     private Boolean zfinImagePermission;
 
+    @Column(name = "p_zirc_image_permission")
+    private Boolean zircImagePermission;
+
     @Column(name = "p_non_mendelian_percentage")
     private Double nonMendelianPercentage;
 
+    @Column(name = "p_non_mendelian_comment")
+    private String nonMendelianComment;
+
     @Column(name = "p_segregation", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] segregation;
 
     @Column(name = "p_type", columnDefinition = "text[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] type;
 
 }

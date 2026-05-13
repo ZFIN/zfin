@@ -15,6 +15,8 @@ import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.zfin.profile.Person;
 
 import java.io.Serializable;
@@ -56,9 +58,6 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_previous_names")
     private String previousNames;
 
-    @Column(name = "ls_features_linked")
-    private Boolean featuresLinked;
-
     @Column(name = "ls_maternal_background")
     private String maternalBackground;
 
@@ -76,6 +75,38 @@ public class LineSubmission implements Serializable {
 
     @Column(name = "ls_additional_info")
     private String additionalInfo;
+
+    @Column(name = "ls_single_allelic")
+    private Boolean singleAllelic;
+
+    @Column(name = "ls_husbandry_info")
+    private String husbandryInfo;
+
+    /**
+     * Acceptance reasons as a postgres text[] of snake_case option values
+     * (e.g. {@code {"frequently_requested","expect_high_demand"}}). The
+     * canonical option list lives in the React form; the column has no FK
+     * or check constraint so renaming labels doesn't require DB churn. The
+     * companion {@link #reasonsOther} field holds the single free-text
+     * "Other" entry when the user picks the Other checkbox.
+     */
+    @Column(name = "ls_reasons", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] reasons = new String[0];
+
+    @Column(name = "ls_reasons_other")
+    private String reasonsOther;
+
+    // Default applied here (not just at the DB level) because Hibernate writes
+    // an explicit NULL in INSERT for null fields, bypassing the column DEFAULT.
+    @Column(name = "ls_is_draft", nullable = false)
+    private Boolean isDraft = Boolean.TRUE;
+
+    @Column(name = "ls_deleted_at")
+    private Date deletedAt;
+
+    @Column(name = "ls_submitted_at")
+    private Date submittedAt;
 
     @Column(name = "ls_created_at", insertable = false, updatable = false)
     private Date createdAt;
@@ -98,6 +129,18 @@ public class LineSubmission implements Serializable {
             fetch = FetchType.LAZY)
     @OrderBy("sortOrder")
     private Set<LineSubmissionPerson> persons = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "lineSubmission",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    // Ordered by the on-disk pair identity. The DB CHECK constraint on
+    // line_submission_linked_feature ensures mutationA.id < mutationB.id, so
+    // sorting by mutationA.id alone gives a stable order; mutationB.id is
+    // a tiebreaker for rows that share mutationA.
+    @OrderBy("mutationA.id, mutationB.id")
+    private Set<LinkedFeature> linkedFeatures = new HashSet<>();
 
     /**
      * Convenience accessor for the dashboard. Returns the {@link Person} associated with
