@@ -47,35 +47,35 @@ BEGIN
     FOR rec IN
         SELECT *
         FROM (VALUES
-            ('myh7 CRISPR knockout', 'myh7-ko', 'myh7-cr-001', false,
+            ('myh7 CRISPR knockout', 'myh7-ko', 'myh7-cr-001',
              'AB', 'AB', true, NULL, NULL,
              'Generated via Cas9 RNP injection at 1-cell stage; founders confirmed by HRMA.'),
 
-            ('tbx5a hypomorph allele', 'tbx5a-hy', NULL, false,
+            ('tbx5a hypomorph allele', 'tbx5a-hy', NULL,
              'TL', 'AB', false,
              'Cardiac phenotype is sensitive to background — please retain TL/AB cross.',
              NULL,
              'Adult heterozygotes show mild cardiac edema; homozygotes embryonic lethal at ~72 hpf.'),
 
-            ('Tg(myl7:GFP) reporter', 'Tg(myl7:GFP)', 'myl7-GFP-line-A', false,
+            ('Tg(myl7:GFP) reporter', 'Tg(myl7:GFP)', 'myl7-GFP-line-A',
              'AB', 'AB', true, NULL, NULL,
              'Stable transgenic line; GFP visible in cardiomyocytes from 24 hpf.'),
 
-            ('cdh2 / N-cadherin null', 'cdh2-null', 'parachute', false,
+            ('cdh2 / N-cadherin null', 'cdh2-null', 'parachute',
              'AB', 'AB', true, NULL, NULL,
              'Originally isolated by ENU mutagenesis; re-derived on AB background. Embryonic lethal homozygous.'),
 
-            ('fgf8a;ace double mutant', 'fgf8a;ace', NULL, true,
+            ('fgf8a;ace double mutant', 'fgf8a;ace', NULL,
              'AB', 'AB', false,
              'Two linked features — distance metadata captured in line_submission_linked_feature.',
              NULL,
              'Genetic interaction study; distance between loci ~3.2 cM.'),
 
-            ('myod1 deletion line (incomplete)', 'myod1-del', NULL, NULL,
+            ('myod1 deletion line (incomplete)', 'myod1-del', NULL,
              NULL, NULL, NULL, NULL,
              'Submission in progress — waiting on lab to confirm background and lethality.',
              NULL)
-        ) AS v(ls_name, ls_abbreviation, ls_previous_names, ls_features_linked,
+        ) AS v(ls_name, ls_abbreviation, ls_previous_names,
                ls_maternal_background, ls_paternal_background, ls_background_changeable,
                ls_background_change_concerns, ls_unreported_features_details, ls_additional_info)
         WHERE NOT EXISTS (
@@ -87,11 +87,11 @@ BEGIN
         INSERT INTO zdb_active_data (zactvd_zdb_id) VALUES (v_zdb_id);
 
         INSERT INTO zirc.line_submission (
-            ls_zdb_id, ls_name, ls_abbreviation, ls_previous_names, ls_features_linked,
+            ls_zdb_id, ls_name, ls_abbreviation, ls_previous_names,
             ls_maternal_background, ls_paternal_background, ls_background_changeable,
             ls_background_change_concerns, ls_unreported_features_details, ls_additional_info)
         VALUES (
-            v_zdb_id, rec.ls_name, rec.ls_abbreviation, rec.ls_previous_names, rec.ls_features_linked,
+            v_zdb_id, rec.ls_name, rec.ls_abbreviation, rec.ls_previous_names,
             rec.ls_maternal_background, rec.ls_paternal_background, rec.ls_background_changeable,
             rec.ls_background_change_concerns, rec.ls_unreported_features_details, rec.ls_additional_info);
 
@@ -106,7 +106,6 @@ END $$;
 SELECT ls.ls_zdb_id,
        ls.ls_name,
        ls.ls_abbreviation,
-       ls.ls_features_linked,
        ls.ls_created_at::date AS created,
        p.full_name AS owner
 FROM zirc.line_submission ls
