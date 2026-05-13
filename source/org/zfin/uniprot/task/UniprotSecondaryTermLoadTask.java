@@ -1,15 +1,15 @@
 package org.zfin.uniprot.task;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.report.LegacyReportAdapter;
+import org.zfin.report.ReportWriter;
 import org.zfin.uniprot.UniProtLoadSummaryService;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.InterProProteinDTO;
@@ -46,8 +46,6 @@ import static org.zfin.util.FileUtil.writeToFileOrZip;
 public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private static final int ACTION_SIZE_ERROR_THRESHOLD = 30_000;
-    private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/secondary-load-report.html";
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private final String domainFile;
     private final String contextInputFile;
 
@@ -373,28 +371,23 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     /**
-     * Write the actions to a report file for display.
-     * It replaces the placeholder in the template with the JSON string.
-     * The rest of the display logic is handled by the HTML file.
-     * @param container
+     * Write the actions to an HTML report through the unified report viewer.
+     * The container is adapted to a {@code ZfinReport} and rendered through
+     * {@link LegacyReportAdapter} + {@link ReportWriter}, matching the
+     * UniProt-Diff-Load, NCBI, and GAF/GOA reports.
      */
     private void writeOutputReportFile(SecondaryTermLoadActionsContainer container) {
         String reportFile = this.outputReportName;
-
         log.info("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJsonString(container);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            writeToFileOrZip(new File(reportFile), filledTemplate, "UTF-8");
+            var zfinReport = new UniProtSecondaryReportAdapter()
+                .adapt("UniProt Secondary Term Load", container.getReleaseID(), container);
+            var report = new LegacyReportAdapter().adapt(zfinReport);
+            String html = new ReportWriter().render(report);
+            writeToFileOrZip(new File(reportFile), html, "UTF-8");
         } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+            log.error("Error creating report (" + reportFile + ")\n" + e.getMessage(), e);
         }
-    }
-
-    private String actionsToJsonString(SecondaryTermLoadActionsContainer actionsContainer) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actionsContainer);
     }
 
     private void writeContext(SecondaryLoadContext context) {

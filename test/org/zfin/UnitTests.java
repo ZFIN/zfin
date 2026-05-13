@@ -50,6 +50,8 @@ import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.report.LegacyReportAdapterTest;
+import org.zfin.uniprot.UniProtReportAdapterTest;
+import org.zfin.uniprot.secondary.UniProtSecondaryReportAdapterTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.PublicationTest;
 import org.zfin.sequence.blast.SequenceTest;
@@ -76,6 +78,8 @@ import org.zfin.util.*;
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
         LegacyReportAdapterTest.class,
+        UniProtReportAdapterTest.class,
+        UniProtSecondaryReportAdapterTest.class,
         GafErrorSummaryTest.class,
         GafReportBuilderTest.class,
         DbScriptFileParserTest.class,
