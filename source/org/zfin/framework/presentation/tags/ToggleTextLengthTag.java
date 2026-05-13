@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.jsoup.Jsoup;
 
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.Tag;
@@ -38,7 +39,9 @@ public class ToggleTextLengthTag extends TagSupport {
                     // otherwise leave the text untruncated.
                     if (indexOf > -1)
                         outputText = outputText.substring(0, indexOf);
-
+                    // Close any HTML tags the cut left dangling (e.g. <i> with no </i>)
+                    // so the rest of the page isn't styled by an unclosed tag.
+                    outputText = Jsoup.parseBodyFragment(outputText).body().html();
                 }
             } else {
                 outputText = text;
