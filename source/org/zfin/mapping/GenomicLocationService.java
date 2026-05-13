@@ -117,11 +117,15 @@ public class GenomicLocationService {
 				if (vrSeq != null) {
 					HibernateUtil.currentSession().delete(vrSeq);
 				}
-				// Delete feature_genomic_mutation_detail if it exists
+				// Detach feature_genomic_mutation_detail if it exists. The
+				// Feature.featureGenomicMutationDetailSet mapping is orphanRemoval=true,
+				// so removing the row from the set is enough — Hibernate will issue the
+				// DELETE at flush. An additional currentSession().delete(fgmd) here would
+				// race with that cascaded delete and surface as a StaleStateException
+				// ("Batch update returned unexpected row count from update [0]").
 				FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
 				if (fgmd != null) {
 					feature.setFeatureGenomicMutationDetail(null);
-					HibernateUtil.currentSession().delete(fgmd);
 				}
 			}
 		}
