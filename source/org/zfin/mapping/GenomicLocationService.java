@@ -111,21 +111,17 @@ public class GenomicLocationService {
 				}
 				insertOrUpdateFlankSeq(feature, seq1, seq2, offset);
 			} else {
-				// Location is empty/deleted - clean up related records
-				// Delete variant_flanking_sequence if it exists
+				// Location is empty/deleted - clean up the flanking-sequence row.
+				// We deliberately do NOT touch feature_genomic_mutation_detail here:
+				// the Feature.featureGenomicMutationDetailSet mapping has multiple
+				// cascade flags (PERSIST + SAVE_UPDATE + orphanRemoval=true) and the
+				// existing setFeatureGenomicMutationDetail() setter calls .clear() +
+				// .add(null), which combination produced a double-DELETE at flush
+				// (StaleStateException "actual row count: 0; expected: 1"). The fgmd
+				// is cleared field-wise from editFeatureDTO when locationDeleted=true.
 				VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
 				if (vrSeq != null) {
 					HibernateUtil.currentSession().delete(vrSeq);
-				}
-				// Detach feature_genomic_mutation_detail if it exists. The
-				// Feature.featureGenomicMutationDetailSet mapping is orphanRemoval=true,
-				// so removing the row from the set is enough — Hibernate will issue the
-				// DELETE at flush. An additional currentSession().delete(fgmd) here would
-				// race with that cascaded delete and surface as a StaleStateException
-				// ("Batch update returned unexpected row count from update [0]").
-				FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
-				if (fgmd != null) {
-					feature.setFeatureGenomicMutationDetail(null);
 				}
 			}
 		}

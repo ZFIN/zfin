@@ -292,10 +292,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
             // When the curator removes all location info (marking "Assembly information
             // not known as of <date>"), the calculated Sequence of Reference no longer
-            // has a source. Drop it before the validate step so we don't compare the
-            // stale value the GUI carried over against a no-longer-applicable assembly.
+            // has a source. Drop both sequence fields before the validate step so we
+            // don't compare the stale GUI value against a no-longer-applicable
+            // assembly, and so the persisted FGMD reflects the empty-location state.
             if (locationDeleted) {
                 fgmd.setFgmdSeqRef(null);
+                fgmd.setFgmdSeqVar(null);
             }
             validateReferenceSequence(fgmd, fgl);
 
