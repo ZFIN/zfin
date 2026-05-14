@@ -322,7 +322,7 @@
             if (!link) return;
             var here = window.location.pathname + window.location.search + window.location.hash;
             // Skip on the auth pages themselves to avoid redirect loops.
-            if (/^\/action\/(login|logout|j_security-check|expired-password)/.test(window.location.pathname)) return;
+            if (/^\/action\/(login|logout|j_security-check|profile\/expired-password)/.test(window.location.pathname)) return;
             link.href = '/action/login?redirect=' + encodeURIComponent(here);
         })();
     </script>
