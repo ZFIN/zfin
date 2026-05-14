@@ -10,6 +10,7 @@ import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.datatransfer.go.GafErrorSummaryTest;
+import org.zfin.datatransfer.go.GafJobEntryFormattersTest;
 import org.zfin.datatransfer.go.service.GafReportBuilderTest;
 import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
@@ -83,6 +84,7 @@ import org.zfin.util.*;
         UniProtReportAdapterTest.class,
         UniProtSecondaryReportAdapterTest.class,
         GafErrorSummaryTest.class,
+        GafJobEntryFormattersTest.class,
         GafReportBuilderTest.class,
         DbScriptFileParserTest.class,
         DiseaseDisplayComparatorTest.class,

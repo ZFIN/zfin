@@ -98,13 +98,16 @@ public class GafReportBuilder {
 
             .tableSchema(SCHEMA_ANNOTATION, new Report.TableSchema()
                 .description("Annotation entries (one row per MarkerGoTermEvidence).")
-                .addColumn(ReportTable.Column.of("zdbID",    "ZDB ID",      "zdbID"))
-                .addColumn(ReportTable.Column.of("marker",   "Gene"))
-                .addColumn(ReportTable.Column.of("qualifier","Qualifier"))
-                .addColumn(ReportTable.Column.of("goTerm",   "GO term"))
-                .addColumn(ReportTable.Column.of("goTermID", "GO ID",       "goTermID"))
-                .addColumn(ReportTable.Column.of("evidence", "Evidence"))
-                .addColumn(ReportTable.Column.of("source",   "Source pub",  "publication"))
+                .addColumn(ReportTable.Column.of("zdbID",        "ZDB ID",       "zdbID"))
+                .addColumn(ReportTable.Column.of("marker",       "Gene"))
+                .addColumn(ReportTable.Column.of("qualifier",    "Qualifier"))
+                .addColumn(ReportTable.Column.of("goTerm",       "GO term"))
+                .addColumn(ReportTable.Column.of("goTermID",     "GO ID",        "goTermID"))
+                .addColumn(ReportTable.Column.of("evidence",     "Evidence"))
+                .addColumn(ReportTable.Column.of("withFrom",     "With/From"))
+                .addColumn(ReportTable.Column.of("annotExtn",    "Annotation extension"))
+                .addColumn(ReportTable.Column.of("noctuaModel",  "Noctua model"))
+                .addColumn(ReportTable.Column.of("source",       "Source pub",   "publication"))
                 .addColumn(ReportTable.Column.of("organization", "Organization")))
 
             .tableSchema(SCHEMA_ERROR_ENTRY, new Report.TableSchema()
@@ -225,6 +228,9 @@ public class GafReportBuilder {
                 "goTerm",       safe(e.getGoTermName()),
                 "goTermID",     safe(e.getGoTermID()),
                 "evidence",     safe(e.getEvidenceCode()),
+                "withFrom",     safe(e.getWithFrom()),
+                "annotExtn",    safe(e.getAnnotationExtensions()),
+                "noctuaModel",  safe(e.getNoctuaModelId()),
                 "source",       safe(e.getSource()),
                 "organization", safe(e.getOrganizationCreatedBy())
             );
@@ -410,6 +416,9 @@ public class GafReportBuilder {
                 "goTerm",       e.getGoTerm() != null ? safe(e.getGoTerm().getTermName()) : "",
                 "goTermID",     e.getGoTerm() != null ? safe(e.getGoTerm().getOboID()) : "",
                 "evidence",     e.getEvidenceCode() != null ? safe(e.getEvidenceCode().getName()) : "",
+                "withFrom",     GafJobEntry.formatWithFrom(e),
+                "annotExtn",    GafJobEntry.formatAnnotationExtensions(e),
+                "noctuaModel",  safe(e.getNoctuaModelId()),
                 "source",       e.getSource() != null ? safe(e.getSource().getZdbID()) : "",
                 "organization", safe(e.getOrganizationCreatedBy())
             );
