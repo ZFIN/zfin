@@ -10,14 +10,10 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
-import org.zfin.profile.Lab;
-import org.zfin.profile.Person;
 import org.zfin.search.Category;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /*
  * This should match the fl parameter set as default in solrconfig
@@ -160,22 +156,12 @@ public class SearchResult implements ProvidesLink {
     }
 
     /**
-     * Returns true if a field should be hidden. Currently only email addresses are considered (for person or lab).
-     * @param field the field name from solr highlights map
-     * @return true if we should hide the highlight, otherwise false
+     * Returns true if a field should be hidden. Email addresses are always hidden from
+     * Person and Lab search results — see ZFIN-10298.
      */
     private boolean shouldFieldBeHidden(String field) {
-        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Person")) {
-            Person person = getProfileRepository().getPerson(this.getId());
-            if (person.getEmailPrivacyPreference().isHidden()) {
-                return true;
-            }
-        }
-        if (SOLR_EMAIL_FIELD.equals(field) && getType().equals("Lab")) {
-            Lab lab = getProfileRepository().getLabById(this.getId());
-            if (lab.getEmailPrivacyPreference().isHidden()) {
-                return true;
-            }
+        if (SOLR_EMAIL_FIELD.equals(field) && ("Person".equals(getType()) || "Lab".equals(getType()))) {
+            return true;
         }
         return false;
     }

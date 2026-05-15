@@ -949,7 +949,11 @@ public class SolrService {
 
     }
 
-    public boolean allowDownload(String q, String[] filterQuery) {
+    public boolean allowDownload(String q, String[] filterQuery, String category) {
+        if (Category.COMMUNITY.getName().equals(category)) {
+            return false;
+        }
+
         if (q != null && StringUtils.isNotEmpty(q.trim()) && !StringUtils.equals(q,"*:*")) {
             return true;
         }
