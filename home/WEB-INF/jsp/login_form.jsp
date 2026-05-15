@@ -22,6 +22,9 @@
         <form id="login" name="login" action="/action/j_security-check" method="POST" accept-charset="UTF-8">
             <input type='hidden' name='_spring_security_remember_me' value="true"/>
             <input type="hidden" name="page" value="Main"/>
+            <c:if test="${not empty param.redirect}">
+                <input type="hidden" name="redirect" value="${fn:escapeXml(param.redirect)}"/>
+            </c:if>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" name="username" id="username">

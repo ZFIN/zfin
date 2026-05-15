@@ -1,9 +1,12 @@
 package org.zfin.framework.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Simple controller that serves the developers home page.
@@ -26,6 +29,12 @@ public class LoginController {
         // that's why we check both cases.
         if (accessDenied != null || (queryString != null && queryString.startsWith(ACCESS_DENIED)))
             return "access_denied";
+
+        String redirect = request.getParameter("redirect");
+        if (StringUtils.isNotEmpty(redirect)) {
+            return "redirect:/action/login-redirect?redirect="
+                    + URLEncoder.encode(redirect, StandardCharsets.UTF_8);
+        }
         return "redirect:/action/login-redirect";
     }
 
