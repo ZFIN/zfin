@@ -1,14 +1,12 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="OVERVIEW"           value="Overview"/>
-<c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
 <c:set var="LINKED_FEATURES"    value="Linked Features"/>
 <c:set var="BACKGROUND"         value="Background"/>
-<c:set var="PEOPLE"             value="People"/>
 <c:set var="MUTATIONS"          value="Mutations"/>
 <c:set var="ADDITIONAL"         value="Additional Info"/>
 
-<c:set var="sections" value="${[OVERVIEW, ACCEPTANCE_REASONS, MUTATIONS, LINKED_FEATURES, BACKGROUND, PEOPLE, ADDITIONAL]}"/>
+<c:set var="sections" value="${[OVERVIEW, MUTATIONS, LINKED_FEATURES, BACKGROUND, PEOPLE, ADDITIONAL]}"/>
 
 <z:dataPage sections="${sections}" title="Line Submission: ${submission.name}">
 
@@ -30,20 +28,31 @@
         <style>
             /* Bootstrap 4 modal sits at z-index 1050; lift the autocomplete menu above it. */
             .ui-autocomplete { z-index: 1100 !important; }
+            /* Fixed-width slot for the field-status badge so labels and badges
+               line up across rows even when the badge is absent (e.g. an N/A
+               conditional field). */
+            .status-slot { display: inline-block; width: 2.25em; text-align: center; margin-right: 0.4em; }
         </style>
 
         <div class="small text-uppercase text-muted">Line Submission</div>
-        <h1>${submission.name}</h1>
+        <h1>${submission.name} <z:zirc-status-badge status="${overallStatus}"/></h1>
 
-        <z:section title="${OVERVIEW}">
+        <c:set var="overviewBadge"><z:zirc-status-badge status="${sectionStatus['Overview']}"/></c:set>
+        <z:section title="${OVERVIEW}" appendedText="${overviewBadge}">
             <table class="table table-borderless">
                 <tbody>
                     <tr>
-                        <th class="w-25">ID</th>
-                        <td>${submission.zdbID}</td>
+                        <th><span class="status-slot"></span> ID</th>
+                        <td>
+                            <span id="zdb-id-value">${submission.zdbID}</span>
+                            <a href="javascript:void(0)" id="copy-zdb-id"
+                               class="ml-2 text-muted" title="Copy ID to clipboard">
+                                <i class="far fa-copy"></i>
+                            </a>
+                        </td>
                     </tr>
                     <tr>
-                        <th>Name</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['name']}"/></span>Name</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.name}"><c:out value="${submission.name}"/></c:when>
@@ -52,7 +61,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Previous Names</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['previousNames']}"/></span>Previous Names</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.previousNames}"><c:out value="${submission.previousNames}"/></c:when>
@@ -61,15 +70,15 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Date Started</th>
+                        <th><span class="status-slot"></span>Date Started</th>
                         <td><fmt:formatDate value="${submission.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     </tr>
                     <tr>
-                        <th>Last Updated</th>
+                        <th><span class="status-slot"></span>Last Updated</th>
                         <td><fmt:formatDate value="${submission.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     </tr>
                     <tr>
-                        <th>Submitter</th>
+                        <th><span class="status-slot"></span>Submitter</th>
                         <td>
                             <c:choose>
                                 <c:when test="${empty submission.persons}">
@@ -89,40 +98,43 @@
                             </a>
                         </td>
                     </tr>
+                    <tr>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['reasons']}"/></span>Acceptance Reasons</th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${empty submission.reasons and empty submission.reasonsOther}">
+                                    <span class="text-muted">&mdash;</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <ul class="mb-0 pl-3">
+                                        <c:forEach items="${submission.reasons}" var="r">
+                                            <li>
+                                                <c:choose>
+                                                    <c:when test="${r == 'frequently_requested'}">Currently frequently requested</c:when>
+                                                    <c:when test="${r == 'expect_high_demand'}">Expect high demand</c:when>
+                                                    <c:when test="${r == 'interesting_gene'}">Interesting gene</c:when>
+                                                    <c:when test="${r == 'community_resource'}">Community resource/tool</c:when>
+                                                    <c:when test="${r == 'mutant_gene_cloned'}">Mutant gene cloned</c:when>
+                                                    <c:when test="${r == 'danger_of_losing'}">Danger of losing line</c:when>
+                                                    <c:when test="${r == 'lack_of_space_or_funding'}">Lack of space or funding to maintain line</c:when>
+                                                    <c:otherwise><code>${r}</code></c:otherwise>
+                                                </c:choose>
+                                            </li>
+                                        </c:forEach>
+                                        <c:if test="${not empty submission.reasonsOther}">
+                                            <li>Other: <c:out value="${submission.reasonsOther}"/></li>
+                                        </c:if>
+                                    </ul>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </z:section>
 
-        <z:section title="${ACCEPTANCE_REASONS}">
-            <c:choose>
-                <c:when test="${empty submission.reasons and empty submission.reasonsOther}">
-                    <p class="text-muted">No reasons selected.</p>
-                </c:when>
-                <c:otherwise>
-                    <ul>
-                        <c:forEach items="${submission.reasons}" var="r">
-                            <li>
-                                <c:choose>
-                                    <c:when test="${r == 'frequently_requested'}">Currently frequently requested</c:when>
-                                    <c:when test="${r == 'expect_high_demand'}">Expect high demand</c:when>
-                                    <c:when test="${r == 'interesting_gene'}">Interesting gene</c:when>
-                                    <c:when test="${r == 'community_resource'}">Community resource/tool</c:when>
-                                    <c:when test="${r == 'mutant_gene_cloned'}">Mutant gene cloned</c:when>
-                                    <c:when test="${r == 'danger_of_losing'}">Danger of losing line</c:when>
-                                    <c:when test="${r == 'lack_of_space_or_funding'}">Lack of space or funding to maintain line</c:when>
-                                    <c:otherwise><code>${r}</code></c:otherwise>
-                                </c:choose>
-                            </li>
-                        </c:forEach>
-                        <c:if test="${not empty submission.reasonsOther}">
-                            <li>Other: <c:out value="${submission.reasonsOther}"/></li>
-                        </c:if>
-                    </ul>
-                </c:otherwise>
-            </c:choose>
-        </z:section>
-
-        <z:section title="${MUTATIONS}">
+        <c:set var="mutationsBadge"><z:zirc-status-badge status="${sectionStatus['Mutations']}"/></c:set>
+        <z:section title="${MUTATIONS}" appendedText="${mutationsBadge}">
             <c:choose>
                 <c:when test="${empty submission.mutations}">
                     <p class="text-muted">No mutations recorded for this submission.</p>
@@ -179,7 +191,8 @@
             </c:choose>
         </z:section>
 
-        <z:section title="${LINKED_FEATURES}">
+        <c:set var="linkedBadge"><z:zirc-status-badge status="${sectionStatus['Linked Features']}"/></c:set>
+        <z:section title="${LINKED_FEATURES}" appendedText="${linkedBadge}">
             <c:choose>
                 <c:when test="${empty submission.linkedFeatures}">
                     <p class="text-muted">No linked features.</p>
@@ -238,11 +251,12 @@
             </c:choose>
         </z:section>
 
-        <z:section title="${BACKGROUND}">
+        <c:set var="backgroundBadge"><z:zirc-status-badge status="${sectionStatus['Background']}"/></c:set>
+        <z:section title="${BACKGROUND}" appendedText="${backgroundBadge}">
             <table class="table table-borderless">
                 <tbody>
                     <tr>
-                        <th class="w-25">Maternal</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['maternalBackground']}"/></span>Maternal</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.maternalBackground}"><c:out value="${submission.maternalBackground}"/></c:when>
@@ -251,7 +265,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Paternal</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['paternalBackground']}"/></span>Paternal</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.paternalBackground}"><c:out value="${submission.paternalBackground}"/></c:when>
@@ -260,7 +274,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Background Changeable</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['backgroundChangeable']}"/></span>Background Changeable</th>
                         <td>
                             <c:choose>
                                 <c:when test="${submission.backgroundChangeable == true}">Yes</c:when>
@@ -270,7 +284,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Concerns</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['backgroundChangeConcerns']}"/></span>Concerns</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.backgroundChangeConcerns}"><c:out value="${submission.backgroundChangeConcerns}"/></c:when>
@@ -282,39 +296,12 @@
             </table>
         </z:section>
 
-        <z:section title="${PEOPLE}">
-            <c:choose>
-                <c:when test="${empty submission.persons}">
-                    <p class="text-muted">No people associated with this submission.</p>
-                </c:when>
-                <c:otherwise>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Role</th>
-                                <th>Name</th>
-                                <th>ZDB ID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${submission.persons}" var="lsp">
-                                <tr>
-                                    <td>${lsp.role}</td>
-                                    <td><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a></td>
-                                    <td><code>${lsp.person.zdbID}</code></td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-            </c:choose>
-        </z:section>
-
-        <z:section title="${ADDITIONAL}">
+        <c:set var="additionalBadge"><z:zirc-status-badge status="${sectionStatus['Additional Info']}"/></c:set>
+        <z:section title="${ADDITIONAL}" appendedText="${additionalBadge}">
             <table class="table table-borderless">
                 <tbody>
                     <tr>
-                        <th class="w-25">Additional Info</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['additionalInfo']}"/></span>Additional Info</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.additionalInfo}"><c:out value="${submission.additionalInfo}"/></c:when>
@@ -323,7 +310,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Unreported Features Details</th>
+                        <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['unreportedFeaturesDetails']}"/></span>Unreported Features Details</th>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty submission.unreportedFeaturesDetails}"><c:out value="${submission.unreportedFeaturesDetails}"/></c:when>
@@ -361,6 +348,22 @@
 
         <script>
         jQuery(function () {
+            // Copy ZDB ID to clipboard when the copy icon is clicked
+            jQuery('#copy-zdb-id').on('click', function (e) {
+                e.preventDefault();
+                var text = jQuery('#zdb-id-value').text().trim();
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                }
+                var $icon = jQuery(this);
+                var original = $icon.attr('title');
+                $icon.attr('title', 'Copied!');
+                if ($icon.tooltip) {
+                    $icon.tooltip('dispose').tooltip('show');
+                    setTimeout(function () { $icon.tooltip('dispose').attr('title', original); }, 1000);
+                }
+            });
+
             var initialized = false;
 
             function postAdd(personZdbID) {

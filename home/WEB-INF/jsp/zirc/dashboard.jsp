@@ -42,7 +42,7 @@
                                 <tr>
                                     <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
-                                    <td>&mdash;</td>
+                                    <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>
@@ -79,7 +79,7 @@
                                 <tr>
                                     <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
-                                    <td>&mdash;</td>
+                                    <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>

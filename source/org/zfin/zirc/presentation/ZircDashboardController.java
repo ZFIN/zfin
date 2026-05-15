@@ -15,10 +15,14 @@ import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.service.LineSubmissionService;
+import org.zfin.zirc.service.LineSubmissionStatusComputer;
+import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
+import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +40,15 @@ public class ZircDashboardController {
                     "from ZircLineSubmission where deletedAt is null order by createdAt desc",
                     LineSubmission.class)
                 .list();
-        // No status column on LineSubmission yet, so everything lands in "Active".
+        // Per-row overall status, keyed by zdbID so the JSP can look it up cheaply.
+        Map<String, FieldStatus> overallByZdbId = new LinkedHashMap<>();
+        for (LineSubmission s : submissions) {
+            overallByZdbId.put(s.getZdbID(), LineSubmissionStatusComputer.compute(s).overall());
+        }
+        // No "closed" column on LineSubmission yet, so everything lands in "Active".
         model.addAttribute("activeSubmissions", submissions);
         model.addAttribute("closedSubmissions", Collections.emptyList());
+        model.addAttribute("overallStatus", overallByZdbId);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission Dashboard");
         return "zirc/dashboard";
     }
@@ -50,6 +60,12 @@ public class ZircDashboardController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
         }
         model.addAttribute("submission", submission);
+        // FieldStatus enum carries its own abbreviation / cssClass / displayName;
+        // the JSP tag reads them via EL getters. No flattening needed.
+        FieldStatusResult status = LineSubmissionStatusComputer.compute(submission);
+        model.addAttribute("fieldStatus", status.byField());
+        model.addAttribute("sectionStatus", status.bySection());
+        model.addAttribute("overallStatus", status.overall());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission: " + submission.getName());
         return "zirc/line-submission-detail";
     }
