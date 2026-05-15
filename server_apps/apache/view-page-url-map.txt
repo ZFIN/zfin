@@ -55,6 +55,7 @@ GTCONSTRCT	/action/marker/construct/view/ZDB-GTCONSTRCT
 JRNL    /action/publication/journal/ZDB-JRNL
 IMAGE    /action/image/view/ZDB-IMAGE
 LAB	/action/profile/view/ZDB-LAB
+LINESUBMISSION	/action/zirc/line-submission/ZDB-LINESUBMISSION
 LINK /action/mapping/linkage/ZDB-LINK
 MRPHLNO	/action/marker/str/view/ZDB-MRPHLNO
 NBO	/action/ontology/term/NBO
