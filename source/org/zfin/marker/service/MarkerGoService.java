@@ -197,9 +197,13 @@ public class MarkerGoService {
                         row.setAnnotationExtensions(markerGoTermEvidence.getAnnotationExtensions().stream()
                                 .map(MarkerGoEvidencePresentation::generateAnnotationExtensionLink)
                                 .collect(Collectors.toSet()));
+                        // Solr's group can contain documents for evidence rows that
+                        // no longer exist in the DB (stale index). Drop those rather
+                        // than NPE'ing the whole request (ZFIN-10303).
                         Set<Publication> publications = group.getResult().stream()
                                 .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
                                 .map(repository::getMarkerGoTermEvidenceByZdbID)
+                                .filter(Objects::nonNull)
                                 .map(MarkerGoTermEvidence::getSource)
                                 .collect(Collectors.toSet());
                         row.setPublications(publications);
