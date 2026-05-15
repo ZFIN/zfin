@@ -22,7 +22,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps
 
 SUBDIRS = apache cron data_transfer WebSiteTools \
-	DB_maintenance Reports quicksearch
+	DB_maintenance quicksearch
 
 GENERICS = ZFINPerlModules.pm
 STATICS = build.xml
