@@ -71,7 +71,6 @@ public class ResultService {
     public static String CONSTRUCT = "Construct:";
     public static String EFG_NAME = "Engineered Foreign Gene Name:";
     public static String EISSN = "eISSN:";
-    public static String EMAIL = "Email:";
     public static String EXPRESSION = "Expression:";
     public static String FISH = "Fish:";
     public static String GENE = "Gene:";
@@ -475,10 +474,6 @@ public class ResultService {
         Person person = RepositoryFactory.getProfileRepository().getPerson(result.getId());
 
         if (person != null) {
-            if (person.getEmailPrivacyPreference().isVisible()) {
-                result.addAttribute(EMAIL, person.getEmail());
-            }
-
             if (StringUtils.isNotEmpty(person.getAddress())) {
                 result.addAttribute(ADDRESS, "<span class=\"result-street-address\">" + person.getAddress() + "</span>");
             }

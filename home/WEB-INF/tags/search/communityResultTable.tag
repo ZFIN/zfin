@@ -3,7 +3,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
-<c:set var="emailAttribute" value="${ResultService.EMAIL}"/>
 <c:set var="addressAttribute" value="${ResultService.ADDRESS}"/>
 <c:set var="lineDesigAttribute" value="${ResultService.LINE_DESIGNATION}"/>
 
@@ -11,7 +10,6 @@
     <c:when test="${fn:contains(result.id, 'PERS')}">
 <table class="table-results searchresults" style="display: none;">
     <th>Name</th>
-    <th>Email</th>
     <th>Address</th>
     <th>Image</th>
     <th>ZDB ID</th>
@@ -19,11 +17,6 @@
     <c:forEach var="result" items="${results}" varStatus="loop">
         <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
             <td>${result.link}</td>
-
-            <td>${result.attributes[emailAttribute]}</td>
-
-
-
 
             <td style="word-wrap: break-word">${result.attributes[addressAttribute]}</td>
             <td>
@@ -41,7 +34,6 @@
 <c:otherwise>
     <table class="table-results searchresults" style="display: none;">
         <th>Name</th>
-        <th>Email</th>
         <th>Address</th>
         <th>Image</th>
         <th>Line Designation</th>
@@ -50,11 +42,6 @@
         <c:forEach var="result" items="${results}" varStatus="loop">
             <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="id">
                 <td>${result.link}</td>
-
-                <td>${result.attributes[emailAttribute]}</td>
-
-
-
 
                 <td style="word-wrap: break-word">${result.attributes[addressAttribute]}</td>
                 <td>
