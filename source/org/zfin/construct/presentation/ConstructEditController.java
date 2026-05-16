@@ -85,15 +85,27 @@ public class ConstructEditController {
     ConstructUpdateResult updateConstruct(@PathVariable String constructID,
                            @RequestBody EditConstructFormFields request) throws Exception{
 
+        try {
+            HibernateUtil.createTransaction();
 
-        HibernateUtil.createTransaction();
+            constructEditService.updateConstruct(constructID, request);
+            Marker newMarker = mr.getMarkerByID(constructID);
 
-        constructEditService.updateConstruct(constructID, request);
-        Marker newMarker = mr.getMarkerByID(constructID);
+            HibernateUtil.flushAndCommitCurrentSession();
 
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), newMarker.getZdbID(), true);
+            return new ConstructUpdateResult(newMarker.getZdbID() + " saved as " + newMarker.getName(), newMarker.getZdbID(), true);
+        } catch (Exception e) {
+            try {
+                HibernateUtil.rollbackTransaction();
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            if (e instanceof InvalidConstructNameException) {
+                return new ConstructUpdateResult(e.getMessage(), null, false);
+            }
+            return new ConstructUpdateResult("Construct could not be updated", null, false);
+        }
     }
 
 //    /action/construct/create-and-update
