@@ -76,6 +76,11 @@
 
         <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.ZIRC_LINE_SUBMISSIONS)}">
         <z:section title="${ZIRC_LINE_SUBMISSIONS}">
+            <p>
+                <a href="/action/zirc/line-submission/new" class="btn btn-primary">
+                    <i class="fas fa-plus-circle mr-1"></i>Start a new line submission
+                </a>
+            </p>
             <h5>Active Line Submissions</h5>
             <table class="table table-striped">
                 <thead>
@@ -102,7 +107,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>
-                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>
@@ -138,7 +143,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>
-                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>

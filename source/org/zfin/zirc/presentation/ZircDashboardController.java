@@ -14,10 +14,15 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.service.GeneStatusComputer;
+import org.zfin.zirc.service.GenotypingAssayStatusComputer;
+import org.zfin.zirc.service.LesionStatusComputer;
+import org.zfin.zirc.service.PhenotypeStatusComputer;
 import org.zfin.zirc.service.LineSubmissionService;
 import org.zfin.zirc.service.LineSubmissionStatusComputer;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
+import org.zfin.zirc.service.MutationStatusComputer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +71,80 @@ public class ZircDashboardController {
         model.addAttribute("fieldStatus", status.byField());
         model.addAttribute("sectionStatus", status.bySection());
         model.addAttribute("overallStatus", status.overall());
+
+        // Per-mutation status, in one pass:
+        //   mutationStatus        : Mutation.id  → overall status (subsection header badge)
+        //   mutationFieldStatus   : Mutation.id  → byField map  (per-row badges)
+        //   mutationSectionStatus : Mutation.id  → bySection map (per-subsection header badges)
+        //   subSectionStatus      : "Mutation N" → overall status (left-nav sub-items)
+        //   subSections           : "Mutations" → ["Mutation 1", "Mutation 2", …]
+        Map<Long, FieldStatus> mutationStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> mutationFieldStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> mutationSectionStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> geneFieldStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> lesionFieldStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> assayFieldStatus = new LinkedHashMap<>();
+        Map<Long, Map<String, FieldStatus>> phenotypeFieldStatus = new LinkedHashMap<>();
+        Map<String, FieldStatus> subSectionStatus = new LinkedHashMap<>();
+        // Third-level nav: each "Mutation N" expands into its 7 inner sections.
+        // The seven labels match the <z:section title="…"> blocks under each
+        // Mutation in line-submission-detail.jsp; anchor IDs follow the
+        // convention {sub-id}-{sub-sub-id} which dataPage.tag builds from
+        // makeDomIdentifier and the JSP applies via sectionID="…".
+        Map<String, List<String>> subSubSections = new LinkedHashMap<>();
+        Map<String, Map<String, FieldStatus>> subSubSectionStatus = new LinkedHashMap<>();
+        List<String> mutationSubSectionLabels = List.of(
+                "Overview", "Genes", "Lesions", "Genotyping Assays",
+                "Phenotypes", "Lethality", "Publications");
+        List<String> mutationLabels = new ArrayList<>();
+        if (submission.getMutations() != null) {
+            int i = 1;
+            for (Mutation mut : submission.getMutations()) {
+                String label = "Mutation " + i++;
+                FieldStatusResult r = MutationStatusComputer.compute(mut);
+                mutationStatus.put(mut.getId(), r.overall());
+                mutationFieldStatus.put(mut.getId(), r.byField());
+                mutationSectionStatus.put(mut.getId(), r.bySection());
+                subSectionStatus.put(label, r.overall());
+                mutationLabels.add(label);
+                subSubSections.put(label, mutationSubSectionLabels);
+                subSubSectionStatus.put(label, r.bySection());
+                if (mut.getGenes() != null) {
+                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
+                        geneFieldStatus.put(g.getId(), GeneStatusComputer.compute(g).byField());
+                    }
+                }
+                if (mut.getLesions() != null) {
+                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
+                        lesionFieldStatus.put(lz.getId(), LesionStatusComputer.compute(lz).byField());
+                    }
+                }
+                if (mut.getGenotypingAssays() != null) {
+                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
+                        assayFieldStatus.put(ga.getId(), GenotypingAssayStatusComputer.compute(ga).byField());
+                    }
+                }
+                if (mut.getPhenotypes() != null) {
+                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
+                        phenotypeFieldStatus.put(p.getId(), PhenotypeStatusComputer.compute(p).byField());
+                    }
+                }
+            }
+        }
+        model.addAttribute("mutationStatus", mutationStatus);
+        model.addAttribute("mutationFieldStatus", mutationFieldStatus);
+        model.addAttribute("mutationSectionStatus", mutationSectionStatus);
+        model.addAttribute("geneFieldStatus", geneFieldStatus);
+        model.addAttribute("lesionFieldStatus", lesionFieldStatus);
+        model.addAttribute("assayFieldStatus", assayFieldStatus);
+        model.addAttribute("phenotypeFieldStatus", phenotypeFieldStatus);
+        if (!mutationLabels.isEmpty()) {
+            model.addAttribute("subSections", Map.of("Mutations", mutationLabels));
+            model.addAttribute("subSectionStatus", subSectionStatus);
+            model.addAttribute("subSubSections", subSubSections);
+            model.addAttribute("subSubSectionStatus", subSubSectionStatus);
+        }
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission: " + submission.getName());
         return "zirc/line-submission-detail";
     }

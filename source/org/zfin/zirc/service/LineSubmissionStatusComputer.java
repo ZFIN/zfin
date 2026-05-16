@@ -1,6 +1,7 @@
 package org.zfin.zirc.service;
 
 import org.zfin.zirc.entity.LineSubmission;
+import org.zfin.zirc.entity.Mutation;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -113,7 +114,15 @@ public final class LineSubmissionStatusComputer {
         // auto-added on first save, so it can't really go missing.
         Map<String, FieldStatus> bySection = new LinkedHashMap<>();
         bySection.put("Overview",        rollup(byField, Field.NAME, Field.PREVIOUS_NAMES, Field.REASONS));
-        bySection.put("Mutations",       rollup(byField, Field.MUTATIONS));
+        // Mutations section is worst-of (presence-check, each mutation's own overall),
+        // so a present-but-incomplete mutation bubbles up Missing — not just absence.
+        FieldStatus mutationsSection = rollup(byField, Field.MUTATIONS);
+        if (s.getMutations() != null) {
+            for (Mutation m : s.getMutations()) {
+                mutationsSection = mutationsSection.worse(MutationStatusComputer.compute(m).overall());
+            }
+        }
+        bySection.put("Mutations",       mutationsSection);
         bySection.put("Linked Features", rollup(byField, Field.LINKED_FEATURES));
         bySection.put("Background",      rollup(byField,
                 Field.MATERNAL_BACKGROUND, Field.PATERNAL_BACKGROUND,

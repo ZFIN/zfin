@@ -5,14 +5,14 @@
 
 <c:set var="sections" value="${[ACTIVE, CLOSED]}"/>
 
-<z:dataPage sections="${sections}" title="Line Submission Dashboard">
+<z:dataPage sections="${sections}" title="ZIRC Line Submission Dashboard">
 
     <jsp:attribute name="entityName">Line Submission Dashboard</jsp:attribute>
 
     <jsp:body>
 
         <div class="small text-uppercase text-muted">ZIRC</div>
-        <h1>Line Submission Dashboard</h1>
+        <h1><img src="/images/zirc_logo20061006.gif" alt="ZIRC" class="ml-2" style="height:1em;vertical-align:baseline"> Line Submission Dashboard </h1>
 
         <p>
             <a href="/action/zirc/line-submission/new" class="btn btn-primary">
@@ -21,7 +21,7 @@
         </p>
 
         <z:section title="${ACTIVE}">
-            <table class="table table-striped">
+            <table class="table table-striped w-auto">
                 <thead>
                     <tr>
                         <th>Line Submission Name</th>
@@ -46,7 +46,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>
-                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>
@@ -58,7 +58,7 @@
         </z:section>
 
         <z:section title="${CLOSED}">
-            <table class="table table-striped">
+            <table class="table table-striped w-auto">
                 <thead>
                     <tr>
                         <th>Line Submission Name</th>
@@ -83,7 +83,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${empty sub.persons}">&mdash;</c:when>
-                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}">${lsp.person.fullName}</a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>

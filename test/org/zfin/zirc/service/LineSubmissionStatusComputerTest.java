@@ -1,6 +1,8 @@
 package org.zfin.zirc.service;
 
 import org.junit.Test;
+import org.zfin.marker.Marker;
+import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
@@ -161,7 +163,22 @@ public class LineSubmissionStatusComputerTest {
         s.setReasons(new String[]{"frequently_requested"});
 
         Set<Mutation> muts = new HashSet<>();
-        muts.add(new Mutation());
+        Mutation mut = new Mutation();
+        // Fill General-section required fields so MutationStatusComputer's
+        // overall is COMPLETE; otherwise the LineSubmission's Mutations
+        // section rolls up Missing per the cross-computer rule.
+        mut.setAlleleDesignation("ab123");
+        mut.setMutagenesisStage("F0");
+        mut.setMutagenesisProtocol("CRISPR");
+        mut.setMutationType("indel");
+        // Genes is required on a Mutation; one Gene with a Marker set
+        // satisfies the per-row required field too.
+        Gene g = new Gene();
+        g.setMutatedGene(new Marker());
+        Set<Gene> genes = new HashSet<>();
+        genes.add(g);
+        mut.setGenes(genes);
+        muts.add(mut);
         s.setMutations(muts);
 
         // linkedFeatures: optional, populate one so it's also Complete
