@@ -7,6 +7,7 @@
 <%@ attribute name="cssClass" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="infoPopup" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="appendedText" required="false" rtexprvalue="true" type="java.lang.String" %>
+<%@ attribute name="prependedText" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="sectionID" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="navigationMenu" required="false" rtexprvalue="true" type="org.zfin.framework.presentation.NavigationMenu" %>
 
@@ -20,6 +21,9 @@
     <c:set var="hide" value="${!navigationMenu.include(title)}"/>
 </c:if>
 
+<c:if test="${!empty prependedText}">
+    <c:set var="title" value="${prependedText} ${title}"/>
+</c:if>
 <c:if test="${!empty appendedText}">
     <c:set var="title" value="${title} ${appendedText}"/>
 </c:if>

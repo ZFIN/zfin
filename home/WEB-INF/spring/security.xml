@@ -182,7 +182,9 @@
         <security:intercept-url pattern="/action/zebrashare/line-edit/*" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/zebrashare/dashboard" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}" />
 
+<!--
         <security:intercept-url pattern="/action/zirc/**" access="isAuthenticated() or ${DISABLE_SECURITY}"/>
+-->
 
         <security:intercept-url pattern="/action/str/*/edit" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
 
@@ -225,7 +227,9 @@
              will tighten to per-role / per-owner checks. Without it,
              every /action/zirc/** endpoint (writes, file uploads,
              deletes) is callable anonymously. -->
+<!--
         <security:intercept-url pattern="/action/zirc/**" access="isAuthenticated() or ${DISABLE_SECURITY}"/>
+-->
         <security:intercept-url pattern="/action/**" access="permitAll"/>
 
     </security:http>

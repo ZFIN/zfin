@@ -1,6 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="sections" required="true" rtexprvalue="true" type="java.util.Collection" %>
+<%@ attribute name="sectionStatus" required="false" rtexprvalue="true" type="java.util.Map" description="optional section-name → status map; renders a status badge in the left nav next to each section" %>
+<%@ attribute name="subSections" required="false" rtexprvalue="true" type="java.util.Map" description="optional section-name → Collection of child item titles; renders each as an indented sub-item under the parent section" %>
+<%@ attribute name="subSectionStatus" required="false" rtexprvalue="true" type="java.util.Map" description="optional child-title → status map; renders a status badge next to each sub-item" %>
+<%@ attribute name="subSubSections" required="false" rtexprvalue="true" type="java.util.Map" description="optional sub-item-title → Collection of grandchild titles; renders each as a deeper-indented sub-sub-item under the parent sub-item. Anchor is '#'+makeDomIdentifier(parent)+'-'+makeDomIdentifier(child)." %>
+<%@ attribute name="subSubSectionStatus" required="false" rtexprvalue="true" type="java.util.Map" description="optional Map<sub-item-title, Map<sub-sub-title, status>> — status badges for the third level" %>
 <%@ attribute name="entityName" required="false" fragment="true" %>
 <%@ attribute name="entityNameAddendum" required="false" fragment="true" %>
 <%@ attribute name="title" required="false" %>
@@ -37,8 +42,18 @@
                     <c:when test="${empty navigationMenu}">
                         <c:forEach var="section" items="${sections}" varStatus="loop">
                             <z:navigationItem title="${section}"
+                                              status="${sectionStatus[section]}"
                                               order="${loop.index}"
                             />
+                            <c:forEach var="sub" items="${subSections[section]}">
+                                <z:navigationItem title="${sub}" status="${subSectionStatus[sub]}" indent="true"/>
+                                <c:forEach var="subsub" items="${subSubSections[sub]}">
+                                    <z:navigationItem title="${subsub}"
+                                                      status="${subSubSectionStatus[sub][subsub]}"
+                                                      cssClass="pl-5"
+                                                      href="#${zfn:makeDomIdentifier(sub)}-${zfn:makeDomIdentifier(subsub)}"/>
+                                </c:forEach>
+                            </c:forEach>
                         </c:forEach>
                     </c:when>
                     <c:otherwise>
