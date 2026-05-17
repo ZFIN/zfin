@@ -133,14 +133,42 @@ public class ZircDashboardController {
             }
         }
         // History of field changes for this submission (for the in-row popups).
-        // One query loads updates for the submission and all its mutations;
-        // results are split into top-level fieldUpdates and per-mutation
-        // mutationFieldUpdates so the JSP can look up history per row.
+        // One query loads updates for the submission, its mutations, and all
+        // sub-entities (genes, lesions, assays, phenotypes, linked features);
+        // results are partitioned by recID prefix into per-entity maps so the
+        // JSP can look up history for any field row.
         List<String> auditKeys = new ArrayList<>();
         auditKeys.add(submission.getZdbID());
         if (submission.getMutations() != null) {
             for (Mutation mut : submission.getMutations()) {
                 auditKeys.add("ZIRC-MUT-" + mut.getId());
+                if (mut.getGenes() != null) {
+                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
+                        auditKeys.add("ZIRC-GENE-" + g.getId());
+                    }
+                }
+                if (mut.getLesions() != null) {
+                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
+                        auditKeys.add("ZIRC-LESION-" + lz.getId());
+                    }
+                }
+                if (mut.getGenotypingAssays() != null) {
+                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
+                        auditKeys.add("ZIRC-GA-" + ga.getId());
+                    }
+                }
+                if (mut.getPhenotypes() != null) {
+                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
+                        auditKeys.add("ZIRC-PHEN-" + p.getId());
+                    }
+                }
+            }
+        }
+        if (submission.getLinkedFeatures() != null) {
+            for (org.zfin.zirc.entity.LinkedFeature lf : submission.getLinkedFeatures()) {
+                if (lf.getMutationA() != null && lf.getMutationB() != null) {
+                    auditKeys.add("ZIRC-LF-" + lf.getMutationA().getId() + "-" + lf.getMutationB().getId());
+                }
             }
         }
         List<Updates> allUpdates = HibernateUtil.currentSession()
@@ -150,22 +178,50 @@ public class ZircDashboardController {
                 .setParameterList("rids", auditKeys)
                 .list();
         Map<String, List<Updates>> fieldUpdates = new LinkedHashMap<>();
-        Map<Long, Map<String, List<Updates>>> mutationFieldUpdates = new LinkedHashMap<>();
-        String mutPrefix = "ZIRC-MUT-";
+        Map<Long, Map<String, List<Updates>>> mutationFieldUpdates    = new LinkedHashMap<>();
+        Map<Long, Map<String, List<Updates>>> geneFieldUpdates        = new LinkedHashMap<>();
+        Map<Long, Map<String, List<Updates>>> lesionFieldUpdates      = new LinkedHashMap<>();
+        Map<Long, Map<String, List<Updates>>> assayFieldUpdates       = new LinkedHashMap<>();
+        Map<Long, Map<String, List<Updates>>> phenotypeFieldUpdates   = new LinkedHashMap<>();
+        Map<String, Map<String, List<Updates>>> linkedFeatureFieldUpdates = new LinkedHashMap<>();
         for (Updates u : allUpdates) {
             String recId = u.getRecID();
+            if (recId == null) continue;
             if (submission.getZdbID().equals(recId)) {
                 fieldUpdates.computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
-            } else if (recId != null && recId.startsWith(mutPrefix)) {
-                Long mutId = Long.parseLong(recId.substring(mutPrefix.length()));
-                mutationFieldUpdates
-                        .computeIfAbsent(mutId, k -> new LinkedHashMap<>())
-                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>())
-                        .add(u);
+            } else if (recId.startsWith("ZIRC-MUT-")) {
+                Long id = Long.parseLong(recId.substring("ZIRC-MUT-".length()));
+                mutationFieldUpdates.computeIfAbsent(id, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId.startsWith("ZIRC-GENE-")) {
+                Long id = Long.parseLong(recId.substring("ZIRC-GENE-".length()));
+                geneFieldUpdates.computeIfAbsent(id, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId.startsWith("ZIRC-LESION-")) {
+                Long id = Long.parseLong(recId.substring("ZIRC-LESION-".length()));
+                lesionFieldUpdates.computeIfAbsent(id, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId.startsWith("ZIRC-GA-")) {
+                Long id = Long.parseLong(recId.substring("ZIRC-GA-".length()));
+                assayFieldUpdates.computeIfAbsent(id, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId.startsWith("ZIRC-PHEN-")) {
+                Long id = Long.parseLong(recId.substring("ZIRC-PHEN-".length()));
+                phenotypeFieldUpdates.computeIfAbsent(id, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId.startsWith("ZIRC-LF-")) {
+                String key = recId.substring("ZIRC-LF-".length());
+                linkedFeatureFieldUpdates.computeIfAbsent(key, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
             }
         }
         model.addAttribute("fieldUpdates", fieldUpdates);
         model.addAttribute("mutationFieldUpdates", mutationFieldUpdates);
+        model.addAttribute("geneFieldUpdates", geneFieldUpdates);
+        model.addAttribute("lesionFieldUpdates", lesionFieldUpdates);
+        model.addAttribute("assayFieldUpdates", assayFieldUpdates);
+        model.addAttribute("phenotypeFieldUpdates", phenotypeFieldUpdates);
+        model.addAttribute("linkedFeatureFieldUpdates", linkedFeatureFieldUpdates);
 
         model.addAttribute("mutationStatus", mutationStatus);
         model.addAttribute("mutationFieldStatus", mutationFieldStatus);
