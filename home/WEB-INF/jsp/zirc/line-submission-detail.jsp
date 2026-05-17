@@ -37,14 +37,16 @@
                see it). Opacity rather than display:none so layout doesn't shift. */
             .field-history-trigger { opacity: 0; transition: opacity 0.12s ease-in; }
             tr:hover .field-history-trigger,
+            h1:hover .field-history-trigger,
+            .section .heading:hover .field-history-trigger,
             .field-history-trigger:focus,
             .field-history-trigger:hover { opacity: 1; }
         </style>
 
         <div class="small text-uppercase text-muted">ZIRC Line Submission</div>
-        <h1><z:zirc-status-badge status="${overallStatus}"/> ${submission.name}</h1>
+        <h1><z:zirc-status-badge status="${overallStatus}"/> ${submission.name}<z:zirc-section-history key="submission" label="Line Submission ${submission.name}" updates="${submissionAllUpdates}"/></h1>
 
-        <c:set var="overviewBadge"><z:zirc-status-badge status="${sectionStatus['Overview']}"/></c:set>
+        <c:set var="overviewBadge"><z:zirc-status-badge status="${sectionStatus['Overview']}"/><z:zirc-section-history key="overview" label="Overview" updates="${sectionUpdates['Overview']}"/></c:set>
         <z:section title="${OVERVIEW}" prependedText="${overviewBadge}">
             <table class="table table-borderless w-auto">
                 <tbody>
@@ -127,7 +129,7 @@
             </table>
         </z:section>
 
-        <c:set var="mutationsBadge"><z:zirc-status-badge status="${sectionStatus['Mutations']}"/></c:set>
+        <c:set var="mutationsBadge"><z:zirc-status-badge status="${sectionStatus['Mutations']}"/><z:zirc-section-history key="mutations" label="Mutations" updates="${sectionUpdates['Mutations']}"/></c:set>
         <z:section title="${MUTATIONS}" prependedText="${mutationsBadge}">
             <c:choose>
                 <c:when test="${empty submission.mutations}">
@@ -139,13 +141,14 @@
                         <c:set var="mFieldUpdates" value="${mutationFieldUpdates[m.id]}"/>
                         <c:set var="mScope" value="mut${m.id}"/>
                         <c:set var="mSectStat" value="${mutationSectionStatus[m.id]}"/>
-                        <c:set var="mSectionBadge"><z:zirc-status-badge status="${mutationStatus[m.id]}"/></c:set>
-                        <c:set var="overviewBadge"><z:zirc-status-badge status="${mSectStat['Overview']}"/></c:set>
-                        <c:set var="genesBadge"><z:zirc-status-badge status="${mSectStat['Genes']}"/></c:set>
-                        <c:set var="lesionsBadge"><z:zirc-status-badge status="${mSectStat['Lesions']}"/></c:set>
-                        <c:set var="gaBadge"><z:zirc-status-badge status="${mSectStat['Genotyping Assays']}"/></c:set>
-                        <c:set var="phenoBadge"><z:zirc-status-badge status="${mSectStat['Phenotypes']}"/></c:set>
-                        <c:set var="lethalityBadge"><z:zirc-status-badge status="${mSectStat['Lethality']}"/></c:set>
+                        <c:set var="mSectUpdates" value="${mutationSectionUpdates[m.id]}"/>
+                        <c:set var="mSectionBadge"><z:zirc-status-badge status="${mutationStatus[m.id]}"/><z:zirc-section-history key="mutation" label="Mutation ${loop.count}" updates="${mutationAllUpdates[m.id]}" scope="${mScope}"/></c:set>
+                        <c:set var="overviewBadge"><z:zirc-status-badge status="${mSectStat['Overview']}"/><z:zirc-section-history key="overview" label="Mutation ${loop.count} &mdash; Overview" updates="${mSectUpdates['Overview']}" scope="${mScope}"/></c:set>
+                        <c:set var="genesBadge"><z:zirc-status-badge status="${mSectStat['Genes']}"/><z:zirc-section-history key="genes" label="Mutation ${loop.count} &mdash; Genes" updates="${mSectUpdates['Genes']}" scope="${mScope}"/></c:set>
+                        <c:set var="lesionsBadge"><z:zirc-status-badge status="${mSectStat['Lesions']}"/><z:zirc-section-history key="lesions" label="Mutation ${loop.count} &mdash; Lesions" updates="${mSectUpdates['Lesions']}" scope="${mScope}"/></c:set>
+                        <c:set var="gaBadge"><z:zirc-status-badge status="${mSectStat['Genotyping Assays']}"/><z:zirc-section-history key="genotyping-assays" label="Mutation ${loop.count} &mdash; Genotyping Assays" updates="${mSectUpdates['Genotyping Assays']}" scope="${mScope}"/></c:set>
+                        <c:set var="phenoBadge"><z:zirc-status-badge status="${mSectStat['Phenotypes']}"/><z:zirc-section-history key="phenotypes" label="Mutation ${loop.count} &mdash; Phenotypes" updates="${mSectUpdates['Phenotypes']}" scope="${mScope}"/></c:set>
+                        <c:set var="lethalityBadge"><z:zirc-status-badge status="${mSectStat['Lethality']}"/><z:zirc-section-history key="lethality" label="Mutation ${loop.count} &mdash; Lethality" updates="${mSectUpdates['Lethality']}" scope="${mScope}"/></c:set>
                         <c:set var="pubsBadge"><z:zirc-status-badge status="${mSectStat['Publications']}"/></c:set>
                         <z:section title="Mutation ${loop.count}" prependedText="${mSectionBadge}" cssClass="ml-4">
                             <p class="text-right mb-2">
@@ -535,7 +538,7 @@
             </c:choose>
         </z:section>
 
-        <c:set var="linkedBadge"><z:zirc-status-badge status="${sectionStatus['Linked Features']}"/></c:set>
+        <c:set var="linkedBadge"><z:zirc-status-badge status="${sectionStatus['Linked Features']}"/><z:zirc-section-history key="linked-features" label="Linked Features" updates="${sectionUpdates['Linked Features']}"/></c:set>
         <z:section title="${LINKED_FEATURES}" prependedText="${linkedBadge}">
             <c:choose>
                 <c:when test="${empty submission.linkedFeatures}">
@@ -604,7 +607,7 @@
             </c:choose>
         </z:section>
 
-        <c:set var="backgroundBadge"><z:zirc-status-badge status="${sectionStatus['Background']}"/></c:set>
+        <c:set var="backgroundBadge"><z:zirc-status-badge status="${sectionStatus['Background']}"/><z:zirc-section-history key="background" label="Background" updates="${sectionUpdates['Background']}"/></c:set>
         <z:section title="${BACKGROUND}" prependedText="${backgroundBadge}">
             <table class="table table-borderless w-auto">
                 <tbody>
@@ -653,7 +656,7 @@
             </table>
         </z:section>
 
-        <c:set var="additionalBadge"><z:zirc-status-badge status="${sectionStatus['Additional Info']}"/></c:set>
+        <c:set var="additionalBadge"><z:zirc-status-badge status="${sectionStatus['Additional Info']}"/><z:zirc-section-history key="additional-info" label="Additional Info" updates="${sectionUpdates['Additional Info']}"/></c:set>
         <z:section title="${ADDITIONAL}" prependedText="${additionalBadge}">
             <table class="table table-borderless w-auto">
                 <tbody>

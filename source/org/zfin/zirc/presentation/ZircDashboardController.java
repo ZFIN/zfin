@@ -26,6 +26,7 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import org.zfin.zirc.service.MutationStatusComputer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -222,6 +223,138 @@ public class ZircDashboardController {
         model.addAttribute("assayFieldUpdates", assayFieldUpdates);
         model.addAttribute("phenotypeFieldUpdates", phenotypeFieldUpdates);
         model.addAttribute("linkedFeatureFieldUpdates", linkedFeatureFieldUpdates);
+
+        // Section roll-ups: aggregate all field-level updates under each
+        // visible section so the curator can open one modal per section
+        // and see every audited change inside it (most-recent first).
+        Map<String, List<Updates>> sectionUpdates = new LinkedHashMap<>();
+        java.util.function.BiConsumer<String, Collection<List<Updates>>> rollup = (section, lists) -> {
+            List<Updates> agg = sectionUpdates.computeIfAbsent(section, k -> new ArrayList<>());
+            for (List<Updates> lst : lists) {
+                if (lst != null) agg.addAll(lst);
+            }
+        };
+        java.util.function.Function<String[], List<List<Updates>>> pickFields = keys -> {
+            List<List<Updates>> out = new ArrayList<>();
+            for (String k : keys) out.add(fieldUpdates.get(k));
+            return out;
+        };
+        rollup.accept("Overview",
+                pickFields.apply(new String[]{"name", "previousNames", "reasons", "reasonsOther", "abbreviation"}));
+        rollup.accept("Background",
+                pickFields.apply(new String[]{"maternalBackground", "paternalBackground",
+                        "backgroundChangeable", "backgroundChangeConcerns"}));
+        rollup.accept("Additional Info",
+                pickFields.apply(new String[]{"additionalInfo", "unreportedFeaturesDetails",
+                        "husbandryInfo", "singleAllelic"}));
+        // Linked Features: every update on any LF row.
+        for (Map<String, List<Updates>> byField : linkedFeatureFieldUpdates.values()) {
+            rollup.accept("Linked Features", byField.values());
+        }
+        // Mutations: every mutation + every gene/lesion/assay/phenotype update across all mutations.
+        for (Map<String, List<Updates>> byField : mutationFieldUpdates.values()) {
+            rollup.accept("Mutations", byField.values());
+        }
+        for (Map<String, List<Updates>> byField : geneFieldUpdates.values()) {
+            rollup.accept("Mutations", byField.values());
+        }
+        for (Map<String, List<Updates>> byField : lesionFieldUpdates.values()) {
+            rollup.accept("Mutations", byField.values());
+        }
+        for (Map<String, List<Updates>> byField : assayFieldUpdates.values()) {
+            rollup.accept("Mutations", byField.values());
+        }
+        for (Map<String, List<Updates>> byField : phenotypeFieldUpdates.values()) {
+            rollup.accept("Mutations", byField.values());
+        }
+        for (List<Updates> lst : sectionUpdates.values()) {
+            lst.sort((a, b) -> b.getWhenUpdated().compareTo(a.getWhenUpdated()));
+        }
+        model.addAttribute("sectionUpdates", sectionUpdates);
+
+        // Per-mutation section roll-ups. For each mutation, build a map
+        // from its inner section label (Overview, Genes, Lesions, ...) to
+        // the consolidated list of updates inside it.
+        Map<Long, Map<String, List<Updates>>> mutationSectionUpdates = new LinkedHashMap<>();
+        String[] mutOverviewFields = {"alleleDesignation", "alleleInZfin", "mutagenesisStage",
+                "mutagenesisProtocol", "mutagenesisProtocolOther", "molecularlyCharacterized",
+                "mutationType", "zfinRecordEstablished", "cellGenomicFeature",
+                "mutationDiscoverer", "mutationInstitution"};
+        String[] mutLethalityFields = {"homozygousLethal", "lethalityStageTypical",
+                "lethalitySpecificTimepoint", "lethalityWindowStart", "lethalityWindowEnd",
+                "lethalityAdditionalInfo"};
+        if (submission.getMutations() != null) {
+            for (Mutation mut : submission.getMutations()) {
+                Long mid = mut.getId();
+                Map<String, List<Updates>> perField = mutationFieldUpdates.getOrDefault(mid, Map.of());
+                Map<String, List<Updates>> mySections = new LinkedHashMap<>();
+                List<Updates> overviewList = new ArrayList<>();
+                for (String f : mutOverviewFields) {
+                    List<Updates> u = perField.get(f);
+                    if (u != null) overviewList.addAll(u);
+                }
+                if (!overviewList.isEmpty()) mySections.put("Overview", overviewList);
+                List<Updates> lethalityList = new ArrayList<>();
+                for (String f : mutLethalityFields) {
+                    List<Updates> u = perField.get(f);
+                    if (u != null) lethalityList.addAll(u);
+                }
+                if (!lethalityList.isEmpty()) mySections.put("Lethality", lethalityList);
+                if (mut.getGenes() != null) {
+                    List<Updates> genesList = new ArrayList<>();
+                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
+                        Map<String, List<Updates>> byField = geneFieldUpdates.get(g.getId());
+                        if (byField != null) for (List<Updates> u : byField.values()) genesList.addAll(u);
+                    }
+                    if (!genesList.isEmpty()) mySections.put("Genes", genesList);
+                }
+                if (mut.getLesions() != null) {
+                    List<Updates> lesionsList = new ArrayList<>();
+                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
+                        Map<String, List<Updates>> byField = lesionFieldUpdates.get(lz.getId());
+                        if (byField != null) for (List<Updates> u : byField.values()) lesionsList.addAll(u);
+                    }
+                    if (!lesionsList.isEmpty()) mySections.put("Lesions", lesionsList);
+                }
+                if (mut.getGenotypingAssays() != null) {
+                    List<Updates> assaysList = new ArrayList<>();
+                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
+                        Map<String, List<Updates>> byField = assayFieldUpdates.get(ga.getId());
+                        if (byField != null) for (List<Updates> u : byField.values()) assaysList.addAll(u);
+                    }
+                    if (!assaysList.isEmpty()) mySections.put("Genotyping Assays", assaysList);
+                }
+                if (mut.getPhenotypes() != null) {
+                    List<Updates> phenoList = new ArrayList<>();
+                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
+                        Map<String, List<Updates>> byField = phenotypeFieldUpdates.get(p.getId());
+                        if (byField != null) for (List<Updates> u : byField.values()) phenoList.addAll(u);
+                    }
+                    if (!phenoList.isEmpty()) mySections.put("Phenotypes", phenoList);
+                }
+                for (List<Updates> lst : mySections.values()) {
+                    lst.sort((a, b) -> b.getWhenUpdated().compareTo(a.getWhenUpdated()));
+                }
+                mutationSectionUpdates.put(mid, mySections);
+            }
+        }
+        // Per-mutation total roll-up (union of all this mutation's sections).
+        Map<Long, List<Updates>> mutationAllUpdates = new LinkedHashMap<>();
+        for (Map.Entry<Long, Map<String, List<Updates>>> e : mutationSectionUpdates.entrySet()) {
+            List<Updates> all = new ArrayList<>();
+            for (List<Updates> lst : e.getValue().values()) {
+                all.addAll(lst);
+            }
+            all.sort((a, b) -> b.getWhenUpdated().compareTo(a.getWhenUpdated()));
+            if (!all.isEmpty()) {
+                mutationAllUpdates.put(e.getKey(), all);
+            }
+        }
+        model.addAttribute("mutationSectionUpdates", mutationSectionUpdates);
+        model.addAttribute("mutationAllUpdates", mutationAllUpdates);
+        // Whole-submission roll-up: every audited change anywhere on this
+        // submission (already DESC-sorted by the query above).
+        model.addAttribute("submissionAllUpdates", allUpdates);
 
         model.addAttribute("mutationStatus", mutationStatus);
         model.addAttribute("mutationFieldStatus", mutationFieldStatus);
