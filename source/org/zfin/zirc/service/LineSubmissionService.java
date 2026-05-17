@@ -11,6 +11,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.GenotypingAssay;
@@ -65,8 +66,15 @@ public class LineSubmissionService {
     public LineSubmission saveField(String zdbID, String fieldName, String rawValue, Person currentUser) {
         String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        String oldValue = readField(submission, fieldName);
         applyField(submission, fieldName, value);
+        String newValue = readField(submission, fieldName);
         HibernateUtil.currentSession().merge(submission);
+        if (!java.util.Objects.equals(oldValue, newValue)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), fieldName, oldValue, newValue,
+                    "Line submission " + fieldName + " updated");
+        }
         return submission;
     }
 
@@ -78,11 +86,35 @@ public class LineSubmissionService {
      */
     public LineSubmission saveReasons(String zdbID, String[] reasons, String reasonsOther, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        String oldReasons = joinReasons(submission.getReasons());
+        String oldOther   = submission.getReasonsOther();
         submission.setReasons(reasons != null ? reasons : new String[0]);
         String trimmed = (reasonsOther != null && !reasonsOther.isBlank()) ? reasonsOther.trim() : null;
         submission.setReasonsOther(trimmed);
+        String newReasons = joinReasons(submission.getReasons());
+        String newOther   = submission.getReasonsOther();
         HibernateUtil.currentSession().merge(submission);
+        if (!java.util.Objects.equals(oldReasons, newReasons)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), "reasons", oldReasons, newReasons,
+                    "Line submission reasons updated");
+        }
+        if (!java.util.Objects.equals(oldOther, newOther)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), "reasonsOther", oldOther, newOther,
+                    "Line submission reasonsOther updated");
+        }
         return submission;
+    }
+
+    /** Render a reasons array as a comma-joined string for audit comparison/storage.
+     * Empty / null array becomes null so a transition between "no value" and "empty
+     * list" doesn't spuriously log a change. */
+    private static String joinReasons(String[] reasons) {
+        if (reasons == null || reasons.length == 0) {
+            return null;
+        }
+        return String.join(",", reasons);
     }
 
     /**
@@ -653,9 +685,47 @@ public class LineSubmissionService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
         }
         String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
+        String oldValue = readMutationField(m, fieldName);
         applyMutationField(m, fieldName, value);
+        String newValue = readMutationField(m, fieldName);
         HibernateUtil.currentSession().merge(m);
+        if (!java.util.Objects.equals(oldValue, newValue)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    mutationRecId(m), fieldName, oldValue, newValue,
+                    "Mutation " + fieldName + " updated");
+        }
         return m;
+    }
+
+    /** Stable string key used as {@code rec_id} in the updates audit log for
+     * per-mutation changes. Mutations have a numeric primary key, so we
+     * prefix it to avoid any chance of collision with ZDB-id-style keys. */
+    static String mutationRecId(Mutation m) {
+        return "ZIRC-MUT-" + m.getId();
+    }
+
+    /** Read the current value of a mutation scalar field. Mirrors {@link #applyMutationField}. */
+    static String readMutationField(Mutation m, String fieldName) {
+        return switch (fieldName) {
+            case "alleleDesignation"          -> m.getAlleleDesignation();
+            case "alleleInZfin"               -> m.getAlleleInZfin() == null ? null : m.getAlleleInZfin().toString();
+            case "mutagenesisStage"           -> m.getMutagenesisStage();
+            case "mutagenesisProtocol"        -> m.getMutagenesisProtocol();
+            case "mutagenesisProtocolOther"   -> m.getMutagenesisProtocolOther();
+            case "molecularlyCharacterized"   -> m.getMolecularlyCharacterized() == null ? null : m.getMolecularlyCharacterized().toString();
+            case "mutationType"               -> m.getMutationType();
+            case "homozygousLethal"           -> m.getHomozygousLethal() == null ? null : m.getHomozygousLethal().toString();
+            case "lethalityStageTypical"      -> m.getLethalityStageTypical();
+            case "lethalitySpecificTimepoint" -> m.getLethalitySpecificTimepoint();
+            case "lethalityWindowStart"       -> m.getLethalityWindowStart();
+            case "lethalityWindowEnd"         -> m.getLethalityWindowEnd();
+            case "lethalityAdditionalInfo"    -> m.getLethalityAdditionalInfo();
+            case "zfinRecordEstablished"      -> m.getZfinRecordEstablished() == null ? null : m.getZfinRecordEstablished().toString();
+            case "cellGenomicFeature"         -> m.getCellGenomicFeature();
+            case "mutationDiscoverer"         -> m.getMutationDiscoverer();
+            case "mutationInstitution"        -> m.getMutationInstitution();
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown mutation field: " + fieldName);
+        };
     }
 
     /** Package-private for unit testing. */
@@ -710,6 +780,26 @@ public class LineSubmissionService {
         lsp.setRole("submitter");
         lsp.setSortOrder(1);
         HibernateUtil.currentSession().persist(lsp);
+    }
+
+    /** Read the current value of one of the scalar fields handled by
+     * {@link #applyField}. Returned as a String so the result can be
+     * compared / logged regardless of the underlying type. */
+    static String readField(LineSubmission s, String fieldName) {
+        return switch (fieldName) {
+            case "name"                       -> s.getName();
+            case "abbreviation"               -> s.getAbbreviation();
+            case "previousNames"              -> s.getPreviousNames();
+            case "maternalBackground"         -> s.getMaternalBackground();
+            case "paternalBackground"         -> s.getPaternalBackground();
+            case "backgroundChangeable"       -> s.getBackgroundChangeable() == null ? null : s.getBackgroundChangeable().toString();
+            case "backgroundChangeConcerns"   -> s.getBackgroundChangeConcerns();
+            case "unreportedFeaturesDetails"  -> s.getUnreportedFeaturesDetails();
+            case "additionalInfo"             -> s.getAdditionalInfo();
+            case "singleAllelic"              -> s.getSingleAllelic() == null ? null : s.getSingleAllelic().toString();
+            case "husbandryInfo"              -> s.getHusbandryInfo();
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown field: " + fieldName);
+        };
     }
 
     /** Package-private for unit testing. */

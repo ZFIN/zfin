@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.Updates;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
@@ -131,6 +132,41 @@ public class ZircDashboardController {
                 }
             }
         }
+        // History of field changes for this submission (for the in-row popups).
+        // One query loads updates for the submission and all its mutations;
+        // results are split into top-level fieldUpdates and per-mutation
+        // mutationFieldUpdates so the JSP can look up history per row.
+        List<String> auditKeys = new ArrayList<>();
+        auditKeys.add(submission.getZdbID());
+        if (submission.getMutations() != null) {
+            for (Mutation mut : submission.getMutations()) {
+                auditKeys.add("ZIRC-MUT-" + mut.getId());
+            }
+        }
+        List<Updates> allUpdates = HibernateUtil.currentSession()
+                .createQuery(
+                    "from Updates where recID in :rids order by whenUpdated desc",
+                    Updates.class)
+                .setParameterList("rids", auditKeys)
+                .list();
+        Map<String, List<Updates>> fieldUpdates = new LinkedHashMap<>();
+        Map<Long, Map<String, List<Updates>>> mutationFieldUpdates = new LinkedHashMap<>();
+        String mutPrefix = "ZIRC-MUT-";
+        for (Updates u : allUpdates) {
+            String recId = u.getRecID();
+            if (submission.getZdbID().equals(recId)) {
+                fieldUpdates.computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+            } else if (recId != null && recId.startsWith(mutPrefix)) {
+                Long mutId = Long.parseLong(recId.substring(mutPrefix.length()));
+                mutationFieldUpdates
+                        .computeIfAbsent(mutId, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(u.getFieldName(), k -> new ArrayList<>())
+                        .add(u);
+            }
+        }
+        model.addAttribute("fieldUpdates", fieldUpdates);
+        model.addAttribute("mutationFieldUpdates", mutationFieldUpdates);
+
         model.addAttribute("mutationStatus", mutationStatus);
         model.addAttribute("mutationFieldStatus", mutationFieldStatus);
         model.addAttribute("mutationSectionStatus", mutationSectionStatus);

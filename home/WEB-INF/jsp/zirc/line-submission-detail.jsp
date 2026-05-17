@@ -32,6 +32,13 @@
                line up across rows even when the badge is absent (e.g. an N/A
                conditional field). */
             .status-slot { display: inline-block; width: 2.25em; text-align: center; margin-right: 0.4em; }
+            /* History-icon hover reveal: stay invisible until the curator hovers
+               the row (or the icon itself takes focus, so keyboard users still
+               see it). Opacity rather than display:none so layout doesn't shift. */
+            .field-history-trigger { opacity: 0; transition: opacity 0.12s ease-in; }
+            tr:hover .field-history-trigger,
+            .field-history-trigger:focus,
+            .field-history-trigger:hover { opacity: 1; }
         </style>
 
         <div class="small text-uppercase text-muted">ZIRC Line Submission</div>
@@ -58,6 +65,7 @@
                                 <c:when test="${not empty submission.name}"><c:out value="${submission.name}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="name" label="Name" updates="${fieldUpdates['name']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -67,6 +75,7 @@
                                 <c:when test="${not empty submission.previousNames}"><c:out value="${submission.previousNames}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="previousNames" label="Previous Names" updates="${fieldUpdates['previousNames']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -110,6 +119,8 @@
                                     <c:if test="${not empty submission.reasonsOther}"><c:if test="${not empty submission.reasons}">, </c:if>Other: <c:out value="${submission.reasonsOther}"/></c:if>
                                 </c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="reasons" label="Acceptance Reasons" updates="${fieldUpdates['reasons']}"/>
+                            <z:zirc-field-history fieldName="reasonsOther" label="Acceptance Reasons (Other)" updates="${fieldUpdates['reasonsOther']}"/>
                         </td>
                     </tr>
                 </tbody>
@@ -125,6 +136,8 @@
                 <c:otherwise>
                     <c:forEach items="${submission.mutations}" var="m" varStatus="loop">
                         <c:set var="mFieldStatus" value="${mutationFieldStatus[m.id]}"/>
+                        <c:set var="mFieldUpdates" value="${mutationFieldUpdates[m.id]}"/>
+                        <c:set var="mScope" value="mut${m.id}"/>
                         <c:set var="mSectStat" value="${mutationSectionStatus[m.id]}"/>
                         <c:set var="mSectionBadge"><z:zirc-status-badge status="${mutationStatus[m.id]}"/></c:set>
                         <c:set var="overviewBadge"><z:zirc-status-badge status="${mSectStat['Overview']}"/></c:set>
@@ -151,6 +164,7 @@
                                                     <c:when test="${m.alleleInZfin == false}">No</c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="alleleInZfin" label="Allele in ZFIN" updates="${mFieldUpdates['alleleInZfin']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -160,6 +174,7 @@
                                                     <c:when test="${not empty m.alleleDesignation}"><c:out value="${m.alleleDesignation}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="alleleDesignation" label="Allele Designation" updates="${mFieldUpdates['alleleDesignation']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -169,6 +184,7 @@
                                                     <c:when test="${not empty m.mutagenesisStage}"><c:out value="${m.mutagenesisStage}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="mutagenesisStage" label="Mutagenesis Stage" updates="${mFieldUpdates['mutagenesisStage']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -178,6 +194,8 @@
                                                     <c:when test="${not empty m.mutagenesisProtocol}"><c:out value="${m.mutagenesisProtocol}"/><c:if test="${m.mutagenesisProtocol == 'other' and not empty m.mutagenesisProtocolOther}"> (<c:out value="${m.mutagenesisProtocolOther}"/>)</c:if></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="mutagenesisProtocol" label="Mutagenesis Protocol" updates="${mFieldUpdates['mutagenesisProtocol']}" scope="${mScope}"/>
+                                                <z:zirc-field-history fieldName="mutagenesisProtocolOther" label="Mutagenesis Protocol (Other)" updates="${mFieldUpdates['mutagenesisProtocolOther']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -188,6 +206,7 @@
                                                     <c:when test="${m.molecularlyCharacterized == false}">No</c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="molecularlyCharacterized" label="Molecularly Characterized" updates="${mFieldUpdates['molecularlyCharacterized']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -197,6 +216,7 @@
                                                     <c:when test="${not empty m.mutationType}"><c:out value="${m.mutationType}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="mutationType" label="Mutation Type" updates="${mFieldUpdates['mutationType']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -207,6 +227,7 @@
                                                     <c:when test="${m.zfinRecordEstablished == false}">No</c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="zfinRecordEstablished" label="ZFIN Record Established" updates="${mFieldUpdates['zfinRecordEstablished']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -216,6 +237,7 @@
                                                     <c:when test="${not empty m.cellGenomicFeature}"><c:out value="${m.cellGenomicFeature}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="cellGenomicFeature" label="ZDB Genomic Feature #" updates="${mFieldUpdates['cellGenomicFeature']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -225,6 +247,7 @@
                                                     <c:when test="${not empty m.mutationDiscoverer}"><c:out value="${m.mutationDiscoverer}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="mutationDiscoverer" label="Discoverer" updates="${mFieldUpdates['mutationDiscoverer']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -234,6 +257,7 @@
                                                     <c:when test="${not empty m.mutationInstitution}"><c:out value="${m.mutationInstitution}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="mutationInstitution" label="Institution" updates="${mFieldUpdates['mutationInstitution']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -437,6 +461,7 @@
                                                     <c:when test="${m.homozygousLethal == false}">No</c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="homozygousLethal" label="Homozygous Lethal" updates="${mFieldUpdates['homozygousLethal']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -446,6 +471,7 @@
                                                     <c:when test="${not empty m.lethalityStageTypical}"><c:out value="${m.lethalityStageTypical}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="lethalityStageTypical" label="Lethality Stage Typical" updates="${mFieldUpdates['lethalityStageTypical']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -455,6 +481,7 @@
                                                     <c:when test="${not empty m.lethalitySpecificTimepoint}"><c:out value="${m.lethalitySpecificTimepoint}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="lethalitySpecificTimepoint" label="Lethality Specific Timepoint" updates="${mFieldUpdates['lethalitySpecificTimepoint']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -464,6 +491,8 @@
                                                     <c:when test="${not empty m.lethalityWindowStart or not empty m.lethalityWindowEnd}"><c:out value="${m.lethalityWindowStart}"/> &ndash; <c:out value="${m.lethalityWindowEnd}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="lethalityWindowStart" label="Lethality Window Start" updates="${mFieldUpdates['lethalityWindowStart']}" scope="${mScope}"/>
+                                                <z:zirc-field-history fieldName="lethalityWindowEnd" label="Lethality Window End" updates="${mFieldUpdates['lethalityWindowEnd']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -473,6 +502,7 @@
                                                     <c:when test="${not empty m.lethalityAdditionalInfo}"><c:out value="${m.lethalityAdditionalInfo}"/></c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
+                                                <z:zirc-field-history fieldName="lethalityAdditionalInfo" label="Lethality Additional Info" updates="${mFieldUpdates['lethalityAdditionalInfo']}" scope="${mScope}"/>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -568,6 +598,7 @@
                                 <c:when test="${not empty submission.maternalBackground}"><c:out value="${submission.maternalBackground}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="maternalBackground" label="Maternal Background" updates="${fieldUpdates['maternalBackground']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -577,6 +608,7 @@
                                 <c:when test="${not empty submission.paternalBackground}"><c:out value="${submission.paternalBackground}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="paternalBackground" label="Paternal Background" updates="${fieldUpdates['paternalBackground']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -587,6 +619,7 @@
                                 <c:when test="${submission.backgroundChangeable == false}">No</c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="backgroundChangeable" label="Background Changeable" updates="${fieldUpdates['backgroundChangeable']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -596,6 +629,7 @@
                                 <c:when test="${not empty submission.backgroundChangeConcerns}"><c:out value="${submission.backgroundChangeConcerns}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="backgroundChangeConcerns" label="Concerns" updates="${fieldUpdates['backgroundChangeConcerns']}"/>
                         </td>
                     </tr>
                 </tbody>
@@ -613,6 +647,7 @@
                                 <c:when test="${not empty submission.additionalInfo}"><c:out value="${submission.additionalInfo}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="additionalInfo" label="Additional Info" updates="${fieldUpdates['additionalInfo']}"/>
                         </td>
                     </tr>
                     <tr>
@@ -622,6 +657,7 @@
                                 <c:when test="${not empty submission.unreportedFeaturesDetails}"><c:out value="${submission.unreportedFeaturesDetails}"/></c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
+                            <z:zirc-field-history fieldName="unreportedFeaturesDetails" label="Unreported Features Details" updates="${fieldUpdates['unreportedFeaturesDetails']}"/>
                         </td>
                     </tr>
                 </tbody>
