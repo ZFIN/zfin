@@ -20,12 +20,16 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
+import org.zfin.zirc.service.LineSubmissionStatusComputer;
+import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -335,8 +339,13 @@ public class PersonController {
                     LineSubmission.class)
                 .setParameter("zdbID", zdbID)
                 .list();
+        Map<String, FieldStatus> overallByZdbId = new LinkedHashMap<>();
+        for (LineSubmission s : lineSubmissions) {
+            overallByZdbId.put(s.getZdbID(), LineSubmissionStatusComputer.compute(s).overall());
+        }
         model.addAttribute("activeSubmissions", lineSubmissions);
         model.addAttribute("closedSubmissions", java.util.Collections.emptyList());
+        model.addAttribute("overallStatus", overallByZdbId);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/person-view";

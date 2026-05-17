@@ -11,6 +11,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.GenotypingAssay;
@@ -34,9 +35,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Single entry point for mutating a line submission. Centralized so future
@@ -65,8 +69,15 @@ public class LineSubmissionService {
     public LineSubmission saveField(String zdbID, String fieldName, String rawValue, Person currentUser) {
         String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        String oldValue = readField(submission, fieldName);
         applyField(submission, fieldName, value);
+        String newValue = readField(submission, fieldName);
         HibernateUtil.currentSession().merge(submission);
+        if (!java.util.Objects.equals(oldValue, newValue)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), fieldName, oldValue, newValue,
+                    "Line submission " + fieldName + " updated");
+        }
         return submission;
     }
 
@@ -78,11 +89,35 @@ public class LineSubmissionService {
      */
     public LineSubmission saveReasons(String zdbID, String[] reasons, String reasonsOther, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        String oldReasons = joinReasons(submission.getReasons());
+        String oldOther   = submission.getReasonsOther();
         submission.setReasons(reasons != null ? reasons : new String[0]);
         String trimmed = (reasonsOther != null && !reasonsOther.isBlank()) ? reasonsOther.trim() : null;
         submission.setReasonsOther(trimmed);
+        String newReasons = joinReasons(submission.getReasons());
+        String newOther   = submission.getReasonsOther();
         HibernateUtil.currentSession().merge(submission);
+        if (!java.util.Objects.equals(oldReasons, newReasons)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), "reasons", oldReasons, newReasons,
+                    "Line submission reasons updated");
+        }
+        if (!java.util.Objects.equals(oldOther, newOther)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    submission.getZdbID(), "reasonsOther", oldOther, newOther,
+                    "Line submission reasonsOther updated");
+        }
         return submission;
+    }
+
+    /** Render a reasons array as a comma-joined string for audit comparison/storage.
+     * Empty / null array becomes null so a transition between "no value" and "empty
+     * list" doesn't spuriously log a change. */
+    private static String joinReasons(String[] reasons) {
+        if (reasons == null || reasons.length == 0) {
+            return null;
+        }
+        return String.join(",", reasons);
     }
 
     /**
@@ -104,6 +139,8 @@ public class LineSubmissionService {
      */
     public LineSubmission saveLinkedFeatures(String zdbID, List<LinkedFeatureDTO> incoming, Person currentUser) {
         LineSubmission submission = loadOrCreate(zdbID, currentUser);
+        Map<String, Map<String, String>> auditBefore = snapshotById(submission.getLinkedFeatures(),
+                LineSubmissionService::linkedFeatureKey, LineSubmissionService::readLinkedFeatureFields);
 
         // Index this submission's mutations by id for the FK lookup.
         Map<Long, Mutation> mutationsById = new HashMap<>();
@@ -161,6 +198,10 @@ public class LineSubmissionService {
 
         submission.getLinkedFeatures().removeIf(lf -> !incomingKeys.contains(
                 List.of(lf.getMutationA().getId(), lf.getMutationB().getId())));
+        HibernateUtil.currentSession().flush();
+        logCollectionDiff(LF_REC_PREFIX, auditBefore, submission.getLinkedFeatures(),
+                LineSubmissionService::linkedFeatureKey, LineSubmissionService::readLinkedFeatureFields,
+                "LinkedFeature");
         return submission;
     }
 
@@ -231,6 +272,8 @@ public class LineSubmissionService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
         }
         requireWithinChildCap(incoming, "gene");
+        Map<Long, Map<String, String>> auditBefore = snapshotById(mutation.getGenes(), Gene::getId,
+                LineSubmissionService::readGeneFields);
         Map<Long, Gene> existing = new HashMap<>();
         for (Gene g : mutation.getGenes()) {
             existing.put(g.getId(), g);
@@ -272,6 +315,9 @@ public class LineSubmissionService {
 
         // Drop rows that didn't appear in the incoming list.
         mutation.getGenes().removeIf(g -> !keep.contains(g));
+        HibernateUtil.currentSession().flush();
+        logCollectionDiff(GENE_REC_PREFIX, auditBefore, mutation.getGenes(), Gene::getId,
+                LineSubmissionService::readGeneFields, "Gene");
         return mutation;
     }
 
@@ -283,6 +329,8 @@ public class LineSubmissionService {
     public Mutation saveLesions(Long mutationId, List<LesionDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
         requireWithinChildCap(incoming, "lesion");
+        Map<Long, Map<String, String>> auditBefore = snapshotById(mutation.getLesions(), Lesion::getId,
+                LineSubmissionService::readLesionFields);
         Map<Long, Lesion> existing = new HashMap<>();
         for (Lesion l : mutation.getLesions()) {
             existing.put(l.getId(), l);
@@ -319,12 +367,17 @@ public class LineSubmissionService {
             }
         }
         mutation.getLesions().removeIf(l -> !keep.contains(l));
+        HibernateUtil.currentSession().flush();
+        logCollectionDiff(LESION_REC_PREFIX, auditBefore, mutation.getLesions(), Lesion::getId,
+                LineSubmissionService::readLesionFields, "Lesion");
         return mutation;
     }
 
     public Mutation saveGenotypingAssays(Long mutationId, List<GenotypingAssayDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
         requireWithinChildCap(incoming, "genotyping assay");
+        Map<Long, Map<String, String>> auditBefore = snapshotById(mutation.getGenotypingAssays(),
+                GenotypingAssay::getId, LineSubmissionService::readGenotypingAssayFields);
         Map<Long, GenotypingAssay> existing = new HashMap<>();
         for (GenotypingAssay g : mutation.getGenotypingAssays()) {
             existing.put(g.getId(), g);
@@ -373,12 +426,17 @@ public class LineSubmissionService {
             }
         }
         mutation.getGenotypingAssays().removeIf(g -> !keep.contains(g));
+        HibernateUtil.currentSession().flush();
+        logCollectionDiff(GA_REC_PREFIX, auditBefore, mutation.getGenotypingAssays(),
+                GenotypingAssay::getId, LineSubmissionService::readGenotypingAssayFields, "GenotypingAssay");
         return mutation;
     }
 
     public Mutation savePhenotypes(Long mutationId, List<PhenotypeDTO> incoming, Person currentUser) {
         Mutation mutation = requireMutation(mutationId);
         requireWithinChildCap(incoming, "phenotype");
+        Map<Long, Map<String, String>> auditBefore = snapshotById(mutation.getPhenotypes(),
+                Phenotype::getId, LineSubmissionService::readPhenotypeFields);
         Map<Long, Phenotype> existing = new HashMap<>();
         for (Phenotype p : mutation.getPhenotypes()) {
             existing.put(p.getId(), p);
@@ -412,6 +470,9 @@ public class LineSubmissionService {
             }
         }
         mutation.getPhenotypes().removeIf(p -> !keep.contains(p));
+        HibernateUtil.currentSession().flush();
+        logCollectionDiff(PHEN_REC_PREFIX, auditBefore, mutation.getPhenotypes(),
+                Phenotype::getId, LineSubmissionService::readPhenotypeFields, "Phenotype");
         return mutation;
     }
 
@@ -653,9 +714,47 @@ public class LineSubmissionService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
         }
         String value = (rawValue != null && !rawValue.isBlank()) ? rawValue.trim() : null;
+        String oldValue = readMutationField(m, fieldName);
         applyMutationField(m, fieldName, value);
+        String newValue = readMutationField(m, fieldName);
         HibernateUtil.currentSession().merge(m);
+        if (!java.util.Objects.equals(oldValue, newValue)) {
+            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                    mutationRecId(m), fieldName, oldValue, newValue,
+                    "Mutation " + fieldName + " updated");
+        }
         return m;
+    }
+
+    /** Stable string key used as {@code rec_id} in the updates audit log for
+     * per-mutation changes. Mutations have a numeric primary key, so we
+     * prefix it to avoid any chance of collision with ZDB-id-style keys. */
+    static String mutationRecId(Mutation m) {
+        return "ZIRC-MUT-" + m.getId();
+    }
+
+    /** Read the current value of a mutation scalar field. Mirrors {@link #applyMutationField}. */
+    static String readMutationField(Mutation m, String fieldName) {
+        return switch (fieldName) {
+            case "alleleDesignation"          -> m.getAlleleDesignation();
+            case "alleleInZfin"               -> m.getAlleleInZfin() == null ? null : m.getAlleleInZfin().toString();
+            case "mutagenesisStage"           -> m.getMutagenesisStage();
+            case "mutagenesisProtocol"        -> m.getMutagenesisProtocol();
+            case "mutagenesisProtocolOther"   -> m.getMutagenesisProtocolOther();
+            case "molecularlyCharacterized"   -> m.getMolecularlyCharacterized() == null ? null : m.getMolecularlyCharacterized().toString();
+            case "mutationType"               -> m.getMutationType();
+            case "homozygousLethal"           -> m.getHomozygousLethal() == null ? null : m.getHomozygousLethal().toString();
+            case "lethalityStageTypical"      -> m.getLethalityStageTypical();
+            case "lethalitySpecificTimepoint" -> m.getLethalitySpecificTimepoint();
+            case "lethalityWindowStart"       -> m.getLethalityWindowStart();
+            case "lethalityWindowEnd"         -> m.getLethalityWindowEnd();
+            case "lethalityAdditionalInfo"    -> m.getLethalityAdditionalInfo();
+            case "zfinRecordEstablished"      -> m.getZfinRecordEstablished() == null ? null : m.getZfinRecordEstablished().toString();
+            case "cellGenomicFeature"         -> m.getCellGenomicFeature();
+            case "mutationDiscoverer"         -> m.getMutationDiscoverer();
+            case "mutationInstitution"        -> m.getMutationInstitution();
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown mutation field: " + fieldName);
+        };
     }
 
     /** Package-private for unit testing. */
@@ -710,6 +809,26 @@ public class LineSubmissionService {
         lsp.setRole("submitter");
         lsp.setSortOrder(1);
         HibernateUtil.currentSession().persist(lsp);
+    }
+
+    /** Read the current value of one of the scalar fields handled by
+     * {@link #applyField}. Returned as a String so the result can be
+     * compared / logged regardless of the underlying type. */
+    static String readField(LineSubmission s, String fieldName) {
+        return switch (fieldName) {
+            case "name"                       -> s.getName();
+            case "abbreviation"               -> s.getAbbreviation();
+            case "previousNames"              -> s.getPreviousNames();
+            case "maternalBackground"         -> s.getMaternalBackground();
+            case "paternalBackground"         -> s.getPaternalBackground();
+            case "backgroundChangeable"       -> s.getBackgroundChangeable() == null ? null : s.getBackgroundChangeable().toString();
+            case "backgroundChangeConcerns"   -> s.getBackgroundChangeConcerns();
+            case "unreportedFeaturesDetails"  -> s.getUnreportedFeaturesDetails();
+            case "additionalInfo"             -> s.getAdditionalInfo();
+            case "singleAllelic"              -> s.getSingleAllelic() == null ? null : s.getSingleAllelic().toString();
+            case "husbandryInfo"              -> s.getHusbandryInfo();
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown field: " + fieldName);
+        };
     }
 
     /** Package-private for unit testing. */
@@ -840,5 +959,187 @@ public class LineSubmissionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Patch value is not a list of " + elementType.getSimpleName() + ": " + v);
         }
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // Audit-log helpers for the replace-all sub-entity save methods
+    // (saveGenes, saveLesions, saveGenotypingAssays, savePhenotypes,
+    // saveLinkedFeatures). Each helper produces a Map<fieldName, value>
+    // snapshot keyed by entity id; logCollectionDiff compares the
+    // pre-save snapshot to the post-save state and writes one updates
+    // row per changed field (per added field, per removed row).
+    // ──────────────────────────────────────────────────────────────────
+
+    static final String GENE_REC_PREFIX   = "ZIRC-GENE-";
+    static final String LESION_REC_PREFIX = "ZIRC-LESION-";
+    static final String GA_REC_PREFIX     = "ZIRC-GA-";
+    static final String PHEN_REC_PREFIX   = "ZIRC-PHEN-";
+    static final String LF_REC_PREFIX     = "ZIRC-LF-";
+
+    private static String s(Object o) { return o == null ? null : o.toString(); }
+    private static String sArr(String[] a) { return (a == null || a.length == 0) ? null : String.join(",", a); }
+
+    static Map<String, String> readGeneFields(Gene g) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("mutatedGene",       g.getMutatedGene() == null ? null : g.getMutatedGene().getZdbID());
+        m.put("linkageGroup",      g.getLinkageGroup());
+        m.put("genbankGenomicDna", g.getGenbankGenomicDna());
+        m.put("genbankCdna",       g.getGenbankCdna());
+        return m;
+    }
+
+    static Map<String, String> readLesionFields(Lesion l) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("lesionType",            l.getLesionType());
+        m.put("lesionSizeBp",          s(l.getLesionSizeBp()));
+        m.put("insertionSizeBp",       s(l.getInsertionSizeBp()));
+        m.put("nucleotideChange",      l.getNucleotideChange());
+        m.put("deletedSequence",       l.getDeletedSequence());
+        m.put("insertedSequence",      l.getInsertedSequence());
+        m.put("transgeneSequence",     l.getTransgeneSequence());
+        m.put("locationInline",        l.getLocationInline());
+        m.put("fivePrimeFlank",        l.getFivePrimeFlank());
+        m.put("threePrimeFlank",       l.getThreePrimeFlank());
+        m.put("hasLargeVariant",       s(l.getHasLargeVariant()));
+        m.put("mutatedAminoAcids",     l.getMutatedAminoAcids());
+        m.put("mutatedAminoAcidsHgvs", l.getMutatedAminoAcidsHgvs());
+        m.put("additionalInfo",        l.getAdditionalInfo());
+        return m;
+    }
+
+    static Map<String, String> readGenotypingAssayFields(GenotypingAssay g) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("assayType",                g.getAssayType());
+        m.put("forwardPrimer",            g.getForwardPrimer());
+        m.put("reversePrimer",            g.getReversePrimer());
+        m.put("expectedWtPcr",            g.getExpectedWtPcr());
+        m.put("expectedMutPcr",           g.getExpectedMutPcr());
+        m.put("restrictionEnzymeName",    g.getRestrictionEnzymeName());
+        m.put("restrictionEnzymeCatalog", g.getRestrictionEnzymeCatalog());
+        m.put("enzymeCleaves",            sArr(g.getEnzymeCleaves()));
+        m.put("expectedWtDigest",         g.getExpectedWtDigest());
+        m.put("expectedMutDigest",        g.getExpectedMutDigest());
+        m.put("additionalInfo",           g.getAdditionalInfo());
+        m.put("sequencingPrimer",         g.getSequencingPrimer());
+        m.put("dcapsMismatchPrimer",      g.getDcapsMismatchPrimer());
+        m.put("wtSpecificPrimer",         g.getWtSpecificPrimer());
+        m.put("mutSpecificPrimer",        g.getMutSpecificPrimer());
+        m.put("commonPrimer",             g.getCommonPrimer());
+        m.put("kaspGenomicSequence",      g.getKaspGenomicSequence());
+        m.put("sslpMarkerName",           g.getSslpMarkerName());
+        m.put("sslpDistance",             g.getSslpDistance());
+        m.put("sslpGenomicLocation",      g.getSslpGenomicLocation());
+        m.put("sslpInducedBackground",    g.getSslpInducedBackground());
+        m.put("sslpOutcrossedBackground", g.getSslpOutcrossedBackground());
+        m.put("sslpInducedPcr",           g.getSslpInducedPcr());
+        m.put("sslpOutcrossedPcr",        g.getSslpOutcrossedPcr());
+        return m;
+    }
+
+    static Map<String, String> readPhenotypeFields(Phenotype p) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("description",             p.getDescription());
+        m.put("hpfStart",                s(p.getHpfStart()));
+        m.put("hpfEnd",                  s(p.getHpfEnd()));
+        m.put("stage",                   p.getStage());
+        m.put("zfinImagePermission",     s(p.getZfinImagePermission()));
+        m.put("zircImagePermission",     s(p.getZircImagePermission()));
+        m.put("nonMendelianPercentage",  s(p.getNonMendelianPercentage()));
+        m.put("nonMendelianComment",     p.getNonMendelianComment());
+        m.put("segregation",             sArr(p.getSegregation()));
+        m.put("type",                    sArr(p.getType()));
+        return m;
+    }
+
+    static Map<String, String> readLinkedFeatureFields(LinkedFeature lf) {
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("mutationA",            lf.getMutationA() == null ? null : s(lf.getMutationA().getId()));
+        m.put("mutationB",            lf.getMutationB() == null ? null : s(lf.getMutationB().getId()));
+        m.put("distanceKnown",        s(lf.getDistanceKnown()));
+        m.put("distanceCentimorgans", s(lf.getDistanceCentimorgans()));
+        m.put("distanceMegabases",    s(lf.getDistanceMegabases()));
+        m.put("additionalInfo",       lf.getAdditionalInfo());
+        return m;
+    }
+
+    /** Snapshot the field map for each entity that already has a key,
+     * keyed by {@code keyGetter}. Entities whose key is null are
+     * excluded — they appear as "added" rows in the post-save diff. */
+    private static <T, K> Map<K, Map<String, String>> snapshotById(
+            Iterable<T> rows, Function<T, K> keyGetter, Function<T, Map<String, String>> reader) {
+        Map<K, Map<String, String>> snap = new LinkedHashMap<>();
+        for (T row : rows) {
+            K key = keyGetter.apply(row);
+            if (key != null) {
+                snap.put(key, reader.apply(row));
+            }
+        }
+        return snap;
+    }
+
+    /** Compare pre-save snapshot to post-save state and emit one updates
+     * row per per-field change. Removed rows (in {@code before} but not
+     * in {@code after}) are logged as transitions to null. Added rows
+     * (no entry in {@code before}) are logged as transitions from null
+     * to current value. Caller is responsible for flushing the session
+     * before invoking so that newly-inserted rows already have keys. */
+    private static <T, K> void logCollectionDiff(
+            String recIdPrefix,
+            Map<K, Map<String, String>> before,
+            Iterable<T> after,
+            Function<T, K> keyGetter,
+            Function<T, Map<String, String>> reader,
+            String entityLabel) {
+        Set<K> seen = new HashSet<>();
+        for (T row : after) {
+            K key = keyGetter.apply(row);
+            if (key == null) {
+                continue; // un-flushed; can't log without a stable rec id
+            }
+            Map<String, String> now = reader.apply(row);
+            Map<String, String> prev = before.get(key);
+            seen.add(key);
+            if (prev == null) {
+                // new row
+                for (Map.Entry<String, String> e : now.entrySet()) {
+                    if (e.getValue() != null) {
+                        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                                recIdPrefix + key, e.getKey(), null, e.getValue(),
+                                entityLabel + " created");
+                    }
+                }
+            } else {
+                for (Map.Entry<String, String> e : now.entrySet()) {
+                    String oldV = prev.get(e.getKey());
+                    String newV = e.getValue();
+                    if (!Objects.equals(oldV, newV)) {
+                        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                                recIdPrefix + key, e.getKey(), oldV, newV,
+                                entityLabel + " " + e.getKey() + " updated");
+                    }
+                }
+            }
+        }
+        for (Map.Entry<K, Map<String, String>> e : before.entrySet()) {
+            if (!seen.contains(e.getKey())) {
+                for (Map.Entry<String, String> f : e.getValue().entrySet()) {
+                    if (f.getValue() != null) {
+                        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                                recIdPrefix + e.getKey(), f.getKey(), f.getValue(), null,
+                                entityLabel + " removed");
+                    }
+                }
+            }
+        }
+    }
+
+    /** Stable composite key for a linked-feature row; matches the
+     * composite primary key (mutationA.id, mutationB.id) since the DB
+     * normalizes those ordered. */
+    static String linkedFeatureKey(LinkedFeature lf) {
+        if (lf.getMutationA() == null || lf.getMutationB() == null) {
+            return null;
+        }
+        return lf.getMutationA().getId() + "-" + lf.getMutationB().getId();
     }
 }
