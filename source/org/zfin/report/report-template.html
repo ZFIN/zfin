@@ -87,7 +87,11 @@
         #right-content {
             flex: 1;
             padding: 18px 30px 30px;
-            min-width: 0;
+            /* Grow to fit a wide table rather than letting it overflow.
+               min-content (vs. the default `auto`) is functionally the same
+               here but explicit; the page scrolls horizontally if a table
+               is wider than the viewport. */
+            min-width: min-content;
         }
         #footer {
             background: #c9e0e0;
