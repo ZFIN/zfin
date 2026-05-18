@@ -142,6 +142,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             dto.getFeatureEndLoc() == null) {
             infrastructureRepository.deleteRecordAttribution(fl.getZdbID(), dto.getPublicationZdbID());
             HibernateUtil.currentSession().delete(fl);
+            // Clear the in-memory fields too. The caller may still hold this reference
+            // (e.g. validateReferenceSequence reads fl.getStartLocation() etc.), and
+            // without this it would keep observing the pre-delete coordinates and
+            // attempt a FASTA lookup against a location the curator just removed.
+            fl.setChromosome(null);
+            fl.setAssembly(null);
+            fl.setStartLocation(null);
+            fl.setEndLocation(null);
+            fl.setLocationEvidence(null);
             return;
         }
         // If the assembly is changing, only allow changing to a current assembly (GRCz12tu or GRCz11)
@@ -281,6 +290,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            // When the curator removes all location info (marking "Assembly information
+            // not known as of <date>"), the calculated Sequence of Reference no longer
+            // has a source. Drop both sequence fields before the validate step so we
+            // don't compare the stale GUI value against a no-longer-applicable
+            // assembly, and so the persisted FGMD reflects the empty-location state.
+            if (locationDeleted) {
+                fgmd.setFgmdSeqRef(null);
+                fgmd.setFgmdSeqVar(null);
+            }
             validateReferenceSequence(fgmd, fgl);
 
             if (fgmd.getZdbID() == null) {
