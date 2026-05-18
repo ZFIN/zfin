@@ -33,7 +33,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
     def whitelistTemplateFiles = [
             'cgi-bin/merge_markers.pl',
             'server_apps/Reports/AnnualStats/runStats.sh',
-            'server_apps/Reports/BetterFish/betterFish.sql',
             'server_apps/Reports/PubTracking/runAverageTimeInBinsCumulative.sh',
             'server_apps/Reports/PubTracking/runLongestBinResidents.sh',
             'server_apps/Reports/PubTracking/runMonthlyBinLengthReport.sh',
