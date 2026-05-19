@@ -69,6 +69,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private List<InterProProteinDTO> downloadedInterproDomainRecords;
 
     private SecondaryTermLoadPipeline pipeline;
+    private final boolean rerunLatestProcessed;
 
     public static void main(String[] args) throws Exception {
 
@@ -103,6 +104,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             }
         }
 
+        boolean rerunLatestProcessed = false;
         if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             inputFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE", "");
             ipToGoTranslationFile = getArgOrEnvironmentVar(args, 2, "IP2GO_FILE", "");
@@ -111,12 +113,13 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
+            rerunLatestProcessed = "true".equals(getArgOrEnvironmentVar(args, 7, "UNIPROT_RERUN_LATEST_PROCESSED", "false"));
         } else {
             printUsage();
             System.exit(1);
         }
 
-        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName);
+        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName, rerunLatestProcessed);
         task.runTask();
     }
 
@@ -140,6 +143,10 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     public UniprotSecondaryTermLoadTask(LoadTaskMode mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName) {
+        this(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName, false);
+    }
+
+    public UniprotSecondaryTermLoadTask(LoadTaskMode mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName, boolean rerunLatestProcessed) {
         this.mode = mode;
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
@@ -163,6 +170,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         this.domainFile = domainFile;
         this.contextInputFile = contextInputFile;
         this.actionsFileName = actionsFileName;
+        this.rerunLatestProcessed = rerunLatestProcessed;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -411,6 +419,14 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
                 inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
                 release = releaseOptional.get();
+            } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
+                UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+                if (latestProcessed == null) {
+                    throw new RuntimeException("No input file specified, no release pending secondary load, and no processed UniProt release to re-run against.");
+                }
+                log.info("No release pending secondary load; re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
+                inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+                release = latestProcessed;
             } else if (inputFileName.isEmpty()) {
                 throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
             }

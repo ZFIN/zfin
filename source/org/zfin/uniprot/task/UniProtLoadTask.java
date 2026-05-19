@@ -39,6 +39,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private String inputFileName;
     private final String outputReportName;
     private final boolean commitChanges;
+    private final boolean rerunLatestProcessed;
     private final String contextOutputFile;
     private final String contextInputFile;
     private UniProtLoadContext context;
@@ -56,6 +57,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
      *  2. Whether to commit the changes to the database -> false = dry run (if omitted or "null", the default is false),
      *  3. The output report file name (if omitted or "null", the default is /tmp/uniprot_load_&lt;timestamp&gt;.report.html)
      *  4. The output file name to record this load's "context" (aka the current state of the DB). If omitted or "null", the default is to not record it.
+     *  5. The context input file (read instead of querying the DB). If omitted or "null", the default is to query the DB.
+     *  6. Whether to re-run the load against the latest processed release file when there is no unprocessed release (if omitted, default false).
+     *     Used by the monthly auto-run job to re-integrate DB-side changes against the same UniProt release file when no new release is available.
      *
      *  The arguments can also be passed as environment variables:
      *  1. UNIPROT_INPUT_FILE
@@ -63,6 +67,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
      *  3. UNIPROT_OUTPUT_REPORT_FILE
      *  4. UNIPROT_CONTEXT_FILE
      *  5. UNIPROT_CONTEXT_INPUT_FILE
+     *  6. UNIPROT_RERUN_LATEST_PROCESSED
      *
      * @param args Command line arguments
      *
@@ -77,8 +82,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String contextOutputFile = getArgOrEnvironmentVar(args, 3, "UNIPROT_CONTEXT_FILE", "");
         String contextInputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_INPUT_FILE", "");
+        String rerunLatestProcessed = getArgOrEnvironmentVar(args, 5, "UNIPROT_RERUN_LATEST_PROCESSED", "false");
 
-        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile);
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile, "true".equals(rerunLatestProcessed));
         task.runTask();
     }
 
@@ -87,11 +93,16 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     }
 
     public UniProtLoadTask(String inputFileName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile) {
+        this(inputFileName, outputReportName, commitChanges, contextOutputFile, contextInputFile, false);
+    }
+
+    public UniProtLoadTask(String inputFileName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile, boolean rerunLatestProcessed) {
         this.inputFileName = inputFileName;
         this.outputReportName = outputReportName;
         this.commitChanges = commitChanges;
         this.contextOutputFile = contextOutputFile;
         this.contextInputFile = contextInputFile;
+        this.rerunLatestProcessed = rerunLatestProcessed;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -169,6 +180,17 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             log.info("No input file specified, using latest unprocessed UniProt release: " + latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath() + ".");
             inputFileName = latestUnprocessedUniProtRelease.get().getLocalFile().getAbsolutePath();
             release = latestUnprocessedUniProtRelease.get();
+            if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
+                throw new RuntimeException("No such file (or empty): " + inputFileName);
+            }
+        } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
+            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+            if (latestProcessed == null) {
+                throw new RuntimeException("No input file specified, no unprocessed release, and no processed UniProt release to re-run against.");
+            }
+            log.info("No unprocessed UniProt release; re-running against latest processed release: " + latestProcessed.getLocalFile().getAbsolutePath() + ".");
+            inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+            release = latestProcessed;
             if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
                 throw new RuntimeException("No such file (or empty): " + inputFileName);
             }
