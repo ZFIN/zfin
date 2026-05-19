@@ -53,7 +53,7 @@
                                 <a  class="btn btn-outline-secondary" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                                     <i class="fas fa-question-circle"></i>
                                 </a>
-                                <a class="btn btn-outline-secondary feedback-link" href="#">Feedback</a>
+                                <a class="btn btn-outline-secondary" href="#" onclick="document.getElementById('input-welcome-button').click(); return false;">Feedback</a>
                             </div>
                         </div>
 
@@ -88,9 +88,6 @@
 
         </div>
 
-
-
-        <zfin-search:feedbackModal/>
 
 
         <c:if test="${!empty message}">

@@ -9,7 +9,7 @@
         </div>
         <div class="popup-body" id="input-welcome-body">
             <form id="input-welcome-form">
-                We welcome your input and comments. Please use this form to recommend updates to the information in ZFIN. We
+                We welcome your input and comments. Please use this form to report issues or recommend updates to the information in ZFIN. We
                 appreciate as much detail as possible and references as appropriate. We will review your comments promptly.
                 <div id="input-welcome-form-controls">
                     <div id="input-welcome-validate">
