@@ -831,6 +831,11 @@ public class GafService {
     public void updateEntriesBatch(List<MarkerGoTermEvidence> batchToUpdate) {
         for (MarkerGoTermEvidence evidence : batchToUpdate) {
             markerGoTermEvidenceRepository.updateEvidence(evidence);
+            // Materialize the lazy noctuaModels collection while the session is
+            // still open. The HTML report builder reads it after the load closes
+            // the session, at which point an uninitialized proxy would throw
+            // LazyInitializationException.
+            org.hibernate.Hibernate.initialize(evidence.getNoctuaModels());
         }
     }
 
