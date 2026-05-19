@@ -1,13 +1,13 @@
 package org.zfin.uniprot.task;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.report.LegacyReportAdapter;
+import org.zfin.report.ReportWriter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.*;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.UniProtLoadSummaryItemDTO;
@@ -36,11 +35,8 @@ import static org.zfin.util.FileUtil.writeToFileOrZip;
 @Getter
 @Setter
 public class UniProtLoadTask extends AbstractScriptWrapper {
-    private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/load-report.html";
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private static final String UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE = "/tmp/uniprot_load_%s.%s";
     private String inputFileName;
-    private final String outputJsonName;
     private final String outputReportName;
     private final boolean commitChanges;
     private final String contextOutputFile;
@@ -52,22 +48,21 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     /**
      * Run the UniProtLoadTask. This will load the UniProt data from the given release file that's been downloaded
-     * from UniProt. It will then process the data using a pipeline of handlers. Finally, it will generate a report
-     * and a JSON file.
+     * from UniProt. It will then process the data using a pipeline of handlers. Finally, it will generate an HTML
+     * report through the unified viewer (source/org/zfin/report/report-template.html).
      *
      * It can be called from the command line with the following positional arguments:
      *  1. The input file name (if omitted or "null", the default is the latest release file from UniProt that we have in our DB table "uniprot_release")
-     *  2. The output JSON file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.json)
-     *  3. The output report file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.html)
-     *  4. Whether to commit the changes to the database -> false = dry run (if omitted or "null", the default is false),
-     *  5. The output file name to record this load's "context" (aka the current state of the DB). If omitted or "null", the default is to not record it.
+     *  2. Whether to commit the changes to the database -> false = dry run (if omitted or "null", the default is false),
+     *  3. The output report file name (if omitted or "null", the default is /tmp/uniprot_load_&lt;timestamp&gt;.report.html)
+     *  4. The output file name to record this load's "context" (aka the current state of the DB). If omitted or "null", the default is to not record it.
      *
      *  The arguments can also be passed as environment variables:
      *  1. UNIPROT_INPUT_FILE
-     *  2. UNIPROT_OUTPUT_JSON_FILE
+     *  2. UNIPROT_COMMIT_CHANGES
      *  3. UNIPROT_OUTPUT_REPORT_FILE
-     *  4. UNIPROT_COMMIT_CHANGES
-     *  5. UNIPROT_CONTEXT_FILE
+     *  4. UNIPROT_CONTEXT_FILE
+     *  5. UNIPROT_CONTEXT_INPUT_FILE
      *
      * @param args Command line arguments
      *
@@ -79,12 +74,11 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         Date startTime = new Date();
         String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
         String commitChanges = getArgOrEnvironmentVar(args, 1, "UNIPROT_COMMIT_CHANGES", "false");
-        String outputJsonName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
-        String outputReportName = getArgOrEnvironmentVar(args, 3, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
-        String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
-        String contextInputFile = getArgOrEnvironmentVar(args, 5, "UNIPROT_CONTEXT_INPUT_FILE", "");
+        String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
+        String contextOutputFile = getArgOrEnvironmentVar(args, 3, "UNIPROT_CONTEXT_FILE", "");
+        String contextInputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_INPUT_FILE", "");
 
-        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile);
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile);
         task.runTask();
     }
 
@@ -92,9 +86,8 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return Optional.ofNullable(getInfrastructureRepository().getLatestUnprocessedUniProtRelease());
     }
 
-    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile) {
+    public UniProtLoadTask(String inputFileName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile) {
         this.inputFileName = inputFileName;
-        this.outputJsonName = outputJsonName;
         this.outputReportName = outputReportName;
         this.commitChanges = commitChanges;
         this.contextOutputFile = contextOutputFile;
@@ -103,7 +96,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        log.info("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
+        log.info("Starting UniProtLoadTask for file " + inputFileName + " with report file " + outputReportName + ".");
         log.info("Commit changes: " + commitChanges + ".");
 
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
@@ -209,29 +202,22 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     private void writeOutputReportFile(Set<UniProtLoadAction> actions, List<UniProtLoadSummaryItemDTO> summary, Map<String, RichSequenceAdapter> uniprotRecords) {
         String reportFile = this.outputReportName;
-        String jsonFile = this.outputJsonName;
-
         log.info("Creating report file: " + reportFile);
         try {
-            UniProtLoadActionsContainer actionsContainer = UniProtLoadActionsContainer.builder()
+            UniProtLoadActionsContainer container = UniProtLoadActionsContainer.builder()
                     .actions(actions)
                     .summary(summary)
                     .uniprotDatFile(buildDatFileMap(actions, uniprotRecords))
                     .build();
-            String jsonContents = actionsToJson(actionsContainer);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            writeToFileOrZip(new File(reportFile), filledTemplate, "UTF-8");
-            writeToFileOrZip(new File(jsonFile), jsonContents, "UTF-8");
-            log.info("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
+            String releaseID = release != null ? release.getReleaseNumber() : null;
+            var zfinReport = new UniProtReportAdapter().adapt("UniProt Diff Load", releaseID, container);
+            var report = new LegacyReportAdapter().adapt(zfinReport);
+            String html = new ReportWriter().render(report);
+            writeToFileOrZip(new File(reportFile), html, "UTF-8");
+            log.info("Finished creating report file: " + reportFile);
         } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+            log.error("Error creating report (" + reportFile + ")\n" + e.getMessage(), e);
         }
-    }
-
-    private String actionsToJson(UniProtLoadActionsContainer actions) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actions);
     }
 
     private void calculateContext() {
