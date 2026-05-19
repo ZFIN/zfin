@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 
@@ -20,6 +21,10 @@ import java.io.Serializable;
  */
 @Entity(name = "ZircLesion")
 @Table(schema = "zirc", name = "lesion")
+// Same rationale as Mutation / GenotypingAssay / Gene — without
+// @DynamicUpdate two near-simultaneous field-path PATCHes against this
+// row would clobber each other's untouched columns on commit.
+@DynamicUpdate
 @Getter
 @Setter
 public class Lesion implements Serializable {

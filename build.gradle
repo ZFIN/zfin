@@ -1078,9 +1078,21 @@ sourceSets {
             exclude '**/SolrUnitTests.java'
             exclude '**/SmokeTestsReadWrite.java'
         }
+        groovy {
+            // Without this, Spock specs in test/ never reach compileTestGroovy
+            // (the Groovy plugin defaults look in test/groovy/). Discovered
+            // while wiring ZircOpenApiDriftSpec.
+            srcDirs = ['test']
+            exclude '**/*.java'
+            // PublicationServiceSpec imports org.apache.bcel.Repository which
+            // isn't on the test classpath; pre-existing dead Groovy spec from
+            // before this source set was even compiling.
+            exclude 'org/zfin/publication/PublicationServiceSpec.groovy'
+        }
         resources {
             srcDirs = ['test']
             exclude '**/*.java'
+            exclude '**/*.groovy'
         }
     }
 }
@@ -1088,6 +1100,23 @@ sourceSets {
 test {
 //    maxHeapSize = "2048m"
     maxHeapSize = "8g"
+
+    // ZircOpenApiDriftTest reads home/WEB-INF/openapi/zirc-api.yaml at
+    // runtime; without this Gradle won't know to invalidate :test when only
+    // the spec changes.
+    inputs.file('home/WEB-INF/openapi/zirc-api.yaml')
+    // FormSchemaSnapshotTest baselines — same idea.
+    inputs.dir('test/resources/zirc/snapshot')
+
+    // Forward the snapshot-update flag through to the test JVM so callers can
+    // do `gradle test -Dzirc.snapshot.update=true ...` to regenerate the
+    // FormSchemaSnapshotTest baselines.
+    if (project.hasProperty('zirc.snapshot.update') ||
+            System.getProperty('zirc.snapshot.update') != null) {
+        systemProperty 'zirc.snapshot.update',
+                project.findProperty('zirc.snapshot.update') ?:
+                System.getProperty('zirc.snapshot.update')
+    }
 
 //    useJUnitPlatform() //do we want this (junit 4 specific)
 
@@ -1195,6 +1224,12 @@ test {
             includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
             includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
             includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+
+            // ZIRC drift checks (no DB, pure reflection)
+            includeTestsMatching "org.zfin.zirc.api.ZircOpenApiDriftTest"
+            includeTestsMatching "org.zfin.zirc.api.FormSchemaSnapshotTest"
+            includeTestsMatching "org.zfin.zirc.api.uischema.UiSchemaSerializationTest"
+            includeTestsMatching "org.zfin.zirc.api.jsonschema.JsonSchemaSerializationTest"
 
             /*need to figure out ..all tests fail here
         includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"*/

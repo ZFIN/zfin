@@ -1,0 +1,272 @@
+{
+  "schema" : {
+    "properties" : {
+      "acceptance" : {
+        "properties" : {
+          "reasons" : {
+            "items" : {
+              "oneOf" : [ {
+                "const" : "frequently_requested",
+                "title" : "Currently frequently requested"
+              }, {
+                "const" : "expect_high_demand",
+                "title" : "Expect high demand"
+              }, {
+                "const" : "interesting_gene",
+                "title" : "Interesting gene"
+              }, {
+                "const" : "community_resource",
+                "title" : "Community resource/tool"
+              }, {
+                "const" : "mutant_gene_cloned",
+                "title" : "Mutant gene cloned"
+              }, {
+                "const" : "danger_of_losing",
+                "title" : "Danger of losing line"
+              }, {
+                "const" : "lack_of_space_or_funding",
+                "title" : "Lack of space or funding to maintain line"
+              }, {
+                "const" : "other",
+                "title" : "Other"
+              } ],
+              "type" : "string"
+            },
+            "uniqueItems" : true,
+            "type" : "array"
+          },
+          "reasonsOther" : {
+            "maxLength" : 2000,
+            "title" : "Other reason",
+            "type" : "string"
+          }
+        },
+        "title" : "Acceptance Reasons",
+        "type" : "object"
+      },
+      "additionalInfo" : {
+        "properties" : {
+          "additionalInfo" : {
+            "maxLength" : 5000,
+            "title" : "Additional Info",
+            "type" : "string"
+          },
+          "husbandryInfo" : {
+            "maxLength" : 5000,
+            "title" : "Husbandry Info",
+            "type" : "string"
+          },
+          "unreportedFeaturesDetails" : {
+            "maxLength" : 5000,
+            "title" : "Unreported Features Details",
+            "type" : "string"
+          }
+        },
+        "title" : "Additional Info",
+        "type" : "object"
+      },
+      "background" : {
+        "properties" : {
+          "backgroundChangeable" : {
+            "title" : "Background Changeable",
+            "type" : [ "boolean", "null" ]
+          },
+          "maternalBackground" : {
+            "maxLength" : 255,
+            "title" : "Maternal",
+            "type" : "string"
+          },
+          "paternalBackground" : {
+            "maxLength" : 255,
+            "title" : "Paternal",
+            "type" : "string"
+          },
+          "singleAllelic" : {
+            "title" : "Single-allelic submission",
+            "type" : [ "boolean", "null" ]
+          }
+        },
+        "title" : "Background",
+        "type" : "object"
+      },
+      "linkedFeatures" : {
+        "items" : {
+          "properties" : {
+            "additionalInfo" : {
+              "type" : [ "string", "null" ]
+            },
+            "distanceCentimorgans" : {
+              "type" : [ "number", "null" ]
+            },
+            "distanceKnown" : {
+              "type" : [ "boolean", "null" ]
+            },
+            "distanceMegabases" : {
+              "type" : [ "number", "null" ]
+            },
+            "mutationAId" : {
+              "type" : "number"
+            },
+            "mutationBId" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "title" : "Linked Features",
+        "type" : "array"
+      },
+      "mutations" : {
+        "items" : {
+          "properties" : {
+            "alleleDesignation" : {
+              "type" : [ "string", "null" ]
+            },
+            "alleleInZfin" : {
+              "type" : [ "boolean", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "lineSubmissionId" : {
+              "type" : "string"
+            },
+            "mutationType" : {
+              "type" : [ "string", "null" ]
+            },
+            "sortOrder" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 5,
+        "title" : "Mutations",
+        "type" : "array"
+      },
+      "name" : {
+        "maxLength" : 255,
+        "title" : "Name",
+        "type" : "string"
+      },
+      "previousNames" : {
+        "maxLength" : 2000,
+        "title" : "Previous Names",
+        "type" : "string"
+      }
+    },
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "Line name as it should appear in publications.",
+          "placeholder" : "e.g. nasl1<sup>zf123</sup>"
+        },
+        "scope" : "#/properties/name",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "Useful when this line was previously known by a different designation.",
+          "placeholder" : "Comma-separated former names"
+        },
+        "scope" : "#/properties/previousNames",
+        "type" : "Control"
+      } ],
+      "label" : "Overview",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Why ZIRC should accept this line",
+          "widget" : "multipleChoiceWithOther"
+        },
+        "scope" : "#/properties/acceptance",
+        "type" : "Control"
+      } ],
+      "label" : "Acceptance Reasons",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "mutationsList"
+        },
+        "scope" : "#/properties/mutations",
+        "type" : "Control"
+      } ],
+      "label" : "Mutations",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "linkedFeaturesList"
+        },
+        "scope" : "#/properties/linkedFeatures",
+        "type" : "Control"
+      } ],
+      "label" : "Linked Features",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/background/properties/singleAllelic",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "AB", "TU", "WIK", "AB/TU", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/background/properties/maternalBackground",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "AB", "TU", "WIK", "AB/TU", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/background/properties/paternalBackground",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/background/properties/backgroundChangeable",
+        "type" : "Control"
+      } ],
+      "label" : "Background",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo/properties/unreportedFeaturesDetails",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true,
+          "placeholder" : "Husbandry-specific information, e.g. special feeding regime"
+        },
+        "scope" : "#/properties/additionalInfo/properties/husbandryInfo",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo/properties/additionalInfo",
+        "type" : "Control"
+      } ],
+      "label" : "Additional Info",
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}

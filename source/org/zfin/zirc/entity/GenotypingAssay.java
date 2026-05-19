@@ -15,6 +15,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -27,6 +28,10 @@ import java.util.Set;
  */
 @Entity(name = "ZircGenotypingAssay")
 @Table(schema = "zirc", name = "genotyping_assay")
+// Same rationale as Mutation / LineSubmission: without DynamicUpdate two
+// near-simultaneous field-path PATCHes against the same row clobber each
+// other's untouched columns on commit.
+@DynamicUpdate
 @Getter
 @Setter
 public class GenotypingAssay implements Serializable {

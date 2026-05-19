@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -24,6 +25,7 @@ import java.io.Serializable;
  */
 @Entity(name = "ZircPhenotype")
 @Table(schema = "zirc", name = "phenotype")
+@DynamicUpdate
 @Getter
 @Setter
 public class Phenotype implements Serializable {

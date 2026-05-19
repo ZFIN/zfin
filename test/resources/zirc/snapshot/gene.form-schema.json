@@ -1,0 +1,61 @@
+{
+  "schema" : {
+    "properties" : {
+      "genbankCdna" : {
+        "maxLength" : 255,
+        "title" : "GenBank cDNA",
+        "type" : "string"
+      },
+      "genbankGenomicDna" : {
+        "maxLength" : 255,
+        "title" : "GenBank Genomic DNA",
+        "type" : "string"
+      },
+      "linkageGroup" : {
+        "maxLength" : 255,
+        "title" : "Linkage Group",
+        "type" : "string"
+      },
+      "mutatedGeneZdbID" : {
+        "maxLength" : 50,
+        "title" : "Gene (ZDB-ID)",
+        "type" : "string"
+      }
+    },
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.",
+          "placeholder" : "Start typing a gene name…",
+          "widget" : "autocomplete"
+        },
+        "scope" : "#/properties/mutatedGeneZdbID",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "e.g. 5"
+        },
+        "scope" : "#/properties/linkageGroup",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "Accession, e.g. NC_007112.7"
+        },
+        "scope" : "#/properties/genbankGenomicDna",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "Accession, e.g. NM_001077291"
+        },
+        "scope" : "#/properties/genbankCdna",
+        "type" : "Control"
+      } ],
+      "label" : "Gene",
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}

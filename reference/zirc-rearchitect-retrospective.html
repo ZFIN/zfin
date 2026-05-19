@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rearchitecting the ZIRC submission form: a retrospective</title>
+<style>
+  body {
+    max-width: 880px;
+    margin: 2rem auto;
+    padding: 0 1.25rem 4rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    color: #1f2328;
+  }
+  h1 { font-size: 2rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.5rem; margin-top: 2.25rem; border-bottom: 1px solid #d0d7de; padding-bottom: 0.25rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.75rem; }
+  h4 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: 0.4rem; }
+  .meta { color: #57606a; font-size: 0.9rem; margin-bottom: 2rem; }
+  .toc { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 0.75rem 1.25rem; margin-bottom: 2rem; }
+  .toc ol { margin: 0.25rem 0 0.25rem 1rem; padding-left: 0.5rem; }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+  pre.ascii { font-size: 0.78rem; line-height: 1.35; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    background: rgba(175,184,193,0.2);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+  }
+  pre code { background: transparent; padding: 0; font-size: inherit; }
+  blockquote {
+    margin: 0.75rem 0;
+    padding: 0.25rem 1rem;
+    border-left: 3px solid #d0d7de;
+    color: #57606a;
+  }
+  .callout {
+    border-left: 4px solid #218bff;
+    background: #ddf4ff;
+    padding: 0.6rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.warn { border-left-color: #d29922; background: #fff8c5; }
+  .callout.pitfall { border-left-color: #cf222e; background: #ffebe9; }
+  table { border-collapse: collapse; margin: 1rem 0; }
+  th, td { border: 1px solid #d0d7de; padding: 0.4rem 0.7rem; text-align: left; }
+  th { background: #f6f8fa; }
+  hr { border: 0; border-top: 1px solid #d0d7de; margin: 2.5rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Rearchitecting the ZIRC submission form</h1>
+<p class="meta">
+  A retrospective on rebuilding the ZIRC line-submission editor from a per-section
+  React-Hook-Form layout into a schema-driven, JSON-Schema-first system with
+  per-field autosave, a DB-backed audit trail, multipart attachments, and an
+  OpenAPI 3 spec.
+  Covers M1 through M4.3 plus the polish + OpenAPI tail. Written for a ZFIN
+  dev who already knows Java/Spring + TypeScript but hasn't worked with
+  Zod / React Hook Form / rjsf / JSON Forms before.
+</p>
+
+<div class="toc">
+<strong>Contents</strong>
+<ol>
+  <li><a href="#tldr">TL;DR</a></li>
+  <li><a href="#starting-point">Where we started (and the alternate-universe branch)</a></li>
+  <li><a href="#libraries">A quick library glossary (Zod, RHF, rjsf, JSON Forms, React Query)</a></li>
+  <li><a href="#m1-m2">M1 / M2: per-section autosave with Zod + RHF</a></li>
+  <li><a href="#pivot">The pivot: schema-driven forms</a></li>
+  <li><a href="#rjsf-vs-jsonforms">rjsf vs JSON Forms (the spike)</a></li>
+  <li><a href="#anatomy">Anatomy of a schema-driven form today</a></li>
+  <li><a href="#m3-m4">M3 / M4: scaling to mutations and assays</a></li>
+  <li><a href="#attachments">M4.3: multipart attachments and the IllegalArgumentException gap</a></li>
+  <li><a href="#audit">DB-backed audit trail</a></li>
+  <li><a href="#openapi">OpenAPI 3 spec + drift test + Swagger UI</a></li>
+  <li><a href="#pitfalls">Pitfalls and how we resolved them</a></li>
+  <li><a href="#alt-comparison">Head-to-head: this branch vs ZFIN-10265</a></li>
+  <li><a href="#wins-regrets">What went well, what we'd do differently</a></li>
+  <li><a href="#dev-practice">Dev-practice debt worth paying down</a></li>
+</ol>
+</div>
+
+<h2 id="tldr">TL;DR</h2>
+<ul>
+  <li><strong>Single source of truth is Java.</strong> The server ships both the JSON Schema and the JSON Forms uiSchema; the React form is a thin renderer with no hand-coded field list.</li>
+  <li><strong>Writes are per-field, not per-form.</strong> PATCH endpoints take <code>{ path, value }</code>. Audit log captures one row per leaf change; lost-update races between sibling fields are prevented with Hibernate <code>@DynamicUpdate</code>.</li>
+  <li><strong>We chose JSON Forms over rjsf</strong> after a head-to-head spike. JSON Forms' "uiSchema dispatches to renderers ranked by tester functions" model fit our reference-styled markup better than rjsf's prop-soup widget overrides.</li>
+  <li><strong>Per-aggregate flat paths</strong> (one PATCH endpoint per row id: submission, mutation, assay) let us avoid a JSON-pointer path resolver. Nested aggregates get their own card with their own form scope.</li>
+  <li><strong>Audit, undo, and validation</strong> all become easier when you treat the form as an event stream of field changes rather than a snapshot of the document.</li>
+</ul>
+
+<h2 id="starting-point">Where we started</h2>
+
+<p>
+  The starting state on <code>zirc-rearchitect</code> (commit <code>5ca8ea9fa9</code>,
+  branched from PR #1845's tip) was almost a blank slate:
+</p>
+
+<ul>
+  <li><strong>Backend entities and DB schema</strong> — <code>LineSubmission</code>, <code>Mutation</code>, <code>GenotypingAssay</code>, <code>GenotypingAssayFile</code>, the 1182 Liquibase migrations — already landed from PR #1845.</li>
+  <li><strong>JSP shell with an empty React mount</strong> — <code>line-submission-edit.jsp</code> had <code>&lt;div class="__react-root" id="LineSubmissionEdit"&gt;</code> with <em>nothing to mount</em>. No <code>LineSubmissionEdit.tsx</code>, no form code, no DTO, no service.</li>
+  <li><strong>Detail page with inline editing</strong> — <code>line-submission-detail.jsp</code> used <code>editable-field</code> spans (the trunk-style "click a span, it turns into an input, save on blur" idiom).</li>
+</ul>
+
+<p>
+  So the rearchitect wasn't replacing a prior form architecture — it was building the edit experience from a clean slate, on top of an existing entity/DB layer.
+</p>
+
+<div class="callout warn">
+  <strong>The alternate-universe version.</strong> A parallel implementation
+  for the same blank slate (ZFIN-10265 / PR #1864) landed on
+  <code>main</code> a day before this branch's starting marker. It lives
+  at <code>zfin-10265-zirc-line-submission-react-re-architect-squash</code>.
+  That version built a <em>hand-rolled</em> form renderer
+  (<code>section()</code>/<code>field()</code>/<code>array()</code>/<code>custom()</code>
+  schema builders with a <code>useAutosavedForm</code> hook + per-path PATCH +
+  a <code>SaveToast</code>) plus a <code>LineSubmissionDTO</code> and
+  <code>LineSubmissionService</code>. Some of the things this retrospective
+  treats as "what we built" — per-field PATCH, save-on-blur, the
+  assay-type field matrix idea, even the save toast — already existed in
+  that parallel branch. Our distinguishing bet was schema-as-data
+  published by the server (JSON Forms + uiSchema rules) instead of
+  schema-as-code authored in the client.
+</div>
+
+<p>
+  What we wanted from the rebuild, beyond "fill in the empty React mount":
+</p>
+<ul>
+  <li><strong>Per-field audit trail.</strong> Curators wanted to know who changed which field and when. Section-scoped writes can't distinguish "you renamed the line" from "you re-saved the section while you were there."</li>
+  <li><strong>No cross-field lost updates.</strong> Two tabs writing the same row would clobber each other's columns even when they touched different fields, because Hibernate's default UPDATE writes every column.</li>
+  <li><strong>One source of truth for shape and constraints.</strong> The Java entity, any client-side schema, the JSP, and the reference HTML otherwise drift on field names, max lengths, and required-ness. The hand-rolled-FormRenderer path (ZFIN-10265) put the schema in TypeScript; we wanted it in Java so it couldn't get out of sync with the entity.</li>
+</ul>
+
+<h2 id="libraries">A quick library glossary</h2>
+
+<h4>Zod (TypeScript)</h4>
+<p>
+  Runtime schema validator. You write <code>z.object({ name: z.string().max(255) })</code> and it gives you both the validation function and a TypeScript type via <code>z.infer</code>. We used it heavily in M2, then removed it once the server took over as the source of truth for shape and constraints. Mentioned here so you can recognize <code>schema.parse(input)</code> in older code.
+</p>
+
+<h4>React Hook Form (RHF)</h4>
+<p>
+  Form state library. Tracks dirty/touched/error per field, integrates with Zod via <code>@hookform/resolvers/zod</code>. Lives at the field component level — each <code>&lt;input&gt;</code> is registered with <code>{...register("name")}</code>, and the whole form has a <code>handleSubmit</code>. M2 forms used RHF; M3+ forms don't.
+</p>
+
+<h4>rjsf (<code>@rjsf/core</code>)</h4>
+<p>
+  "React JSON Schema Form." Takes a JSON Schema, renders a form. You override per-widget templates (string widget, array template, field template, error template) to control markup. The model is "one fat <code>&lt;Form&gt;</code> component plus a forest of overridable templates."
+</p>
+
+<h4>JSON Forms (<code>@jsonforms/react</code>)</h4>
+<p>
+  Different model. You pass <em>two</em> schemas — the JSON Schema for shape, and a separate <em>uiSchema</em> describing layout and per-control widget hints. The runtime dispatches each uiSchema element to whichever renderer has the highest-ranked <code>tester</code> match. You don't override templates; you register renderers. We picked this one.
+</p>
+
+<h4>React Query (<code>@tanstack/react-query</code>)</h4>
+<p>
+  Server-state cache for React. <code>useQuery</code> for fetches, <code>useMutation</code> for writes, automatic invalidation by key. We use it as the only source of server data; React component state is purely local (form drafts, expansion state, etc.).
+</p>
+
+<h2 id="m1-m2">M1 / M2: per-section autosave with Zod + RHF</h2>
+
+<p>
+  Filling the empty React mount, our first cut split the form into four
+  sections and built each with React Hook Form + Zod. Each section had its
+  own component, its own Zod schema, and its own autosave hook. The save
+  endpoint was section-scoped: <code>POST /api/zirc/line-submissions/{id}/overview</code>
+  with the section's whole subdocument as the body.
+</p>
+
+<pre><code>// home/javascript/react/zirc/hooks/useSectionAutosave.ts (M2 era)
+export function useSectionAutosave&lt;T extends FieldValues&gt;({
+  schema, defaultValues, save,
+}: Options&lt;T&gt;) {
+  const form = useForm&lt;T&gt;({
+    resolver: zodResolver(schema),
+    defaultValues,
+    mode: "onChange",
+  });
+  const watched = form.watch();
+  const key = JSON.stringify(watched);
+  React.useEffect(() =&gt; {
+    if (!form.formState.isDirty || !form.formState.isValid) return;
+    const handle = setTimeout(() =&gt; save(watched), 800);
+    return () =&gt; clearTimeout(handle);
+  }, [key]);
+  return form;
+}</code></pre>
+
+<p>This worked, but three limits showed up fast:</p>
+
+<ol>
+  <li><strong>Field-level audit is awkward.</strong> Section-scoped writes can't distinguish "user changed the line name" from "user re-saved an unchanged section."</li>
+  <li><strong>Schema drift was still there.</strong> The Zod schema in TS, Jakarta Bean Validation in Java, and the entity column lengths in SQL could all disagree.</li>
+  <li><strong>Parallel evidence.</strong> ZFIN-10265 had already arrived at per-field PATCH the hard way — through a hand-rolled <code>useAutosavedForm</code> hook with a save queue, path-keyed commits, and DTO-shaped save responses. That branch's existence was a useful signal: per-field is the right granularity, and we should adopt it without re-inventing the renderer.</li>
+</ol>
+
+<h2 id="pivot">The pivot: schema-driven forms</h2>
+
+<p>
+  Two pivots at once, looking sideways at the alternate-universe branch:
+</p>
+
+<ol>
+  <li><strong>Per-field, not per-section.</strong> Both the alt branch and our own M1/M2 lessons pointed here.</li>
+  <li><strong>Server-published schema instead of client-authored.</strong> This is where we diverge from ZFIN-10265. They authored the schema in TypeScript with a builder DSL; we publish it from Java as JSON Schema + a JSON Forms uiSchema.</li>
+</ol>
+
+<p>
+  The result: <strong>the server owns the form schema</strong>. The React app fetches
+  <code>{ schema, uiSchema }</code> from <code>GET /api/zirc/form-schema</code>
+  and just renders it. The client doesn't know what fields exist until the
+  server tells it.
+</p>
+
+<p>
+  Writes flow the other way: the form emits one PATCH per leaf change, with a JSON-pointer
+  path and the new value:
+</p>
+
+<pre><code>PATCH /api/zirc/line-submissions/ZDB-LINESUBMISSION-260515-7
+Content-Type: application/json
+
+{ "path": "/acceptance/reasons", "value": ["expect_high_demand", "interesting_gene"] }</code></pre>
+
+<p>
+  On the server, the path is looked up in a <code>FIELDS</code> map of <code>FieldDescriptor</code>
+  records — one read+write closure per legal path:
+</p>
+
+<pre><code>public record FieldDescriptor(
+    Function&lt;LineSubmission, JsonNode&gt; read,
+    BiConsumer&lt;LineSubmission, JsonNode&gt; write) {}
+
+public static final Map&lt;String, FieldDescriptor&gt; FIELDS = Map.ofEntries(
+    field("/name",
+        LineSubmission::getName,
+        (s, v) -&gt; s.setName(text(v))),
+    field("/acceptance/reasons",
+        LineSubmission::getReasons,
+        (s, v) -&gt; s.setReasons(stringArray(v))),
+    // ...
+);</code></pre>
+
+<p>This single map gives us four things at once:</p>
+<ul>
+  <li><strong>Authorization gate.</strong> Unknown paths are rejected at the controller — clients can't write columns the form doesn't expose.</li>
+  <li><strong>Audit log.</strong> The same descriptor's <code>read</code> captures the pre-update value, so old/new round-trip through Jackson consistently.</li>
+  <li><strong>Persistence.</strong> The <code>write</code> closure applies the typed coercion (trim, null-on-blank, etc.) before Hibernate sees the entity.</li>
+  <li><strong>Schema generation.</strong> The same file builds the JSON Schema sent to the client. One file, one matrix.</li>
+</ul>
+
+<p>The service method is then almost boring, which is the point:</p>
+
+<pre><code>public LineSubmission updateField(String zdbID, FieldUpdate update) {
+    LineSubmission submission = getRequiredLineSubmission(zdbID);
+    FieldDescriptor d = ZircFormSchema.FIELDS.get(update.path());
+    if (d == null) throw new IllegalArgumentException("Unknown path: " + update.path());
+
+    JsonNode oldValue = d.read().apply(submission);
+    HibernateUtil.createTransaction();
+    d.write().accept(submission, update.value());
+    HibernateUtil.flushAndCommitCurrentSession();
+
+    log.info("ZIRC_AUDIT user={} submission={} path={} old={} new={}",
+        currentUserId(), zdbID, update.path(), safeJson(oldValue), safeJson(update.value()));
+    return submission;
+}</code></pre>
+
+<h2 id="rjsf-vs-jsonforms">rjsf vs JSON Forms (the spike)</h2>
+
+<p>We ran parallel spikes — same Overview section, same backend, two libraries — to pick. The decisive code samples:</p>
+
+<h4>rjsf: customize via templates</h4>
+<pre><code>// One Form component, many overridable templates
+&lt;Form
+  schema={schema}
+  uiSchema={uiSchema}
+  templates={{
+    FieldTemplate: ZfinFieldTemplate,    // table-row layout
+    ObjectFieldTemplate: ZfinObjectTpl,  // section wrapper
+    ButtonTemplates: { SubmitButton: () =&gt; null },
+  }}
+  widgets={{
+    TextWidget: ZfinTextWidget,
+    SelectWidget: ZfinSelectWidget,
+    RadioWidget: ZfinYesNoRadio,
+  }}
+/&gt;</code></pre>
+
+<h4>JSON Forms: dispatch to renderers ranked by testers</h4>
+<pre><code>// Renderers are registered with a (tester, component) pair
+export const yesNoRadioRendererEntry: JsonFormsRendererRegistryEntry = {
+  tester: rankWith(20, and(isControl, optionIs("widget", "yesNoRadio"))),
+  renderer: withJsonFormsControlProps(YesNoRadioRenderer),
+};
+
+&lt;JsonForms
+  schema={schema}
+  uischema={uiSchema}
+  data={formData}
+  renderers={[
+    verticalLayoutRendererEntry,
+    sectionRendererEntry,
+    rowControlRendererEntry,
+    yesNoRadioRendererEntry,
+    // ...
+  ]}
+  onChange={({ data }) =&gt; setFormData(data)}
+/&gt;</code></pre>
+
+<p>What pushed us to JSON Forms:</p>
+
+<table>
+<tr><th>Concern</th><th>rjsf</th><th>JSON Forms</th></tr>
+<tr><td>Reference-styled markup (table rows, section headers)</td><td>Field/Object templates work, but you fight prop-soup</td><td>One renderer per uiSchema element type; clean separation</td></tr>
+<tr><td>Conditional reveal</td><td><code>oneOf</code> with discriminator</td><td>uiSchema <code>rule</code> blocks (<code>effect: SHOW</code>)</td></tr>
+<tr><td>Composite widgets ("select + Other" combo)</td><td>Custom widget, but parent <code>onChange</code> is single-value</td><td>Multi-field renderer reads two scopes naturally</td></tr>
+<tr><td>Layout independent of shape</td><td>Coupled via <code>ui:order</code> / nesting</td><td>uiSchema is a separate document</td></tr>
+<tr><td>Bootstrap-4 theme maintained</td><td><code>@rjsf/bootstrap-4</code> pinned at 5.24, stale</td><td>n/a, you write your own renderers</td></tr>
+</table>
+
+<p>The deciding factor was the conditional-reveal idiom. JSON Forms lets you write:</p>
+
+<pre><code>// In Java, emitted to the client as part of uiSchema
+Map&lt;String, Object&gt; showWhenLethal = Map.of(
+    "effect", "SHOW",
+    "condition", Map.of(
+        "scope",  "#/properties/homozygousLethal",
+        "schema", Map.of("const", true)));
+
+group("Lethality", List.of(
+    controlWithOptions("#/properties/homozygousLethal", Map.of("widget", "yesNoRadio")),
+    controlWithRule("#/properties/lethalityStageTypical", Map.of(), showWhenLethal),
+    controlWithRule("#/properties/lethalityWindowStart",  Map.of(), showWhenLethal),
+    controlWithRule("#/properties/lethalityAdditionalInfo", Map.of("multi", true), showWhenLethal)
+));</code></pre>
+
+<p>For the assay-type field matrix (M4.2), this scales to <code>schema.enum</code> membership tests — "show this group when assayType is one of {PCR, RFLP, dCAPS, sequencing, KASP}":</p>
+
+<pre><code>private static Map&lt;String, Object&gt; groupWithRule(
+    String label, List&lt;String&gt; visibleForAssayTypes, List&lt;Map&lt;String, Object&gt;&gt; elements) {
+    Map&lt;String, Object&gt; g = group(label, elements);
+    g.put("rule", Map.of(
+        "effect", "SHOW",
+        "condition", Map.of(
+            "scope",  "#/properties/assayType",
+            "schema", Map.of("enum", visibleForAssayTypes))));
+    return g;
+}</code></pre>
+
+<h2 id="anatomy">Anatomy of a schema-driven form today</h2>
+
+<p>Here's the round trip from browser keystroke to audit-log line:</p>
+
+<pre class="ascii"><code>┌────────────────────────────────────────────────────────────────────────────┐
+│ Browser                                                                    │
+│                                                                            │
+│   user types in #fr-forwardPrimer                                          │
+│        │                                                                   │
+│        ▼                                                                   │
+│   onChange in RowControlRenderer                                           │
+│        │                                                                   │
+│        ▼                                                                   │
+│   setFormData(next)        (local component state)                         │
+│        │                                                                   │
+│        ▼  ─── 800ms debounce ───                                           │
+│   diffLeaves(lastSavedRef, formData)  →  [["/forwardPrimer", "GATCGAT..."]] │
+│        │                                                                   │
+│        ▼                                                                   │
+│   for ([path, value] of changes)                                           │
+│     api.patch("/assays/3", { path, value })                                │
+│        │                                                                   │
+└────────┼───────────────────────────────────────────────────────────────────┘
+         │  PATCH /api/zirc/assays/3   { "path": "/forwardPrimer", "value": "GATCGAT..." }
+         ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│ Spring                                                                     │
+│                                                                            │
+│   ZircAssayApiController.updateField(3, FieldUpdate)                       │
+│        │                                                                   │
+│        ▼                                                                   │
+│   ZircSubmissionService.updateAssayField(3, FieldUpdate)                   │
+│        │                                                                   │
+│        ▼                                                                   │
+│   FieldDescriptor d = ZircAssayFormSchema.FIELDS.get("/forwardPrimer")    │
+│        │                                                                   │
+│        ├──► d.read().apply(assay)        → old value (audit)               │
+│        ├──► d.write().accept(assay, v)   → setter on entity                │
+│        ├──► HibernateUtil.flushAndCommitCurrentSession()                   │
+│        │                                                                   │
+│        ▼                                                                   │
+│   log.info("ZIRC_AUDIT ... path=/forwardPrimer old=null new=\"GATCGAT...\"")│
+└────────┼───────────────────────────────────────────────────────────────────┘
+         │  200 OK { full AssayDTO }
+         ▼
+   React Query cache stays in sync via the response body
+</code></pre>
+
+<p>The autosave loop on the client is small enough to paste in full:</p>
+
+<pre><code>React.useEffect(() =&gt; {
+    // Guard: don't run until the seed effect has populated formData.
+    if (formData == null || lastSavedRef.current == null) return;
+
+    const handle = window.setTimeout(async () =&gt; {
+        const changes = diffLeaves(lastSavedRef.current, formData)
+            .filter(([path]) =&gt; !EXTERNALLY_MANAGED_PATHS.has(path));
+        if (changes.length === 0) return;
+
+        setStatus("saving");
+        try {
+            for (const [path, value] of changes) {
+                await api.patch(`/assays/${assayId}`, { path, value });
+            }
+            lastSavedRef.current = formData;
+            setStatus("saved");
+        } catch (e) {
+            setStatus("error");
+        }
+    }, AUTOSAVE_DEBOUNCE_MS);
+
+    return () =&gt; window.clearTimeout(handle);
+}, [formDataKey]);</code></pre>
+
+<p><code>diffLeaves</code> is a 25-line recursive walk. Arrays are treated as leaves
+(the whole list is one value), which matches how the reasons chip-list and
+publications list are modeled on the server.</p>
+
+<h2 id="m3-m4">M3 / M4: scaling to mutations and assays</h2>
+
+<p>The submission, the mutation, and the assay are all separate aggregates with their own row id, their own schema endpoint, their own PATCH endpoint, and their own flat-path namespace:</p>
+
+<table>
+<tr><th>Aggregate</th><th>Schema endpoint</th><th>Field PATCH endpoint</th><th>FIELDS map</th></tr>
+<tr><td>LineSubmission</td><td><code>GET /api/zirc/form-schema</code></td><td><code>PATCH /api/zirc/line-submissions/{zdbID}</code></td><td><code>ZircFormSchema.FIELDS</code></td></tr>
+<tr><td>Mutation</td><td><code>GET /api/zirc/mutations/form-schema</code></td><td><code>PATCH /api/zirc/mutations/{id}</code></td><td><code>ZircMutationFormSchema.FIELDS</code></td></tr>
+<tr><td>GenotypingAssay</td><td><code>GET /api/zirc/assays/form-schema</code></td><td><code>PATCH /api/zirc/assays/{id}</code></td><td><code>ZircAssayFormSchema.FIELDS</code></td></tr>
+</table>
+
+<p>
+  Child lists (mutations on the submission, assays on the mutation) are
+  <strong>server-managed</strong> from the parent form's point of view. The parent
+  schema includes them as summary rows, but Add/Delete go through dedicated
+  POST/DELETE endpoints — not the field-path PATCH. The parent form's autosave
+  diff filters those paths out so a list mutation doesn't fire a spurious
+  "PATCH the whole array" attempt:
+</p>
+
+<pre><code>const EXTERNALLY_MANAGED_PATHS = new Set&lt;string&gt;(["/mutations"]);
+// (MutationEdit has its own: ["/assays"])
+
+const changes = diffLeaves(lastSavedRef.current, formData)
+    .filter(([path]) =&gt; !EXTERNALLY_MANAGED_PATHS.has(path));</code></pre>
+
+<p>
+  In M4.2 we deliberately mounted the per-assay editor <em>inline inside an
+  expanded card</em> rather than navigating to a dedicated <code>/zirc/assay/{id}/edit</code>
+  page. The mutation page picked the latter (own route), the assay layer picked
+  the former (inline). Both work; the trade-off is:
+</p>
+
+<ul>
+  <li><strong>Inline expansion.</strong> Faster UX, no navigation hop, but you have to be careful that the inline form's data flow doesn't entangle with the parent's. We solved this by giving each <code>AssayEdit</code> its own React Query and its own seed/autosave loop scoped to its own row id.</li>
+  <li><strong>Own route.</strong> Cleaner state isolation (mount/unmount on navigation), but two clicks to reach a field.</li>
+</ul>
+
+<p>
+  Critically, both choices keep field paths <strong>flat</strong> within a single PATCH
+  endpoint. The "what if we used <code>/assays/0/forwardPrimer</code> against
+  the parent mutation?" path-resolver question stays deferred — and looks
+  increasingly like it might never need to be answered.
+</p>
+
+<h2 id="attachments">M4.3: multipart attachments and the IllegalArgumentException gap</h2>
+
+<p>
+  The genotyping_assay_file table started life with a four-kind matrix
+  (chromatogram / gel_image / result_image / melt_curve) gated on assay
+  type. Curators ultimately wanted one generic "Attachments" slot per
+  assay instead — simpler today, with the option to re-introduce
+  categorization later. The implementation reflects that:
+</p>
+
+<ul>
+  <li><strong>Liquibase migration</strong> drops the <code>af_kind</code> CHECK constraint and makes the column nullable. The column itself stays so future categorization isn't blocked.</li>
+  <li><strong>Multipart upload at</strong> <code>POST /api/zirc/assays/{id}/attachments</code>. The on-disk layout is server-constructed: <code>$TARGETROOT/server_apps/data_transfer/ZIRC/&lt;submission&gt;/assay-&lt;assay&nbsp;id&gt;-&lt;file&nbsp;id&gt;-&lt;sanitized&nbsp;filename&gt;</code> — the client never sees a path.</li>
+  <li><strong>Streaming download at</strong> <code>GET /api/zirc/assays/attachments/{id}/content</code>. <code>Content-Disposition: inline; filename="…"</code> uses the original filename, not the on-disk name.</li>
+  <li><strong>Guards</strong>: 20 MB cap, content-type allowlist (jpeg/png/gif/svg/tiff/pdf/plain/csv).</li>
+</ul>
+
+<p>
+  Two architectural points worth calling out:
+</p>
+
+<h4>1. Sanitize-before-store with an audit-log breadcrumb</h4>
+<pre><code>// Strip path separators, leading dots, traversal, and length-cap.
+static String sanitizeFilename(String name) {
+    if (name == null) return "file";
+    String trimmed = name.replaceAll("[\\\\/\\u0000-\\u001F]", "_");
+    trimmed = trimmed.replace("..", "_");
+    while (trimmed.startsWith(".")) trimmed = trimmed.substring(1);
+    if (trimmed.isBlank()) return "file";
+    if (trimmed.length() &gt; 200) trimmed = trimmed.substring(0, 200);
+    return trimmed;
+}</code></pre>
+
+<p>
+  The DB stores both <code>af_original_filename</code> (user-supplied) and
+  <code>af_stored_path</code> (server-constructed). Audit log captures
+  both at upload time and again at delete time, so even a deleted-then-
+  removed-from-disk attachment leaves a queryable trail.
+</p>
+
+<h4>2. The IllegalArgumentException gap (caught during verification)</h4>
+
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Uploading a disallowed content type rejected the file (good) but returned a 500 + HTML error page instead of an RFC 7807 ProblemDetail.<br>
+  <strong>Root cause:</strong> <code>ZircApiExceptionHandler</code> mapped <code>ZircEntityNotFoundException</code> and <code>MethodArgumentNotValidException</code> but not the bare <code>IllegalArgumentException</code> that the service throws for size and content-type rejections. Spring's default mapping for <code>IllegalArgumentException</code> is 500.<br>
+  <strong>Fix:</strong> Add a 400 mapping. Important to notice: this gap also affected the existing "Unknown form field path" rejections in <code>updateField</code>/<code>updateMutationField</code>/<code>updateAssayField</code> — all three were silently returning HTML 500 pages instead of JSON. One small handler fixed all four call sites at once.
+</div>
+
+<pre><code>@ExceptionHandler(IllegalArgumentException.class)
+public ProblemDetail handleBadRequest(IllegalArgumentException e) {
+    ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    pd.setTitle("Bad Request");
+    pd.setType(URI.create("https://zfin.org/problems/bad-request"));
+    return pd;
+}</code></pre>
+
+<p>
+  Lesson: error mappers can have silent coverage gaps that don't show up
+  until the unhappy path actually runs. Worth doing a "throw every kind
+  of failure" sweep when you build out an exception advice — happy
+  paths exercise it less than you'd think.
+</p>
+
+<h2 id="audit">DB-backed audit trail</h2>
+
+<p>
+  Through M4.2 the audit log was log4j-only — <code>ZIRC_AUDIT</code> lines
+  in <code>catalina.out</code>. Curators wanting to query history had to
+  ssh in. Replaced (additively — the log lines still emit) with a
+  <code>zirc.audit</code> table:
+</p>
+
+<pre><code>CREATE TABLE zirc.audit (
+    ae_id          BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    ae_actor       TEXT NOT NULL,
+    ae_entity_kind TEXT NOT NULL,        -- submission|mutation|assay
+    ae_entity_id   TEXT NOT NULL,
+    ae_action      TEXT NOT NULL,        -- update|create-*|delete-*|upload|delete-file
+    ae_path        TEXT,                 -- JSON pointer for `update`, NULL otherwise
+    ae_old_value   JSONB,
+    ae_new_value   JSONB,
+    ae_at          TIMESTAMP NOT NULL DEFAULT now()
+);
+CREATE INDEX audit_entity_idx ON zirc.audit (ae_entity_kind, ae_entity_id, ae_at);
+CREATE INDEX audit_actor_idx  ON zirc.audit (ae_actor, ae_at);</code></pre>
+
+<p>
+  The service-side change was a single helper that writes both the row and
+  the log line, called from every existing audit site. Because the insert
+  goes through the same Hibernate session as the main change, audit
+  rows roll back automatically if the main commit fails — a property we
+  didn't have to engineer; it just falls out of putting the insert before
+  the <code>flushAndCommitCurrentSession()</code> call.
+</p>
+
+<pre><code>private void writeAudit(String entityKind, String entityId, String action,
+                        String path, JsonNode oldValue, JsonNode newValue) {
+    Person currentUser = ProfileService.getCurrentSecurityUser();
+    String actor = currentUser == null ? "anonymous" : currentUser.getZdbID();
+
+    AuditEntry entry = new AuditEntry();
+    entry.setActor(actor);
+    entry.setEntityKind(entityKind);
+    entry.setEntityId(entityId);
+    entry.setAction(action);
+    entry.setPath(path);
+    entry.setOldValue(safeJson(oldValue));
+    entry.setNewValue(safeJson(newValue));
+    repository.save(entry);
+
+    log.info("ZIRC_AUDIT user={} {}={} action={} path={} old={} new={}",
+            actor, entityKind, entityId, action,
+            path == null ? "-" : path, safeJson(oldValue), safeJson(newValue));
+}</code></pre>
+
+<p>
+  An interesting side effect: <strong>actions that weren't audited before</strong>
+  (Add/Delete mutation, Add/Delete assay, upload, delete-file) are
+  audited now because they all flow through the same helper. The
+  audit table is the single source of truth and the log line is a
+  reasonable shadow for any tooling that's still grepping logs.
+</p>
+
+<h2 id="openapi">OpenAPI 3 spec + drift test + Swagger UI</h2>
+
+<p>
+  After the API stabilized at ~17 endpoints we wanted a single
+  developer-readable contract. The natural choice would be springdoc-openapi
+  v2, but it assumes Spring Boot autoconfig — we run plain Spring MVC.
+  The decision matrix lived in <code>reference/zirc-openapi-approach.md</code>;
+  TL;DR:
+</p>
+
+<ul>
+  <li><strong>Picked</strong>: hand-curated YAML at <code>home/WEB-INF/openapi/zirc-api.yaml</code>, served by a small controller.</li>
+  <li><strong>Not picked</strong>: springdoc-openapi (Boot-conditional bean wiring is brittle without Boot), swagger-core annotations + build-time generation (overkill at 17 endpoints).</li>
+</ul>
+
+<h4>Drift detection</h4>
+
+<p>
+  The cost of hand-curating is that the YAML can rot. Mitigated with a
+  JUnit 4 test that reflects over the four ZIRC controllers and asserts
+  every <code>(method, path)</code> pair appears in both directions:
+</p>
+
+<pre><code>// In the test:
+for (Class&lt;?&gt; controller : CONTROLLERS) {
+    String classPrefix = classRequestMapping(controller);
+    for (Method method : controller.getDeclaredMethods()) {
+        for (var e : METHOD_ANNOS.entrySet()) {           // GET/POST/PATCH/DELETE
+            var anno = method.getAnnotation(e.getKey());
+            if (anno == null) continue;
+            for (String methodPath : pathsFor(anno)) {
+                handlerEndpoints.add(e.getValue().toUpperCase() + " "
+                        + stripApiZircPrefix(classPrefix + methodPath));
+            }
+        }
+    }
+}
+// then: assertEquals(specEndpoints, handlerEndpoints)</code></pre>
+
+<p>
+  The YAML is declared as a Gradle <code>test</code> input so spec-only
+  changes invalidate the task and the test re-runs. Verified by tampering
+  with the YAML and observing both asserts fire (one for missing
+  handler, one for missing spec entry).
+</p>
+
+<h4>Why this test ended up in JUnit 4 instead of Spock</h4>
+
+<p>
+  Worth flagging for future test-writers: the codebase has ~15 <code>.groovy</code> Spock specs sitting in <code>test/</code>, mentioned in the <code>gradle test</code> filter allowlist, that <strong>never actually run</strong>. Two reasons:
+</p>
+
+<ol>
+  <li>The test source set declared <code>java.srcDirs = ['test']</code> but no <code>groovy</code> srcDir. The Groovy plugin's default is <code>test/groovy/</code>, which doesn't exist in this layout. So <code>compileTestGroovy</code> was reporting <code>NO-SOURCE</code> and no Spock <code>.class</code> files were produced.</li>
+  <li>Even with that fixed (added <code>groovy { srcDirs = ['test'] }</code>), Spock 2.x requires <code>useJUnitPlatform()</code> — which is commented out in <code>build.gradle</code>. So the specs would still need an opt-in to the JUnit Platform runner.</li>
+</ol>
+
+<p>
+  Fixing #1 was straightforward (one pre-existing dead Groovy file with a missing import had to be excluded). #2 would surface dozens of dormant specs at once with unknown breakage; the right scope is "deliberate Spock revival" rather than a side effect. Until then, default to JUnit 4 Java for new tests.
+</p>
+
+<h4>Swagger UI: vendor it</h4>
+
+<p>
+  The <code>/api/zirc/docs</code> route renders a small HTML shell that
+  mounts Swagger UI against the YAML. First cut loaded the
+  swagger-ui-dist CSS and JS from jsdelivr; that worked but means the
+  page is broken without internet and at the mercy of CDN outages.
+  Replaced with the vendored files (~1.6 MB total) under
+  <code>home/WEB-INF/openapi/swagger-ui/</code>, served via two extra
+  controller routes. The drift test now also covers these routes so
+  accidental removal breaks CI.
+</p>
+
+<h2 id="pitfalls">Pitfalls and how we resolved them</h2>
+
+<h3>Cross-section lost updates (Hibernate default UPDATE writes all columns)</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Two near-simultaneous field-path PATCHes against the same row clobber each other's untouched columns on commit.<br>
+  <strong>Fix:</strong> <code>@DynamicUpdate</code> on every entity that has field-path PATCH support.
+</div>
+<pre><code>@Entity(name = "ZircLineSubmission")
+@Table(schema = "zirc", name = "line_submission")
+@DynamicUpdate   // ← critical
+@Getter @Setter
+public class LineSubmission { ... }</code></pre>
+
+<h3>Spurious "clear field" PATCHes during slow page reload</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> After saving multiple fields, reloading the page sometimes fired a PATCH clearing an unrelated field (e.g. <code>path=/alleleDesignation old="zf-test-allele" new=""</code>).<br>
+  <strong>Root cause:</strong> Race between <code>useState</code>'s initial empty-defaults value (captured on first render before the GET resolved) and the seed <code>useEffect</code>'s <code>setFormData</code>. The autosave effect could close over empty-defaults <code>formData</code> while <code>lastSavedRef</code> had already been updated to the seeded values; the diff then emitted "non-empty → empty" changes.<br>
+  <strong>Fix:</strong> Type <code>formData</code> as <code>T | null</code>, render "Loading…" until the seed effect runs, early-return the autosave effect when either is null.
+</div>
+<pre><code>const [formData, setFormData] = React.useState&lt;FormDataShape | null&gt;(null);
+const lastSavedRef = React.useRef&lt;FormDataShape | null&gt;(null);
+
+React.useEffect(() =&gt; {
+    if (!mutation || formData !== null) return;
+    const seed = initialDataFromMutation(mutation);
+    setFormData(seed);
+    lastSavedRef.current = seed;
+}, [mutation?.id, formData]);
+
+// ... in render
+if (formData == null) return &lt;p&gt;Loading…&lt;/p&gt;;</code></pre>
+
+<h3>ProblemDetail handler not catching errors</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Validation errors came back as HTML 500 pages instead of RFC 7807 JSON.<br>
+  <strong>Root cause:</strong> Spring picks the most specific <code>@ExceptionHandler</code> by exception type, but for sibling beans it picks by registration order. A pre-existing <code>ZfinGlobalExceptionHandler.@ExceptionHandler(Exception.class)</code> was matched first.<br>
+  <strong>Fix:</strong> <code>@Order(Ordered.HIGHEST_PRECEDENCE)</code> on the ZIRC advice so it gets first crack.
+</div>
+
+<h3>Section <code>rule</code> visibility silently ignored (M4.2)</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Conditional reveal worked for individual <code>Control</code> elements but not for <code>Group</code> elements — PCR Primers showed even when assayType was empty.<br>
+  <strong>Root cause:</strong> JSON Forms' built-in <code>withJsonFormsControlProps</code> evaluates the rule and passes <code>props.visible</code>. Our custom <code>SectionRenderer</code> uses <code>withJsonFormsLayoutProps</code>, which also passes <code>visible</code>, but we weren't reading it.<br>
+  <strong>Fix:</strong> A single early-return:
+</div>
+<pre><code>function SectionRenderer({ uischema, schema, path, enabled, visible, ... }: LayoutProps) {
+    if (visible === false) return null;  // ← respects uiSchema rules
+    ...
+}</code></pre>
+
+<h3>200 vs 204 on void DELETE</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Delete fired on the server (DB confirmed), but the React UI didn't update.<br>
+  <strong>Root cause:</strong> Spring <code>@DeleteMapping</code> returning <code>void</code> defaults to 200 with empty body. Our <code>api.delete&lt;void&gt;</code> client did <code>response.json()</code> on a 200, which threw, so the <code>onSuccess</code> handler never ran — meaning React Query never invalidated.<br>
+  <strong>Fix:</strong> <code>@ResponseStatus(HttpStatus.NO_CONTENT)</code> on every delete endpoint. The client already special-cases 204:
+</div>
+<pre><code>if (response.status === 204) return undefined as unknown as T;
+return response.json() as Promise&lt;T&gt;;</code></pre>
+
+<h3>List didn't update after Add/Delete</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Add a mutation to a submission — the React Query cache refreshed, but the form still showed the old list.<br>
+  <strong>Root cause:</strong> <code>SchemaForm</code>'s <code>formData</code> is locally-owned for keystroke responsiveness; the list lives inside it. Invalidating the React Query cache refetched, but the local copy was stale.<br>
+  <strong>Fix:</strong> Sync the server-managed slice into local state via a dependency on a JSON-stringified key:
+</div>
+<pre><code>const mutationsKey = JSON.stringify(submission?.mutations ?? []);
+React.useEffect(() =&gt; {
+    if (!submission || formData === null) return;
+    const next = submission.mutations ?? [];
+    setFormData((d) =&gt; (d == null ? d : { ...d, mutations: next }));
+    if (lastSavedRef.current != null) {
+        lastSavedRef.current = { ...lastSavedRef.current, mutations: next };
+    }
+}, [mutationsKey]);</code></pre>
+
+<h3>Spring property name collision (path-as-id)</h3>
+<div class="callout pitfall">
+  <strong>Symptom:</strong> Nested form-data paths produced HTML IDs like <code>fr-background.maternalBackground</code> with literal dots in them, breaking <code>document.getElementById</code> in tests.<br>
+  <strong>Fix:</strong> One-liner in the row renderer: <code>const id = `fr-${path.split('.').pop()}`</code>. The collision risk between leaves of different objects is real but hasn't bitten us yet.
+</div>
+
+<h2 id="alt-comparison">Head-to-head: this branch vs ZFIN-10265</h2>
+
+<p>
+  The starting-point section flagged that
+  <code>zfin-10265-zirc-line-submission-react-re-architect-squash</code>
+  is a parallel implementation of the same blank slate. With everything
+  this branch built now on the table, here's a head-to-head on the
+  axes where the two branches actually differ.
+</p>
+
+<h3>Schema authoring location</h3>
+
+<table>
+  <thead><tr><th></th><th>This branch — server-published JSON Schema + uiSchema</th><th>ZFIN-10265 — TypeScript schema builders</th></tr></thead>
+  <tbody>
+  <tr><th>Pros</th><td>
+    One source of truth in Java, where the entity already lives. Drift
+    is essentially impossible — adding a column means editing
+    <code>FIELDS</code> and the uiSchema in the same file. Curators can
+    change enums and labels without a frontend deploy.
+  </td><td>
+    TypeScript catches a missing path at compile time. Per-field metadata
+    (<code>helpText</code>, <code>infoHref</code>, <code>placeholder</code>,
+    <code>suffix</code>) is expressive without abusing JSON Forms
+    <code>options</code>. Form renders immediately — no schema fetch.
+  </td></tr>
+  <tr><th>Cons</th><td>
+    Pre-render flash: until the schema response lands, the form is just
+    "Loading…". Schema builders are imperative <code>LinkedHashMap</code>s
+    — forgetting to register a path that the uiSchema references blows
+    up at runtime when the user types in the field. No compile-time
+    cross-check between the schema and the FIELDS map.
+  </td><td>
+    Drift surface: the Java entity and the TS schema can disagree on
+    max lengths and required-ness without anything failing. New
+    aggregates need parallel TS schema files; the server doesn't know
+    what the client is showing. Curator-driven changes require a deploy.
+  </td></tr>
+  </tbody>
+</table>
+
+<h3>Form rendering</h3>
+
+<table>
+  <thead><tr><th></th><th>This branch — JSON Forms with ~10 custom renderers</th><th>ZFIN-10265 — hand-rolled <code>FormRenderer</code></th></tr></thead>
+  <tbody>
+  <tr><th>Pros</th><td>
+    Battle-tested library; conditional reveal via uiSchema <code>rule</code>
+    blocks is declarative and inherits accessibility, focus management,
+    transitions for free. Adding new control types is a
+    <code>rankWith(20, ...)</code> registration.
+  </td><td>
+    No external forms-library dependency. Plain TypeScript schema is
+    debuggable in any tooling that understands TS. Direct control over
+    markup — no library-imposed structural choices to fight.
+  </td></tr>
+  <tr><th>Cons</th><td>
+    We still wrote ~10 custom renderers because the default Bootstrap
+    theme didn't match trunk markup; the "free library" still cost LOC.
+    JSON Forms' tester/rank dispatch is obscure for newcomers — debugging
+    "why is the default renderer winning" needs library familiarity.
+    <code>props.visible</code> from rules works automatically for
+    Controls but not for layouts (we hit this — SectionRenderer was
+    silently ignoring rules until we added the early return).
+  </td><td>
+    Every concern (conditional reveal, validation, focus, accessibility)
+    has to be reimplemented. Rendering, validation, and layout are
+    coupled in the same component — extending is more invasive than a
+    library renderer registration. The renderer grows with the form;
+    ours stays roughly constant.
+  </td></tr>
+  </tbody>
+</table>
+
+<h3>Concurrency / lost-update prevention</h3>
+
+<table>
+  <thead><tr><th></th><th>This branch — Hibernate <code>@DynamicUpdate</code></th><th>ZFIN-10265 — client save queue</th></tr></thead>
+  <tbody>
+  <tr><th>Pros</th><td>
+    Solves the problem at the persistence layer — works no matter how
+    many client tabs are open, no matter how the client batches writes.
+    Zero client complexity.
+  </td><td>
+    Serializes saves within one tab — no two PATCHes in flight
+    simultaneously. Avoids out-of-order response problems where a later
+    save's response races a prior save's. Reduces wire chatter by
+    batching section writes.
+  </td></tr>
+  <tr><th>Cons</th><td>
+    Per-field UPDATE statements (one PATCH = one UPDATE of one column)
+    are chattier on the wire than batched writes. Forgetting
+    <code>@DynamicUpdate</code> on a new entity silently re-introduces
+    lost updates — no test catches it.
+  </td><td>
+    Doesn't help across tabs/sessions — two curators editing the same
+    row from different machines can still clobber each other. Adds
+    careful but easy-to-break client state (in-flight queue, monotonic
+    seq, <code>dtoRef</code> vs <code>setDtoState</code> mirror). The
+    section-scoped writes that the batching enables also re-introduce
+    the audit-granularity problem.
+  </td></tr>
+  </tbody>
+</table>
+
+<p>
+  Honest take: <code>@DynamicUpdate</code> is structurally stronger.
+  The save queue is a useful client-side optimization but doesn't
+  replace it — they're complementary, not alternatives.
+</p>
+
+<h3>Endpoint shape and service complexity</h3>
+
+<table>
+  <thead><tr><th></th><th>This branch — per-aggregate field-path PATCH</th><th>ZFIN-10265 — domain-specific save methods</th></tr></thead>
+  <tbody>
+  <tr><th>Shape</th><td>
+    17 endpoints across 4 controllers. ~400-line
+    <code>ZircSubmissionService</code>. One write path per aggregate;
+    new fields plug into a <code>FIELDS</code> map.
+  </td><td>
+    ~25 endpoints in one controller. 844-line
+    <code>LineSubmissionService</code>. Mix of per-field
+    (<code>/patch</code>) and per-section (<code>saveReasons</code>,
+    <code>saveLinkedFeatures</code>, <code>saveGenes</code>,
+    <code>saveLesions</code>, <code>saveGenotypingAssays</code>,
+    <code>savePhenotypes</code>, <code>savePublications</code>,
+    <code>addAssayFile</code>, <code>removeAssayFile</code>, …) writes.
+  </td></tr>
+  <tr><th>Pros</th><td>
+    Adding a new field is a one-line <code>FIELDS</code> map entry.
+    Audit log is uniform — one row per change, regardless of which
+    field.
+  </td><td>
+    Section-scoped methods can validate the section atomically (e.g.,
+    "reasons[] and reasonsOther must be consistent"). Domain methods
+    read more like business logic.
+  </td></tr>
+  <tr><th>Cons</th><td>
+    The path-as-key indirection costs some readability vs. an explicit
+    <code>saveReasons(...)</code>. Field-path PATCH can't express
+    "validate this whole section as a unit" — each path is validated in
+    isolation.
+  </td><td>
+    Per-section endpoints scale linearly with structured data types.
+    Linked features, genes, lesions, phenotypes, publications each
+    needed their own method. The service file is twice as long as ours
+    and growing.
+  </td></tr>
+  </tbody>
+</table>
+
+<h3>Feature completeness (the asymmetric one)</h3>
+
+<p>
+  This dimension is the elephant in the room: the alt branch covers
+  more of the curator workflow than we do.
+</p>
+
+<table>
+  <thead><tr><th>Feature</th><th>ZFIN-10265</th><th>This branch</th></tr></thead>
+  <tbody>
+  <tr><td>Overview / Acceptance / Background / Additional Info</td><td>✅</td><td>✅</td></tr>
+  <tr><td>Mutations list + per-mutation edit</td><td>✅</td><td>✅</td></tr>
+  <tr><td>Genotyping assays + per-type field matrix</td><td>✅ (with help text + info links + placeholders)</td><td>✅ (uiSchema rules, plainer)</td></tr>
+  <tr><td>Attachments</td><td>✅</td><td>✅</td></tr>
+  <tr><td>Linked features (mutation A × mutation B distance)</td><td>✅</td><td>❌</td></tr>
+  <tr><td>Genes per mutation</td><td>✅</td><td>❌</td></tr>
+  <tr><td>Lesions per mutation (point/deletion/insertion/indel/transgene + HGVS + flanking)</td><td>✅</td><td>❌</td></tr>
+  <tr><td>Phenotypes per mutation (timing, image consent)</td><td>✅</td><td>❌</td></tr>
+  <tr><td>Person/marker/feature autocomplete</td><td>✅</td><td>❌</td></tr>
+  <tr><td>Max-rows caps surfaced via <code>/caps</code></td><td>✅</td><td>❌</td></tr>
+  </tbody>
+</table>
+
+<p>
+  We covered ~60% of the curator workflow; the alt branch is closer to
+  100%. If "ship to curators" is the bar, the alt branch is further
+  along.
+</p>
+
+<h3>Polish and operations</h3>
+
+<table>
+  <thead><tr><th></th><th>This branch</th><th>ZFIN-10265</th></tr></thead>
+  <tbody>
+  <tr><th>Audit</th><td>DB-backed <code>zirc.audit</code> table with JSONB old/new, queryable from psql.</td><td>log4j lines only.</td></tr>
+  <tr><th>API documentation</th><td>Hand-curated OpenAPI 3 spec at <code>/api/zirc/openapi.yaml</code> + Swagger UI at <code>/api/zirc/docs</code> + drift test.</td><td>None.</td></tr>
+  <tr><th>Error responses</th><td>RFC 7807 ProblemDetail with <code>IllegalArgumentException</code> mapping.</td><td>Bare <code>ResponseStatusException</code>.</td></tr>
+  <tr><th>Tests</th><td>One drift test (JUnit 4 Java). No service tests.</td><td>Service-level integration tests (<code>LineSubmissionServiceTest.java</code>) — though see the Spock-dormant finding for why those may not actually be running.</td></tr>
+  <tr><th>Save toast</th><td>Floating bottom-right with auto-dismiss.</td><td>Inline toast component (shipped from the start, we re-implemented it as polish).</td></tr>
+  </tbody>
+</table>
+
+<h3>Net assessment</h3>
+
+<p>
+  <strong>This branch is better at</strong>:
+</p>
+<ul>
+  <li>Long-run schema drift control — server-published JSON Schema beats anything in the alt branch.</li>
+  <li>Audit and observability — DB-backed audit + OpenAPI + drift test gives a queryable, contract-tested API.</li>
+  <li>Concurrency safety at the persistence layer — <code>@DynamicUpdate</code> is structurally stronger than a per-tab queue.</li>
+  <li>Library leverage — JSON Forms gives us conditional reveal almost for free.</li>
+</ul>
+
+<p>
+  <strong>ZFIN-10265 is better at</strong>:
+</p>
+<ul>
+  <li>Feature breadth — covers linked features, genes, lesions, phenotypes, autocomplete; we covered only the spine.</li>
+  <li>Per-field UX expressiveness — <code>typeMatrices.ts</code> carries help text, info links, placeholders, suffixes that are awkward to express in JSON Forms <code>options</code>.</li>
+  <li>Render-without-server — schema is local, so first paint doesn't wait on a fetch.</li>
+  <li>Existing test coverage — service-layer tests we don't have.</li>
+</ul>
+
+<p>
+  <strong>Honest verdict</strong>: if these were two PRs to evaluate
+  side-by-side, the right answer is probably "take the alt branch's
+  feature breadth and tests, replace its schema/render with our
+  server-published JSON Forms approach, keep our audit table + OpenAPI
+  + drift test." This branch's architectural bets are the right
+  long-run direction; the alt branch's domain coverage is the right
+  short-run answer. Treating them as competing rather than
+  complementary is the false choice.
+</p>
+
+<h2 id="wins-regrets">What went well, what we'd do differently</h2>
+
+<h3>Wins</h3>
+<ul>
+  <li><strong>Backend as source of truth was the right call.</strong> This is our actual divergence from the alt branch — they kept schema authoring in TypeScript. Once we landed the server-published schema, every new section (3 in M3.3, 7 cluster-groups in M4.2) was almost no client work — just a new entry in <code>FIELDS</code> and the uiSchema group.</li>
+  <li><strong>The FieldDescriptor pattern absorbed an "audit-capture switch" we never had to add.</strong> Audit, validation, and dispatch all share the same map.</li>
+  <li><strong>Per-aggregate flat paths sidestep a real problem.</strong> JSON-pointer array-index resolution (<code>/mutations/0/alleleDesignation</code>) is solvable but adds a layer; we haven't needed it.</li>
+  <li><strong>The seed-vs-autosave null gate is a one-line idiom</strong> that future-proofs any new aggregate against the same race.</li>
+</ul>
+
+<h3>Credit where due</h3>
+<p>
+  Per-field PATCH, save-on-blur autosave, the save-status toast, the
+  assay-type field-matrix idea, and the DTO shape we ended up keeping
+  all existed first on ZFIN-10265. The full comparison is in the
+  <a href="#alt-comparison">head-to-head section above</a>; the short
+  version is "both branches reached similar UX conclusions
+  independently; our distinguishing bet is where the schema lives, not
+  the UX it produces."
+</p>
+
+<h3>Regrets / things to revisit</h3>
+<ul>
+  <li><strong>We rolled our own <code>diffLeaves</code>, JSON-pointer paths, and stringify-key syncing</strong> when something like Immer + a real JSON Patch library could have given us cleaner primitives. We didn't reach for it because the leaf set is small (~25 paths per aggregate) and the diff is trivial to debug — but if we add 100+ paths the case gets stronger.</li>
+  <li><strong>No DB-backed audit table yet.</strong> Audit log is log4j only. For curators it's behind an SSH session, not a UI. Eventually we want a <code>zirc.audit</code> table with the same row shape.</li>
+  <li><strong>Renderers are hand-rolled.</strong> We chose this over JSON Forms' Bootstrap theme because the trunk reference markup is opinionated (table-row layout, ZFIN section style). It costs us per-renderer LOC.</li>
+  <li><strong>The schema generators are imperative <code>LinkedHashMap</code>s</strong>, not records or builders. Readable but mistake-prone — e.g. forgetting to add a path to FIELDS that's referenced in the uiSchema only blows up at runtime when the user types in that field.</li>
+  <li><strong>We didn't ship a section-level diff filter as a default.</strong> Each <code>SchemaForm</code>/<code>MutationEdit</code>/<code>AssayEdit</code> repeats the <code>EXTERNALLY_MANAGED_PATHS</code> idiom. A small shared autosave helper would deduplicate this.</li>
+</ul>
+
+<h2 id="dev-practice">Dev-practice debt worth paying down</h2>
+
+<p>Things that slowed us down across the milestones, in rough order of how much pain they caused:</p>
+
+<h4>Lombok-unaware Java LSP</h4>
+<p>
+  The bundled LSP regularly reports "method undefined" against Lombok-generated
+  getters. Touching an entity or a record that calls one via method reference
+  fires 10–30 false-positive diagnostics. We learned to trust <code>gradle compileJava</code>
+  instead, but the noise is constant and easy to mistake for real failures.
+  Worth investigating a Lombok-aware LSP setup.
+</p>
+
+<h4>Tomcat OOM under long-running dirtydeploy sessions</h4>
+<p>
+  After enough hot redeploys, the JVM heap fills up and we get
+  <code>OutOfMemoryError</code> in every thread. A restart fixes it. Worth raising
+  the dev-container's <code>-Xmx</code> or putting a watchdog on it.
+</p>
+
+<h4>Curl-poll after dirtydeploy</h4>
+<p>
+  We were running <code>until curl --max-time 5 ...; do sleep 5; done</code>
+  after every deploy to wait for Tomcat. That cost 30–60s per cycle. The
+  next test step (Playwright navigate, curl probe) gives a clean
+  "not ready" error if it's too early, so the polling loop was buying nothing.
+  Cut it.
+</p>
+
+<h4>Working tree noise</h4>
+<p>
+  The repo accumulates <code>.png</code> spikes, <code>.zip</code> dumps, and
+  scratch SQL files in the working directory. <code>git status</code> on this
+  branch is 60+ untracked entries deep. A <code>.gitignore</code> sweep would
+  make commit-by-file workflows cheaper.
+</p>
+
+<h4>Liquibase tracking table out of sync on local dev DBs</h4>
+<p>
+  The dev container's <code>DATABASECHANGELOG</code> table thinks several
+  zirc changesets are still "pending" even though their SQL has been
+  applied (it appears the original M3 schema went through raw SQL rather
+  than Liquibase). <code>gradle liquibasePostBuild</code> therefore fails
+  on dev — we ended up applying the M4.3 and audit-table migrations
+  directly via <code>psql</code> for the local session, while the
+  Liquibase changesets themselves are committed and correct for CI.
+  A <code>changelogSync</code> on the affected rows would unstick this;
+  worth a one-time cleanup.
+</p>
+
+<h4>Spock specs silently dormant in CI</h4>
+<p>
+  See the OpenAPI section above. Capturing it here too because it has
+  blast radius beyond the spec drift test — anyone writing a
+  <code>.groovy</code> spec today is writing code that doesn't run.
+  The fix needs to be opt-in (enable <code>useJUnitPlatform()</code> +
+  add the vintage engine for existing JUnit 4 tests) and reviewed
+  separately so a forest of dormant specs doesn't suddenly start
+  failing as a side effect.
+</p>
+
+<h4>Long-running dev container OOMs under hot redeploy</h4>
+<p>
+  Tomcat OOM'd three times during this session — each after enough
+  <code>dirtydeploy</code> cycles. <code>OutOfMemoryError</code> in every
+  thread, recoverable with a container restart. Worth raising the
+  dev-container's <code>-Xmx</code> or adding a watchdog to restart on
+  detected OOM. Doesn't matter in production where deploys happen
+  fresh, but it's a real cost on the loop.
+</p>
+
+<h4>Memory system pays off</h4>
+<p>
+  This is a small win, but worth flagging: the auto-memory entries for things
+  like the seed-vs-autosave race, the Lombok LSP noise, and the
+  curl-poll-after-deploy feedback survived a context-compaction and shaped the
+  next session's decisions. The pattern of "save a short, actionable
+  memory note when a non-obvious fix lands" is cheap to maintain and reliably
+  prevents the same fights from re-running. The
+  <code>~/.claude/projects/.../memory/</code> directory has a dozen of these now.
+</p>
+
+<hr>
+
+<p class="meta">
+  Branch: <code>zirc-rearchitect</code> — most recent updates: M4.3 file
+  uploads, <code>zirc.audit</code> table, hand-curated OpenAPI 3 spec at
+  <code>/api/zirc/openapi.yaml</code>, Swagger UI at <code>/api/zirc/docs</code>
+  (vendored), drift-detection test, and the navbar + Saved-toast polish
+  items.
+</p>
+
+<p class="meta">
+  Open follow-ups not yet started: a deliberate Spock revival
+  (<code>useJUnitPlatform()</code> + vintage engine), Liquibase
+  changelog-sync on local dev DBs, and the Gradle subproject cleanup
+  PRD that lives in <code>.specify/gradle-subproject-cleanup/</code>.
+</p>
+
+</body>
+</html>

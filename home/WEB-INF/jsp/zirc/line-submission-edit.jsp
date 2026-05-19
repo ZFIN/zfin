@@ -2,8 +2,8 @@
 
 <c:set var="OVERVIEW"           value="Overview"/>
 <c:set var="ACCEPTANCE_REASONS" value="Acceptance Reasons"/>
-<c:set var="LINKED_FEATURES"    value="Linked Features"/>
 <c:set var="MUTATIONS"          value="Mutations"/>
+<c:set var="LINKED_FEATURES"    value="Linked Features"/>
 <c:set var="BACKGROUND"         value="Background"/>
 <c:set var="ADDITIONAL"         value="Additional Info"/>
 

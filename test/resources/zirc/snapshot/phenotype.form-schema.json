@@ -1,0 +1,132 @@
+{
+  "schema" : {
+    "properties" : {
+      "description" : {
+        "maxLength" : 5000,
+        "title" : "Description",
+        "type" : "string"
+      },
+      "hpfEnd" : {
+        "title" : "End (hpf)",
+        "type" : [ "number", "null" ]
+      },
+      "hpfStart" : {
+        "title" : "Start (hpf)",
+        "type" : [ "number", "null" ]
+      },
+      "nonMendelianComment" : {
+        "maxLength" : 5000,
+        "title" : "Non-Mendelian comment",
+        "type" : "string"
+      },
+      "nonMendelianPercentage" : {
+        "title" : "Non-Mendelian %",
+        "type" : [ "number", "null" ]
+      },
+      "segregation" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Segregation",
+        "type" : "array"
+      },
+      "stage" : {
+        "maxLength" : 255,
+        "title" : "Stage",
+        "type" : "string"
+      },
+      "type" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Phenotype type",
+        "type" : "array"
+      },
+      "zfinImagePermission" : {
+        "title" : "ZFIN image permission",
+        "type" : [ "boolean", "null" ]
+      },
+      "zircImagePermission" : {
+        "title" : "ZIRC image permission",
+        "type" : [ "boolean", "null" ]
+      }
+    },
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/description",
+        "type" : "Control"
+      } ],
+      "label" : "Description",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "phenotypeTiming"
+        },
+        "scope" : "#/properties/hpfStart",
+        "type" : "Control"
+      } ],
+      "label" : "Timing",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/zfinImagePermission",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/zircImagePermission",
+        "type" : "Control"
+      } ],
+      "label" : "Image Permissions",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "suffix" : "%"
+        },
+        "scope" : "#/properties/nonMendelianPercentage",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/nonMendelianComment",
+        "type" : "Control"
+      } ],
+      "label" : "Non-Mendelian Segregation",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "stringList"
+        },
+        "scope" : "#/properties/segregation",
+        "type" : "Control"
+      } ],
+      "label" : "Segregation",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "stringList"
+        },
+        "scope" : "#/properties/type",
+        "type" : "Control"
+      } ],
+      "label" : "Phenotype Type",
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}
