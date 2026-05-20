@@ -42,6 +42,9 @@ export interface MutationDTO {
     alleleDesignation: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
+    zfinRecordEstablished: boolean | null;
+    // Conditional on zfinRecordEstablished — uiSchema rule gates visibility.
+    cellGenomicFeature: string | null;
     mutationDiscoverer: string | null;
     mutationInstitution: string | null;
     // Mutagenesis

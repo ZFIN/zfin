@@ -29,6 +29,11 @@
         "title" : "Genotyping Assays",
         "type" : "array"
       },
+      "cellGenomicFeature" : {
+        "maxLength" : 255,
+        "title" : "Cell Genomic Feature",
+        "type" : "string"
+      },
       "genes" : {
         "items" : {
           "properties" : {
@@ -153,6 +158,10 @@
         },
         "title" : "Publications",
         "type" : "array"
+      },
+      "zfinRecordEstablished" : {
+        "title" : "ZFIN Record Established",
+        "type" : [ "boolean", "null" ]
       }
     },
     "type" : "object"
@@ -201,6 +210,28 @@
         "type" : "Control"
       }, {
         "scope" : "#/properties/mutationType",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/zfinRecordEstablished",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ZFIN feature record once established; leave blank until assigned.",
+          "placeholder" : "e.g. ENSDARG…"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/zfinRecordEstablished"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/cellGenomicFeature",
         "type" : "Control"
       }, {
         "options" : {

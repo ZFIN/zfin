@@ -752,6 +752,8 @@ components:
         alleleDesignation: { type: string, nullable: true }
         alleleInZfin: { type: boolean, nullable: true }
         mutationType: { type: string, nullable: true }
+        zfinRecordEstablished: { type: boolean, nullable: true }
+        cellGenomicFeature: { type: string, nullable: true }
         mutationDiscoverer: { type: string, nullable: true }
         mutationInstitution: { type: string, nullable: true }
         mutagenesisStage: { type: string, nullable: true }

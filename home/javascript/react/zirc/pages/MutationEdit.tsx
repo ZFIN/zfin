@@ -18,6 +18,7 @@ import { assaysListRendererEntry } from '../schemaForm/renderers/AssaysListRende
 import { genesListRendererEntry } from '../schemaForm/renderers/GenesListRenderer';
 import { lesionsListRendererEntry } from '../schemaForm/renderers/LesionsListRenderer';
 import { phenotypesListRendererEntry } from '../schemaForm/renderers/PhenotypesListRenderer';
+import { autocompleteRendererEntry } from '../schemaForm/renderers/AutocompleteRenderer';
 
 export type MutationEditProps = {
     // From data-mutation-id on the JSP mount.
@@ -38,6 +39,9 @@ type FormDataShape = {
     alleleDesignation?: string | null;
     alleleInZfin?: boolean | null;
     mutationType?: string | null;
+    zfinRecordEstablished?: boolean | null;
+    // Conditional on zfinRecordEstablished — uiSchema rule gates visibility.
+    cellGenomicFeature?: string | null;
     mutationDiscoverer?: string | null;
     mutationInstitution?: string | null;
     // Mutagenesis
@@ -81,6 +85,7 @@ const renderers = [
     genesListRendererEntry,
     lesionsListRendererEntry,
     phenotypesListRendererEntry,
+    autocompleteRendererEntry,
 ];
 
 function initialDataFromMutation(m: MutationDTO): FormDataShape {
@@ -88,6 +93,8 @@ function initialDataFromMutation(m: MutationDTO): FormDataShape {
         alleleDesignation: m.alleleDesignation ?? '',
         alleleInZfin: m.alleleInZfin,
         mutationType: m.mutationType ?? '',
+        zfinRecordEstablished: m.zfinRecordEstablished,
+        cellGenomicFeature: m.cellGenomicFeature ?? '',
         mutationDiscoverer: m.mutationDiscoverer ?? '',
         mutationInstitution: m.mutationInstitution ?? '',
         mutagenesisStage: m.mutagenesisStage ?? '',
