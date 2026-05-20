@@ -314,6 +314,18 @@
         <session-timeout>-1</session-timeout>
     </session-config>
 
+    <!-- Treat every .jsp file's source bytes AND its rendered output as
+         UTF-8. Without this, JSP defaults to ISO-8859-1, so literal
+         non-ASCII characters in the source (em-dashes, ellipses, etc.)
+         get mojibaked in the browser. -->
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+    </jsp-config>
+
     <!-- The Usual Welcome File List -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

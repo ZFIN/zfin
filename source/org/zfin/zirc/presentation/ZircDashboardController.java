@@ -11,6 +11,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.Updates;
 import org.zfin.profile.Person;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
@@ -355,6 +356,117 @@ public class ZircDashboardController {
         // Whole-submission roll-up: every audited change anywhere on this
         // submission (already DESC-sorted by the query above).
         model.addAttribute("submissionAllUpdates", allUpdates);
+
+        // Per-section approval state. Loaded for the submission + each
+        // mutation so the JSP can render initial checkbox state on every
+        // section header. Key format: "<recId>|<sectionName>".
+        List<Object[]> approvalRows = HibernateUtil.currentSession()
+                .createQuery(
+                    "select recId, sectionName, approved from ZircLineSubmissionSectionApproval "
+                  + "where recId in :rids",
+                    Object[].class)
+                .setParameterList("rids", auditKeys)
+                .list();
+        Map<String, Boolean> sectionApprovals = new LinkedHashMap<>();
+        for (Object[] r : approvalRows) {
+            sectionApprovals.put(r[0] + "|" + r[1], (Boolean) r[2]);
+        }
+        model.addAttribute("sectionApprovals", sectionApprovals);
+
+        // Overlay APPROVED onto the section status maps so the rollup
+        // badges reflect curator approval. The slug-to-label mapping
+        // mirrors the JSP's section names.
+        Map<String, String> SLUG_TO_SECTION = Map.ofEntries(
+                Map.entry("overview",          "Overview"),
+                Map.entry("mutations",         "Mutations"),
+                Map.entry("linked-features",   "Linked Features"),
+                Map.entry("background",        "Background"),
+                Map.entry("additional-info",   "Additional Info"),
+                Map.entry("genes",             "Genes"),
+                Map.entry("lesions",           "Lesions"),
+                Map.entry("genotyping-assays", "Genotyping Assays"),
+                Map.entry("phenotypes",        "Phenotypes"),
+                Map.entry("lethality",         "Lethality"),
+                Map.entry("publications",      "Publications"));
+        for (Map.Entry<String, Boolean> e : sectionApprovals.entrySet()) {
+            if (!Boolean.TRUE.equals(e.getValue())) continue;
+            String[] parts = e.getKey().split("\\|", 2);
+            if (parts.length != 2) continue;
+            String recIdKey  = parts[0];
+            String slug      = parts[1];
+            String sectionLabel = SLUG_TO_SECTION.get(slug);
+            if (submission.getZdbID().equals(recIdKey)) {
+                if (sectionLabel != null) {
+                    status.bySection().put(sectionLabel, FieldStatus.APPROVED);
+                }
+            } else if (recIdKey.startsWith("ZIRC-MUT-")) {
+                Long mid;
+                try { mid = Long.parseLong(recIdKey.substring("ZIRC-MUT-".length())); }
+                catch (NumberFormatException nfe) { continue; }
+                if ("mutation".equals(slug)) {
+                    // The mutation header itself
+                    mutationStatus.put(mid, FieldStatus.APPROVED);
+                    subSectionStatus.replaceAll((label, st) -> {
+                        // subSectionStatus is keyed by "Mutation N" labels; we
+                        // can't easily reverse the id, but the per-mutation
+                        // loop above already populated it from r.overall().
+                        // Cheaper to just look the id up via mutationLabels.
+                        return st;
+                    });
+                } else if (sectionLabel != null) {
+                    Map<String, FieldStatus> bySect = mutationSectionStatus.get(mid);
+                    if (bySect != null) bySect.put(sectionLabel, FieldStatus.APPROVED);
+                }
+            }
+        }
+        // Re-roll the parent statuses upward so a section reads APPROVED
+        // when all its children are. mutation overall = worst-of inner
+        // sections; "Mutations" = worst-of all mutations (or MISSING when
+        // none exist); overallStatus = worst-of all top-level sections.
+        // An explicit approval on the parent itself never gets downgraded.
+        for (Map.Entry<Long, Map<String, FieldStatus>> e : mutationSectionStatus.entrySet()) {
+            FieldStatus worst = FieldStatus.APPROVED;
+            for (FieldStatus s : e.getValue().values()) {
+                if (s != null) worst = worst.worse(s);
+            }
+            if (Boolean.TRUE.equals(sectionApprovals.get("ZIRC-MUT-" + e.getKey() + "|mutation"))) {
+                worst = FieldStatus.APPROVED;
+            }
+            mutationStatus.put(e.getKey(), worst);
+        }
+        // Recompute top-level "Mutations": presence-check + worst-of-mutations.
+        FieldStatus mutsRollup;
+        if (mutationStatus.isEmpty()) {
+            mutsRollup = FieldStatus.MISSING;
+        } else {
+            mutsRollup = FieldStatus.APPROVED;
+            for (FieldStatus s : mutationStatus.values()) {
+                if (s != null) mutsRollup = mutsRollup.worse(s);
+            }
+        }
+        if (Boolean.TRUE.equals(sectionApprovals.get(submission.getZdbID() + "|mutations"))) {
+            mutsRollup = FieldStatus.APPROVED;
+        }
+        status.bySection().put("Mutations", mutsRollup);
+
+        // Refresh subSectionStatus from the (now potentially-approved)
+        // mutationStatus map so the left-nav "Mutation N" entries pick up
+        // approved coloring too.
+        if (submission.getMutations() != null) {
+            int i = 1;
+            for (Mutation mut : submission.getMutations()) {
+                String label = "Mutation " + i++;
+                FieldStatus st = mutationStatus.get(mut.getId());
+                if (st != null) subSectionStatus.put(label, st);
+            }
+        }
+
+        // Recompute page-overall from the (now potentially-approved) top-level sections.
+        FieldStatus pageOverall = FieldStatus.APPROVED;
+        for (FieldStatus s : status.bySection().values()) {
+            if (s != null) pageOverall = pageOverall.worse(s);
+        }
+        model.addAttribute("overallStatus", pageOverall);
 
         model.addAttribute("mutationStatus", mutationStatus);
         model.addAttribute("mutationFieldStatus", mutationFieldStatus);
@@ -837,6 +949,176 @@ public class ZircDashboardController {
                     mutationId, req.path, req.value, currentUser);
             HibernateUtil.flushAndCommitCurrentSession();
             return MutationDTO.from(m);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // Curator/submitter comment threads (per-field + per-section).
+    //
+    // Threads are addressed by (recId, scope, fieldName | sectionName).
+    // recId reuses the existing audit identifier scheme so a comment can
+    // attach to a top-level field (recId = ZDB-LINESUBMISSION-…), a
+    // mutation (ZIRC-MUT-N), a gene/lesion/assay/phenotype, or a linked
+    // feature.
+    // ──────────────────────────────────────────────────────────────────
+
+    /** JSON shape returned by the comment list endpoint. */
+    public static record CommentDTO(Long id,
+                                    String author,        // display name "F. Last"
+                                    String authorZdbId,
+                                    String comment,
+                                    String createdAt) {}  // ISO-8601
+
+    private static CommentDTO toDto(org.zfin.zirc.entity.LineSubmissionComment c) {
+        String displayName;
+        if (c.getAuthor() == null) {
+            displayName = "Unknown";
+        } else {
+            String first = c.getAuthor().getFirstName();
+            String last  = c.getAuthor().getLastName();
+            String initial = (first != null && !first.isBlank()) ? first.substring(0, 1) + ". " : "";
+            displayName = (initial + (last == null ? "" : last)).trim();
+            if (displayName.isEmpty()) displayName = c.getAuthor().getFullName();
+        }
+        return new CommentDTO(
+                c.getId(),
+                displayName,
+                c.getAuthor() == null ? null : c.getAuthor().getZdbID(),
+                c.getComment(),
+                c.getCreatedAt() == null ? null : c.getCreatedAt().toInstant().toString());
+    }
+
+    @GetMapping("/comments")
+    @ResponseBody
+    public List<CommentDTO> listComments(@RequestParam("recId") String recId,
+                                         @RequestParam("scope") String scope,
+                                         @RequestParam(value = "fieldName",   required = false) String fieldName,
+                                         @RequestParam(value = "sectionName", required = false) String sectionName) {
+        if (!"field".equals(scope) && !"section".equals(scope)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "scope must be 'field' or 'section'");
+        }
+        String hql = "from ZircLineSubmissionComment where recId = :rid and scope = :scope and "
+                + ("field".equals(scope) ? "fieldName = :name" : "sectionName = :name")
+                + " order by createdAt asc, id asc";
+        String name = "field".equals(scope) ? fieldName : sectionName;
+        if (name == null || name.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "fieldName (scope=field) or sectionName (scope=section) is required");
+        }
+        List<org.zfin.zirc.entity.LineSubmissionComment> rows =
+                HibernateUtil.currentSession()
+                        .createQuery(hql, org.zfin.zirc.entity.LineSubmissionComment.class)
+                        .setParameter("rid", recId)
+                        .setParameter("scope", scope)
+                        .setParameter("name", name)
+                        .list();
+        List<CommentDTO> out = new ArrayList<>(rows.size());
+        for (org.zfin.zirc.entity.LineSubmissionComment c : rows) out.add(toDto(c));
+        return out;
+    }
+
+    @PostMapping("/comments")
+    @ResponseBody
+    public CommentDTO addComment(@RequestParam("recId") String recId,
+                                 @RequestParam("scope") String scope,
+                                 @RequestParam(value = "fieldName",   required = false) String fieldName,
+                                 @RequestParam(value = "sectionName", required = false) String sectionName,
+                                 @RequestParam("comment") String comment) {
+        if (!"field".equals(scope) && !"section".equals(scope)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "scope must be 'field' or 'section'");
+        }
+        String name = "field".equals(scope) ? fieldName : sectionName;
+        if (name == null || name.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "fieldName (scope=field) or sectionName (scope=section) is required");
+        }
+        if (comment == null || comment.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "comment must not be empty");
+        }
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        if (currentUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required to comment");
+        }
+        HibernateUtil.createTransaction();
+        try {
+            org.zfin.zirc.entity.LineSubmissionComment c = new org.zfin.zirc.entity.LineSubmissionComment();
+            c.setRecId(recId);
+            c.setScope(scope);
+            if ("field".equals(scope)) c.setFieldName(name);
+            else                       c.setSectionName(name);
+            c.setAuthor(HibernateUtil.currentSession().getReference(Person.class, currentUser.getZdbID()));
+            c.setComment(comment.trim());
+            HibernateUtil.currentSession().persist(c);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return toDto(c);
+        } catch (RuntimeException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // Per-section curator-approval flag.
+    // Upserts a row in zirc.line_submission_section_approval and also
+    // writes an audit-log entry so the existing history popups pick it
+    // up. recId reuses the audit identifier scheme (so we can approve
+    // submission-level sections AND per-mutation inner sections with
+    // the same endpoint).
+    // ──────────────────────────────────────────────────────────────────
+
+    public static record SectionApprovalDTO(String recId,
+                                            String sectionName,
+                                            boolean approved,
+                                            String approver,
+                                            String approvedAt) {}
+
+    @PostMapping("/section-approval")
+    @ResponseBody
+    public SectionApprovalDTO setSectionApproval(@RequestParam("recId") String recId,
+                                                 @RequestParam("sectionName") String sectionName,
+                                                 @RequestParam("approved") boolean approved) {
+        if (recId == null || recId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "recId required");
+        }
+        if (sectionName == null || sectionName.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "sectionName required");
+        }
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        if (currentUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required");
+        }
+        HibernateUtil.createTransaction();
+        try {
+            org.zfin.zirc.entity.LineSubmissionSectionApproval row = HibernateUtil.currentSession()
+                    .createQuery(
+                        "from ZircLineSubmissionSectionApproval where recId = :rid and sectionName = :sn",
+                        org.zfin.zirc.entity.LineSubmissionSectionApproval.class)
+                    .setParameter("rid", recId)
+                    .setParameter("sn", sectionName)
+                    .uniqueResult();
+            boolean oldApproved = row != null && row.isApproved();
+            if (row == null) {
+                row = new org.zfin.zirc.entity.LineSubmissionSectionApproval();
+                row.setRecId(recId);
+                row.setSectionName(sectionName);
+            }
+            row.setApproved(approved);
+            row.setApprover(HibernateUtil.currentSession().getReference(Person.class, currentUser.getZdbID()));
+            HibernateUtil.currentSession().merge(row);
+            if (oldApproved != approved) {
+                RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
+                        recId, "section.approved." + sectionName,
+                        Boolean.toString(oldApproved), Boolean.toString(approved),
+                        "Section " + sectionName + (approved ? " approved" : " un-approved"));
+            }
+            HibernateUtil.flushAndCommitCurrentSession();
+            String approverName = currentUser.getFullName();
+            return new SectionApprovalDTO(recId, sectionName, approved,
+                    approverName,
+                    row.getApprovedAt() == null ? null : row.getApprovedAt().toInstant().toString());
         } catch (RuntimeException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
