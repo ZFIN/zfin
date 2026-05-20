@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.LinkedFeature;
 
 /**
@@ -12,8 +13,8 @@ import org.zfin.zirc.entity.LinkedFeature;
  * field-path PATCH targets whichever column the chosen unit maps to.
  */
 public record LinkedFeatureDTO(
-        Long mutationAId,
-        Long mutationBId,
+        @NotNull Long mutationAId,
+        @NotNull Long mutationBId,
         Boolean distanceKnown,
         Double distanceCentimorgans,
         Double distanceMegabases,

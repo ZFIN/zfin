@@ -4,7 +4,8 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { queryClient } from '../queryClient';
 import { api } from '../api/client';
-import { AssaySummaryDTO, GeneDTO, LesionSummaryDTO, MutationDTO, PhenotypeSummaryDTO } from '../api/types';
+import { MutationDTO } from '../api/types';
+import { FormFor, seedFromDto } from '../api/formHelpers';
 import { useMutationById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -34,40 +35,7 @@ export default function MutationEdit(props: MutationEditProps) {
     );
 }
 
-type FormDataShape = {
-    // General
-    alleleDesignation?: string | null;
-    alleleInZfin?: boolean | null;
-    mutationType?: string | null;
-    zfinRecordEstablished?: boolean | null;
-    // Conditional on zfinRecordEstablished — uiSchema rule gates visibility.
-    cellGenomicFeature?: string | null;
-    mutationDiscoverer?: string | null;
-    mutationInstitution?: string | null;
-    // Mutagenesis
-    mutagenesisStage?: string | null;
-    mutagenesisProtocol?: string | null;
-    molecularlyCharacterized?: boolean | null;
-    // Lethality
-    homozygousLethal?: boolean | null;
-    lethalityStageTypical?: string | null;
-    lethalitySpecificTimepoint?: string | null;
-    lethalityWindowStart?: string | null;
-    lethalityWindowEnd?: string | null;
-    lethalityAdditionalInfo?: string | null;
-    // Publications
-    publications?: string[];
-    // Genotyping assays — server-managed, like /mutations on the
-    // submission. Mirrored into local state so the renderer sees
-    // post-Add/Delete updates; never PATCH'd (see EXTERNALLY_MANAGED_PATHS).
-    assays?: AssaySummaryDTO[];
-    // Genes — same server-managed pattern as assays.
-    genes?: GeneDTO[];
-    // Lesions — same server-managed pattern as assays.
-    lesions?: LesionSummaryDTO[];
-    // Phenotypes — same server-managed pattern as assays.
-    phenotypes?: PhenotypeSummaryDTO[];
-};
+type FormDataShape = FormFor<MutationDTO>;
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
@@ -88,31 +56,6 @@ const renderers = [
     autocompleteRendererEntry,
 ];
 
-function initialDataFromMutation(m: MutationDTO): FormDataShape {
-    return {
-        alleleDesignation: m.alleleDesignation ?? '',
-        alleleInZfin: m.alleleInZfin,
-        mutationType: m.mutationType ?? '',
-        zfinRecordEstablished: m.zfinRecordEstablished,
-        cellGenomicFeature: m.cellGenomicFeature ?? '',
-        mutationDiscoverer: m.mutationDiscoverer ?? '',
-        mutationInstitution: m.mutationInstitution ?? '',
-        mutagenesisStage: m.mutagenesisStage ?? '',
-        mutagenesisProtocol: m.mutagenesisProtocol ?? '',
-        molecularlyCharacterized: m.molecularlyCharacterized,
-        homozygousLethal: m.homozygousLethal,
-        lethalityStageTypical: m.lethalityStageTypical ?? '',
-        lethalitySpecificTimepoint: m.lethalitySpecificTimepoint ?? '',
-        lethalityWindowStart: m.lethalityWindowStart ?? '',
-        lethalityWindowEnd: m.lethalityWindowEnd ?? '',
-        lethalityAdditionalInfo: m.lethalityAdditionalInfo ?? '',
-        publications: m.publications ?? [],
-        assays: m.assays ?? [],
-        genes: m.genes ?? [],
-        lesions: m.lesions ?? [],
-        phenotypes: m.phenotypes ?? [],
-    };
-}
 
 // Paths whose changes flow through dedicated endpoints (POST/DELETE), not
 // the field-path PATCH. Without this filter, an Add/Delete on the assays
@@ -169,7 +112,7 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
 
     React.useEffect(() => {
         if (!mutation || formData !== null) {return;}
-        const seed = initialDataFromMutation(mutation);
+        const seed = seedFromDto(mutation);
         setFormData(seed);
         lastSavedRef.current = seed;
     }, [mutation?.id, formData]);

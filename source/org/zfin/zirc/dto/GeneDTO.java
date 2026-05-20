@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Gene;
 
 /**
@@ -13,9 +14,9 @@ import org.zfin.zirc.entity.Gene;
  * factory for the controller mapping.
  */
 public record GeneDTO(
-        Long id,
-        Long mutationId,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull Long mutationId,
+        @NotNull Integer sortOrder,
         String mutatedGeneZdbID,
         String mutatedGeneAbbreviation,
         String linkageGroup,

@@ -1,5 +1,10 @@
-// Hand-typed mirror of org.zfin.zirc.dto.LineSubmissionDTO, used by the
-// React Query cache and as the seed for the schema-driven form's initial data.
+// GENERATED FILE — do not edit.
+//
+// Source: org.zfin.zirc.dto records. Regenerate via
+//   gradle generateZircTypes
+//
+// See reference/zirc-architecture.md §3 for why this
+// mirror exists and what the generator covers.
 
 export interface LineSubmissionDTO {
     zdbID: string;
@@ -21,10 +26,33 @@ export interface LineSubmissionDTO {
     draft: boolean;
 }
 
-// One pairwise linkage between two mutations on the same submission.
-// distance is stored across two underlying columns (centimorgans vs
-// megabases) — exactly one is non-null at a time. The renderer
-// combines them into a single (value, unit) widget.
+export interface MutationDTO {
+    id: number;
+    lineSubmissionId: string;
+    sortOrder: number;
+    alleleDesignation: string | null;
+    alleleInZfin: boolean | null;
+    mutationType: string | null;
+    zfinRecordEstablished: boolean | null;
+    cellGenomicFeature: string | null;
+    mutationDiscoverer: string | null;
+    mutationInstitution: string | null;
+    mutagenesisStage: string | null;
+    mutagenesisProtocol: string | null;
+    molecularlyCharacterized: boolean | null;
+    homozygousLethal: boolean | null;
+    lethalityStageTypical: string | null;
+    lethalitySpecificTimepoint: string | null;
+    lethalityWindowStart: string | null;
+    lethalityWindowEnd: string | null;
+    lethalityAdditionalInfo: string | null;
+    publications: string[];
+    assays: AssaySummaryDTO[];
+    genes: GeneDTO[];
+    lesions: LesionSummaryDTO[];
+    phenotypes: PhenotypeSummaryDTO[];
+}
+
 export interface LinkedFeatureDTO {
     mutationAId: number;
     mutationBId: number;
@@ -34,109 +62,35 @@ export interface LinkedFeatureDTO {
     additionalInfo: string | null;
 }
 
-export interface MutationDTO {
-    id: number;
-    lineSubmissionId: string;
-    sortOrder: number;
-    // General
-    alleleDesignation: string | null;
-    alleleInZfin: boolean | null;
-    mutationType: string | null;
-    zfinRecordEstablished: boolean | null;
-    // Conditional on zfinRecordEstablished — uiSchema rule gates visibility.
-    cellGenomicFeature: string | null;
-    mutationDiscoverer: string | null;
-    mutationInstitution: string | null;
-    // Mutagenesis
-    mutagenesisStage: string | null;
-    mutagenesisProtocol: string | null;
-    molecularlyCharacterized: boolean | null;
-    // Lethality
-    homozygousLethal: boolean | null;
-    lethalityStageTypical: string | null;
-    lethalitySpecificTimepoint: string | null;
-    lethalityWindowStart: string | null;
-    lethalityWindowEnd: string | null;
-    lethalityAdditionalInfo: string | null;
-    // Publications
-    publications: string[];
-    // Genotyping assays — summary rows only, surfaced as collapsed cards.
-    assays: AssaySummaryDTO[];
-    // Per-mutation genes — full records (small enough that there's no
-    // separate summary type).
-    genes: GeneDTO[];
-    // Per-mutation lesions — summary rows only, surfaced as collapsed
-    // cards. Full per-lesion fields fetched via /api/zirc/lesions/{id}.
-    lesions: LesionSummaryDTO[];
-    // Per-mutation phenotypes — summary rows only, surfaced as collapsed
-    // cards. Full per-phenotype fields fetched via /api/zirc/phenotypes/{id}.
-    phenotypes: PhenotypeSummaryDTO[];
-}
-
 export interface LesionSummaryDTO {
     id: number;
     sortOrder: number;
     lesionType: string | null;
 }
 
-export interface PhenotypeSummaryDTO {
-    id: number;
-    sortOrder: number;
-    description: string | null;
-}
-
-// Full per-phenotype payload. segregation and type are PostgreSQL text[]
-// columns surfaced as JSON string arrays. Wire format for timing is
-// always integer hpf; the hpf/dpf unit toggle in the renderer is UI
-// state only.
-export interface PhenotypeDTO {
-    id: number;
-    mutationId: number | null;
-    sortOrder: number;
-    description: string | null;
-    hpfStart: number | null;
-    hpfEnd: number | null;
-    stage: string | null;
-    zfinImagePermission: boolean | null;
-    zircImagePermission: boolean | null;
-    nonMendelianPercentage: number | null;
-    nonMendelianComment: string | null;
-    segregation: string[];
-    type: string[];
-}
-
-// Full per-lesion payload. Field visibility is decided by the uiSchema
-// rules on lesionType, not by which fields are populated.
 export interface LesionDTO {
     id: number;
-    mutationId: number | null;
+    mutationId: number;
     sortOrder: number;
     lesionType: string | null;
-    // Sizing
     lesionSizeBp: number | null;
     insertionSizeBp: number | null;
-    // Sequence specifics
     nucleotideChange: string | null;
     deletedSequence: string | null;
     insertedSequence: string | null;
     transgeneSequence: string | null;
-    // Location
     locationInline: string | null;
     fivePrimeFlank: string | null;
     threePrimeFlank: string | null;
     hasLargeVariant: boolean | null;
-    // Protein-level
     mutatedAminoAcids: string | null;
     mutatedAminoAcidsHgvs: string | null;
-    // Catch-all
     additionalInfo: string | null;
 }
 
-// One per-mutation gene record. mutatedGeneZdbID is the marker FK; the
-// abbreviation is denormalized for display.
 export interface GeneDTO {
     id: number;
-    mutationId: number | null;
+    mutationId: number;
     sortOrder: number;
     mutatedGeneZdbID: string | null;
     mutatedGeneAbbreviation: string | null;
@@ -151,36 +105,26 @@ export interface AssaySummaryDTO {
     assayType: string | null;
 }
 
-// Full per-assay payload — used by the inline assay editor (M4.2). Field
-// visibility is decided by the uiSchema's conditional rules, not by which
-// fields are populated, so every column shows up here regardless of type.
 export interface AssayDTO {
     id: number;
-    mutationId: number | null;
+    mutationId: number;
     sortOrder: number;
     assayType: string | null;
-    // PCR core
     forwardPrimer: string | null;
     reversePrimer: string | null;
     expectedWtPcr: string | null;
     expectedMutPcr: string | null;
-    // Sequencing
     sequencingPrimer: string | null;
-    // dCAPS
     dcapsMismatchPrimer: string | null;
-    // Allele-specific PCR
     wtSpecificPrimer: string | null;
     mutSpecificPrimer: string | null;
     commonPrimer: string | null;
-    // KASP
     kaspGenomicSequence: string | null;
-    // RFLP
     restrictionEnzymeName: string | null;
     restrictionEnzymeCatalog: string | null;
     enzymeCleaves: string[];
     expectedWtDigest: string | null;
     expectedMutDigest: string | null;
-    // SSLP
     sslpMarkerName: string | null;
     sslpDistance: string | null;
     sslpGenomicLocation: string | null;
@@ -188,9 +132,7 @@ export interface AssayDTO {
     sslpOutcrossedBackground: string | null;
     sslpInducedPcr: string | null;
     sslpOutcrossedPcr: string | null;
-    // Catch-all
     additionalInfo: string | null;
-    // Attachments (M4.3) — summary; content streamed separately.
     attachments: AssayFileDTO[];
 }
 
@@ -202,8 +144,28 @@ export interface AssayFileDTO {
     uploadedAt: string | null;
 }
 
-// One row in an autocomplete result. label is the display string with
-// the ZDB-ID in parens; value is the canonical id stored back in the form.
+export interface PhenotypeSummaryDTO {
+    id: number;
+    sortOrder: number;
+    description: string | null;
+}
+
+export interface PhenotypeDTO {
+    id: number;
+    mutationId: number;
+    sortOrder: number;
+    description: string | null;
+    hpfStart: number | null;
+    hpfEnd: number | null;
+    stage: string | null;
+    zfinImagePermission: boolean | null;
+    zircImagePermission: boolean | null;
+    nonMendelianPercentage: number | null;
+    nonMendelianComment: string | null;
+    segregation: string[];
+    type: string[];
+}
+
 export interface AutocompleteItemDTO {
     label: string;
     value: string;

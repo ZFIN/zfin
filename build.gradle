@@ -1492,6 +1492,23 @@ compileJava {
 // GWT COMPILATION TASKS
 // ============================================================================
 
+// Regenerate home/javascript/react/zirc/api/types.ts from the Java DTO
+// records in org.zfin.zirc.dto. See reference/zirc-architecture.md §3.
+//
+// Run via:  gradle generateZircTypes
+// CI verifies cleanliness via a JUnit test that calls the generator
+// in-process and asserts the committed file is byte-equal.
+task generateZircTypes(type: JavaExec) {
+    description = 'Regenerate the ZIRC TypeScript DTO mirror from Java records.'
+    group = 'build'
+    dependsOn 'compileJava'
+
+    mainClass = 'org.zfin.zirc.dto.GenerateTypeScript'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = project.projectDir
+    // No args → writes to the default home/javascript/react/zirc/api/types.ts
+}
+
 // Task to compile a single GWT module
 task compileGwtModule(type: JavaExec) {
     description = 'Compile a GWT module (specify with -Pmodule=...)'

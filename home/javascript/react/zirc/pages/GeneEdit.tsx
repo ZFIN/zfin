@@ -4,6 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { GeneDTO } from '../api/types';
+import { FormFor, seedFromDto } from '../api/formHelpers';
 import { geneKey, mutationKey, useGeneById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -41,21 +42,7 @@ const renderers = [
     autocompleteRendererEntry,
 ];
 
-type FormDataShape = {
-    mutatedGeneZdbID: string | null;
-    linkageGroup: string | null;
-    genbankGenomicDna: string | null;
-    genbankCdna: string | null;
-};
-
-function initialDataFromGene(g: GeneDTO): FormDataShape {
-    return {
-        mutatedGeneZdbID:  g.mutatedGeneZdbID ?? '',
-        linkageGroup:      g.linkageGroup ?? '',
-        genbankGenomicDna: g.genbankGenomicDna ?? '',
-        genbankCdna:       g.genbankCdna ?? '',
-    };
-}
+type FormDataShape = FormFor<GeneDTO>;
 
 function diffLeaves(prev: unknown, curr: unknown, basePath = ''): Array<[string, unknown]> {
     const isPlainObject = (v: unknown): v is Record<string, unknown> =>
@@ -95,7 +82,7 @@ export function GeneEdit({ geneId, mutationId }: GeneEditProps) {
 
     React.useEffect(() => {
         if (!gene || formData !== null) {return;}
-        const seed = initialDataFromGene(gene);
+        const seed = seedFromDto(gene);
         setFormData(seed);
         lastSavedRef.current = seed;
     }, [gene?.id, formData]);

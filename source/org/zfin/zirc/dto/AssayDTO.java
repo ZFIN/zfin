@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.entity.GenotypingAssayFile;
 
@@ -14,9 +15,9 @@ import java.util.List;
  * rules decide what's <em>visible</em>, the persistence layer doesn't.
  */
 public record AssayDTO(
-        Long id,
-        Long mutationId,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull Long mutationId,
+        @NotNull Integer sortOrder,
         String assayType,
         // PCR core
         String forwardPrimer,

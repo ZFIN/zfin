@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Phenotype;
 
 /**
@@ -10,7 +11,10 @@ import org.zfin.zirc.entity.Phenotype;
  * <p>{@code description} is truncated by the renderer for display;
  * the full text comes back on expand.
  */
-public record PhenotypeSummaryDTO(Long id, Integer sortOrder, String description) {
+public record PhenotypeSummaryDTO(
+        @NotNull Long id,
+        @NotNull Integer sortOrder,
+        String description) {
 
     public static PhenotypeSummaryDTO of(Phenotype p) {
         return new PhenotypeSummaryDTO(p.getId(), p.getSortOrder(), p.getDescription());

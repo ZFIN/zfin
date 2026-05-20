@@ -4,6 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { PhenotypeDTO } from '../api/types';
+import { FormFor, seedFromDto } from '../api/formHelpers';
 import { usePhenotypeById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -39,22 +40,7 @@ const renderers = [
     phenotypeTimingRendererEntry,
 ];
 
-type FormDataShape = Omit<PhenotypeDTO, 'id' | 'mutationId' | 'sortOrder'>;
-
-function initialDataFromPhenotype(p: PhenotypeDTO): FormDataShape {
-    return {
-        description:             p.description ?? '',
-        hpfStart:                p.hpfStart,
-        hpfEnd:                  p.hpfEnd,
-        stage:                   p.stage ?? '',
-        zfinImagePermission:     p.zfinImagePermission,
-        zircImagePermission:     p.zircImagePermission,
-        nonMendelianPercentage:  p.nonMendelianPercentage,
-        nonMendelianComment:     p.nonMendelianComment ?? '',
-        segregation:             p.segregation ?? [],
-        type:                    p.type ?? [],
-    };
-}
+type FormDataShape = FormFor<PhenotypeDTO>;
 
 function diffLeaves(prev: unknown, curr: unknown, basePath = ''): Array<[string, unknown]> {
     const isPlainObject = (v: unknown): v is Record<string, unknown> =>
@@ -93,7 +79,7 @@ export function PhenotypeEdit({ phenotypeId, mutationId }: PhenotypeEditProps) {
 
     React.useEffect(() => {
         if (!phenotype || formData !== null) {return;}
-        const seed = initialDataFromPhenotype(phenotype);
+        const seed = seedFromDto(phenotype);
         setFormData(seed);
         lastSavedRef.current = seed;
     }, [phenotype?.id, formData]);

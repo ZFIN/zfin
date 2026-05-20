@@ -292,6 +292,7 @@ The most-likely-first answers to common confusions:
 | JSP fails to compile with "Must use jsp:body" | Comments between `<jsp:attribute>` blocks break the parser; move the comment inside an attribute body |
 | `FormSchemaSnapshotTest` fails | A schema/uiSchema change drifted the wire output; rerun with `-Pzirc.snapshot.update=true`, review the diff under `test/resources/zirc/snapshot/`, then commit if intended |
 | `FormSchemaInvariantsTest` fails | The three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the DTO drifted. The failure message names which form and which side is out of sync. Either add the missing entry on the other side, or whitelist the divergence as intentional in the test's `Spec` (e.g. a new server-managed child list) |
+| `GenerateTypeScriptDriftTest` fails | The committed `home/javascript/react/zirc/api/types.ts` is out of sync with the Java DTOs. Run `gradle generateZircTypes` and commit the regenerated file. If you added a new DTO, also list it in `GenerateTypeScript.DTO_CLASSES` so it's emitted. |
 | Liquibase says a changeset already ran but it didn't | The dev DB's tracker is out of sync; apply the SQL directly with `psql` for local work — CI runs cleanly |
 
 ---

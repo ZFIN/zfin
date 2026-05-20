@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Lesion;
 
 /**
@@ -14,9 +15,9 @@ import org.zfin.zirc.entity.Lesion;
  * clusters.
  */
 public record LesionDTO(
-        Long id,
-        Long mutationId,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull Long mutationId,
+        @NotNull Integer sortOrder,
         String lesionType,
         // Size fields (per-type)
         Integer lesionSizeBp,

@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Phenotype;
 
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.List;
  * hpfStart change once the STAGE lookup is wired in).
  */
 public record PhenotypeDTO(
-        Long id,
-        Long mutationId,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull Long mutationId,
+        @NotNull Integer sortOrder,
         String description,
         // Timing
         Integer hpfStart,

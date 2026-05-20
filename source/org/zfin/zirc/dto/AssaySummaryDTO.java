@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.GenotypingAssay;
 
 /**
@@ -8,8 +9,8 @@ import org.zfin.zirc.entity.GenotypingAssay;
  * per-assay field set is fetched separately when a card is expanded.
  */
 public record AssaySummaryDTO(
-        Long id,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull Integer sortOrder,
         String assayType) {
 
     public static AssaySummaryDTO of(GenotypingAssay a) {

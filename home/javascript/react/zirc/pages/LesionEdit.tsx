@@ -4,6 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { LesionDTO } from '../api/types';
+import { FormFor, seedFromDto } from '../api/formHelpers';
 import { lesionKey, mutationKey, useLesionById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -39,26 +40,7 @@ const renderers = [
     selectWithOtherRendererEntry,
 ];
 
-type FormDataShape = Omit<LesionDTO, 'id' | 'mutationId' | 'sortOrder'>;
-
-function initialDataFromLesion(l: LesionDTO): FormDataShape {
-    return {
-        lesionType:            l.lesionType ?? '',
-        additionalInfo:        l.additionalInfo ?? '',
-        lesionSizeBp:          l.lesionSizeBp,
-        insertionSizeBp:       l.insertionSizeBp,
-        nucleotideChange:      l.nucleotideChange ?? '',
-        deletedSequence:       l.deletedSequence ?? '',
-        insertedSequence:      l.insertedSequence ?? '',
-        transgeneSequence:     l.transgeneSequence ?? '',
-        locationInline:        l.locationInline ?? '',
-        fivePrimeFlank:        l.fivePrimeFlank ?? '',
-        threePrimeFlank:       l.threePrimeFlank ?? '',
-        hasLargeVariant:       l.hasLargeVariant,
-        mutatedAminoAcids:     l.mutatedAminoAcids ?? '',
-        mutatedAminoAcidsHgvs: l.mutatedAminoAcidsHgvs ?? '',
-    };
-}
+type FormDataShape = FormFor<LesionDTO>;
 
 function diffLeaves(prev: unknown, curr: unknown, basePath = ''): Array<[string, unknown]> {
     const isPlainObject = (v: unknown): v is Record<string, unknown> =>
@@ -98,7 +80,7 @@ export function LesionEdit({ lesionId, mutationId }: LesionEditProps) {
 
     React.useEffect(() => {
         if (!lesion || formData !== null) {return;}
-        const seed = initialDataFromLesion(lesion);
+        const seed = seedFromDto(lesion);
         setFormData(seed);
         lastSavedRef.current = seed;
     }, [lesion?.id, formData]);

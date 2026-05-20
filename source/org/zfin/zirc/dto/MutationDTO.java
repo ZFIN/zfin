@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.entity.Lesion;
@@ -10,9 +11,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public record MutationDTO(
-        Long id,
-        String lineSubmissionId,
-        Integer sortOrder,
+        @NotNull Long id,
+        @NotNull String lineSubmissionId,
+        @NotNull Integer sortOrder,
         // General
         String alleleDesignation,
         Boolean alleleInZfin,

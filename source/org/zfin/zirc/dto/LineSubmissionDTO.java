@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.Mutation;
 
@@ -7,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public record LineSubmissionDTO(
-        String zdbID,
+        @NotNull String zdbID,
         String name,
         String abbreviation,
         String previousNames,

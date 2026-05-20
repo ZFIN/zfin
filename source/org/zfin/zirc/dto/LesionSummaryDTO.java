@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Lesion;
 
 /**
@@ -7,7 +8,10 @@ import org.zfin.zirc.entity.Lesion;
  * record is fetched via {@code /api/zirc/lesions/{id}} when a card is
  * expanded — same pattern as {@link AssaySummaryDTO}.
  */
-public record LesionSummaryDTO(Long id, Integer sortOrder, String lesionType) {
+public record LesionSummaryDTO(
+        @NotNull Long id,
+        @NotNull Integer sortOrder,
+        String lesionType) {
 
     public static LesionSummaryDTO of(Lesion l) {
         return new LesionSummaryDTO(l.getId(), l.getSortOrder(), l.getLesionType());

@@ -4,6 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { AssayFileDTO, AssayDTO } from '../api/types';
+import { FormFor, seedFromDto } from '../api/formHelpers';
 import { assayKey, mutationKey, useAssayById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -35,41 +36,12 @@ const renderers = [
     attachmentsRendererEntry,
 ];
 
-type FormDataShape = Omit<AssayDTO, 'id' | 'mutationId' | 'sortOrder'>;
+type FormDataShape = FormFor<AssayDTO>;
 
 // Server-managed: uploads/deletes go through dedicated endpoints, not the
 // field-path PATCH. AssayEdit must skip /attachments in its leaf diff.
 const EXTERNALLY_MANAGED_PATHS = new Set<string>(['/attachments']);
 
-function initialDataFromAssay(a: AssayDTO): FormDataShape {
-    return {
-        assayType: a.assayType ?? '',
-        additionalInfo: a.additionalInfo ?? '',
-        forwardPrimer: a.forwardPrimer ?? '',
-        reversePrimer: a.reversePrimer ?? '',
-        expectedWtPcr: a.expectedWtPcr ?? '',
-        expectedMutPcr: a.expectedMutPcr ?? '',
-        sequencingPrimer: a.sequencingPrimer ?? '',
-        dcapsMismatchPrimer: a.dcapsMismatchPrimer ?? '',
-        wtSpecificPrimer: a.wtSpecificPrimer ?? '',
-        mutSpecificPrimer: a.mutSpecificPrimer ?? '',
-        commonPrimer: a.commonPrimer ?? '',
-        kaspGenomicSequence: a.kaspGenomicSequence ?? '',
-        restrictionEnzymeName: a.restrictionEnzymeName ?? '',
-        restrictionEnzymeCatalog: a.restrictionEnzymeCatalog ?? '',
-        enzymeCleaves: a.enzymeCleaves ?? [],
-        expectedWtDigest: a.expectedWtDigest ?? '',
-        expectedMutDigest: a.expectedMutDigest ?? '',
-        sslpMarkerName: a.sslpMarkerName ?? '',
-        sslpDistance: a.sslpDistance ?? '',
-        sslpGenomicLocation: a.sslpGenomicLocation ?? '',
-        sslpInducedBackground: a.sslpInducedBackground ?? '',
-        sslpOutcrossedBackground: a.sslpOutcrossedBackground ?? '',
-        sslpInducedPcr: a.sslpInducedPcr ?? '',
-        sslpOutcrossedPcr: a.sslpOutcrossedPcr ?? '',
-        attachments: a.attachments ?? [],
-    };
-}
 
 function diffLeaves(
     prev: unknown,
@@ -124,7 +96,7 @@ export function AssayEdit({ assayId, mutationId }: AssayEditProps) {
 
     React.useEffect(() => {
         if (!assay || formData !== null) {return;}
-        const seed = initialDataFromAssay(assay);
+        const seed = seedFromDto(assay);
         setFormData(seed);
         lastSavedRef.current = seed;
     }, [assay?.id, formData]);

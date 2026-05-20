@@ -1,5 +1,6 @@
 package org.zfin.zirc.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.GenotypingAssayFile;
 
 import java.time.Instant;
@@ -12,8 +13,8 @@ import java.util.Date;
  * rather than hand-rolling a path.
  */
 public record AssayFileDTO(
-        Long id,
-        String originalFilename,
+        @NotNull Long id,
+        @NotNull String originalFilename,
         String contentType,
         Long fileSize,
         Instant uploadedAt) {
