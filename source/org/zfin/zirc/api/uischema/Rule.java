@@ -38,6 +38,17 @@ public record Rule(Effect effect, RuleCondition condition) {
                 new RuleCondition(scope, Map.of("const", true)));
     }
 
+    /**
+     * HIDE when the scoped value equals boolean true; equivalent to
+     * SHOW-when-not-true. The complement of {@link #showWhenTrue} is
+     * the common case for "render alternative widget when flag is off"
+     * (e.g. plain input + autocomplete on the same scope).
+     */
+    public static Rule hideWhenTrue(String scope) {
+        return new Rule(Effect.HIDE,
+                new RuleCondition(scope, Map.of("const", true)));
+    }
+
     /** SHOW when the scoped value is one of the listed values. */
     public static Rule showWhenIn(String scope, String... values) {
         return new Rule(Effect.SHOW,

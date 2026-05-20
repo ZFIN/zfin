@@ -161,16 +161,43 @@
     "elements" : [ {
       "elements" : [ {
         "options" : {
+          "helpText" : "When \"Yes\", the field below searches existing ZFIN markers.",
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/alleleInZfin",
+        "type" : "Control"
+      }, {
+        "options" : {
           "helpText" : "ZFIN allele designation; leave blank if not yet assigned.",
           "placeholder" : "e.g. zf123"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "HIDE"
         },
         "scope" : "#/properties/alleleDesignation",
         "type" : "Control"
       }, {
         "options" : {
-          "widget" : "yesNoRadio"
+          "helpText" : "Resolves to the ZFIN marker ZDB-ID.",
+          "placeholder" : "Start typing an allele or ZDB-ID…",
+          "widget" : "autocomplete"
         },
-        "scope" : "#/properties/alleleInZfin",
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/alleleDesignation",
         "type" : "Control"
       }, {
         "scope" : "#/properties/mutationType",
@@ -213,6 +240,58 @@
         "type" : "Control"
       } ],
       "label" : "Mutagenesis",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "genesList"
+        },
+        "scope" : "#/properties/genes",
+        "type" : "Control"
+      } ],
+      "label" : "Genes",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "lesionsList"
+        },
+        "scope" : "#/properties/lesions",
+        "type" : "Control"
+      } ],
+      "label" : "Lesions",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "assaysList"
+        },
+        "scope" : "#/properties/assays",
+        "type" : "Control"
+      } ],
+      "label" : "Genotyping Assays",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "phenotypesList"
+        },
+        "scope" : "#/properties/phenotypes",
+        "type" : "Control"
+      } ],
+      "label" : "Phenotypes",
+      "options" : {
+        "layout" : "plain"
+      },
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -310,58 +389,6 @@
         "type" : "Control"
       } ],
       "label" : "Publications",
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "widget" : "assaysList"
-        },
-        "scope" : "#/properties/assays",
-        "type" : "Control"
-      } ],
-      "label" : "Genotyping Assays",
-      "options" : {
-        "layout" : "plain"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "widget" : "genesList"
-        },
-        "scope" : "#/properties/genes",
-        "type" : "Control"
-      } ],
-      "label" : "Genes",
-      "options" : {
-        "layout" : "plain"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "widget" : "lesionsList"
-        },
-        "scope" : "#/properties/lesions",
-        "type" : "Control"
-      } ],
-      "label" : "Lesions",
-      "options" : {
-        "layout" : "plain"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "widget" : "phenotypesList"
-        },
-        "scope" : "#/properties/phenotypes",
-        "type" : "Control"
-      } ],
-      "label" : "Phenotypes",
-      "options" : {
-        "layout" : "plain"
-      },
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

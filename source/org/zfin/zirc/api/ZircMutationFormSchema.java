@@ -98,16 +98,36 @@ public final class ZircMutationFormSchema {
         // Conditional reveal: lethality detail fields only render when
         // homozygousLethal is exactly true.
         Rule showWhenLethal = Rule.showWhenTrue("#/properties/homozygousLethal");
+        // Twin rules on the alleleDesignation pair: plain input renders when
+        // the curator doesn't claim the allele already exists in ZFIN;
+        // marker autocomplete renders when they do.
+        Rule hideIfInZfin = Rule.hideWhenTrue("#/properties/alleleInZfin");
+        Rule showIfInZfin = Rule.showWhenTrue("#/properties/alleleInZfin");
 
         return new VerticalLayout(List.of(
                 Group.of("General", List.of(
+                        // alleleInZfin gates which alleleDesignation widget
+                        // renders, so it comes first in the group.
+                        new Control("#/properties/alleleInZfin",
+                                Options.of()
+                                        .widget("yesNoRadio")
+                                        .helpText("When \"Yes\", the field below searches existing ZFIN markers."),
+                                null),
+                        // Plain text input for new alleles.
                         new Control("#/properties/alleleDesignation",
                                 Options.of()
                                         .placeholder("e.g. zf123")
                                         .helpText("ZFIN allele designation; leave blank if not yet assigned."),
-                                null),
-                        new Control("#/properties/alleleInZfin",
-                                Options.of().widget("yesNoRadio"), null),
+                                hideIfInZfin),
+                        // Marker autocomplete when the allele is already in
+                        // ZFIN — same widget the per-gene form uses; the
+                        // selected ZDB-ID is what we PATCH back.
+                        new Control("#/properties/alleleDesignation",
+                                Options.of()
+                                        .widget("autocomplete")
+                                        .placeholder("Start typing an allele or ZDB-ID…")
+                                        .helpText("Resolves to the ZFIN marker ZDB-ID."),
+                                showIfInZfin),
                         Control.of("#/properties/mutationType"),
                         new Control("#/properties/mutationDiscoverer",
                                 Options.of().placeholder("Person who first identified the mutation"),
@@ -125,6 +145,32 @@ public final class ZircMutationFormSchema {
                         new Control("#/properties/molecularlyCharacterized",
                                 Options.of().widget("yesNoRadio"), null)
                 )),
+                // Genes: same inline-expand pattern as assays.
+                new Group("Genes",
+                        List.of(new Control("#/properties/genes",
+                                Options.of().widget("genesList"), null)),
+                        Options.of().layout("plain"),
+                        null),
+                // Lesions: same inline-expand pattern; the per-lesion
+                // form has the lesion-type matrix.
+                new Group("Lesions",
+                        List.of(new Control("#/properties/lesions",
+                                Options.of().widget("lesionsList"), null)),
+                        Options.of().layout("plain"),
+                        null),
+                // Genotyping Assays is a list of child rows like the
+                // submission's Mutations section — drop the table wrapper.
+                new Group("Genotyping Assays",
+                        List.of(new Control("#/properties/assays",
+                                Options.of().widget("assaysList"), null)),
+                        Options.of().layout("plain"),
+                        null),
+                // Phenotypes: same inline-expand pattern; no type matrix.
+                new Group("Phenotypes",
+                        List.of(new Control("#/properties/phenotypes",
+                                Options.of().widget("phenotypesList"), null)),
+                        Options.of().layout("plain"),
+                        null),
                 Group.of("Lethality", List.of(
                         new Control("#/properties/homozygousLethal",
                                 Options.of().widget("yesNoRadio"), null),
@@ -146,33 +192,7 @@ public final class ZircMutationFormSchema {
                 Group.of("Publications", List.of(
                         new Control("#/properties/publications",
                                 Options.of().widget("stringList"), null)
-                )),
-                // Genotyping Assays is a list of child rows like the
-                // submission's Mutations section — drop the table wrapper.
-                new Group("Genotyping Assays",
-                        List.of(new Control("#/properties/assays",
-                                Options.of().widget("assaysList"), null)),
-                        Options.of().layout("plain"),
-                        null),
-                // Genes: same inline-expand pattern as assays.
-                new Group("Genes",
-                        List.of(new Control("#/properties/genes",
-                                Options.of().widget("genesList"), null)),
-                        Options.of().layout("plain"),
-                        null),
-                // Lesions: same inline-expand pattern; the per-lesion
-                // form has the lesion-type matrix.
-                new Group("Lesions",
-                        List.of(new Control("#/properties/lesions",
-                                Options.of().widget("lesionsList"), null)),
-                        Options.of().layout("plain"),
-                        null),
-                // Phenotypes: same inline-expand pattern; no type matrix.
-                new Group("Phenotypes",
-                        List.of(new Control("#/properties/phenotypes",
-                                Options.of().widget("phenotypesList"), null)),
-                        Options.of().layout("plain"),
-                        null)
+                ))
         ));
     }
 
