@@ -29,18 +29,21 @@ public class EnsemblTranscriptBiotypeMappingTest {
     public void proteinCodingAndCodingVariantsAreMrna() {
         Map<String, TranscriptType.Type> m = EnsemblTranscriptFastaReadProcess.BIOTYPE_TO_ZFIN_TYPE;
         for (String biotype : List.of("protein_coding",
-                                       "nonsense_mediated_decay", "non_stop_decay",
                                        "IG_C_gene", "TR_J_gene", "TR_V_gene", "TR_D_gene")) {
             assertEquals("expected MRNA for " + biotype, MRNA, m.get(biotype));
         }
     }
 
     @Test
-    public void retainedIntronIsNcrna() {
-        // Per Sridhar's request on ZFIN-9472: retained_intron transcripts are
-        // non-coding, not mRNA.
-        assertEquals(NCRNA,
-                EnsemblTranscriptFastaReadProcess.BIOTYPE_TO_ZFIN_TYPE.get("retained_intron"));
+    public void splicingVariantsAreNcrna() {
+        // Per Sridhar on ZFIN-10222: retained_intron, nonsense_mediated_decay,
+        // and non_stop_decay transcripts are non-coding, not mRNA.
+        Map<String, TranscriptType.Type> m = EnsemblTranscriptFastaReadProcess.BIOTYPE_TO_ZFIN_TYPE;
+        for (String biotype : List.of("retained_intron",
+                                       "nonsense_mediated_decay",
+                                       "non_stop_decay")) {
+            assertEquals("expected NCRNA for " + biotype, NCRNA, m.get(biotype));
+        }
     }
 
     @Test

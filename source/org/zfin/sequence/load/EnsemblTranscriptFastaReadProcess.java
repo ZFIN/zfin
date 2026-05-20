@@ -122,11 +122,11 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         Map<String, TranscriptType.Type> m = new HashMap<>();
         // Protein-coding (and coding variants Ensembl tags separately)
         m.put("protein_coding",                       MRNA);
-        // retained_intron: per Sridhar (ZFIN-9472) these should be ncRNA;
-        // a future ticket will add "retained intron" as an annotation status.
+        // retained_intron / nonsense_mediated_decay / non_stop_decay:
+        // per Sridhar (ZFIN-10222 review) all three should be ncRNA.
         m.put("retained_intron",                      NCRNA);
-        m.put("nonsense_mediated_decay",              MRNA);
-        m.put("non_stop_decay",                       MRNA);
+        m.put("nonsense_mediated_decay",              NCRNA);
+        m.put("non_stop_decay",                       NCRNA);
         m.put("IG_C_gene",                            MRNA);
         m.put("TR_J_gene",                            MRNA);
         m.put("TR_V_gene",                            MRNA);
