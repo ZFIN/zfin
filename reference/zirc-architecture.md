@@ -389,23 +389,25 @@ response shape consistent.
 
 ---
 
-## 13. OpenAPI contract
+## 13. OpenAPI contract — postponed
 
-The hand-curated spec lives at `home/WEB-INF/openapi/zirc-api.yaml`
-and is served from `GET /api/zirc/openapi.yaml`. The Swagger UI shell
-at `GET /api/zirc/docs` mounts a vendored copy of swagger-ui-dist
-against that YAML. The vendored assets are in
-`home/WEB-INF/openapi/swagger-ui/`.
+There is no published OpenAPI 3 spec for the ZIRC API right now. The
+hand-curated YAML + drift test + vendored Swagger UI shell that
+shipped during M1–M8 was removed because a per-feature OpenAPI surface
+in an otherwise-undocumented codebase was a maintenance asymmetry —
+new ZIRC endpoints had to mirror into the YAML or CI failed, while
+the rest of the codebase had no such expectation, and curators of
+other features were the ones paying the discovery cost.
 
-The drift test `ZircOpenApiDriftTest` reflects over every
-`@RestController` in `org.zfin.zirc.api` and asserts every
-`(method, path)` pair appears in both the YAML and the code. Adding a
-new endpoint without updating the YAML breaks CI.
+See `reference/zirc-openapi-approach.md` for the original
+decision-evaluation (springdoc / hand-curated / swagger-core
+annotations) and for the "return-to-this" triggers — chief among them
+a codebase-wide migration to Spring Boot, or a second feature area
+independently growing an OpenAPI surface.
 
-**Rule**: when you add or remove a controller method, update
-`zirc-api.yaml` in the same PR. The drift test will tell you which
-direction (handler-missing-from-spec or spec-missing-from-code) you
-got wrong.
+`FormSchemaSnapshotTest` continues to lock down the wire shape of the
+form-schema responses. That's a narrower contract than OpenAPI but
+it's the contract that actually constrains the React client today.
 
 ---
 
@@ -429,8 +431,7 @@ source/org/zfin/zirc/
     ├── ZircLinkedFeatureFormSchema.java — per-linkage form (composite PK)
     ├── ZircAutocompleteApiController.java — markers / features / persons type-ahead
     ├── Zirc*ApiController.java       — Spring MVC controllers
-    ├── ZircApiExceptionHandler.java  — RFC 7807 advice
-    └── ZircOpenApiController.java    — /openapi.yaml + /docs + vendored UI
+    └── ZircApiExceptionHandler.java  — RFC 7807 advice
 
 home/javascript/react/zirc/
 ├── api/                              client + types + React Query hooks
@@ -456,13 +457,7 @@ home/javascript/react/zirc/
         ├── PhenotypeTimingRenderer.tsx — hpf/dpf unit toggle (UI-only)
         ├── ...
 
-home/WEB-INF/openapi/
-├── zirc-api.yaml                     hand-curated OpenAPI 3 spec
-├── swagger-ui.html                   Swagger UI shell
-└── swagger-ui/                       vendored swagger-ui-dist
-
 test/org/zfin/zirc/api/
-├── ZircOpenApiDriftTest.java         JUnit 4 reflection drift test
 ├── FormSchemaSnapshotTest.java       JUnit 4 byte-level snapshot test
 └── ...
 test/resources/zirc/snapshot/
@@ -482,7 +477,7 @@ source/org/zfin/db/postGmakePostloaddb/
 
 ### Footprint by category
 
-The schema-driven stack lands at ~80 files / ~8.1k LOC, split close to
+The schema-driven stack lands at ~79 files / ~8.0k LOC, split close to
 50/50 between front end and back end. The bulk concentrates in three
 places: `ZircSubmissionService` (the PATCH/audit dispatcher, ~814 LOC),
 the seven `*FormSchema` classes (~1.5k LOC) that are the single source
@@ -508,11 +503,11 @@ any shared scaffolding gets counted.
 | `zirc/api/` — `client.ts`, `queries.ts`, `types.ts`            |     3 |   576 |
 | `zirc/components/SaveStatusBadge.tsx`                          |     1 |    90 |
 
-**Back end — 49 files / ~4,202 LOC**
+**Back end — 48 files / ~4,131 LOC**
 
 | Group                                                                                | Files | LOC   |
 |--------------------------------------------------------------------------------------|-------|-------|
-| REST controllers + `ZircApiExceptionHandler` + `ZircOpenApiController`               |     9 |   635 |
+| REST controllers + `ZircApiExceptionHandler`                                         |     8 |   564 |
 | Per-aggregate `*FormSchema.java` (`schema()` + `uiSchema()` + `FIELDS` dispatch map) |     7 | 1,484 |
 | `api/jsonschema/` typed JSON Schema records                                          |     7 |   227 |
 | `api/uischema/` typed UI Schema records                                              |     6 |   241 |
@@ -551,8 +546,7 @@ You almost always touch six places. In this order:
 5. **JSON Schema**: a property in `Zirc*FormSchema.schema()` (typed record under `org.zfin.zirc.api.jsonschema`).
 6. **uiSchema**: a Control (with options) in the appropriate Group in `Zirc*FormSchema.uiSchema()`.
 7. **TS type**: mirror in `home/javascript/react/zirc/api/types.ts`.
-8. **OpenAPI**: if the new field changes the response shape, update `home/WEB-INF/openapi/zirc-api.yaml` (drift test only covers paths, not field-level schemas).
-9. **Snapshot**: rerun `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`, then review the diff under `test/resources/zirc/snapshot/` before committing.
+8. **Snapshot**: rerun `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`, then review the diff under `test/resources/zirc/snapshot/` before committing.
 
 That's it. If the field is editable, no React change is needed —
 JSON Forms picks it up from the schema. If it needs a custom renderer

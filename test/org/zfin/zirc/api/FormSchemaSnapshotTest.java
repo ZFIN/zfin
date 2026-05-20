@@ -132,7 +132,7 @@ public class FormSchemaSnapshotTest {
     /**
      * Snapshot files live alongside the test, but the working directory
      * differs depending on how the test is invoked. Probe both common
-     * roots (matches the idiom in ZircOpenApiDriftTest).
+     * roots.
      */
     private static Path locateSnapshot(String name) {
         String rel = "test/resources/zirc/snapshot/" + name + ".form-schema.json";

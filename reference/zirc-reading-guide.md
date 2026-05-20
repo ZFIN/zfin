@@ -11,8 +11,11 @@ There are three companion docs in `reference/`:
 - **`zirc-rearchitect-retrospective.html`** — the story. Why we made the
   bets we did, what we tried that didn't work, what the alternative on
   `zfin-10265-zirc-line-submission-react-re-architect-squash` looks like.
-- **`zirc-openapi-approach.md`** — the API documentation decision: hand-
-  curated YAML over springdoc, with the reasoning.
+- **`zirc-openapi-approach.md`** — historical: the original decision to
+  hand-curate an OpenAPI YAML, plus the reasoning. The actual artifact
+  has been removed (a per-feature OpenAPI surface in an
+  otherwise-undocumented codebase was a maintenance asymmetry) and
+  this file now reads as a "postponed; return-to-this triggers" note.
 
 This file is meant to *order* those docs and the source code into a
 reading sequence.
@@ -164,10 +167,11 @@ practical bits:
 
 ### "Add a new field to an existing aggregate"
 
-Follow the checklist in `zirc-architecture.md` §16. Eight files, in
+Follow the checklist in `zirc-architecture.md` §16. Seven files, in
 order: DB migration → entity → DTO → `FIELDS` map → schema → uiSchema →
-TS type → OpenAPI YAML. The drift test will tell you if you missed the
-last step.
+TS type. `FormSchemaSnapshotTest` flags drift on the form-schema
+output; regenerate via `-Pzirc.snapshot.update=true` and review the
+diff before committing.
 
 ### "Add a new aggregate (new child entity under Mutation)"
 
@@ -199,10 +203,8 @@ Mirror the existing inline-expand pattern. The skeleton is:
 13. Wire renderer into `MutationEdit.tsx`: add to `renderers`, add
     summary list to `FormDataShape` + `initialDataFromMutation`,
     add path to `EXTERNALLY_MANAGED_PATHS`, add mirror-sync `useEffect`
-14. Add `Zirc*ApiController.class` to `ZircOpenApiDriftTest.CONTROLLERS`
-15. Add a `*SchemaMatchesSnapshot` test in `FormSchemaSnapshotTest`
-16. Update the OpenAPI YAML with all new paths + DTO schemas
-17. Regenerate snapshots: `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`
+14. Add a `*SchemaMatchesSnapshot` test in `FormSchemaSnapshotTest`
+15. Regenerate snapshots: `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`
 
 The M6.1 → M7.1 → M8.1 commit chain on `zirc-rearchitect` is the
 canonical worked example — three nearly-identical aggregate adds in a
@@ -274,11 +276,6 @@ worth recognizing.
   Lombok-decorated column-list shape.
 - The renderers other than the three named above. They follow the same
   pattern; one is enough to understand the shape.
-- `home/WEB-INF/openapi/zirc-api.yaml` — read its top-of-file `info:`
-  block, but you don't need to read every endpoint until you're
-  changing the API surface.
-- The vendored Swagger UI assets under `home/WEB-INF/openapi/swagger-ui/`
-  — they're upstream files, not maintained here.
 
 ---
 
@@ -293,7 +290,7 @@ The most-likely-first answers to common confusions:
 | `@DeleteMapping` returns 500 to the client even though the delete worked | Add `@ResponseStatus(HttpStatus.NO_CONTENT)`. The client expects 204 |
 | New uiSchema `rule` is silently ignored | Check whether it's on a Group; `SectionRenderer` needs the explicit `visible === false` gate (already in place — the bug only re-appears if you make a new layout renderer) |
 | JSP fails to compile with "Must use jsp:body" | Comments between `<jsp:attribute>` blocks break the parser; move the comment inside an attribute body |
-| Drift test fails | Either you added a `@*Mapping` without adding to `zirc-api.yaml`, or vice versa. The test message tells you which direction |
+| `FormSchemaSnapshotTest` fails | A schema/uiSchema change drifted the wire output; rerun with `-Pzirc.snapshot.update=true`, review the diff under `test/resources/zirc/snapshot/`, then commit if intended |
 | Liquibase says a changeset already ran but it didn't | The dev DB's tracker is out of sync; apply the SQL directly with `psql` for local work — CI runs cleanly |
 
 ---
@@ -304,7 +301,7 @@ The most-likely-first answers to common confusions:
 30 sec:  this guide
 15 min:  zirc-architecture.md §1–3 + ZircFormSchema.java + SchemaForm.tsx
 60 min:  + retrospective + service + DTO + queries + renderers
-deep:    + read the architecture doc end-to-end + skim the OpenAPI YAML
+deep:    + read the architecture doc end-to-end + skim the form-schema snapshots
 ```
 
 If you've read all of the above and are still missing context, the

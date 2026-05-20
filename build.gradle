@@ -1101,11 +1101,8 @@ test {
 //    maxHeapSize = "2048m"
     maxHeapSize = "8g"
 
-    // ZircOpenApiDriftTest reads home/WEB-INF/openapi/zirc-api.yaml at
-    // runtime; without this Gradle won't know to invalidate :test when only
-    // the spec changes.
-    inputs.file('home/WEB-INF/openapi/zirc-api.yaml')
-    // FormSchemaSnapshotTest baselines — same idea.
+    // FormSchemaSnapshotTest baselines — without this Gradle won't know to
+    // invalidate :test when only a snapshot changes.
     inputs.dir('test/resources/zirc/snapshot')
 
     // Forward the snapshot-update flag through to the test JVM so callers can
