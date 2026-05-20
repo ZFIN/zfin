@@ -30,13 +30,45 @@ public class ZircAutocompleteService {
     private static final int MAX_RESULTS = 20;
 
     public List<AutocompleteItemDTO> searchMarkers(String term) {
+        return searchMarkers(term, null);
+    }
+
+    /**
+     * Same shape as {@link #searchMarkers(String)} but narrows results
+     * to a {@link Marker.TypeGroup} (e.g. {@code GENEDOM} for the gene
+     * picker, {@code SSLP} for sequence-tagged-site lookups).
+     *
+     * <p>Filter is applied via {@code MarkerType.typeGroupStrings} —
+     * the typed enum-Set on {@code MarkerType} is {@code @Transient}
+     * and unqueryable, but the underlying join table behind
+     * {@code typeGroupStrings} is fully mapped.
+     *
+     * <p>Bad group names quietly return {@code []} so the dropdown
+     * stays silent rather than 4xx'ing mid-keystroke. Empty/null
+     * {@code typeGroup} skips the filter entirely.
+     */
+    public List<AutocompleteItemDTO> searchMarkers(String term, String typeGroup) {
         if (term == null || term.isBlank()) {return List.of();}
-        return HibernateUtil.currentSession()
-                .createQuery(
-                    "from Marker where lower(abbreviation) like :q order by abbreviationOrder",
-                    Marker.class)
-                .setParameter("q", "%" + term.toLowerCase() + "%")
-                .setMaxResults(MAX_RESULTS)
+        String groupString = null;
+        if (typeGroup != null && !typeGroup.isBlank()) {
+            try {
+                groupString = Marker.TypeGroup.valueOf(typeGroup).name();
+            } catch (IllegalArgumentException e) {
+                return List.of();
+            }
+        }
+        String hql = groupString == null
+                ? "from Marker where lower(abbreviation) like :q order by abbreviationOrder"
+                : "select m from Marker m join m.markerType.typeGroupStrings tg"
+                        + " where lower(m.abbreviation) like :q and tg = :group"
+                        + " order by m.abbreviationOrder";
+        var query = HibernateUtil.currentSession()
+                .createQuery(hql, Marker.class)
+                .setParameter("q", "%" + term.toLowerCase() + "%");
+        if (groupString != null) {
+            query.setParameter("group", groupString);
+        }
+        return query.setMaxResults(MAX_RESULTS)
                 .list()
                 .stream()
                 .map(m -> new AutocompleteItemDTO(

@@ -28,8 +28,9 @@ public class ZircAutocompleteApiController {
 
     @GetMapping("/markers")
     public List<AutocompleteItemDTO> searchMarkers(
-            @RequestParam(value = "term", required = false) String term) {
-        return autocompleteService.searchMarkers(term);
+            @RequestParam(value = "term", required = false) String term,
+            @RequestParam(value = "typeGroup", required = false) String typeGroup) {
+        return autocompleteService.searchMarkers(term, typeGroup);
     }
 
     @GetMapping("/features")

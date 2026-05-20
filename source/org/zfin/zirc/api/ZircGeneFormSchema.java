@@ -56,9 +56,14 @@ public final class ZircGeneFormSchema {
                         new Control("#/properties/mutatedGeneZdbID",
                                 Options.of()
                                         .widget("autocomplete")
-                                        // Searches the markers endpoint; the
-                                        // selected item's value (ZDB-ID) is
-                                        // what we PATCH back.
+                                        // Searches the markers endpoint
+                                        // narrowed to GENEDOM (gene/pseudogene/
+                                        // miRNA etc.) so non-gene markers like
+                                        // SSLPs or BACs don't pollute the
+                                        // dropdown. The selected item's value
+                                        // (ZDB-ID) is what we PATCH back.
+                                        .searchEndpoint("markers")
+                                        .typeGroup("GENEDOM")
                                         .placeholder("Start typing a gene name…")
                                         .helpText("Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown."),
                                 null),

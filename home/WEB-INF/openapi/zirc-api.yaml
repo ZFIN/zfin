@@ -530,6 +530,14 @@ paths:
       summary: Marker (gene/clone) name lookup for the M6 genes section.
       parameters:
         - $ref: '#/components/parameters/AutocompleteTerm'
+        - name: typeGroup
+          in: query
+          required: false
+          description: >
+            Optional Marker.TypeGroup filter (e.g. GENEDOM for the
+            gene picker). Invalid values return an empty result set
+            rather than 4xx-ing.
+          schema: { type: string }
       responses:
         '200':
           description: Up to 20 matches.

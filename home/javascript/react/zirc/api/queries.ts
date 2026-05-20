@@ -272,14 +272,25 @@ export type AutocompleteEndpoint = 'markers' | 'features' | 'persons';
  * The {@code term} state should already be debounced by the caller —
  * see {@link useDebouncedValue}. Empty/whitespace-only terms short-
  * circuit to an empty list without firing a request.
+ *
+ * {@code typeGroup} narrows the markers endpoint to one of the
+ * {@code Marker.TypeGroup} values (e.g. {@code "GENEDOM"} for the gene
+ * picker, {@code "SSLP"} for sequence-tagged sites). Ignored on the
+ * features and persons endpoints.
  */
-export function useAutocomplete(endpoint: AutocompleteEndpoint, term: string) {
+export function useAutocomplete(
+    endpoint: AutocompleteEndpoint,
+    term: string,
+    typeGroup?: string | null,
+) {
     const trimmed = term.trim();
+    const params = new URLSearchParams({ term: trimmed });
+    if (typeGroup) { params.set('typeGroup', typeGroup); }
     return useQuery({
-        queryKey: ['zirc', 'autocomplete', endpoint, trimmed],
+        queryKey: ['zirc', 'autocomplete', endpoint, typeGroup ?? null, trimmed],
         queryFn: () =>
             api.get<AutocompleteItemDTO[]>(
-                `/autocomplete/${endpoint}?term=${encodeURIComponent(trimmed)}`,
+                `/autocomplete/${endpoint}?${params.toString()}`,
             ),
         enabled: trimmed.length > 0,
         // The server hard-caps at 20 results; cache aggressively so re-

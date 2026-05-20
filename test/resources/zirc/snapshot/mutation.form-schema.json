@@ -193,8 +193,9 @@
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "Resolves to the ZFIN marker ZDB-ID.",
+          "helpText" : "Resolves to the ZFIN feature ZDB-ID.",
           "placeholder" : "Start typing an allele or ZDB-ID…",
+          "searchEndpoint" : "features",
           "widget" : "autocomplete"
         },
         "rule" : {

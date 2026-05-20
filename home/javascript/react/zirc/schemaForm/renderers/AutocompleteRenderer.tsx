@@ -54,14 +54,20 @@ function AutocompleteRenderer({
 }: ControlProps) {
     if (visible === false) {return null;}
 
-    const opts = ((uischema as { options?: { searchEndpoint?: AutocompleteEndpoint } } | undefined)?.options) ?? {};
+    const opts = ((uischema as {
+        options?: {
+            searchEndpoint?: AutocompleteEndpoint;
+            typeGroup?: string;
+        };
+    } | undefined)?.options) ?? {};
     const endpoint: AutocompleteEndpoint = opts.searchEndpoint ?? 'markers';
+    const typeGroup = opts.typeGroup;
 
     const value = (data as string | undefined) ?? '';
     const [term, setTerm] = React.useState(value);
     const [open, setOpen] = React.useState(false);
     const debouncedTerm = useDebouncedValue(term, 200);
-    const suggestions = useAutocomplete(endpoint, debouncedTerm);
+    const suggestions = useAutocomplete(endpoint, debouncedTerm, typeGroup);
 
     // Sync the local input state when the form's data prop changes
     // out-of-band (e.g. autosave snapshot reset after a server response).

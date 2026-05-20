@@ -124,14 +124,16 @@ public final class ZircMutationFormSchema {
                                         .placeholder("e.g. zf123")
                                         .helpText("ZFIN allele designation; leave blank if not yet assigned."),
                                 hideIfInZfin),
-                        // Marker autocomplete when the allele is already in
-                        // ZFIN — same widget the per-gene form uses; the
-                        // selected ZDB-ID is what we PATCH back.
+                        // Feature autocomplete when the allele is already in
+                        // ZFIN — alleles live in the Feature table, not
+                        // Marker (per the reference's /features/search).
+                        // The selected ZDB-ID is what we PATCH back.
                         new Control("#/properties/alleleDesignation",
                                 Options.of()
                                         .widget("autocomplete")
+                                        .searchEndpoint("features")
                                         .placeholder("Start typing an allele or ZDB-ID…")
-                                        .helpText("Resolves to the ZFIN marker ZDB-ID."),
+                                        .helpText("Resolves to the ZFIN feature ZDB-ID."),
                                 showIfInZfin),
                         Control.of("#/properties/mutationType"),
                         new Control("#/properties/zfinRecordEstablished",
