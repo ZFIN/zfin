@@ -11,7 +11,6 @@ export interface LineSubmissionDTO {
     name: string | null;
     abbreviation: string | null;
     previousNames: string | null;
-    labContact: string | null;
     singleAllelic: boolean | null;
     maternalBackground: string | null;
     paternalBackground: string | null;

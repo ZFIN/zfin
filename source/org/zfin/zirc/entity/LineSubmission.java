@@ -66,9 +66,6 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_previous_names")
     private String previousNames;
 
-    @Column(name = "ls_lab_contact")
-    private String labContact;
-
     @Column(name = "ls_maternal_background")
     private String maternalBackground;
 
