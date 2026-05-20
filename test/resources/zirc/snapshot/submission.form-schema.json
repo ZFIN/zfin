@@ -89,6 +89,11 @@
         "title" : "Background",
         "type" : "object"
       },
+      "labContact" : {
+        "maxLength" : 255,
+        "title" : "Lab Contact",
+        "type" : "string"
+      },
       "linkedFeatures" : {
         "items" : {
           "properties" : {
@@ -172,6 +177,13 @@
           "placeholder" : "Comma-separated former names"
         },
         "scope" : "#/properties/previousNames",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "Curator-facing contact for questions about this line.",
+          "placeholder" : "e.g. Jane Doe"
+        },
+        "scope" : "#/properties/labContact",
         "type" : "Control"
       } ],
       "label" : "Overview",

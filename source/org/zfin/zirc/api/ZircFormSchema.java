@@ -80,6 +80,7 @@ public final class ZircFormSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("name",            StringSchema.of("Name", 255));
         properties.put("previousNames",   StringSchema.of("Previous Names", 2000));
+        properties.put("labContact",      StringSchema.of("Lab Contact", 255));
         properties.put("acceptance",      ObjectSchema.of("Acceptance Reasons", acceptance));
         properties.put("mutations",       mutationsSummaryArrayProp());
         properties.put("linkedFeatures",  linkedFeaturesArrayProp());
@@ -106,6 +107,11 @@ public final class ZircFormSchema {
                                 Options.of()
                                         .placeholder("Comma-separated former names")
                                         .helpText("Useful when this line was previously known by a different designation."),
+                                null),
+                        new Control("#/properties/labContact",
+                                Options.of()
+                                        .placeholder("e.g. Jane Doe")
+                                        .helpText("Curator-facing contact for questions about this line."),
                                 null)
                 )),
                 Group.of("Acceptance Reasons", List.of(
@@ -165,6 +171,7 @@ public final class ZircFormSchema {
     public static final Map<String, FieldDescriptor> FIELDS = Map.ofEntries(
             field("/name",                       LineSubmission::getName,                       (s, v) -> s.setName(text(v))),
             field("/previousNames",              LineSubmission::getPreviousNames,              (s, v) -> s.setPreviousNames(text(v))),
+            field("/labContact",                 LineSubmission::getLabContact,                 (s, v) -> s.setLabContact(text(v))),
             // Acceptance: stored flat on the entity (reasons/reasonsOther) but nested in the form schema
             field("/acceptance/reasons",         s -> s.getReasons() == null ? new String[0] : s.getReasons(),
                                                                                                 (s, v) -> s.setReasons(stringArray(v))),

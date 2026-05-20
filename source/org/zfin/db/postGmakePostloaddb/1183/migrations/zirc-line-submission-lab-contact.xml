@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!--
+      Free-text contact name for curators handling questions about a
+      line submission. Distinct from the formal submitter person record
+      (LineSubmissionPerson) — that captures attribution, this is just
+      "who to ask." Nullable; many submissions won't need it.
+    -->
+    <changeSet author="ryan" id="zirc-line-submission-lab-contact">
+        <sql>
+            ALTER TABLE zirc.line_submission
+                ADD COLUMN ls_lab_contact TEXT;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
