@@ -26,6 +26,18 @@ which sidesteps the need for a JSON Pointer array-index resolver.
 
 ## 2. Aggregates
 
+An **aggregate** here is a self-contained editing unit — a top-level
+entity that owns its own form, its own PATCH endpoint, its own
+flat-path namespace for autosave, and its own audit identity. The term
+is borrowed loosely from DDD's "aggregate root." Each aggregate has
+its own JSON Pointer root, which is why a PATCH to `/alleleDesignation`
+on `/api/zirc/mutations/{id}` updates *that* mutation — not "the third
+mutation under that submission." Expanded child cards therefore run as
+their own form scope, and there is no array-index path resolver to
+build or maintain ([§11](#11-inline-expansion-as-the-ux-pattern)).
+
+There are seven aggregates in the ZIRC submission stack:
+
 | Aggregate          | DB table                 | Form schema                                   | PATCH endpoint                                                          |
 |--------------------|--------------------------|-----------------------------------------------|-------------------------------------------------------------------------|
 | `LineSubmission`   | `zirc.line_submission`   | `GET /api/zirc/form-schema`                   | `PATCH /api/zirc/line-submissions/{zdbID}`                              |
@@ -463,10 +475,55 @@ test/resources/zirc/snapshot/
 
 source/org/zfin/db/postGmakePostloaddb/
 ├── 1182/migrations/zirc-line-submission.sql               original schema (PR #1845)
-└── 1199/migrations/
+└── 1183/migrations/
     ├── zirc-relax-genotyping-assay-file-kind.xml          M4.3
     └── zirc-audit-table.xml                               audit
 ```
+
+### Footprint by category
+
+The schema-driven stack lands at ~80 files / ~8.1k LOC, split close to
+50/50 between front end and back end. The bulk concentrates in three
+places: `ZircSubmissionService` (the PATCH/audit dispatcher, ~814 LOC),
+the seven `*FormSchema` classes (~1.5k LOC) that are the single source
+of truth for shape, and the JSON Forms custom renderers (~1.9k LOC)
+that cover shapes JSON Forms doesn't ship out of the box (inline-expand
+list cards, multi-choice-with-Other, autocomplete-against-our-API,
+hpf/dpf timing).
+
+A useful read of the numbers is **per-aggregate fan-out**: each
+aggregate carries a fixed bundle (entity + DTO + FormSchema +
+ApiController + page component, plus a list renderer if it's a child).
+Six aggregates × ~5 files = ~30 files of inherent multiplicity before
+any shared scaffolding gets counted.
+
+**Front end — 31 files / ~3,881 LOC**
+
+| Group                                                          | Files | LOC   |
+|----------------------------------------------------------------|-------|-------|
+| `containers/` mount shims (3-line bootstraps)                  |     2 |     6 |
+| `zirc/pages/` — one page per aggregate                         |     6 | 1,009 |
+| `zirc/schemaForm/` shell (`SchemaForm.tsx` + `queryClient.ts`) |     2 |   271 |
+| `zirc/schemaForm/renderers/` — JSON Forms custom renderers     |    17 | 1,929 |
+| `zirc/api/` — `client.ts`, `queries.ts`, `types.ts`            |     3 |   576 |
+| `zirc/components/SaveStatusBadge.tsx`                          |     1 |    90 |
+
+**Back end — 49 files / ~4,202 LOC**
+
+| Group                                                                                | Files | LOC   |
+|--------------------------------------------------------------------------------------|-------|-------|
+| REST controllers + `ZircApiExceptionHandler` + `ZircOpenApiController`               |     9 |   635 |
+| Per-aggregate `*FormSchema.java` (`schema()` + `uiSchema()` + `FIELDS` dispatch map) |     7 | 1,484 |
+| `api/jsonschema/` typed JSON Schema records                                          |     7 |   227 |
+| `api/uischema/` typed UI Schema records                                              |     6 |   241 |
+| DTOs (per-aggregate full + summary, plus `FieldUpdate`, `FormSchemaDTO`)             |    14 |   572 |
+| Service layer (`ZircSubmissionService` + autocomplete + exception)                   |     3 |   902 |
+| Repository (`ZircSubmissionRepository` + Hibernate impl)                             |     2 |   127 |
+| `AuditEntry` entity                                                                  |     1 |    64 |
+
+Counts taken at the commit immediately after the M1–M8 squash plus the
+ZFIN-10265 obsolete-tree cleanup. They will drift; re-derive before
+citing.
 
 ---
 
