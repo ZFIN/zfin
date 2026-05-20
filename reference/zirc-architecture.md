@@ -474,10 +474,11 @@ test/resources/zirc/snapshot/
 └── phenotype.form-schema.json
 
 source/org/zfin/db/postGmakePostloaddb/
-├── 1182/migrations/zirc-line-submission.sql               original schema (PR #1845)
-└── 1183/migrations/
-    ├── zirc-relax-genotyping-assay-file-kind.xml          M4.3
-    └── zirc-audit-table.xml                               audit
+├── 1182/migrations/0050-ZFIN-10162-zirc-line-submission.sql   original schema (PR #1845)
+└── 1183/migrations/                                            (current release directory)
+    ├── zirc-relax-genotyping-assay-file-kind.xml              M4.3
+    ├── zirc-audit-table.xml                                   audit
+    └── zirc-line-submission-lab-contact.xml                   sample worked example
 ```
 
 ### Footprint by category
@@ -544,7 +545,7 @@ citing.
 
 You almost always touch six places. In this order:
 
-1. **DB**: Liquibase changeset under `source/org/zfin/db/postGmakePostloaddb/{version}/migrations/`. Run via `gradle liquibasePostBuild` (or `psql` for local).
+1. **DB**: Liquibase changeset under `source/org/zfin/db/postGmakePostloaddb/{currentRelease}/migrations/` (currently `1183/migrations/` — bump when the next release directory is created). Run via `gradle liquibasePostBuild` (or `psql` for local).
 2. **Entity**: column in the relevant `@Entity` class.
 3. **DTO**: field in the relevant DTO record + the `of(entity)` mapping.
 4. **FIELDS map**: an entry in the relevant `Zirc*FormSchema.FIELDS` with `(getter, setter)`.
