@@ -112,13 +112,13 @@ public class GafReportBuilder {
 
             .tableSchema(SCHEMA_ERROR_ENTRY, new Report.TableSchema()
                 .description("Errors with the GAF entry (or annotation) that triggered them.")
+                .addColumn(ReportTable.Column.of("createdBy", "Created by"))
                 .addColumn(ReportTable.Column.of("entryId",   "Identifier"))
                 .addColumn(ReportTable.Column.of("qualifier", "Qualifier"))
                 .addColumn(ReportTable.Column.of("goTerm",    "GO term"))
                 .addColumn(ReportTable.Column.of("goTermID",  "GO ID",     "goTermID"))
                 .addColumn(ReportTable.Column.of("evidence",  "Evidence"))
                 .addColumn(ReportTable.Column.of("source",    "Source"))
-                .addColumn(ReportTable.Column.of("createdBy", "Created by"))
                 .addColumn(ReportTable.Column.of("message",   "Error")))
 
             .tableSchema(SCHEMA_COUNT, new Report.TableSchema()
@@ -247,7 +247,9 @@ public class GafReportBuilder {
             .count(data.getErrors().size())
             .body(Report.Body.text(
                 "Validation, parsing, and database errors encountered during the load. " +
-                "Click into a category for details and examples."));
+                "Use the All errors table below to filter across categories (e.g. type " +
+                "\"ZFIN\" to find errors on ZFIN-curated annotations), or click into a " +
+                "category for examples and detail."));
 
         if (errorSummary == null) return node;
 
@@ -261,12 +263,44 @@ public class GafReportBuilder {
                 .forEach(e -> summary.addRow("label", e.getKey(), "count", e.getValue()));
             node.addTable(summary);
 
+            node.addTable(buildAllErrorsTable(data.getErrors()));
+
             for (Map.Entry<String, Integer> entry : categoryCounts.entrySet()) {
                 node.addChild(buildErrorCategoryNode(entry.getKey(), entry.getValue(), data, errorSummary));
             }
         }
 
         return node;
+    }
+
+    /**
+     * Flat list of every error with a Category column up front. The viewer's
+     * per-table filter input then lets a curator narrow by Created by (e.g.
+     * "ZFIN") across categories — useful because many errors come from
+     * annotations curated by other organizations and aren't ZFIN's to fix.
+     */
+    private ReportTable buildAllErrorsTable(List<GafValidationError> errors) {
+        ReportTable table = new ReportTable()
+            .title("All errors (" + errors.size() + ")")
+            .description("Filter by any column (e.g. \"ZFIN\" in Created by).")
+            .addColumn(ReportTable.Column.of("category",  "Category"))
+            .addColumn(ReportTable.Column.of("createdBy", "Created by"))
+            .addColumn(ReportTable.Column.of("entryId",   "Identifier"))
+            .addColumn(ReportTable.Column.of("qualifier", "Qualifier"))
+            .addColumn(ReportTable.Column.of("goTerm",    "GO term"))
+            .addColumn(ReportTable.Column.of("goTermID",  "GO ID",     "goTermID"))
+            .addColumn(ReportTable.Column.of("evidence",  "Evidence"))
+            .addColumn(ReportTable.Column.of("source",    "Source",    "publication"))
+            .addColumn(ReportTable.Column.of("message",   "Error"));
+        for (GafValidationError err : errors) {
+            String msg = err.getMessage();
+            if (msg == null) continue;
+            String firstLine = msg.split("\n", 2)[0].strip();
+            Map<String, Object> row = buildErrorRow(err, firstLine);
+            row.put("category", GafErrorSummary.categorize(firstLine));
+            table.addRow(row);
+        }
+        return table;
     }
 
     private ReportNode buildErrorCategoryNode(String category, int count,
@@ -294,25 +328,34 @@ public class GafReportBuilder {
             if (msg == null) continue;
             String firstLine = msg.split("\n", 2)[0].strip();
             if (!category.equals(GafErrorSummary.categorize(firstLine))) continue;
-
-            Map<String, String> f = parseEntryFields(msg);
-            // GafEntry shape carries `goid` (the OBO ID); MarkerGoTermEvidence carries `goTerm` (the name).
-            // Keep them in their respective columns so the OBO link only renders for real GO IDs.
-            String goid = f.getOrDefault("goid", "");
-            String goName = goid.isEmpty() ? f.getOrDefault("goTerm", "") : "";
-            matches.addRow(
-                "entryId",   firstNonEmpty(f.get("entryId"), f.get("zdbID")),
-                "qualifier", firstNonEmpty(f.get("qualifier"), f.get("qualifierRelation")),
-                "goTerm",    goName,
-                "goTermID",  goid,
-                "evidence",  firstNonEmpty(f.get("evidenceCode")),
-                "source",    firstNonEmpty(f.get("pmid"), f.get("source")),
-                "createdBy", firstNonEmpty(f.get("createdBy"), f.get("organizationCreatedBy")),
-                "message",   firstLine
-            );
+            matches.addRow(buildErrorRow(err, firstLine));
         }
         if (matches.getRows() != null) child.addTable(matches);
         return child;
+    }
+
+    /**
+     * Parses one error message into the column shape shared by the per-category
+     * "Matching errors" table and the flat "All errors" table.
+     *
+     * <p>GafEntry shape carries {@code goid} (the OBO ID); MarkerGoTermEvidence
+     * carries {@code goTerm} (the name). Keep them in their respective columns
+     * so the OBO link only renders for real GO IDs.
+     */
+    private static Map<String, Object> buildErrorRow(GafValidationError err, String firstLine) {
+        Map<String, String> f = parseEntryFields(err.getMessage());
+        String goid = f.getOrDefault("goid", "");
+        String goName = goid.isEmpty() ? f.getOrDefault("goTerm", "") : "";
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("entryId",   firstNonEmpty(f.get("entryId"), f.get("zdbID")));
+        row.put("qualifier", firstNonEmpty(f.get("qualifier"), f.get("qualifierRelation")));
+        row.put("goTerm",    goName);
+        row.put("goTermID",  goid);
+        row.put("evidence",  firstNonEmpty(f.get("evidenceCode")));
+        row.put("source",    firstNonEmpty(f.get("pmid"), f.get("source")));
+        row.put("createdBy", firstNonEmpty(f.get("createdBy"), f.get("organizationCreatedBy")));
+        row.put("message",   firstLine);
+        return row;
     }
 
     /** Extracts key='value' pairs from the GafEntry{...} or MarkerGoTermEvidence{...} blob inside a message. */
