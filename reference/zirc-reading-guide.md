@@ -291,6 +291,7 @@ The most-likely-first answers to common confusions:
 | New uiSchema `rule` is silently ignored | Check whether it's on a Group; `SectionRenderer` needs the explicit `visible === false` gate (already in place — the bug only re-appears if you make a new layout renderer) |
 | JSP fails to compile with "Must use jsp:body" | Comments between `<jsp:attribute>` blocks break the parser; move the comment inside an attribute body |
 | `FormSchemaSnapshotTest` fails | A schema/uiSchema change drifted the wire output; rerun with `-Pzirc.snapshot.update=true`, review the diff under `test/resources/zirc/snapshot/`, then commit if intended |
+| `FormSchemaInvariantsTest` fails | The three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the DTO drifted. The failure message names which form and which side is out of sync. Either add the missing entry on the other side, or whitelist the divergence as intentional in the test's `Spec` (e.g. a new server-managed child list) |
 | Liquibase says a changeset already ran but it didn't | The dev DB's tracker is out of sync; apply the SQL directly with `psql` for local work — CI runs cleanly |
 
 ---

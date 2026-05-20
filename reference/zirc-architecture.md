@@ -109,7 +109,7 @@ This one map gives us four things at once:
 1. **Authorization gate** — unknown paths are rejected at the controller. Clients can't write columns the form doesn't expose.
 2. **Audit log capture** — the same descriptor's `read()` produces the pre-update value, so `old`/`new` round-trip through Jackson consistently.
 3. **Persistence** — `write()` applies typed coercion (trim, null-on-blank, etc.) before Hibernate sees the entity.
-4. **Schema generation reference** — the `FIELDS` keys are the legal paths; if a uiSchema Control references a scope that isn't in `FIELDS`, the client's PATCH will 400 at runtime. The `FormSchemaSnapshotTest` locks down the serialized form-schema for submission / mutation / assay / gene / lesion / phenotype — drift trips the test before reaching the client.
+4. **Schema generation reference** — the `FIELDS` keys are the legal paths; if a uiSchema Control references a scope that isn't in `FIELDS`, the client's PATCH will 400 at runtime. Two tests guard against drift before it reaches the client: `FormSchemaSnapshotTest` locks down the serialized wire shape per form, and `FormSchemaInvariantsTest` asserts the three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the corresponding DTO record components (with per-form whitelists for intentional divergence like server-managed child lists and read-only denormalized columns).
 
 **Rule**: if you add a column to an entity that should be editable, you add a `FIELDS` entry, a `schema()` property, and a uiSchema Control. Forgetting any one is the most common bug pattern.
 
@@ -459,6 +459,7 @@ home/javascript/react/zirc/
 
 test/org/zfin/zirc/api/
 ├── FormSchemaSnapshotTest.java       JUnit 4 byte-level snapshot test
+├── FormSchemaInvariantsTest.java     JUnit 4 schema ↔ FIELDS ↔ DTO drift check
 └── ...
 test/resources/zirc/snapshot/
 ├── submission.form-schema.json
