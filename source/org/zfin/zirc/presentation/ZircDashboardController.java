@@ -406,13 +406,6 @@ public class ZircDashboardController {
                 if ("mutation".equals(slug)) {
                     // The mutation header itself
                     mutationStatus.put(mid, FieldStatus.APPROVED);
-                    subSectionStatus.replaceAll((label, st) -> {
-                        // subSectionStatus is keyed by "Mutation N" labels; we
-                        // can't easily reverse the id, but the per-mutation
-                        // loop above already populated it from r.overall().
-                        // Cheaper to just look the id up via mutationLabels.
-                        return st;
-                    });
                 } else if (sectionLabel != null) {
                     Map<String, FieldStatus> bySect = mutationSectionStatus.get(mid);
                     if (bySect != null) bySect.put(sectionLabel, FieldStatus.APPROVED);
