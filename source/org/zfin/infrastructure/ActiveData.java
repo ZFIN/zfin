@@ -309,7 +309,7 @@ public class ActiveData implements ZdbID {
         RNAMO,
         PROTBS,
         VFSEQ,
-        LINESUBMISSION;
+        ZLSUB;
 
 
         private Class<? extends DeleteEntityRule> ruleClass;
