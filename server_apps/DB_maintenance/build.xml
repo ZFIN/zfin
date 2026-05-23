@@ -339,6 +339,21 @@
         </java>
     </target>
 
+    <target name="check-sequence-of-reference-drift" description="ZFIN-10280: report features whose stored fgmd_sequence_of_reference disagrees with the FASTA-computed sequence at the stored coordinates. Read-only.">
+        <echo message="Check Sequence of Reference drift"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+        <java classname="org.zfin.infrastructure.ant.CheckSequenceOfReferenceDriftTask" fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
     <target name="run-data-report-param" description="">
         <data-report-param/>
     </target>
