@@ -331,6 +331,8 @@
 
         <!-- ZIRC line submission entities -->
         <mapping class="org.zfin.zirc.entity.LineSubmission"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionComment"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionSectionApproval"/>
         <mapping class="org.zfin.zirc.entity.LineSubmissionPerson"/>
         <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
         <mapping class="org.zfin.zirc.entity.Mutation"/>

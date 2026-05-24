@@ -49,7 +49,10 @@ hdr "ZFIN-10241 backfill — preflight checks"
 
 PMID_FILE="$SOURCEROOT/$PMID_FILE_REL"
 PUBMED_DIR="$TARGETROOT/server_apps/data_transfer/PUBMED"
-WAR_LIB="$TARGETROOT/home/WEB-INF"
+# WAR_LIB defaults to the schlapp/dev exploded layout under $TARGETROOT;
+# trunk + other environments where the WAR lives under catalina_bases can
+# override with e.g.  WAR_LIB=/opt/zfin/catalina_bases/zfin.org/webapps/ROOT/WEB-INF
+WAR_LIB="${WAR_LIB:-$TARGETROOT/home/WEB-INF}"
 CP="$WAR_LIB/classes:$WAR_LIB/lib/*"
 
 [[ -f "$PMID_FILE" ]] || { red "missing PMID list: $PMID_FILE"; exit 1; }
