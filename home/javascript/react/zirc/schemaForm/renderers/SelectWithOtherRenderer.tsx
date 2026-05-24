@@ -8,6 +8,10 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
+import { ValueDisplay } from '../../components/ValueDisplay';
 
 const OTHER_SENTINEL = '__other';
 
@@ -22,10 +26,10 @@ const OTHER_SENTINEL = '__other';
  * Used by Background's maternal/paternal strain selects and Mutagenesis's
  * protocol select.
  */
-function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, visible }: ControlProps) {
+function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, visible, config }: ControlProps) {
     if (visible === false) {return null;}
 
-    const fieldName = path.split('.').pop() ?? path;
+    const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const options = (uischema as { options?: { standardValues?: string[] } } | undefined)?.options ?? {};
@@ -34,6 +38,26 @@ function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, vi
     const isStandard = standardValues.includes(value);
     const [otherSelected, setOtherSelected] = React.useState(() => value !== '' && !isStandard);
     const selectValue = isStandard ? value : (otherSelected ? OTHER_SENTINEL : '');
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        return (
+            <tr>
+                <th className='w-25' scope='row' id={labelId}>
+                    <StatusBadge status={view.fieldStatus[fieldName]}/>
+                    {label}
+                </th>
+                <td>
+                    <ValueDisplay value={data}/>
+                    <FieldHistory
+                        fieldKey={fieldName}
+                        label={label ?? fieldName}
+                        updates={view.fieldUpdates[fieldName]}
+                    />
+                </td>
+            </tr>
+        );
+    }
 
     return (
         <tr>

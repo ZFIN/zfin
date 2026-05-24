@@ -16,14 +16,23 @@ import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRendere
 import { mutationsListRendererEntry } from './renderers/MutationsListRenderer';
 import { linkedFeaturesListRendererEntry } from './renderers/LinkedFeaturesListRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
+import type { FieldStatus } from '../components/StatusBadge';
+import type { AuditEntry } from '../components/FieldHistory';
 
 type FormData = Record<string, unknown>;
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
+export type FormMode = 'edit' | 'view';
+
 type Props = {
     submission: LineSubmissionDTO | null;
-    onCreated: (s: LineSubmissionDTO) => void;
+    onCreated?: (s: LineSubmissionDTO) => void;
+    mode?: FormMode;
+    fieldStatus?: Record<string, FieldStatus>;
+    fieldUpdates?: Record<string, AuditEntry[]>;
+    sectionStatus?: Record<string, FieldStatus>;
+    sectionUpdates?: Record<string, AuditEntry[]>;
 };
 
 const AUTOSAVE_DEBOUNCE_MS = 800;
@@ -130,7 +139,16 @@ function diffLeaves(
  * dispatches them to JsonForms with our reference-styled renderers, then
  * emits one field-path PATCH per changed leaf when the user pauses typing.
  */
-export function SchemaForm({ submission, onCreated }: Props) {
+export function SchemaForm({
+    submission,
+    onCreated,
+    mode = 'edit',
+    fieldStatus,
+    fieldUpdates,
+    sectionStatus,
+    sectionUpdates,
+}: Props) {
+    const readonly = mode === 'view';
     const { data: schemaResponse, isLoading: schemaLoading, isError: schemaError } =
         useQuery<FormSchemaDTO>({
             queryKey: ['zirc', 'form-schema'],
@@ -190,6 +208,8 @@ export function SchemaForm({ submission, onCreated }: Props) {
     React.useEffect(() => {
         // No autosave until the seed has applied.
         if (formData == null || lastSavedRef.current == null) {return;}
+        // View mode is a pure value -> DOM projection; no PATCH path.
+        if (readonly) {return;}
 
         const handle = window.setTimeout(async () => {
             const changes = diffLeaves(lastSavedRef.current, formData)
@@ -204,7 +224,7 @@ export function SchemaForm({ submission, onCreated }: Props) {
                     const created = await create.mutateAsync();
                     submissionIdRef.current = created.zdbID;
                     id = created.zdbID;
-                    onCreated(created);
+                    onCreated?.(created);
                     window.history.replaceState(
                         {},
                         '',
@@ -238,20 +258,32 @@ export function SchemaForm({ submission, onCreated }: Props) {
 
     return (
         <div>
-            <div className='d-flex justify-content-end mb-1'>
-                <SaveStatusBadge status={status} message={errorMessage} />
-            </div>
+            {!readonly && (
+                <div className='d-flex justify-content-end mb-1'>
+                    <SaveStatusBadge status={status} message={errorMessage} />
+                </div>
+            )}
             <JsonForms
                 schema={schemaResponse.schema}
                 uischema={schemaResponse.uiSchema}
                 data={formData}
                 renderers={renderers}
                 cells={[]}
+                readonly={readonly}
                 config={{
                     submissionId: submissionIdRef.current ?? submission?.zdbID,
                     mutations: submission?.mutations ?? [],
+                    mode,
+                    readonly,
+                    fieldStatus: fieldStatus ?? {},
+                    fieldUpdates: fieldUpdates ?? {},
+                    sectionStatus: sectionStatus ?? {},
+                    sectionUpdates: sectionUpdates ?? {},
                 }}
-                onChange={({ data }) => setFormData(data as FormData)}
+                onChange={({ data }) => {
+                    if (readonly) {return;}
+                    setFormData(data as FormData);
+                }}
             />
         </div>
     );

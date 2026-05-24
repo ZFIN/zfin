@@ -14,6 +14,7 @@ import {
     useDeleteLinkedFeature,
     usePatchLinkedFeature,
 } from '../../api/queries';
+import { viewConfigFrom } from '../useViewConfig';
 
 /**
  * Renders pairwise linkages between mutations on the submission page.
@@ -38,6 +39,27 @@ function LinkedFeaturesListRenderer({ data, config }: ControlProps) {
         { submissionId?: string; mutations?: MutationDTO[] } | undefined) ?? {};
     const submissionId = cfg.submissionId;
     const mutations = cfg.mutations ?? [];
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        if (links.length === 0) {
+            return <p className='text-muted'>No linked features.</p>;
+        }
+        const nameFor = (id: number) =>
+            mutations.find((m) => m.id === id)?.alleleDesignation ?? `#${id}`;
+        return (
+            <ul className='list-unstyled'>
+                {links.map((lf) => (
+                    <li key={`${lf.mutationAId}-${lf.mutationBId}`}>
+                        {nameFor(lf.mutationAId)} ↔ {nameFor(lf.mutationBId)}
+                    </li>
+                ))}
+                <li className='small text-muted mt-2'>
+                    Detailed read-only linked-feature view not yet ported.
+                </li>
+            </ul>
+        );
+    }
 
     const add = useAddLinkedFeature();
     const remove = useDeleteLinkedFeature();

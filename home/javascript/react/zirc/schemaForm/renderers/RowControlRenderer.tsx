@@ -8,6 +8,10 @@ import {
     schemaTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
+import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
  * Renders a string-typed Control as a table row matching the reference
@@ -33,14 +37,36 @@ function RowControlRenderer({
     errors,
     visible,
     uischema,
+    schema,
+    config,
 }: ControlProps) {
     if (visible === false) {return null;}
 
-    const fieldName = path.split('.').pop() ?? path;
+    const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const opts = ((uischema as { options?: RowOptions } | undefined)?.options) ?? {};
     const { placeholder, helpText, infoHref, suffix } = opts;
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        return (
+            <tr>
+                <th className='w-25' scope='row' id={labelId}>
+                    <StatusBadge status={view.fieldStatus[fieldName]}/>
+                    {label}
+                </th>
+                <td>
+                    <ValueDisplay value={data} schema={schema}/>
+                    <FieldHistory
+                        fieldKey={fieldName}
+                        label={label ?? fieldName}
+                        updates={view.fieldUpdates[fieldName]}
+                    />
+                </td>
+            </tr>
+        );
+    }
 
     const input = (
         <input

@@ -10,6 +10,7 @@ import {
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { MutationDTO } from '../../api/types';
 import { useAddMutation, useDeleteMutation } from '../../api/queries';
+import { viewConfigFrom } from '../useViewConfig';
 
 /**
  * Renders the read-only summary of mutations on the submission page.
@@ -28,6 +29,29 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
     const submissionId = (config as { submissionId?: string } | undefined)?.submissionId;
     const addMutation = useAddMutation();
     const deleteMutation = useDeleteMutation();
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        // The full mutation card layout (nested per-mutation SchemaForm with
+        // mutation-aggregate field/section status) is a follow-up. Stub the
+        // section so the rest of the detail page renders cleanly.
+        if (mutations.length === 0) {
+            return <p className='text-muted'>No mutations recorded for this submission.</p>;
+        }
+        return (
+            <ul className='list-unstyled'>
+                {mutations.map((m, i) => (
+                    <li key={m.id} className='mb-1'>
+                        <strong>Mutation {i + 1}:</strong>{' '}
+                        {m.alleleDesignation ?? <span className='text-muted'>(no allele designation)</span>}
+                    </li>
+                ))}
+                <li className='small text-muted mt-2'>
+                    Detailed per-mutation read-only view not yet ported.
+                </li>
+            </ul>
+        );
+    }
 
     // JSON Schema maxItems on the array — server publishes the curator-spec
     // cap (MAX_MUTATIONS_PER_SUBMISSION); we honor it client-side so the

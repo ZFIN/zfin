@@ -8,6 +8,9 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
 
 type ReasonsObject = {
     reasons?: string[];
@@ -32,6 +35,7 @@ function MultipleChoiceWithOtherRenderer({
     schema,
     uischema,
     visible,
+    config,
 }: ControlProps) {
     if (visible === false) {return null;}
     const obj: ReasonsObject = (data as ReasonsObject) ?? {};
@@ -45,6 +49,31 @@ function MultipleChoiceWithOtherRenderer({
     const choices: ReasonChoice[] =
         ((schema as { properties?: { reasons?: { items?: { oneOf?: ReasonChoice[] } } } })
             .properties?.reasons?.items?.oneOf) ?? [];
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        const titles = reasons.map((v) => choices.find((c) => c.const === v)?.title ?? v);
+        if (reasonsOther) {titles.push(`Other: ${reasonsOther}`);}
+        const display = titles.length > 0
+            ? titles.join(', ')
+            : null;
+        return (
+            <tr>
+                <th className='w-25' scope='row' id='fr-label-reasons'>
+                    <StatusBadge status={view.fieldStatus['reasons']}/>
+                    {labelText}
+                </th>
+                <td>
+                    {display ?? <span className='text-muted'>&mdash;</span>}
+                    <FieldHistory
+                        fieldKey='reasons'
+                        label={labelText}
+                        updates={view.fieldUpdates['reasons']}
+                    />
+                </td>
+            </tr>
+        );
+    }
 
     const toggle = (value: string, checked: boolean) => {
         const next = checked ? [...reasons, value] : reasons.filter((r) => r !== value);

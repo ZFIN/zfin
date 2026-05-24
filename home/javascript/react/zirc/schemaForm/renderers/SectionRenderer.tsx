@@ -7,6 +7,9 @@ import {
     uiTypeIs,
 } from '@jsonforms/core';
 import { ResolvedJsonFormsDispatch, withJsonFormsLayoutProps } from '@jsonforms/react';
+import { viewConfigFrom } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
 
 /**
  * Renders a uiSchema "Group" element as a ZFIN-styled section: section.section
@@ -25,6 +28,7 @@ function SectionRenderer({
     visible,
     renderers,
     cells,
+    config,
 }: LayoutProps) {
     // Hidden by a uiSchema rule (e.g. the per-assayType groups in the assay
     // schema). Without this gate, group-level rules are silently ignored —
@@ -51,9 +55,21 @@ function SectionRenderer({
         />
     ));
 
+    const view = viewConfigFrom(config);
+    const sectionStatus = view.sectionStatus[label];
+    const sectionUpdates = view.sectionUpdates[label];
+
     return (
         <section className='section' id={sectionId} aria-labelledby={headingId}>
-            <h2 id={headingId} className='heading'>{label}</h2>
+            <h2 id={headingId} className='heading'>
+                <StatusBadge status={sectionStatus}/>
+                {label}
+                <FieldHistory
+                    fieldKey={`section-${sectionId}`}
+                    label={label}
+                    updates={sectionUpdates}
+                />
+            </h2>
             {isPlain ? (
                 <div>{children}</div>
             ) : (

@@ -1,6 +1,8 @@
 package org.zfin.zirc.presentation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -381,6 +383,132 @@ public class ZircDashboardController {
      * transient (un-persisted) entity so the JSP can use the same EL access
      * patterns as for existing submissions.
      */
+    /**
+     * Schema-driven read-only detail view. Reuses the existing
+     * {@link LineSubmissionStatusComputer} maps and the central
+     * {@code Updates} table; serializes both into a single JSON blob that
+     * the React mount reads off the DOM.
+     *
+     * <p>Smallest-cutover scope: submission-level field status, section
+     * status, field updates, section updates. Per-mutation status maps,
+     * gene/lesion/assay/phenotype status, and the dashboard's status-
+     * overview bar are intentionally NOT computed here — they ride on a
+     * follow-up port and the legacy {@link #viewLineSubmission} JSP route
+     * remains in service as the off-ramp.
+     */
+    @GetMapping("/line-submission/{zdbID}/detail-react")
+    public String viewLineSubmissionReact(@PathVariable String zdbID, Model model) {
+        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
+        if (submission == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
+        }
+        model.addAttribute("submission", submission);
+
+        FieldStatusResult status = LineSubmissionStatusComputer.compute(submission);
+
+        // Submission-level updates only — nested-aggregate updates are out
+        // of scope for the smallest cutover (the list renderers stub them).
+        List<Updates> submissionUpdates = HibernateUtil.currentSession()
+                .createQuery(
+                    "from Updates where recID = :rid order by whenUpdated desc",
+                    Updates.class)
+                .setParameter("rid", submission.getZdbID())
+                .list();
+        Map<String, List<Updates>> fieldUpdates = new LinkedHashMap<>();
+        for (Updates u : submissionUpdates) {
+            if (u.getFieldName() == null) continue;
+            fieldUpdates.computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+        }
+        Map<String, List<Updates>> sectionUpdates = new LinkedHashMap<>();
+        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Overview",
+                "name", "previousNames", "reasons", "reasonsOther", "abbreviation");
+        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Background",
+                "maternalBackground", "paternalBackground",
+                "backgroundChangeable", "backgroundChangeConcerns");
+        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Additional Info",
+                "additionalInfo", "unreportedFeaturesDetails",
+                "husbandryInfo", "singleAllelic");
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("fieldStatus",     fieldStatusToJson(status.byField()));
+        payload.put("sectionStatus",   fieldStatusToJson(status.bySection()));
+        payload.put("fieldUpdates",    updatesMapToJson(fieldUpdates));
+        payload.put("sectionUpdates",  updatesMapToJson(sectionUpdates));
+
+        try {
+            String json = STATUS_PAYLOAD_MAPPER.writeValueAsString(payload);
+            // Defang the </script close-tag pattern. JSON unescapes \/ to /, so
+            // the parsed value on the React side is unchanged.
+            json = json.replace("</", "<\\/");
+            model.addAttribute("statusPayloadJson", json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize status payload", e);
+        }
+
+        String label = (submission.getName() != null && !submission.getName().isBlank())
+                ? submission.getName() : zdbID;
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Submission: " + label);
+        return "zirc/line-submission-detail-react";
+    }
+
+    private static final ObjectMapper STATUS_PAYLOAD_MAPPER = new ObjectMapper();
+
+    private static void rollupFieldUpdates(Map<String, List<Updates>> sectionUpdates,
+                                            Map<String, List<Updates>> fieldUpdates,
+                                            String section,
+                                            String... fields) {
+        List<Updates> agg = new ArrayList<>();
+        for (String f : fields) {
+            List<Updates> lst = fieldUpdates.get(f);
+            if (lst != null) agg.addAll(lst);
+        }
+        if (!agg.isEmpty()) {
+            agg.sort((a, b) -> b.getWhenUpdated().compareTo(a.getWhenUpdated()));
+            sectionUpdates.put(section, agg);
+        }
+    }
+
+    private static Map<String, Map<String, String>> fieldStatusToJson(Map<String, FieldStatus> in) {
+        Map<String, Map<String, String>> out = new LinkedHashMap<>();
+        if (in == null) return out;
+        in.forEach((k, v) -> {
+            if (v == null) return;
+            Map<String, String> m = new LinkedHashMap<>();
+            m.put("abbreviation", v.getAbbreviation());
+            m.put("displayName",  v.getDisplayName());
+            m.put("cssClass",     v.getCssClass());
+            out.put(k, m);
+        });
+        return out;
+    }
+
+    private static Map<String, List<Map<String, Object>>> updatesMapToJson(Map<String, List<Updates>> in) {
+        Map<String, List<Map<String, Object>>> out = new LinkedHashMap<>();
+        if (in == null) return out;
+        in.forEach((k, lst) -> {
+            List<Map<String, Object>> rows = new ArrayList<>();
+            for (Updates u : lst) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("whenUpdated", u.getWhenUpdated() == null ? null : u.getWhenUpdated().toInstant().toString());
+                row.put("submitterName", u.getSubmitterName());
+                if (u.getSubmitter() != null) {
+                    Map<String, String> p = new LinkedHashMap<>();
+                    p.put("zdbID",     u.getSubmitter().getZdbID());
+                    p.put("firstName", u.getSubmitter().getFirstName());
+                    p.put("lastName",  u.getSubmitter().getLastName());
+                    row.put("submitter", p);
+                } else {
+                    row.put("submitter", null);
+                }
+                row.put("oldValue", u.getOldValue());
+                row.put("newValue", u.getNewValue());
+                rows.add(row);
+            }
+            out.put(k, rows);
+        });
+        return out;
+    }
+
     @GetMapping("/line-submission/new")
     public String newLineSubmission(Model model) {
         model.addAttribute("submission", new LineSubmission());

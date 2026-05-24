@@ -9,6 +9,10 @@ import {
     schemaTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
+import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
  * Multi-line string renderer. Tester claims any string Control whose uiSchema
@@ -23,12 +27,35 @@ function TextareaRowRenderer({
     uischema,
     errors,
     visible,
+    config,
 }: ControlProps) {
     if (visible === false) {return null;}
-    const fieldName = path.split('.').pop() ?? path;
+    const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const placeholder = (uischema as { options?: { placeholder?: string } })?.options?.placeholder;
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        return (
+            <tr>
+                <th className='w-25' scope='row' id={labelId}>
+                    <StatusBadge status={view.fieldStatus[fieldName]}/>
+                    {label}
+                </th>
+                <td>
+                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                        <ValueDisplay value={data}/>
+                    </div>
+                    <FieldHistory
+                        fieldKey={fieldName}
+                        label={label ?? fieldName}
+                        updates={view.fieldUpdates[fieldName]}
+                    />
+                </td>
+            </tr>
+        );
+    }
     return (
         <tr>
             <th className='w-25' scope='row' id={labelId}>
