@@ -4,11 +4,15 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.hibernate.query.NativeQuery;
+import org.zfin.feature.FeatureDeletionSizeRow;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Reports features whose stored deletion size (fdmd_number_removed_dna_base_pairs)
@@ -29,6 +33,9 @@ public class CheckDeletionSizeDriftTask extends AbstractValidateDataReportTask {
 
     private static final Logger LOG = LogManager.getLogger(CheckDeletionSizeDriftTask.class);
 
+    private static final Set<FeatureTypeEnum> SIZED_TYPES =
+            EnumSet.of(FeatureTypeEnum.DELETION, FeatureTypeEnum.INDEL, FeatureTypeEnum.MNV);
+
     public CheckDeletionSizeDriftTask(String jobName, String propertyFilePath, String dataDirectoryString) {
         super(jobName, propertyFilePath, dataDirectoryString);
     }
@@ -48,37 +55,14 @@ public class CheckDeletionSizeDriftTask extends AbstractValidateDataReportTask {
         int skippedNoSize = 0;
 
         try {
-            // Native projection — keep entities out of the persistence context
-            // for the full dataset (cf. CheckSequenceOfReferenceDriftTask).
-            // Restrict to feature types where deletion size is meaningful.
-            String sql = "select fdmd.fdmd_feature_zdb_id, " +
-                    "       f.feature_abbrev, " +
-                    "       f.feature_type, " +
-                    "       sfcl.sfcl_assembly, " +
-                    "       sfcl.sfcl_chromosome, " +
-                    "       sfcl.sfcl_start_position, " +
-                    "       sfcl.sfcl_end_position, " +
-                    "       fdmd.fdmd_number_removed_dna_base_pairs " +
-                    "  from feature_dna_mutation_detail fdmd " +
-                    "  join feature f on f.feature_zdb_id = fdmd.fdmd_feature_zdb_id " +
-                    "  left join sequence_feature_chromosome_location sfcl " +
-                    "         on sfcl.sfcl_feature_zdb_id = fdmd.fdmd_feature_zdb_id " +
-                    " where f.feature_type in ('DELETION', 'INDEL', 'MNV') " +
-                    "   and fdmd.fdmd_number_removed_dna_base_pairs is not null " +
-                    " order by fdmd.fdmd_feature_zdb_id";
+            List<FeatureDeletionSizeRow> rows = RepositoryFactory.getSequenceRepository()
+                    .getDeletionSizeDriftCandidates(SIZED_TYPES);
 
-            NativeQuery<Object[]> query = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class);
-
-            for (Object[] row : query.list()) {
+            for (FeatureDeletionSizeRow row : rows) {
                 examined++;
-                String featureZdbId = (String) row[0];
-                String featureAbbrev = (String) row[1];
-                String featureType = (String) row[2];
-                String assemblyName = (String) row[3];
-                String chromosome = (String) row[4];
-                Integer startLoc = row[5] != null ? ((Number) row[5]).intValue() : null;
-                Integer endLoc = row[6] != null ? ((Number) row[6]).intValue() : null;
-                Integer storedSize = row[7] != null ? ((Number) row[7]).intValue() : null;
+                Integer storedSize = row.storedSize();
+                Integer startLoc = row.startLocation();
+                Integer endLoc = row.endLocation();
 
                 if (storedSize == null) {
                     skippedNoSize++;
@@ -91,12 +75,12 @@ public class CheckDeletionSizeDriftTask extends AbstractValidateDataReportTask {
 
                 int expectedSize = endLoc - startLoc + 1;
                 if (storedSize != expectedSize) {
-                    List<String> outRow = new ArrayList<>(8);
-                    outRow.add(featureZdbId);
-                    outRow.add(featureAbbrev == null ? "" : featureAbbrev);
-                    outRow.add(featureType == null ? "" : featureType);
-                    outRow.add(assemblyName == null ? "" : assemblyName);
-                    outRow.add(chromosome == null ? "" : chromosome);
+                    List<String> outRow = new ArrayList<>(9);
+                    outRow.add(row.featureZdbId());
+                    outRow.add(row.featureAbbrev() == null ? "" : row.featureAbbrev());
+                    outRow.add(row.featureType() == null ? "" : row.featureType().name());
+                    outRow.add(row.assemblyName() == null ? "" : row.assemblyName());
+                    outRow.add(row.chromosome() == null ? "" : row.chromosome());
                     outRow.add(String.valueOf(startLoc));
                     outRow.add(String.valueOf(endLoc));
                     outRow.add(String.valueOf(storedSize));
