@@ -43,6 +43,11 @@ public class LineSubmissionSectionApproval {
     @JoinColumn(name = "lssa_approver_zdb_id", referencedColumnName = "zdb_id", nullable = false)
     private Person approver;
 
-    @Column(name = "lssa_approved_at", insertable = false, updatable = false)
+    // Last-toggle timestamp. The migration sets a now() default so the
+    // first INSERT lands at row creation; subsequent UPDATEs MUST refresh
+    // it explicitly (handled by ZircDashboardController.setSectionApproval).
+    // Hibernate-side insertable/updatable both true so the explicit set
+    // is honored.
+    @Column(name = "lssa_approved_at", nullable = false)
     private Date approvedAt;
 }

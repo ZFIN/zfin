@@ -1068,6 +1068,29 @@ public class ZircDashboardController {
                                             String approver,
                                             String approvedAt) {}
 
+    // Allowlist of valid section slugs (mirrors what the JSP emits).
+    private static final java.util.Set<String> TOP_LEVEL_SECTION_SLUGS = java.util.Set.of(
+            "overview", "mutations", "linked-features", "background", "additional-info");
+    private static final java.util.Set<String> MUTATION_SECTION_SLUGS = java.util.Set.of(
+            "mutation", "overview", "genes", "lesions",
+            "genotyping-assays", "phenotypes", "lethality", "publications");
+    private static final java.util.Map<String, String> SECTION_SLUG_TO_LABEL = java.util.Map.ofEntries(
+            java.util.Map.entry("overview",          "Overview"),
+            java.util.Map.entry("mutations",         "Mutations"),
+            java.util.Map.entry("linked-features",   "Linked Features"),
+            java.util.Map.entry("background",        "Background"),
+            java.util.Map.entry("additional-info",   "Additional Info"),
+            java.util.Map.entry("genes",             "Genes"),
+            java.util.Map.entry("lesions",           "Lesions"),
+            java.util.Map.entry("genotyping-assays", "Genotyping Assays"),
+            java.util.Map.entry("phenotypes",        "Phenotypes"),
+            java.util.Map.entry("lethality",         "Lethality"),
+            java.util.Map.entry("publications",      "Publications"));
+    private static final java.util.regex.Pattern LSUB_REC_ID_PATTERN =
+            java.util.regex.Pattern.compile("^ZDB-LINESUBMISSION-\\d{6}-\\d+$");
+    private static final java.util.regex.Pattern MUT_REC_ID_PATTERN =
+            java.util.regex.Pattern.compile("^ZIRC-MUT-(\\d+)$");
+
     @PostMapping("/section-approval")
     @ResponseBody
     public SectionApprovalDTO setSectionApproval(@RequestParam("recId") String recId,
@@ -1082,6 +1105,50 @@ public class ZircDashboardController {
         Person currentUser = ProfileService.getCurrentSecurityUser();
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login required");
+        }
+        // Only curators may flip approvals.
+        if (currentUser.getAccountInfo() == null || !currentUser.getAccountInfo().isCurator()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Curator role required");
+        }
+        // Validate (recId, sectionName) and resolve owning submission.
+        LineSubmission owningSubmission;
+        java.util.regex.Matcher mutMatch = MUT_REC_ID_PATTERN.matcher(recId);
+        if (LSUB_REC_ID_PATTERN.matcher(recId).matches()) {
+            if (!TOP_LEVEL_SECTION_SLUGS.contains(sectionName)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Unknown top-level section: " + sectionName);
+            }
+            owningSubmission = HibernateUtil.currentSession().get(LineSubmission.class, recId);
+            if (owningSubmission == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Submission " + recId + " not found");
+            }
+        } else if (mutMatch.matches()) {
+            if (!MUTATION_SECTION_SLUGS.contains(sectionName)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Unknown mutation section: " + sectionName);
+            }
+            Long mutId = Long.parseLong(mutMatch.group(1));
+            Mutation mut = HibernateUtil.currentSession().get(Mutation.class, mutId);
+            if (mut == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutId + " not found");
+            }
+            owningSubmission = mut.getLineSubmission();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "recId must be ZDB-LINESUBMISSION-* or ZIRC-MUT-*");
+        }
+        // Server-side rollup check: only allow approved=true when the
+        // section's underlying status is already COMPLETE (or already
+        // APPROVED — the latter lets an idempotent re-approval succeed
+        // even if the overlay has already promoted the rollup). Un-approval
+        // is always allowed.
+        if (approved) {
+            FieldStatus rollup = resolveSectionRollup(owningSubmission, recId, sectionName);
+            if (rollup == null
+                    || (rollup != FieldStatus.COMPLETE && rollup != FieldStatus.APPROVED)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Section " + sectionName + " is not Complete; cannot approve");
+            }
         }
         HibernateUtil.createTransaction();
         try {
@@ -1100,7 +1167,9 @@ public class ZircDashboardController {
             }
             row.setApproved(approved);
             row.setApprover(HibernateUtil.currentSession().getReference(Person.class, currentUser.getZdbID()));
-            HibernateUtil.currentSession().merge(row);
+            row.setApprovedAt(new java.util.Date());
+            row = (org.zfin.zirc.entity.LineSubmissionSectionApproval)
+                    HibernateUtil.currentSession().merge(row);
             if (oldApproved != approved) {
                 RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(
                         recId, "section.approved." + sectionName,
@@ -1116,5 +1185,32 @@ public class ZircDashboardController {
             HibernateUtil.rollbackTransaction();
             throw e;
         }
+    }
+
+    /** Resolve the current rollup status for (recId, sectionName) by running the
+     *  relevant status computer on the owning submission. Returns null if the
+     *  section can't be located. Pre-approval-overlay value — the caller decides
+     *  whether to allow the toggle based on it. */
+    private FieldStatus resolveSectionRollup(LineSubmission submission, String recId, String sectionName) {
+        String label = SECTION_SLUG_TO_LABEL.get(sectionName);
+        if (LSUB_REC_ID_PATTERN.matcher(recId).matches()) {
+            if (label == null) return null;
+            FieldStatusResult r = LineSubmissionStatusComputer.compute(submission);
+            return r.bySection().get(label);
+        }
+        java.util.regex.Matcher m = MUT_REC_ID_PATTERN.matcher(recId);
+        if (m.matches()) {
+            long mid = Long.parseLong(m.group(1));
+            Mutation mut = submission.getMutations() == null ? null :
+                    submission.getMutations().stream()
+                            .filter(x -> x.getId() == mid).findFirst().orElse(null);
+            if (mut == null) return null;
+            FieldStatusResult r = MutationStatusComputer.compute(mut);
+            if ("mutation".equals(sectionName)) {
+                return r.overall();
+            }
+            return label == null ? null : r.bySection().get(label);
+        }
+        return null;
     }
 }

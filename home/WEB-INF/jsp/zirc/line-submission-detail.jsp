@@ -67,7 +67,8 @@
         </style>
 
         <div class="small text-uppercase text-muted">ZIRC Line Submission</div>
-        <h1><z:zirc-status-badge status="${overallStatus}"/> ${submission.name}<z:zirc-section-history key="submission" label="Line Submission ${submission.name}" updates="${submissionAllUpdates}"/><z:zirc-field-comments recId="${submission.zdbID}" scope="section" sectionName="submission" label="Line Submission ${submission.name}"/></h1>
+        <%-- submission.name is curator-entered; escape on every direct HTML emission. --%>
+        <h1><z:zirc-status-badge status="${overallStatus}"/> <c:out value="${submission.name}"/><z:zirc-section-history key="submission" label="Line Submission ${submission.name}" updates="${submissionAllUpdates}"/><z:zirc-field-comments recId="${submission.zdbID}" scope="section" sectionName="submission" label="Line Submission ${submission.name}"/></h1>
 
         <%-- Workflow status bar: first three cells display data, the rest
              mirror the page's top-level sections and turn green when that

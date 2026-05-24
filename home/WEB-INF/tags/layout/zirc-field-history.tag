@@ -21,8 +21,9 @@
 <%@ attribute name="scope"     required="false" rtexprvalue="true" type="java.lang.String" %>
 
 <c:if test="${not empty updates}">
-    <c:set var="modalId" value="fieldUpdatesModal-${fieldName}${empty scope ? '' : '-'}${scope}"/>
-    <a href="javascript:void(0)" class="ml-2 text-muted field-history-trigger" title="View change history for ${label}"
+    <c:set var="modalId"   value="fieldUpdatesModal-${fieldName}${empty scope ? '' : '-'}${scope}"/>
+    <c:set var="safeLabel" value="${fn:escapeXml(label)}"/>
+    <a href="javascript:void(0)" class="ml-2 text-muted field-history-trigger" title="View change history for ${safeLabel}"
        data-toggle="modal" data-target="#${modalId}">
         <i class="fas fa-history"></i>
     </a>
@@ -30,7 +31,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">${label} &mdash; Change History</h5>
+                    <h5 class="modal-title">${safeLabel} &mdash; Change History</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

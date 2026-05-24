@@ -1,5 +1,6 @@
 <%@ tag pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%--
   Trigger icon for the per-field / per-section curator <-> submitter
   comment thread. Clicking opens the shared #zircCommentsModal which
@@ -17,12 +18,21 @@
 <%@ attribute name="sectionName" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="label"       required="true"  rtexprvalue="true" type="java.lang.String" %>
 
+<%-- HTML-escape every value that lands in an attribute: label can come
+     from submission / mutation names which are curator-entered, so a
+     stray quote or angle bracket must not break the attribute context. --%>
+<c:set var="safeLabel"       value="${fn:escapeXml(label)}"/>
+<c:set var="safeRecId"       value="${fn:escapeXml(recId)}"/>
+<c:set var="safeScope"       value="${fn:escapeXml(scope)}"/>
+<c:set var="safeFieldName"   value="${fn:escapeXml(fieldName)}"/>
+<c:set var="safeSectionName" value="${fn:escapeXml(sectionName)}"/>
+
 <a href="javascript:void(0)" class="ml-2 text-muted field-history-trigger zirc-comments-trigger"
-   title="Comments &mdash; ${label}"
-   data-rec-id="${recId}"
-   data-scope="${scope}"
-   data-field-name="${fieldName}"
-   data-section-name="${sectionName}"
-   data-label="${label}">
+   title="Comments &mdash; ${safeLabel}"
+   data-rec-id="${safeRecId}"
+   data-scope="${safeScope}"
+   data-field-name="${safeFieldName}"
+   data-section-name="${safeSectionName}"
+   data-label="${safeLabel}">
     <i class="far fa-comments"></i>
 </a>
