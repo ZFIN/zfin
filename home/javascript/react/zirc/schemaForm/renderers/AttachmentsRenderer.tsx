@@ -10,6 +10,7 @@ import {
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { AssayFileDTO } from '../../api/types';
 import { useUploadAttachment, useDeleteAttachment } from '../../api/queries';
+import { viewConfigFrom } from '../useViewConfig';
 
 /**
  * Per-assay attachments. Single "Attachments" section regardless of
@@ -26,6 +27,20 @@ function AttachmentsRenderer({ data, schema, config }: ControlProps) {
     const upload = useUploadAttachment();
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        if (files.length === 0) {
+            return <p className='text-muted small mb-0'>No attachments.</p>;
+        }
+        return (
+            <ul className='list-unstyled mb-0'>
+                {files.map((f) => (
+                    <li key={f.id}>{f.originalFilename}</li>
+                ))}
+            </ul>
+        );
+    }
 
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 

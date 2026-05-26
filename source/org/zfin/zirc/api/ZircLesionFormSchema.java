@@ -101,7 +101,7 @@ public final class ZircLesionFormSchema {
         // Protein-level
         properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
-        return ObjectSchema.of(properties);
+        return ObjectSchema.of(null, properties, List.of("lesionType"));
     }
 
     public static UiSchemaElement uiSchema() {

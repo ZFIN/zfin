@@ -79,7 +79,7 @@ public final class ZircMutationFormSchema {
         properties.put("lethalityAdditionalInfo",    StringSchema.of("Lethality Additional Info", 5000));
         // Publications
         properties.put("publications",               new ArraySchema("Publications",
-                                                            new StringSchema(null, null, null, null),
+                                                            new StringSchema(null, null, null, null, null),
                                                             null, null));
         // Genotyping assays — summary rows that the AssaysListRenderer
         // turns into expandable cards. Add/Delete go through dedicated
@@ -93,7 +93,14 @@ public final class ZircMutationFormSchema {
         properties.put("lesions",                    lesionsSummaryArrayProp());
         // Phenotypes — same inline-expand pattern; no type matrix.
         properties.put("phenotypes",                 phenotypesSummaryArrayProp());
-        return ObjectSchema.of(properties);
+        // Required fields per the General + Mutagenesis sections. Conditional
+        // applicability (e.g. cellGenomicFeature only when zfinRecordEstablished)
+        // remains a hand-coded exception in MutationStatusComputer.compute().
+        return ObjectSchema.of(null, properties, List.of(
+                "alleleDesignation",
+                "mutagenesisStage",
+                "mutagenesisProtocol",
+                "mutationType"));
     }
 
     public static UiSchemaElement uiSchema() {

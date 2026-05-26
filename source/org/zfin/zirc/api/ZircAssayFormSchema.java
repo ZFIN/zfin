@@ -99,7 +99,7 @@ public final class ZircAssayFormSchema {
         properties.put("restrictionEnzymeName",      StringSchema.of("Restriction Enzyme Name", 255));
         properties.put("restrictionEnzymeCatalog",   StringSchema.of("Restriction Enzyme Catalog #", 255));
         properties.put("enzymeCleaves",              new ArraySchema("Enzyme Cleaves At",
-                                                            new StringSchema(null, null, null, null),
+                                                            new StringSchema(null, null, null, null, null),
                                                             null, null));
         properties.put("expectedWtDigest",           StringSchema.of("Expected WT Digest", 2000));
         properties.put("expectedMutDigest",          StringSchema.of("Expected Mutant Digest", 2000));
@@ -115,7 +115,7 @@ public final class ZircAssayFormSchema {
         // multipart endpoint, not the field-path PATCH (AssayEdit's diff
         // filter must skip /attachments).
         properties.put("attachments",                attachmentsArrayProp());
-        return ObjectSchema.of(properties);
+        return ObjectSchema.of(null, properties, List.of("assayType"));
     }
 
     public static UiSchemaElement uiSchema() {
@@ -253,7 +253,7 @@ public final class ZircAssayFormSchema {
     private static ArraySchema attachmentsArrayProp() {
         Map<String, JsonSchema> itemProps = new LinkedHashMap<>();
         itemProps.put("id",               NumberSchema.of());
-        itemProps.put("originalFilename", new StringSchema(null, null, null, null));
+        itemProps.put("originalFilename", new StringSchema(null, null, null, null, null));
         itemProps.put("contentType",      StringSchema.nullable());
         itemProps.put("fileSize",         new NumberSchema(null, Boolean.TRUE));
         itemProps.put("uploadedAt",       StringSchema.nullable());

@@ -47,7 +47,7 @@ public final class ZircGeneFormSchema {
         properties.put("linkageGroup",      StringSchema.of("Linkage Group", 255));
         properties.put("genbankGenomicDna", StringSchema.of("GenBank Genomic DNA", 255));
         properties.put("genbankCdna",       StringSchema.of("GenBank cDNA", 255));
-        return ObjectSchema.of(properties);
+        return ObjectSchema.of(null, properties, java.util.List.of("mutatedGeneZdbID", "genbankGenomicDna"));
     }
 
     public static UiSchemaElement uiSchema() {

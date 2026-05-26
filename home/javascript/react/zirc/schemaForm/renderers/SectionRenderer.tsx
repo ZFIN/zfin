@@ -7,9 +7,10 @@ import {
     uiTypeIs,
 } from '@jsonforms/core';
 import { ResolvedJsonFormsDispatch, withJsonFormsLayoutProps } from '@jsonforms/react';
-import { viewConfigFrom } from '../useViewConfig';
+import { viewConfigFrom, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 
 /**
  * Renders a uiSchema "Group" element as a ZFIN-styled section: section.section
@@ -36,9 +37,14 @@ function SectionRenderer({
     if (visible === false) {return null;}
     const layout = uischema as GroupLayout;
     const label = layout.label ?? schema?.title ?? '';
-    const sectionId = label
+    const view = viewConfigFrom(config);
+    const slug = label
         ? label.toLowerCase().replace(/[^a-z0-9-_:.]/g, '-').replace(/-+/g, '-')
         : 'section';
+    // When idPrefix is set (e.g. "mutation-1" for a nested mutation card),
+    // scope this section's id so it doesn't collide with sibling cards'
+    // sections that share the same label.
+    const sectionId = view.idPrefix ? `${view.idPrefix}-${slug}` : slug;
     const headingId = `${sectionId}-heading`;
     const isPlain =
         (layout.options as { layout?: string } | undefined)?.layout === 'plain';
@@ -55,9 +61,7 @@ function SectionRenderer({
         />
     ));
 
-    const view = viewConfigFrom(config);
     const sectionStatus = view.sectionStatus[label];
-    const sectionUpdates = view.sectionUpdates[label];
 
     return (
         <section className='section' id={sectionId} aria-labelledby={headingId}>
@@ -65,15 +69,29 @@ function SectionRenderer({
                 <StatusBadge status={sectionStatus}/>
                 {label}
                 <FieldHistory
-                    fieldKey={`section-${sectionId}`}
+                    recId={view.recId}
+                    scope='section'
+                    sectionName={label}
                     label={label}
-                    updates={sectionUpdates}
                 />
+                {commentsEnabled(uischema) && (
+                    <FieldComments
+                        recId={view.recId}
+                        scope='section'
+                        sectionName={label}
+                        label={label}
+                    />
+                )}
             </h2>
             {isPlain ? (
-                <div>{children}</div>
+                <div className='ml-4' style={{ marginLeft: '1.5rem' }}>
+                    {children}
+                </div>
             ) : (
-                <table className='table table-borderless'>
+                <table
+                    className='table table-borderless ml-4'
+                    style={{ marginLeft: '1.5rem' }}
+                >
                     <tbody>{children}</tbody>
                 </table>
             )}

@@ -7,10 +7,63 @@ import {
     optionIs,
     rankWith,
 } from '@jsonforms/core';
-import { withJsonFormsControlProps } from '@jsonforms/react';
+import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
+import { JsonForms, withJsonFormsControlProps } from '@jsonforms/react';
+import { useQuery } from '@tanstack/react-query';
 import { AssaySummaryDTO } from '../../api/types';
-import { useAddAssay, useDeleteAssay } from '../../api/queries';
+import { api } from '../../api/client';
+import { useAddAssay, useAssayById, useDeleteAssay } from '../../api/queries';
 import { AssayEdit } from '../../pages/AssayEdit';
+import { viewConfigFrom } from '../useViewConfig';
+import { aggregateRenderers } from '../aggregateRenderers';
+import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
+
+type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
+
+function AssayDetailCard({
+    summary, n, schema, uiSchema,
+}: {
+    summary: AssaySummaryDTO;
+    n: number;
+    schema: JsonSchema;
+    uiSchema: UISchemaElement;
+}) {
+    const q = useAssayById(summary.id);
+    return (
+        <div className='card mb-2'>
+            <div className='card-header py-1'>
+                <strong>{summary.assayType || `Assay ${n}`}</strong>
+            </div>
+            <div className='card-body py-2'>
+                {q.isLoading && <p className='text-muted small mb-0'>Loading…</p>}
+                {q.isError && (
+                    <div className='alert alert-warning mb-0'>
+                        Failed to load assay {summary.id}.
+                    </div>
+                )}
+                {q.data && (
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={q.data}
+                        renderers={aggregateRenderers}
+                        cells={[]}
+                        readonly
+                        config={{
+                            mode: 'view',
+                            readonly: true,
+                            assayId: summary.id,
+                            recId: `ZIRC-GA-${summary.id}`,
+                            fieldStatus: deriveFieldStatus(schema, q.data),
+                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                        }}
+                        onChange={() => { /* read-only */ }}
+                    />
+                )}
+            </div>
+        </div>
+    );
+}
 
 /**
  * Renders the per-mutation list of genotyping assays as a stack of cards.
@@ -34,6 +87,38 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
     const addAssay = useAddAssay();
     const deleteAssay = useDeleteAssay();
     const [expanded, setExpanded] = React.useState<Set<number>>(new Set());
+
+    const view = viewConfigFrom(config);
+    const assaySchema = useQuery<FormSchemaDTO>({
+        queryKey: ['zirc', 'assay-form-schema'],
+        queryFn: () => api.get<FormSchemaDTO>('/assays/form-schema'),
+        staleTime: Infinity,
+        enabled: view.readonly,
+    });
+    if (view.readonly) {
+        if (assays.length === 0) {
+            return <p className='text-muted small mb-0'>No genotyping assays.</p>;
+        }
+        if (assaySchema.isLoading) {
+            return <p className='text-muted small'>Loading assay details…</p>;
+        }
+        if (assaySchema.isError || !assaySchema.data) {
+            return <div className='alert alert-warning'>Failed to load assay form schema.</div>;
+        }
+        return (
+            <div>
+                {assays.map((a, i) => (
+                    <AssayDetailCard
+                        key={a.id}
+                        summary={a}
+                        n={i + 1}
+                        schema={assaySchema.data.schema}
+                        uiSchema={assaySchema.data.uiSchema}
+                    />
+                ))}
+            </div>
+        );
+    }
 
     // Server-published MAX_ASSAYS_PER_MUTATION via JSON Schema maxItems.
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;

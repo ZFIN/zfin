@@ -8,6 +8,7 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom, leafOf } from '../useViewConfig';
 
 /**
  * Simple list-of-strings widget rendered as one textarea, one entry per line.
@@ -22,16 +23,36 @@ function PublicationsListRenderer({
     path,
     label,
     visible,
+    config,
 }: ControlProps) {
     if (visible === false) {return null;}
-    const fieldName = path.split('.').pop() ?? path;
+    const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const value = ((data as string[] | undefined) ?? []).join('\n');
 
+    const view = viewConfigFrom(config);
+    if (view.readonly) {
+        const items = (data as string[] | undefined) ?? [];
+        return (
+            <tr>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>{label}</th>
+                <td>
+                    {items.length === 0
+                        ? <span className='text-muted'>&mdash;</span>
+                        : (
+                            <ul className='list-unstyled mb-0'>
+                                {items.map((p, i) => <li key={i}>{p}</li>)}
+                            </ul>
+                        )}
+                </td>
+            </tr>
+        );
+    }
+
     return (
         <tr>
-            <th className='w-25' scope='row' id={labelId}>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 <label htmlFor={inputId} className='mb-0'>{label}</label>
             </th>
             <td>

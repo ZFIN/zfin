@@ -7,10 +7,74 @@ import {
     optionIs,
     rankWith,
 } from '@jsonforms/core';
-import { withJsonFormsControlProps } from '@jsonforms/react';
+import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
+import { JsonForms, withJsonFormsControlProps } from '@jsonforms/react';
+import { useQuery } from '@tanstack/react-query';
 import { LesionSummaryDTO } from '../../api/types';
-import { useAddLesion, useDeleteLesion } from '../../api/queries';
+import { api } from '../../api/client';
+import { useAddLesion, useDeleteLesion, useLesionById } from '../../api/queries';
 import { LesionEdit } from '../../pages/LesionEdit';
+import { viewConfigFrom } from '../useViewConfig';
+import { aggregateRenderers } from '../aggregateRenderers';
+import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
+
+type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
+
+/**
+ * Read-only card for one lesion. Fetches the full {@link LesionDTO} so
+ * the nested JsonForms can render every field the schema declares (the
+ * parent mutation only carries summaries). React Query coalesces and
+ * caches per id, so re-renders / sibling renderers don't refetch.
+ */
+function LesionDetailCard({
+    summary, n, schema, uiSchema,
+}: {
+    summary: LesionSummaryDTO;
+    n: number;
+    schema: JsonSchema;
+    uiSchema: UISchemaElement;
+}) {
+    const q = useLesionById(summary.id);
+    return (
+        <div className='card mb-2'>
+            <div className='card-header py-1'>
+                <strong>{summary.lesionType || `Lesion ${n}`}</strong>
+            </div>
+            <div className='card-body py-2'>
+                {q.isLoading && <p className='text-muted small mb-0'>Loading…</p>}
+                {q.isError && (
+                    <div className='alert alert-warning mb-0'>
+                        Failed to load lesion {summary.id}.
+                    </div>
+                )}
+                {q.data && (
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={q.data}
+                        renderers={aggregateRenderers}
+                        cells={[]}
+                        readonly
+                        config={{
+                            mode: 'view',
+                            readonly: true,
+                            lesionId: summary.id,
+                            recId: `ZIRC-LESION-${summary.id}`,
+                            // Client-derived from schema.required since the
+                            // bootstrap payload doesn't carry per-lesion
+                            // status maps. Mirrors the server's
+                            // LesionStatusComputer for the MISSING/COMPLETE
+                            // cases that schema.required can express.
+                            fieldStatus: deriveFieldStatus(schema, q.data),
+                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                        }}
+                        onChange={() => { /* read-only */ }}
+                    />
+                )}
+            </div>
+        </div>
+    );
+}
 
 /**
  * Per-mutation lesions list with inline-expand cards. Same shape as
@@ -27,6 +91,38 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
     const addLesion = useAddLesion();
     const deleteLesion = useDeleteLesion();
     const [expanded, setExpanded] = React.useState<Set<number>>(new Set());
+
+    const view = viewConfigFrom(config);
+    const lesionSchema = useQuery<FormSchemaDTO>({
+        queryKey: ['zirc', 'lesion-form-schema'],
+        queryFn: () => api.get<FormSchemaDTO>('/lesions/form-schema'),
+        staleTime: Infinity,
+        enabled: view.readonly,
+    });
+    if (view.readonly) {
+        if (lesions.length === 0) {
+            return <p className='text-muted small mb-0'>No lesions.</p>;
+        }
+        if (lesionSchema.isLoading) {
+            return <p className='text-muted small'>Loading lesion details…</p>;
+        }
+        if (lesionSchema.isError || !lesionSchema.data) {
+            return <div className='alert alert-warning'>Failed to load lesion form schema.</div>;
+        }
+        return (
+            <div>
+                {lesions.map((l, i) => (
+                    <LesionDetailCard
+                        key={l.id}
+                        summary={l}
+                        n={i + 1}
+                        schema={lesionSchema.data.schema}
+                        uiSchema={lesionSchema.data.uiSchema}
+                    />
+                ))}
+            </div>
+        );
+    }
 
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;
     const atCapacity = maxItems != null && lesions.length >= maxItems;

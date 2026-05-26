@@ -61,12 +61,12 @@ public final class ZircPhenotypeFormSchema {
         properties.put("nonMendelianComment",    StringSchema.of("Non-Mendelian comment", 5000));
         // PG text[] columns surface as JSON arrays of strings.
         properties.put("segregation",            new ArraySchema("Segregation",
-                                                        new StringSchema(null, null, null, null),
+                                                        new StringSchema(null, null, null, null, null),
                                                         null, null));
         properties.put("type",                   new ArraySchema("Phenotype type",
-                                                        new StringSchema(null, null, null, null),
+                                                        new StringSchema(null, null, null, null, null),
                                                         null, null));
-        return ObjectSchema.of(properties);
+        return ObjectSchema.of(null, properties, List.of("description"));
     }
 
     public static UiSchemaElement uiSchema() {

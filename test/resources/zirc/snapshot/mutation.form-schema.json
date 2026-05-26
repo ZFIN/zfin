@@ -164,6 +164,7 @@
         "type" : [ "boolean", "null" ]
       }
     },
+    "required" : [ "alleleDesignation", "mutagenesisStage", "mutagenesisProtocol", "mutationType" ],
     "type" : "object"
   },
   "uiSchema" : {

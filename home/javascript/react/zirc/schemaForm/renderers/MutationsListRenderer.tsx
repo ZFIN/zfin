@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
     and,
     ControlProps,
@@ -7,10 +8,15 @@ import {
     optionIs,
     rankWith,
 } from '@jsonforms/core';
-import { withJsonFormsControlProps } from '@jsonforms/react';
+import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
+import { JsonForms, withJsonFormsControlProps } from '@jsonforms/react';
 import { MutationDTO } from '../../api/types';
+import { api } from '../../api/client';
 import { useAddMutation, useDeleteMutation } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
+import { aggregateRenderers } from '../aggregateRenderers';
+
+type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
 /**
  * Renders the read-only summary of mutations on the submission page.
@@ -30,26 +36,77 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
     const addMutation = useAddMutation();
     const deleteMutation = useDeleteMutation();
     const view = viewConfigFrom(config);
+    // Per-mutation status maps come through the outer SchemaForm's config,
+    // keyed by mutation id (as string — JSON object keys are always strings).
+    const outerCfg = (config ?? {}) as {
+        mutationFieldStatus?: Record<string, Record<string, unknown>>;
+        mutationSectionStatus?: Record<string, Record<string, unknown>>;
+    };
+
+    // Mutation form-schema is shared across all rows; fetch once, cache forever.
+    // The hook must be invoked unconditionally to satisfy the rules of hooks,
+    // even though we only use the data in the readonly branch.
+    const mutationSchema = useQuery<FormSchemaDTO>({
+        queryKey: ['zirc', 'mutation-form-schema'],
+        queryFn: () => api.get<FormSchemaDTO>('/mutations/form-schema'),
+        staleTime: Infinity,
+    });
 
     if (view.readonly) {
-        // The full mutation card layout (nested per-mutation SchemaForm with
-        // mutation-aggregate field/section status) is a follow-up. Stub the
-        // section so the rest of the detail page renders cleanly.
         if (mutations.length === 0) {
             return <p className='text-muted'>No mutations recorded for this submission.</p>;
         }
+        if (mutationSchema.isLoading) {
+            return <p className='text-muted'>Loading mutation details…</p>;
+        }
+        if (mutationSchema.isError || !mutationSchema.data) {
+            return (
+                <div className='alert alert-warning'>
+                    Failed to load mutation form schema.
+                </div>
+            );
+        }
         return (
-            <ul className='list-unstyled'>
+            <div>
                 {mutations.map((m, i) => (
-                    <li key={m.id} className='mb-1'>
-                        <strong>Mutation {i + 1}:</strong>{' '}
-                        {m.alleleDesignation ?? <span className='text-muted'>(no allele designation)</span>}
-                    </li>
+                    <div
+                        key={m.id}
+                        id={`mutation-${i + 1}`}
+                        className='card mb-3'
+                    >
+                        <div className='card-header py-2'>
+                            <strong>Mutation {i + 1}</strong>
+                            {m.alleleDesignation && (
+                                <span className='ml-2 text-muted'>
+                                    — {m.alleleDesignation}
+                                </span>
+                            )}
+                        </div>
+                        <div className='card-body py-2'>
+                            <JsonForms
+                                schema={mutationSchema.data.schema}
+                                uischema={mutationSchema.data.uiSchema}
+                                data={m}
+                                renderers={aggregateRenderers}
+                                cells={[]}
+                                readonly
+                                config={{
+                                    mode: 'view',
+                                    readonly: true,
+                                    mutationId: m.id,
+                                    idPrefix: `mutation-${i + 1}`,
+                                    fieldStatus:
+                                        outerCfg.mutationFieldStatus?.[String(m.id)] ?? {},
+                                    sectionStatus:
+                                        outerCfg.mutationSectionStatus?.[String(m.id)] ?? {},
+                                    recId: `ZIRC-MUT-${m.id}`,
+                                }}
+                                onChange={() => { /* read-only */ }}
+                            />
+                        </div>
+                    </div>
                 ))}
-                <li className='small text-muted mt-2'>
-                    Detailed per-mutation read-only view not yet ported.
-                </li>
-            </ul>
+            </div>
         );
     }
 

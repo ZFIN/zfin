@@ -341,6 +341,7 @@
         <mapping class="org.zfin.zirc.entity.Phenotype"/>
         <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
         <mapping class="org.zfin.zirc.entity.AuditEntry"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionComment"/>
 
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
 

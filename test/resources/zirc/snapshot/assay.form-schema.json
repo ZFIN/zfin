@@ -149,6 +149,7 @@
         "type" : "string"
       }
     },
+    "required" : [ "assayType" ],
     "type" : "object"
   },
   "uiSchema" : {

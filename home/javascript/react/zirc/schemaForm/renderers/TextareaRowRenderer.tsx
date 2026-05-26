@@ -9,9 +9,10 @@ import {
     schemaTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
@@ -39,7 +40,7 @@ function TextareaRowRenderer({
     if (view.readonly) {
         return (
             <tr>
-                <th className='w-25' scope='row' id={labelId}>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                     <StatusBadge status={view.fieldStatus[fieldName]}/>
                     {label}
                 </th>
@@ -48,17 +49,26 @@ function TextareaRowRenderer({
                         <ValueDisplay value={data}/>
                     </div>
                     <FieldHistory
-                        fieldKey={fieldName}
+                        recId={view.recId}
+                        scope='field'
+                        fieldName={fieldName}
                         label={label ?? fieldName}
-                        updates={view.fieldUpdates[fieldName]}
                     />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName={fieldName}
+                            label={label ?? fieldName}
+                        />
+                    )}
                 </td>
             </tr>
         );
     }
     return (
         <tr>
-            <th className='w-25' scope='row' id={labelId}>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 <label htmlFor={inputId} className='mb-0'>{label}</label>
             </th>
             <td>

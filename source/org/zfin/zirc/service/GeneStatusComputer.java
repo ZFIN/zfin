@@ -1,5 +1,8 @@
 package org.zfin.zirc.service;
 
+import org.zfin.zirc.api.ZircGeneFormSchema;
+import org.zfin.zirc.api.jsonschema.JsonSchema;
+import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
@@ -7,7 +10,9 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Per-field status for one {@link Gene} row under a {@link org.zfin.zirc.entity.Mutation}.
@@ -16,29 +21,45 @@ import java.util.Map;
  */
 public final class GeneStatusComputer {
 
+    /**
+     * Field paths match the schema property names (and DTO components), so
+     * the schema's {@code required} list is the single source of truth for
+     * required-ness across the stack. The entity exposes a
+     * {@link Gene#getMutatedGeneZdbID()} {@code @Transient} accessor so
+     * reflection can read it under the schema-side name.
+     */
     public enum Field {
-        MUTATED_GENE          ("mutatedGene",         true),
-        LINKAGE_GROUP         ("linkageGroup",        false),
-        GENBANK_GENOMIC_DNA   ("genbankGenomicDna",   false),
-        GENBANK_CDNA          ("genbankCdna",         false);
+        MUTATED_GENE_ZDB_ID   ("mutatedGeneZdbID"),
+        LINKAGE_GROUP         ("linkageGroup"),
+        GENBANK_GENOMIC_DNA   ("genbankGenomicDna"),
+        GENBANK_CDNA          ("genbankCdna");
 
         private final String path;
-        private final boolean required;
 
-        Field(String path, boolean required) {
-            this.path = path;
-            this.required = required;
+        Field(String path) { this.path = path; }
+
+        public String getPath() { return path; }
+    }
+
+    private static final Set<String> REQUIRED_PATHS = collectRequiredPaths(ZircGeneFormSchema.schema());
+
+    private static Set<String> collectRequiredPaths(JsonSchema node) {
+        Set<String> out = new LinkedHashSet<>();
+        if (node instanceof ObjectSchema obj) {
+            if (obj.required() != null) out.addAll(obj.required());
+            if (obj.properties() != null) {
+                for (JsonSchema child : obj.properties().values()) {
+                    out.addAll(collectRequiredPaths(child));
+                }
+            }
         }
+        return out;
+    }
 
-        public String  getPath()    { return path; }
-        public boolean isRequired() { return required; }
-
-        public FieldStatus statusFor(Gene g) {
-            Object value = readProperty(g, path);
-            boolean empty = isEmpty(value);
-            if (empty && required) return FieldStatus.MISSING;
-            return FieldStatus.COMPLETE;
-        }
+    private static FieldStatus statusFor(Gene g, String path) {
+        Object value = readProperty(g, path);
+        if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        return FieldStatus.COMPLETE;
     }
 
     private GeneStatusComputer() {}
@@ -46,7 +67,7 @@ public final class GeneStatusComputer {
     public static FieldStatusResult compute(Gene g) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
-            byField.put(f.getPath(), f.statusFor(g));
+            byField.put(f.getPath(), statusFor(g, f.getPath()));
         }
 
         FieldStatus overall = FieldStatus.COMPLETE;

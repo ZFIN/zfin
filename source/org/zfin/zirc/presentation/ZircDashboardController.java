@@ -406,34 +406,72 @@ public class ZircDashboardController {
 
         FieldStatusResult status = LineSubmissionStatusComputer.compute(submission);
 
-        // Submission-level updates only — nested-aggregate updates are out
-        // of scope for the smallest cutover (the list renderers stub them).
-        List<Updates> submissionUpdates = HibernateUtil.currentSession()
-                .createQuery(
-                    "from Updates where recID = :rid order by whenUpdated desc",
-                    Updates.class)
-                .setParameter("rid", submission.getZdbID())
-                .list();
-        Map<String, List<Updates>> fieldUpdates = new LinkedHashMap<>();
-        for (Updates u : submissionUpdates) {
-            if (u.getFieldName() == null) continue;
-            fieldUpdates.computeIfAbsent(u.getFieldName(), k -> new ArrayList<>()).add(u);
+        // Field/section history is no longer embedded in the bootstrap
+        // payload — FieldHistory lazy-fetches GET /api/zirc/audit on click,
+        // symmetric with FieldComments. That makes nested-aggregate history
+        // (lesion, assay, phenotype, gene) work without bootstrap plumbing.
+
+        // Per-mutation status maps for the nested mutation cards in the
+        // schema-driven detail view. Keyed by mutation id so the React
+        // MutationsListRenderer can do an O(1) lookup per card.
+        Map<String, Map<String, Map<String, String>>> perMutationFieldStatus = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perMutationSectionStatus = new LinkedHashMap<>();
+        if (submission.getMutations() != null) {
+            for (Mutation mut : submission.getMutations()) {
+                FieldStatusResult r = MutationStatusComputer.compute(mut);
+                perMutationFieldStatus.put(String.valueOf(mut.getId()),
+                        fieldStatusToJson(r.byField()));
+                perMutationSectionStatus.put(String.valueOf(mut.getId()),
+                        fieldStatusToJson(r.bySection()));
+            }
         }
-        Map<String, List<Updates>> sectionUpdates = new LinkedHashMap<>();
-        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Overview",
-                "name", "previousNames", "reasons", "reasonsOther", "abbreviation");
-        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Background",
-                "maternalBackground", "paternalBackground",
-                "backgroundChangeable", "backgroundChangeConcerns");
-        rollupFieldUpdates(sectionUpdates, fieldUpdates, "Additional Info",
-                "additionalInfo", "unreportedFeaturesDetails",
-                "husbandryInfo", "singleAllelic");
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("fieldStatus",     fieldStatusToJson(status.byField()));
         payload.put("sectionStatus",   fieldStatusToJson(status.bySection()));
-        payload.put("fieldUpdates",    updatesMapToJson(fieldUpdates));
-        payload.put("sectionUpdates",  updatesMapToJson(sectionUpdates));
+        payload.put("mutationFieldStatus",   perMutationFieldStatus);
+        payload.put("mutationSectionStatus", perMutationSectionStatus);
+
+        // Left-nav subsections: one entry per mutation under "Mutations".
+        // navigationItem.tag links each to '#' + makeDomIdentifier(title), so
+        // "Mutation 1" -> #mutation-1, matching the id we set on the card div
+        // in MutationsListRenderer's view-mode branch.
+        //
+        // Sub-sub-sections: each mutation's inner Groups (General, Mutagenesis,
+        // …). dataPage.tag builds the href as '#'+makeDomIdentifier(parent)+
+        // '-'+makeDomIdentifier(child), so "Mutation 1" / "General" links to
+        // '#mutation-1-general' — matching the prefixed id SectionRenderer
+        // emits when its config.idPrefix is set.
+        List<String> mutationLabels = new ArrayList<>();
+        Map<String, List<String>> mutationSubSubSections = new LinkedHashMap<>();
+        Map<String, FieldStatus> mutationSubSectionStatus = new LinkedHashMap<>();
+        Map<String, Map<String, FieldStatus>> mutationSubSubSectionStatus = new LinkedHashMap<>();
+        List<String> mutationInnerGroups = List.of(
+                "General", "Mutagenesis", "Lethality",
+                "Genes", "Lesions", "Genotyping Assays", "Phenotypes",
+                "Publications");
+        if (submission.getMutations() != null) {
+            int i = 1;
+            for (Mutation mut : submission.getMutations()) {
+                String label = "Mutation " + (i++);
+                mutationLabels.add(label);
+                mutationSubSubSections.put(label, mutationInnerGroups);
+                // Per-mutation overall status; navigationItem.tag renders it
+                // next to the sub-item via the zirc-status-badge tag.
+                FieldStatusResult mutationStatus = MutationStatusComputer.compute(mut);
+                mutationSubSectionStatus.put(label, mutationStatus.overall());
+                // Per-Group status under each mutation. Keys must match the
+                // inner-group labels above so dataPage's
+                // subSubSectionStatus[sub][subsub] lookup hits.
+                mutationSubSubSectionStatus.put(label, mutationStatus.bySection());
+            }
+        }
+        if (!mutationLabels.isEmpty()) {
+            model.addAttribute("subSections", Map.of("Mutations", mutationLabels));
+            model.addAttribute("subSubSections", mutationSubSubSections);
+            model.addAttribute("subSectionStatus", mutationSubSectionStatus);
+            model.addAttribute("subSubSectionStatus", mutationSubSubSectionStatus);
+        }
 
         try {
             String json = STATUS_PAYLOAD_MAPPER.writeValueAsString(payload);
@@ -453,21 +491,6 @@ public class ZircDashboardController {
 
     private static final ObjectMapper STATUS_PAYLOAD_MAPPER = new ObjectMapper();
 
-    private static void rollupFieldUpdates(Map<String, List<Updates>> sectionUpdates,
-                                            Map<String, List<Updates>> fieldUpdates,
-                                            String section,
-                                            String... fields) {
-        List<Updates> agg = new ArrayList<>();
-        for (String f : fields) {
-            List<Updates> lst = fieldUpdates.get(f);
-            if (lst != null) agg.addAll(lst);
-        }
-        if (!agg.isEmpty()) {
-            agg.sort((a, b) -> b.getWhenUpdated().compareTo(a.getWhenUpdated()));
-            sectionUpdates.put(section, agg);
-        }
-    }
-
     private static Map<String, Map<String, String>> fieldStatusToJson(Map<String, FieldStatus> in) {
         Map<String, Map<String, String>> out = new LinkedHashMap<>();
         if (in == null) return out;
@@ -478,33 +501,6 @@ public class ZircDashboardController {
             m.put("displayName",  v.getDisplayName());
             m.put("cssClass",     v.getCssClass());
             out.put(k, m);
-        });
-        return out;
-    }
-
-    private static Map<String, List<Map<String, Object>>> updatesMapToJson(Map<String, List<Updates>> in) {
-        Map<String, List<Map<String, Object>>> out = new LinkedHashMap<>();
-        if (in == null) return out;
-        in.forEach((k, lst) -> {
-            List<Map<String, Object>> rows = new ArrayList<>();
-            for (Updates u : lst) {
-                Map<String, Object> row = new LinkedHashMap<>();
-                row.put("whenUpdated", u.getWhenUpdated() == null ? null : u.getWhenUpdated().toInstant().toString());
-                row.put("submitterName", u.getSubmitterName());
-                if (u.getSubmitter() != null) {
-                    Map<String, String> p = new LinkedHashMap<>();
-                    p.put("zdbID",     u.getSubmitter().getZdbID());
-                    p.put("firstName", u.getSubmitter().getFirstName());
-                    p.put("lastName",  u.getSubmitter().getLastName());
-                    row.put("submitter", p);
-                } else {
-                    row.put("submitter", null);
-                }
-                row.put("oldValue", u.getOldValue());
-                row.put("newValue", u.getNewValue());
-                rows.add(row);
-            }
-            out.put(k, rows);
         });
         return out;
     }

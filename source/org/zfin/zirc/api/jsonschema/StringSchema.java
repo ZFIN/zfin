@@ -23,22 +23,28 @@ public record StringSchema(
         String title,
         Integer maxLength,
         List<ConstSchema> oneOf,
-        @JsonIgnore Boolean isNullable
+        @JsonIgnore Boolean isNullable,
+        Boolean readOnly
 ) implements JsonSchema {
 
     /** Factory for the common case: just a title + maxLength. */
     public static StringSchema of(String title, int maxLength) {
-        return new StringSchema(title, maxLength, null, null);
+        return new StringSchema(title, maxLength, null, null, null);
     }
 
     /** Factory for nullable strings (e.g. mutation-summary item fields). */
     public static StringSchema nullable() {
-        return new StringSchema(null, null, null, Boolean.TRUE);
+        return new StringSchema(null, null, null, Boolean.TRUE, null);
     }
 
     /** Factory for the canonical-reasons-list pattern (string with oneOf). */
     public static StringSchema withOneOf(List<ConstSchema> oneOf) {
-        return new StringSchema(null, null, oneOf, null);
+        return new StringSchema(null, null, oneOf, null, null);
+    }
+
+    /** Factory for a server-managed, display-only string (e.g. createdAt). */
+    public static StringSchema readOnly(String title) {
+        return new StringSchema(title, null, null, null, Boolean.TRUE);
     }
 
     @JsonProperty("type")

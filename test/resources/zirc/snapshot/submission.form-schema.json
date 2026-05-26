@@ -41,6 +41,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "reasons" ],
         "title" : "Acceptance Reasons",
         "type" : "object"
       },
@@ -86,8 +87,14 @@
             "type" : [ "boolean", "null" ]
           }
         },
+        "required" : [ "maternalBackground", "paternalBackground", "backgroundChangeable" ],
         "title" : "Background",
         "type" : "object"
+      },
+      "createdAt" : {
+        "readOnly" : true,
+        "title" : "Date Started",
+        "type" : "string"
       },
       "linkedFeatures" : {
         "items" : {
@@ -146,15 +153,21 @@
       },
       "name" : {
         "maxLength" : 255,
-        "title" : "Name",
+        "title" : "Line Name",
         "type" : "string"
       },
       "previousNames" : {
         "maxLength" : 2000,
         "title" : "Previous Names",
         "type" : "string"
+      },
+      "updatedAt" : {
+        "readOnly" : true,
+        "title" : "Last Updated",
+        "type" : "string"
       }
     },
+    "required" : [ "name", "mutations" ],
     "type" : "object"
   },
   "uiSchema" : {
@@ -173,19 +186,27 @@
         },
         "scope" : "#/properties/previousNames",
         "type" : "Control"
-      } ],
-      "label" : "Overview",
-      "type" : "Group"
-    }, {
-      "elements" : [ {
+      }, {
         "options" : {
-          "label" : "Why ZIRC should accept this line",
+          "comments" : false
+        },
+        "scope" : "#/properties/createdAt",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "comments" : false
+        },
+        "scope" : "#/properties/updatedAt",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "label" : "Acceptance Reasons",
           "widget" : "multipleChoiceWithOther"
         },
         "scope" : "#/properties/acceptance",
         "type" : "Control"
       } ],
-      "label" : "Acceptance Reasons",
+      "label" : "Overview",
       "type" : "Group"
     }, {
       "elements" : [ {

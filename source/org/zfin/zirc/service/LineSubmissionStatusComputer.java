@@ -1,12 +1,17 @@
 package org.zfin.zirc.service;
 
+import org.zfin.zirc.api.ZircFormSchema;
+import org.zfin.zirc.api.jsonschema.JsonSchema;
+import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.Mutation;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * System-derived per-field and per-section status for a {@link LineSubmission}.
@@ -45,8 +50,12 @@ public final class LineSubmissionStatusComputer {
 
     /**
      * Catalogue of LineSubmission fields that participate in status computation.
-     * Each constant carries the JavaBean property path (used both as the JSP map
-     * key and to look up the getter via reflection) and a required flag.
+     * Each constant carries the JavaBean property path (used both as the
+     * JSP map key and to look up the getter via reflection).
+     *
+     * Required-ness is no longer carried here — it lives on the schema's
+     * {@code required} arrays (see {@link ZircFormSchema#schema()}), which
+     * {@link #REQUIRED_PATHS} unions at class init.
      *
      * Optional fields are always COMPLETE — empty is a valid terminal state.
      * Required fields are MISSING when empty, COMPLETE otherwise.
@@ -54,41 +63,54 @@ public final class LineSubmissionStatusComputer {
      * derived here.
      */
     public enum Field {
-        NAME                        ("name",                       true),
-        PREVIOUS_NAMES              ("previousNames",              false),
-        ABBREVIATION                ("abbreviation",               false),
-        REASONS                     ("reasons",                    true),
-        MUTATIONS                   ("mutations",                  true),
-        LINKED_FEATURES             ("linkedFeatures",             false),
-        MATERNAL_BACKGROUND         ("maternalBackground",         true),
-        PATERNAL_BACKGROUND         ("paternalBackground",         true),
-        BACKGROUND_CHANGEABLE       ("backgroundChangeable",       true),
+        NAME                        ("name"),
+        PREVIOUS_NAMES              ("previousNames"),
+        ABBREVIATION                ("abbreviation"),
+        REASONS                     ("reasons"),
+        MUTATIONS                   ("mutations"),
+        LINKED_FEATURES             ("linkedFeatures"),
+        MATERNAL_BACKGROUND         ("maternalBackground"),
+        PATERNAL_BACKGROUND         ("paternalBackground"),
+        BACKGROUND_CHANGEABLE       ("backgroundChangeable"),
         // Conditional applicability — the compute loop skips it unless
         // backgroundChangeable is explicitly No. Optional even when applicable.
-        BACKGROUND_CHANGE_CONCERNS  ("backgroundChangeConcerns",   false),
-        SINGLE_ALLELIC              ("singleAllelic",              false),
-        HUSBANDRY_INFO              ("husbandryInfo",              false),
-        UNREPORTED_FEATURES_DETAILS ("unreportedFeaturesDetails",  false),
-        ADDITIONAL_INFO             ("additionalInfo",             false);
+        BACKGROUND_CHANGE_CONCERNS  ("backgroundChangeConcerns"),
+        SINGLE_ALLELIC              ("singleAllelic"),
+        HUSBANDRY_INFO              ("husbandryInfo"),
+        UNREPORTED_FEATURES_DETAILS ("unreportedFeaturesDetails"),
+        ADDITIONAL_INFO             ("additionalInfo");
 
         private final String path;
-        private final boolean required;
 
-        Field(String path, boolean required) {
-            this.path = path;
-            this.required = required;
+        Field(String path) { this.path = path; }
+
+        public String getPath() { return path; }
+    }
+
+    /**
+     * Union of every {@code required} list across the LineSubmission schema
+     * (root + nested object schemas). Computed once at class load — the schema
+     * is static.
+     */
+    private static final Set<String> REQUIRED_PATHS = collectRequiredPaths(ZircFormSchema.schema());
+
+    private static Set<String> collectRequiredPaths(JsonSchema node) {
+        Set<String> out = new LinkedHashSet<>();
+        if (node instanceof ObjectSchema obj) {
+            if (obj.required() != null) out.addAll(obj.required());
+            if (obj.properties() != null) {
+                for (JsonSchema child : obj.properties().values()) {
+                    out.addAll(collectRequiredPaths(child));
+                }
+            }
         }
+        return out;
+    }
 
-        public String  getPath()     { return path; }
-        public boolean isRequired()  { return required; }
-
-        /** Read the field's current value from a submission and derive its status. */
-        public FieldStatus statusFor(LineSubmission s) {
-            Object value = readProperty(s, path);
-            boolean empty = isEmpty(value);
-            if (empty && required) return FieldStatus.MISSING;
-            return FieldStatus.COMPLETE;
-        }
+    private static FieldStatus statusFor(LineSubmission s, String path) {
+        Object value = readProperty(s, path);
+        if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        return FieldStatus.COMPLETE;
     }
 
     public record FieldStatusResult(
@@ -106,7 +128,7 @@ public final class LineSubmissionStatusComputer {
                     && !Boolean.FALSE.equals(s.getBackgroundChangeable())) {
                 continue;
             }
-            byField.put(f.getPath(), f.statusFor(s));
+            byField.put(f.getPath(), statusFor(s, f.getPath()));
         }
 
         // Section rollups. Section keys match the JSP labels in

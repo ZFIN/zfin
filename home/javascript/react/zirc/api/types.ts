@@ -24,6 +24,8 @@ export interface LineSubmissionDTO {
     mutations: MutationDTO[];
     linkedFeatures: LinkedFeatureDTO[];
     draft: boolean;
+    createdAt: string | null;
+    updatedAt: string | null;
 }
 
 export interface MutationDTO {

@@ -7,10 +7,29 @@ import {
     optionIs,
     rankWith,
 } from '@jsonforms/core';
+import type { JsonSchema } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
+import { useQuery } from '@tanstack/react-query';
 import { GeneDTO } from '../../api/types';
+import { api } from '../../api/client';
 import { useAddGene, useDeleteGene } from '../../api/queries';
 import { GeneEdit } from '../../pages/GeneEdit';
+import { viewConfigFrom } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldComments } from '../../components/FieldComments';
+import { STATUS_COMPLETE, STATUS_MISSING } from '../deriveStatus';
+
+type FormSchemaDTO = { schema: JsonSchema; uiSchema: unknown };
+
+/**
+ * Per-cell helper that defers to the shared MISSING/COMPLETE constants.
+ * The gene table renders four cells per row, each needing a tiny badge —
+ * inlining the empty check keeps the JSX readable.
+ */
+function deriveStatus(value: unknown, fieldName: string, requiredSet: Set<string>) {
+    const empty = value == null || (typeof value === 'string' && value.trim() === '');
+    return empty && requiredSet.has(fieldName) ? STATUS_MISSING : STATUS_COMPLETE;
+}
 
 /**
  * Per-mutation genes list with inline-expand cards. Same shape as
@@ -27,6 +46,101 @@ function GenesListRenderer({ data, schema, config }: ControlProps) {
     const addGene = useAddGene();
     const deleteGene = useDeleteGene();
     const [expanded, setExpanded] = React.useState<Set<number>>(new Set());
+
+    const view = viewConfigFrom(config);
+    // Fetch the gene schema once (cached) so the required-set in the table's
+    // per-cell badges stays in lockstep with ZircGeneFormSchema's declaration.
+    const geneSchema = useQuery<FormSchemaDTO>({
+        queryKey: ['zirc', 'gene-form-schema'],
+        queryFn: () => api.get<FormSchemaDTO>('/genes/form-schema'),
+        staleTime: Infinity,
+        enabled: view.readonly,
+    });
+    const requiredSet = React.useMemo<Set<string>>(() => {
+        const r = (geneSchema.data?.schema as { required?: string[] } | undefined)?.required;
+        return new Set(r ?? []);
+    }, [geneSchema.data]);
+
+    if (view.readonly) {
+        if (genes.length === 0) {
+            return <p className='text-muted small mb-0'>No genes.</p>;
+        }
+        // Compact table view: Gene-as-link + the three optional metadata
+        // columns. Status badge in each cell is derived from the schema's
+        // required-set + value emptiness so all four columns line up
+        // regardless of which fields are required.
+        return (
+            <table className='table table-sm table-borderless mb-0' style={{ width: 'auto' }}>
+                <thead>
+                    <tr>
+                        <th className='pr-3'>Gene</th>
+                        <th className='pr-3'>Linkage Group</th>
+                        <th className='pr-3'>GenBank Genomic DNA</th>
+                        <th className='pr-3'>GenBank cDNA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {genes.map((g, i) => {
+                        const name = g.mutatedGeneAbbreviation
+                            || g.mutatedGeneZdbID
+                            || `Gene ${i + 1}`;
+                        const zdb = g.mutatedGeneZdbID;
+                        const geneRecId = `ZIRC-GENE-${g.id}`;
+                        return (
+                            <tr key={g.id}>
+                                <td className='pr-3'>
+                                    <StatusBadge status={deriveStatus(zdb, 'mutatedGeneZdbID', requiredSet)}/>
+                                    {zdb
+                                        ? (
+                                            <a href={`/action/marker/view/${zdb}`}>
+                                                {name}
+                                            </a>
+                                        )
+                                        : <span className='text-muted'>{name}</span>}
+                                    <FieldComments
+                                        recId={geneRecId}
+                                        scope='field'
+                                        fieldName='mutatedGeneZdbID'
+                                        label='Gene'
+                                    />
+                                </td>
+                                <td className='pr-3'>
+                                    <StatusBadge status={deriveStatus(g.linkageGroup, 'linkageGroup', requiredSet)}/>
+                                    {g.linkageGroup ?? <span className='text-muted'>&mdash;</span>}
+                                    <FieldComments
+                                        recId={geneRecId}
+                                        scope='field'
+                                        fieldName='linkageGroup'
+                                        label='Linkage Group'
+                                    />
+                                </td>
+                                <td className='pr-3'>
+                                    <StatusBadge status={deriveStatus(g.genbankGenomicDna, 'genbankGenomicDna', requiredSet)}/>
+                                    {g.genbankGenomicDna ?? <span className='text-muted'>&mdash;</span>}
+                                    <FieldComments
+                                        recId={geneRecId}
+                                        scope='field'
+                                        fieldName='genbankGenomicDna'
+                                        label='GenBank Genomic DNA'
+                                    />
+                                </td>
+                                <td className='pr-3'>
+                                    <StatusBadge status={deriveStatus(g.genbankCdna, 'genbankCdna', requiredSet)}/>
+                                    {g.genbankCdna ?? <span className='text-muted'>&mdash;</span>}
+                                    <FieldComments
+                                        recId={geneRecId}
+                                        scope='field'
+                                        fieldName='genbankCdna'
+                                        label='GenBank cDNA'
+                                    />
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        );
+    }
 
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;
     const atCapacity = maxItems != null && genes.length >= maxItems;

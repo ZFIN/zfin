@@ -8,6 +8,7 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { useJsonForms, withJsonFormsControlProps } from '@jsonforms/react';
+import { viewConfigFrom } from '../useViewConfig';
 
 /**
  * Phenotype timing widget for the per-phenotype edit form (M8.1). The
@@ -22,7 +23,7 @@ import { useJsonForms, withJsonFormsControlProps } from '@jsonforms/react';
  * legacy code path; here it's a read-only echo (TODO: re-derive
  * once the STAGE lookup is wired in).
  */
-function PhenotypeTimingRenderer({ data, handleChange, path }: ControlProps) {
+function PhenotypeTimingRenderer({ data, handleChange, path, config }: ControlProps) {
     const ctx = useJsonForms();
     const root = (ctx.core?.data ?? {}) as {
         hpfStart?: number | null;
@@ -32,6 +33,25 @@ function PhenotypeTimingRenderer({ data, handleChange, path }: ControlProps) {
     const hpfStart = (data ?? null) as number | null;
     const hpfEnd = root.hpfEnd ?? null;
     const stage = root.stage ?? null;
+    const view = viewConfigFrom(config);
+
+    if (view.readonly) {
+        const startDisplay = hpfStart == null ? '—' : `${hpfStart} hpf`;
+        const endDisplay = hpfEnd == null ? '' : ` – ${hpfEnd} hpf`;
+        return (
+            <div className='form-group row mb-2'>
+                <span className='col-sm-3 col-form-label'>Timing</span>
+                <div className='col-sm-9'>
+                    <span>{startDisplay}{endDisplay}</span>
+                    {stage && (
+                        <small className='form-text text-muted'>
+                            Stage at 28.5°C: <em>{stage}</em>
+                        </small>
+                    )}
+                </div>
+            </div>
+        );
+    }
 
     const endPath = path.replace(/hpfStart$/, 'hpfEnd');
     const [unit, setUnit] = React.useState<'hpf' | 'dpf'>('hpf');

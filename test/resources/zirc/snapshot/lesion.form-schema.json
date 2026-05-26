@@ -69,6 +69,7 @@
         "type" : "string"
       }
     },
+    "required" : [ "lesionType" ],
     "type" : "object"
   },
   "uiSchema" : {

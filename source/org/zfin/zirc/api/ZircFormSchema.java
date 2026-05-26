@@ -65,12 +65,19 @@ public final class ZircFormSchema {
         Map<String, JsonSchema> acceptance = new LinkedHashMap<>();
         acceptance.put("reasons", reasonsArrayProp());
         acceptance.put("reasonsOther", StringSchema.of("Other reason", 2000));
+        // Acceptance: at least one reason must be selected. reasonsOther is
+        // gated by the "other" canonical value being included, so it's not
+        // listed as universally required here.
+        ObjectSchema acceptanceSchema =
+                ObjectSchema.of("Acceptance Reasons", acceptance, List.of("reasons"));
 
         Map<String, JsonSchema> background = new LinkedHashMap<>();
         background.put("singleAllelic",        BooleanSchema.nullable("Single-allelic submission"));
         background.put("maternalBackground",   StringSchema.of("Maternal", 255));
         background.put("paternalBackground",   StringSchema.of("Paternal", 255));
         background.put("backgroundChangeable", BooleanSchema.nullable("Background Changeable"));
+        ObjectSchema backgroundSchema = ObjectSchema.of("Background", background,
+                List.of("maternalBackground", "paternalBackground", "backgroundChangeable"));
 
         Map<String, JsonSchema> additionalInfo = new LinkedHashMap<>();
         additionalInfo.put("unreportedFeaturesDetails", StringSchema.of("Unreported Features Details", 5000));
@@ -78,14 +85,18 @@ public final class ZircFormSchema {
         additionalInfo.put("additionalInfo",            StringSchema.of("Additional Info", 5000));
 
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
-        properties.put("name",            StringSchema.of("Name", 255));
+        properties.put("name",            StringSchema.of("Line Name", 255));
         properties.put("previousNames",   StringSchema.of("Previous Names", 2000));
-        properties.put("acceptance",      ObjectSchema.of("Acceptance Reasons", acceptance));
+        properties.put("createdAt",       StringSchema.readOnly("Date Started"));
+        properties.put("updatedAt",       StringSchema.readOnly("Last Updated"));
+        properties.put("acceptance",      acceptanceSchema);
         properties.put("mutations",       mutationsSummaryArrayProp());
         properties.put("linkedFeatures",  linkedFeaturesArrayProp());
-        properties.put("background",      ObjectSchema.of("Background", background));
+        properties.put("background",      backgroundSchema);
         properties.put("additionalInfo",  ObjectSchema.of("Additional Info", additionalInfo));
-        return ObjectSchema.of(properties);
+        // Top-level required: name and mutations. The acceptance and background
+        // nested objects carry their own required lists.
+        return ObjectSchema.of(null, properties, List.of("name", "mutations"));
     }
 
     /**
@@ -106,13 +117,15 @@ public final class ZircFormSchema {
                                 Options.of()
                                         .placeholder("Comma-separated former names")
                                         .helpText("Useful when this line was previously known by a different designation."),
-                                null)
-                )),
-                Group.of("Acceptance Reasons", List.of(
+                                null),
+                        new Control("#/properties/createdAt",
+                                Options.of().comments(false), null),
+                        new Control("#/properties/updatedAt",
+                                Options.of().comments(false), null),
                         new Control("#/properties/acceptance",
                                 Options.of()
                                         .widget("multipleChoiceWithOther")
-                                        .label("Why ZIRC should accept this line"),
+                                        .label("Acceptance Reasons"),
                                 null)
                 )),
                 // Mutations is structurally different from the field sections —
@@ -197,7 +210,7 @@ public final class ZircFormSchema {
     private static ArraySchema mutationsSummaryArrayProp() {
         Map<String, JsonSchema> itemProps = new LinkedHashMap<>();
         itemProps.put("id",                NumberSchema.of());
-        itemProps.put("lineSubmissionId",  new StringSchema(null, null, null, null));
+        itemProps.put("lineSubmissionId",  new StringSchema(null, null, null, null, null));
         itemProps.put("sortOrder",         NumberSchema.of());
         itemProps.put("alleleDesignation", StringSchema.nullable());
         itemProps.put("alleleInZfin",      new BooleanSchema(null, Boolean.TRUE));

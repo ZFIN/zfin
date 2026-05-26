@@ -8,9 +8,10 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { viewConfigFrom } from '../useViewConfig';
+import { viewConfigFrom, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 
 type ReasonsObject = {
     reasons?: string[];
@@ -59,17 +60,26 @@ function MultipleChoiceWithOtherRenderer({
             : null;
         return (
             <tr>
-                <th className='w-25' scope='row' id='fr-label-reasons'>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id='fr-label-reasons'>
                     <StatusBadge status={view.fieldStatus['reasons']}/>
                     {labelText}
                 </th>
                 <td>
                     {display ?? <span className='text-muted'>&mdash;</span>}
                     <FieldHistory
-                        fieldKey='reasons'
+                        recId={view.recId}
+                        scope='field'
+                        fieldName='reasons'
                         label={labelText}
-                        updates={view.fieldUpdates['reasons']}
                     />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName='reasons'
+                            label={labelText}
+                        />
+                    )}
                 </td>
             </tr>
         );
@@ -86,7 +96,7 @@ function MultipleChoiceWithOtherRenderer({
 
     return (
         <tr>
-            <th className='w-25' scope='row' id='fr-label-reasons'>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id='fr-label-reasons'>
                 <label htmlFor='fr-reasons' className='mb-0'>{labelText}</label>
             </th>
             <td>

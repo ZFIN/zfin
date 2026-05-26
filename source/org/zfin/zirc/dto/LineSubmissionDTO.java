@@ -4,7 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.Mutation;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public record LineSubmissionDTO(
@@ -24,7 +26,9 @@ public record LineSubmissionDTO(
         String reasonsOther,
         List<MutationDTO> mutations,
         List<LinkedFeatureDTO> linkedFeatures,
-        boolean draft) {
+        boolean draft,
+        String createdAt,
+        String updatedAt) {
 
     public static LineSubmissionDTO of(LineSubmission s) {
         List<MutationDTO> muts = s.getMutations() == null ? List.of() :
@@ -61,6 +65,12 @@ public record LineSubmissionDTO(
                 s.getReasonsOther(),
                 muts,
                 links,
-                Boolean.TRUE.equals(s.getIsDraft()));
+                Boolean.TRUE.equals(s.getIsDraft()),
+                formatDate(s.getCreatedAt()),
+                formatDate(s.getUpdatedAt()));
+    }
+
+    private static String formatDate(Date d) {
+        return d == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm").format(d);
     }
 }

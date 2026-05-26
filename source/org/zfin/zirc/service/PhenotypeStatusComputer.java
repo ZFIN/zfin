@@ -1,5 +1,8 @@
 package org.zfin.zirc.service;
 
+import org.zfin.zirc.api.ZircPhenotypeFormSchema;
+import org.zfin.zirc.api.jsonschema.JsonSchema;
+import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.entity.Phenotype;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
@@ -7,7 +10,9 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Per-field status for one {@link Phenotype} row under a {@link org.zfin.zirc.entity.Mutation}.
@@ -19,34 +24,43 @@ import java.util.Map;
 public final class PhenotypeStatusComputer {
 
     public enum Field {
-        DESCRIPTION              ("description",              true),
-        HPF_START                ("hpfStart",                 false),
-        HPF_END                  ("hpfEnd",                   false),
-        STAGE                    ("stage",                    false),
-        ZFIN_IMAGE_PERMISSION    ("zfinImagePermission",      false),
-        ZIRC_IMAGE_PERMISSION    ("zircImagePermission",      false),
-        NON_MENDELIAN_PERCENTAGE ("nonMendelianPercentage",   false),
-        NON_MENDELIAN_COMMENT    ("nonMendelianComment",      false),
-        SEGREGATION              ("segregation",              false),
-        TYPE                     ("type",                     false);
+        DESCRIPTION              ("description"),
+        HPF_START                ("hpfStart"),
+        HPF_END                  ("hpfEnd"),
+        STAGE                    ("stage"),
+        ZFIN_IMAGE_PERMISSION    ("zfinImagePermission"),
+        ZIRC_IMAGE_PERMISSION    ("zircImagePermission"),
+        NON_MENDELIAN_PERCENTAGE ("nonMendelianPercentage"),
+        NON_MENDELIAN_COMMENT    ("nonMendelianComment"),
+        SEGREGATION              ("segregation"),
+        TYPE                     ("type");
 
         private final String path;
-        private final boolean required;
 
-        Field(String path, boolean required) {
-            this.path = path;
-            this.required = required;
+        Field(String path) { this.path = path; }
+
+        public String getPath() { return path; }
+    }
+
+    private static final Set<String> REQUIRED_PATHS = collectRequiredPaths(ZircPhenotypeFormSchema.schema());
+
+    private static Set<String> collectRequiredPaths(JsonSchema node) {
+        Set<String> out = new LinkedHashSet<>();
+        if (node instanceof ObjectSchema obj) {
+            if (obj.required() != null) out.addAll(obj.required());
+            if (obj.properties() != null) {
+                for (JsonSchema child : obj.properties().values()) {
+                    out.addAll(collectRequiredPaths(child));
+                }
+            }
         }
+        return out;
+    }
 
-        public String  getPath()    { return path; }
-        public boolean isRequired() { return required; }
-
-        public FieldStatus statusFor(Phenotype p) {
-            Object value = readProperty(p, path);
-            boolean empty = isEmpty(value);
-            if (empty && required) return FieldStatus.MISSING;
-            return FieldStatus.COMPLETE;
-        }
+    private static FieldStatus statusFor(Phenotype p, String path) {
+        Object value = readProperty(p, path);
+        if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        return FieldStatus.COMPLETE;
     }
 
     private PhenotypeStatusComputer() {}
@@ -54,7 +68,7 @@ public final class PhenotypeStatusComputer {
     public static FieldStatusResult compute(Phenotype p) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
-            byField.put(f.getPath(), f.statusFor(p));
+            byField.put(f.getPath(), statusFor(p, f.getPath()));
         }
 
         FieldStatus overall = FieldStatus.COMPLETE;

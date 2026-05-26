@@ -1,5 +1,8 @@
 package org.zfin.zirc.service;
 
+import org.zfin.zirc.api.ZircAssayFormSchema;
+import org.zfin.zirc.api.jsonschema.JsonSchema;
+import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
@@ -7,7 +10,9 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Per-field status for one {@link GenotypingAssay} row under a {@link org.zfin.zirc.entity.Mutation}.
@@ -18,48 +23,57 @@ import java.util.Map;
 public final class GenotypingAssayStatusComputer {
 
     public enum Field {
-        ASSAY_TYPE                    ("assayType",                  true),
-        FORWARD_PRIMER                ("forwardPrimer",              false),
-        REVERSE_PRIMER                ("reversePrimer",              false),
-        EXPECTED_WT_PCR               ("expectedWtPcr",              false),
-        EXPECTED_MUT_PCR              ("expectedMutPcr",             false),
-        RESTRICTION_ENZYME_NAME       ("restrictionEnzymeName",      false),
-        RESTRICTION_ENZYME_CATALOG    ("restrictionEnzymeCatalog",   false),
-        ENZYME_CLEAVES                ("enzymeCleaves",              false),
-        EXPECTED_WT_DIGEST            ("expectedWtDigest",           false),
-        EXPECTED_MUT_DIGEST           ("expectedMutDigest",          false),
-        ADDITIONAL_INFO               ("additionalInfo",             false),
-        SEQUENCING_PRIMER             ("sequencingPrimer",           false),
-        DCAPS_MISMATCH_PRIMER         ("dcapsMismatchPrimer",        false),
-        WT_SPECIFIC_PRIMER            ("wtSpecificPrimer",           false),
-        MUT_SPECIFIC_PRIMER           ("mutSpecificPrimer",          false),
-        COMMON_PRIMER                 ("commonPrimer",               false),
-        KASP_GENOMIC_SEQUENCE         ("kaspGenomicSequence",        false),
-        SSLP_MARKER_NAME              ("sslpMarkerName",             false),
-        SSLP_DISTANCE                 ("sslpDistance",               false),
-        SSLP_GENOMIC_LOCATION         ("sslpGenomicLocation",        false),
-        SSLP_INDUCED_BACKGROUND       ("sslpInducedBackground",      false),
-        SSLP_OUTCROSSED_BACKGROUND    ("sslpOutcrossedBackground",   false),
-        SSLP_INDUCED_PCR              ("sslpInducedPcr",             false),
-        SSLP_OUTCROSSED_PCR           ("sslpOutcrossedPcr",          false);
+        ASSAY_TYPE                    ("assayType"),
+        FORWARD_PRIMER                ("forwardPrimer"),
+        REVERSE_PRIMER                ("reversePrimer"),
+        EXPECTED_WT_PCR               ("expectedWtPcr"),
+        EXPECTED_MUT_PCR              ("expectedMutPcr"),
+        RESTRICTION_ENZYME_NAME       ("restrictionEnzymeName"),
+        RESTRICTION_ENZYME_CATALOG    ("restrictionEnzymeCatalog"),
+        ENZYME_CLEAVES                ("enzymeCleaves"),
+        EXPECTED_WT_DIGEST            ("expectedWtDigest"),
+        EXPECTED_MUT_DIGEST           ("expectedMutDigest"),
+        ADDITIONAL_INFO               ("additionalInfo"),
+        SEQUENCING_PRIMER             ("sequencingPrimer"),
+        DCAPS_MISMATCH_PRIMER         ("dcapsMismatchPrimer"),
+        WT_SPECIFIC_PRIMER            ("wtSpecificPrimer"),
+        MUT_SPECIFIC_PRIMER           ("mutSpecificPrimer"),
+        COMMON_PRIMER                 ("commonPrimer"),
+        KASP_GENOMIC_SEQUENCE         ("kaspGenomicSequence"),
+        SSLP_MARKER_NAME              ("sslpMarkerName"),
+        SSLP_DISTANCE                 ("sslpDistance"),
+        SSLP_GENOMIC_LOCATION         ("sslpGenomicLocation"),
+        SSLP_INDUCED_BACKGROUND       ("sslpInducedBackground"),
+        SSLP_OUTCROSSED_BACKGROUND    ("sslpOutcrossedBackground"),
+        SSLP_INDUCED_PCR              ("sslpInducedPcr"),
+        SSLP_OUTCROSSED_PCR           ("sslpOutcrossedPcr");
 
         private final String path;
-        private final boolean required;
 
-        Field(String path, boolean required) {
-            this.path = path;
-            this.required = required;
+        Field(String path) { this.path = path; }
+
+        public String getPath() { return path; }
+    }
+
+    private static final Set<String> REQUIRED_PATHS = collectRequiredPaths(ZircAssayFormSchema.schema());
+
+    private static Set<String> collectRequiredPaths(JsonSchema node) {
+        Set<String> out = new LinkedHashSet<>();
+        if (node instanceof ObjectSchema obj) {
+            if (obj.required() != null) out.addAll(obj.required());
+            if (obj.properties() != null) {
+                for (JsonSchema child : obj.properties().values()) {
+                    out.addAll(collectRequiredPaths(child));
+                }
+            }
         }
+        return out;
+    }
 
-        public String  getPath()    { return path; }
-        public boolean isRequired() { return required; }
-
-        public FieldStatus statusFor(GenotypingAssay ga) {
-            Object value = readProperty(ga, path);
-            boolean empty = isEmpty(value);
-            if (empty && required) return FieldStatus.MISSING;
-            return FieldStatus.COMPLETE;
-        }
+    private static FieldStatus statusFor(GenotypingAssay ga, String path) {
+        Object value = readProperty(ga, path);
+        if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        return FieldStatus.COMPLETE;
     }
 
     private GenotypingAssayStatusComputer() {}
@@ -67,7 +81,7 @@ public final class GenotypingAssayStatusComputer {
     public static FieldStatusResult compute(GenotypingAssay ga) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
-            byField.put(f.getPath(), f.statusFor(ga));
+            byField.put(f.getPath(), statusFor(ga, f.getPath()));
         }
 
         FieldStatus overall = FieldStatus.COMPLETE;

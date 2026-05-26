@@ -17,7 +17,6 @@ import { mutationsListRendererEntry } from './renderers/MutationsListRenderer';
 import { linkedFeaturesListRendererEntry } from './renderers/LinkedFeaturesListRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import type { FieldStatus } from '../components/StatusBadge';
-import type { AuditEntry } from '../components/FieldHistory';
 
 type FormData = Record<string, unknown>;
 
@@ -30,14 +29,19 @@ type Props = {
     onCreated?: (s: LineSubmissionDTO) => void;
     mode?: FormMode;
     fieldStatus?: Record<string, FieldStatus>;
-    fieldUpdates?: Record<string, AuditEntry[]>;
     sectionStatus?: Record<string, FieldStatus>;
-    sectionUpdates?: Record<string, AuditEntry[]>;
+    /** Per-mutation field-status map keyed by mutation id (as a string). */
+    mutationFieldStatus?: Record<string, Record<string, FieldStatus>>;
+    /** Per-mutation section-status map keyed by mutation id (as a string). */
+    mutationSectionStatus?: Record<string, Record<string, FieldStatus>>;
 };
 
 const AUTOSAVE_DEBOUNCE_MS = 800;
 
-const renderers = [
+// Exported so nested schema-driven views (e.g. per-mutation cards inside
+// MutationsListRenderer) can reuse the same renderer registry — the schema
+// is the single source of truth for both top-level and per-aggregate forms.
+export const renderers = [
     verticalLayoutRendererEntry,
     sectionRendererEntry,
     rowControlRendererEntry,
@@ -60,6 +64,8 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
         return {
             name: '',
             previousNames: '',
+            createdAt: '',
+            updatedAt: '',
             acceptance: { reasons: [], reasonsOther: '' },
             mutations: [],
             linkedFeatures: [],
@@ -79,6 +85,8 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
     return {
         name: submission.name ?? '',
         previousNames: submission.previousNames ?? '',
+        createdAt: submission.createdAt ?? '',
+        updatedAt: submission.updatedAt ?? '',
         acceptance: {
             reasons: submission.reasons ?? [],
             reasonsOther: submission.reasonsOther ?? '',
@@ -144,9 +152,9 @@ export function SchemaForm({
     onCreated,
     mode = 'edit',
     fieldStatus,
-    fieldUpdates,
     sectionStatus,
-    sectionUpdates,
+    mutationFieldStatus,
+    mutationSectionStatus,
 }: Props) {
     const readonly = mode === 'view';
     const { data: schemaResponse, isLoading: schemaLoading, isError: schemaError } =
@@ -276,9 +284,13 @@ export function SchemaForm({
                     mode,
                     readonly,
                     fieldStatus: fieldStatus ?? {},
-                    fieldUpdates: fieldUpdates ?? {},
                     sectionStatus: sectionStatus ?? {},
-                    sectionUpdates: sectionUpdates ?? {},
+                    mutationFieldStatus: mutationFieldStatus ?? {},
+                    mutationSectionStatus: mutationSectionStatus ?? {},
+                    // Submission-level comments key off the submission's
+                    // ZDB-ID. Nested aggregates set their own recId in
+                    // their respective list renderers' child configs.
+                    recId: submission?.zdbID ?? null,
                 }}
                 onChange={({ data }) => {
                     if (readonly) {return;}

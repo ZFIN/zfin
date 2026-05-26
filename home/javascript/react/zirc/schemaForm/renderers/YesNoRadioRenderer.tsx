@@ -8,9 +8,10 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
@@ -20,7 +21,7 @@ import { ValueDisplay } from '../../components/ValueDisplay';
  *
  * Tester: any Control whose uiSchema sets options.widget = 'yesNoRadio'.
  */
-function YesNoRadioRenderer({ data, handleChange, path, label, visible, config }: ControlProps) {
+function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, uischema }: ControlProps) {
     if (visible === false) {return null;}
     const fieldName = leafOf(path);
     const labelId = `fr-label-${fieldName}`;
@@ -30,17 +31,26 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config }
     if (view.readonly) {
         return (
             <tr>
-                <th className='w-25' scope='row' id={labelId}>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                     <StatusBadge status={view.fieldStatus[fieldName]}/>
                     {label}
                 </th>
                 <td>
                     <ValueDisplay value={data}/>
                     <FieldHistory
-                        fieldKey={fieldName}
+                        recId={view.recId}
+                        scope='field'
+                        fieldName={fieldName}
                         label={label ?? fieldName}
-                        updates={view.fieldUpdates[fieldName]}
                     />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName={fieldName}
+                            label={label ?? fieldName}
+                        />
+                    )}
                 </td>
             </tr>
         );
@@ -48,7 +58,7 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config }
 
     return (
         <tr>
-            <th className='w-25' scope='row' id={labelId}>{label}</th>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>{label}</th>
             <td>
                 <div role='radiogroup' aria-labelledby={labelId}>
                     <div className='form-check form-check-inline'>

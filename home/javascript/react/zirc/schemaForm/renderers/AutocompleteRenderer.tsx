@@ -13,6 +13,11 @@ import {
     useAutocomplete,
     useDebouncedValue,
 } from '../../api/queries';
+import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
+import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
  * Type-ahead text input that resolves to a ZDB-ID. Used for cross-entity
@@ -51,8 +56,39 @@ function AutocompleteRenderer({
     errors,
     visible,
     uischema,
+    config,
 }: ControlProps) {
     if (visible === false) {return null;}
+
+    const view = viewConfigFrom(config);
+    const fieldNameView = leafOf(path);
+    if (view.readonly) {
+        return (
+            <tr>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>
+                    <StatusBadge status={view.fieldStatus[fieldNameView]}/>
+                    {label}
+                </th>
+                <td>
+                    <ValueDisplay value={data}/>
+                    <FieldHistory
+                        recId={view.recId}
+                        scope='field'
+                        fieldName={fieldNameView}
+                        label={label ?? fieldNameView}
+                    />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName={fieldNameView}
+                            label={label ?? fieldNameView}
+                        />
+                    )}
+                </td>
+            </tr>
+        );
+    }
 
     const opts = ((uischema as {
         options?: {
@@ -92,7 +128,7 @@ function AutocompleteRenderer({
 
     return (
         <tr>
-            <th className='w-25' scope='row' id={labelId}>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 <label htmlFor={inputId} className='mb-0'>
                     {label}{required ? ' *' : ''}
                 </label>

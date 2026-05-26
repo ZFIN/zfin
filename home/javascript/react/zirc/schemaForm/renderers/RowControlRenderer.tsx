@@ -8,9 +8,10 @@ import {
     schemaTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
@@ -49,20 +50,33 @@ function RowControlRenderer({
     const { placeholder, helpText, infoHref, suffix } = opts;
     const view = viewConfigFrom(config);
 
-    if (view.readonly) {
+    // Read-only sources: (a) the whole form is in view mode; (b) the schema
+    // marks this field as server-managed (e.g. createdAt). Both render the
+    // value as text — never an editable input.
+    const fieldReadOnly = (schema as { readOnly?: boolean } | undefined)?.readOnly === true;
+    if (view.readonly || fieldReadOnly) {
         return (
             <tr>
-                <th className='w-25' scope='row' id={labelId}>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                     <StatusBadge status={view.fieldStatus[fieldName]}/>
                     {label}
                 </th>
                 <td>
                     <ValueDisplay value={data} schema={schema}/>
                     <FieldHistory
-                        fieldKey={fieldName}
+                        recId={view.recId}
+                        scope='field'
+                        fieldName={fieldName}
                         label={label ?? fieldName}
-                        updates={view.fieldUpdates[fieldName]}
                     />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName={fieldName}
+                            label={label ?? fieldName}
+                        />
+                    )}
                 </td>
             </tr>
         );
@@ -82,7 +96,7 @@ function RowControlRenderer({
 
     return (
         <tr>
-            <th className='w-25' scope='row' id={labelId}>
+            <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 <label htmlFor={inputId} className='mb-0'>
                     {label}{required ? ' *' : ''}
                 </label>

@@ -7,10 +7,63 @@ import {
     optionIs,
     rankWith,
 } from '@jsonforms/core';
-import { withJsonFormsControlProps } from '@jsonforms/react';
+import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
+import { JsonForms, withJsonFormsControlProps } from '@jsonforms/react';
+import { useQuery } from '@tanstack/react-query';
 import { PhenotypeSummaryDTO } from '../../api/types';
-import { useAddPhenotype, useDeletePhenotype } from '../../api/queries';
+import { api } from '../../api/client';
+import { useAddPhenotype, useDeletePhenotype, usePhenotypeById } from '../../api/queries';
 import { PhenotypeEdit } from '../../pages/PhenotypeEdit';
+import { viewConfigFrom } from '../useViewConfig';
+import { aggregateRenderers } from '../aggregateRenderers';
+import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
+
+type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
+
+function PhenotypeDetailCard({
+    summary, n, schema, uiSchema,
+}: {
+    summary: PhenotypeSummaryDTO;
+    n: number;
+    schema: JsonSchema;
+    uiSchema: UISchemaElement;
+}) {
+    const q = usePhenotypeById(summary.id);
+    return (
+        <div className='card mb-2'>
+            <div className='card-header py-1'>
+                <strong>{summary.description || `Phenotype ${n}`}</strong>
+            </div>
+            <div className='card-body py-2'>
+                {q.isLoading && <p className='text-muted small mb-0'>Loading…</p>}
+                {q.isError && (
+                    <div className='alert alert-warning mb-0'>
+                        Failed to load phenotype {summary.id}.
+                    </div>
+                )}
+                {q.data && (
+                    <JsonForms
+                        schema={schema}
+                        uischema={uiSchema}
+                        data={q.data}
+                        renderers={aggregateRenderers}
+                        cells={[]}
+                        readonly
+                        config={{
+                            mode: 'view',
+                            readonly: true,
+                            phenotypeId: summary.id,
+                            recId: `ZIRC-PHEN-${summary.id}`,
+                            fieldStatus: deriveFieldStatus(schema, q.data),
+                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                        }}
+                        onChange={() => { /* read-only */ }}
+                    />
+                )}
+            </div>
+        </div>
+    );
+}
 
 /**
  * Per-mutation phenotypes list with inline-expand cards. Same shape as
@@ -23,6 +76,38 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
     const addPhenotype = useAddPhenotype();
     const deletePhenotype = useDeletePhenotype();
     const [expanded, setExpanded] = React.useState<Set<number>>(new Set());
+
+    const view = viewConfigFrom(config);
+    const phenotypeSchema = useQuery<FormSchemaDTO>({
+        queryKey: ['zirc', 'phenotype-form-schema'],
+        queryFn: () => api.get<FormSchemaDTO>('/phenotypes/form-schema'),
+        staleTime: Infinity,
+        enabled: view.readonly,
+    });
+    if (view.readonly) {
+        if (phenotypes.length === 0) {
+            return <p className='text-muted small mb-0'>No phenotypes.</p>;
+        }
+        if (phenotypeSchema.isLoading) {
+            return <p className='text-muted small'>Loading phenotype details…</p>;
+        }
+        if (phenotypeSchema.isError || !phenotypeSchema.data) {
+            return <div className='alert alert-warning'>Failed to load phenotype form schema.</div>;
+        }
+        return (
+            <div>
+                {phenotypes.map((p, i) => (
+                    <PhenotypeDetailCard
+                        key={p.id}
+                        summary={p}
+                        n={i + 1}
+                        schema={phenotypeSchema.data.schema}
+                        uiSchema={phenotypeSchema.data.uiSchema}
+                    />
+                ))}
+            </div>
+        );
+    }
 
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;
     const atCapacity = maxItems != null && phenotypes.length >= maxItems;

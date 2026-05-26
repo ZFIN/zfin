@@ -172,9 +172,16 @@ public class LineSubmissionStatusComputerTest {
         mut.setMutagenesisProtocol("CRISPR");
         mut.setMutationType("indel");
         // Genes is required on a Mutation; one Gene with a Marker set
-        // satisfies the per-row required field too.
+        // satisfies the per-row required field too. The status check now
+        // reads `mutatedGeneZdbID` via the entity's @Transient accessor,
+        // so the Marker needs an actual ZDB-ID — a default-constructed
+        // Marker returns null and would surface as MISSING.
         Gene g = new Gene();
-        g.setMutatedGene(new Marker());
+        Marker marker = new Marker();
+        marker.setZdbID("ZDB-GENE-TEST-1");
+        g.setMutatedGene(marker);
+        // genbankGenomicDna is now required per the gene schema.
+        g.setGenbankGenomicDna("NC_999999");
         Set<Gene> genes = new HashSet<>();
         genes.add(g);
         mut.setGenes(genes);
