@@ -4,12 +4,12 @@
       "additionalInfo" : {
         "maxLength" : 5000,
         "title" : "Additional Info",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "assayType" : {
         "maxLength" : 255,
         "title" : "Assay Type",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "attachments" : {
         "items" : {
@@ -39,12 +39,12 @@
       "commonPrimer" : {
         "maxLength" : 2000,
         "title" : "Common Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "dcapsMismatchPrimer" : {
         "maxLength" : 2000,
         "title" : "dCAPS Mismatch Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "enzymeCleaves" : {
         "items" : {
@@ -56,97 +56,97 @@
       "expectedMutDigest" : {
         "maxLength" : 2000,
         "title" : "Expected Mutant Digest",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "expectedMutPcr" : {
         "maxLength" : 2000,
         "title" : "Expected Mutant PCR",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "expectedWtDigest" : {
         "maxLength" : 2000,
         "title" : "Expected WT Digest",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "expectedWtPcr" : {
         "maxLength" : 2000,
         "title" : "Expected WT PCR",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "forwardPrimer" : {
         "maxLength" : 2000,
         "title" : "Forward Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "kaspGenomicSequence" : {
         "maxLength" : 5000,
         "title" : "KASP Genomic Sequence",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutSpecificPrimer" : {
         "maxLength" : 2000,
         "title" : "Mutant-Specific Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "restrictionEnzymeCatalog" : {
         "maxLength" : 255,
         "title" : "Restriction Enzyme Catalog #",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "restrictionEnzymeName" : {
         "maxLength" : 255,
         "title" : "Restriction Enzyme Name",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "reversePrimer" : {
         "maxLength" : 2000,
         "title" : "Reverse Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sequencingPrimer" : {
         "maxLength" : 2000,
         "title" : "Sequencing Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpDistance" : {
         "maxLength" : 255,
         "title" : "SSLP Distance",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpGenomicLocation" : {
         "maxLength" : 255,
         "title" : "SSLP Genomic Location",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpInducedBackground" : {
         "maxLength" : 255,
         "title" : "SSLP Induced Background",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpInducedPcr" : {
         "maxLength" : 2000,
         "title" : "SSLP Induced PCR",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpMarkerName" : {
         "maxLength" : 255,
         "title" : "SSLP Marker Name",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpOutcrossedBackground" : {
         "maxLength" : 255,
         "title" : "SSLP Outcrossed Background",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "sslpOutcrossedPcr" : {
         "maxLength" : 2000,
         "title" : "SSLP Outcrossed PCR",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "wtSpecificPrimer" : {
         "maxLength" : 2000,
         "title" : "WT-Specific Primer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       }
     },
     "required" : [ "assayType" ],

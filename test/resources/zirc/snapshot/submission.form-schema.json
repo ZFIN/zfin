@@ -38,7 +38,7 @@
           "reasonsOther" : {
             "maxLength" : 2000,
             "title" : "Other reason",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           }
         },
         "required" : [ "reasons" ],
@@ -50,17 +50,17 @@
           "additionalInfo" : {
             "maxLength" : 5000,
             "title" : "Additional Info",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "husbandryInfo" : {
             "maxLength" : 5000,
             "title" : "Husbandry Info",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "unreportedFeaturesDetails" : {
             "maxLength" : 5000,
             "title" : "Unreported Features Details",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           }
         },
         "title" : "Additional Info",
@@ -75,12 +75,12 @@
           "maternalBackground" : {
             "maxLength" : 255,
             "title" : "Maternal",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "paternalBackground" : {
             "maxLength" : 255,
             "title" : "Paternal",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "singleAllelic" : {
             "title" : "Single-allelic submission",
@@ -154,12 +154,12 @@
       "name" : {
         "maxLength" : 255,
         "title" : "Line Name",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "previousNames" : {
         "maxLength" : 2000,
         "title" : "Previous Names",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "submitterNames" : {
         "readOnly" : true,

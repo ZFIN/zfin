@@ -4,7 +4,7 @@
       "alleleDesignation" : {
         "maxLength" : 255,
         "title" : "Allele Designation",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "alleleInZfin" : {
         "title" : "Allele already in ZFIN",
@@ -32,7 +32,7 @@
       "cellGenomicFeature" : {
         "maxLength" : 255,
         "title" : "Cell Genomic Feature",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "genes" : {
         "items" : {
@@ -82,27 +82,27 @@
       "lethalityAdditionalInfo" : {
         "maxLength" : 5000,
         "title" : "Lethality Additional Info",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "lethalitySpecificTimepoint" : {
         "maxLength" : 255,
         "title" : "Specific Timepoint",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "lethalityStageTypical" : {
         "maxLength" : 255,
         "title" : "Typical Lethality Stage",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "lethalityWindowEnd" : {
         "maxLength" : 255,
         "title" : "Lethality Window End",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "lethalityWindowStart" : {
         "maxLength" : 255,
         "title" : "Lethality Window Start",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "molecularlyCharacterized" : {
         "title" : "Molecularly Characterized",
@@ -111,27 +111,27 @@
       "mutagenesisProtocol" : {
         "maxLength" : 255,
         "title" : "Mutagenesis Protocol",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutagenesisStage" : {
         "maxLength" : 255,
         "title" : "Mutagenesis Stage",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutationDiscoverer" : {
         "maxLength" : 255,
         "title" : "Discoverer",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutationInstitution" : {
         "maxLength" : 255,
         "title" : "Institution",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutationType" : {
         "maxLength" : 255,
         "title" : "Mutation Type",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "phenotypes" : {
         "items" : {
