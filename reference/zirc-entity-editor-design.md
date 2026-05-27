@@ -1,18 +1,23 @@
-# ZircEntityEditor — locked design (not yet implemented)
+# ZircEntityEditor — design + implementation record
 
-**Status**: design decided in a May 2026 conversation; no code written yet.
-This note records the locked decisions and the implementation sequence so
-they survive into the session that builds it. See `zirc-architecture.md`
-for the surrounding form-pipeline conventions this builds on.
+**Status**: implemented (May 2026). The four inline aggregate editors
+(`AssayEdit`/`GeneEdit`/`LesionEdit`/`PhenotypeEdit`) are now thin
+wrappers over `ZircEntityEditor`; `MutationEdit` shares the same
+`useAutosavedSchemaForm` hook. Browser-smoke-tested on the deployed
+form (autosave persists, `refreshesParent` relabels cards, the lesion
+matrix + number fields render). See `zirc-architecture.md` §5/§11/§14
+for the live conventions; this note keeps the *why* and the
+future-iteration flag.
 
 ## Why
 
-Today there are five near-identical per-aggregate edit components
-(`MutationEdit`, `AssayEdit`, `GeneEdit`, `LesionEdit`, `PhenotypeEdit`)
-plus the submission `SchemaForm`. The four inline editors are ~90% the
-same boilerplate (schema fetch → null-gated seed → autosave diff →
-PATCH → JsonForms mount), differing only in configuration. `diffLeaves`
-alone is copy-pasted six times in three variants.
+Before this change there were five near-identical per-aggregate edit
+components (`MutationEdit`, `AssayEdit`, `GeneEdit`, `LesionEdit`,
+`PhenotypeEdit`) plus the submission `SchemaForm`. The four inline
+editors were ~90% the same boilerplate (schema fetch → null-gated seed →
+autosave diff → PATCH → JsonForms mount), differing only in
+configuration. `diffLeaves` alone was copy-pasted six times in three
+variants.
 
 The goal: one component, **`ZircEntityEditor`**, that renders any ZIRC
 aggregate from its schema + uiSchema, driven by a small amount of
@@ -29,12 +34,14 @@ per-aggregate config.
 - `widget` — renderer dispatch (existing).
 - **`managesOwnPersistence`** — the widget owns its own write path
   (uploads/deletes via dedicated endpoints), so the autosave loop must
-  skip this path. Set by default by the self-managed-list group builder.
-  The skip-set is *derived* by walking Controls and converting
-  `scope` → JSON Pointer; this replaces the three hardcoded
+  skip this path. The skip-set is *derived* by walking Controls and
+  converting `scope` → JSON Pointer; this replaced the three hardcoded
   `EXTERNALLY_MANAGED_PATHS` sets. Name chosen over `skipAutosave` to
-  state intent at the declaration site; bridge the
-  persistence→autosave gap with a one-line comment at the filter.
+  state intent at the declaration site.
+  **As built**: set explicitly on each of the 7 list Controls rather
+  than via a shared group-builder default (the schemas inline their
+  Groups across three classes; a shared builder wasn't worth
+  introducing for 7 call sites). Revisit if a builder emerges.
 - **`refreshesParent`** — editing this field changes what the parent's
   collapsed card displays, so after a successful PATCH the parent query
   must be invalidated. Per-Control because the trigger field varies and
@@ -58,18 +65,26 @@ This registry is the one fact the schema doesn't carry today —
 - Three drift tests: `FormSchemaSnapshotTest`, `FormSchemaInvariantsTest`,
   `GenerateTypeScriptDriftTest`
 
-## Implementation sequence (smallest-risk-first)
+## Implementation sequence (as built)
 
-1. Extract `diffLeaves` → `formHelpers.ts`; add a `useAutosavedSchemaForm`
-   hook; port `MutationEdit` first (the hardest caller — mirror-sync,
-   self-managed paths, a refresh trigger) to prove the hook.
-2. Add `managesOwnPersistence` + `refreshesParent` to
-   `org.zfin.zirc.api.uischema.Options`; default the former in the
-   self-managed-list group builder; flag the trigger fields
-   (`assayType`, `lesionType`, `mutatedGeneZdbID`, `description`).
-3. Build `ZircEntityEditor` + the entityKind registry; collapse the four
-   inline editors; delete the duplicated seed/autosave code.
-4. Snapshot regen + browser smoke.
+1. ✅ Extracted `diffLeaves` → `formHelpers.ts`; added the
+   `useAutosavedSchemaForm` hook; ported `MutationEdit` (the hardest
+   caller — mirror-sync, self-managed paths) to prove it.
+2. ✅ Added `managesOwnPersistence` + `refreshesParent` to
+   `org.zfin.zirc.api.uischema.Options`; flagged the 7 list Controls +
+   the 4 trigger fields (`assayType`, `lesionType`, `mutatedGeneZdbID`,
+   `description`); the hook derives skip/mirror/refresh sets from the
+   uiSchema.
+3. ✅ Built `ZircEntityEditor` + `aggregateRegistry`; collapsed the four
+   inline editors to thin wrappers; deleted the duplicated
+   seed/autosave code.
+4. ✅ Snapshot regen + browser smoke on the deployed form.
+
+Two adjacent fixes surfaced during the browser smoke and were folded in:
+a number/integer renderer in `RowControlRenderer` (number fields had
+shown "No applicable renderer found"), and making `StringSchema.of`
+emit a nullable type so empty fields stop tripping AJV's "must be
+string".
 
 ## Flagged for future iteration: the frontend registry
 

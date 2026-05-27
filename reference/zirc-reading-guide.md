@@ -28,18 +28,20 @@ If you only have 15 minutes, read these three files in this order. They
 contain the whole architectural idea; everything else is plumbing.
 
 1. **`reference/zirc-architecture.md` §1–3** — three short sections that
-   cover the mental model, the three aggregates, and the
+   cover the mental model, the seven aggregates, and the
    `FieldDescriptor` pattern. ~10 min.
 
 2. **`source/org/zfin/zirc/api/ZircFormSchema.java`** — the single source
    of truth for the submission form. Read it top to bottom. ~600 lines
    but mostly data; the `FIELDS` map at the bottom carries the whole
    contract. Notice:
-   - `schema()` produces JSON Schema
-   - `uiSchema()` produces JSON Forms uiSchema
+   - `schema()` produces JSON Schema, built from typed records under
+     `api/jsonschema` (`StringSchema.of`, `BooleanSchema.nullable`,
+     `NumberSchema`, `ArraySchema`, `ObjectSchema`)
+   - `uiSchema()` produces JSON Forms uiSchema, built from typed records
+     under `api/uischema` (`VerticalLayout`, `Group`, `Control`,
+     `Options`, `Rule`)
    - `FIELDS` is the path → (read, write) dispatch table
-   - Three builder helpers (`stringProp`, `nullableBoolProp`, etc.)
-     repeat throughout — once you've seen them you can skim.
 
 3. **`home/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — the
    React side. The whole client form is ~240 lines. Notice:
@@ -140,12 +142,19 @@ order:
    - `PhenotypeTimingRenderer.tsx` — escape-hatch for the hpf/dpf
      unit toggle that needs sibling-field access via `useJsonForms`.
 
-6. **`home/javascript/react/zirc/pages/`** — five page-level form
-   components, all the same shape: `MutationEdit`, `AssayEdit`,
-   `GeneEdit`, `LesionEdit`, `PhenotypeEdit`. Reading one is enough;
-   `MutationEdit.tsx` is the most complete and shows how the four
-   inline-expand child sections are wired (`EXTERNALLY_MANAGED_PATHS`
-   filter + per-list mirror-sync `useEffect`).
+6. **`home/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts`**
+   — the autosave state machine (schema fetch → null-gated seed →
+   mirror-sync → debounced PATCH) shared by every aggregate editor. It
+   derives its skip-set / mirror-keys / parent-refresh from the
+   uiSchema's per-Control flags. Read this to understand the autosave
+   model in one place.
+
+7. **`home/javascript/react/zirc/schemaForm/ZircEntityEditor.tsx`** +
+   **`aggregateRegistry.ts`** — one component that renders any inline
+   aggregate using the hook. The per-aggregate page files (`AssayEdit`,
+   `GeneEdit`, `LesionEdit`, `PhenotypeEdit`) are ~25-line wrappers over
+   it. `MutationEdit.tsx` is the standalone page that uses the hook
+   directly (it hosts the four inline-expand child sections).
 
 ### Step 4 — Pitfalls section of the retrospective (10 min)
 
@@ -196,14 +205,21 @@ Mirror the existing inline-expand pattern. The skeleton is:
 10. Wire summary list into the parent's `ZircMutationFormSchema`
     (`*SummaryArrayProp()` helper + a uiSchema Group with
     `widget: "<aggregate>List"`)
-11. New React Query hooks in `api/queries.ts`
-12. New page component if the aggregate gets its own route
-    (`MutationEdit.tsx` shape) OR inline expansion via a renderer
-    (`AssaysListRenderer` + `AssayEdit.tsx` shape)
-13. Wire renderer into `MutationEdit.tsx`: add to `renderers`, add
-    summary list to `FormDataShape` + `initialDataFromMutation`,
-    add path to `EXTERNALLY_MANAGED_PATHS`, add mirror-sync `useEffect`
-14. Add a `*SchemaMatchesSnapshot` test in `FormSchemaSnapshotTest`
+11. New React Query hooks + cache key in `api/queries.ts`
+    (`use<Kind>ById`, `<kind>Key`)
+12. For an inline-expand child aggregate: add an entry to
+    `schemaForm/aggregateRegistry.ts` (endpoints, query hook, cache key,
+    parent topology) and write a ~25-line page wrapper that renders
+    `<ZircEntityEditor kind="<kind>" …>`. Flag the parent's summary-list
+    Control `managesOwnPersistence` and the parent-card-label field
+    `refreshesParent` in the form schema — the hook reads both from the
+    uiSchema, so there's no per-page `EXTERNALLY_MANAGED_PATHS` or
+    mirror-sync effect to wire. If the aggregate gets its own *route*
+    instead, follow the `MutationEdit.tsx` shape (uses the hook directly).
+13. If the aggregate's form needs a widget `ZircEntityEditor` doesn't
+    already register, add the renderer to its union.
+14. Add a `*SchemaMatchesSnapshot` test in `FormSchemaSnapshotTest` and a
+    `Spec` row in `FormSchemaInvariantsTest`
 15. Regenerate snapshots: `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`
 
 The M6.1 → M7.1 → M8.1 commit chain on `zirc-rearchitect` is the
@@ -237,31 +253,35 @@ For Control-level rules, JSON Forms handles it automatically.
 1. Write the renderer under `home/javascript/react/zirc/schemaForm/renderers/`
 2. Register it with `rankWith(20, and(isControl, optionIs("widget",
    "yourWidgetName")))` higher than the default rank of 10
-3. Export it as `*RendererEntry` and add it to the renderers array on
-   whichever page component mounts the form
-4. In the relevant `*FormSchema.uiSchema()`, use
-   `controlWithOptions("#/properties/foo", Map.of("widget", "yourWidgetName"))`
+3. Export it as `*RendererEntry` and add it to the renderers list where
+   the form mounts: `ZircEntityEditor`'s union (inline aggregates) or the
+   `renderers` array in `MutationEdit` / `SchemaForm`
+4. In the relevant `*FormSchema.uiSchema()`, set the widget via the typed
+   `Options` builder: `new Control("#/properties/foo", Options.of().widget("yourWidgetName"), null)`
 
 ### "I hit a bug related to autosave"
 
-The autosave story is centralized — all behave the same way:
+The autosave state machine lives in one place —
+`home/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts` — used
+by `ZircEntityEditor` (the four inline aggregates) and by `MutationEdit`
+directly. The submission page (`schemaForm/SchemaForm.tsx`) is the lone
+exception: it has a create-on-first-save flow and still carries its own
+copy of the loop.
 
-- `home/javascript/react/zirc/schemaForm/SchemaForm.tsx` (submission)
-- `home/javascript/react/zirc/pages/MutationEdit.tsx`
-- `home/javascript/react/zirc/pages/AssayEdit.tsx`
-- `home/javascript/react/zirc/pages/GeneEdit.tsx`
-- `home/javascript/react/zirc/pages/LesionEdit.tsx`
-- `home/javascript/react/zirc/pages/PhenotypeEdit.tsx`
-
-The shared idioms are:
-- `formData: T | null` starts null; we don't render `<JsonForms>` until
-  the seed effect has populated it (prevents the seed-vs-autosave race)
-- `lastSavedRef` tracks what's on the server; `diffLeaves` produces the
-  PATCH list
-- `EXTERNALLY_MANAGED_PATHS` filters out paths handled by dedicated
-  POST/DELETE endpoints (e.g. `/mutations`, `/assays`, `/attachments`)
-- The React Query cache is mirrored back into local state for server-
-  managed lists via a `JSON.stringify(...)` keyed effect
+The shared idioms (all in the hook):
+- `formData: T | null` starts null; the caller doesn't render
+  `<JsonForms>` until the seed effect has populated it (prevents the
+  seed-vs-autosave race)
+- `lastSavedRef` tracks what's on the server; `diffLeaves`
+  (in `api/formHelpers.ts`) produces the PATCH list
+- The autosave diff skips paths whose Control is flagged
+  `managesOwnPersistence` in the uiSchema (dedicated POST/DELETE
+  endpoints handle those), derived from the schema — no hardcoded path
+  list
+- Those same server-managed keys are mirrored back into local state
+  from the refetched entity via one `JSON.stringify(...)`-keyed effect
+- A change to a `refreshesParent`-flagged path invalidates the parent
+  query after the save
 
 If you see "field clears unexpectedly on reload," read
 `zirc-rearchitect-retrospective.html` "Spurious field clear during slow
