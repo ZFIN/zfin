@@ -67,10 +67,11 @@ public class FormSchemaInvariantsTest {
                 Set.of("zdbID", "abbreviation", "backgroundChangeConcerns", "draft"),
                 // Schema paths managed through dedicated POST/DELETE
                 // endpoints rather than the field-path PATCH. createdAt /
-                // updatedAt are server-managed read-only display fields —
-                // present in the schema for view-mode rendering, never patched.
+                // updatedAt / submitterNames are server-managed read-only
+                // display fields — present in the schema for view-mode
+                // rendering, never patched.
                 Set.of("/mutations", "/linkedFeatures",
-                        "/createdAt", "/updatedAt")));
+                        "/createdAt", "/updatedAt", "/submitterNames")));
     }
 
     @Test

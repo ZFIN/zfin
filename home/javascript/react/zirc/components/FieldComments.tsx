@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
+import { StatusRefetchContext } from '../statusRefetchContext';
 
 export type FieldCommentDTO = {
     id: number;
@@ -12,6 +13,7 @@ export type FieldCommentDTO = {
     authorZdbId: string;
     authorName: string;
     comment: string;
+    closed: boolean;
     createdAt: string | null;
 };
 
@@ -43,9 +45,11 @@ export function FieldComments({ recId, scope, fieldName, sectionName, label }: P
     const [open, setOpen] = React.useState(false);
     const [anchorRect, setAnchorRect] = React.useState<DOMRect | null>(null);
     const [draft, setDraft] = React.useState('');
+    const [draftClosed, setDraftClosed] = React.useState(false);
     const [errMsg, setErrMsg] = React.useState<string | null>(null);
     const triggerRef = React.useRef<HTMLButtonElement | null>(null);
     const qc = useQueryClient();
+    const refetchStatus = React.useContext(StatusRefetchContext);
 
     const enabled = !!recId && (scope === 'field' ? !!fieldName : !!sectionName);
 
@@ -64,16 +68,22 @@ export function FieldComments({ recId, scope, fieldName, sectionName, label }: P
     });
 
     const post = useMutation({
-        mutationFn: (body: string) => api.post<FieldCommentDTO>('/comments', {
-            recId, scope, fieldName, sectionName, comment: body,
-        }),
+        mutationFn: (vars: { body: string; closed: boolean }) =>
+            api.post<FieldCommentDTO>('/comments', {
+                recId, scope, fieldName, sectionName,
+                comment: vars.body, closed: vars.closed,
+            }),
         onSuccess: (created) => {
             setDraft('');
+            setDraftClosed(false);
             setErrMsg(null);
             qc.setQueryData<FieldCommentDTO[]>(
                 queryKey(recId!, scope, fieldName ?? null, sectionName ?? null),
                 (prev) => [...(prev ?? []), created],
             );
+            // A new comment can flip this field's open-comment overlay
+            // (and bubble into its section / overall). Pull fresh status.
+            refetchStatus();
         },
         onError: (e) => setErrMsg(e instanceof Error ? e.message : 'Failed to post'),
     });
@@ -177,8 +187,13 @@ export function FieldComments({ recId, scope, fieldName, sectionName, label }: P
                                         {c.authorName}
                                     </a>
                                     {c.createdAt && <> &middot; {c.createdAt}</>}
+                                    {c.closed && (
+                                        <span className='badge badge-secondary ml-2'>closed</span>
+                                    )}
                                 </div>
-                                <div style={{ whiteSpace: 'pre-wrap' }}>{c.comment}</div>
+                                {c.comment
+                                    ? <div style={{ whiteSpace: 'pre-wrap' }}>{c.comment}</div>
+                                    : <div className='text-muted small font-italic'>(no comment)</div>}
                             </li>
                         ))}
                     </ul>
@@ -191,12 +206,24 @@ export function FieldComments({ recId, scope, fieldName, sectionName, label }: P
                     onChange={(e) => setDraft(e.target.value)}
                 />
                 {errMsg && <div className='alert alert-danger py-1 mb-2 small'>{errMsg}</div>}
-                <div className='d-flex justify-content-end'>
+                <div className='d-flex justify-content-between align-items-center'>
+                    <div className='form-check'>
+                        <input
+                            type='checkbox'
+                            className='form-check-input'
+                            id={`fc-closed-${popupKey}`}
+                            checked={draftClosed}
+                            onChange={(e) => setDraftClosed(e.target.checked)}
+                        />
+                        <label className='form-check-label small' htmlFor={`fc-closed-${popupKey}`}>
+                            closed
+                        </label>
+                    </div>
                     <button
                         type='button'
                         className='btn btn-sm btn-primary'
-                        disabled={draft.trim().length === 0 || post.isPending}
-                        onClick={() => post.mutate(draft.trim())}
+                        disabled={(draft.trim().length === 0 && !draftClosed) || post.isPending}
+                        onClick={() => post.mutate({ body: draft.trim(), closed: draftClosed })}
                     >
                         {post.isPending ? 'Saving…' : 'Post'}
                     </button>

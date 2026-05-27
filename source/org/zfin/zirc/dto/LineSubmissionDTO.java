@@ -1,13 +1,17 @@
 package org.zfin.zirc.dto;
 
 import jakarta.validation.constraints.NotNull;
+import org.zfin.profile.Person;
 import org.zfin.zirc.entity.LineSubmission;
+import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.Mutation;
 
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public record LineSubmissionDTO(
         @NotNull String zdbID,
@@ -28,7 +32,8 @@ public record LineSubmissionDTO(
         List<LinkedFeatureDTO> linkedFeatures,
         boolean draft,
         String createdAt,
-        String updatedAt) {
+        String updatedAt,
+        String submitterNames) {
 
     public static LineSubmissionDTO of(LineSubmission s) {
         List<MutationDTO> muts = s.getMutations() == null ? List.of() :
@@ -67,10 +72,30 @@ public record LineSubmissionDTO(
                 links,
                 Boolean.TRUE.equals(s.getIsDraft()),
                 formatDate(s.getCreatedAt()),
-                formatDate(s.getUpdatedAt()));
+                formatDate(s.getUpdatedAt()),
+                formatSubmitters(s));
     }
 
     private static String formatDate(Date d) {
         return d == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm").format(d);
+    }
+
+    /** "F. Last, G. Other" in submission sort order; null when none. */
+    private static String formatSubmitters(LineSubmission s) {
+        if (s.getPersons() == null || s.getPersons().isEmpty()) return null;
+        String joined = s.getPersons().stream()
+                .sorted(Comparator.comparing(LineSubmissionPerson::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(LineSubmissionPerson::getPerson)
+                .filter(Objects::nonNull)
+                .map(LineSubmissionDTO::personLabel)
+                .collect(Collectors.joining(", "));
+        return joined.isBlank() ? null : joined;
+    }
+
+    private static String personLabel(Person p) {
+        String initial = (p.getFirstName() == null || p.getFirstName().isBlank())
+                ? "" : p.getFirstName().charAt(0) + ". ";
+        return initial + (p.getLastName() == null ? p.getZdbID() : p.getLastName());
     }
 }

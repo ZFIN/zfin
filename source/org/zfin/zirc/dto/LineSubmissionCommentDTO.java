@@ -19,6 +19,7 @@ public record LineSubmissionCommentDTO(
         String authorZdbId,
         String authorName,
         String comment,
+        boolean closed,
         String createdAt) {
 
     public static LineSubmissionCommentDTO of(LineSubmissionComment c, Person author) {
@@ -39,6 +40,7 @@ public record LineSubmissionCommentDTO(
                 c.getAuthorZdbId(),
                 name,
                 c.getComment(),
+                c.isClosed(),
                 c.getCreatedAt() == null
                         ? null
                         : new SimpleDateFormat("yyyy-MM-dd HH:mm").format(c.getCreatedAt()));

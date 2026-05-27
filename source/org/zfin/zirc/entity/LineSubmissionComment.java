@@ -54,6 +54,10 @@ public class LineSubmissionComment implements Serializable {
     @Column(name = "lsc_comment", nullable = false)
     private String comment;
 
+    /** Marks this comment thread as finished. Defaults false. */
+    @Column(name = "lsc_closed", nullable = false)
+    private boolean closed;
+
     @Column(name = "lsc_created_at", insertable = false, updatable = false)
     private Date createdAt;
 

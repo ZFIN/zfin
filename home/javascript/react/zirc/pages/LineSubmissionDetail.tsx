@@ -3,6 +3,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../queryClient';
 import { useLineSubmission } from '../api/queries';
 import { SchemaForm } from '../schemaForm/SchemaForm';
+import { StatusOverviewBar } from '../components/StatusOverviewBar';
+import { StatusRefetchContext } from '../statusRefetchContext';
 import type { FieldStatus } from '../components/StatusBadge';
 
 export type LineSubmissionDetailProps = {
@@ -44,7 +46,7 @@ function LineSubmissionDetailInner({
     submissionId,
     statusPayloadElementId = 'ls-detail-status-payload',
 }: LineSubmissionDetailProps) {
-    const payload = React.useMemo<StatusPayload>(() => {
+    const initialPayload = React.useMemo<StatusPayload>(() => {
         const el = document.getElementById(statusPayloadElementId);
         const empty: StatusPayload = {
             fieldStatus: {},
@@ -70,6 +72,23 @@ function LineSubmissionDetailInner({
         }
     }, [statusPayloadElementId]);
 
+    // Reactive copy so a comment change can refresh the badges in place.
+    const [payload, setPayload] = React.useState<StatusPayload>(initialPayload);
+
+    // Re-pull the server-computed status (incl. the open-comment IN_PROGRESS
+    // overlay + section/overall rollups) without a full page reload. The
+    // status endpoint lives under /action/zirc (not the /action/api/zirc api
+    // client base), so we fetch it directly.
+    const refetchStatus = React.useCallback(() => {
+        if (!submissionId) {return;}
+        fetch(`/action/zirc/line-submission/${encodeURIComponent(submissionId)}/status`, {
+            headers: { Accept: 'application/json' },
+        })
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+            .then((p: StatusPayload) => setPayload(p))
+            .catch((e) => console.error('Status refetch failed', e));
+    }, [submissionId]);
+
     const query = useLineSubmission(submissionId);
     if (query.isLoading) {return <p className='text-muted'>Loading submission…</p>;}
     if (query.isError) {
@@ -81,22 +100,30 @@ function LineSubmissionDetailInner({
     }
     const submission = query.data ?? null;
     return (
-        <SchemaForm
-            submission={submission}
-            mode='view'
-            fieldStatus={payload.fieldStatus}
-            sectionStatus={payload.sectionStatus}
-            mutationFieldStatus={payload.mutationFieldStatus}
-            mutationSectionStatus={payload.mutationSectionStatus}
-            mutationOverallStatus={payload.mutationOverallStatus}
-            geneFieldStatus={payload.geneFieldStatus}
-            geneSectionStatus={payload.geneSectionStatus}
-            lesionFieldStatus={payload.lesionFieldStatus}
-            lesionSectionStatus={payload.lesionSectionStatus}
-            assayFieldStatus={payload.assayFieldStatus}
-            assaySectionStatus={payload.assaySectionStatus}
-            phenotypeFieldStatus={payload.phenotypeFieldStatus}
-            phenotypeSectionStatus={payload.phenotypeSectionStatus}
-        />
+        <StatusRefetchContext.Provider value={refetchStatus}>
+            {submission && (
+                <StatusOverviewBar
+                    submission={submission}
+                    sectionStatus={payload.sectionStatus}
+                />
+            )}
+            <SchemaForm
+                submission={submission}
+                mode='view'
+                fieldStatus={payload.fieldStatus}
+                sectionStatus={payload.sectionStatus}
+                mutationFieldStatus={payload.mutationFieldStatus}
+                mutationSectionStatus={payload.mutationSectionStatus}
+                mutationOverallStatus={payload.mutationOverallStatus}
+                geneFieldStatus={payload.geneFieldStatus}
+                geneSectionStatus={payload.geneSectionStatus}
+                lesionFieldStatus={payload.lesionFieldStatus}
+                lesionSectionStatus={payload.lesionSectionStatus}
+                assayFieldStatus={payload.assayFieldStatus}
+                assaySectionStatus={payload.assaySectionStatus}
+                phenotypeFieldStatus={payload.phenotypeFieldStatus}
+                phenotypeSectionStatus={payload.phenotypeSectionStatus}
+            />
+        </StatusRefetchContext.Provider>
     );
 }

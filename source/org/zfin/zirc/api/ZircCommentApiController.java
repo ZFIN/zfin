@@ -71,7 +71,8 @@ public class ZircCommentApiController {
             String scope,
             String fieldName,
             String sectionName,
-            String comment) {}
+            String comment,
+            boolean closed) {}
 
     @PostMapping("/comments")
     @ResponseStatus(HttpStatus.CREATED)
@@ -83,7 +84,7 @@ public class ZircCommentApiController {
         }
         LineSubmissionComment saved = commentService.add(
                 req.recId(), req.scope(), req.fieldName(), req.sectionName(),
-                currentUser, req.comment());
+                currentUser, req.comment(), req.closed());
         return LineSubmissionCommentDTO.of(saved, currentUser);
     }
 

@@ -87,6 +87,7 @@ public final class ZircFormSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("name",            StringSchema.of("Line Name", 255));
         properties.put("previousNames",   StringSchema.of("Previous Names", 2000));
+        properties.put("submitterNames",  StringSchema.readOnly("Submitter"));
         properties.put("createdAt",       StringSchema.readOnly("Date Started"));
         properties.put("updatedAt",       StringSchema.readOnly("Last Updated"));
         properties.put("acceptance",      acceptanceSchema);
@@ -118,6 +119,8 @@ public final class ZircFormSchema {
                                         .placeholder("Comma-separated former names")
                                         .helpText("Useful when this line was previously known by a different designation."),
                                 null),
+                        new Control("#/properties/submitterNames",
+                                Options.of().comments(false), null),
                         new Control("#/properties/createdAt",
                                 Options.of().comments(false), null),
                         new Control("#/properties/updatedAt",

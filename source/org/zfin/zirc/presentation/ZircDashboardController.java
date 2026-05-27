@@ -17,6 +17,12 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.api.ZircAssayFormSchema;
+import org.zfin.zirc.api.ZircFormSchema;
+import org.zfin.zirc.api.ZircGeneFormSchema;
+import org.zfin.zirc.api.ZircLesionFormSchema;
+import org.zfin.zirc.api.ZircMutationFormSchema;
+import org.zfin.zirc.api.ZircPhenotypeFormSchema;
 import org.zfin.zirc.service.GeneStatusComputer;
 import org.zfin.zirc.service.GenotypingAssayStatusComputer;
 import org.zfin.zirc.service.LesionStatusComputer;
@@ -26,6 +32,7 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import org.zfin.zirc.service.MutationStatusComputer;
+import org.zfin.zirc.service.SchemaSections;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +41,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/zirc")
@@ -41,6 +49,9 @@ public class ZircDashboardController {
 
     @Autowired
     private LineSubmissionService lineSubmissionService;
+
+    @Autowired
+    private org.zfin.zirc.service.ZircCommentService commentService;
 
     @GetMapping("/dashboard")
     public String viewDashboard(Model model) {
@@ -404,89 +415,10 @@ public class ZircDashboardController {
         }
         model.addAttribute("submission", submission);
 
-        FieldStatusResult status = LineSubmissionStatusComputer.compute(submission);
-
-        // Field/section history is no longer embedded in the bootstrap
-        // payload — FieldHistory lazy-fetches GET /api/zirc/audit on click,
-        // symmetric with FieldComments. That makes nested-aggregate history
-        // (lesion, assay, phenotype, gene) work without bootstrap plumbing.
-
-        // Per-mutation status maps for the nested mutation cards in the
-        // schema-driven detail view. Keyed by entity id so each list
-        // renderer can do an O(1) lookup per card. Status for every
-        // nested child (gene, lesion, assay, phenotype) is computed
-        // up-front and shipped in the bootstrap payload — the client
-        // never derives status locally.
-        Map<String, Map<String, Map<String, String>>> perMutationFieldStatus   = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perMutationSectionStatus = new LinkedHashMap<>();
-        // Per-mutation overall status (single FieldStatus per mutation) for
-        // the card-header badge. Collected then serialized in one shot.
-        Map<String, FieldStatus> perMutationOverall = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perGeneFieldStatus       = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perGeneSectionStatus     = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perLesionFieldStatus     = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perLesionSectionStatus   = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perAssayFieldStatus      = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perAssaySectionStatus    = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perPhenotypeFieldStatus  = new LinkedHashMap<>();
-        Map<String, Map<String, Map<String, String>>> perPhenotypeSectionStatus = new LinkedHashMap<>();
-        if (submission.getMutations() != null) {
-            for (Mutation mut : submission.getMutations()) {
-                FieldStatusResult r = MutationStatusComputer.compute(mut);
-                String mutKey = String.valueOf(mut.getId());
-                perMutationFieldStatus.put(mutKey,   fieldStatusToJson(r.byField()));
-                perMutationSectionStatus.put(mutKey, fieldStatusToJson(r.bySection()));
-                perMutationOverall.put(mutKey, r.overall());
-
-                if (mut.getGenes() != null) {
-                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
-                        FieldStatusResult gr = GeneStatusComputer.compute(g);
-                        String k = String.valueOf(g.getId());
-                        perGeneFieldStatus.put(k,   fieldStatusToJson(gr.byField()));
-                        perGeneSectionStatus.put(k, fieldStatusToJson(gr.bySection()));
-                    }
-                }
-                if (mut.getLesions() != null) {
-                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
-                        FieldStatusResult lr = LesionStatusComputer.compute(lz);
-                        String k = String.valueOf(lz.getId());
-                        perLesionFieldStatus.put(k,   fieldStatusToJson(lr.byField()));
-                        perLesionSectionStatus.put(k, fieldStatusToJson(lr.bySection()));
-                    }
-                }
-                if (mut.getGenotypingAssays() != null) {
-                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
-                        FieldStatusResult ar = GenotypingAssayStatusComputer.compute(ga);
-                        String k = String.valueOf(ga.getId());
-                        perAssayFieldStatus.put(k,   fieldStatusToJson(ar.byField()));
-                        perAssaySectionStatus.put(k, fieldStatusToJson(ar.bySection()));
-                    }
-                }
-                if (mut.getPhenotypes() != null) {
-                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
-                        FieldStatusResult pr = PhenotypeStatusComputer.compute(p);
-                        String k = String.valueOf(p.getId());
-                        perPhenotypeFieldStatus.put(k,   fieldStatusToJson(pr.byField()));
-                        perPhenotypeSectionStatus.put(k, fieldStatusToJson(pr.bySection()));
-                    }
-                }
-            }
-        }
-
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("fieldStatus",     fieldStatusToJson(status.byField()));
-        payload.put("sectionStatus",   fieldStatusToJson(status.bySection()));
-        payload.put("mutationFieldStatus",   perMutationFieldStatus);
-        payload.put("mutationSectionStatus", perMutationSectionStatus);
-        payload.put("mutationOverallStatus", fieldStatusToJson(perMutationOverall));
-        payload.put("geneFieldStatus",       perGeneFieldStatus);
-        payload.put("geneSectionStatus",     perGeneSectionStatus);
-        payload.put("lesionFieldStatus",     perLesionFieldStatus);
-        payload.put("lesionSectionStatus",   perLesionSectionStatus);
-        payload.put("assayFieldStatus",      perAssayFieldStatus);
-        payload.put("assaySectionStatus",    perAssaySectionStatus);
-        payload.put("phenotypeFieldStatus",  perPhenotypeFieldStatus);
-        payload.put("phenotypeSectionStatus", perPhenotypeSectionStatus);
+        // Status payload (field/section/overall + comment overlay) is built
+        // once here and also served live via GET .../status so the React
+        // page can refetch it when a comment's open/closed state changes.
+        Map<String, Object> payload = buildStatusPayload(submission);
 
         // Left-nav subsections: one entry per mutation under "Mutations".
         // navigationItem.tag links each to '#' + makeDomIdentifier(title), so
@@ -545,7 +477,292 @@ public class ZircDashboardController {
         return "zirc/line-submission-detail-react";
     }
 
+    /**
+     * Live status payload for the React detail page. Same map embedded in
+     * the JSP at first paint; the client refetches it when a comment's
+     * open/closed state changes so the field/section/overall badges update
+     * without a full reload.
+     */
+    @GetMapping("/line-submission/{zdbID}/status")
+    @ResponseBody
+    public Map<String, Object> lineSubmissionStatus(@PathVariable String zdbID) {
+        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
+        if (submission == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
+        }
+        return buildStatusPayload(submission);
+    }
+
+    /**
+     * Compute the full status payload: submission + per-aggregate field /
+     * section status, the per-mutation overall, all with the open-comment
+     * IN_PROGRESS overlay folded into fields and propagated into section /
+     * overall rollups.
+     */
+    private Map<String, Object> buildStatusPayload(LineSubmission submission) {
+        FieldStatusResult status = LineSubmissionStatusComputer.compute(submission);
+
+        Map<String, Map<String, Map<String, String>>> perMutationFieldStatus   = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perMutationSectionStatus = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perGeneFieldStatus       = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perGeneSectionStatus     = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perLesionFieldStatus     = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perLesionSectionStatus   = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perAssayFieldStatus      = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perAssaySectionStatus    = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perPhenotypeFieldStatus  = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perPhenotypeSectionStatus = new LinkedHashMap<>();
+        if (submission.getMutations() != null) {
+            for (Mutation mut : submission.getMutations()) {
+                FieldStatusResult r = MutationStatusComputer.compute(mut);
+                String mutKey = String.valueOf(mut.getId());
+                perMutationFieldStatus.put(mutKey,   fieldStatusToJson(r.byField()));
+                perMutationSectionStatus.put(mutKey, fieldStatusToJson(r.bySection()));
+
+                if (mut.getGenes() != null) {
+                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
+                        FieldStatusResult gr = GeneStatusComputer.compute(g);
+                        String k = String.valueOf(g.getId());
+                        perGeneFieldStatus.put(k,   fieldStatusToJson(gr.byField()));
+                        perGeneSectionStatus.put(k, fieldStatusToJson(gr.bySection()));
+                    }
+                }
+                if (mut.getLesions() != null) {
+                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
+                        FieldStatusResult lr = LesionStatusComputer.compute(lz);
+                        String k = String.valueOf(lz.getId());
+                        perLesionFieldStatus.put(k,   fieldStatusToJson(lr.byField()));
+                        perLesionSectionStatus.put(k, fieldStatusToJson(lr.bySection()));
+                    }
+                }
+                if (mut.getGenotypingAssays() != null) {
+                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
+                        FieldStatusResult ar = GenotypingAssayStatusComputer.compute(ga);
+                        String k = String.valueOf(ga.getId());
+                        perAssayFieldStatus.put(k,   fieldStatusToJson(ar.byField()));
+                        perAssaySectionStatus.put(k, fieldStatusToJson(ar.bySection()));
+                    }
+                }
+                if (mut.getPhenotypes() != null) {
+                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
+                        FieldStatusResult pr = PhenotypeStatusComputer.compute(p);
+                        String k = String.valueOf(p.getId());
+                        perPhenotypeFieldStatus.put(k,   fieldStatusToJson(pr.byField()));
+                        perPhenotypeSectionStatus.put(k, fieldStatusToJson(pr.bySection()));
+                    }
+                }
+            }
+        }
+
+        Map<String, Map<String, String>> submissionFieldStatus = fieldStatusToJson(status.byField());
+
+        // Comment overlay: a field whose latest comment is still open
+        // (closed=false) shows IN_PROGRESS regardless of its emptiness-derived
+        // status. One bulk lookup across every recId in play.
+        List<String> allRecIds = new ArrayList<>();
+        allRecIds.add(submission.getZdbID());
+        for (String id : perMutationFieldStatus.keySet())  allRecIds.add("ZIRC-MUT-" + id);
+        for (String id : perGeneFieldStatus.keySet())       allRecIds.add("ZIRC-GENE-" + id);
+        for (String id : perLesionFieldStatus.keySet())     allRecIds.add("ZIRC-LESION-" + id);
+        for (String id : perAssayFieldStatus.keySet())      allRecIds.add("ZIRC-GA-" + id);
+        for (String id : perPhenotypeFieldStatus.keySet())  allRecIds.add("ZIRC-PHEN-" + id);
+        Set<String> openFieldKeys = commentService.openFieldKeys(allRecIds);
+
+        overlayOpenComments(submissionFieldStatus, submission.getZdbID(), openFieldKeys);
+        overlayOpenCommentsPerEntity(perMutationFieldStatus,  "ZIRC-MUT-",    openFieldKeys);
+        overlayOpenCommentsPerEntity(perGeneFieldStatus,      "ZIRC-GENE-",   openFieldKeys);
+        overlayOpenCommentsPerEntity(perLesionFieldStatus,    "ZIRC-LESION-", openFieldKeys);
+        overlayOpenCommentsPerEntity(perAssayFieldStatus,     "ZIRC-GA-",     openFieldKeys);
+        overlayOpenCommentsPerEntity(perPhenotypeFieldStatus, "ZIRC-PHEN-",   openFieldKeys);
+
+        // Propagate the field overlay into section + overall rollups.
+        Map<String, Map<String, String>> submissionSectionStatus = fieldStatusToJson(status.bySection());
+        mergeFieldOverlayIntoSections(submissionSectionStatus, submissionFieldStatus,
+                SchemaSections.groupsToFields(ZircFormSchema.uiSchema()));
+
+        Map<String, List<String>> mutationSections = SchemaSections.groupsToFields(ZircMutationFormSchema.uiSchema());
+        Map<String, List<String>> geneSections     = SchemaSections.groupsToFields(ZircGeneFormSchema.uiSchema());
+        Map<String, List<String>> lesionSections   = SchemaSections.groupsToFields(ZircLesionFormSchema.uiSchema());
+        Map<String, List<String>> assaySections    = SchemaSections.groupsToFields(ZircAssayFormSchema.uiSchema());
+        Map<String, List<String>> phenoSections    = SchemaSections.groupsToFields(ZircPhenotypeFormSchema.uiSchema());
+
+        // Bottom-up propagation so an open-comment IP on a leaf field climbs
+        // all the way: leaf field → its section → that entity's overall →
+        // the parent's child-rollup section → parent overall → … up to the
+        // submission's "Mutations" section.
+        //
+        // 1. Fold the field overlay into each leaf aggregate's own sections,
+        //    then take that entity's overall from its (now-overlaid) sections.
+        Map<String, Map<String, String>> geneOverall      = new LinkedHashMap<>();
+        Map<String, Map<String, String>> lesionOverall    = new LinkedHashMap<>();
+        Map<String, Map<String, String>> assayOverall      = new LinkedHashMap<>();
+        Map<String, Map<String, String>> phenotypeOverall = new LinkedHashMap<>();
+        perGeneSectionStatus.forEach((id, sectionJson) -> {
+            mergeFieldOverlayIntoSections(sectionJson, perGeneFieldStatus.get(id), geneSections);
+            geneOverall.put(id, overallFromSections(sectionJson));
+        });
+        perLesionSectionStatus.forEach((id, sectionJson) -> {
+            mergeFieldOverlayIntoSections(sectionJson, perLesionFieldStatus.get(id), lesionSections);
+            lesionOverall.put(id, overallFromSections(sectionJson));
+        });
+        perAssaySectionStatus.forEach((id, sectionJson) -> {
+            mergeFieldOverlayIntoSections(sectionJson, perAssayFieldStatus.get(id), assaySections);
+            assayOverall.put(id, overallFromSections(sectionJson));
+        });
+        perPhenotypeSectionStatus.forEach((id, sectionJson) -> {
+            mergeFieldOverlayIntoSections(sectionJson, perPhenotypeFieldStatus.get(id), phenoSections);
+            phenotypeOverall.put(id, overallFromSections(sectionJson));
+        });
+
+        // 2. Per mutation: fold its own field overlay into its sections, then
+        //    fold each child group's post-overlay overalls into the matching
+        //    child-rollup section (worse-of keeps the computer's MISSING for
+        //    a required-but-absent child collection), then take the mutation
+        //    overall from its sections.
+        Map<String, Map<String, String>> mutationOverallJson = new LinkedHashMap<>();
+        if (submission.getMutations() != null) {
+            for (Mutation mut : submission.getMutations()) {
+                String mid = String.valueOf(mut.getId());
+                Map<String, Map<String, String>> msec = perMutationSectionStatus.get(mid);
+                mergeFieldOverlayIntoSections(msec, perMutationFieldStatus.get(mid), mutationSections);
+                mergeChildOverall(msec, "Genes",             childOveralls(mut.getGenes(),            geneOverall));
+                mergeChildOverall(msec, "Lesions",           childOveralls(mut.getLesions(),          lesionOverall));
+                mergeChildOverall(msec, "Genotyping Assays", childOveralls(mut.getGenotypingAssays(), assayOverall));
+                mergeChildOverall(msec, "Phenotypes",        childOveralls(mut.getPhenotypes(),       phenotypeOverall));
+                Map<String, String> overall = overallFromSections(msec);
+                if (overall != null) mutationOverallJson.put(mid, overall);
+            }
+            // 3. Submission "Mutations" section ← worse-of mutation overalls.
+            Map<String, String> mutationsWorst = submissionSectionStatus.get("Mutations");
+            for (Mutation mut : submission.getMutations()) {
+                mutationsWorst = worseJson(mutationsWorst, mutationOverallJson.get(String.valueOf(mut.getId())));
+            }
+            if (mutationsWorst != null) submissionSectionStatus.put("Mutations", mutationsWorst);
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("fieldStatus",     submissionFieldStatus);
+        payload.put("sectionStatus",   submissionSectionStatus);
+        payload.put("mutationFieldStatus",   perMutationFieldStatus);
+        payload.put("mutationSectionStatus", perMutationSectionStatus);
+        payload.put("mutationOverallStatus", mutationOverallJson);
+        payload.put("geneFieldStatus",       perGeneFieldStatus);
+        payload.put("geneSectionStatus",     perGeneSectionStatus);
+        payload.put("lesionFieldStatus",     perLesionFieldStatus);
+        payload.put("lesionSectionStatus",   perLesionSectionStatus);
+        payload.put("assayFieldStatus",      perAssayFieldStatus);
+        payload.put("assaySectionStatus",    perAssaySectionStatus);
+        payload.put("phenotypeFieldStatus",  perPhenotypeFieldStatus);
+        payload.put("phenotypeSectionStatus", perPhenotypeSectionStatus);
+        return payload;
+    }
+
     private static final ObjectMapper STATUS_PAYLOAD_MAPPER = new ObjectMapper();
+
+    /** JSON form of IN_PROGRESS, derived from the enum to avoid drift. */
+    private static final Map<String, String> IN_PROGRESS_JSON = Map.of(
+            "abbreviation", FieldStatus.IN_PROGRESS.getAbbreviation(),
+            "displayName",  FieldStatus.IN_PROGRESS.getDisplayName(),
+            "cssClass",     FieldStatus.IN_PROGRESS.getCssClass());
+
+    /** Overlay IN_PROGRESS on a single recId's field-status JSON map for any
+     *  field whose latest comment is open. */
+    private static void overlayOpenComments(Map<String, Map<String, String>> fieldJson,
+                                            String recId, Set<String> openFieldKeys) {
+        for (String field : fieldJson.keySet()) {
+            if (openFieldKeys.contains(org.zfin.zirc.service.ZircCommentService.fieldKey(recId, field))) {
+                fieldJson.put(field, IN_PROGRESS_JSON);
+            }
+        }
+    }
+
+    /** Same as {@link #overlayOpenComments} for a per-entity map keyed by id,
+     *  reconstructing each entity's recId from {@code recIdPrefix + id}. */
+    private static void overlayOpenCommentsPerEntity(
+            Map<String, Map<String, Map<String, String>>> perEntity,
+            String recIdPrefix, Set<String> openFieldKeys) {
+        perEntity.forEach((id, fieldJson) ->
+                overlayOpenComments(fieldJson, recIdPrefix + id, openFieldKeys));
+    }
+
+    /** Severity rank for a status JSON (lower = worse), matching
+     *  {@code FieldStatus.worse}: MISSING < IN_PROGRESS < COMPLETE < APPROVED. */
+    private static int statusRank(Map<String, String> st) {
+        if (st == null) return 9;
+        return switch (st.getOrDefault("abbreviation", "")) {
+            case "M"  -> 0;
+            case "IP" -> 1;
+            case "C"  -> 2;
+            case "A"  -> 3;
+            default   -> 9;
+        };
+    }
+
+    private static Map<String, String> worseJson(Map<String, String> a, Map<String, String> b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return statusRank(a) <= statusRank(b) ? a : b;
+    }
+
+    /**
+     * Fold each section's field overlay into its status: for every
+     * {@code section -> [field,…]} entry, replace the section's badge with
+     * worst-of(existing badge, each present field's badge). Sections whose
+     * fields aren't in {@code fieldJson} (e.g. list-widget groups like
+     * "Genes") keep their existing child-rollup badge untouched.
+     */
+    private static void mergeFieldOverlayIntoSections(
+            Map<String, Map<String, String>> sectionJson,
+            Map<String, Map<String, String>> fieldJson,
+            Map<String, List<String>> sectionToFields) {
+        if (fieldJson == null) return;
+        sectionToFields.forEach((section, fields) -> {
+            Map<String, String> worst = sectionJson.get(section);
+            for (String f : fields) {
+                worst = worseJson(worst, fieldJson.get(f));
+            }
+            if (worst != null) sectionJson.put(section, worst);
+        });
+    }
+
+    private static Map<String, String> overallFromSections(Map<String, Map<String, String>> sectionJson) {
+        Map<String, String> worst = null;
+        for (Map<String, String> s : sectionJson.values()) {
+            worst = worseJson(worst, s);
+        }
+        return worst;
+    }
+
+    /** Fold a worse-of child-overall into a parent's child-rollup section
+     *  (e.g. mutation "Lesions"), preserving the computer's existing value
+     *  (which already encodes "required child collection is empty ⇒ MISSING"). */
+    private static void mergeChildOverall(Map<String, Map<String, String>> sectionJson,
+                                          String section, Map<String, String> childWorst) {
+        if (childWorst == null) return;
+        sectionJson.merge(section, childWorst, ZircDashboardController::worseJson);
+    }
+
+    /** Worse-of the post-overlay overalls of a child collection, looked up by
+     *  id in {@code overallById}. Null when the collection is empty/absent. */
+    private static <T> Map<String, String> childOveralls(
+            java.util.Collection<T> children,
+            Map<String, Map<String, String>> overallById) {
+        if (children == null || children.isEmpty()) return null;
+        Map<String, String> worst = null;
+        for (T child : children) {
+            Long id = entityId(child);
+            if (id != null) worst = worseJson(worst, overallById.get(String.valueOf(id)));
+        }
+        return worst;
+    }
+
+    private static Long entityId(Object child) {
+        if (child instanceof org.zfin.zirc.entity.Gene g)             return g.getId();
+        if (child instanceof org.zfin.zirc.entity.Lesion l)           return l.getId();
+        if (child instanceof org.zfin.zirc.entity.GenotypingAssay a)  return a.getId();
+        if (child instanceof org.zfin.zirc.entity.Phenotype p)        return p.getId();
+        return null;
+    }
 
     private static Map<String, Map<String, String>> fieldStatusToJson(Map<String, FieldStatus> in) {
         Map<String, Map<String, String>> out = new LinkedHashMap<>();

@@ -161,6 +161,11 @@
         "title" : "Previous Names",
         "type" : "string"
       },
+      "submitterNames" : {
+        "readOnly" : true,
+        "title" : "Submitter",
+        "type" : "string"
+      },
       "updatedAt" : {
         "readOnly" : true,
         "title" : "Last Updated",
@@ -185,6 +190,12 @@
           "placeholder" : "Comma-separated former names"
         },
         "scope" : "#/properties/previousNames",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "comments" : false
+        },
+        "scope" : "#/properties/submitterNames",
         "type" : "Control"
       }, {
         "options" : {

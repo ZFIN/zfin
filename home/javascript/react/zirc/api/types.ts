@@ -26,6 +26,7 @@ export interface LineSubmissionDTO {
     draft: boolean;
     createdAt: string | null;
     updatedAt: string | null;
+    submitterNames: string | null;
 }
 
 export interface MutationDTO {
