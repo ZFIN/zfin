@@ -65,7 +65,10 @@ public final class ZircGeneFormSchema {
                                         .searchEndpoint("markers")
                                         .typeGroup("GENEDOM")
                                         .placeholder("Start typing a gene name…")
-                                        .helpText("Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown."),
+                                        .helpText("Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.")
+                                        // The parent gene card shows the denormalized marker
+                                        // abbreviation derived from this id — refresh it on change.
+                                        .refreshesParent(true),
                                 null),
                         new Control("#/properties/linkageGroup",
                                 Options.of().placeholder("e.g. 5"),

@@ -108,7 +108,8 @@ public final class ZircLesionFormSchema {
         return new VerticalLayout(List.of(
                 Group.of("General", List.of(
                         new Control("#/properties/lesionType",
-                                Options.of().widget("selectWithOther").standardValues(LESION_TYPES),
+                                Options.of().widget("selectWithOther").standardValues(LESION_TYPES)
+                                        .refreshesParent(true),
                                 null),
                         new Control("#/properties/additionalInfo",
                                 Options.of().multi(true), null)

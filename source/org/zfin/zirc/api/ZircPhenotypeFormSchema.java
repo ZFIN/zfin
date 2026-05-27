@@ -72,8 +72,10 @@ public final class ZircPhenotypeFormSchema {
     public static UiSchemaElement uiSchema() {
         return new VerticalLayout(List.of(
                 Group.of("Description", List.of(
+                        // The parent phenotype card shows the description snippet —
+                        // refresh it on change.
                         new Control("#/properties/description",
-                                Options.of().multi(true), null)
+                                Options.of().multi(true).refreshesParent(true), null)
                 )),
                 // Custom timing widget — hpf/dpf unit toggle + read-only
                 // stage echo. The stage field stays in the schema so the

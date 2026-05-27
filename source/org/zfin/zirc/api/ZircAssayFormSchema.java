@@ -122,7 +122,8 @@ public final class ZircAssayFormSchema {
         return new VerticalLayout(List.of(
                 Group.of("General", List.of(
                         new Control("#/properties/assayType",
-                                Options.of().widget("selectWithOther").standardValues(ASSAY_TYPES),
+                                Options.of().widget("selectWithOther").standardValues(ASSAY_TYPES)
+                                        .refreshesParent(true),
                                 null),
                         new Control("#/properties/additionalInfo",
                                 Options.of().multi(true), null)
@@ -189,7 +190,7 @@ public final class ZircAssayFormSchema {
                 // collapsed to a single "Files" affordance for now.
                 new Group("Attachments",
                         List.of(new Control("#/properties/attachments",
-                                Options.of().widget("attachmentsList"), null)),
+                                Options.of().widget("attachmentsList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
                         null)
         ));
