@@ -26,9 +26,15 @@ public record StringSchema(
         @JsonIgnore Boolean isNullable
 ) implements JsonSchema {
 
-    /** Factory for the common case: just a title + maxLength. */
+    /**
+     * Factory for the common case: a title + maxLength. Emits a nullable
+     * type ({@code ["string","null"]}) because every editable field on
+     * these forms is clearable — an unset field is {@code null} on the
+     * wire, and client-side AJV validation must accept that without
+     * flagging "must be string". maxLength still applies to non-null values.
+     */
     public static StringSchema of(String title, int maxLength) {
-        return new StringSchema(title, maxLength, null, null);
+        return new StringSchema(title, maxLength, null, Boolean.TRUE);
     }
 
     /** Factory for nullable strings (e.g. mutation-summary item fields). */

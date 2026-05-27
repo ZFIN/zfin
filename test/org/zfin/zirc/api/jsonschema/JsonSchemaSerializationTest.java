@@ -33,7 +33,7 @@ public class JsonSchemaSerializationTest {
                 "{\n" +
                 "  \"maxLength\" : 255,\n" +
                 "  \"title\" : \"Name\",\n" +
-                "  \"type\" : \"string\"\n" +
+                "  \"type\" : [ \"string\", \"null\" ]\n" +
                 "}",
                 json);
     }
@@ -149,7 +149,7 @@ public class JsonSchemaSerializationTest {
                 "    \"reasonsOther\" : {\n" +
                 "      \"maxLength\" : 2000,\n" +
                 "      \"title\" : \"Other reason\",\n" +
-                "      \"type\" : \"string\"\n" +
+                "      \"type\" : [ \"string\", \"null\" ]\n" +
                 "    }\n" +
                 "  },\n" +
                 "  \"title\" : \"Acceptance Reasons\",\n" +

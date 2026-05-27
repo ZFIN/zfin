@@ -4,7 +4,7 @@
       "description" : {
         "maxLength" : 5000,
         "title" : "Description",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "hpfEnd" : {
         "title" : "End (hpf)",
@@ -17,7 +17,7 @@
       "nonMendelianComment" : {
         "maxLength" : 5000,
         "title" : "Non-Mendelian comment",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "nonMendelianPercentage" : {
         "title" : "Non-Mendelian %",
@@ -33,7 +33,7 @@
       "stage" : {
         "maxLength" : 255,
         "title" : "Stage",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "type" : {
         "items" : {
