@@ -14,11 +14,22 @@ export type LineSubmissionDetailProps = {
     statusPayloadElementId?: string;
 };
 
+type PerEntityStatus = Record<string, Record<string, FieldStatus>>;
+
 type StatusPayload = {
     fieldStatus: Record<string, FieldStatus>;
     sectionStatus: Record<string, FieldStatus>;
-    mutationFieldStatus: Record<string, Record<string, FieldStatus>>;
-    mutationSectionStatus: Record<string, Record<string, FieldStatus>>;
+    mutationFieldStatus: PerEntityStatus;
+    mutationSectionStatus: PerEntityStatus;
+    mutationOverallStatus: Record<string, FieldStatus>;
+    geneFieldStatus: PerEntityStatus;
+    geneSectionStatus: PerEntityStatus;
+    lesionFieldStatus: PerEntityStatus;
+    lesionSectionStatus: PerEntityStatus;
+    assayFieldStatus: PerEntityStatus;
+    assaySectionStatus: PerEntityStatus;
+    phenotypeFieldStatus: PerEntityStatus;
+    phenotypeSectionStatus: PerEntityStatus;
 };
 
 export default function LineSubmissionDetail(props: LineSubmissionDetailProps) {
@@ -40,6 +51,15 @@ function LineSubmissionDetailInner({
             sectionStatus: {},
             mutationFieldStatus: {},
             mutationSectionStatus: {},
+            mutationOverallStatus: {},
+            geneFieldStatus: {},
+            geneSectionStatus: {},
+            lesionFieldStatus: {},
+            lesionSectionStatus: {},
+            assayFieldStatus: {},
+            assaySectionStatus: {},
+            phenotypeFieldStatus: {},
+            phenotypeSectionStatus: {},
         };
         if (!el || !el.textContent) {return empty;}
         try {
@@ -68,6 +88,15 @@ function LineSubmissionDetailInner({
             sectionStatus={payload.sectionStatus}
             mutationFieldStatus={payload.mutationFieldStatus}
             mutationSectionStatus={payload.mutationSectionStatus}
+            mutationOverallStatus={payload.mutationOverallStatus}
+            geneFieldStatus={payload.geneFieldStatus}
+            geneSectionStatus={payload.geneSectionStatus}
+            lesionFieldStatus={payload.lesionFieldStatus}
+            lesionSectionStatus={payload.lesionSectionStatus}
+            assayFieldStatus={payload.assayFieldStatus}
+            assaySectionStatus={payload.assaySectionStatus}
+            phenotypeFieldStatus={payload.phenotypeFieldStatus}
+            phenotypeSectionStatus={payload.phenotypeSectionStatus}
         />
     );
 }

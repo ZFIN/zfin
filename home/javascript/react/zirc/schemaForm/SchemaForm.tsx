@@ -24,16 +24,33 @@ type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
 export type FormMode = 'edit' | 'view';
 
+type PerEntityStatus = Record<string, Record<string, FieldStatus>>;
+
 type Props = {
     submission: LineSubmissionDTO | null;
     onCreated?: (s: LineSubmissionDTO) => void;
     mode?: FormMode;
     fieldStatus?: Record<string, FieldStatus>;
     sectionStatus?: Record<string, FieldStatus>;
-    /** Per-mutation field-status map keyed by mutation id (as a string). */
-    mutationFieldStatus?: Record<string, Record<string, FieldStatus>>;
-    /** Per-mutation section-status map keyed by mutation id (as a string). */
-    mutationSectionStatus?: Record<string, Record<string, FieldStatus>>;
+    /**
+     * Per-aggregate field/section status maps, all keyed by entity id (as a
+     * string). Threaded through JsonForms config so MutationsListRenderer
+     * and the four sibling list renderers can pull the right map per row
+     * without re-deriving anything. Server is the single source of truth
+     * for status; the client never computes it.
+     */
+    mutationFieldStatus?: PerEntityStatus;
+    mutationSectionStatus?: PerEntityStatus;
+    /** Single overall status per mutation id — drives the card-header badge. */
+    mutationOverallStatus?: Record<string, FieldStatus>;
+    geneFieldStatus?: PerEntityStatus;
+    geneSectionStatus?: PerEntityStatus;
+    lesionFieldStatus?: PerEntityStatus;
+    lesionSectionStatus?: PerEntityStatus;
+    assayFieldStatus?: PerEntityStatus;
+    assaySectionStatus?: PerEntityStatus;
+    phenotypeFieldStatus?: PerEntityStatus;
+    phenotypeSectionStatus?: PerEntityStatus;
 };
 
 const AUTOSAVE_DEBOUNCE_MS = 800;
@@ -155,6 +172,15 @@ export function SchemaForm({
     sectionStatus,
     mutationFieldStatus,
     mutationSectionStatus,
+    mutationOverallStatus,
+    geneFieldStatus,
+    geneSectionStatus,
+    lesionFieldStatus,
+    lesionSectionStatus,
+    assayFieldStatus,
+    assaySectionStatus,
+    phenotypeFieldStatus,
+    phenotypeSectionStatus,
 }: Props) {
     const readonly = mode === 'view';
     const { data: schemaResponse, isLoading: schemaLoading, isError: schemaError } =
@@ -285,8 +311,17 @@ export function SchemaForm({
                     readonly,
                     fieldStatus: fieldStatus ?? {},
                     sectionStatus: sectionStatus ?? {},
-                    mutationFieldStatus: mutationFieldStatus ?? {},
-                    mutationSectionStatus: mutationSectionStatus ?? {},
+                    mutationFieldStatus:    mutationFieldStatus    ?? {},
+                    mutationSectionStatus:  mutationSectionStatus  ?? {},
+                    mutationOverallStatus:  mutationOverallStatus  ?? {},
+                    geneFieldStatus:        geneFieldStatus        ?? {},
+                    geneSectionStatus:      geneSectionStatus      ?? {},
+                    lesionFieldStatus:      lesionFieldStatus      ?? {},
+                    lesionSectionStatus:    lesionSectionStatus    ?? {},
+                    assayFieldStatus:       assayFieldStatus       ?? {},
+                    assaySectionStatus:     assaySectionStatus     ?? {},
+                    phenotypeFieldStatus:   phenotypeFieldStatus   ?? {},
+                    phenotypeSectionStatus: phenotypeSectionStatus ?? {},
                     // Submission-level comments key off the submission's
                     // ZDB-ID. Nested aggregates set their own recId in
                     // their respective list renderers' child configs.

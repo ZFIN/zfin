@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,17 +66,27 @@ public final class PhenotypeStatusComputer {
 
     private PhenotypeStatusComputer() {}
 
+    private static final Map<String, List<String>> SECTIONS =
+            SchemaSections.groupsToFields(ZircPhenotypeFormSchema.uiSchema());
+
     public static FieldStatusResult compute(Phenotype p) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
             byField.put(f.getPath(), statusFor(p, f.getPath()));
         }
 
-        FieldStatus overall = FieldStatus.COMPLETE;
-        for (FieldStatus st : byField.values()) overall = overall.worse(st);
-
         Map<String, FieldStatus> bySection = new LinkedHashMap<>();
-        bySection.put("Phenotype", overall);
+        for (Map.Entry<String, List<String>> e : SECTIONS.entrySet()) {
+            FieldStatus worst = FieldStatus.COMPLETE;
+            for (String f : e.getValue()) {
+                FieldStatus st = byField.get(f);
+                if (st != null) worst = worst.worse(st);
+            }
+            bySection.put(e.getKey(), worst);
+        }
+
+        FieldStatus overall = FieldStatus.COMPLETE;
+        for (FieldStatus st : bySection.values()) overall = overall.worse(st);
 
         return new FieldStatusResult(byField, bySection, overall);
     }

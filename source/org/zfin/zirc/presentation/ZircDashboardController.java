@@ -412,17 +412,64 @@ public class ZircDashboardController {
         // (lesion, assay, phenotype, gene) work without bootstrap plumbing.
 
         // Per-mutation status maps for the nested mutation cards in the
-        // schema-driven detail view. Keyed by mutation id so the React
-        // MutationsListRenderer can do an O(1) lookup per card.
-        Map<String, Map<String, Map<String, String>>> perMutationFieldStatus = new LinkedHashMap<>();
+        // schema-driven detail view. Keyed by entity id so each list
+        // renderer can do an O(1) lookup per card. Status for every
+        // nested child (gene, lesion, assay, phenotype) is computed
+        // up-front and shipped in the bootstrap payload — the client
+        // never derives status locally.
+        Map<String, Map<String, Map<String, String>>> perMutationFieldStatus   = new LinkedHashMap<>();
         Map<String, Map<String, Map<String, String>>> perMutationSectionStatus = new LinkedHashMap<>();
+        // Per-mutation overall status (single FieldStatus per mutation) for
+        // the card-header badge. Collected then serialized in one shot.
+        Map<String, FieldStatus> perMutationOverall = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perGeneFieldStatus       = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perGeneSectionStatus     = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perLesionFieldStatus     = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perLesionSectionStatus   = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perAssayFieldStatus      = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perAssaySectionStatus    = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perPhenotypeFieldStatus  = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, String>>> perPhenotypeSectionStatus = new LinkedHashMap<>();
         if (submission.getMutations() != null) {
             for (Mutation mut : submission.getMutations()) {
                 FieldStatusResult r = MutationStatusComputer.compute(mut);
-                perMutationFieldStatus.put(String.valueOf(mut.getId()),
-                        fieldStatusToJson(r.byField()));
-                perMutationSectionStatus.put(String.valueOf(mut.getId()),
-                        fieldStatusToJson(r.bySection()));
+                String mutKey = String.valueOf(mut.getId());
+                perMutationFieldStatus.put(mutKey,   fieldStatusToJson(r.byField()));
+                perMutationSectionStatus.put(mutKey, fieldStatusToJson(r.bySection()));
+                perMutationOverall.put(mutKey, r.overall());
+
+                if (mut.getGenes() != null) {
+                    for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
+                        FieldStatusResult gr = GeneStatusComputer.compute(g);
+                        String k = String.valueOf(g.getId());
+                        perGeneFieldStatus.put(k,   fieldStatusToJson(gr.byField()));
+                        perGeneSectionStatus.put(k, fieldStatusToJson(gr.bySection()));
+                    }
+                }
+                if (mut.getLesions() != null) {
+                    for (org.zfin.zirc.entity.Lesion lz : mut.getLesions()) {
+                        FieldStatusResult lr = LesionStatusComputer.compute(lz);
+                        String k = String.valueOf(lz.getId());
+                        perLesionFieldStatus.put(k,   fieldStatusToJson(lr.byField()));
+                        perLesionSectionStatus.put(k, fieldStatusToJson(lr.bySection()));
+                    }
+                }
+                if (mut.getGenotypingAssays() != null) {
+                    for (org.zfin.zirc.entity.GenotypingAssay ga : mut.getGenotypingAssays()) {
+                        FieldStatusResult ar = GenotypingAssayStatusComputer.compute(ga);
+                        String k = String.valueOf(ga.getId());
+                        perAssayFieldStatus.put(k,   fieldStatusToJson(ar.byField()));
+                        perAssaySectionStatus.put(k, fieldStatusToJson(ar.bySection()));
+                    }
+                }
+                if (mut.getPhenotypes() != null) {
+                    for (org.zfin.zirc.entity.Phenotype p : mut.getPhenotypes()) {
+                        FieldStatusResult pr = PhenotypeStatusComputer.compute(p);
+                        String k = String.valueOf(p.getId());
+                        perPhenotypeFieldStatus.put(k,   fieldStatusToJson(pr.byField()));
+                        perPhenotypeSectionStatus.put(k, fieldStatusToJson(pr.bySection()));
+                    }
+                }
             }
         }
 
@@ -431,6 +478,15 @@ public class ZircDashboardController {
         payload.put("sectionStatus",   fieldStatusToJson(status.bySection()));
         payload.put("mutationFieldStatus",   perMutationFieldStatus);
         payload.put("mutationSectionStatus", perMutationSectionStatus);
+        payload.put("mutationOverallStatus", fieldStatusToJson(perMutationOverall));
+        payload.put("geneFieldStatus",       perGeneFieldStatus);
+        payload.put("geneSectionStatus",     perGeneSectionStatus);
+        payload.put("lesionFieldStatus",     perLesionFieldStatus);
+        payload.put("lesionSectionStatus",   perLesionSectionStatus);
+        payload.put("assayFieldStatus",      perAssayFieldStatus);
+        payload.put("assaySectionStatus",    perAssaySectionStatus);
+        payload.put("phenotypeFieldStatus",  perPhenotypeFieldStatus);
+        payload.put("phenotypeSectionStatus", perPhenotypeSectionStatus);
 
         // Left-nav subsections: one entry per mutation under "Mutations".
         // navigationItem.tag links each to '#' + makeDomIdentifier(title), so

@@ -16,17 +16,18 @@ import { useAddPhenotype, useDeletePhenotype, usePhenotypeById } from '../../api
 import { PhenotypeEdit } from '../../pages/PhenotypeEdit';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
-import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
 function PhenotypeDetailCard({
-    summary, n, schema, uiSchema,
+    summary, n, schema, uiSchema, fieldStatus, sectionStatus,
 }: {
     summary: PhenotypeSummaryDTO;
     n: number;
     schema: JsonSchema;
     uiSchema: UISchemaElement;
+    fieldStatus: Record<string, unknown>;
+    sectionStatus: Record<string, unknown>;
 }) {
     const q = usePhenotypeById(summary.id);
     return (
@@ -54,8 +55,8 @@ function PhenotypeDetailCard({
                             readonly: true,
                             phenotypeId: summary.id,
                             recId: `ZIRC-PHEN-${summary.id}`,
-                            fieldStatus: deriveFieldStatus(schema, q.data),
-                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                            fieldStatus,
+                            sectionStatus,
                         }}
                         onChange={() => { /* read-only */ }}
                     />
@@ -94,6 +95,10 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
         if (phenotypeSchema.isError || !phenotypeSchema.data) {
             return <div className='alert alert-warning'>Failed to load phenotype form schema.</div>;
         }
+        const outerCfg = (config ?? {}) as {
+            phenotypeFieldStatus?: Record<string, Record<string, unknown>>;
+            phenotypeSectionStatus?: Record<string, Record<string, unknown>>;
+        };
         return (
             <div>
                 {phenotypes.map((p, i) => (
@@ -103,6 +108,8 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
                         n={i + 1}
                         schema={phenotypeSchema.data.schema}
                         uiSchema={phenotypeSchema.data.uiSchema}
+                        fieldStatus={outerCfg.phenotypeFieldStatus?.[String(p.id)] ?? {}}
+                        sectionStatus={outerCfg.phenotypeSectionStatus?.[String(p.id)] ?? {}}
                     />
                 ))}
             </div>

@@ -15,6 +15,7 @@ import { api } from '../../api/client';
 import { useAddMutation, useDeleteMutation } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
+import { FieldStatus, StatusBadge } from '../../components/StatusBadge';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
@@ -36,11 +37,24 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
     const addMutation = useAddMutation();
     const deleteMutation = useDeleteMutation();
     const view = viewConfigFrom(config);
-    // Per-mutation status maps come through the outer SchemaForm's config,
-    // keyed by mutation id (as string — JSON object keys are always strings).
+    // Per-aggregate status maps come through the outer SchemaForm's config,
+    // each keyed by entity id (as string — JSON object keys are always
+    // strings). We pass them through unchanged into the inner mutation
+    // config so the sibling list renderers (genes, lesions, assays,
+    // phenotypes) inside the nested JsonForms can look up their own
+    // entity's map.
     const outerCfg = (config ?? {}) as {
         mutationFieldStatus?: Record<string, Record<string, unknown>>;
         mutationSectionStatus?: Record<string, Record<string, unknown>>;
+        mutationOverallStatus?: Record<string, FieldStatus>;
+        geneFieldStatus?: Record<string, Record<string, unknown>>;
+        geneSectionStatus?: Record<string, Record<string, unknown>>;
+        lesionFieldStatus?: Record<string, Record<string, unknown>>;
+        lesionSectionStatus?: Record<string, Record<string, unknown>>;
+        assayFieldStatus?: Record<string, Record<string, unknown>>;
+        assaySectionStatus?: Record<string, Record<string, unknown>>;
+        phenotypeFieldStatus?: Record<string, Record<string, unknown>>;
+        phenotypeSectionStatus?: Record<string, Record<string, unknown>>;
     };
 
     // Mutation form-schema is shared across all rows; fetch once, cache forever.
@@ -75,6 +89,7 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                         className='card mb-3'
                     >
                         <div className='card-header py-2'>
+                            <StatusBadge status={outerCfg.mutationOverallStatus?.[String(m.id)]}/>
                             <strong>Mutation {i + 1}</strong>
                             {m.alleleDesignation && (
                                 <span className='ml-2 text-muted'>
@@ -100,6 +115,17 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     sectionStatus:
                                         outerCfg.mutationSectionStatus?.[String(m.id)] ?? {},
                                     recId: `ZIRC-MUT-${m.id}`,
+                                    // Pass child maps unchanged; the inner
+                                    // list renderers index them by their own
+                                    // entity id.
+                                    geneFieldStatus:        outerCfg.geneFieldStatus        ?? {},
+                                    geneSectionStatus:      outerCfg.geneSectionStatus      ?? {},
+                                    lesionFieldStatus:      outerCfg.lesionFieldStatus      ?? {},
+                                    lesionSectionStatus:    outerCfg.lesionSectionStatus    ?? {},
+                                    assayFieldStatus:       outerCfg.assayFieldStatus       ?? {},
+                                    assaySectionStatus:     outerCfg.assaySectionStatus     ?? {},
+                                    phenotypeFieldStatus:   outerCfg.phenotypeFieldStatus   ?? {},
+                                    phenotypeSectionStatus: outerCfg.phenotypeSectionStatus ?? {},
                                 }}
                                 onChange={() => { /* read-only */ }}
                             />

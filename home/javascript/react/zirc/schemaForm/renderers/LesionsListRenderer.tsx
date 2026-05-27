@@ -16,7 +16,6 @@ import { useAddLesion, useDeleteLesion, useLesionById } from '../../api/queries'
 import { LesionEdit } from '../../pages/LesionEdit';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
-import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
@@ -27,12 +26,14 @@ type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
  * caches per id, so re-renders / sibling renderers don't refetch.
  */
 function LesionDetailCard({
-    summary, n, schema, uiSchema,
+    summary, n, schema, uiSchema, fieldStatus, sectionStatus,
 }: {
     summary: LesionSummaryDTO;
     n: number;
     schema: JsonSchema;
     uiSchema: UISchemaElement;
+    fieldStatus: Record<string, unknown>;
+    sectionStatus: Record<string, unknown>;
 }) {
     const q = useLesionById(summary.id);
     return (
@@ -60,13 +61,8 @@ function LesionDetailCard({
                             readonly: true,
                             lesionId: summary.id,
                             recId: `ZIRC-LESION-${summary.id}`,
-                            // Client-derived from schema.required since the
-                            // bootstrap payload doesn't carry per-lesion
-                            // status maps. Mirrors the server's
-                            // LesionStatusComputer for the MISSING/COMPLETE
-                            // cases that schema.required can express.
-                            fieldStatus: deriveFieldStatus(schema, q.data),
-                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                            fieldStatus,
+                            sectionStatus,
                         }}
                         onChange={() => { /* read-only */ }}
                     />
@@ -109,6 +105,10 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
         if (lesionSchema.isError || !lesionSchema.data) {
             return <div className='alert alert-warning'>Failed to load lesion form schema.</div>;
         }
+        const outerCfg = (config ?? {}) as {
+            lesionFieldStatus?: Record<string, Record<string, unknown>>;
+            lesionSectionStatus?: Record<string, Record<string, unknown>>;
+        };
         return (
             <div>
                 {lesions.map((l, i) => (
@@ -118,6 +118,8 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                         n={i + 1}
                         schema={lesionSchema.data.schema}
                         uiSchema={lesionSchema.data.uiSchema}
+                        fieldStatus={outerCfg.lesionFieldStatus?.[String(l.id)] ?? {}}
+                        sectionStatus={outerCfg.lesionSectionStatus?.[String(l.id)] ?? {}}
                     />
                 ))}
             </div>

@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,17 +79,27 @@ public final class GenotypingAssayStatusComputer {
 
     private GenotypingAssayStatusComputer() {}
 
+    private static final Map<String, List<String>> SECTIONS =
+            SchemaSections.groupsToFields(ZircAssayFormSchema.uiSchema());
+
     public static FieldStatusResult compute(GenotypingAssay ga) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
             byField.put(f.getPath(), statusFor(ga, f.getPath()));
         }
 
-        FieldStatus overall = FieldStatus.COMPLETE;
-        for (FieldStatus st : byField.values()) overall = overall.worse(st);
-
         Map<String, FieldStatus> bySection = new LinkedHashMap<>();
-        bySection.put("Genotyping Assay", overall);
+        for (Map.Entry<String, List<String>> e : SECTIONS.entrySet()) {
+            FieldStatus worst = FieldStatus.COMPLETE;
+            for (String f : e.getValue()) {
+                FieldStatus st = byField.get(f);
+                if (st != null) worst = worst.worse(st);
+            }
+            bySection.put(e.getKey(), worst);
+        }
+
+        FieldStatus overall = FieldStatus.COMPLETE;
+        for (FieldStatus st : bySection.values()) overall = overall.worse(st);
 
         return new FieldStatusResult(byField, bySection, overall);
     }

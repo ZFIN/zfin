@@ -16,17 +16,18 @@ import { useAddAssay, useAssayById, useDeleteAssay } from '../../api/queries';
 import { AssayEdit } from '../../pages/AssayEdit';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
-import { deriveFieldStatus, deriveSectionStatus } from '../deriveStatus';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
 function AssayDetailCard({
-    summary, n, schema, uiSchema,
+    summary, n, schema, uiSchema, fieldStatus, sectionStatus,
 }: {
     summary: AssaySummaryDTO;
     n: number;
     schema: JsonSchema;
     uiSchema: UISchemaElement;
+    fieldStatus: Record<string, unknown>;
+    sectionStatus: Record<string, unknown>;
 }) {
     const q = useAssayById(summary.id);
     return (
@@ -54,8 +55,8 @@ function AssayDetailCard({
                             readonly: true,
                             assayId: summary.id,
                             recId: `ZIRC-GA-${summary.id}`,
-                            fieldStatus: deriveFieldStatus(schema, q.data),
-                            sectionStatus: deriveSectionStatus(schema, uiSchema, q.data),
+                            fieldStatus,
+                            sectionStatus,
                         }}
                         onChange={() => { /* read-only */ }}
                     />
@@ -105,6 +106,10 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
         if (assaySchema.isError || !assaySchema.data) {
             return <div className='alert alert-warning'>Failed to load assay form schema.</div>;
         }
+        const outerCfg = (config ?? {}) as {
+            assayFieldStatus?: Record<string, Record<string, unknown>>;
+            assaySectionStatus?: Record<string, Record<string, unknown>>;
+        };
         return (
             <div>
                 {assays.map((a, i) => (
@@ -114,6 +119,8 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
                         n={i + 1}
                         schema={assaySchema.data.schema}
                         uiSchema={assaySchema.data.uiSchema}
+                        fieldStatus={outerCfg.assayFieldStatus?.[String(a.id)] ?? {}}
+                        sectionStatus={outerCfg.assaySectionStatus?.[String(a.id)] ?? {}}
                     />
                 ))}
             </div>
