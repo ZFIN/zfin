@@ -222,6 +222,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "mutationsList"
         },
         "scope" : "#/properties/mutations",
@@ -235,6 +236,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "linkedFeaturesList"
         },
         "scope" : "#/properties/linkedFeatures",

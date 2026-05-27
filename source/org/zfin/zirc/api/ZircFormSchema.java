@@ -136,7 +136,7 @@ public final class ZircFormSchema {
                 // layout option tells SectionRenderer to drop the table wrapper.
                 new Group("Mutations",
                         List.of(new Control("#/properties/mutations",
-                                Options.of().widget("mutationsList"),
+                                Options.of().widget("mutationsList").managesOwnPersistence(true),
                                 null)),
                         Options.of().layout("plain"),
                         null),
@@ -144,7 +144,7 @@ public final class ZircFormSchema {
                 // same submission. List-of-cards layout like Mutations.
                 new Group("Linked Features",
                         List.of(new Control("#/properties/linkedFeatures",
-                                Options.of().widget("linkedFeaturesList"),
+                                Options.of().widget("linkedFeaturesList").managesOwnPersistence(true),
                                 null)),
                         Options.of().layout("plain"),
                         null),

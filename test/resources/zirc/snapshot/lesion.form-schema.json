@@ -76,6 +76,7 @@
     "elements" : [ {
       "elements" : [ {
         "options" : {
+          "refreshesParent" : true,
           "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
           "widget" : "selectWithOther"
         },

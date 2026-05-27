@@ -156,6 +156,7 @@
     "elements" : [ {
       "elements" : [ {
         "options" : {
+          "refreshesParent" : true,
           "standardValues" : [ "PCR", "RFLP", "dCAPS", "sequencing", "AS-PCR", "KASP", "SSLP" ],
           "widget" : "selectWithOther"
         },
@@ -364,6 +365,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
         },
         "scope" : "#/properties/attachments",

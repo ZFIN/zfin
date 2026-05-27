@@ -277,6 +277,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "genesList"
         },
         "scope" : "#/properties/genes",
@@ -290,6 +291,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "lesionsList"
         },
         "scope" : "#/properties/lesions",
@@ -303,6 +305,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "assaysList"
         },
         "scope" : "#/properties/assays",
@@ -316,6 +319,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "phenotypesList"
         },
         "scope" : "#/properties/phenotypes",

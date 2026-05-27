@@ -169,27 +169,27 @@ public final class ZircMutationFormSchema {
                 // Genes: same inline-expand pattern as assays.
                 new Group("Genes",
                         List.of(new Control("#/properties/genes",
-                                Options.of().widget("genesList"), null)),
+                                Options.of().widget("genesList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
                         null),
                 // Lesions: same inline-expand pattern; the per-lesion
                 // form has the lesion-type matrix.
                 new Group("Lesions",
                         List.of(new Control("#/properties/lesions",
-                                Options.of().widget("lesionsList"), null)),
+                                Options.of().widget("lesionsList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
                         null),
                 // Genotyping Assays is a list of child rows like the
                 // submission's Mutations section — drop the table wrapper.
                 new Group("Genotyping Assays",
                         List.of(new Control("#/properties/assays",
-                                Options.of().widget("assaysList"), null)),
+                                Options.of().widget("assaysList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
                         null),
                 // Phenotypes: same inline-expand pattern; no type matrix.
                 new Group("Phenotypes",
                         List.of(new Control("#/properties/phenotypes",
-                                Options.of().widget("phenotypesList"), null)),
+                                Options.of().widget("phenotypesList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
                         null),
                 Group.of("Lethality", List.of(

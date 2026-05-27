@@ -31,6 +31,7 @@
         "options" : {
           "helpText" : "Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.",
           "placeholder" : "Start typing a gene name…",
+          "refreshesParent" : true,
           "searchEndpoint" : "markers",
           "typeGroup" : "GENEDOM",
           "widget" : "autocomplete"
