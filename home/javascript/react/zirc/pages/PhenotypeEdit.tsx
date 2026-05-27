@@ -4,7 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { PhenotypeDTO } from '../api/types';
-import { FormFor, seedFromDto } from '../api/formHelpers';
+import { FormFor, seedFromDto, diffLeaves } from '../api/formHelpers';
 import { usePhenotypeById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -41,29 +41,6 @@ const renderers = [
 ];
 
 type FormDataShape = FormFor<PhenotypeDTO>;
-
-function diffLeaves(prev: unknown, curr: unknown, basePath = ''): Array<[string, unknown]> {
-    const isPlainObject = (v: unknown): v is Record<string, unknown> =>
-        typeof v === 'object' && v !== null && !Array.isArray(v);
-    if (Array.isArray(prev) || Array.isArray(curr)) {
-        if (JSON.stringify(prev ?? null) !== JSON.stringify(curr ?? null)) {
-            return [[basePath || '/', curr ?? null]];
-        }
-        return [];
-    }
-    if (isPlainObject(prev) && isPlainObject(curr)) {
-        const keys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-        const changes: Array<[string, unknown]> = [];
-        for (const key of keys) {
-            changes.push(...diffLeaves(prev[key], curr[key], `${basePath}/${key}`));
-        }
-        return changes;
-    }
-    if (!Object.is(prev, curr)) {
-        return [[basePath || '/', curr ?? null]];
-    }
-    return [];
-}
 
 export function PhenotypeEdit({ phenotypeId, mutationId }: PhenotypeEditProps) {
     const schemaQuery = useQuery<FormSchemaDTO>({
