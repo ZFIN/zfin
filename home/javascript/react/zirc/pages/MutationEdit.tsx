@@ -51,16 +51,14 @@ const renderers = [
     autocompleteRendererEntry,
 ];
 
-// Server-managed sub-collections: Add/Delete go through dedicated
-// POST/DELETE endpoints, so the autosave skips these paths and the hook
-// mirrors them back from the refetched mutation. (A later step derives
-// this from the uiSchema's managesOwnPersistence flags.)
-const SERVER_MANAGED_KEYS = ['assays', 'genes', 'lesions', 'phenotypes'] as const;
-
 function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
     const idNum = mutationId ? Number(mutationId) : null;
     const mutationQuery = useMutationById(idNum);
 
+    // The hook derives its autosave skip-set + mirror-keys from the
+    // uiSchema's managesOwnPersistence flags (assays/genes/lesions/
+    // phenotypes are flagged server-side). No parent to refresh — the
+    // mutation edit page is its own route, not an inline card.
     const { formData, setFormData, status, errorMessage, schemaQuery } =
         useAutosavedSchemaForm<MutationDTO>({
             entity: mutationQuery.data,
@@ -68,7 +66,6 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
             schemaQueryKey: 'mutation-form-schema',
             schemaEndpoint: '/mutations/form-schema',
             patchEndpointFor: (id) => `/mutations/${id}`,
-            serverManagedKeys: SERVER_MANAGED_KEYS,
         });
 
     if (!idNum) {
