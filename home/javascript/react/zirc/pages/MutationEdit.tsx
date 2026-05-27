@@ -5,7 +5,7 @@ import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { queryClient } from '../queryClient';
 import { api } from '../api/client';
 import { MutationDTO } from '../api/types';
-import { FormFor, seedFromDto } from '../api/formHelpers';
+import { FormFor, seedFromDto, diffLeaves } from '../api/formHelpers';
 import { useMutationById } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -61,33 +61,6 @@ const renderers = [
 // the field-path PATCH. Without this filter, an Add/Delete on the assays
 // list would emit a spurious PATCH /assays trying to write an array.
 const EXTERNALLY_MANAGED_PATHS = new Set<string>(['/assays', '/genes', '/lesions', '/phenotypes']);
-
-function diffLeaves(
-    prev: unknown,
-    curr: unknown,
-    basePath = '',
-): Array<[string, unknown]> {
-    const isPlainObject = (v: unknown): v is Record<string, unknown> =>
-        typeof v === 'object' && v !== null && !Array.isArray(v);
-    if (Array.isArray(prev) || Array.isArray(curr)) {
-        if (JSON.stringify(prev ?? null) !== JSON.stringify(curr ?? null)) {
-            return [[basePath || '/', curr ?? null]];
-        }
-        return [];
-    }
-    if (isPlainObject(prev) && isPlainObject(curr)) {
-        const keys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-        const changes: Array<[string, unknown]> = [];
-        for (const key of keys) {
-            changes.push(...diffLeaves(prev[key], curr[key], `${basePath}/${key}`));
-        }
-        return changes;
-    }
-    if (!Object.is(prev, curr)) {
-        return [[basePath || '/', curr ?? null]];
-    }
-    return [];
-}
 
 function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
     const idNum = mutationId ? Number(mutationId) : null;
