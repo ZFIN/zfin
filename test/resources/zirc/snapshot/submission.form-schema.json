@@ -152,9 +152,11 @@
         "type" : [ "string", "null" ]
       },
       "previousNames" : {
-        "maxLength" : 2000,
+        "items" : {
+          "type" : "string"
+        },
         "title" : "Previous Names",
-        "type" : [ "string", "null" ]
+        "type" : "array"
       }
     },
     "required" : [ "name", "mutations" ],
@@ -171,8 +173,10 @@
         "type" : "Control"
       }, {
         "options" : {
+          "addLabel" : "+ Add previous name",
           "helpText" : "Useful when this line was previously known by a different designation.",
-          "placeholder" : "Comma-separated former names"
+          "placeholder" : "Previous name",
+          "widget" : "stringList"
         },
         "scope" : "#/properties/previousNames",
         "type" : "Control"

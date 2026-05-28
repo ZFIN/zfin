@@ -16,6 +16,7 @@ import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.LineSubmission;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,13 @@ public final class ZircFormSchema {
 
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("name",            StringSchema.of("Line Name", 255));
-        properties.put("previousNames",   StringSchema.of("Previous Names", 2000));
+        // Previous names: multi-valued list rendered via the stringList widget
+        // (one entry per row). Items are non-nullable strings; the array itself
+        // is always present (empty = no previous names).
+        properties.put("previousNames",   new ArraySchema(
+                "Previous Names",
+                new StringSchema(null, null, null, null, null),
+                null, null));
         properties.put("acceptance",      acceptanceSchema);
         properties.put("mutations",       mutationsSummaryArrayProp());
         properties.put("linkedFeatures",  linkedFeaturesArrayProp());
@@ -113,7 +120,9 @@ public final class ZircFormSchema {
                                 null),
                         new Control("#/properties/previousNames",
                                 Options.of()
-                                        .placeholder("Comma-separated former names")
+                                        .widget("stringList")
+                                        .placeholder("Previous name")
+                                        .addLabel("+ Add previous name")
                                         .helpText("Useful when this line was previously known by a different designation."),
                                 null),
                         new Control("#/properties/acceptance",
@@ -171,7 +180,8 @@ public final class ZircFormSchema {
      */
     public static final Map<String, FieldDescriptor> FIELDS = Map.ofEntries(
             field("/name",                       LineSubmission::getName,                       (s, v) -> s.setName(text(v))),
-            field("/previousNames",              LineSubmission::getPreviousNames,              (s, v) -> s.setPreviousNames(text(v))),
+            field("/previousNames",              s -> s.getPreviousNames() == null ? new String[0] : s.getPreviousNames(),
+                                                                                                (s, v) -> s.setPreviousNames(stringArray(v))),
             // Acceptance: stored flat on the entity (reasons/reasonsOther) but nested in the form schema
             field("/acceptance/reasons",         s -> s.getReasons() == null ? new String[0] : s.getReasons(),
                                                                                                 (s, v) -> s.setReasons(stringArray(v))),
@@ -271,12 +281,21 @@ public final class ZircFormSchema {
         return v.asBoolean();
     }
 
+    /**
+     * Convert a JSON array to a trimmed String[] with blank entries
+     * dropped. Used for the stringList widget (previousNames) and the
+     * canonical reasons list — neither expects empty strings on the
+     * wire even when the React side passes them through during editing.
+     */
     private static String[] stringArray(JsonNode v) {
         if (v == null || v.isNull() || !v.isArray()) {return new String[0];}
-        String[] result = new String[v.size()];
+        List<String> out = new ArrayList<>(v.size());
         for (int i = 0; i < v.size(); i++) {
-            result[i] = v.get(i).asText();
+            String s = v.get(i).asText();
+            if (s != null && !s.isBlank()) {
+                out.add(s.trim());
+            }
         }
-        return result;
+        return out.toArray(new String[0]);
     }
 }

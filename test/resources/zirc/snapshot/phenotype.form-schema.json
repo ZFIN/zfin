@@ -107,6 +107,8 @@
     }, {
       "elements" : [ {
         "options" : {
+          "addLabel" : "+ Add segregation",
+          "placeholder" : "Segregation pattern",
           "widget" : "stringList"
         },
         "scope" : "#/properties/segregation",
@@ -116,6 +118,8 @@
     }, {
       "elements" : [ {
         "options" : {
+          "addLabel" : "+ Add phenotype type",
+          "placeholder" : "Phenotype type",
           "widget" : "stringList"
         },
         "scope" : "#/properties/type",

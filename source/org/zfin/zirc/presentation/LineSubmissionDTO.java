@@ -27,7 +27,7 @@ public class LineSubmissionDTO {
     private String zdbID;
     private String name;
     private String abbreviation;
-    private String previousNames;
+    private String[] previousNames;
     private String maternalBackground;
     private String paternalBackground;
     private Boolean backgroundChangeable;

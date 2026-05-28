@@ -100,11 +100,19 @@ public final class ZircPhenotypeFormSchema {
                 )),
                 Group.of(null, List.of(
                         new Control("#/properties/segregation",
-                                Options.of().widget("stringList"), null)
+                                Options.of()
+                                        .widget("stringList")
+                                        .placeholder("Segregation pattern")
+                                        .addLabel("+ Add segregation"),
+                                null)
                 )),
                 Group.of(null, List.of(
                         new Control("#/properties/type",
-                                Options.of().widget("stringList"), null)
+                                Options.of()
+                                        .widget("stringList")
+                                        .placeholder("Phenotype type")
+                                        .addLabel("+ Add phenotype type"),
+                                null)
                 ))
         ));
     }

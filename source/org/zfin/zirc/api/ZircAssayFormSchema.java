@@ -158,7 +158,9 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/enzymeCleaves",
                                 Options.of()
                                         .widget("stringList")
-                                        .helpText("One sequence per row; positions where the enzyme cuts."),
+                                        .placeholder("Sequence at one cleave position")
+                                        .addLabel("+ Add cleave sequence")
+                                        .helpText("One sequence per entry; positions where the enzyme cuts."),
                                 null),
                         new Control("#/properties/expectedWtDigest",
                                 Options.of().suffix("bp"), null),

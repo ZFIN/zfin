@@ -10,7 +10,7 @@ export interface LineSubmissionDTO {
     zdbID: string;
     name: string | null;
     abbreviation: string | null;
-    previousNames: string | null;
+    previousNames: string[];
     singleAllelic: boolean | null;
     maternalBackground: string | null;
     paternalBackground: string | null;

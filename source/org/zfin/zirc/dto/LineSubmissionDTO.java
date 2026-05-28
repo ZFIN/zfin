@@ -17,7 +17,7 @@ public record LineSubmissionDTO(
         @NotNull String zdbID,
         String name,
         String abbreviation,
-        String previousNames,
+        String[] previousNames,
         Boolean singleAllelic,
         String maternalBackground,
         String paternalBackground,

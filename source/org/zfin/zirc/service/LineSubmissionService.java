@@ -818,7 +818,7 @@ public class LineSubmissionService {
         return switch (fieldName) {
             case "name"                       -> s.getName();
             case "abbreviation"               -> s.getAbbreviation();
-            case "previousNames"              -> s.getPreviousNames();
+            case "previousNames"              -> s.getPreviousNames() == null || s.getPreviousNames().length == 0 ? null : String.join("; ", s.getPreviousNames());
             case "maternalBackground"         -> s.getMaternalBackground();
             case "paternalBackground"         -> s.getPaternalBackground();
             case "backgroundChangeable"       -> s.getBackgroundChangeable() == null ? null : s.getBackgroundChangeable().toString();
@@ -836,7 +836,12 @@ public class LineSubmissionService {
         switch (fieldName) {
             case "name":                       s.setName(value); break;
             case "abbreviation":               s.setAbbreviation(value); break;
-            case "previousNames":              s.setPreviousNames(value); break;
+            // Legacy scalar-string path: only ever invoked from the dead
+            // /line-submission/patch endpoint. The schema-driven flow
+            // (ZircFormSchema.FIELDS) writes the array directly.
+            case "previousNames":              s.setPreviousNames(value == null || value.isBlank()
+                                                       ? new String[0]
+                                                       : new String[]{value}); break;
             case "maternalBackground":         s.setMaternalBackground(value); break;
             case "paternalBackground":         s.setPaternalBackground(value); break;
             case "backgroundChangeable":       s.setBackgroundChangeable(parseTriBool(value)); break;

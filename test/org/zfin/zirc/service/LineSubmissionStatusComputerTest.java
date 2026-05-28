@@ -152,7 +152,7 @@ public class LineSubmissionStatusComputerTest {
         LineSubmission s = new LineSubmission();
         s.setName("test line");
         s.setAbbreviation("tl");
-        s.setPreviousNames("old name");
+        s.setPreviousNames(new String[]{"old name"});
         s.setMaternalBackground("AB");
         s.setPaternalBackground("TU");
         s.setBackgroundChangeable(Boolean.TRUE);

@@ -420,6 +420,8 @@
     }, {
       "elements" : [ {
         "options" : {
+          "addLabel" : "+ Add publication",
+          "placeholder" : "Citation, PMID, DOI, or ZDB Pub ID",
           "widget" : "stringList"
         },
         "scope" : "#/properties/publications",

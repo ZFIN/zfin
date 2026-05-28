@@ -63,8 +63,9 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_abbreviation")
     private String abbreviation;
 
-    @Column(name = "ls_previous_names")
-    private String previousNames;
+    @Column(name = "ls_previous_names", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] previousNames = new String[0];
 
     @Column(name = "ls_maternal_background")
     private String maternalBackground;

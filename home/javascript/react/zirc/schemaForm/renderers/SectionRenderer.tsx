@@ -100,7 +100,7 @@ function SectionRenderer({
                 </div>
             ) : (
                 <table
-                    className='table table-borderless ml-4'
+                    className='table table-borderless'
                     style={{ marginLeft: '1.5rem' }}
                 >
                     <tbody>{children}</tbody>

@@ -224,7 +224,9 @@
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "One sequence per row; positions where the enzyme cuts.",
+          "addLabel" : "+ Add cleave sequence",
+          "helpText" : "One sequence per entry; positions where the enzyme cuts.",
+          "placeholder" : "Sequence at one cleave position",
           "widget" : "stringList"
         },
         "scope" : "#/properties/enzymeCleaves",

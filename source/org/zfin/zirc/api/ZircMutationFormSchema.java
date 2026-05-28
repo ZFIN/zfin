@@ -212,7 +212,11 @@ public final class ZircMutationFormSchema {
                 )),
                 Group.of("Publications", List.of(
                         new Control("#/properties/publications",
-                                Options.of().widget("stringList"), null)
+                                Options.of()
+                                        .widget("stringList")
+                                        .placeholder("Citation, PMID, DOI, or ZDB Pub ID")
+                                        .addLabel("+ Add publication"),
+                                null)
                 ))
         ));
     }
