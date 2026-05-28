@@ -25,11 +25,11 @@ public record LineSubmissionCommentDTO(
     public static LineSubmissionCommentDTO of(LineSubmissionComment c, Person author) {
         String name;
         if (author == null) {
-            name = c.getAuthorZdbId();
+            name = c.getAuthor().getZdbID();
         } else {
             String initial = (author.getFirstName() == null || author.getFirstName().isBlank())
                     ? "" : author.getFirstName().charAt(0) + ". ";
-            name = initial + (author.getLastName() == null ? c.getAuthorZdbId() : author.getLastName());
+            name = initial + (author.getLastName() == null ? c.getAuthor().getZdbID() : author.getLastName());
         }
         return new LineSubmissionCommentDTO(
                 c.getId(),
@@ -37,7 +37,7 @@ public record LineSubmissionCommentDTO(
                 c.getScope(),
                 c.getFieldName(),
                 c.getSectionName(),
-                c.getAuthorZdbId(),
+                c.getAuthor().getZdbID(),
                 name,
                 c.getComment(),
                 c.isClosed(),

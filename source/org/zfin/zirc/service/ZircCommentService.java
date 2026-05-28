@@ -114,7 +114,7 @@ public class ZircCommentService {
         c.setScope(scope);
         c.setFieldName("field".equals(scope) ? fieldName : null);
         c.setSectionName("section".equals(scope) ? sectionName : null);
-        c.setAuthorZdbId(author.getZdbID());
+        c.setAuthor(author);
         c.setComment(hasBody ? body.trim() : "");   // lsc_comment is NOT NULL
         c.setClosed(closed);
 

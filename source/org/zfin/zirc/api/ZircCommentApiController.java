@@ -11,17 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zirc.dto.LineSubmissionCommentDTO;
 import org.zfin.zirc.entity.LineSubmissionComment;
 import org.zfin.zirc.service.ZircCommentService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST surface for per-field / per-section comments. Two endpoints:
@@ -89,21 +85,14 @@ public class ZircCommentApiController {
     }
 
     /**
-     * Bulk-fetch authors by zdbID so list() avoids an N+1 person lookup.
+     * Build DTOs from rows. The author relationship is loaded lazily per
+     * row; if the per-page comment count grows, add JOIN FETCH on author
+     * to the list queries in {@link ZircCommentService}.
      */
     private List<LineSubmissionCommentDTO> enrich(List<LineSubmissionComment> rows) {
         if (rows.isEmpty()) {return List.of();}
-        List<String> authorIds = rows.stream().map(LineSubmissionComment::getAuthorZdbId).distinct().toList();
-        List<Person> people = HibernateUtil.currentSession()
-                .createQuery("from Person where zdbID in :ids", Person.class)
-                .setParameterList("ids", authorIds)
-                .list();
-        Map<String, Person> byId = new HashMap<>();
-        for (Person p : people) {byId.put(p.getZdbID(), p);}
-        List<LineSubmissionCommentDTO> out = new ArrayList<>(rows.size());
-        for (LineSubmissionComment c : rows) {
-            out.add(LineSubmissionCommentDTO.of(c, byId.get(c.getAuthorZdbId())));
-        }
-        return out;
+        return rows.stream()
+                .map(c -> LineSubmissionCommentDTO.of(c, c.getAuthor()))
+                .toList();
     }
 }
