@@ -105,8 +105,13 @@ public final class ZircLesionFormSchema {
     }
 
     public static UiSchemaElement uiSchema() {
+        // All groups are headless — the inline lesion editor card already
+        // carries the "Lesion #N — <type>" header, and inner sub-section
+        // headings (General/Sizing/Nucleotide Change/Location/…) just
+        // cluttered the card. Group structure is retained so the per-type
+        // visibility rules still work.
         return new VerticalLayout(List.of(
-                Group.of("General", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/lesionType",
                                 Options.of().widget("selectWithOther").standardValues(LESION_TYPES)
                                         .refreshesParent(true),
@@ -114,36 +119,36 @@ public final class ZircLesionFormSchema {
                         new Control("#/properties/additionalInfo",
                                 Options.of().multi(true), null)
                 )),
-                groupRevealedFor("Sizing", LESION_SIZE_TYPES, List.of(
+                groupRevealedFor(LESION_SIZE_TYPES, List.of(
                         new Control("#/properties/lesionSizeBp",
                                 Options.of().suffix("bp"), null)
                 )),
-                groupRevealedFor("Insertion Sizing", INSERTION_SIZE_TYPES, List.of(
+                groupRevealedFor(INSERTION_SIZE_TYPES, List.of(
                         new Control("#/properties/insertionSizeBp",
                                 Options.of().suffix("bp"), null)
                 )),
-                groupRevealedFor("Nucleotide Change", NUCLEOTIDE_CHANGE_TYPES, List.of(
+                groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/nucleotideChange",
                                 Options.of()
                                         .placeholder("WT → mutant, e.g. A → T")
                                         .multi(true),
                                 null)
                 )),
-                groupRevealedFor("Deleted Sequence", DELETED_SEQ_TYPES, List.of(
+                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/deletedSequence",
                                 Options.of().multi(true), null)
                 )),
-                groupRevealedFor("Inserted Sequence", INSERTED_SEQ_TYPES, List.of(
+                groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
                                 Options.of().multi(true), null)
                 )),
-                groupRevealedFor("Transgene", TRANSGENE_TYPES, List.of(
+                groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
                                 Options.of().multi(true), null),
                         new Control("#/properties/hasLargeVariant",
                                 Options.of().widget("yesNoRadio"), null)
                 )),
-                groupRevealedFor("Location", LOCATION_TYPES, List.of(
+                groupRevealedFor(LOCATION_TYPES, List.of(
                         new Control("#/properties/locationInline",
                                 Options.of()
                                         .helpText("Annotated inline; list at least 5 nt before and after.")
@@ -162,7 +167,7 @@ public final class ZircLesionFormSchema {
                                         .infoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)
                 )),
-                groupRevealedFor("Protein-level", PROTEIN_TYPES, List.of(
+                groupRevealedFor(PROTEIN_TYPES, List.of(
                         new Control("#/properties/mutatedAminoAcids",
                                 Options.of().placeholder("e.g. p.Gly12Val"), null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
@@ -173,11 +178,12 @@ public final class ZircLesionFormSchema {
 
     /**
      * Helper for the lesion-type matrix's repeated "SHOW when lesionType
-     * in [...]" pattern. Mirrors the assay-form's groupRevealedFor.
+     * in [...]" pattern. Mirrors the assay-form's groupRevealedFor. Groups
+     * are headless so children render as bare rows under the editor card.
      */
     private static Group groupRevealedFor(
-            String label, List<String> lesionTypes, List<UiSchemaElement> elements) {
-        return new Group(label, elements, null,
+            List<String> lesionTypes, List<UiSchemaElement> elements) {
+        return new Group(null, elements, null,
                 Rule.showWhenIn("#/properties/lesionType", lesionTypes));
     }
 

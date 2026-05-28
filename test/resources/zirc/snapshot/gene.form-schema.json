@@ -57,7 +57,6 @@
         "scope" : "#/properties/genbankCdna",
         "type" : "Control"
       } ],
-      "label" : "Gene",
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

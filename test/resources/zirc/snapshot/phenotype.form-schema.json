@@ -64,7 +64,6 @@
         "scope" : "#/properties/description",
         "type" : "Control"
       } ],
-      "label" : "Description",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -74,7 +73,6 @@
         "scope" : "#/properties/hpfStart",
         "type" : "Control"
       } ],
-      "label" : "Timing",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -90,7 +88,6 @@
         "scope" : "#/properties/zircImagePermission",
         "type" : "Control"
       } ],
-      "label" : "Image Permissions",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -106,7 +103,6 @@
         "scope" : "#/properties/nonMendelianComment",
         "type" : "Control"
       } ],
-      "label" : "Non-Mendelian Segregation",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -116,7 +112,6 @@
         "scope" : "#/properties/segregation",
         "type" : "Control"
       } ],
-      "label" : "Segregation",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -126,7 +121,6 @@
         "scope" : "#/properties/type",
         "type" : "Control"
       } ],
-      "label" : "Phenotype Type",
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

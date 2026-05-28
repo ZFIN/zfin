@@ -169,7 +169,6 @@
         "scope" : "#/properties/additionalInfo",
         "type" : "Control"
       } ],
-      "label" : "General",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -199,7 +198,6 @@
         "scope" : "#/properties/expectedMutPcr",
         "type" : "Control"
       } ],
-      "label" : "PCR Primers",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -244,7 +242,6 @@
         "scope" : "#/properties/expectedMutDigest",
         "type" : "Control"
       } ],
-      "label" : "Restriction Digest",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -260,7 +257,6 @@
         "scope" : "#/properties/sequencingPrimer",
         "type" : "Control"
       } ],
-      "label" : "Sequencing",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -276,7 +272,6 @@
         "scope" : "#/properties/dcapsMismatchPrimer",
         "type" : "Control"
       } ],
-      "label" : "dCAPS Mismatch",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -298,7 +293,6 @@
         "scope" : "#/properties/commonPrimer",
         "type" : "Control"
       } ],
-      "label" : "Allele-Specific PCR",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -317,7 +311,6 @@
         "scope" : "#/properties/kaspGenomicSequence",
         "type" : "Control"
       } ],
-      "label" : "KASP",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -351,7 +344,6 @@
         "scope" : "#/properties/sslpOutcrossedPcr",
         "type" : "Control"
       } ],
-      "label" : "SSLP",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -371,7 +363,6 @@
         "scope" : "#/properties/attachments",
         "type" : "Control"
       } ],
-      "label" : "Attachments",
       "options" : {
         "layout" : "plain"
       },

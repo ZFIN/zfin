@@ -63,26 +63,37 @@ function SectionRenderer({
 
     const sectionStatus = view.sectionStatus[label];
 
+    // Headless groups are used as visibility/layout containers inside the
+    // inline aggregate editors (Lesion/Gene/Assay/Phenotype) where inner
+    // sub-section headings would clutter the card. The visibility rule and
+    // table wrapper still apply; only the <h2> and its section-scope
+    // history/comments accessories are skipped.
+    const sectionProps = label
+        ? { id: sectionId, 'aria-labelledby': headingId }
+        : {};
+
     return (
-        <section className='section' id={sectionId} aria-labelledby={headingId}>
-            <h2 id={headingId} className='heading'>
-                {sectionStatus && <StatusBadge status={sectionStatus}/>}
-                {label}
-                <FieldHistory
-                    recId={view.recId}
-                    scope='section'
-                    sectionName={label}
-                    label={label}
-                />
-                {commentsEnabled(uischema) && (
-                    <FieldComments
+        <section className='section' {...sectionProps}>
+            {label && (
+                <h2 id={headingId} className='heading'>
+                    {sectionStatus && <StatusBadge status={sectionStatus}/>}
+                    {label}
+                    <FieldHistory
                         recId={view.recId}
                         scope='section'
                         sectionName={label}
                         label={label}
                     />
-                )}
-            </h2>
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='section'
+                            sectionName={label}
+                            label={label}
+                        />
+                    )}
+                </h2>
+            )}
             {isPlain ? (
                 <div className='ml-4' style={{ marginLeft: '1.5rem' }}>
                     {children}

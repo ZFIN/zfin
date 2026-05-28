@@ -89,7 +89,6 @@
         "scope" : "#/properties/additionalInfo",
         "type" : "Control"
       } ],
-      "label" : "General",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -99,7 +98,6 @@
         "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
       } ],
-      "label" : "Sizing",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -118,7 +116,6 @@
         "scope" : "#/properties/insertionSizeBp",
         "type" : "Control"
       } ],
-      "label" : "Insertion Sizing",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -138,7 +135,6 @@
         "scope" : "#/properties/nucleotideChange",
         "type" : "Control"
       } ],
-      "label" : "Nucleotide Change",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -157,7 +153,6 @@
         "scope" : "#/properties/deletedSequence",
         "type" : "Control"
       } ],
-      "label" : "Deleted Sequence",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -176,7 +171,6 @@
         "scope" : "#/properties/insertedSequence",
         "type" : "Control"
       } ],
-      "label" : "Inserted Sequence",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -201,7 +195,6 @@
         "scope" : "#/properties/hasLargeVariant",
         "type" : "Control"
       } ],
-      "label" : "Transgene",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -237,7 +230,6 @@
         "scope" : "#/properties/threePrimeFlank",
         "type" : "Control"
       } ],
-      "label" : "Location",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -262,7 +254,6 @@
         "scope" : "#/properties/mutatedAminoAcidsHgvs",
         "type" : "Control"
       } ],
-      "label" : "Protein-level",
       "rule" : {
         "condition" : {
           "schema" : {

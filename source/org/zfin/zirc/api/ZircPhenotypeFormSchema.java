@@ -70,39 +70,39 @@ public final class ZircPhenotypeFormSchema {
     }
 
     public static UiSchemaElement uiSchema() {
+        // All groups are headless — the inline phenotype editor card
+        // already carries the "Phenotype #N — <description-snippet>"
+        // header. Group structure is retained as a layout container.
         return new VerticalLayout(List.of(
-                Group.of("Description", List.of(
+                Group.of(null, List.of(
                         // The parent phenotype card shows the description snippet —
                         // refresh it on change.
                         new Control("#/properties/description",
                                 Options.of().multi(true).refreshesParent(true), null)
                 )),
                 // Custom timing widget — hpf/dpf unit toggle + read-only
-                // stage echo. The stage field stays in the schema so the
-                // renderer can show it, but it's edited via the widget
-                // (or not at all, in the case of stage which is for now
-                // a server-derived display).
-                Group.of("Timing", List.of(
+                // stage echo.
+                Group.of(null, List.of(
                         new Control("#/properties/hpfStart",
                                 Options.of().widget("phenotypeTiming"), null)
                 )),
-                Group.of("Image Permissions", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/zfinImagePermission",
                                 Options.of().widget("yesNoRadio"), null),
                         new Control("#/properties/zircImagePermission",
                                 Options.of().widget("yesNoRadio"), null)
                 )),
-                Group.of("Non-Mendelian Segregation", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/nonMendelianPercentage",
                                 Options.of().suffix("%"), null),
                         new Control("#/properties/nonMendelianComment",
                                 Options.of().multi(true), null)
                 )),
-                Group.of("Segregation", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/segregation",
                                 Options.of().widget("stringList"), null)
                 )),
-                Group.of("Phenotype Type", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/type",
                                 Options.of().widget("stringList"), null)
                 ))

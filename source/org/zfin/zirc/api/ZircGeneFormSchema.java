@@ -52,7 +52,9 @@ public final class ZircGeneFormSchema {
 
     public static UiSchemaElement uiSchema() {
         return new VerticalLayout(java.util.List.of(
-                Group.of("Gene", java.util.List.of(
+                // Headless group — the editor card already carries the
+                // "Gene #N" header; an inner "Gene" heading is redundant.
+                Group.of(null, java.util.List.of(
                         new Control("#/properties/mutatedGeneZdbID",
                                 Options.of()
                                         .widget("autocomplete")

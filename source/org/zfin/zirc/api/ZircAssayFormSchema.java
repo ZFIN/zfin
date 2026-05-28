@@ -119,8 +119,11 @@ public final class ZircAssayFormSchema {
     }
 
     public static UiSchemaElement uiSchema() {
+        // All groups are headless — the inline assay editor card already
+        // carries the "Assay #N — <type>" header. Group structure is kept
+        // so per-assayType visibility rules continue to work.
         return new VerticalLayout(List.of(
-                Group.of("General", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/assayType",
                                 Options.of().widget("selectWithOther").standardValues(ASSAY_TYPES)
                                         .refreshesParent(true),
@@ -128,7 +131,7 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/additionalInfo",
                                 Options.of().multi(true), null)
                 )),
-                groupRevealedFor("PCR Primers", PCR_PRIMER_TYPES, List.of(
+                groupRevealedFor(PCR_PRIMER_TYPES, List.of(
                         new Control("#/properties/forwardPrimer",
                                 Options.of().placeholder("5′ → 3′ sequence"), null),
                         new Control("#/properties/reversePrimer",
@@ -144,7 +147,7 @@ public final class ZircAssayFormSchema {
                                         .helpText("Expected amplicon size on a mutant template."),
                                 null)
                 )),
-                groupRevealedFor("Restriction Digest", DIGEST_TYPES, List.of(
+                groupRevealedFor(DIGEST_TYPES, List.of(
                         new Control("#/properties/restrictionEnzymeName",
                                 Options.of().placeholder("e.g. BsmBI"), null),
                         new Control("#/properties/restrictionEnzymeCatalog",
@@ -162,22 +165,22 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/expectedMutDigest",
                                 Options.of().suffix("bp"), null)
                 )),
-                groupRevealedFor("Sequencing", SEQUENCING_TYPES, List.of(
+                groupRevealedFor(SEQUENCING_TYPES, List.of(
                         Control.of("#/properties/sequencingPrimer")
                 )),
-                groupRevealedFor("dCAPS Mismatch", DCAPS_TYPES, List.of(
+                groupRevealedFor(DCAPS_TYPES, List.of(
                         Control.of("#/properties/dcapsMismatchPrimer")
                 )),
-                groupRevealedFor("Allele-Specific PCR", ASPCR_TYPES, List.of(
+                groupRevealedFor(ASPCR_TYPES, List.of(
                         Control.of("#/properties/wtSpecificPrimer"),
                         Control.of("#/properties/mutSpecificPrimer"),
                         Control.of("#/properties/commonPrimer")
                 )),
-                groupRevealedFor("KASP", KASP_TYPES, List.of(
+                groupRevealedFor(KASP_TYPES, List.of(
                         new Control("#/properties/kaspGenomicSequence",
                                 Options.of().multi(true), null)
                 )),
-                groupRevealedFor("SSLP", SSLP_TYPES, List.of(
+                groupRevealedFor(SSLP_TYPES, List.of(
                         Control.of("#/properties/sslpMarkerName"),
                         Control.of("#/properties/sslpDistance"),
                         Control.of("#/properties/sslpGenomicLocation"),
@@ -187,8 +190,9 @@ public final class ZircAssayFormSchema {
                         Control.of("#/properties/sslpOutcrossedPcr")
                 )),
                 // Attachments is always shown — kind matrix is intentionally
-                // collapsed to a single "Files" affordance for now.
-                new Group("Attachments",
+                // collapsed to a single "Files" affordance for now. Headless
+                // group with plain layout (renders as a <div>, not a table).
+                new Group(null,
                         List.of(new Control("#/properties/attachments",
                                 Options.of().widget("attachmentsList").managesOwnPersistence(true), null)),
                         Options.of().layout("plain"),
@@ -197,12 +201,12 @@ public final class ZircAssayFormSchema {
     }
 
     /**
-     * Tiny helper specific to the assay-type matrix: a Group revealed
-     * when {@code assayType} is one of the listed values.
+     * Tiny helper specific to the assay-type matrix: a headless Group
+     * revealed when {@code assayType} is one of the listed values.
      */
     private static Group groupRevealedFor(
-            String label, List<String> assayTypes, List<UiSchemaElement> elements) {
-        return new Group(label, elements, null,
+            List<String> assayTypes, List<UiSchemaElement> elements) {
+        return new Group(null, elements, null,
                 Rule.showWhenIn("#/properties/assayType", assayTypes));
     }
 
