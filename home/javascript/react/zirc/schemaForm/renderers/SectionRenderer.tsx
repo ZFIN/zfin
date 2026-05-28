@@ -66,7 +66,7 @@ function SectionRenderer({
     return (
         <section className='section' id={sectionId} aria-labelledby={headingId}>
             <h2 id={headingId} className='heading'>
-                <StatusBadge status={sectionStatus}/>
+                {sectionStatus && <StatusBadge status={sectionStatus}/>}
                 {label}
                 <FieldHistory
                     recId={view.recId}

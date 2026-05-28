@@ -82,9 +82,6 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
         return {
             name: '',
             previousNames: '',
-            submitterNames: '',
-            createdAt: '',
-            updatedAt: '',
             acceptance: { reasons: [], reasonsOther: '' },
             mutations: [],
             linkedFeatures: [],
@@ -104,9 +101,6 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
     return {
         name: submission.name ?? '',
         previousNames: submission.previousNames ?? '',
-        submitterNames: submission.submitterNames ?? '',
-        createdAt: submission.createdAt ?? '',
-        updatedAt: submission.updatedAt ?? '',
         acceptance: {
             reasons: submission.reasons ?? [],
             reasonsOther: submission.reasonsOther ?? '',

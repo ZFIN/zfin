@@ -91,11 +91,6 @@
         "title" : "Background",
         "type" : "object"
       },
-      "createdAt" : {
-        "readOnly" : true,
-        "title" : "Date Started",
-        "type" : "string"
-      },
       "linkedFeatures" : {
         "items" : {
           "properties" : {
@@ -160,16 +155,6 @@
         "maxLength" : 2000,
         "title" : "Previous Names",
         "type" : [ "string", "null" ]
-      },
-      "submitterNames" : {
-        "readOnly" : true,
-        "title" : "Submitter",
-        "type" : "string"
-      },
-      "updatedAt" : {
-        "readOnly" : true,
-        "title" : "Last Updated",
-        "type" : "string"
       }
     },
     "required" : [ "name", "mutations" ],
@@ -180,7 +165,7 @@
       "elements" : [ {
         "options" : {
           "helpText" : "Line name as it should appear in publications.",
-          "placeholder" : "e.g. nasl1<sup>zf123</sup>"
+          "placeholder" : "e.g. nasl1zf123"
         },
         "scope" : "#/properties/name",
         "type" : "Control"
@@ -190,24 +175,6 @@
           "placeholder" : "Comma-separated former names"
         },
         "scope" : "#/properties/previousNames",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/submitterNames",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/createdAt",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/updatedAt",
         "type" : "Control"
       }, {
         "options" : {

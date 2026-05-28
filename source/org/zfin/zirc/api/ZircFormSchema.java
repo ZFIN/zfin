@@ -87,9 +87,6 @@ public final class ZircFormSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("name",            StringSchema.of("Line Name", 255));
         properties.put("previousNames",   StringSchema.of("Previous Names", 2000));
-        properties.put("submitterNames",  StringSchema.readOnly("Submitter"));
-        properties.put("createdAt",       StringSchema.readOnly("Date Started"));
-        properties.put("updatedAt",       StringSchema.readOnly("Last Updated"));
         properties.put("acceptance",      acceptanceSchema);
         properties.put("mutations",       mutationsSummaryArrayProp());
         properties.put("linkedFeatures",  linkedFeaturesArrayProp());
@@ -111,7 +108,7 @@ public final class ZircFormSchema {
                 Group.of("Overview", List.of(
                         new Control("#/properties/name",
                                 Options.of()
-                                        .placeholder("e.g. nasl1<sup>zf123</sup>")
+                                        .placeholder("e.g. nasl1zf123")
                                         .helpText("Line name as it should appear in publications."),
                                 null),
                         new Control("#/properties/previousNames",
@@ -119,12 +116,6 @@ public final class ZircFormSchema {
                                         .placeholder("Comma-separated former names")
                                         .helpText("Useful when this line was previously known by a different designation."),
                                 null),
-                        new Control("#/properties/submitterNames",
-                                Options.of().comments(false), null),
-                        new Control("#/properties/createdAt",
-                                Options.of().comments(false), null),
-                        new Control("#/properties/updatedAt",
-                                Options.of().comments(false), null),
                         new Control("#/properties/acceptance",
                                 Options.of()
                                         .widget("multipleChoiceWithOther")
