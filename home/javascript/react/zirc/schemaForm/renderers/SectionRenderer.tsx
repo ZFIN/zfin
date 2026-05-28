@@ -95,14 +95,9 @@ function SectionRenderer({
                 </h2>
             )}
             {isPlain ? (
-                <div className='ml-4' style={{ marginLeft: '1.5rem' }}>
-                    {children}
-                </div>
+                <div>{children}</div>
             ) : (
-                <table
-                    className='table table-borderless'
-                    style={{ marginLeft: '1.5rem' }}
-                >
+                <table className='table table-borderless'>
                     <tbody>{children}</tbody>
                 </table>
             )}
