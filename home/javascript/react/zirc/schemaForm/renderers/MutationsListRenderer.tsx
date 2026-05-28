@@ -157,62 +157,69 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
         deleteMutation.mutate({ submissionId, mutationId });
     };
 
+    const addButton = (
+        <button
+            type='button'
+            className='btn btn-sm btn-outline-secondary'
+            onClick={handleAdd}
+            disabled={!submissionId || addMutation.isPending || atCapacity}
+            title={capTitle}
+        >
+            + Add mutation
+        </button>
+    );
+
     if (mutations.length === 0) {
         return (
             <div>
                 <p className='text-muted'>No mutations recorded for this submission.</p>
-                <button
-                    type='button'
-                    className='btn btn-sm btn-outline-secondary'
-                    onClick={handleAdd}
-                    disabled={!submissionId || addMutation.isPending || atCapacity}
-                    title={capTitle}
-                >
-                    + Add mutation
-                </button>
+                {addButton}
             </div>
         );
     }
 
     return (
         <div>
-            <ul className='list-unstyled'>
-                {mutations.map((m) => (
-                    <li key={m.id} className='border rounded p-2 mb-2 d-flex justify-content-between align-items-center'>
-                        <div>
-                            <strong>{m.alleleDesignation || `Mutation #${m.sortOrder}`}</strong>
-                            {m.mutationType && (
-                                <span className='text-muted small ml-2'>{m.mutationType}</span>
-                            )}
-                        </div>
-                        <div>
-                            <a
-                                className='btn btn-sm btn-outline-secondary mr-1'
-                                href={`/action/zirc/mutation/${m.id}/edit`}
-                            >
-                                Edit
-                            </a>
-                            <button
-                                type='button'
-                                className='btn btn-sm btn-outline-danger'
-                                onClick={() => handleDelete(m.id)}
-                                disabled={deleteMutation.isPending}
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <button
-                type='button'
-                className='btn btn-sm btn-outline-secondary'
-                onClick={handleAdd}
-                disabled={!submissionId || addMutation.isPending || atCapacity}
-                title={capTitle}
-            >
-                + Add mutation
-            </button>
+            <table className='table table-sm'>
+                <thead>
+                    <tr>
+                        <th style={{ width: '3rem' }}>#</th>
+                        <th>Allele Designation</th>
+                        <th>Mutagenesis Protocol</th>
+                        <th>Mutation Type</th>
+                        <th>Discoverer</th>
+                        <th className='text-right' style={{ width: '8rem' }}>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {mutations.map((m, i) => (
+                        <tr key={m.id}>
+                            <td>{i + 1}</td>
+                            <td>{m.alleleDesignation || <span className='text-muted'>—</span>}</td>
+                            <td>{m.mutagenesisProtocol || <span className='text-muted'>—</span>}</td>
+                            <td>{m.mutationType || <span className='text-muted'>—</span>}</td>
+                            <td>{m.mutationDiscoverer || <span className='text-muted'>—</span>}</td>
+                            <td className='text-right text-nowrap'>
+                                <a
+                                    className='btn btn-sm btn-outline-secondary mr-1'
+                                    href={`/action/zirc/mutation/${m.id}/edit`}
+                                >
+                                    Edit
+                                </a>
+                                <button
+                                    type='button'
+                                    className='btn btn-sm btn-outline-danger'
+                                    onClick={() => handleDelete(m.id)}
+                                    disabled={deleteMutation.isPending}
+                                >
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {addButton}
         </div>
     );
 }
