@@ -44,7 +44,7 @@ import java.util.Set;
 @DynamicUpdate
 @Getter
 @Setter
-public class LineSubmission {
+public class LineSubmission implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ZircLineSubmission")
