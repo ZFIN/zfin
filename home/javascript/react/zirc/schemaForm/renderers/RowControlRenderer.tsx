@@ -141,20 +141,22 @@ function RowControlRenderer({
                 )}
             </th>
             <td>
-                {suffix ? (
-                    <div className='input-group'>
-                        {input}
-                        <div className='input-group-append'>
-                            <span className='input-group-text'>{suffix}</span>
+                <div style={{ maxWidth: '40em' }}>
+                    {suffix ? (
+                        <div className='input-group'>
+                            {input}
+                            <div className='input-group-append'>
+                                <span className='input-group-text'>{suffix}</span>
+                            </div>
                         </div>
-                    </div>
-                ) : input}
-                {helpText && (
-                    <small className='form-text text-muted'>{helpText}</small>
-                )}
-                {errors && (
-                    <small className='text-danger'>{errors}</small>
-                )}
+                    ) : input}
+                    {helpText && (
+                        <small className='form-text text-muted'>{helpText}</small>
+                    )}
+                    {errors && (
+                        <small className='text-danger'>{errors}</small>
+                    )}
+                </div>
             </td>
         </tr>
     );

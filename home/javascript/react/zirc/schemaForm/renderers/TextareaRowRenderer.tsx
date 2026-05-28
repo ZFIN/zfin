@@ -72,15 +72,17 @@ function TextareaRowRenderer({
                 <label htmlFor={inputId} className='mb-0'>{label}</label>
             </th>
             <td>
-                <textarea
-                    id={inputId}
-                    className='form-control'
-                    rows={3}
-                    placeholder={placeholder}
-                    value={(data as string | undefined) ?? ''}
-                    onChange={(e) => handleChange(path, e.target.value)}
-                />
-                {errors && <small className='text-danger'>{errors}</small>}
+                <div style={{ maxWidth: '40em' }}>
+                    <textarea
+                        id={inputId}
+                        className='form-control'
+                        rows={3}
+                        placeholder={placeholder}
+                        value={(data as string | undefined) ?? ''}
+                        onChange={(e) => handleChange(path, e.target.value)}
+                    />
+                    {errors && <small className='text-danger'>{errors}</small>}
+                </div>
             </td>
         </tr>
     );

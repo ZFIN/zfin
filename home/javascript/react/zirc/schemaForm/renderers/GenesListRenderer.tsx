@@ -181,29 +181,34 @@ function GenesListRenderer({ data, schema, config }: ControlProps) {
             <ul className='list-unstyled'>
                 {genes.map((g) => {
                     const isOpen = expanded.has(g.id);
-                    const label = g.mutatedGeneAbbreviation
-                        || g.mutatedGeneZdbID
-                        || `Gene #${g.sortOrder}`;
+                    const summary = g.mutatedGeneAbbreviation || g.mutatedGeneZdbID;
                     return (
                         <li key={g.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
-                                <button
-                                    type='button'
-                                    className='btn btn-link p-0 text-left'
-                                    onClick={() => toggle(g.id)}
-                                    aria-expanded={isOpen}
-                                >
-                                    <span className='mr-2'>{isOpen ? '▾' : '▸'}</span>
-                                    <strong>{label}</strong>
-                                </button>
-                                <button
-                                    type='button'
-                                    className='btn btn-sm btn-outline-danger'
-                                    onClick={() => handleDelete(g.id)}
-                                    disabled={deleteGene.isPending}
-                                >
-                                    Delete
-                                </button>
+                                <span>
+                                    <strong>Gene {g.sortOrder ?? ''}</strong>
+                                    {summary && (
+                                        <span className='ml-2 text-muted'>{summary}</span>
+                                    )}
+                                </span>
+                                <div>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-secondary mr-1'
+                                        onClick={() => toggle(g.id)}
+                                        aria-expanded={isOpen}
+                                    >
+                                        {isOpen ? 'Done' : 'Edit'}
+                                    </button>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-danger'
+                                        onClick={() => handleDelete(g.id)}
+                                        disabled={deleteGene.isPending}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                             {isOpen && (
                                 <GeneEdit geneId={g.id} mutationId={mutationId} />
