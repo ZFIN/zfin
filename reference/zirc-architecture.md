@@ -188,6 +188,7 @@ vocabulary:
 | `typeGroup`     | string                   | For `autocomplete` against `markers` — narrows to a `Marker.TypeGroup` (e.g. `GENEDOM` for the gene picker). |
 | `managesOwnPersistence` | boolean          | The widget owns its writes (uploads/deletes/add-row via dedicated POST/DELETE), so the autosave loop skips this Control's path and mirror-syncs it from refetches. Set on the self-managed list widgets. |
 | `refreshesParent` | boolean                | Editing this field changes the parent's collapsed-card label, so a successful PATCH invalidates the parent query. Set on the field that feeds the card (discriminator, gene marker id, phenotype description). |
+| `addLabel`      | string                   | For the `stringList` widget — label for the "+ Add …" button (e.g. `"+ Add publication"`). Defaults to `"+ Add"`. |
 
 **Convention**: render-metadata that's curator-facing belongs in
 `options`, not in the JSON Schema. The schema is for constraints
@@ -470,11 +471,13 @@ home/javascript/react/zirc/
     ├── ZircEntityEditor.tsx          one editor for any inline aggregate; registers the union of renderers
     ├── aggregateRegistry.ts          per-entityKind endpoints / cache keys / parent topology (the one non-schema fact)
     └── renderers/                    custom Control + Layout renderers
-        ├── SectionRenderer.tsx       Group → <section class="section">
-        ├── RowControlRenderer.tsx    Control → table row; string OR number/integer inputs
-        ├── AssaysListRenderer.tsx    — server-managed inline-expand list (assays)
+        ├── SectionRenderer.tsx       Group → <section class="section">; headless (label=null) groups skip the <h2> but still apply visibility rules
+        ├── RowControlRenderer.tsx    Control → table row; string OR number/integer inputs; <td> capped at max-width 40em
+        ├── TextareaRowRenderer.tsx   Control with options.multi → table row with a 40em-capped textarea
+        ├── PublicationsListRenderer.tsx — the `stringList` widget: one <input> per entry with a Remove button + "+ Add …" footer. Powers previousNames, publications, enzymeCleaves, segregation, phenotype type. Add button label = options.addLabel.
+        ├── AssaysListRenderer.tsx    — server-managed inline-expand list (assays); Edit/Done toggle per card
         ├── GenesListRenderer.tsx     — server-managed inline-expand list (genes)
-        ├── LesionsListRenderer.tsx   — server-managed inline-expand list (lesions)
+        ├── LesionsListRenderer.tsx   — server-managed inline-expand list (lesions); humanizes the type enum for the card summary
         ├── PhenotypesListRenderer.tsx — server-managed inline-expand list (phenotypes)
         ├── LinkedFeaturesListRenderer.tsx — submission-scope pairwise links
         ├── AutocompleteRenderer.tsx  — type-ahead ZDB-ID resolver
@@ -584,6 +587,17 @@ validates cleanly; numbers likewise.) If the field needs a *new* widget
 type, register the renderer where the form mounts: `ZircEntityEditor`'s
 union for the inline aggregates, or the `renderers` array in
 `MutationEdit` / `SchemaForm` for those pages.
+
+**Multi-valued strings** are stored as a Postgres `text[]` column with
+`@JdbcTypeCode(SqlTypes.ARRAY)` on a `String[]` entity field, an
+`ArraySchema` of strings in the JSON Schema, and `widget: "stringList"`
+in the uiSchema. Per-Control `placeholder` and `addLabel` options
+customize the input placeholder and the "+ Add …" button label.
+`previousNames` (on `LineSubmission`) is the canonical example; see
+`ZircFormSchema.java` for the schema + FIELDS dispatch shape (uses the
+private `stringArray` helper that trims and drops blank entries
+server-side, so transient blank inputs from the renderer don't leak
+into storage).
 
 **Adding a new child aggregate** is the same checklist times two: do
 it for the new aggregate (one row in §2), and add a summary-list

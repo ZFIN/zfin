@@ -124,14 +124,21 @@ order:
 4. **`home/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — covered
    above. Re-read with the API client in mind now.
 
-5. **`home/javascript/react/zirc/schemaForm/renderers/`** — fifteen
-   custom JSON Forms renderers. Don't read all of them; pick:
+5. **`home/javascript/react/zirc/schemaForm/renderers/`** — 17 custom
+   JSON Forms renderers. Don't read all of them; pick:
    - `RowControlRenderer.tsx` — the workhorse table-row Control for
      string fields. Shows the `options` vocabulary
      (placeholder/helpText/infoHref/suffix).
    - `SectionRenderer.tsx` — the layout renderer for Groups. Note the
      `visible === false` early return; without it, group-level uiSchema
-     rules silently don't apply.
+     rules silently don't apply. A null label produces a headless group
+     (no `<h2>`, no section-scope history/comments), used by the inline
+     aggregate editors so inner sub-section headings don't clutter cards.
+   - `PublicationsListRenderer.tsx` — the `stringList` widget. One
+     `<input>` per entry, Remove button beside each, "+ Add …" footer
+     (label from `options.addLabel`). Used by every multi-valued
+     string field — `previousNames`, mutation `publications`,
+     `enzymeCleaves`, phenotype `segregation` / `type`.
    - `MutationsListRenderer.tsx` — the pattern for server-managed list
      widgets with `maxItems` caps.
    - `LesionsListRenderer.tsx` (or `GenesListRenderer` /
