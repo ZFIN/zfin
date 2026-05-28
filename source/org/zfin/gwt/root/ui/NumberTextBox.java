@@ -7,9 +7,10 @@ public class NumberTextBox extends AbstractTextBox<Integer> {
     @Override
     public Integer getBoxValue() {
         String text = super.getText();
-        if (text.trim().length() == 0) {
+        if (text == null || text.trim().length() == 0) {
             return null;
         } else {
+            text = text.trim();
             if (StringUtils.isNumeric(text))
                 return Integer.parseInt(text);
             else
@@ -30,7 +31,7 @@ public class NumberTextBox extends AbstractTextBox<Integer> {
             return true;
         if (text.trim().length() == 0)
             return true;
-        return StringUtils.isNumeric(text);
+        return StringUtils.isNumeric(text.trim());
     }
 
     @Override
@@ -44,11 +45,12 @@ public class NumberTextBox extends AbstractTextBox<Integer> {
         if (text == null) {
             return false;
         }
-        if (!StringUtils.isNumeric(text))
-            return false;
-        if (text.trim().length() == 0) {
+        text = text.trim();
+        if (text.length() == 0) {
             return number.equals(0);
         }
+        if (!StringUtils.isNumeric(text))
+            return false;
         Integer textValue = Integer.parseInt(text);
         return textValue.equals(number);
     }
