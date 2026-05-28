@@ -52,7 +52,11 @@ public class Location {
     @JoinColumn(name = "sfcl_evidence_code")
     protected GenericTerm locationEvidence;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // orphanRemoval=true so removing from this set DELETEs the
+    // record_attribution row instead of NULL'ing recattrib_data_zdb_id —
+    // the column is NOT NULL and the dissociate-via-UPDATE that Hibernate
+    // would otherwise emit fails with a constraint violation.
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "recattrib_data_zdb_id")
     protected Set<RecordAttribution> references;
 

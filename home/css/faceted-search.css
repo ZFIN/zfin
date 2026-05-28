@@ -329,12 +329,6 @@ body.modal-open {
     cursor: pointer;
 }
 
-.feedback-box {
-    background-color: #f5f5f5;
-    border: 1px solid #e3e3e3;
-    color: #333333;
-}
-
 .btn-selected {
     background-color: #888 !important;
     color: #eee !important;

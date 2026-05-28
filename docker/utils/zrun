@@ -18,6 +18,11 @@ usage() {
       echo "  bash_args   Extra arguments passed to bash (e.g. -c 'ls -la')"
       echo "  Env: COMPOSE_PROJECT_NAMES comma-separated project name prefixes (default: zfin_org,test,trunk,cell,crick,franklin,schlapp)"
       ;;
+    zrestart)
+      echo "Usage: zrestart [service]"
+      echo "  service     Container name pattern to match (default: compile)"
+      echo "  Env: COMPOSE_PROJECT_NAMES comma-separated project name prefixes (default: zfin_org,test,trunk,cell,crick,franklin,schlapp)"
+      ;;
     zup)
       echo "Usage: zup [service...]"
       echo "  service     One or more services to start (default: all)"
@@ -39,7 +44,7 @@ usage() {
       echo "  Env: ZFIN_COMPOSE  path to docker-compose.yml"
       ;;
     *)
-      echo "Must be invoked as 'zrun', 'zexec', 'zup', 'zdown', 'zlog', or 'zpull'" >&2
+      echo "Must be invoked as 'zrun', 'zexec', 'zrestart', 'zup', 'zdown', 'zlog', or 'zpull'" >&2
       ;;
   esac
   exit 1
@@ -55,6 +60,22 @@ else
   [[ $# -gt 0 ]] && shift
 fi
 
+# Extract docker flags (e.g. -u root) so they reach docker, not bash.
+# Without this, `-u` would land at `bash -l -u ...` and enable nounset.
+DOCKER_ARGS=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -u|--user)
+      [[ $# -lt 2 ]] && { echo "Error: $1 requires an argument" >&2; exit 1; }
+      DOCKER_ARGS+=("$1" "$2")
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
 compose_file() {
   local f="${ZFIN_COMPOSE:-$HOME/zfin/docker/docker-compose.yml}"
   if [[ ! -f "$f" ]]; then
@@ -67,9 +88,9 @@ compose_file() {
 
 case "$SCRIPT" in
   zrun)
-    exec docker compose -f "$(compose_file)" run --rm "$SERVICE" bash -l "$@"
+    exec docker compose -f "$(compose_file)" run --rm "${DOCKER_ARGS[@]}" "$SERVICE" bash -l "$@"
     ;;
-  zexec)
+  zexec|zrestart)
     IFS=',' read -ra PROJECT_NAMES <<< "${COMPOSE_PROJECT_NAMES:-zfin_org,test,trunk,cell,crick,franklin,schlapp}"
     CONTAINER_ID=""
     for project in "${PROJECT_NAMES[@]}"; do
@@ -86,10 +107,14 @@ case "$SCRIPT" in
       exit 1
     fi
     CONTAINER_NAME=$(docker ps --format '{{.Names}}' --filter "id=$CONTAINER_ID")
+    if [[ "$SCRIPT" == "zrestart" ]]; then
+      echo "Restarting: $CONTAINER_NAME" >&2
+      exec docker restart "$CONTAINER_ID" "$@"
+    fi
     echo "Connecting to: $CONTAINER_NAME" >&2
     TTY_FLAG=()
     [[ -t 0 ]] && TTY_FLAG=(-t)
-    exec docker exec -i "${TTY_FLAG[@]}" "$CONTAINER_ID" bash -l "$@"
+    exec docker exec -i "${TTY_FLAG[@]}" "${DOCKER_ARGS[@]}" "$CONTAINER_ID" bash -l "$@"
     ;;
   zup)
     exec docker compose -f "$(compose_file)" up -d "$SERVICE" "$@"
@@ -104,7 +129,7 @@ case "$SCRIPT" in
     exec docker compose -f "$(compose_file)" logs -f "$SERVICE" "$@"
     ;;
   *)
-    echo "Error: must be invoked as 'zrun', 'zexec', 'zup', 'zdown', or 'zpull'" >&2
+    echo "Error: must be invoked as 'zrun', 'zexec', 'zrestart', 'zup', 'zdown', or 'zpull'" >&2
     exit 1
     ;;
 esac
