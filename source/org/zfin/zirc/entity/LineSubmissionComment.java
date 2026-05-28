@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.profile.Person;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
