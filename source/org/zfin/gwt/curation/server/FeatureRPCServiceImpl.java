@@ -374,6 +374,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            // Mirror the FGMD cleanup above: when the curator marks
+            // "Assembly information not known as of <date>", the deletion size
+            // (bp) is derived from the now-removed start/end coordinates and
+            // must not linger on the DNA mutation detail. The DTO still
+            // carries the previous value, so updateDnaMutationDetailWithDTO
+            // wrote it back — null it explicitly here.
+            if (locationDeleted) {
+                detail.setNumberRemovedBasePair(null);
+            }
             validateDeletionLength(detail, fgl, feature.getType());
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
                 if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair()) {
