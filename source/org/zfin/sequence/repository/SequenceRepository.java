@@ -5,6 +5,8 @@ package org.zfin.sequence.repository;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.zfin.Species;
+import org.zfin.feature.FeatureDeletionSizeRow;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -162,6 +164,16 @@ public interface SequenceRepository {
     List<MarkerGenomeLocation> getAllGenomeLocations(GenomeLocation.Source source);
 
     void saveOrUpdateGenomeLocation(GenomeLocation genomeLocation);
+
+    /**
+     * Returns one projection row per (FeatureDnaMutationDetail, FeatureLocation)
+     * pair for features in the given types whose stored
+     * fdmd_number_removed_dna_base_pairs is not null. Features without a
+     * FeatureLocation still appear (start/end/chromosome/assembly null).
+     * Used by CheckDeletionSizeDriftTask to flag rows where the stored deletion
+     * size disagrees with end-start+1. Read-only.
+     */
+    List<FeatureDeletionSizeRow> getDeletionSizeDriftCandidates(Collection<FeatureTypeEnum> featureTypes);
 }
 
 
