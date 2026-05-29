@@ -354,6 +354,21 @@
         </java>
     </target>
 
+    <target name="check-deletion-size-drift" description="ZFIN-10280: report features whose stored fdmd_number_removed_dna_base_pairs disagrees with (sfcl_end_position - sfcl_start_position + 1). Read-only.">
+        <echo message="Check Deletion Size drift"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+        <java classname="org.zfin.infrastructure.ant.CheckDeletionSizeDriftTask" fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
     <target name="run-data-report-param" description="">
         <data-report-param/>
     </target>

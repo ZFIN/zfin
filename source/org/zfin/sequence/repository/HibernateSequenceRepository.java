@@ -11,7 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
+import org.zfin.feature.FeatureDeletionSizeRow;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -1340,6 +1342,34 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession();
         session.saveOrUpdate(genomeLocation);
         session.flush();
+    }
+
+    @Override
+    public List<FeatureDeletionSizeRow> getDeletionSizeDriftCandidates(Collection<FeatureTypeEnum> featureTypes) {
+        // FeatureLocation is the discriminator-mapped child of Location (table
+        // sequence_feature_chromosome_location, FK sfcl_feature_zdb_id). Feature
+        // has no inverse mapping for Locations, so we join FeatureLocation via
+        // its ManyToOne back to Feature with an explicit ON condition.
+        String hql = """
+            select new org.zfin.feature.FeatureDeletionSizeRow(
+                       fdmd.feature.zdbID,
+                       fdmd.feature.abbreviation,
+                       fdmd.feature.type,
+                       loc.assembly,
+                       loc.chromosome,
+                       loc.startLocation,
+                       loc.endLocation,
+                       fdmd.numberRemovedBasePair)
+              from FeatureDnaMutationDetail fdmd
+              left join FeatureLocation loc on loc.feature = fdmd.feature
+             where fdmd.feature.type in (:types)
+               and fdmd.numberRemovedBasePair is not null
+             order by fdmd.feature.zdbID
+            """;
+        return HibernateUtil.currentSession()
+                .createQuery(hql, FeatureDeletionSizeRow.class)
+                .setParameterList("types", featureTypes)
+                .list();
     }
 }
 
