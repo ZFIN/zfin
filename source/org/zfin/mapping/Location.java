@@ -52,12 +52,15 @@ public class Location {
     @JoinColumn(name = "sfcl_evidence_code")
     protected GenericTerm locationEvidence;
 
-    // orphanRemoval=true so removing from this set DELETEs the
-    // record_attribution row instead of NULL'ing recattrib_data_zdb_id —
-    // the column is NOT NULL and the dissociate-via-UPDATE that Hibernate
-    // would otherwise emit fails with a constraint violation.
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "recattrib_data_zdb_id")
+    // Read-only view over record_attribution rows whose data_zdb_id is
+    // this Location's zdbID. Service code (InfrastructureRepository) owns
+    // all writes — we mark the join column insertable/updatable=false so
+    // Hibernate never emits the unidirectional-@JoinColumn dissociation
+    // UPDATE ("set recattrib_data_zdb_id=null") that would violate the
+    // column's NOT NULL constraint when a Location is deleted with
+    // surviving attribution rows.
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id", insertable = false, updatable = false)
     protected Set<RecordAttribution> references;
 
     @Column(name = "sfcl_chromosome_reference_accession_number")
