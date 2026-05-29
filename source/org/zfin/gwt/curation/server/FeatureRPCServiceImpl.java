@@ -140,7 +140,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             StringUtils.isEmpty(dto.getEvidence()) &&
             dto.getFeatureStartLoc() == null &&
             dto.getFeatureEndLoc() == null) {
-            infrastructureRepository.deleteRecordAttribution(fl.getZdbID(), dto.getPublicationZdbID());
+            // Remove ALL attribution rows for this FL — not just the one matching
+            // dto.getPublicationZdbID() — because Location.references no longer
+            // cascades deletes, and any surviving record_attribution row whose
+            // recattrib_data_zdb_id points at this FL would block the FL delete
+            // (or, worse, leave dangling rows referencing a non-existent FL).
+            infrastructureRepository.deleteRecordAttributionsForData(fl.getZdbID());
             HibernateUtil.currentSession().delete(fl);
             // Clear the in-memory fields too. The caller may still hold this reference
             // (e.g. validateReferenceSequence reads fl.getStartLocation() etc.), and
