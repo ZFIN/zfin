@@ -1474,6 +1474,13 @@ compileJava.finalizedBy copyClasspathTemplates
 // declared explicitly. Same applies to test runtime / processTestResources.
 compileTestJava.dependsOn copyClasspathTemplates
 processTestResources.dependsOn copyClasspathTemplates
+// Every JavaExec task uses sourceSets.main.runtimeClasspath, which includes
+// home/WEB-INF/classes (the dir copyClasspathTemplates writes into). Gradle 8.x
+// strict validation fails any such task without an explicit dependency edge, so
+// wire them all up here rather than per-task.
+tasks.withType(JavaExec).configureEach {
+    dependsOn copyClasspathTemplates
+}
 
 // ============================================================================
 // GWT COMPILATION TASKS
