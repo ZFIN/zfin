@@ -6,38 +6,37 @@ import {
     JsonFormsRendererRegistryEntry,
     optionIs,
     rankWith,
-    schemaTypeIs,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
-import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
- * Multi-line string renderer. Tester claims any string Control whose uiSchema
- * carries `options.multi: true`. Same table-row shape + fr-* ids as the
- * single-line RowControlRenderer; only the input element differs.
+ * Single boolean rendered as one checkbox. Distinct from yesNoRadio (two
+ * radio buttons forced to a yes/no decision) — checkbox is appropriate
+ * for fields where "not yet decided" / null is meaningful and the box
+ * just turns on a flag.
+ *
+ * Reads {@code data} as a tri-state Boolean | null. Toggling produces
+ * true/false; there's no UI affordance to return to null once toggled,
+ * matching the old form's behavior.
+ *
+ * Triggered by uiSchema {@code options.widget = "checkbox"}.
  */
-function TextareaRowRenderer({
-    data,
-    handleChange,
-    path,
-    label,
-    uischema,
-    errors,
-    visible,
-    config,
+function CheckboxRenderer({
+    data, handleChange, path, label, visible, uischema, schema, config,
 }: ControlProps) {
     if (visible === false) {return null;}
     const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
-    const placeholder = (uischema as { options?: { placeholder?: string } })?.options?.placeholder;
-    const view = viewConfigFrom(config);
+    const checked = data === true;
 
-    if (view.readonly) {
+    const view = viewConfigFrom(config);
+    const fieldReadOnly = (schema as { readOnly?: boolean } | undefined)?.readOnly === true;
+    if (view.readonly || fieldReadOnly) {
         return (
             <tr>
                 <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
@@ -45,9 +44,7 @@ function TextareaRowRenderer({
                     {label}
                 </th>
                 <td>
-                    <div style={{ whiteSpace: 'pre-wrap' }}>
-                        <ValueDisplay value={data}/>
-                    </div>
+                    {data === true ? 'Yes' : data === false ? 'No' : <span className='text-muted'>&mdash;</span>}
                     <FieldHistory
                         recId={view.recId}
                         scope='field'
@@ -66,29 +63,28 @@ function TextareaRowRenderer({
             </tr>
         );
     }
+
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 <label htmlFor={inputId} className='mb-0'>{label}</label>
             </th>
             <td>
-                <div style={{ maxWidth: '40em' }}>
-                    <textarea
+                <div className='form-check'>
+                    <input
+                        type='checkbox'
                         id={inputId}
-                        className='form-control'
-                        rows={3}
-                        placeholder={placeholder}
-                        value={(data as string | undefined) ?? ''}
-                        onChange={(e) => handleChange(path, e.target.value)}
+                        className='form-check-input'
+                        checked={checked}
+                        onChange={(e) => handleChange(path, e.target.checked)}
                     />
-                    {errors && <small className='text-danger'>{errors}</small>}
                 </div>
             </td>
         </tr>
     );
 }
 
-export const textareaRowRendererEntry: JsonFormsRendererRegistryEntry = {
-    tester: rankWith(20, and(isControl, schemaTypeIs('string'), optionIs('multi', true))),
-    renderer: withJsonFormsControlProps(TextareaRowRenderer),
+export const checkboxRendererEntry: JsonFormsRendererRegistryEntry = {
+    tester: rankWith(20, and(isControl, optionIs('widget', 'checkbox'))),
+    renderer: withJsonFormsControlProps(CheckboxRenderer),
 };

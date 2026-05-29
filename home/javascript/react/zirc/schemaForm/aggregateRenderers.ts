@@ -3,6 +3,7 @@ import { sectionRendererEntry } from './renderers/SectionRenderer';
 import { rowControlRendererEntry } from './renderers/RowControlRenderer';
 import { textareaRowRendererEntry } from './renderers/TextareaRowRenderer';
 import { yesNoRadioRendererEntry } from './renderers/YesNoRadioRenderer';
+import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
@@ -28,6 +29,7 @@ export const aggregateRenderers = [
     rowControlRendererEntry,
     textareaRowRendererEntry,
     yesNoRadioRendererEntry,
+    checkboxRendererEntry,
     selectWithOtherRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,

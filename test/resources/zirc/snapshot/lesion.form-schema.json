@@ -4,17 +4,17 @@
       "additionalInfo" : {
         "maxLength" : 5000,
         "title" : "Additional Info",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "deletedSequence" : {
         "maxLength" : 5000,
         "title" : "Deleted sequence",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "fivePrimeFlank" : {
         "maxLength" : 5000,
         "title" : "5′ flank",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "hasLargeVariant" : {
         "title" : "Has large variant",
@@ -23,7 +23,7 @@
       "insertedSequence" : {
         "maxLength" : 5000,
         "title" : "Inserted sequence",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "insertionSizeBp" : {
         "title" : "Insertion size (bp)",
@@ -36,37 +36,37 @@
       "lesionType" : {
         "maxLength" : 255,
         "title" : "Lesion Type",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "locationInline" : {
         "maxLength" : 5000,
         "title" : "Location (inline)",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutatedAminoAcids" : {
         "maxLength" : 2000,
         "title" : "Mutated amino acids",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutatedAminoAcidsHgvs" : {
         "maxLength" : 2000,
         "title" : "Mutated amino acids (HGVS)",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "nucleotideChange" : {
         "maxLength" : 2000,
         "title" : "Nucleotide change",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "threePrimeFlank" : {
         "maxLength" : 5000,
         "title" : "3′ flank",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "transgeneSequence" : {
         "maxLength" : 5000,
         "title" : "Transgene sequence",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       }
     },
     "required" : [ "lesionType" ],
@@ -76,6 +76,7 @@
     "elements" : [ {
       "elements" : [ {
         "options" : {
+          "refreshesParent" : true,
           "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
           "widget" : "selectWithOther"
         },
@@ -88,7 +89,6 @@
         "scope" : "#/properties/additionalInfo",
         "type" : "Control"
       } ],
-      "label" : "General",
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -98,7 +98,6 @@
         "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
       } ],
-      "label" : "Sizing",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -117,7 +116,6 @@
         "scope" : "#/properties/insertionSizeBp",
         "type" : "Control"
       } ],
-      "label" : "Insertion Sizing",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -137,7 +135,6 @@
         "scope" : "#/properties/nucleotideChange",
         "type" : "Control"
       } ],
-      "label" : "Nucleotide Change",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -156,7 +153,6 @@
         "scope" : "#/properties/deletedSequence",
         "type" : "Control"
       } ],
-      "label" : "Deleted Sequence",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -175,7 +171,6 @@
         "scope" : "#/properties/insertedSequence",
         "type" : "Control"
       } ],
-      "label" : "Inserted Sequence",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -200,7 +195,6 @@
         "scope" : "#/properties/hasLargeVariant",
         "type" : "Control"
       } ],
-      "label" : "Transgene",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -236,7 +230,6 @@
         "scope" : "#/properties/threePrimeFlank",
         "type" : "Control"
       } ],
-      "label" : "Location",
       "rule" : {
         "condition" : {
           "schema" : {
@@ -261,7 +254,6 @@
         "scope" : "#/properties/mutatedAminoAcidsHgvs",
         "type" : "Control"
       } ],
-      "label" : "Protein-level",
       "rule" : {
         "condition" : {
           "schema" : {

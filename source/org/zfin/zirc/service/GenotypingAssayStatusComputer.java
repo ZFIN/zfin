@@ -31,7 +31,8 @@ public final class GenotypingAssayStatusComputer {
         EXPECTED_MUT_PCR              ("expectedMutPcr"),
         RESTRICTION_ENZYME_NAME       ("restrictionEnzymeName"),
         RESTRICTION_ENZYME_CATALOG    ("restrictionEnzymeCatalog"),
-        ENZYME_CLEAVES                ("enzymeCleaves"),
+        ENZYME_CLEAVES_WT             ("enzymeCleavesWt"),
+        ENZYME_CLEAVES_MUT            ("enzymeCleavesMut"),
         EXPECTED_WT_DIGEST            ("expectedWtDigest"),
         EXPECTED_MUT_DIGEST           ("expectedMutDigest"),
         ADDITIONAL_INFO               ("additionalInfo"),
@@ -98,8 +99,11 @@ public final class GenotypingAssayStatusComputer {
             bySection.put(e.getKey(), worst);
         }
 
+        // Roll up overall from byField rather than bySection so that headless
+        // (label-less) Groups — which SchemaSections skips — still contribute
+        // their fields to the aggregate's overall status.
         FieldStatus overall = FieldStatus.COMPLETE;
-        for (FieldStatus st : bySection.values()) overall = overall.worse(st);
+        for (FieldStatus st : byField.values()) overall = overall.worse(st);
 
         return new FieldStatusResult(byField, bySection, overall);
     }

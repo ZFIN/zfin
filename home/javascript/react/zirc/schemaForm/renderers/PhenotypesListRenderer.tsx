@@ -175,29 +175,36 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
                 {phenotypes.map((p) => {
                     const isOpen = expanded.has(p.id);
                     const snippet = (p.description ?? '').trim();
-                    const label = snippet.length === 0
-                        ? `Phenotype #${p.sortOrder}`
+                    const summary = snippet.length === 0
+                        ? null
                         : snippet.length > 80 ? snippet.slice(0, 80) + '…' : snippet;
                     return (
                         <li key={p.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
-                                <button
-                                    type='button'
-                                    className='btn btn-link p-0 text-left'
-                                    onClick={() => toggle(p.id)}
-                                    aria-expanded={isOpen}
-                                >
-                                    <span className='mr-2'>{isOpen ? '▾' : '▸'}</span>
-                                    <strong>{label}</strong>
-                                </button>
-                                <button
-                                    type='button'
-                                    className='btn btn-sm btn-outline-danger'
-                                    onClick={() => handleDelete(p.id)}
-                                    disabled={deletePhenotype.isPending}
-                                >
-                                    Delete
-                                </button>
+                                <span>
+                                    <strong>Phenotype {p.sortOrder ?? ''}</strong>
+                                    {summary && (
+                                        <span className='ml-2 text-muted'>{summary}</span>
+                                    )}
+                                </span>
+                                <div>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-secondary mr-1'
+                                        onClick={() => toggle(p.id)}
+                                        aria-expanded={isOpen}
+                                    >
+                                        {isOpen ? 'Done' : 'Edit'}
+                                    </button>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-danger'
+                                        onClick={() => handleDelete(p.id)}
+                                        disabled={deletePhenotype.isPending}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                             {isOpen && (
                                 <PhenotypeEdit phenotypeId={p.id} mutationId={mutationId} />

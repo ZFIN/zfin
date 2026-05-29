@@ -10,7 +10,7 @@ export interface LineSubmissionDTO {
     zdbID: string;
     name: string | null;
     abbreviation: string | null;
-    previousNames: string | null;
+    previousNames: string[];
     singleAllelic: boolean | null;
     maternalBackground: string | null;
     paternalBackground: string | null;
@@ -125,7 +125,8 @@ export interface AssayDTO {
     kaspGenomicSequence: string | null;
     restrictionEnzymeName: string | null;
     restrictionEnzymeCatalog: string | null;
-    enzymeCleaves: string[];
+    enzymeCleavesWt: boolean | null;
+    enzymeCleavesMut: boolean | null;
     expectedWtDigest: string | null;
     expectedMutDigest: string | null;
     sslpMarkerName: string | null;

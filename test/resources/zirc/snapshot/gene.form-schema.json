@@ -4,22 +4,22 @@
       "genbankCdna" : {
         "maxLength" : 255,
         "title" : "GenBank cDNA",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "genbankGenomicDna" : {
         "maxLength" : 255,
         "title" : "GenBank Genomic DNA",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "linkageGroup" : {
         "maxLength" : 255,
         "title" : "Linkage Group",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "mutatedGeneZdbID" : {
         "maxLength" : 50,
         "title" : "Gene (ZDB-ID)",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       }
     },
     "required" : [ "mutatedGeneZdbID", "genbankGenomicDna" ],
@@ -31,6 +31,7 @@
         "options" : {
           "helpText" : "Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.",
           "placeholder" : "Start typing a gene name…",
+          "refreshesParent" : true,
           "searchEndpoint" : "markers",
           "typeGroup" : "GENEDOM",
           "widget" : "autocomplete"
@@ -56,7 +57,6 @@
         "scope" : "#/properties/genbankCdna",
         "type" : "Control"
       } ],
-      "label" : "Gene",
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

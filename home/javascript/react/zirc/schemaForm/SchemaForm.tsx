@@ -4,6 +4,7 @@ import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { LineSubmissionDTO } from '../api/types';
+import { diffLeaves } from '../api/formHelpers';
 import { useCreateLineSubmission } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from './renderers/SectionRenderer';
@@ -80,10 +81,7 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
     if (!submission) {
         return {
             name: '',
-            previousNames: '',
-            submitterNames: '',
-            createdAt: '',
-            updatedAt: '',
+            previousNames: [],
             acceptance: { reasons: [], reasonsOther: '' },
             mutations: [],
             linkedFeatures: [],
@@ -102,10 +100,7 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
     }
     return {
         name: submission.name ?? '',
-        previousNames: submission.previousNames ?? '',
-        submitterNames: submission.submitterNames ?? '',
-        createdAt: submission.createdAt ?? '',
-        updatedAt: submission.updatedAt ?? '',
+        previousNames: submission.previousNames ?? [],
         acceptance: {
             reasons: submission.reasons ?? [],
             reasonsOther: submission.reasonsOther ?? '',
@@ -132,34 +127,6 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
  * value, since the schema models reasons[] as an atomic chip-list). Path is
  * JSON Pointer (`/acceptance/reasons`).
  */
-function diffLeaves(
-    prev: unknown,
-    curr: unknown,
-    basePath = '',
-): Array<[string, unknown]> {
-    const isPlainObject = (v: unknown): v is Record<string, unknown> =>
-        typeof v === 'object' && v !== null && !Array.isArray(v);
-
-    if (Array.isArray(prev) || Array.isArray(curr)) {
-        if (JSON.stringify(prev ?? null) !== JSON.stringify(curr ?? null)) {
-            return [[basePath || '/', curr ?? null]];
-        }
-        return [];
-    }
-    if (isPlainObject(prev) && isPlainObject(curr)) {
-        const keys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-        const changes: Array<[string, unknown]> = [];
-        for (const key of keys) {
-            changes.push(...diffLeaves(prev[key], curr[key], `${basePath}/${key}`));
-        }
-        return changes;
-    }
-    if (!Object.is(prev, curr)) {
-        return [[basePath || '/', curr ?? null]];
-    }
-    return [];
-}
-
 /**
  * Schema-driven submission form. Server's GET /api/zirc/form-schema returns
  * both the JSON Schema and the JSON Forms uiSchema; this component just

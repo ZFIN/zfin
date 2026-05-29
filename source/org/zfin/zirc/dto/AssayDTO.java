@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.entity.GenotypingAssayFile;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,10 +33,11 @@ public record AssayDTO(
         String commonPrimer,
         // KASP
         String kaspGenomicSequence,
-        // RFLP
+        // RFLP / dCAPS
         String restrictionEnzymeName,
         String restrictionEnzymeCatalog,
-        List<String> enzymeCleaves,
+        Boolean enzymeCleavesWt,
+        Boolean enzymeCleavesMut,
         String expectedWtDigest,
         String expectedMutDigest,
         // SSLP
@@ -55,7 +55,6 @@ public record AssayDTO(
         List<AssayFileDTO> attachments) {
 
     public static AssayDTO of(GenotypingAssay a) {
-        String[] cleaves = a.getEnzymeCleaves();
         List<AssayFileDTO> files = a.getFiles() == null ? List.of() :
                 a.getFiles().stream()
                         .sorted(Comparator.comparing(
@@ -80,7 +79,8 @@ public record AssayDTO(
                 a.getKaspGenomicSequence(),
                 a.getRestrictionEnzymeName(),
                 a.getRestrictionEnzymeCatalog(),
-                cleaves == null ? List.of() : List.copyOf(Arrays.asList(cleaves)),
+                a.getEnzymeCleavesWt(),
+                a.getEnzymeCleavesMut(),
                 a.getExpectedWtDigest(),
                 a.getExpectedMutDigest(),
                 a.getSslpMarkerName(),

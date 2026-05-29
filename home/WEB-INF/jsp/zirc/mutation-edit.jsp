@@ -23,7 +23,7 @@
         <nav class="navbar navbar-light admin text-center border-bottom">
             <a class="col-sm" href="/action/zirc/dashboard">Dashboard</a>
             <a class="col-sm" href="/action/zirc/line-submission/${submission.zdbID}/edit">
-                Submission
+                &laquo; Submission
             </a>
             <span class="col-sm">Mutation</span>
         </nav>
@@ -32,7 +32,11 @@
     <jsp:body>
 
         <div class="small text-uppercase text-muted">
-            ${submission.zdbID} &middot; Edit Mutation
+            Submission &rsaquo;
+            <a href="/action/zirc/line-submission/${submission.zdbID}/edit">
+                <c:out value="${not empty submission.name ? submission.name : submission.zdbID}"/>
+            </a>
+            &middot; Edit Mutation
         </div>
         <h1>${alleleLabel}</h1>
 
@@ -40,6 +44,13 @@
         <div class="__react-root" id="MutationEdit"
              data-mutation-id="${mutation.id}"
              data-submission-id="${submission.zdbID}"></div>
+
+        <div class="mt-4">
+            <a class="btn btn-outline-secondary"
+               href="/action/zirc/line-submission/${submission.zdbID}/edit">
+                &laquo; Back to Submission
+            </a>
+        </div>
 
     </jsp:body>
 </z:dataPage>

@@ -33,11 +33,23 @@ function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, vi
     const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
-    const options = (uischema as { options?: { standardValues?: string[] } } | undefined)?.options ?? {};
+    const options = (uischema as {
+        options?: {
+            standardValues?: string[];
+            standardLabels?: string[];
+            noOther?: boolean;
+        };
+    } | undefined)?.options ?? {};
     const standardValues = options.standardValues ?? [];
+    const standardLabels = options.standardLabels ?? null;
+    const noOther = options.noOther === true;
+    const labelFor = (v: string, i: number) =>
+        standardLabels && standardLabels[i] != null ? standardLabels[i] : v;
     const value = (data as string | undefined) ?? '';
     const isStandard = standardValues.includes(value);
-    const [otherSelected, setOtherSelected] = React.useState(() => value !== '' && !isStandard);
+    const [otherSelected, setOtherSelected] = React.useState(
+        () => !noOther && value !== '' && !isStandard,
+    );
     const selectValue = isStandard ? value : (otherSelected ? OTHER_SENTINEL : '');
     const view = viewConfigFrom(config);
 
@@ -79,7 +91,7 @@ function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, vi
                     <select
                         id={inputId}
                         className='form-control'
-                        style={{ maxWidth: 200 }}
+                        style={{ maxWidth: 240 }}
                         value={selectValue}
                         onChange={(e) => {
                             const v = e.target.value;
@@ -93,12 +105,14 @@ function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, vi
                         }}
                     >
                         <option value=''>(select)</option>
-                        {standardValues.map((s) => (
-                            <option key={s} value={s}>{s}</option>
+                        {standardValues.map((s, i) => (
+                            <option key={s} value={s}>{labelFor(s, i)}</option>
                         ))}
-                        <option value={OTHER_SENTINEL}>Other</option>
+                        {!noOther && (
+                            <option value={OTHER_SENTINEL}>Other</option>
+                        )}
                     </select>
-                    {otherSelected && (
+                    {!noOther && otherSelected && (
                         <input
                             type='text'
                             id={`${inputId}-other`}

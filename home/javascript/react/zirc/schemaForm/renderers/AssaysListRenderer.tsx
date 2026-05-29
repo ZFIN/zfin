@@ -19,6 +19,26 @@ import { aggregateRenderers } from '../aggregateRenderers';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
+/**
+ * Map an assay-type enum token to the display label shown on the card.
+ * Mirror of {@code ASSAY_TYPE_LABELS} in {@code ZircAssayFormSchema.java}
+ * — kept in sync by hand because there's no value→label channel on the
+ * mutation summary. Unknown tokens fall back to the raw value.
+ */
+const ASSAY_TYPE_DISPLAY: Record<string, string> = {
+    pcr_gel: 'PCR + gel electrophoresis',
+    pcr_sequencing: 'PCR + sequencing',
+    rflp: 'RFLP',
+    dcaps: 'dCAPS',
+    asa: 'ASA',
+    kasp: 'KASP',
+    hrma: 'HRMA',
+    sslp: 'SSLP',
+};
+function humanize(value: string): string {
+    return ASSAY_TYPE_DISPLAY[value] ?? value;
+}
+
 function AssayDetailCard({
     summary, n, schema, uiSchema, fieldStatus, sectionStatus,
 }: {
@@ -187,26 +207,34 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
             <ul className='list-unstyled'>
                 {assays.map((a) => {
                     const isOpen = expanded.has(a.id);
+                    const typeDisplay = a.assayType ? humanize(a.assayType) : null;
                     return (
                         <li key={a.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
-                                <button
-                                    type='button'
-                                    className='btn btn-link p-0 text-left'
-                                    onClick={() => toggle(a.id)}
-                                    aria-expanded={isOpen}
-                                >
-                                    <span className='mr-2'>{isOpen ? '▾' : '▸'}</span>
-                                    <strong>{a.assayType || `Assay #${a.sortOrder}`}</strong>
-                                </button>
-                                <button
-                                    type='button'
-                                    className='btn btn-sm btn-outline-danger'
-                                    onClick={() => handleDelete(a.id)}
-                                    disabled={deleteAssay.isPending}
-                                >
-                                    Delete
-                                </button>
+                                <span>
+                                    <strong>Assay {a.sortOrder ?? ''}</strong>
+                                    {typeDisplay && (
+                                        <span className='ml-2 text-muted'>{typeDisplay}</span>
+                                    )}
+                                </span>
+                                <div>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-secondary mr-1'
+                                        onClick={() => toggle(a.id)}
+                                        aria-expanded={isOpen}
+                                    >
+                                        {isOpen ? 'Done' : 'Edit'}
+                                    </button>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-danger'
+                                        onClick={() => handleDelete(a.id)}
+                                        disabled={deleteAssay.isPending}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                             {isOpen && (
                                 <AssayEdit assayId={a.id} mutationId={mutationId} />

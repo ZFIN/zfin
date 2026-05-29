@@ -3,6 +3,7 @@ package org.zfin.zirc.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zfin.zirc.api.jsonschema.ArraySchema;
+import org.zfin.zirc.api.jsonschema.BooleanSchema;
 import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
 import org.zfin.zirc.api.jsonschema.ObjectSchema;
@@ -57,60 +58,85 @@ public final class ZircAssayFormSchema {
             BiConsumer<GenotypingAssay, JsonNode> write) {
     }
 
+    // Stable enum tokens stored on the wire (and in ga_assay_type). Display
+    // labels for the dropdown live in ASSAY_TYPE_LABELS, parallel by index.
     private static final List<String> ASSAY_TYPES = List.of(
-            "PCR", "RFLP", "dCAPS", "sequencing", "AS-PCR", "KASP", "SSLP");
+            "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp");
+    private static final List<String> ASSAY_TYPE_LABELS = List.of(
+            "PCR + gel electrophoresis",
+            "PCR + sequencing",
+            "RFLP",
+            "dCAPS",
+            "ASA",
+            "KASP",
+            "HRMA",
+            "SSLP");
 
-    private static final List<String> PCR_PRIMER_TYPES =
-            List.of("PCR", "RFLP", "dCAPS", "sequencing", "KASP");
-    private static final List<String> DIGEST_TYPES =
-            List.of("RFLP", "dCAPS");
+    // Per-cluster reveal sets — each lists the assay types that should
+    // show this Group's fields. Matches the old per-type field layouts.
+    private static final List<String> FWD_REV_PRIMER_TYPES =
+            List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp");
+    private static final List<String> EXPECTED_PCR_TYPES =
+            List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma");
     private static final List<String> SEQUENCING_TYPES =
-            List.of("sequencing");
+            List.of("pcr_sequencing");
     private static final List<String> DCAPS_TYPES =
-            List.of("dCAPS");
-    private static final List<String> ASPCR_TYPES =
-            List.of("AS-PCR");
+            List.of("dcaps");
+    private static final List<String> ALLELE_SPECIFIC_TYPES =
+            List.of("asa", "kasp");
     private static final List<String> KASP_TYPES =
-            List.of("KASP");
+            List.of("kasp");
+    private static final List<String> DIGEST_TYPES =
+            List.of("rflp", "dcaps");
     private static final List<String> SSLP_TYPES =
-            List.of("SSLP");
+            List.of("sslp");
+    // Per-type attachment-bucket labels — each visibility rule shows the
+    // attachments Control with the matching heading for that workflow.
+    private static final List<String> GEL_IMAGE_TYPES =
+            List.of("pcr_gel", "rflp", "dcaps", "sslp");
+    private static final List<String> CHROMATOGRAM_TYPES =
+            List.of("pcr_sequencing");
+    private static final List<String> RESULT_IMAGE_TYPES =
+            List.of("asa", "kasp");
+    private static final List<String> MELT_CURVE_TYPES =
+            List.of("hrma");
 
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         // General
-        properties.put("assayType",                  StringSchema.of("Assay Type", 255));
-        properties.put("additionalInfo",             StringSchema.of("Additional Info", 5000));
+        properties.put("assayType",                  StringSchema.of("Assay type", 255));
         // PCR primers
-        properties.put("forwardPrimer",              StringSchema.of("Forward Primer", 2000));
-        properties.put("reversePrimer",              StringSchema.of("Reverse Primer", 2000));
-        properties.put("expectedWtPcr",              StringSchema.of("Expected WT PCR", 2000));
-        properties.put("expectedMutPcr",             StringSchema.of("Expected Mutant PCR", 2000));
+        properties.put("forwardPrimer",              StringSchema.of("Forward primer", 2000));
+        properties.put("reversePrimer",              StringSchema.of("Reverse primer", 2000));
+        properties.put("expectedWtPcr",              StringSchema.of("Expected wild-type PCR product", 2000));
+        properties.put("expectedMutPcr",             StringSchema.of("Expected mutant PCR product", 2000));
         // Sequencing
-        properties.put("sequencingPrimer",           StringSchema.of("Sequencing Primer", 2000));
+        properties.put("sequencingPrimer",           StringSchema.of("Sequencing primer", 2000));
         // dCAPS
-        properties.put("dcapsMismatchPrimer",        StringSchema.of("dCAPS Mismatch Primer", 2000));
-        // Allele-specific PCR
-        properties.put("wtSpecificPrimer",           StringSchema.of("WT-Specific Primer", 2000));
-        properties.put("mutSpecificPrimer",          StringSchema.of("Mutant-Specific Primer", 2000));
-        properties.put("commonPrimer",               StringSchema.of("Common Primer", 2000));
+        properties.put("dcapsMismatchPrimer",        StringSchema.of("Primer with introduced mismatch", 2000));
+        // Allele-specific (ASA + KASP)
+        properties.put("wtSpecificPrimer",           StringSchema.of("WT-specific primer", 2000));
+        properties.put("mutSpecificPrimer",          StringSchema.of("Mutant-specific primer", 2000));
+        properties.put("commonPrimer",               StringSchema.of("Common primer", 2000));
         // KASP
-        properties.put("kaspGenomicSequence",        StringSchema.of("KASP Genomic Sequence", 5000));
-        // RFLP
-        properties.put("restrictionEnzymeName",      StringSchema.of("Restriction Enzyme Name", 255));
-        properties.put("restrictionEnzymeCatalog",   StringSchema.of("Restriction Enzyme Catalog #", 255));
-        properties.put("enzymeCleaves",              new ArraySchema("Enzyme Cleaves At",
-                                                            new StringSchema(null, null, null, null, null),
-                                                            null, null));
-        properties.put("expectedWtDigest",           StringSchema.of("Expected WT Digest", 2000));
-        properties.put("expectedMutDigest",          StringSchema.of("Expected Mutant Digest", 2000));
+        properties.put("kaspGenomicSequence",        StringSchema.of("Genomic DNA sequence (KASP design)", 5000));
+        // RFLP / dCAPS
+        properties.put("restrictionEnzymeName",      StringSchema.of("Restriction enzyme name", 255));
+        properties.put("restrictionEnzymeCatalog",   StringSchema.of("Restriction enzyme catalog #", 255));
+        properties.put("enzymeCleavesWt",            BooleanSchema.nullable("Enzyme cleaves WT template"));
+        properties.put("enzymeCleavesMut",           BooleanSchema.nullable("Enzyme cleaves MUT template"));
+        properties.put("expectedWtDigest",           StringSchema.of("Expected WT product after digest", 2000));
+        properties.put("expectedMutDigest",          StringSchema.of("Expected MUT product after digest", 2000));
         // SSLP
-        properties.put("sslpMarkerName",             StringSchema.of("SSLP Marker Name", 255));
-        properties.put("sslpDistance",               StringSchema.of("SSLP Distance", 255));
-        properties.put("sslpGenomicLocation",        StringSchema.of("SSLP Genomic Location", 255));
-        properties.put("sslpInducedBackground",      StringSchema.of("SSLP Induced Background", 255));
-        properties.put("sslpOutcrossedBackground",   StringSchema.of("SSLP Outcrossed Background", 255));
-        properties.put("sslpInducedPcr",             StringSchema.of("SSLP Induced PCR", 2000));
-        properties.put("sslpOutcrossedPcr",          StringSchema.of("SSLP Outcrossed PCR", 2000));
+        properties.put("sslpMarkerName",             StringSchema.of("SSLP marker name", 255));
+        properties.put("sslpDistance",               StringSchema.of("Distance marker → mutation", 255));
+        properties.put("sslpGenomicLocation",        StringSchema.of("Genomic location of marker", 255));
+        properties.put("sslpInducedBackground",      StringSchema.of("Background mutation was induced on", 255));
+        properties.put("sslpOutcrossedBackground",   StringSchema.of("Recommended outcrossing background", 255));
+        properties.put("sslpInducedPcr",             StringSchema.of("PCR product on induced background", 2000));
+        properties.put("sslpOutcrossedPcr",          StringSchema.of("PCR product on outcrossing background", 2000));
+        // Catch-all
+        properties.put("additionalInfo",             StringSchema.of("Additional info", 5000));
         // Attachments — summary rows; uploads happen through a dedicated
         // multipart endpoint, not the field-path PATCH (AssayEdit's diff
         // filter must skip /attachments).
@@ -119,31 +145,61 @@ public final class ZircAssayFormSchema {
     }
 
     public static UiSchemaElement uiSchema() {
+        // All groups are headless — the inline assay editor card already
+        // carries the "Assay #N — <type>" header. Group structure is kept
+        // so per-assayType visibility rules continue to work.
+        //
+        // Field ordering inside each per-type group matches the old form,
+        // including the placement of the attachment buckets (e.g. SSLP
+        // shows the gel-image upload right after the primers, before the
+        // SSLP-specific fields).
+        Options actgnHelp = Options.of().helpText("ACTGN only.");
         return new VerticalLayout(List.of(
-                Group.of("General", List.of(
+                Group.of(null, List.of(
                         new Control("#/properties/assayType",
-                                Options.of().widget("selectWithOther").standardValues(ASSAY_TYPES),
-                                null),
-                        new Control("#/properties/additionalInfo",
-                                Options.of().multi(true), null)
-                )),
-                groupRevealedFor("PCR Primers", PCR_PRIMER_TYPES, List.of(
-                        new Control("#/properties/forwardPrimer",
-                                Options.of().placeholder("5′ → 3′ sequence"), null),
-                        new Control("#/properties/reversePrimer",
-                                Options.of().placeholder("5′ → 3′ sequence"), null),
-                        new Control("#/properties/expectedWtPcr",
                                 Options.of()
-                                        .suffix("bp")
-                                        .helpText("Expected amplicon size on a wild-type template."),
-                                null),
-                        new Control("#/properties/expectedMutPcr",
-                                Options.of()
-                                        .suffix("bp")
-                                        .helpText("Expected amplicon size on a mutant template."),
+                                        .widget("selectWithOther")
+                                        .standardValues(ASSAY_TYPES)
+                                        .standardLabels(ASSAY_TYPE_LABELS)
+                                        .noOther(true)
+                                        .refreshesParent(true),
                                 null)
                 )),
-                groupRevealedFor("Restriction Digest", DIGEST_TYPES, List.of(
+                // Forward / Reverse primer — shown for the six types that
+                // use a plain PCR-style primer pair. ASA and KASP use the
+                // WT/mut/common trio instead and are excluded here.
+                groupRevealedFor(FWD_REV_PRIMER_TYPES, List.of(
+                        new Control("#/properties/forwardPrimer", actgnHelp, null),
+                        new Control("#/properties/reversePrimer", actgnHelp, null)
+                )),
+                // Expected WT/MUT PCR product — shown for every type that
+                // produces a PCR amplicon (everything except sslp).
+                groupRevealedFor(EXPECTED_PCR_TYPES, List.of(
+                        Control.of("#/properties/expectedWtPcr"),
+                        Control.of("#/properties/expectedMutPcr")
+                )),
+                // PCR + sequencing — sits between the PCR products and the
+                // chromatogram-attachments block.
+                groupRevealedFor(SEQUENCING_TYPES, List.of(
+                        new Control("#/properties/sequencingPrimer", actgnHelp, null)
+                )),
+                // dCAPS — one extra primer field, before the digest block.
+                groupRevealedFor(DCAPS_TYPES, List.of(
+                        new Control("#/properties/dcapsMismatchPrimer", actgnHelp, null)
+                )),
+                // ASA + KASP — WT/mut/common primer trio. KASP adds the
+                // genomic-sequence textarea in its own group below.
+                groupRevealedFor(ALLELE_SPECIFIC_TYPES, List.of(
+                        new Control("#/properties/wtSpecificPrimer",  actgnHelp, null),
+                        new Control("#/properties/mutSpecificPrimer", actgnHelp, null),
+                        new Control("#/properties/commonPrimer",      actgnHelp, null)
+                )),
+                groupRevealedFor(KASP_TYPES, List.of(
+                        new Control("#/properties/kaspGenomicSequence",
+                                Options.of().multi(true), null)
+                )),
+                // RFLP + dCAPS digest block — same fields for both types.
+                groupRevealedFor(DIGEST_TYPES, List.of(
                         new Control("#/properties/restrictionEnzymeName",
                                 Options.of().placeholder("e.g. BsmBI"), null),
                         new Control("#/properties/restrictionEnzymeCatalog",
@@ -151,33 +207,26 @@ public final class ZircAssayFormSchema {
                                         .placeholder("vendor + cat #")
                                         .infoHref("https://international.neb.com/"),
                                 null),
-                        new Control("#/properties/enzymeCleaves",
-                                Options.of()
-                                        .widget("stringList")
-                                        .helpText("One sequence per row; positions where the enzyme cuts."),
-                                null),
-                        new Control("#/properties/expectedWtDigest",
-                                Options.of().suffix("bp"), null),
-                        new Control("#/properties/expectedMutDigest",
-                                Options.of().suffix("bp"), null)
+                        new Control("#/properties/enzymeCleavesWt",
+                                Options.of().widget("checkbox"), null),
+                        new Control("#/properties/enzymeCleavesMut",
+                                Options.of().widget("checkbox"), null),
+                        Control.of("#/properties/expectedWtDigest"),
+                        Control.of("#/properties/expectedMutDigest")
                 )),
-                groupRevealedFor("Sequencing", SEQUENCING_TYPES, List.of(
-                        Control.of("#/properties/sequencingPrimer")
-                )),
-                groupRevealedFor("dCAPS Mismatch", DCAPS_TYPES, List.of(
-                        Control.of("#/properties/dcapsMismatchPrimer")
-                )),
-                groupRevealedFor("Allele-Specific PCR", ASPCR_TYPES, List.of(
-                        Control.of("#/properties/wtSpecificPrimer"),
-                        Control.of("#/properties/mutSpecificPrimer"),
-                        Control.of("#/properties/commonPrimer")
-                )),
-                groupRevealedFor("KASP", KASP_TYPES, List.of(
-                        new Control("#/properties/kaspGenomicSequence",
-                                Options.of().multi(true), null)
-                )),
-                groupRevealedFor("SSLP", SSLP_TYPES, List.of(
-                        Control.of("#/properties/sslpMarkerName"),
+                // Attachment buckets — same underlying `attachments` field,
+                // labeled per-workflow via four parallel Controls with
+                // visibility rules.
+                attachmentBucketFor(GEL_IMAGE_TYPES,    "Annotated gel images"),
+                attachmentBucketFor(CHROMATOGRAM_TYPES, "Chromatograms"),
+                attachmentBucketFor(RESULT_IMAGE_TYPES, "Annotated result images"),
+                attachmentBucketFor(MELT_CURVE_TYPES,   "Annotated melt curve files"),
+                // SSLP — its primers + gel-image bucket render above (in
+                // FWD_REV_PRIMER_TYPES / GEL_IMAGE_TYPES); the type-specific
+                // metadata fields all live here.
+                groupRevealedFor(SSLP_TYPES, List.of(
+                        new Control("#/properties/sslpMarkerName",
+                                Options.of().placeholder("Search ZFIN SSLP markers…"), null),
                         Control.of("#/properties/sslpDistance"),
                         Control.of("#/properties/sslpGenomicLocation"),
                         Control.of("#/properties/sslpInducedBackground"),
@@ -185,23 +234,39 @@ public final class ZircAssayFormSchema {
                         Control.of("#/properties/sslpInducedPcr"),
                         Control.of("#/properties/sslpOutcrossedPcr")
                 )),
-                // Attachments is always shown — kind matrix is intentionally
-                // collapsed to a single "Files" affordance for now.
-                new Group("Attachments",
-                        List.of(new Control("#/properties/attachments",
-                                Options.of().widget("attachmentsList"), null)),
-                        Options.of().layout("plain"),
-                        null)
+                // Additional info — last row in every variant.
+                Group.of(null, List.of(
+                        new Control("#/properties/additionalInfo",
+                                Options.of().multi(true), null)
+                ))
         ));
     }
 
     /**
-     * Tiny helper specific to the assay-type matrix: a Group revealed
-     * when {@code assayType} is one of the listed values.
+     * Build one Attachments Control wrapped in a headless visibility-gated
+     * group, labeled with the per-workflow bucket heading. All four buckets
+     * share the same backing {@code attachments} array on the entity; the
+     * label changes are UI-only.
+     */
+    private static Group attachmentBucketFor(List<String> assayTypes, String label) {
+        return new Group(null,
+                List.of(new Control("#/properties/attachments",
+                        Options.of()
+                                .widget("attachmentsList")
+                                .managesOwnPersistence(true)
+                                .label(label),
+                        null)),
+                Options.of().layout("plain"),
+                Rule.showWhenIn("#/properties/assayType", assayTypes));
+    }
+
+    /**
+     * Tiny helper specific to the assay-type matrix: a headless Group
+     * revealed when {@code assayType} is one of the listed values.
      */
     private static Group groupRevealedFor(
-            String label, List<String> assayTypes, List<UiSchemaElement> elements) {
-        return new Group(label, elements, null,
+            List<String> assayTypes, List<UiSchemaElement> elements) {
+        return new Group(null, elements, null,
                 Rule.showWhenIn("#/properties/assayType", assayTypes));
     }
 
@@ -226,7 +291,8 @@ public final class ZircAssayFormSchema {
             field("/kaspGenomicSequence",      GenotypingAssay::getKaspGenomicSequence,      (a, v) -> a.setKaspGenomicSequence(text(v))),
             field("/restrictionEnzymeName",    GenotypingAssay::getRestrictionEnzymeName,    (a, v) -> a.setRestrictionEnzymeName(text(v))),
             field("/restrictionEnzymeCatalog", GenotypingAssay::getRestrictionEnzymeCatalog, (a, v) -> a.setRestrictionEnzymeCatalog(text(v))),
-            field("/enzymeCleaves",            GenotypingAssay::getEnzymeCleaves,            (a, v) -> a.setEnzymeCleaves(stringArray(v))),
+            field("/enzymeCleavesWt",          GenotypingAssay::getEnzymeCleavesWt,          (a, v) -> a.setEnzymeCleavesWt(boolNullable(v))),
+            field("/enzymeCleavesMut",         GenotypingAssay::getEnzymeCleavesMut,         (a, v) -> a.setEnzymeCleavesMut(boolNullable(v))),
             field("/expectedWtDigest",         GenotypingAssay::getExpectedWtDigest,         (a, v) -> a.setExpectedWtDigest(text(v))),
             field("/expectedMutDigest",        GenotypingAssay::getExpectedMutDigest,        (a, v) -> a.setExpectedMutDigest(text(v))),
             field("/sslpMarkerName",           GenotypingAssay::getSslpMarkerName,           (a, v) -> a.setSslpMarkerName(text(v))),
@@ -283,6 +349,11 @@ public final class ZircAssayFormSchema {
         if (v == null || v.isNull()) {return null;}
         String s = v.asText();
         return s.isBlank() ? null : s.trim();
+    }
+
+    private static Boolean boolNullable(JsonNode v) {
+        if (v == null || v.isNull()) {return null;}
+        return v.asBoolean();
     }
 
     private static String[] stringArray(JsonNode v) {

@@ -161,7 +161,13 @@
                         <th><span class="status-slot"><z:zirc-status-badge status="${fieldStatus['previousNames']}"/></span>Previous Names</th>
                         <td>
                             <c:choose>
-                                <c:when test="${not empty submission.previousNames}"><c:out value="${submission.previousNames}"/></c:when>
+                                <c:when test="${not empty submission.previousNames}">
+                                    <ul class="list-unstyled mb-0">
+                                        <c:forEach var="prev" items="${submission.previousNames}">
+                                            <li><c:out value="${prev}"/></li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:when>
                                 <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                             </c:choose>
                             <z:zirc-field-history fieldName="previousNames" label="Previous Names" updates="${fieldUpdates['previousNames']}"/><z:zirc-field-comments recId="${submission.zdbID}" scope="field" fieldName="previousNames" label="Previous Names"/>

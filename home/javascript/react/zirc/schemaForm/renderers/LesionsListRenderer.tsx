@@ -19,6 +19,12 @@ import { aggregateRenderers } from '../aggregateRenderers';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
+/** "point_mutation" -> "Point mutation"; for collapsed-card summaries. */
+function humanize(snake: string): string {
+    const spaced = snake.replace(/_/g, ' ');
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
 /**
  * Read-only card for one lesion. Fetches the full {@link LesionDTO} so
  * the nested JsonForms can render every field the schema declares (the
@@ -184,27 +190,34 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
             <ul className='list-unstyled'>
                 {lesions.map((l) => {
                     const isOpen = expanded.has(l.id);
-                    const label = l.lesionType || `Lesion #${l.sortOrder}`;
+                    const typeDisplay = l.lesionType ? humanize(l.lesionType) : null;
                     return (
                         <li key={l.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
-                                <button
-                                    type='button'
-                                    className='btn btn-link p-0 text-left'
-                                    onClick={() => toggle(l.id)}
-                                    aria-expanded={isOpen}
-                                >
-                                    <span className='mr-2'>{isOpen ? '▾' : '▸'}</span>
-                                    <strong>{label}</strong>
-                                </button>
-                                <button
-                                    type='button'
-                                    className='btn btn-sm btn-outline-danger'
-                                    onClick={() => handleDelete(l.id)}
-                                    disabled={deleteLesion.isPending}
-                                >
-                                    Delete
-                                </button>
+                                <span>
+                                    <strong>Lesion {l.sortOrder ?? ''}</strong>
+                                    {typeDisplay && (
+                                        <span className='ml-2 text-muted'>{typeDisplay}</span>
+                                    )}
+                                </span>
+                                <div>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-secondary mr-1'
+                                        onClick={() => toggle(l.id)}
+                                        aria-expanded={isOpen}
+                                    >
+                                        {isOpen ? 'Done' : 'Edit'}
+                                    </button>
+                                    <button
+                                        type='button'
+                                        className='btn btn-sm btn-outline-danger'
+                                        onClick={() => handleDelete(l.id)}
+                                        disabled={deleteLesion.isPending}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                             {isOpen && (
                                 <LesionEdit lesionId={l.id} mutationId={mutationId} />

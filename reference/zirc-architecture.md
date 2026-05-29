@@ -184,11 +184,22 @@ vocabulary:
 | `infoHref`      | URL string               | Renders as an "i" link next to the label, opens in a new tab.           |
 | `suffix`        | string                   | Bootstrap-style input-group append text (e.g., `bp`).                   |
 | `label`         | string                   | Override the default label-from-property-title.                         |
+| `searchEndpoint`| `"markers"`/`"features"`/`"persons"` | For the `autocomplete` widget — which `/api/zirc/autocomplete/{...}` endpoint to query. |
+| `typeGroup`     | string                   | For `autocomplete` against `markers` — narrows to a `Marker.TypeGroup` (e.g. `GENEDOM` for the gene picker). |
+| `managesOwnPersistence` | boolean          | The widget owns its writes (uploads/deletes/add-row via dedicated POST/DELETE), so the autosave loop skips this Control's path and mirror-syncs it from refetches. Set on the self-managed list widgets. |
+| `refreshesParent` | boolean                | Editing this field changes the parent's collapsed-card label, so a successful PATCH invalidates the parent query. Set on the field that feeds the card (discriminator, gene marker id, phenotype description). |
+| `addLabel`      | string                   | For the `stringList` widget — label for the "+ Add …" button (e.g. `"+ Add publication"`). Defaults to `"+ Add"`. |
 
 **Convention**: render-metadata that's curator-facing belongs in
 `options`, not in the JSON Schema. The schema is for constraints
 (`maxLength`, `enum`, `type`, `maxItems`); the uiSchema's `options`
 are for how the form looks. Keep them on the right side of the line.
+
+The last two — `managesOwnPersistence` and `refreshesParent` — are
+*behavior* flags the `ZircEntityEditor` / `useAutosavedSchemaForm` hook
+reads from the fetched uiSchema (see §11). They're declared per-Control
+so the React side derives its autosave behavior from the schema rather
+than from hardcoded path lists.
 
 ---
 
@@ -356,17 +367,25 @@ Children are edited **inline**, not by navigating to a separate page:
 
 - The submission edit page has a "Mutations" section. Each mutation is a card with an Edit button that opens a separate `/zirc/mutation/{id}/edit` page (the one exception — the mutation deserved its own route given the volume of fields).
 - The submission edit page also has a "Linked Features" section — pairwise links between mutations, edited inline via a row-level renderer that PATCHes the composite-PK URL.
-- The mutation edit page has four child sections: **Genotyping Assays**, **Genes**, **Lesions**, **Phenotypes**. Each row is a card that **expands inline** to mount a per-aggregate schema-driven editor (`AssayEdit`, `GeneEdit`, `LesionEdit`, `PhenotypeEdit`).
+- The mutation edit page has four child sections: **Genotyping Assays**, **Genes**, **Lesions**, **Phenotypes**. Each row is a card that **expands inline** to mount `ZircEntityEditor` — one schema-driven editor for every aggregate. The per-aggregate page files (`AssayEdit`, `GeneEdit`, `LesionEdit`, `PhenotypeEdit`) are ~25-line wrappers that call the aggregate's query hook and render `<ZircEntityEditor kind=… entityId=… parentId=… entityQuery=…>`.
 - Each expanded card's editor PATCHes its own aggregate's endpoint with flat paths. No array-index path resolver is needed because each card runs its own form scope.
 
-The parent form's autosave diff filters out child-list paths
-(`/mutations`, `/linkedFeatures`, `/assays`, `/genes`, `/lesions`,
-`/phenotypes`, `/attachments`) via `EXTERNALLY_MANAGED_PATHS` so
-Add/Delete (which use dedicated POST/DELETE endpoints) don't get
-spuriously PATCHed. React Query refetches are then mirrored back
-into local form state via per-list `JSON.stringify(...)`-keyed
-effects, so the list renderers see the post-Add/Delete updates
-without triggering autosave.
+`ZircEntityEditor` (and `MutationEdit`, via the shared
+`useAutosavedSchemaForm` hook) derive their autosave behavior from the
+fetched uiSchema's per-Control flags, not from hardcoded path lists:
+
+- A Control marked **`managesOwnPersistence`** has its path excluded
+  from the autosave diff (Add/Delete go through dedicated POST/DELETE
+  endpoints) and its top-level key mirror-synced from the entity after
+  each refetch. The list widgets (`mutationsList`, `assaysList`,
+  `attachmentsList`, …) carry this flag, replacing what used to be a
+  hand-maintained `EXTERNALLY_MANAGED_PATHS` set in each page.
+- A Control marked **`refreshesParent`**, when changed, invalidates the
+  parent query so the parent's collapsed card relabels.
+
+`SchemaForm` (the submission page) is the one editor not yet ported to
+the hook — it has a create-on-first-save flow and still carries its own
+autosave loop.
 
 ---
 
@@ -436,23 +455,29 @@ source/org/zfin/zirc/
     └── ZircApiExceptionHandler.java  — RFC 7807 advice
 
 home/javascript/react/zirc/
-├── api/                              client + (generated) types + React Query hooks + formHelpers
+├── api/                              client + (generated) types + React Query hooks + formHelpers (FormFor, seedFromDto, diffLeaves)
 ├── pages/                            top-level page components
-│   ├── MutationEdit.tsx              — mutation page (mounts 4 inline-expand child sections)
-│   ├── AssayEdit.tsx                 — inline per-assay editor
-│   ├── GeneEdit.tsx                  — inline per-gene editor
-│   ├── LesionEdit.tsx                — inline per-lesion editor
-│   └── PhenotypeEdit.tsx             — inline per-phenotype editor
+│   ├── LineSubmissionEdit.tsx        — submission page (mounts SchemaForm)
+│   ├── MutationEdit.tsx              — mutation page (uses useAutosavedSchemaForm; mounts 4 inline-expand child sections)
+│   ├── AssayEdit.tsx                 — thin wrapper: <ZircEntityEditor kind="assay" …>
+│   ├── GeneEdit.tsx                  — thin wrapper: <ZircEntityEditor kind="gene" …>
+│   ├── LesionEdit.tsx                — thin wrapper: <ZircEntityEditor kind="lesion" …>
+│   └── PhenotypeEdit.tsx             — thin wrapper: <ZircEntityEditor kind="phenotype" …>
 ├── components/                       small reusable bits
 │   └── SaveStatusBadge.tsx           floating bottom-right toast
 └── schemaForm/                       JSON Forms wrapper + renderers
-    ├── SchemaForm.tsx                submission form mount
+    ├── SchemaForm.tsx                submission form mount (create-on-first-save; own autosave, not ported to the hook)
+    ├── useAutosavedSchemaForm.ts     autosave state machine: schema fetch + seed + mirror-sync + debounced PATCH; derives skip/mirror/refresh from the uiSchema flags
+    ├── ZircEntityEditor.tsx          one editor for any inline aggregate; registers the union of renderers
+    ├── aggregateRegistry.ts          per-entityKind endpoints / cache keys / parent topology (the one non-schema fact)
     └── renderers/                    custom Control + Layout renderers
-        ├── SectionRenderer.tsx       Group → <section class="section">
-        ├── RowControlRenderer.tsx    Control → table row in default layout
-        ├── AssaysListRenderer.tsx    — server-managed inline-expand list (assays)
+        ├── SectionRenderer.tsx       Group → <section class="section">; headless (label=null) groups skip the <h2> but still apply visibility rules
+        ├── RowControlRenderer.tsx    Control → table row; string OR number/integer inputs; <td> capped at max-width 40em
+        ├── TextareaRowRenderer.tsx   Control with options.multi → table row with a 40em-capped textarea
+        ├── PublicationsListRenderer.tsx — the `stringList` widget: one <input> per entry with a Remove button + "+ Add …" footer. Powers previousNames, publications, enzymeCleaves, segregation, phenotype type. Add button label = options.addLabel.
+        ├── AssaysListRenderer.tsx    — server-managed inline-expand list (assays); Edit/Done toggle per card
         ├── GenesListRenderer.tsx     — server-managed inline-expand list (genes)
-        ├── LesionsListRenderer.tsx   — server-managed inline-expand list (lesions)
+        ├── LesionsListRenderer.tsx   — server-managed inline-expand list (lesions); humanizes the type enum for the card summary
         ├── PhenotypesListRenderer.tsx — server-managed inline-expand list (phenotypes)
         ├── LinkedFeaturesListRenderer.tsx — submission-scope pairwise links
         ├── AutocompleteRenderer.tsx  — type-ahead ZDB-ID resolver
@@ -554,9 +579,25 @@ You almost always touch six places. In this order:
 7. **TS type**: regenerate `home/javascript/react/zirc/api/types.ts` via `gradle generateZircTypes`. The file is auto-generated from the DTO records; never hand-edit. `GenerateTypeScriptDriftTest` fails CI if you forget. Per-page `FormDataShape` derives from the generated DTO type via `FormFor<T>` (see `home/javascript/react/zirc/api/formHelpers.ts`), so no per-page edit is needed unless you add a new page.
 8. **Snapshot**: rerun `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`, then review the diff under `test/resources/zirc/snapshot/` before committing.
 
-That's it. If the field is editable, no React change is needed —
-JSON Forms picks it up from the schema. If it needs a custom renderer
-(e.g., a new widget type), register it in the page's `renderers` array.
+That's it. If the field is editable, no React change is needed — JSON
+Forms picks it up from the schema, and `RowControlRenderer` already
+handles both string and number/integer scalar Controls. (String fields
+emit a nullable type `["string","null"]` so an empty/cleared field
+validates cleanly; numbers likewise.) If the field needs a *new* widget
+type, register the renderer where the form mounts: `ZircEntityEditor`'s
+union for the inline aggregates, or the `renderers` array in
+`MutationEdit` / `SchemaForm` for those pages.
+
+**Multi-valued strings** are stored as a Postgres `text[]` column with
+`@JdbcTypeCode(SqlTypes.ARRAY)` on a `String[]` entity field, an
+`ArraySchema` of strings in the JSON Schema, and `widget: "stringList"`
+in the uiSchema. Per-Control `placeholder` and `addLabel` options
+customize the input placeholder and the "+ Add …" button label.
+`previousNames` (on `LineSubmission`) is the canonical example; see
+`ZircFormSchema.java` for the schema + FIELDS dispatch shape (uses the
+private `stringArray` helper that trims and drops blank entries
+server-side, so transient blank inputs from the renderer don't leak
+into storage).
 
 **Adding a new child aggregate** is the same checklist times two: do
 it for the new aggregate (one row in §2), and add a summary-list

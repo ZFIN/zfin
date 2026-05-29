@@ -38,7 +38,7 @@
           "reasonsOther" : {
             "maxLength" : 2000,
             "title" : "Other reason",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           }
         },
         "required" : [ "reasons" ],
@@ -50,17 +50,17 @@
           "additionalInfo" : {
             "maxLength" : 5000,
             "title" : "Additional Info",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "husbandryInfo" : {
             "maxLength" : 5000,
             "title" : "Husbandry Info",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "unreportedFeaturesDetails" : {
             "maxLength" : 5000,
             "title" : "Unreported Features Details",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           }
         },
         "title" : "Additional Info",
@@ -75,12 +75,12 @@
           "maternalBackground" : {
             "maxLength" : 255,
             "title" : "Maternal",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "paternalBackground" : {
             "maxLength" : 255,
             "title" : "Paternal",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "singleAllelic" : {
             "title" : "Single-allelic submission",
@@ -90,11 +90,6 @@
         "required" : [ "maternalBackground", "paternalBackground", "backgroundChangeable" ],
         "title" : "Background",
         "type" : "object"
-      },
-      "createdAt" : {
-        "readOnly" : true,
-        "title" : "Date Started",
-        "type" : "string"
       },
       "linkedFeatures" : {
         "items" : {
@@ -154,22 +149,14 @@
       "name" : {
         "maxLength" : 255,
         "title" : "Line Name",
-        "type" : "string"
+        "type" : [ "string", "null" ]
       },
       "previousNames" : {
-        "maxLength" : 2000,
+        "items" : {
+          "type" : "string"
+        },
         "title" : "Previous Names",
-        "type" : "string"
-      },
-      "submitterNames" : {
-        "readOnly" : true,
-        "title" : "Submitter",
-        "type" : "string"
-      },
-      "updatedAt" : {
-        "readOnly" : true,
-        "title" : "Last Updated",
-        "type" : "string"
+        "type" : "array"
       }
     },
     "required" : [ "name", "mutations" ],
@@ -180,34 +167,18 @@
       "elements" : [ {
         "options" : {
           "helpText" : "Line name as it should appear in publications.",
-          "placeholder" : "e.g. nasl1<sup>zf123</sup>"
+          "placeholder" : "e.g. nasl1zf123"
         },
         "scope" : "#/properties/name",
         "type" : "Control"
       }, {
         "options" : {
+          "addLabel" : "+ Add previous name",
           "helpText" : "Useful when this line was previously known by a different designation.",
-          "placeholder" : "Comma-separated former names"
+          "placeholder" : "Previous name",
+          "widget" : "stringList"
         },
         "scope" : "#/properties/previousNames",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/submitterNames",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/createdAt",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "comments" : false
-        },
-        "scope" : "#/properties/updatedAt",
         "type" : "Control"
       }, {
         "options" : {
@@ -222,6 +193,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "mutationsList"
         },
         "scope" : "#/properties/mutations",
@@ -235,6 +207,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "managesOwnPersistence" : true,
           "widget" : "linkedFeaturesList"
         },
         "scope" : "#/properties/linkedFeatures",

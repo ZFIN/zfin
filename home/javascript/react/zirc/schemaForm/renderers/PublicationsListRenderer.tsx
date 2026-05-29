@@ -11,29 +11,52 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 import { viewConfigFrom, leafOf } from '../useViewConfig';
 
 /**
- * Simple list-of-strings widget rendered as one textarea, one entry per line.
- * Blank lines are filtered on change so the server receives a clean array.
+ * List-of-strings widget rendered as one text input per entry with a
+ * Remove button beside each and an "+ Add …" button at the bottom.
+ * Edits flow through {@code handleChange(path, nextArray)}.
  *
- * Used for mutation publications (free-text citations / PMIDs / DOIs);
- * appropriate for any uiSchema Control with options.widget = 'stringList'.
+ * Recognized {@code options}:
+ * <ul>
+ *   <li>{@code placeholder} — per-input placeholder text.</li>
+ *   <li>{@code addLabel} — label for the Add button (e.g.
+ *     "+ Add publication"). Defaults to "+ Add" if unset.</li>
+ * </ul>
+ *
+ * Used for previousNames (LineSubmission), publications (Mutation),
+ * enzymeCleaves (Assay), and segregation / phenotype type (Phenotype).
+ * Rendered by any uiSchema Control with {@code options.widget = "stringList"}.
  */
+type StringListOptions = {
+    placeholder?: string;
+    addLabel?: string;
+};
+
 function PublicationsListRenderer({
     data,
     handleChange,
     path,
     label,
     visible,
+    uischema,
     config,
 }: ControlProps) {
     if (visible === false) {return null;}
     const fieldName = leafOf(path);
-    const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
-    const value = ((data as string[] | undefined) ?? []).join('\n');
+    // Defensive: tolerate a non-array (e.g. a stale single-string value
+    // pre-array migration) so the renderer never crashes mid-render.
+    const items: string[] = Array.isArray(data)
+        ? (data as string[])
+        : typeof data === 'string' && data.length > 0
+            ? [data]
+            : [];
+
+    const opts = ((uischema as { options?: StringListOptions } | undefined)?.options) ?? {};
+    const placeholder = opts.placeholder ?? '';
+    const addLabel = opts.addLabel ?? '+ Add';
 
     const view = viewConfigFrom(config);
     if (view.readonly) {
-        const items = (data as string[] | undefined) ?? [];
         return (
             <tr>
                 <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>{label}</th>
@@ -50,26 +73,60 @@ function PublicationsListRenderer({
         );
     }
 
+    // Don't filter blanks anywhere — the user needs a fresh empty input
+    // when they click "+ Add", and a blank mid-edit shouldn't disappear.
+    // If a curator leaves a blank entry on save, the server stores it as
+    // an empty-string element; trim/filter is a server-side responsibility.
+    const updateAt = (i: number, value: string) => {
+        const next = items.slice();
+        next[i] = value;
+        handleChange(path, next);
+    };
+
+    const removeAt = (i: number) => {
+        const next = items.slice();
+        next.splice(i, 1);
+        handleChange(path, next);
+    };
+
+    const addOne = () => {
+        handleChange(path, [...items, '']);
+    };
+
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
-                <label htmlFor={inputId} className='mb-0'>{label}</label>
+                {label}
             </th>
             <td>
-                <textarea
-                    id={inputId}
-                    className='form-control'
-                    rows={4}
-                    placeholder='One citation, PMID, or DOI per line'
-                    value={value}
-                    onChange={(e) => {
-                        const next = e.target.value
-                            .split('\n')
-                            .map((s) => s.trim())
-                            .filter((s) => s.length > 0);
-                        handleChange(path, next);
-                    }}
-                />
+                <div style={{ maxWidth: '40em' }}>
+                    {items.map((item, i) => (
+                        <div key={i} className='d-flex mb-2' style={{ gap: '8px' }}>
+                            <input
+                                type='text'
+                                className='form-control'
+                                placeholder={placeholder}
+                                value={item}
+                                onChange={(e) => updateAt(i, e.target.value)}
+                                autoComplete='off'
+                            />
+                            <button
+                                type='button'
+                                className='btn btn-sm btn-outline-danger'
+                                onClick={() => removeAt(i)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type='button'
+                        className='btn btn-sm btn-outline-secondary'
+                        onClick={addOne}
+                    >
+                        {addLabel}
+                    </button>
+                </div>
             </td>
         </tr>
     );
