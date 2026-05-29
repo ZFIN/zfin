@@ -922,125 +922,13 @@ public class ZircDashboardController {
     }
 
     /**
-     * JSON autocomplete for the "add submitter" modal on the line-submission detail page.
-     * Returns a list of {label, value, fullName} entries suitable for jQuery UI autocomplete:
-     * "label" is shown in the dropdown ("Pich, Christian (ZDB-PERS-060413-1)"), "value" is
-     * the person's full name (placed back into the input), and "fullName"/"zdbID" are picked
-     * up by the select-handler to POST the add request.
+     * Person autocomplete for the "add submitter" modal on the
+     * line-submission detail page. Returns a list of
+     * {label, value, fullName, zdbID} entries suitable for jQuery UI
+     * autocomplete. The React app uses /api/zirc/autocomplete/persons
+     * instead; this endpoint stays only because the legacy detail JSP
+     * still mounts the jQuery UI modal.
      */
-    /**
-     * Marker autocomplete for the mutation editor's "allele designation"
-     * field (when "exists in ZFIN" is checked) and the gene rows' mutated
-     * gene picker. Same shape as {@link #searchPersons}: returns a small
-     * list of {label, value, zdbID} entries suitable for any typeahead
-     * client.
-     *
-     * <p>Matches by abbreviation prefix or substring. Caps at 20 results.
-     */
-    @GetMapping("/markers/search")
-    @ResponseBody
-    public List<Map<String, String>> searchMarkers(
-            @RequestParam(value = "term", required = false) String term,
-            @RequestParam(value = "typeGroup", required = false) String typeGroup) {
-        if (term == null || term.isBlank()) {
-            return Collections.emptyList();
-        }
-        // typeGroup narrows results to a Marker.TypeGroup (e.g. GENEDOM,
-        // SSLP). Compared against MarkerType.typeGroupStrings — the
-        // typed enum-Set property is @Transient and unqueryable, but
-        // the underlying join table behind typeGroupStrings is fully
-        // mapped. Validate via the enum to reject random input and let
-        // bad group names quietly return [] (the dropdown stays quiet
-        // rather than 4xxing mid-type).
-        String groupString = null;
-        if (typeGroup != null && !typeGroup.isBlank()) {
-            try {
-                groupString = org.zfin.marker.Marker.TypeGroup.valueOf(typeGroup).name();
-            } catch (IllegalArgumentException e) {
-                return Collections.emptyList();
-            }
-        }
-        String hql = groupString == null
-                ? "from Marker where lower(abbreviation) like :q order by abbreviation"
-                : "select m from Marker m join m.markerType.typeGroupStrings tg"
-                        + " where lower(m.abbreviation) like :q and tg = :group"
-                        + " order by m.abbreviation";
-        var query = HibernateUtil.currentSession()
-                .createQuery(hql, org.zfin.marker.Marker.class)
-                .setParameter("q", "%" + term.toLowerCase() + "%");
-        if (groupString != null) {
-            query.setParameter("group", groupString);
-        }
-        List<org.zfin.marker.Marker> markers = query.setMaxResults(20).list();
-        List<Map<String, String>> out = new ArrayList<>();
-        for (org.zfin.marker.Marker m : markers) {
-            Map<String, String> entry = new HashMap<>();
-            entry.put("label", m.getAbbreviation() + " (" + m.getZdbID() + ")");
-            entry.put("value", m.getAbbreviation());
-            entry.put("zdbID", m.getZdbID());
-            out.add(entry);
-        }
-        return out;
-    }
-
-    /**
-     * Feature (allele) autocomplete. Backs the mutation editor's
-     * "Allele Designation" field when "exists in ZFIN" is checked.
-     * Searches the Feature table by abbreviation prefix or substring.
-     * Same wire shape as {@link #searchMarkers}.
-     */
-    @GetMapping("/features/search")
-    @ResponseBody
-    public List<Map<String, String>> searchFeatures(@RequestParam(value = "term", required = false) String term) {
-        if (term == null || term.isBlank()) {
-            return Collections.emptyList();
-        }
-        List<org.zfin.feature.Feature> features = HibernateUtil.currentSession()
-                .createQuery(
-                        "from Feature where lower(abbreviation) like :q order by abbreviationOrder",
-                        org.zfin.feature.Feature.class)
-                .setParameter("q", "%" + term.toLowerCase() + "%")
-                .setMaxResults(20)
-                .list();
-        List<Map<String, String>> out = new ArrayList<>();
-        for (org.zfin.feature.Feature f : features) {
-            Map<String, String> entry = new HashMap<>();
-            entry.put("label", f.getAbbreviation() + " (" + f.getZdbID() + ")");
-            entry.put("value", f.getAbbreviation());
-            entry.put("zdbID", f.getZdbID());
-            out.add(entry);
-        }
-        return out;
-    }
-
-    /**
-     * Chromosome-name autocomplete for the per-gene "linkage group" field.
-     * Returns names from {@code public.chromosome} ordered by chrom_order.
-     * The Linkage Group column is varchar(10) and accepts free-text values
-     * like "NT" too — the autocomplete is a hint, not a constraint.
-     */
-    @GetMapping("/chromosomes/search")
-    @ResponseBody
-    public List<Map<String, String>> searchChromosomes(@RequestParam(value = "term", required = false) String term) {
-        String t = term == null ? "" : term.trim().toLowerCase();
-        String sql = t.isEmpty()
-                ? "select chrom_name from chromosome order by chrom_order"
-                : "select chrom_name from chromosome where lower(chrom_name) like :q order by chrom_order";
-        var query = HibernateUtil.currentSession().createNativeQuery(sql, String.class);
-        if (!t.isEmpty()) {
-            query.setParameter("q", t + "%");
-        }
-        List<String> names = query.setMaxResults(30).list();
-        List<Map<String, String>> out = new ArrayList<>();
-        for (String name : names) {
-            Map<String, String> entry = new HashMap<>();
-            entry.put("label", name);
-            entry.put("value", name);
-            out.add(entry);
-        }
-        return out;
-    }
-
     @GetMapping("/persons/search")
     @ResponseBody
     public List<Map<String, String>> searchPersons(@RequestParam(value = "term", required = false) String term) {
