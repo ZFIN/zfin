@@ -52,9 +52,8 @@ public class Phenotype implements Serializable {
     @Column(name = "p_hpf_end")
     private Integer hpfEnd;
 
-    // Server-managed cache: LineSubmissionService.savePhenotypes derives
-    // this from hpfStart via the STAGE table on every save. Clients render
-    // it read-only.
+    // Server-managed cache: derived from hpfStart via the STAGE lookup
+    // on each save. Clients render it read-only.
     @Column(name = "p_stage")
     private String stage;
 
