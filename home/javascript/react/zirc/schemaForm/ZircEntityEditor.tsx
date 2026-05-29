@@ -10,6 +10,7 @@ import { rowControlRendererEntry } from './renderers/RowControlRenderer';
 import { verticalLayoutRendererEntry } from './renderers/VerticalLayoutRenderer';
 import { textareaRowRendererEntry } from './renderers/TextareaRowRenderer';
 import { yesNoRadioRendererEntry } from './renderers/YesNoRadioRenderer';
+import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
@@ -42,6 +43,7 @@ const renderers = [
     rowControlRendererEntry,
     textareaRowRendererEntry,
     yesNoRadioRendererEntry,
+    checkboxRendererEntry,
     selectWithOtherRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,

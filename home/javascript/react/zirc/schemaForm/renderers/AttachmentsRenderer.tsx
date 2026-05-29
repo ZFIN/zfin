@@ -21,24 +21,33 @@ import { viewConfigFrom } from '../useViewConfig';
  *
  * assayId arrives via JsonForms' config prop.
  */
-function AttachmentsRenderer({ data, schema, config }: ControlProps) {
+function AttachmentsRenderer({ data, schema, config, uischema, visible }: ControlProps) {
+    if (visible === false) {return null;}
     const files = (data as AssayFileDTO[] | undefined) ?? [];
     const assayId = (config as { assayId?: number } | undefined)?.assayId;
     const upload = useUploadAttachment();
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const view = viewConfigFrom(config);
+    // Per-assay-type bucket label (e.g. "Annotated gel images", "Chromatograms")
+    // — set via uischema options.label so the same Attachments widget can
+    // appear under different headings depending on the assay type.
+    const bucketLabel = ((uischema as { options?: { label?: string } } | undefined)?.options)?.label;
 
     if (view.readonly) {
-        if (files.length === 0) {
-            return <p className='text-muted small mb-0'>No attachments.</p>;
-        }
         return (
-            <ul className='list-unstyled mb-0'>
-                {files.map((f) => (
-                    <li key={f.id}>{f.originalFilename}</li>
-                ))}
-            </ul>
+            <div className='mb-3'>
+                {bucketLabel && <h6>{bucketLabel}</h6>}
+                {files.length === 0 ? (
+                    <p className='text-muted small mb-0'>No attachments.</p>
+                ) : (
+                    <ul className='list-unstyled mb-0'>
+                        {files.map((f) => (
+                            <li key={f.id}>{f.originalFilename}</li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         );
     }
 
@@ -84,7 +93,8 @@ function AttachmentsRenderer({ data, schema, config }: ControlProps) {
     };
 
     return (
-        <div>
+        <div className='mb-3'>
+            {bucketLabel && <h6>{bucketLabel}</h6>}
             {files.length === 0 ? (
                 <p className='text-muted'>No attachments yet.</p>
             ) : (

@@ -27,7 +27,8 @@ public class GenotypingAssayDTO {
     private String expectedMutPcr;
     private String restrictionEnzymeName;
     private String restrictionEnzymeCatalog;
-    private String[] enzymeCleaves;
+    private Boolean enzymeCleavesWt;
+    private Boolean enzymeCleavesMut;
     private String expectedWtDigest;
     private String expectedMutDigest;
     private String additionalInfo;
@@ -57,7 +58,8 @@ public class GenotypingAssayDTO {
         dto.setExpectedMutPcr(g.getExpectedMutPcr());
         dto.setRestrictionEnzymeName(g.getRestrictionEnzymeName());
         dto.setRestrictionEnzymeCatalog(g.getRestrictionEnzymeCatalog());
-        dto.setEnzymeCleaves(g.getEnzymeCleaves());
+        dto.setEnzymeCleavesWt(g.getEnzymeCleavesWt());
+        dto.setEnzymeCleavesMut(g.getEnzymeCleavesMut());
         dto.setExpectedWtDigest(g.getExpectedWtDigest());
         dto.setExpectedMutDigest(g.getExpectedMutDigest());
         dto.setAdditionalInfo(g.getAdditionalInfo());

@@ -16,8 +16,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -70,9 +68,11 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_restriction_enzyme_catalog")
     private String restrictionEnzymeCatalog;
 
-    @Column(name = "ga_enzyme_cleaves", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] enzymeCleaves = new String[0];
+    @Column(name = "ga_enzyme_cleaves_wt")
+    private Boolean enzymeCleavesWt;
+
+    @Column(name = "ga_enzyme_cleaves_mut")
+    private Boolean enzymeCleavesMut;
 
     @Column(name = "ga_expected_wt_digest")
     private String expectedWtDigest;

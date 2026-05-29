@@ -19,10 +19,24 @@ import { aggregateRenderers } from '../aggregateRenderers';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
-/** "restriction_digest" -> "Restriction digest"; for collapsed-card summaries. */
-function humanize(snake: string): string {
-    const spaced = snake.replace(/_/g, ' ');
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+/**
+ * Map an assay-type enum token to the display label shown on the card.
+ * Mirror of {@code ASSAY_TYPE_LABELS} in {@code ZircAssayFormSchema.java}
+ * — kept in sync by hand because there's no value→label channel on the
+ * mutation summary. Unknown tokens fall back to the raw value.
+ */
+const ASSAY_TYPE_DISPLAY: Record<string, string> = {
+    pcr_gel: 'PCR + gel electrophoresis',
+    pcr_sequencing: 'PCR + sequencing',
+    rflp: 'RFLP',
+    dcaps: 'dCAPS',
+    asa: 'ASA',
+    kasp: 'KASP',
+    hrma: 'HRMA',
+    sslp: 'SSLP',
+};
+function humanize(value: string): string {
+    return ASSAY_TYPE_DISPLAY[value] ?? value;
 }
 
 function AssayDetailCard({

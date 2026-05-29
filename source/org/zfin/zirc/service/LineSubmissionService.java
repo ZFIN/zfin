@@ -403,7 +403,8 @@ public class LineSubmissionService {
                 g.setExpectedMutPcr(blankToNull(dto.getExpectedMutPcr()));
                 g.setRestrictionEnzymeName(blankToNull(dto.getRestrictionEnzymeName()));
                 g.setRestrictionEnzymeCatalog(blankToNull(dto.getRestrictionEnzymeCatalog()));
-                g.setEnzymeCleaves(dto.getEnzymeCleaves() != null ? dto.getEnzymeCleaves() : new String[0]);
+                g.setEnzymeCleavesWt(dto.getEnzymeCleavesWt());
+                g.setEnzymeCleavesMut(dto.getEnzymeCleavesMut());
                 g.setExpectedWtDigest(blankToNull(dto.getExpectedWtDigest()));
                 g.setExpectedMutDigest(blankToNull(dto.getExpectedMutDigest()));
                 g.setAdditionalInfo(blankToNull(dto.getAdditionalInfo()));
@@ -1021,7 +1022,8 @@ public class LineSubmissionService {
         m.put("expectedMutPcr",           g.getExpectedMutPcr());
         m.put("restrictionEnzymeName",    g.getRestrictionEnzymeName());
         m.put("restrictionEnzymeCatalog", g.getRestrictionEnzymeCatalog());
-        m.put("enzymeCleaves",            sArr(g.getEnzymeCleaves()));
+        m.put("enzymeCleavesWt",          g.getEnzymeCleavesWt() == null ? null : g.getEnzymeCleavesWt().toString());
+        m.put("enzymeCleavesMut",         g.getEnzymeCleavesMut() == null ? null : g.getEnzymeCleavesMut().toString());
         m.put("expectedWtDigest",         g.getExpectedWtDigest());
         m.put("expectedMutDigest",        g.getExpectedMutDigest());
         m.put("additionalInfo",           g.getAdditionalInfo());
