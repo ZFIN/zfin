@@ -37,7 +37,7 @@ public class MutationStatusComputerTest {
         assertFalse("cellGenomicFeature must be absent when zfinRecordEstablished != true",
                 r.byField().containsKey("cellGenomicFeature"));
 
-        assertEquals(FieldStatus.MISSING, r.bySection().get("Overview"));
+        assertEquals(FieldStatus.MISSING, r.bySection().get("General"));
         assertEquals(FieldStatus.MISSING, r.bySection().get("Genes"));
         assertEquals(FieldStatus.MISSING, r.overall());
     }
@@ -57,7 +57,7 @@ public class MutationStatusComputerTest {
         assertEquals(FieldStatus.COMPLETE, r.byField().get("mutagenesisStage"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("mutagenesisProtocol"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("mutationType"));
-        assertEquals(FieldStatus.COMPLETE, r.bySection().get("Overview"));
+        assertEquals(FieldStatus.COMPLETE, r.bySection().get("General"));
         assertEquals(FieldStatus.COMPLETE, r.bySection().get("Genes"));
         assertEquals(FieldStatus.COMPLETE, r.overall());
     }
@@ -72,7 +72,7 @@ public class MutationStatusComputerTest {
         m.setMutationType("indel");
         // no genes set
         FieldStatusResult r = MutationStatusComputer.compute(m);
-        assertEquals(FieldStatus.COMPLETE, r.bySection().get("Overview"));
+        assertEquals(FieldStatus.COMPLETE, r.bySection().get("General"));
         assertEquals(FieldStatus.MISSING, r.bySection().get("Genes"));
         assertEquals(FieldStatus.MISSING, r.overall());
     }
@@ -93,10 +93,19 @@ public class MutationStatusComputerTest {
         assertEquals(FieldStatus.MISSING, r.overall());
     }
 
-    /** Build a Set containing one valid Gene (mutatedGene set). */
+    /**
+     * Build a Set containing one valid Gene. The Marker needs an actual
+     * ZDB-ID since GeneStatusComputer now reads {@code mutatedGeneZdbID}
+     * (matching the schema's property name) — a default Marker would
+     * return null and roll up as MISSING.
+     */
     private static Set<Gene> genesWithOne() {
         Gene g = new Gene();
-        g.setMutatedGene(new Marker());
+        Marker marker = new Marker();
+        marker.setZdbID("ZDB-GENE-TEST-1");
+        g.setMutatedGene(marker);
+        // genbankGenomicDna is now required per the gene schema.
+        g.setGenbankGenomicDna("NC_999999");
         Set<Gene> genes = new HashSet<>();
         genes.add(g);
         return genes;
@@ -137,7 +146,7 @@ public class MutationStatusComputerTest {
         m.setMutagenesisStage("F0");
         // mutagenesisProtocol + mutationType still missing → General = MISSING
         FieldStatusResult r = MutationStatusComputer.compute(m);
-        assertEquals(FieldStatus.MISSING, r.bySection().get("Overview"));
+        assertEquals(FieldStatus.MISSING, r.bySection().get("General"));
         assertEquals(FieldStatus.MISSING, r.overall());
     }
 

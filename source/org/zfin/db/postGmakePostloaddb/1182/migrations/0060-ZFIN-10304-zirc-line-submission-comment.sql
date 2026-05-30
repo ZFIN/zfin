@@ -44,3 +44,10 @@ CREATE INDEX line_submission_comment_field_idx
 CREATE INDEX line_submission_comment_section_idx
     ON zirc.line_submission_comment (lsc_rec_id, lsc_section_name)
  WHERE lsc_scope = 'section';
+
+--changeset cmpich:zirc-line-submission-comment-closed-flag
+-- Adds the closed flag the entity declares. Separate changeset so existing
+-- dev DBs that already ran the create-table changeset pick this up without
+-- a checksum conflict.
+ALTER TABLE zirc.line_submission_comment
+    ADD COLUMN IF NOT EXISTS lsc_closed BOOLEAN NOT NULL DEFAULT false;

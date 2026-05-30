@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -24,6 +25,7 @@ import java.io.Serializable;
  */
 @Entity(name = "ZircPhenotype")
 @Table(schema = "zirc", name = "phenotype")
+@DynamicUpdate
 @Getter
 @Setter
 public class Phenotype implements Serializable {
@@ -50,9 +52,8 @@ public class Phenotype implements Serializable {
     @Column(name = "p_hpf_end")
     private Integer hpfEnd;
 
-    // Server-managed cache: LineSubmissionService.savePhenotypes derives
-    // this from hpfStart via the STAGE table on every save. Clients render
-    // it read-only.
+    // Server-managed cache: derived from hpfStart via the STAGE lookup
+    // on each save. Clients render it read-only.
     @Column(name = "p_stage")
     private String stage;
 

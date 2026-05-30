@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!--
+      M4.3: the zirc submission form now exposes a single "Attachments" slot
+      per assay instead of the four-kind matrix the original schema baked in.
+      Drop the CHECK constraint and let af_kind be nullable so the column
+      can stay forward-compatible if curators want to categorize later.
+    -->
+    <changeSet author="rtaylor" id="zirc-relax-af-kind">
+        <sql>
+            ALTER TABLE zirc.genotyping_assay_file
+                DROP CONSTRAINT IF EXISTS genotyping_assay_file_af_kind_check;
+            ALTER TABLE zirc.genotyping_assay_file
+                ALTER COLUMN af_kind DROP NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

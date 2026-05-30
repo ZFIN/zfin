@@ -15,8 +15,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -27,6 +26,10 @@ import java.util.Set;
  */
 @Entity(name = "ZircGenotypingAssay")
 @Table(schema = "zirc", name = "genotyping_assay")
+// Same rationale as Mutation / LineSubmission: without DynamicUpdate two
+// near-simultaneous field-path PATCHes against the same row clobber each
+// other's untouched columns on commit.
+@DynamicUpdate
 @Getter
 @Setter
 public class GenotypingAssay implements Serializable {
@@ -65,9 +68,11 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_restriction_enzyme_catalog")
     private String restrictionEnzymeCatalog;
 
-    @Column(name = "ga_enzyme_cleaves", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] enzymeCleaves = new String[0];
+    @Column(name = "ga_enzyme_cleaves_wt")
+    private Boolean enzymeCleavesWt;
+
+    @Column(name = "ga_enzyme_cleaves_mut")
+    private Boolean enzymeCleavesMut;
 
     @Column(name = "ga_expected_wt_digest")
     private String expectedWtDigest;
