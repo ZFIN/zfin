@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "ignoreDeprecations": "6.0",
+    "lib": ["es2020", "dom"]
+  },
+  "include": [
+    "home/javascript/react/zirc/**/*"
+  ]
+}

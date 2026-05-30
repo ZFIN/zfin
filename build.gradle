@@ -1078,9 +1078,21 @@ sourceSets {
             exclude '**/SolrUnitTests.java'
             exclude '**/SmokeTestsReadWrite.java'
         }
+        groovy {
+            // Without this, Spock specs in test/ never reach compileTestGroovy
+            // (the Groovy plugin defaults look in test/groovy/). Discovered
+            // while wiring ZircOpenApiDriftSpec.
+            srcDirs = ['test']
+            exclude '**/*.java'
+            // PublicationServiceSpec imports org.apache.bcel.Repository which
+            // isn't on the test classpath; pre-existing dead Groovy spec from
+            // before this source set was even compiling.
+            exclude 'org/zfin/publication/PublicationServiceSpec.groovy'
+        }
         resources {
             srcDirs = ['test']
             exclude '**/*.java'
+            exclude '**/*.groovy'
         }
     }
 }
@@ -1088,6 +1100,20 @@ sourceSets {
 test {
 //    maxHeapSize = "2048m"
     maxHeapSize = "8g"
+
+    // FormSchemaSnapshotTest baselines — without this Gradle won't know to
+    // invalidate :test when only a snapshot changes.
+    inputs.dir('test/resources/zirc/snapshot')
+
+    // Forward the snapshot-update flag through to the test JVM so callers can
+    // do `gradle test -Dzirc.snapshot.update=true ...` to regenerate the
+    // FormSchemaSnapshotTest baselines.
+    if (project.hasProperty('zirc.snapshot.update') ||
+            System.getProperty('zirc.snapshot.update') != null) {
+        systemProperty 'zirc.snapshot.update',
+                project.findProperty('zirc.snapshot.update') ?:
+                System.getProperty('zirc.snapshot.update')
+    }
 
 //    useJUnitPlatform() //do we want this (junit 4 specific)
 
@@ -1195,6 +1221,12 @@ test {
             includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
             includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
             includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+
+            // ZIRC drift checks (no DB, pure reflection)
+            includeTestsMatching "org.zfin.zirc.api.ZircOpenApiDriftTest"
+            includeTestsMatching "org.zfin.zirc.api.FormSchemaSnapshotTest"
+            includeTestsMatching "org.zfin.zirc.api.uischema.UiSchemaSerializationTest"
+            includeTestsMatching "org.zfin.zirc.api.jsonschema.JsonSchemaSerializationTest"
 
             /*need to figure out ..all tests fail here
         includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"*/
@@ -1459,6 +1491,23 @@ compileJava {
 // ============================================================================
 // GWT COMPILATION TASKS
 // ============================================================================
+
+// Regenerate home/javascript/react/zirc/api/types.ts from the Java DTO
+// records in org.zfin.zirc.dto. See reference/zirc-architecture.md §3.
+//
+// Run via:  gradle generateZircTypes
+// CI verifies cleanliness via a JUnit test that calls the generator
+// in-process and asserts the committed file is byte-equal.
+task generateZircTypes(type: JavaExec) {
+    description = 'Regenerate the ZIRC TypeScript DTO mirror from Java records.'
+    group = 'build'
+    dependsOn 'compileJava'
+
+    mainClass = 'org.zfin.zirc.dto.GenerateTypeScript'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = project.projectDir
+    // No args → writes to the default home/javascript/react/zirc/api/types.ts
+}
 
 // Task to compile a single GWT module
 task compileGwtModule(type: JavaExec) {

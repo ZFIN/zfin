@@ -1,0 +1,435 @@
+{
+  "schema" : {
+    "properties" : {
+      "alleleDesignation" : {
+        "maxLength" : 255,
+        "title" : "Allele Designation",
+        "type" : [ "string", "null" ]
+      },
+      "alleleInZfin" : {
+        "title" : "Allele already in ZFIN",
+        "type" : [ "boolean", "null" ]
+      },
+      "assays" : {
+        "items" : {
+          "properties" : {
+            "assayType" : {
+              "type" : [ "string", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "sortOrder" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Genotyping Assays",
+        "type" : "array"
+      },
+      "cellGenomicFeature" : {
+        "maxLength" : 255,
+        "title" : "Cell Genomic Feature",
+        "type" : [ "string", "null" ]
+      },
+      "genes" : {
+        "items" : {
+          "properties" : {
+            "id" : {
+              "type" : "number"
+            },
+            "mutatedGeneAbbreviation" : {
+              "type" : [ "string", "null" ]
+            },
+            "mutatedGeneZdbID" : {
+              "type" : [ "string", "null" ]
+            },
+            "sortOrder" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Genes",
+        "type" : "array"
+      },
+      "homozygousLethal" : {
+        "title" : "Homozygous Lethal",
+        "type" : [ "boolean", "null" ]
+      },
+      "lesions" : {
+        "items" : {
+          "properties" : {
+            "id" : {
+              "type" : "number"
+            },
+            "lesionType" : {
+              "type" : [ "string", "null" ]
+            },
+            "sortOrder" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Lesions",
+        "type" : "array"
+      },
+      "lethalityAdditionalInfo" : {
+        "maxLength" : 5000,
+        "title" : "Lethality Additional Info",
+        "type" : [ "string", "null" ]
+      },
+      "lethalitySpecificTimepoint" : {
+        "maxLength" : 255,
+        "title" : "Specific Timepoint",
+        "type" : [ "string", "null" ]
+      },
+      "lethalityStageTypical" : {
+        "maxLength" : 255,
+        "title" : "Typical Lethality Stage",
+        "type" : [ "string", "null" ]
+      },
+      "lethalityWindowEnd" : {
+        "maxLength" : 255,
+        "title" : "Lethality Window End",
+        "type" : [ "string", "null" ]
+      },
+      "lethalityWindowStart" : {
+        "maxLength" : 255,
+        "title" : "Lethality Window Start",
+        "type" : [ "string", "null" ]
+      },
+      "molecularlyCharacterized" : {
+        "title" : "Molecularly Characterized",
+        "type" : [ "boolean", "null" ]
+      },
+      "mutagenesisProtocol" : {
+        "maxLength" : 255,
+        "title" : "Mutagenesis Protocol",
+        "type" : [ "string", "null" ]
+      },
+      "mutagenesisStage" : {
+        "maxLength" : 255,
+        "title" : "Mutagenesis Stage",
+        "type" : [ "string", "null" ]
+      },
+      "mutationDiscoverer" : {
+        "maxLength" : 255,
+        "title" : "Discoverer",
+        "type" : [ "string", "null" ]
+      },
+      "mutationInstitution" : {
+        "maxLength" : 255,
+        "title" : "Institution",
+        "type" : [ "string", "null" ]
+      },
+      "mutationType" : {
+        "maxLength" : 255,
+        "title" : "Mutation Type",
+        "type" : [ "string", "null" ]
+      },
+      "phenotypes" : {
+        "items" : {
+          "properties" : {
+            "description" : {
+              "type" : [ "string", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "sortOrder" : {
+              "type" : "number"
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Phenotypes",
+        "type" : "array"
+      },
+      "publications" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Publications",
+        "type" : "array"
+      },
+      "zfinRecordEstablished" : {
+        "title" : "ZFIN Record Established",
+        "type" : [ "boolean", "null" ]
+      }
+    },
+    "required" : [ "alleleDesignation", "mutagenesisStage", "mutagenesisProtocol", "mutationType" ],
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "When \"Yes\", the field below searches existing ZFIN markers.",
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/alleleInZfin",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ZFIN allele designation; leave blank if not yet assigned.",
+          "placeholder" : "e.g. zf123"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "HIDE"
+        },
+        "scope" : "#/properties/alleleDesignation",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "Resolves to the ZFIN feature ZDB-ID.",
+          "placeholder" : "Start typing an allele or ZDB-ID…",
+          "searchEndpoint" : "features",
+          "widget" : "autocomplete"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/alleleDesignation",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/mutationType",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/zfinRecordEstablished",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ZFIN feature record once established; leave blank until assigned.",
+          "placeholder" : "e.g. ENSDARG…"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/zfinRecordEstablished"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/cellGenomicFeature",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "Person who first identified the mutation"
+        },
+        "scope" : "#/properties/mutationDiscoverer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "Lab / institution"
+        },
+        "scope" : "#/properties/mutationInstitution",
+        "type" : "Control"
+      } ],
+      "label" : "General",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "standardValues" : [ "oocyte", "sperm", "embryo", "larva", "adult", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/mutagenesisStage",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "ENU", "CRISPR/Cas9", "TALEN", "ZFN", "ionizing radiation", "spontaneous" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/mutagenesisProtocol",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/molecularlyCharacterized",
+        "type" : "Control"
+      } ],
+      "label" : "Mutagenesis",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "managesOwnPersistence" : true,
+          "widget" : "genesList"
+        },
+        "scope" : "#/properties/genes",
+        "type" : "Control"
+      } ],
+      "label" : "Genes",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "managesOwnPersistence" : true,
+          "widget" : "lesionsList"
+        },
+        "scope" : "#/properties/lesions",
+        "type" : "Control"
+      } ],
+      "label" : "Lesions",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "managesOwnPersistence" : true,
+          "widget" : "assaysList"
+        },
+        "scope" : "#/properties/assays",
+        "type" : "Control"
+      } ],
+      "label" : "Genotyping Assays",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "managesOwnPersistence" : true,
+          "widget" : "phenotypesList"
+        },
+        "scope" : "#/properties/phenotypes",
+        "type" : "Control"
+      } ],
+      "label" : "Phenotypes",
+      "options" : {
+        "layout" : "plain"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/homozygousLethal",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "embryonic", "larval", "juvenile", "adult", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/homozygousLethal"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/lethalityStageTypical",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "Single timepoint when most homozygotes die. Use the window fields below for a range.",
+          "placeholder" : "e.g. 48 hpf"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/homozygousLethal"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/lethalitySpecificTimepoint",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "e.g. 24 hpf"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/homozygousLethal"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/lethalityWindowStart",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "e.g. 72 hpf"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/homozygousLethal"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/lethalityWindowEnd",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/homozygousLethal"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/lethalityAdditionalInfo",
+        "type" : "Control"
+      } ],
+      "label" : "Lethality",
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "addLabel" : "+ Add publication",
+          "placeholder" : "Citation, PMID, DOI, or ZDB Pub ID",
+          "widget" : "stringList"
+        },
+        "scope" : "#/properties/publications",
+        "type" : "Control"
+      } ],
+      "label" : "Publications",
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}

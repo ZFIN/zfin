@@ -39,7 +39,10 @@ public class GenotypingAssayFile implements Serializable {
     @JoinColumn(name = "af_assay_id", referencedColumnName = "ga_id", nullable = false)
     private GenotypingAssay assay;
 
-    @Column(name = "af_kind", nullable = false)
+    // Nullable since M4.3 — the form exposes a single "Attachments" slot per
+    // assay rather than the original four-kind matrix; curators may
+    // re-introduce categorization later.
+    @Column(name = "af_kind")
     private String kind;
 
     @Column(name = "af_original_filename", nullable = false)

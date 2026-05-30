@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -34,6 +35,13 @@ import java.util.Set;
  */
 @Entity(name = "ZircLineSubmission")
 @Table(schema = "zirc", name = "line_submission")
+// Without DynamicUpdate Hibernate writes every column on every commit, so two
+// near-simultaneous section PATCHes (e.g. /background and /additional-info)
+// can race: each opens its own session, both load the same snapshot, the
+// later commit overwrites the earlier one's changes on columns it didn't
+// touch. DynamicUpdate emits UPDATE ... SET only for the columns that
+// actually changed, so cross-section autosaves cannot clobber each other.
+@DynamicUpdate
 @Getter
 @Setter
 public class LineSubmission implements Serializable {
@@ -55,8 +63,9 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_abbreviation")
     private String abbreviation;
 
-    @Column(name = "ls_previous_names")
-    private String previousNames;
+    @Column(name = "ls_previous_names", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] previousNames = new String[0];
 
     @Column(name = "ls_maternal_background")
     private String maternalBackground;

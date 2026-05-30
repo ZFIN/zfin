@@ -40,7 +40,7 @@
                         <c:otherwise>
                             <c:forEach items="${activeSubmissions}" var="sub" varStatus="loop">
                                 <tr>
-                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}/detail-react">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
                                     <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
                                     <td>
@@ -77,7 +77,7 @@
                         <c:otherwise>
                             <c:forEach items="${closedSubmissions}" var="sub" varStatus="loop">
                                 <tr>
-                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}/detail-react">${sub.name}</a></td>
                                     <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
                                     <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
                                     <td>

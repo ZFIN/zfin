@@ -1,0 +1,479 @@
+{
+  "schema" : {
+    "properties" : {
+      "additionalInfo" : {
+        "maxLength" : 5000,
+        "title" : "Additional info",
+        "type" : [ "string", "null" ]
+      },
+      "assayType" : {
+        "maxLength" : 255,
+        "title" : "Assay type",
+        "type" : [ "string", "null" ]
+      },
+      "attachments" : {
+        "items" : {
+          "properties" : {
+            "contentType" : {
+              "type" : [ "string", "null" ]
+            },
+            "fileSize" : {
+              "type" : [ "number", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "originalFilename" : {
+              "type" : "string"
+            },
+            "uploadedAt" : {
+              "type" : [ "string", "null" ]
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Attachments",
+        "type" : "array"
+      },
+      "commonPrimer" : {
+        "maxLength" : 2000,
+        "title" : "Common primer",
+        "type" : [ "string", "null" ]
+      },
+      "dcapsMismatchPrimer" : {
+        "maxLength" : 2000,
+        "title" : "Primer with introduced mismatch",
+        "type" : [ "string", "null" ]
+      },
+      "enzymeCleavesMut" : {
+        "title" : "Enzyme cleaves MUT template",
+        "type" : [ "boolean", "null" ]
+      },
+      "enzymeCleavesWt" : {
+        "title" : "Enzyme cleaves WT template",
+        "type" : [ "boolean", "null" ]
+      },
+      "expectedMutDigest" : {
+        "maxLength" : 2000,
+        "title" : "Expected MUT product after digest",
+        "type" : [ "string", "null" ]
+      },
+      "expectedMutPcr" : {
+        "maxLength" : 2000,
+        "title" : "Expected mutant PCR product",
+        "type" : [ "string", "null" ]
+      },
+      "expectedWtDigest" : {
+        "maxLength" : 2000,
+        "title" : "Expected WT product after digest",
+        "type" : [ "string", "null" ]
+      },
+      "expectedWtPcr" : {
+        "maxLength" : 2000,
+        "title" : "Expected wild-type PCR product",
+        "type" : [ "string", "null" ]
+      },
+      "forwardPrimer" : {
+        "maxLength" : 2000,
+        "title" : "Forward primer",
+        "type" : [ "string", "null" ]
+      },
+      "kaspGenomicSequence" : {
+        "maxLength" : 5000,
+        "title" : "Genomic DNA sequence (KASP design)",
+        "type" : [ "string", "null" ]
+      },
+      "mutSpecificPrimer" : {
+        "maxLength" : 2000,
+        "title" : "Mutant-specific primer",
+        "type" : [ "string", "null" ]
+      },
+      "restrictionEnzymeCatalog" : {
+        "maxLength" : 255,
+        "title" : "Restriction enzyme catalog #",
+        "type" : [ "string", "null" ]
+      },
+      "restrictionEnzymeName" : {
+        "maxLength" : 255,
+        "title" : "Restriction enzyme name",
+        "type" : [ "string", "null" ]
+      },
+      "reversePrimer" : {
+        "maxLength" : 2000,
+        "title" : "Reverse primer",
+        "type" : [ "string", "null" ]
+      },
+      "sequencingPrimer" : {
+        "maxLength" : 2000,
+        "title" : "Sequencing primer",
+        "type" : [ "string", "null" ]
+      },
+      "sslpDistance" : {
+        "maxLength" : 255,
+        "title" : "Distance marker → mutation",
+        "type" : [ "string", "null" ]
+      },
+      "sslpGenomicLocation" : {
+        "maxLength" : 255,
+        "title" : "Genomic location of marker",
+        "type" : [ "string", "null" ]
+      },
+      "sslpInducedBackground" : {
+        "maxLength" : 255,
+        "title" : "Background mutation was induced on",
+        "type" : [ "string", "null" ]
+      },
+      "sslpInducedPcr" : {
+        "maxLength" : 2000,
+        "title" : "PCR product on induced background",
+        "type" : [ "string", "null" ]
+      },
+      "sslpMarkerName" : {
+        "maxLength" : 255,
+        "title" : "SSLP marker name",
+        "type" : [ "string", "null" ]
+      },
+      "sslpOutcrossedBackground" : {
+        "maxLength" : 255,
+        "title" : "Recommended outcrossing background",
+        "type" : [ "string", "null" ]
+      },
+      "sslpOutcrossedPcr" : {
+        "maxLength" : 2000,
+        "title" : "PCR product on outcrossing background",
+        "type" : [ "string", "null" ]
+      },
+      "wtSpecificPrimer" : {
+        "maxLength" : 2000,
+        "title" : "WT-specific primer",
+        "type" : [ "string", "null" ]
+      }
+    },
+    "required" : [ "assayType" ],
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "noOther" : true,
+          "refreshesParent" : true,
+          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
+          "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/assayType",
+        "type" : "Control"
+      } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/forwardPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/reversePrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "scope" : "#/properties/expectedWtPcr",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/expectedMutPcr",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/sequencingPrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "pcr_sequencing" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/dcapsMismatchPrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "dcaps" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/wtSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/mutSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "ACTGN only."
+        },
+        "scope" : "#/properties/commonPrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "asa", "kasp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/kaspGenomicSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "kasp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. BsmBI"
+        },
+        "scope" : "#/properties/restrictionEnzymeName",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "infoHref" : "https://international.neb.com/",
+          "placeholder" : "vendor + cat #"
+        },
+        "scope" : "#/properties/restrictionEnzymeCatalog",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "checkbox"
+        },
+        "scope" : "#/properties/enzymeCleavesWt",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "checkbox"
+        },
+        "scope" : "#/properties/enzymeCleavesMut",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/expectedWtDigest",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/expectedMutDigest",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "rflp", "dcaps" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Annotated gel images",
+          "managesOwnPersistence" : true,
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "pcr_gel", "rflp", "dcaps", "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Chromatograms",
+          "managesOwnPersistence" : true,
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "pcr_sequencing" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Annotated result images",
+          "managesOwnPersistence" : true,
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "asa", "kasp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Annotated melt curve files",
+          "managesOwnPersistence" : true,
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "hrma" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "Search ZFIN SSLP markers…"
+        },
+        "scope" : "#/properties/sslpMarkerName",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpDistance",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpGenomicLocation",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpInducedBackground",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpOutcrossedBackground",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpInducedPcr",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpOutcrossedPcr",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo",
+        "type" : "Control"
+      } ],
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}

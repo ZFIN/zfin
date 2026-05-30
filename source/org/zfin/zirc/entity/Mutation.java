@@ -18,6 +18,7 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ import java.util.Set;
  */
 @Entity(name = "ZircMutation")
 @Table(schema = "zirc", name = "mutation")
+// See LineSubmission for the rationale — without DynamicUpdate two near-
+// simultaneous field-path PATCHes against the same row clobber each other's
+// untouched columns on commit.
+@DynamicUpdate
 @Getter
 @Setter
 public class Mutation implements Serializable {

@@ -10,8 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -22,6 +24,10 @@ import java.io.Serializable;
  */
 @Entity(name = "ZircGene")
 @Table(schema = "zirc", name = "gene")
+// Same rationale as Mutation / GenotypingAssay — without @DynamicUpdate
+// two near-simultaneous field-path PATCHes against this row would
+// clobber each other's untouched columns on commit.
+@DynamicUpdate
 @Getter
 @Setter
 public class Gene implements Serializable {
@@ -51,5 +57,16 @@ public class Gene implements Serializable {
 
     @Column(name = "g_genbank_cdna")
     private String genbankCdna;
+
+    /**
+     * Schema-side accessor matching the DTO's {@code mutatedGeneZdbID}
+     * property. Lets the status computer reach the same value as the
+     * client renderer via the same name — single source of truth for
+     * required-ness across both surfaces.
+     */
+    @Transient
+    public String getMutatedGeneZdbID() {
+        return mutatedGene == null ? null : mutatedGene.getZdbID();
+    }
 
 }

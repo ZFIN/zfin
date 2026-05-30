@@ -1,5 +1,8 @@
 package org.zfin.zirc.service;
 
+import org.zfin.zirc.api.ZircLesionFormSchema;
+import org.zfin.zirc.api.jsonschema.JsonSchema;
+import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.entity.Lesion;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
@@ -7,7 +10,10 @@ import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatusResult;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Per-field status for one {@link Lesion} row under a {@link org.zfin.zirc.entity.Mutation}.
@@ -18,53 +24,81 @@ import java.util.Map;
 public final class LesionStatusComputer {
 
     public enum Field {
-        LESION_TYPE              ("lesionType",              true),
-        LESION_SIZE_BP           ("lesionSizeBp",            false),
-        INSERTION_SIZE_BP        ("insertionSizeBp",         false),
-        NUCLEOTIDE_CHANGE        ("nucleotideChange",        false),
-        DELETED_SEQUENCE         ("deletedSequence",         false),
-        INSERTED_SEQUENCE        ("insertedSequence",        false),
-        TRANSGENE_SEQUENCE       ("transgeneSequence",       false),
-        LOCATION_INLINE          ("locationInline",          false),
-        FIVE_PRIME_FLANK         ("fivePrimeFlank",          false),
-        THREE_PRIME_FLANK        ("threePrimeFlank",         false),
-        HAS_LARGE_VARIANT        ("hasLargeVariant",         false),
-        MUTATED_AMINO_ACIDS      ("mutatedAminoAcids",       false),
-        MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs",   false),
-        ADDITIONAL_INFO          ("additionalInfo",          false);
+        LESION_TYPE              ("lesionType"),
+        LESION_SIZE_BP           ("lesionSizeBp"),
+        INSERTION_SIZE_BP        ("insertionSizeBp"),
+        NUCLEOTIDE_CHANGE        ("nucleotideChange"),
+        DELETED_SEQUENCE         ("deletedSequence"),
+        INSERTED_SEQUENCE        ("insertedSequence"),
+        TRANSGENE_SEQUENCE       ("transgeneSequence"),
+        LOCATION_INLINE          ("locationInline"),
+        FIVE_PRIME_FLANK         ("fivePrimeFlank"),
+        THREE_PRIME_FLANK        ("threePrimeFlank"),
+        HAS_LARGE_VARIANT        ("hasLargeVariant"),
+        MUTATED_AMINO_ACIDS      ("mutatedAminoAcids"),
+        MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs"),
+        ADDITIONAL_INFO          ("additionalInfo");
 
         private final String path;
-        private final boolean required;
 
-        Field(String path, boolean required) {
-            this.path = path;
-            this.required = required;
+        Field(String path) { this.path = path; }
+
+        public String getPath() { return path; }
+    }
+
+    private static final Set<String> REQUIRED_PATHS = collectRequiredPaths(ZircLesionFormSchema.schema());
+
+    private static Set<String> collectRequiredPaths(JsonSchema node) {
+        Set<String> out = new LinkedHashSet<>();
+        if (node instanceof ObjectSchema obj) {
+            if (obj.required() != null) out.addAll(obj.required());
+            if (obj.properties() != null) {
+                for (JsonSchema child : obj.properties().values()) {
+                    out.addAll(collectRequiredPaths(child));
+                }
+            }
         }
+        return out;
+    }
 
-        public String  getPath()    { return path; }
-        public boolean isRequired() { return required; }
-
-        public FieldStatus statusFor(Lesion lz) {
-            Object value = readProperty(lz, path);
-            boolean empty = isEmpty(value);
-            if (empty && required) return FieldStatus.MISSING;
-            return FieldStatus.COMPLETE;
-        }
+    private static FieldStatus statusFor(Lesion lz, String path) {
+        Object value = readProperty(lz, path);
+        if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        return FieldStatus.COMPLETE;
     }
 
     private LesionStatusComputer() {}
 
+    /**
+     * Section labels match the {@link ZircLesionFormSchema#uiSchema()}
+     * Group labels, computed once via {@link SchemaSections}. The legacy
+     * single "Lesion" key is gone — section status now mirrors the actual
+     * UI groups (General, Sizing, Nucleotide Change, etc.).
+     */
+    private static final Map<String, List<String>> SECTIONS =
+            SchemaSections.groupsToFields(ZircLesionFormSchema.uiSchema());
+
     public static FieldStatusResult compute(Lesion lz) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
-            byField.put(f.getPath(), f.statusFor(lz));
+            byField.put(f.getPath(), statusFor(lz, f.getPath()));
         }
 
+        Map<String, FieldStatus> bySection = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> e : SECTIONS.entrySet()) {
+            FieldStatus worst = FieldStatus.COMPLETE;
+            for (String f : e.getValue()) {
+                FieldStatus st = byField.get(f);
+                if (st != null) worst = worst.worse(st);
+            }
+            bySection.put(e.getKey(), worst);
+        }
+
+        // Roll up overall from byField rather than bySection so that headless
+        // (label-less) Groups — which SchemaSections skips — still contribute
+        // their fields to the aggregate's overall status.
         FieldStatus overall = FieldStatus.COMPLETE;
         for (FieldStatus st : byField.values()) overall = overall.worse(st);
-
-        Map<String, FieldStatus> bySection = new LinkedHashMap<>();
-        bySection.put("Lesion", overall);
 
         return new FieldStatusResult(byField, bySection, overall);
     }
