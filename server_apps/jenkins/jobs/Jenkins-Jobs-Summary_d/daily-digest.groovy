@@ -30,14 +30,18 @@ if ((now - timeFrameStart) > maxLookback) {
 }
 
 def dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-def jenkinsUrl = Jenkins.get().getRootUrl() ?: "http://localhost:8080/"
 
 // Collect all builds from time frame
 def recentBuilds = []
+// Keep track of jobs we've already recorded (only include the most recent build per job)
+def seenJobs = [] as Set
 
 for (job in Jenkins.get().allItems(hudson.model.Job)) {
     for (build in job.getBuilds()) {
         if (build.getTimeInMillis() >= timeFrameStart) {
+            if (seenJobs.contains(job.fullName)) {
+                break // we've already added the most recent build for this job
+            }
             def status = "SUCCESS"
             if (build.result == Result.FAILURE) {
                 status = "FAILED"
@@ -52,6 +56,7 @@ for (job in Jenkins.get().allItems(hudson.model.Job)) {
                 result: build.result,
                 url: build.absoluteUrl
             ])
+            seenJobs.add(job.fullName)
         } else {
             break // Builds are in reverse chronological order
         }
@@ -115,7 +120,7 @@ recentBuilds.each { buildInfo ->
     buildHistories[key] = collectHistory(run, historyDepth)
 
     if (buildInfo.status == "FAILED") {
-        if (streak == 1) {
+        if (streak.equals(1)) {
             newFailingBuilds.add(buildInfo)
         } else {
             failedBuilds.add(buildInfo)
@@ -131,6 +136,11 @@ recentBuilds.each { buildInfo ->
 def jobsAlreadyReportedAsFailing = (newFailingBuilds + failedBuilds).collect { it.jobName } as Set
 def outsideWindowFailures = []
 
+// Collect jobs whose last completed build was UNSTABLE but fell outside the time window
+// (similar logic to outsideWindowFailures)
+def jobsAlreadyReportedAsUnstable = (newFailingBuilds + failedBuilds + unstableBuilds).collect { it.jobName } as Set
+def outsideWindowUnstables = []
+
 for (job in Jenkins.get().allItems(hudson.model.Job)) {
     if (!job.isBuildable()) continue
     if (jobsAlreadyReportedAsFailing.contains(job.fullName)) continue
@@ -144,6 +154,25 @@ for (job in Jenkins.get().allItems(hudson.model.Job)) {
         jobName: job.fullName,
         buildNumber: lastBuild.number,
         status: "FAILED",
+        result: lastBuild.result,
+        url: lastBuild.absoluteUrl
+    ])
+    buildHistories["${job.fullName}#${lastBuild.number}"] = collectHistory(lastBuild, historyDepth)
+}
+
+for (job in Jenkins.get().allItems(hudson.model.Job)) {
+    if (!job.isBuildable()) continue
+    if (jobsAlreadyReportedAsUnstable.contains(job.fullName)) continue
+
+    def lastBuild = job.getLastCompletedBuild()
+    if (lastBuild == null) continue
+    if (lastBuild.result != Result.UNSTABLE) continue
+    if (lastBuild.getTimeInMillis() >= timeFrameStart) continue // already covered by in-window logic
+
+    outsideWindowUnstables.add([
+        jobName: job.fullName,
+        buildNumber: lastBuild.number,
+        status: "UNSTABLE",
         result: lastBuild.result,
         url: lastBuild.absoluteUrl
     ])
@@ -193,9 +222,19 @@ if (outsideWindowFailures.size() > 0) {
     }
 }
 
+if (outsideWindowUnstables.size() > 0) {
+    println "UNSTABLE JOBS (last run unstable, outside window):"
+    outsideWindowUnstables.each { build ->
+        println "  ${build.jobName} #${build.buildNumber} - ${build.status}"
+    }
+}
+
 println "\nTotal builds in period: ${recentBuilds.size()}"
 
 // Generate HTML report for email
+// Total count of all failing jobs (in-window new/repeated + outside-window failures)
+def allFailingCount = newFailingBuilds.size() + failedBuilds.size() + outsideWindowFailures.size()
+
 def html = new StringBuilder()
 html.append("""<!DOCTYPE html>
 <html>
@@ -224,8 +263,14 @@ html.append("""<!DOCTYPE html>
 <h1>Jenkins Jobs Summary</h1>
 <p class="timestamp">Period: ${dateFormat.format(new Date(timeFrameStart))} to ${dateFormat.format(new Date(now))}</p>
 <p class="timestamp">Report generated: ${dateFormat.format(new Date())}</p>
+<p class="timestamp">
+    <strong>${recentBuilds.size()} jobs run in reporting window</strong>
+</p>
 
 <div class="summary">
+  <div class="summary-item">
+    <span class="count success">${successfulBuilds.size()}</span> Successful
+  </div>
   <div class="summary-item">
     <span class="count new-failing">${newFailingBuilds.size()}</span> New Failures
   </div>
@@ -236,10 +281,7 @@ html.append("""<!DOCTYPE html>
     <span class="count unstable">${unstableBuilds.size()}</span> Unstable
   </div>
   <div class="summary-item">
-    <span class="count success">${successfulBuilds.size()}</span> Successful
-  </div>
-  <div class="summary-item">
-    <strong>Total: ${recentBuilds.size()}</strong>
+    <span class="count failed">${allFailingCount}</span> All Failing Jobs
   </div>
 </div>
 """)
@@ -301,6 +343,19 @@ if (outsideWindowFailures.size() > 0) {
 """)
     outsideWindowFailures.each { build ->
         html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"new-failing\">FAILED</td></tr>\n")
+    }
+    html.append("</table>\n")
+}
+
+if (outsideWindowUnstables.size() > 0) {
+    html.append("""
+<h2 class="unstable">Unstable Jobs (last run unstable, ${outsideWindowUnstables.size()})</h2>
+<p class="timestamp">Jobs whose most recent build was unstable prior to this reporting window.</p>
+<table>
+  <tr><th>Job Name</th><th>Build #</th><th>Status</th></tr>
+""")
+    outsideWindowUnstables.each { build ->
+        html.append("  <tr><td><a href=\"${build.url}\">${build.jobName}</a>${renderSparkline(buildHistories[build.jobName + '#' + build.buildNumber])}</td><td>${build.buildNumber}</td><td class=\"unstable\">UNSTABLE</td></tr>\n")
     }
     html.append("</table>\n")
 }
