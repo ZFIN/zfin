@@ -18,7 +18,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 
-import static org.zfin.infrastructure.captcha.CaptchaService.isSuccessfulCaptchaToken;
+import static org.zfin.infrastructure.captcha.CaptchaService.isCaptchaRequired;
 import static org.zfin.infrastructure.captcha.CaptchaService.verifyCaptcha;
 
 
@@ -62,14 +62,21 @@ public class UserCommentController {
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid field"), HttpStatus.BAD_REQUEST);
         }
 
-        boolean isCaptchaValid = true; //default to true if exception occurs
-        try {
-            boolean alreadyCaptchaValidated = isSuccessfulCaptchaToken(request);
-            isCaptchaValid = (!StringUtils.isEmpty(altcha) && verifyCaptcha(altcha)) || alreadyCaptchaValidated;
-        } catch (IOException e) {}
-
-        if (!isCaptchaValid) {
-            return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Captcha Response"), HttpStatus.BAD_REQUEST);
+        // Only enforce captcha when this request actually requires it. Logged-in users, bypassed
+        // IPs, and sessions that already passed captcha are exempt (see CaptchaService). If the
+        // session expired since the form was opened, captcha may have become required - in that
+        // case we return a CaptchaRequired status so the client can surface the widget and let the
+        // user resend without losing their comment.
+        if (isCaptchaRequired(request)) {
+            boolean isCaptchaValid = true; //default to true if verification errors, to avoid blocking legitimate input
+            try {
+                isCaptchaValid = !StringUtils.isEmpty(altcha) && verifyCaptcha(altcha);
+            } catch (IOException e) {
+                log.error("Error verifying captcha for user comment submission", e);
+            }
+            if (!isCaptchaValid) {
+                return new ResponseEntity<>(new JSONStatusResponse("CaptchaRequired", "Captcha verification required"), HttpStatus.BAD_REQUEST);
+            }
         }
 
         logSubmissionRequest(request, name, institution, email, subject);

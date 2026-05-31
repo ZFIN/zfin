@@ -81,6 +81,30 @@ public class CaptchaService {
     }
 
     /**
+     * Determine whether the current request must pass a captcha challenge. A request is exempt
+     * (no captcha required) if the user is logged in, the captcha feature flag is off, the client
+     * IP is in a bypass range, or the session has already been verified by captcha.
+     *
+     * @param request The current request object
+     * @return true if the request still needs to pass a captcha challenge
+     */
+    public static boolean isCaptchaRequired(HttpServletRequest request) {
+        if (isLoggedIn()) {
+            return false;
+        }
+        if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
+            return false;
+        }
+        if (isClientIpBypassed(request)) {
+            return false;
+        }
+        if (isSuccessfulCaptchaToken(request)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * If captcha rules require a redirection to run through the captcha validation process,
      * this method will return the URL to redirect to. If it returns empty, then no redirect is needed.
      *
@@ -88,16 +112,7 @@ public class CaptchaService {
      * @return If empty, no redirect is needed. Otherwise, use the value as the destination for a 302 redirect
      */
     public static Optional<String> getRedirectUrlIfNeeded(HttpServletRequest request) {
-        if (isLoggedIn()) {
-            return Optional.empty();
-        }
-        if (!FeatureFlags.isFlagEnabled(FeatureFlagEnum.ENABLE_CAPTCHA)) {
-            return Optional.empty();
-        }
-        if (isClientIpBypassed(request)) {
-            return Optional.empty();
-        }
-        if (isSuccessfulCaptchaToken(request)) {
+        if (!isCaptchaRequired(request)) {
             return Optional.empty();
         }
         String currentUrl = request.getRequestURL().toString();

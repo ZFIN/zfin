@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.infrastructure.captcha.CaptchaKeys;
 import org.zfin.infrastructure.captcha.CaptchaService;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.zfin.infrastructure.captcha.CaptchaService.setSuccessfulCaptchaToken;
@@ -23,6 +25,17 @@ import static org.zfin.infrastructure.captcha.CaptchaService.setSuccessfulCaptch
 @Controller
 @RequestMapping("/captcha")
 public class CaptchaController {
+
+    /**
+     * Lightweight JSON endpoint the frontend can call to decide whether to present a captcha
+     * (e.g. before opening the feedback form). Returns {"required": true|false} based on the
+     * same rules as {@link CaptchaService#getRedirectUrlIfNeeded}.
+     */
+    @GetMapping("/required")
+    @ResponseBody
+    public Map<String, Boolean> captchaRequired(HttpServletRequest request) {
+        return Map.of("required", CaptchaService.isCaptchaRequired(request));
+    }
 
     @GetMapping("/challenge")
     public String challenge(
