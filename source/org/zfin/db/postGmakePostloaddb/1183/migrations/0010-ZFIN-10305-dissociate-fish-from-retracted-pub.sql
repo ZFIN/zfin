@@ -39,3 +39,31 @@ SELECT  'ZDB-PERS-040722-4',          -- Ruzicka, Leyla (ticket reporter)
         'ZFIN-10305: dissociated from ZDB-PUB-150729-10 so the retracted-pub cleanup under ZDB-PUB-140513-391 can delete this fish.',
         now()
 FROM removed;
+
+-- Once Leyla deletes the MRPHLNOs through the pub-curation UI, the linked
+-- MRELs cascade out of marker_relationship (FK marker → marker_relationship
+-- is ON DELETE CASCADE), but their rows in record_attribution survive
+-- because recattrib_data_zdb_id is a free-text string with no FK. Those
+-- orphaned attributions still show up in the pub's "Directly Attributed
+-- Data" panel pointing at MREL ZDB-IDs that no longer resolve. Sweep them.
+
+--changeset cmpich:ZFIN-10305-remove-orphaned-mrel-attributions splitStatements:false
+WITH removed AS (
+    DELETE FROM record_attribution
+    WHERE  recattrib_data_zdb_id   IN ('ZDB-MREL-140811-1','ZDB-MREL-140811-2')
+      AND  recattrib_source_zdb_id = 'ZDB-PUB-140513-391'
+    RETURNING recattrib_data_zdb_id   AS data_zdb_id,
+              recattrib_source_zdb_id AS pub_zdb_id
+)
+INSERT INTO updates (
+        submitter_id, submitter_name, rec_id, field_name,
+        new_value, old_value, comments, upd_when)
+SELECT  'ZDB-PERS-040722-4',
+        'Ruzicka, Leyla',
+        data_zdb_id,
+        'record attribution',
+        NULL,
+        pub_zdb_id,
+        'ZFIN-10305: removed orphaned attribution to ZDB-PUB-140513-391 — the MREL was cascade-deleted when its linked MRPHLNO was deleted.',
+        now()
+FROM removed;
