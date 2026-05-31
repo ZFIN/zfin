@@ -41,7 +41,12 @@
                         <label for="input-welcome-comments">Comments:</label>
                         <textarea id="input-welcome-comments" name="yiw-comments"></textarea>
                     </div>
-                    <div class="control" style="padding-left: 135px; height: 80px;">
+                    <%-- captcha is hidden by default; your-input-welcome.js reveals it only when the
+                         server says this visitor needs to pass one (anonymous, not yet verified). --%>
+                    <div class="control" id="input-welcome-captcha-message" style="display: none;">
+                        Please complete the verification below and resend your comments.
+                    </div>
+                    <div class="control" id="input-welcome-captcha" style="padding-left: 135px; height: 80px; display: none;">
                         <altcha-widget id="altcha-widget" challengeurl="/action/altcha/challenge"></altcha-widget>
                     </div>
                     <div class="control">
@@ -61,12 +66,3 @@
 </div>
 
 <script async defer src="https://cdn.jsdelivr.net/npm/altcha/dist/altcha.min.js" type="module"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector("#altcha-widget").addEventListener("statechange", (ev) => {
-            if (ev.detail.state === "verified") {
-                document.querySelector("#input-welcome-submit").disabled = false;
-            }
-        });
-    });
-</script>
