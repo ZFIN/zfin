@@ -11,8 +11,10 @@ import org.zfin.report.ReportTable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,16 @@ public class GafReportBuilder {
                         List<String> sourceUrls,
                         GafJobData data,
                         GafErrorSummary errorSummary) {
+        return build(jobName, organization, sourceUrls, data, errorSummary, null, null);
+    }
+
+    public Report build(String jobName,
+                        String organization,
+                        List<String> sourceUrls,
+                        GafJobData data,
+                        GafErrorSummary errorSummary,
+                        GoaLoadSnapshot before,
+                        GoaLoadSnapshot after) {
 
         // No subtitle: the renderer already formats createdAt locale-aware
         // in the footer, so a server-locale Date.toString() above would be
@@ -72,7 +84,7 @@ public class GafReportBuilder {
                 "Use the navigation tree on the left to drill into added, updated, removed, " +
                 "and errored annotations. Counts and a categorized error breakdown are below."));
 
-        addSummaryTables(root, data, errorSummary, sourceUrls);
+        addSummaryTables(root, data, errorSummary, sourceUrls, organization, before, after);
         report.root(root);
 
         root.addChild(buildAdded(data));
@@ -144,7 +156,8 @@ public class GafReportBuilder {
     // -------- summary tables (root) --------
 
     private void addSummaryTables(ReportNode root, GafJobData data, GafErrorSummary errorSummary,
-                                  List<String> sourceUrls) {
+                                  List<String> sourceUrls, String organization,
+                                  GoaLoadSnapshot before, GoaLoadSnapshot after) {
         ReportTable counts = new ReportTable()
             .schemaRef(SCHEMA_COUNT)
             .title("Action breakdown")
@@ -174,6 +187,8 @@ public class GafReportBuilder {
                 .forEach(e -> t.addRow("label", e.getKey(), "count", e.getValue()));
             root.addTable(t);
         }
+
+        appendLoadImpactTables(root, organization, before, after);
 
         if (sourceUrls != null && !sourceUrls.isEmpty()) {
             for (String url : sourceUrls) {
@@ -428,6 +443,99 @@ public class GafReportBuilder {
                 "type", GafErrorSummary.idType(e.getKey()),
                 "count", e.getValue()));
         node.addTable(idTable);
+    }
+
+    /**
+     * Append the three "Load impact" tables (overall / per evidence code /
+     * per source pub) inline on the given node — typically the root summary —
+     * showing MGOE counts attributed to the organization, measured immediately
+     * before and after the load. No-op for non-GOA loads or when either
+     * snapshot is missing (e.g. a snapshot query failed mid-load).
+     */
+    private void appendLoadImpactTables(ReportNode node, String organization,
+                                        GoaLoadSnapshot before, GoaLoadSnapshot after) {
+        if (before == null || after == null) return;
+        node.addTable(buildOverallImpactTable(before, after));
+        node.addTable(buildEvidenceCodeImpactTable(before, after));
+        node.addTable(buildSourceImpactTable(before, after));
+    }
+
+    private ReportTable buildOverallImpactTable(GoaLoadSnapshot before, GoaLoadSnapshot after) {
+        ReportTable table = newImpactTable("Totals", "label", "Metric");
+        addImpactRow(table, "Total annotations",
+            before.getTotalAnnotations(), after.getTotalAnnotations());
+        addImpactRow(table, "Distinct GO terms used",
+            before.getDistinctGoTerms(), after.getDistinctGoTerms());
+        addImpactRow(table, "Markers with annotation",
+            before.getDistinctMarkers(), after.getDistinctMarkers());
+        return table;
+    }
+
+    private ReportTable buildEvidenceCodeImpactTable(GoaLoadSnapshot before, GoaLoadSnapshot after) {
+        ReportTable table = newImpactTable(
+            "Annotations per evidence code",
+            "label", "Evidence code");
+        for (String code : unionKeys(before.getCountsByEvidenceCode(), after.getCountsByEvidenceCode())) {
+            addImpactRow(table, code,
+                before.getCountsByEvidenceCode().getOrDefault(code, 0L),
+                after.getCountsByEvidenceCode().getOrDefault(code, 0L));
+        }
+        return table;
+    }
+
+    private ReportTable buildSourceImpactTable(GoaLoadSnapshot before, GoaLoadSnapshot after) {
+        // Source is a publication ZDB ID — render it as a ZFIN link via the
+        // shared "publication" field def so curators can click through. Rows
+        // whose net change is zero are dropped: most source pubs don't move
+        // each load and the unchanged rows drown out the interesting ones.
+        ReportTable table = new ReportTable()
+            .title("Annotations per source publication (excluding unchanged)")
+            .description("Before/after counts grouped by source publication; unchanged rows omitted.")
+            .addColumn(ReportTable.Column.of("label",   "Publication", "publication"))
+            .addColumn(ReportTable.Column.of("before",  "# Before",    "count"))
+            .addColumn(ReportTable.Column.of("after",   "# After",     "count"))
+            .addColumn(ReportTable.Column.of("change",  "Net change",  "count"))
+            .addColumn(ReportTable.Column.of("percent", "% change"));
+        for (String src : unionKeys(before.getCountsBySource(), after.getCountsBySource())) {
+            long b = before.getCountsBySource().getOrDefault(src, 0L);
+            long a = after.getCountsBySource().getOrDefault(src, 0L);
+            if (a == b) continue;
+            addImpactRow(table, src, b, a);
+        }
+        return table;
+    }
+
+    private ReportTable newImpactTable(String title, String labelKey, String labelHeader) {
+        return new ReportTable()
+            .title(title)
+            .addColumn(ReportTable.Column.of(labelKey, labelHeader))
+            .addColumn(ReportTable.Column.of("before",  "# Before",   "count"))
+            .addColumn(ReportTable.Column.of("after",   "# After",    "count"))
+            .addColumn(ReportTable.Column.of("change",  "Net change", "count"))
+            .addColumn(ReportTable.Column.of("percent", "% change"));
+    }
+
+    private static void addImpactRow(ReportTable table, String label, long before, long after) {
+        long change = after - before;
+        // Skip rows that are zero on both sides — usually means the category
+        // didn't exist in either snapshot and adds no signal.
+        if (before == 0 && after == 0) return;
+        String percent = before == 0
+            ? (after == 0 ? "" : "—")
+            : String.format("%+.2f%%", (change * 100.0) / before);
+        table.addRow(
+            "label",   label,
+            "before",  before,
+            "after",   after,
+            "change",  change,
+            "percent", percent);
+    }
+
+    /** Ordered union of keys: present-in-both first by descending after-count, then before-only. */
+    private static Set<String> unionKeys(Map<String, Long> before, Map<String, Long> after) {
+        Set<String> keys = new LinkedHashSet<>(after.keySet());
+        keys.addAll(before.keySet());
+        return keys;
     }
 
     private ReportNode buildExisting(GafJobData data) {
