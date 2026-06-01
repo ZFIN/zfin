@@ -85,17 +85,19 @@ public class ImageViewController {
 
         model.addAttribute("directLink", true);
 
+        boolean isLargeDataPublication = false;
         if (image.getFigure() != null && image.getFigure().getPublication() != null ) {
             Publication publication = image.getFigure().getPublication();
             model.addAttribute("publication", publication);
             model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
             model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
+            isLargeDataPublication = figureViewService.isLargeDataPublication(publication, probe);
         }
 
         ImageNavigationMenu navigationMenu = new ImageNavigationMenu();
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
-        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(figure.getPublication(), probe));
+        model.addAttribute("isLargeDataPublication", isLargeDataPublication);
 
         return "figure/image-view";
     }
