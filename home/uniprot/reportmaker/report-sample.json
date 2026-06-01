@@ -1,0 +1,248 @@
+{
+  "meta": {
+    "title": "UniProt Load — May 2026",
+    "subtitle": "Demonstration report for the generic reportmaker schema",
+    "createdAt": 1748623228072,
+    "schemaVersion": "1"
+  },
+
+  "definitions": {
+    "fields": {
+      "geneZdbID":        { "label": "ZFIN Gene", "type": "link",   "hrefTemplate": "https://zfin.org/{value}" },
+      "uniprotAccession": { "label": "UniProt",   "type": "link",   "hrefTemplate": "https://www.uniprot.org/uniprotkb/{value}" },
+      "ensemblID":        { "label": "Ensembl",   "type": "link",   "hrefTemplate": "https://www.ensembl.org/Danio_rerio/Gene/Summary?g={value}" },
+      "before":           { "label": "Before",    "type": "number" },
+      "after":            { "label": "After",     "type": "number" },
+      "delta":            { "label": "Δ",         "type": "number" },
+      "reviewed":         { "label": "Reviewed",  "type": "boolean" }
+    },
+
+    "tableSchemas": {
+      "beforeAfter": {
+        "description": "Counts of records before and after the load.",
+        "columns": [
+          { "key": "what",   "title": "What" },
+          { "key": "before", "title": "Before", "fieldRef": "before" },
+          { "key": "after",  "title": "After",  "fieldRef": "after"  },
+          { "key": "delta",  "title": "Δ",      "fieldRef": "delta"  }
+        ]
+      },
+      "accessionChange": {
+        "description": "UniProt accession changes for a gene.",
+        "columns": [
+          { "key": "geneZdbID", "title": "Gene",       "fieldRef": "geneZdbID" },
+          { "key": "accession", "title": "Accession",  "fieldRef": "uniprotAccession" },
+          { "key": "action",    "title": "Action" }
+        ]
+      }
+    },
+
+    "tags": {
+      "reviewed":   { "label": "reviewed",   "color": "#b3e5c9", "description": "Swiss-Prot reviewed entry." },
+      "unreviewed": { "label": "unreviewed", "color": "#ffc9d8", "description": "TrEMBL unreviewed entry." },
+      "deprecated": { "label": "deprecated", "color": "#d3d397", "description": "Accession marked deprecated upstream." },
+      "via-ensembl":{ "label": "via Ensembl","color": "#b3d4e5", "description": "Mapping was sourced through Ensembl." }
+    },
+
+    "categories": {
+      "LOAD":    { "label": "Load",    "icon": "✅", "order": 1, "description": "These accessions will be loaded." },
+      "DELETE":  { "label": "Delete",  "icon": "🗑",  "order": 2, "description": "These accessions will be dropped from a gene." },
+      "ERROR":   { "label": "Error",   "icon": "❌", "order": 3, "description": "These accessions are marked as having errors and will not be loaded." },
+      "WARNING": { "label": "Warning", "icon": "⚠️", "order": 4, "description": "Warnings only — these will not block the load." },
+      "INFO":    { "label": "Info",    "icon": "ℹ️",  "order": 5, "description": "Informational entries; no load action taken." }
+    }
+  },
+
+  "blobs": {
+    "blob-load-log-001": "INFO  2026-05-04 12:01:03 Connecting to UniProt FTP...\nINFO  2026-05-04 12:01:08 Downloaded uniprot_sprot.dat (245 MB)\nINFO  2026-05-04 12:03:11 Indexed 567,892 entries\nINFO  2026-05-04 12:03:14 Joining ZFIN gene → UniProt via Ensembl mapping table\nINFO  2026-05-04 12:04:02 Diff complete\n   added:    7879 db_link records\n   removed:    142 db_link records\n   genes touched: 21,699\nINFO  2026-05-04 12:04:08 Done.\n"
+  },
+
+  "root": {
+    "id": "_root",
+    "title": "UniProt Load Summary",
+    "body": {
+      "format": "text",
+      "content": "Summary of the May 2026 UniProt load.\n\nClick a category in the navigation tree on the left to drill in. Items are searchable. Each item shows its source URLs, related entities, and any embedded tables produced by the loader."
+    },
+    "tables": [
+      {
+        "schemaRef": "beforeAfter",
+        "title": "Overall counts",
+        "rows": [
+          { "what": "db_link records",                     "before": 40824, "after": 48703, "delta":  7879 },
+          { "what": "Genes with UniProt links",            "before": 20949, "after": 21699, "delta":   750 },
+          { "what": "Distinct UniProt accessions in ZFIN", "before": 39112, "after": 47208, "delta":  8096 }
+        ]
+      },
+      {
+        "title": "Action breakdown",
+        "columns": [
+          { "key": "category", "title": "Category" },
+          { "key": "count",    "title": "Count", "fieldRef": "after" }
+        ],
+        "rows": [
+          { "category": "LOAD",    "count": 7879 },
+          { "category": "DELETE",  "count":  142 },
+          { "category": "ERROR",   "count":   23 },
+          { "category": "WARNING", "count":   11 },
+          { "category": "INFO",    "count":    5 }
+        ]
+      }
+    ],
+    "blobRefs": ["blob-load-log-001"],
+
+    "children": [
+      {
+        "id": "cat-LOAD",
+        "title": "Load",
+        "categoryRef": "LOAD",
+        "body": { "format": "text", "content": "Accessions that will be added to genes." },
+        "children": [
+          {
+            "id": "load-via-ensembl",
+            "title": "Sourced via Ensembl",
+            "body": { "format": "text", "content": "Accessions tied to ZFIN genes through the Ensembl gene→UniProt mapping table." },
+            "children": [
+              {
+                "id": "load-001",
+                "title": "samd9 ← Q5RGV1",
+                "categoryRef": "LOAD",
+                "fields": {
+                  "geneZdbID":        "ZDB-GENE-040426-2769",
+                  "uniprotAccession": "Q5RGV1",
+                  "ensemblID":        "ENSDARG00000056885",
+                  "reviewed":         true
+                },
+                "tags": ["reviewed", "via-ensembl"],
+                "body": { "format": "text", "content": "Adding UniProt Q5RGV1 to gene samd9 via Ensembl mapping." },
+                "links": [
+                  { "title": "ZFIN gene page", "href": "https://zfin.org/ZDB-GENE-040426-2769" },
+                  { "title": "UniProt entry",  "href": "https://www.uniprot.org/uniprotkb/Q5RGV1" }
+                ],
+                "tables": [
+                  {
+                    "schemaRef": "accessionChange",
+                    "title": "Accession changes for this gene",
+                    "rows": [
+                      { "geneZdbID": "ZDB-GENE-040426-2769", "accession": "Q5RGV1", "action": "ADD" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "load-002",
+                "title": "tbx16 ← F1QGS9",
+                "categoryRef": "LOAD",
+                "fields": {
+                  "geneZdbID":        "ZDB-GENE-980526-437",
+                  "uniprotAccession": "F1QGS9",
+                  "ensemblID":        "ENSDARG00000007329",
+                  "reviewed":         false
+                },
+                "tags": ["unreviewed", "via-ensembl"],
+                "links": [
+                  { "title": "ZFIN gene page", "href": "https://zfin.org/ZDB-GENE-980526-437" },
+                  { "title": "UniProt entry",  "href": "https://www.uniprot.org/uniprotkb/F1QGS9" }
+                ]
+              },
+              {
+                "id": "load-003",
+                "title": "pax6a ← P32117",
+                "categoryRef": "LOAD",
+                "fields": {
+                  "geneZdbID":        "ZDB-GENE-990415-200",
+                  "uniprotAccession": "P32117",
+                  "reviewed":         true
+                },
+                "tags": ["reviewed", "via-ensembl"],
+                "links": [
+                  { "title": "UniProt entry", "href": "https://www.uniprot.org/uniprotkb/P32117" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": "cat-DELETE",
+        "title": "Delete",
+        "categoryRef": "DELETE",
+        "children": [
+          {
+            "id": "delete-deprecated",
+            "title": "Deprecated upstream",
+            "body": { "format": "text", "content": "Accessions that have been deprecated by UniProt and will be removed from their ZFIN genes." },
+            "children": [
+              {
+                "id": "delete-001",
+                "title": "samd9 ✗ M9MM97",
+                "categoryRef": "DELETE",
+                "fields": {
+                  "geneZdbID":        "ZDB-GENE-030131-2956",
+                  "uniprotAccession": "M9MM97"
+                },
+                "tags": ["deprecated"],
+                "body": { "format": "text", "content": "Accession M9MM97 has been deprecated upstream and will be removed from this gene." }
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": "cat-ERROR",
+        "title": "Error",
+        "categoryRef": "ERROR",
+        "children": [
+          {
+            "id": "error-no-uniprot",
+            "title": "No UniProt entry found",
+            "children": [
+              {
+                "id": "error-001",
+                "title": "Stale mapping: X1Y2Z3",
+                "categoryRef": "ERROR",
+                "fields": {
+                  "geneZdbID":        "ZDB-GENE-XXXXXX-XXX",
+                  "uniprotAccession": "X1Y2Z3"
+                },
+                "body": {
+                  "format": "html",
+                  "content": "<p>No UniProt entry found for accession <code>X1Y2Z3</code>. This usually means the accession was withdrawn upstream or the source mapping file is stale.</p><p><strong>Suggested action:</strong> rerun the Ensembl mapping pipeline before the next load.</p>"
+                }
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": "cat-INFO",
+        "title": "Info",
+        "categoryRef": "INFO",
+        "children": [
+          {
+            "id": "info-lost-all",
+            "title": "Genes that lost all UniProt accessions",
+            "body": { "format": "text", "content": "Genes that had at least one UniProt accession before this load and have none after." },
+            "children": [
+              {
+                "id": "info-lost-001",
+                "title": "samd9",
+                "categoryRef": "INFO",
+                "fields": { "geneZdbID": "ZDB-GENE-030131-2956" },
+                "body": { "format": "text", "content": "Lost all UniProt accessions in this load (1 before, 0 after). Lost: M9MM97" }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "edges": [
+    { "from": "delete-001", "to": "info-lost-001", "type": "caused" },
+    { "from": "load-001",   "to": "delete-001",   "type": "replaces" }
+  ]
+}

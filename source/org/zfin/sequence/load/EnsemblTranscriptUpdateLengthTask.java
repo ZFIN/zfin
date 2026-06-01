@@ -22,10 +22,7 @@ import static org.zfin.sequence.load.LoadAction.SubType.*;
 @Log4j2
 public class EnsemblTranscriptUpdateLengthTask extends EnsemblTranscriptBase {
 
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     public static final String HTTPS_WWW_ENSEMBL_ORG_DANIO_RERIO_GENE_SUMMARY_G = "https://www.ensembl.org/Danio_rerio/Gene/Summary?g=";
-
-    public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
 
     public static void main(String[] args) throws IOException {
         AbstractScriptWrapper wrapper = new AbstractScriptWrapper();

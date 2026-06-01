@@ -64,7 +64,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private static final long MAX_REPORT_FILE_SIZE = 50_000_000; // 50 MB
     public File workingDir;
 
@@ -3693,18 +3692,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addActions(getGeneSymbolMatchReportActions());
         builder.addActions(getReplacedNCBIGeneIdReportActions());
 
-        ObjectNode report = builder.build();
-
-        try {
-            String jsonString = builder.getJsonString(report);
-
-            // Write to file
-            writeToFileOrZip(new File(workingDir, "ncbi_report.json"), jsonString, "UTF-8");
-            writeOutputReportFile(jsonString);
-
-        } catch (IOException e) {
-            print(LOG, "ERROR: JSON reporting failed: " + e.getMessage());
-        }
+        writeOutputReportFile(builder.buildZfinReport());
         beforeAfterComparison.clear();
     }
 
@@ -4080,19 +4068,15 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(LOG, "Combined CSVs into Excel report: xlsxName\n");
     }
 
-    private void writeOutputReportFile(String jsonString) {
-        String sourceRoot = ZfinPropertiesEnum.SOURCEROOT.value();
-        if (sourceRoot == null) {
-            sourceRoot = env("SOURCEROOT");
-        }
+    private void writeOutputReportFile(org.zfin.datatransfer.report.model.ZfinReport legacy) {
         File reportFile = new File(workingDir, "ncbi_report.html");
         try {
-            String template = sourceRoot + "/home/uniprot/zfin-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template));
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
-            FileUtils.writeStringToFile(reportFile, filledTemplate);
-            writeToFileOrZip(new File(workingDir, "ncbi_report.html.zip"), filledTemplate, "UTF-8");
-            //check report file size and compress if too big
+            org.zfin.report.Report adapted = new org.zfin.report.LegacyReportAdapter().adapt(legacy);
+            String html = new org.zfin.report.ReportWriter().render(adapted);
+            FileUtils.writeStringToFile(reportFile, html, StandardCharsets.UTF_8);
+            writeToFileOrZip(new File(workingDir, "ncbi_report.html.zip"), html, "UTF-8");
+            // Reports for big loads can run into the tens of MB; once we have the .zip,
+            // discard the raw .html if it's larger than the cap.
             if (reportFile.length() > MAX_REPORT_FILE_SIZE) {
                 print(LOG, "Report file size is " + reportFile.length() + " bytes, keeping only zip file.\n");
                 if (!reportFile.delete()) {

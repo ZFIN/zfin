@@ -24,7 +24,7 @@ public class UniProtLoadAddAttributionTest extends AbstractDatabaseTest {
      */
     @Test
     public void handleUniprotLoadAgreesWithManualCuration() throws JsonProcessingException {
-        UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "", "");
+        UniProtLoadTask loadTask = new UniProtLoadTask("", "", false, "", "");
         String record = testDat();
         loadTask.setContext(testContext());
         try (BufferedReader inputFileReader = new BufferedReader(new StringReader(record)) ) {

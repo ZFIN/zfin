@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zfin.org/uniprot/reportmaker/report-schema.json",
+  "title": "Generic Nested Report",
+  "description": "A report is a recursive tree of nodes. Every node carries the same shape: optional title, body, structured fields, tables, tags, links, blob references, and child nodes. Reusable definitions for fields, tables, tags and categories live in `definitions`. Cross-tree relationships live in `edges`. Long-form content (logs, diffs, raw text) lives in `blobs` and is referenced by id from nodes.",
+  "type": "object",
+  "required": ["meta", "root"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title":         { "type": "string" },
+        "subtitle":      { "type": "string" },
+        "createdAt":     { "type": "integer", "description": "Unix epoch in milliseconds." },
+        "schemaVersion": { "type": "string", "default": "1" }
+      }
+    },
+
+    "definitions": {
+      "type": "object",
+      "description": "Reusable definitions referenced by nodes. All optional.",
+      "properties": {
+        "fields":       { "$ref": "#/$defs/fieldDefs" },
+        "tableSchemas": { "$ref": "#/$defs/tableSchemas" },
+        "tags":         { "$ref": "#/$defs/tagDefs" },
+        "categories":   { "$ref": "#/$defs/categoryDefs" }
+      }
+    },
+
+    "root":  { "$ref": "#/$defs/node" },
+
+    "blobs": {
+      "type": "object",
+      "description": "Long-form content (logs, diffs, raw text) keyed by id. Referenced from nodes via `blobRefs`. Hoisted out of nodes so the same large blob can be shared without duplication.",
+      "additionalProperties": { "type": "string" }
+    },
+
+    "edges": {
+      "type": "array",
+      "description": "Directed relationships between nodes that don't fit the parent-child tree. Replaces the old shared-token `relatedActionsKeys` matching.",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "properties": {
+          "from": { "type": "string", "description": "Source node id." },
+          "to":   { "type": "string", "description": "Target node id." },
+          "type": { "type": "string", "description": "Relationship label, e.g. 'caused', 'replaces', 'related'." }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id":          { "type": "string", "description": "Stable unique id within the report. Used for navigation, anchors and edges." },
+        "title":       { "type": "string" },
+        "categoryRef": { "type": "string", "description": "Key into definitions.categories. Drives icon/color/sort order." },
+        "count":       { "type": "integer", "description": "Optional explicit count shown in the tree. If absent, the renderer sums descendants' explicit counts." },
+        "fields":      { "type": "object", "description": "Key/value pairs. Keys may match definitions.fields entries to control rendering." },
+        "body": {
+          "type": "object",
+          "description": "Free-form node content. The renderer treats `text` as preformatted (preserves whitespace) and `html` as trusted markup. Producers are responsible for sanitization.",
+          "properties": {
+            "format":  { "type": "string", "enum": ["text", "html"], "default": "text" },
+            "content": { "type": "string" }
+          }
+        },
+        "tables":   { "type": "array", "items": { "$ref": "#/$defs/table" } },
+        "tags":     { "type": "array", "items": { "type": "string", "description": "Key into definitions.tags. Falls back to bare label if undefined." } },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "href"],
+            "properties": {
+              "title": { "type": "string" },
+              "href":  { "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "blobRefs": { "type": "array", "items": { "type": "string", "description": "Key into top-level blobs map." } },
+        "children": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+      }
+    },
+
+    "table": {
+      "type": "object",
+      "description": "Either references a shared schema (schemaRef) or carries inline `columns`. Always carries `rows`.",
+      "required": ["rows"],
+      "properties": {
+        "schemaRef":   { "type": "string", "description": "Key into definitions.tableSchemas." },
+        "title":       { "type": "string" },
+        "description": { "type": "string" },
+        "columns":     { "$ref": "#/$defs/columnList" },
+        "rows":        { "type": "array", "items": { "type": "object" } }
+      }
+    },
+
+    "columnList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "title"],
+        "properties": {
+          "key":      { "type": "string" },
+          "title":    { "type": "string" },
+          "fieldRef": { "type": "string", "description": "Key into definitions.fields, controls cell rendering (e.g. link templates)." }
+        }
+      }
+    },
+
+    "fieldDefs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label":        { "type": "string" },
+          "type":         { "type": "string", "enum": ["text", "number", "link", "date", "boolean", "html"], "default": "text" },
+          "hrefTemplate": { "type": "string", "description": "Used when type=link. {value} is substituted with the URL-encoded field value." },
+          "description":  { "type": "string" }
+        }
+      }
+    },
+
+    "tableSchemas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["columns"],
+        "properties": {
+          "description": { "type": "string" },
+          "columns":     { "$ref": "#/$defs/columnList" }
+        }
+      }
+    },
+
+    "tagDefs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label":       { "type": "string" },
+          "color":       { "type": "string", "description": "Any CSS color." },
+          "description": { "type": "string" }
+        }
+      }
+    },
+
+    "categoryDefs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label":       { "type": "string" },
+          "order":       { "type": "integer", "description": "Sort order among siblings carrying this category." },
+          "icon":        { "type": "string", "description": "Short emoji or text shown next to the category." },
+          "color":       { "type": "string", "description": "Any CSS color." },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

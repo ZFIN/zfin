@@ -29,6 +29,10 @@ public class GafJobData {
         this.gafEntryCount = gafEntryCount;
     }
 
+    public int getGafEntryCount() {
+        return gafEntryCount;
+    }
+
     public void addNewEntry(MarkerGoTermEvidence entry) {
         newEntries.add(entry);
     }

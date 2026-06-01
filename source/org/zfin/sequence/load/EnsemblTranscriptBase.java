@@ -1,7 +1,5 @@
 package org.zfin.sequence.load;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
@@ -10,7 +8,6 @@ import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.zfin.marker.Marker;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.FileUtil;
@@ -33,9 +30,6 @@ abstract public class EnsemblTranscriptBase {
     public static final String NCRNA_FILE_NAME = "Danio_rerio.GRCz11.ncrna.fa";
     public static final String ALL_FILE_NAME = "Danio_rerio.GRCz11.all.fa";
 
-
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
-    public static final String REPORT_HOME_DIRECTORY = "/home/ensembl/";
 
     protected record TranscriptRecord(Marker marker, String ensdartID, RichSequence richSequence) {
     }
@@ -179,26 +173,17 @@ abstract public class EnsemblTranscriptBase {
         return dto;
     }
 
-    private String actionsToJson(LoadActionsContainer actions) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actions);
-    }
-
     protected void writeOutputReportFile() {
-        String reportFile = "ensembl-transcript-load-report.html";
-
+        File reportFile = new File("ensembl-transcript-load-report.html");
         log.info("Creating report file: " + reportFile);
         try {
-            LoadActionsContainer actionsContainer = LoadActionsContainer.builder()
+            LoadActionsContainer container = LoadActionsContainer.builder()
                 .actions(actions)
                 .summary(dto)
                 .build();
-            String jsonContents = actionsToJson(actionsContainer);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + REPORT_HOME_DIRECTORY + "/ensembl-transcript-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
+            new LoadActionReportAdapter().writeHtmlReport("Ensembl Transcript Load", container, reportFile);
         } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+            log.error("Error creating report (" + reportFile + ")\n" + e.getMessage(), e);
         }
     }
 

@@ -22,7 +22,12 @@ public class GafErrorSummary {
     private final Map<String, Integer> geneNotFoundSources = new LinkedHashMap<>();
     private Map<String, Integer> parserRejections = new LinkedHashMap<>();
 
-    private static String categorize(String message) {
+    /**
+     * Maps an error's first line to a stable category label. Public so report
+     * builders can use this as the single source of truth (rather than mirroring
+     * the rules and risking drift).
+     */
+    public static String categorize(String message) {
         if (message.startsWith("Annotations with IEA evidence must")) {
             Matcher m = Pattern.compile("\\[(.+?)]").matcher(message);
             String type = m.find() ? m.group(1) : "unknown";
@@ -45,6 +50,14 @@ public class GafErrorSummary {
         }
         if (message.startsWith("No pub found for pmid:")) {
             return "Publication not found for PMID";
+        }
+        // Normalize: strip the specific GO_REF so all unknown-goref errors land in one bucket.
+        if (message.startsWith("Goref ID is not known or loaded")) {
+            return "Goref ID is not known or loaded";
+        }
+        // Normalize: strip the specific RO term name.
+        if (message.startsWith("RO term") && message.contains("does not exist")) {
+            return "RO term does not exist";
         }
         if (message.startsWith("MarkerGoTermEvidence{")) {
             return "Annotation insertion failed";
@@ -234,5 +247,16 @@ public class GafErrorSummary {
         try (FileWriter writer = new FileWriter(outputFile)) {
             writer.write(format());
         }
+    }
+
+    public Map<String, Integer> getCategoryCounts()         { return categoryCounts; }
+    public Map<String, List<String>> getCategoryExamples()  { return categoryExamples; }
+    public Map<String, Integer> getGeneNotFoundIds()        { return geneNotFoundIds; }
+    public Map<String, Integer> getGeneNotFoundSources()    { return geneNotFoundSources; }
+    public Map<String, Integer> getParserRejections()       { return parserRejections; }
+
+    /** Same classifier used internally — exposed so a downstream report can mirror the breakdown. */
+    public static String idType(String entryId) {
+        return classifyId(entryId);
     }
 }
