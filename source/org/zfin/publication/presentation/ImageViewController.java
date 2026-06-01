@@ -64,9 +64,11 @@ public class ImageViewController {
             }
         }
 
-
         model.addAttribute("image", image);
         Figure figure = image.getFigure();
+        Clone probe = figureViewService.getProbeForFigure(figure);
+        model.addAttribute("probe", probe);
+
         if (figure!=null) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
             model.addAttribute("expressionGeneList", figureViewService.getExpressionGenes(image.getFigure()));
@@ -79,8 +81,6 @@ public class ImageViewController {
 
             model.addAttribute("expressionSummaryMap", expressionSummaryMap);
             model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
-            Clone probe = figureViewService.getProbeForFigure(figure);
-            model.addAttribute("probe", probe);
         }
 
         model.addAttribute("directLink", true);
@@ -95,6 +95,7 @@ public class ImageViewController {
         ImageNavigationMenu navigationMenu = new ImageNavigationMenu();
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
+        model.addAttribute("isLargeDataPublication", figureViewService.isLargeDataPublication(figure.getPublication(), probe));
 
         return "figure/image-view";
     }
