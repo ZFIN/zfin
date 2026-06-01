@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>
+    Monthly auto-run of the UniProt primary and secondary loads against the latest
+    processed UniProt release file (re-integrates changes that came from our own
+    database since the release was originally loaded).
+
+    Behavior:
+    - If an unprocessed UniProt release exists (i.e. a newer release was downloaded
+      by UniProt-Release-Check_d but not yet manually loaded), this job marks the
+      build UNSTABLE and skips the loads. The new release should be handled with the
+      manual UniProt-Diff-Load / UniProt-Secondary-Term-Load jobs instead.
+    - Otherwise, this job runs UniProtLoadTask and UniprotSecondaryTermLoadTask
+      against the latest processed release file, with changes committed.
+
+    See also: UniProt-Diff-Load, UniProt-Secondary-Term-Load, UniProt-Release-Check_d.
+  </description>
+  <keepDependencies>false</keepDependencies>
+
+  <properties/>
+
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec></spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>
+        <![CDATA[
+set -e
+
+UNPROCESSED_COUNT=$(psql -At -d $DBNAME -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
+
+if [ "$UNPROCESSED_COUNT" != "0" ]; then
+    echo "Found $UNPROCESSED_COUNT unprocessed UniProt release(s)."
+    echo "A new release is pending - skipping monthly auto-run."
+    echo "Run UniProt-Diff-Load and UniProt-Secondary-Term-Load manually."
+    exit 2
+fi
+
+echo "No unprocessed UniProt releases - proceeding with monthly re-run against latest processed release."
+        ]]>
+      </command>
+      <unstableReturn>2</unstableReturn>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>
+        <![CDATA[
+TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
+echo "WORKSPACE=$WORKSPACE"
+echo "PWD=$PWD"
+rm -f $PWD/uniprot_load_report*.html $PWD/uniprot_context*.json $PWD/uniprot_load_report*.html.zip $PWD/uniprot_context*.json.zip
+export UNIPROT_OUTPUT_REPORT_FILE="$PWD/uniprot_load_report_$TIMESTAMP.html.zip"
+export UNIPROT_CONTEXT_FILE="$PWD/uniprot_context_$TIMESTAMP.json.zip"
+export NCBI_FETCH_CACHE_OUTPUT_FILE="$PWD/ncbi_refseq_api_results.json"
+export UNIPROT_COMMIT_CHANGES=true
+export UNIPROT_RERUN_LATEST_PROCESSED=true
+cd $SOURCEROOT
+gradle uniprotLoadTask
+        ]]>
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>
+        <![CDATA[
+TIMESTAMP=`date +%Y-%m-%d_%H-%M-%S`
+echo "WORKSPACE=$WORKSPACE"
+echo "PWD=$PWD"
+rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report.json.report.html $PWD/uniprot_secondary_load_report*.json.zip $PWD/uniprot_secondary_load_report*.html.zip
+export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report_$TIMESTAMP.json.zip"
+export UNIPROT_COMMIT_CHANGES=true
+export UNIPROT_RERUN_LATEST_PROCESSED=true
+cd $SOURCEROOT
+gradle uniprotSecondaryTermLoadTask
+        ]]>
+      </command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>*</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+      <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>true</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>false</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+          <email>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>true</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>false</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+      </configuredTriggers>
+      <contentType>default</contentType>
+      <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern></attachmentsPattern>
+      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>$DEFAULT_REPLYTO</replyTo>
+      <saveOutput>false</saveOutput>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>

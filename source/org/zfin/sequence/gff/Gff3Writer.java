@@ -3,7 +3,6 @@ package org.zfin.sequence.gff;
 //TODO: use a different CSVWriter (This is the only place in ZFIN that uses opencsv)
 //Then we can delete com.xlson.groovycsv:groovycsv:1.0
 import au.com.bytecode.opencsv.CSVWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
@@ -14,15 +13,12 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.load.LoadAction;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -33,11 +29,8 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class Gff3Writer {
 
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
-
     Gff3NcbiDAO dao = new Gff3NcbiDAO();
     Gff3NcbiAttributesDAO pairDo = new Gff3NcbiAttributesDAO();
-    public Set<LoadAction> actions = new HashSet<>();
 
     public static void main(String[] args) {
         init();
@@ -67,16 +60,10 @@ public class Gff3Writer {
     }
 
     private void createReport(ReportBuilder builder) {
-        ObjectNode report = builder.build();
         try {
-            String jsonString = builder.getJsonString(report);
-
-            // Write to file
-            FileUtils.writeStringToFile(new File(".", "gff3_ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
-            writeOutputReportFile(jsonString);
-
+            builder.writeHtmlReport(new File(".", "gff3_ncbi_report.html"));
         } catch (IOException e) {
-            log.error("JSON reporting failed: " + e.getMessage(), e);
+            log.error("HTML report write failed: " + e.getMessage(), e);
         }
     }
 
@@ -263,22 +250,6 @@ public class Gff3Writer {
         chromoMap.put("NC_133200.1", "25");
         chromoMap.put("NC_002333.2", "MT");
 
-    }
-
-    private void writeOutputReportFile(String jsonString) {
-        String sourceRoot = ZfinPropertiesEnum.SOURCEROOT.value();
-        if (sourceRoot == null) {
-            sourceRoot = System.getenv("SOURCEROOT");
-        }
-        File reportFile = new File(".", "gff3_ncbi_report.html");
-        try {
-            String template = "./home/uniprot/zfin-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template));
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
-            FileUtils.writeStringToFile(reportFile, filledTemplate);
-        } catch (IOException e) {
-            System.out.println("ERROR: Could not write report file: " + e.getMessage());
-        }
     }
 
     private void upsertSequenceFeatureChromosomeRecords(List<Gff3Ncbi> filteredResults) {
