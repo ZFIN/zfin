@@ -8,7 +8,15 @@
             Your Input Welcome
         </div>
         <div class="popup-body" id="input-welcome-body">
-            <form id="input-welcome-form">
+            <%-- novalidate: the Altcha widget injects a hidden <input type="checkbox" required>
+                 inside #input-welcome-captcha. When the server tells us the visitor doesn't
+                 need a captcha (logged-in / already verified), we hide that container via
+                 display:none — but the required checkbox is still in the DOM, so the browser's
+                 native validation tries to focus an unfocusable element on submit and logs
+                 "An invalid form control with name='' is not focusable." The form's JS does
+                 its own field validation (see `validators` in your-input-welcome.js) and gates
+                 the submit button on captcha state, so we don't need the browser's pass. --%>
+            <form id="input-welcome-form" novalidate>
                 We welcome your input and comments. Please use this form to report issues or recommend updates to the information in ZFIN. We
                 appreciate as much detail as possible and references as appropriate. We will review your comments promptly.
                 <div id="input-welcome-form-controls">
