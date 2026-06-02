@@ -5,6 +5,8 @@
 # should be updated. 
 
 use DBI;
+use JSON;
+use POSIX qw(strftime);
 
 use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
 use ZFINPerlModules;
@@ -456,6 +458,141 @@ close(LOG);
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
 
+# ---------------------------------------------------------------------------
+# Persistent inconsistency report (ZFIN-10286)
+# ---------------------------------------------------------------------------
+# Re-runs the same inconsistency check as the main loop above, but ignores the
+# alreadyExamined allow-list so curators see the full surface. Tracks the date
+# each ZDB ID first appeared in alreadyExamined.json so we can show it
+# newest-first and drop resolved entries automatically.
+#
+# State file: /research/zarchive/load_files/Orthology/alreadyExamined.json
+#   { "ZDB-GENE-XXXX-XX": "YYYY-MM-DD", ... }
+# It is fully rewritten each run, NOT appended (so resolved inconsistencies
+# stop being reported once they're fixed).
+&writePersistentInconsistencyReport();
+
+}
+
+sub writePersistentInconsistencyReport {
+
+    my $archivePath = "/research/zarchive/load_files/Orthology/alreadyExamined.json";
+    my $localJson   = "alreadyExamined.json";
+
+    # Pull the previous state if the archive copy exists; missing file just
+    # means we've never run this report before — start with empty state.
+    # Use plain system() so a flaky scp doesn't kill the whole orthology job
+    # (matches how the existing alreadyExamined scp at job end is handled).
+    if (-e $archivePath) {
+        system("scp $archivePath <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/");
+    }
+
+    my %firstSeen;
+    if (-e $localJson) {
+        open(my $jfh, "<", $localJson) or die "Cannot open $localJson : $!\n";
+        local $/;
+        my $blob = <$jfh>;
+        close($jfh);
+        my $decoded = eval { decode_json($blob) };
+        if ($@) {
+            print LOG "Warning: $localJson is malformed, starting fresh: $@\n";
+        } else {
+            %firstSeen = %{$decoded};
+        }
+    }
+
+    my $today = strftime("%Y-%m-%d", localtime);
+
+    # %currentBlocks: ZDB-GENE-id => formatted report block (no date header).
+    # Built by re-running the same Human/Mouse inconsistency check the main
+    # loop uses, minus the alreadyExamined filter. Mouse is only consulted
+    # when there is no Human NCBI name — mirroring the existing report's
+    # priority order.
+    my %currentBlocks;
+    foreach my $zdbGeneId (keys %symbolsZFgene) {
+        my $zfName = $namesZFgene{$zdbGeneId};
+        my $zfNoComma = $zfName;
+        $zfNoComma =~ s/,//g;
+        my $zfLc = lc($zfNoComma);
+
+        my $zfChopped = $choppedNames{$zdbGeneId};
+        $zfChopped =~ s/,//g;
+        my $zfChoppedLc = lc($zfChopped);
+
+        my ($isInconsistent, $block) = (0, "");
+
+        if (exists($namesHumanOrthNCBI{$zdbGeneId})) {
+            my $human = $namesHumanOrthNCBI{$zdbGeneId};
+            my $humanLc = lc($human);
+            $humanLc =~ s/,//g;
+            if ($zfLc !~ m/\Q$humanLc/ && $humanLc !~ m/\Q$zfChoppedLc/) {
+                $isInconsistent = 1;
+                $block  = "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                $block .= "gene name (z): $zfName\n";
+                $block .= "gene name (h): $human\n";
+                $block .= "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+                if (exists($namesMouseOrthNCBI{$zdbGeneId})) {
+                    $block .= "gene name (m): $namesMouseOrthNCBI{$zdbGeneId}\n";
+                    $block .= "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n";
+                } else {
+                    $block .= "gene name (m):\n";
+                    $block .= "gene symbol (m):\n";
+                }
+            }
+        } elsif (exists($namesMouseOrthNCBI{$zdbGeneId})) {
+            my $mouse = $namesMouseOrthNCBI{$zdbGeneId};
+            my $mouseLc = lc($mouse);
+            $mouseLc =~ s/,//g;
+            if ($zfLc !~ m/\Q$mouseLc/ && $mouseLc !~ m/\Q$zfChoppedLc/) {
+                $isInconsistent = 1;
+                $block  = "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                $block .= "gene name (z): $zfName\n";
+                $block .= "gene name (h):\n";
+                $block .= "gene symbol (h):\n";
+                $block .= "gene name (m): $mouse\n";
+                $block .= "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n";
+            }
+        }
+
+        $currentBlocks{$zdbGeneId} = $block if $isInconsistent;
+    }
+
+    # Drop ZDB IDs that were inconsistent in a previous run but aren't now —
+    # those have been resolved and should no longer be reported.
+    foreach my $zdbGeneId (keys %firstSeen) {
+        delete $firstSeen{$zdbGeneId} unless exists $currentBlocks{$zdbGeneId};
+    }
+    # Stamp new inconsistencies with today's date; keep existing dates.
+    foreach my $zdbGeneId (keys %currentBlocks) {
+        $firstSeen{$zdbGeneId} //= $today;
+    }
+
+    # Sort newest-first by first-seen date; gene symbol breaks ties so the
+    # ordering is stable across runs that add no new inconsistencies.
+    my @ordered = sort {
+        ($firstSeen{$b} cmp $firstSeen{$a})
+        || ($symbolsZFgene{$a} cmp $symbolsZFgene{$b})
+    } keys %currentBlocks;
+
+    open(my $rfh, ">", "orthoInconsistentZebrafishGeneNamesReport_persistent.txt")
+        or die "Cannot open orthoInconsistentZebrafishGeneNamesReport_persistent.txt : $!\n";
+    print $rfh "# Persistent ZFIN/ortholog name inconsistencies\n";
+    print $rfh "# Generated $today; " . scalar(@ordered) . " inconsistencies; newest first.\n\n";
+    foreach my $zdbGeneId (@ordered) {
+        print $rfh "first seen: $firstSeen{$zdbGeneId}\n";
+        print $rfh $currentBlocks{$zdbGeneId};
+        print $rfh "\n";
+    }
+    close($rfh);
+
+    open(my $jout, ">", $localJson) or die "Cannot write $localJson : $!\n";
+    print $jout JSON->new->canonical->pretty->encode(\%firstSeen);
+    close($jout);
+
+    system("scp $localJson /research/zarchive/load_files/Orthology/");
+
+    print "persistent inconsistency report: " . scalar(@ordered) . " entries\n";
+    print LOG "persistent inconsistency report: " . scalar(@ordered) . " entries\n";
 }
 
 sub doSystemCommand {
