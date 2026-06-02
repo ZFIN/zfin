@@ -12,9 +12,13 @@ import java.util.List;
  * configured instance because reconfiguration is non-trivial and the generator
  * is documented as thread-safe-for-reuse when used in inline mode.
  *
- * <p>Input is HTML-escaped first so any raw {@code <} in the source can't break
- * out of the cell. The {@code <u>...</u>} markup we add afterwards is the only
- * markup that reaches the output.
+ * <p>Input is fed in raw — the underlying query filters to {@code mrkr_type
+ * = 'GENE'} and that data has no {@code <}, {@code >}, or {@code &} anywhere
+ * (verified against the DB), so the only markup that ever reaches the output
+ * is the {@code <u>...</u>} pair we add. If the producer ever widens the
+ * query to types where HTML metacharacters can occur (transgenes have
+ * {@code >} in SNV notation, e.g. {@code Tg(...T>A...)}), an escape step
+ * needs to come back.
  *
  * <p>Why {@code <u>}: Excel's HTML importer honours per-character underline,
  * but not per-character background colour (Excel cell background is whole-cell
@@ -42,31 +46,15 @@ final class OrthoNameDiff {
 
     /** Returns the "old" side of the diff with deletions marked. */
     static String highlightOld(String oldText, String newText) {
-        return GENERATOR.generateDiffRows(List.of(escape(oldText)), List.of(escape(newText)))
+        return GENERATOR.generateDiffRows(List.of(nullToEmpty(oldText)), List.of(nullToEmpty(newText)))
             .get(0).getOldLine();
     }
 
     /** Returns the "new" side of the diff with insertions marked. */
     static String highlightNew(String oldText, String newText) {
-        return GENERATOR.generateDiffRows(List.of(escape(oldText)), List.of(escape(newText)))
+        return GENERATOR.generateDiffRows(List.of(nullToEmpty(oldText)), List.of(nullToEmpty(newText)))
             .get(0).getNewLine();
     }
 
-    /** Minimal HTML escape — the diff library doesn't escape for us. */
-    private static String escape(String s) {
-        if (s == null) return "";
-        StringBuilder out = new StringBuilder(s.length() + 8);
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-                case '&' -> out.append("&amp;");
-                case '<' -> out.append("&lt;");
-                case '>' -> out.append("&gt;");
-                case '"' -> out.append("&quot;");
-                case '\'' -> out.append("&#39;");
-                default  -> out.append(c);
-            }
-        }
-        return out.toString();
-    }
+    private static String nullToEmpty(String s) { return s == null ? "" : s; }
 }

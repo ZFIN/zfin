@@ -71,16 +71,18 @@ public class OrthoInconsistencyReportJob extends AbstractValidateDataReportTask 
     // -------- data --------
 
     private List<Row> fetch() {
-        String hql = "select o.zebrafishGene.zdbID, " +
-                     "       o.zebrafishGene.abbreviation, " +
-                     "       o.zebrafishGene.name, " +
-                     "       o.organism.commonName, " +
-                     "       o.symbol, " +
-                     "       o.name " +
-                     "  from Ortholog o " +
-                     " where o.organism.commonName in ('Human', 'Mouse') " +
-                     "   and o.zebrafishGene.markerType.name = 'GENE' " +
-                     " order by o.zebrafishGene.abbreviation";
+        String hql = """
+                select o.zebrafishGene.zdbID,
+                       o.zebrafishGene.abbreviation,
+                       o.zebrafishGene.name,
+                       o.organism.commonName,
+                       o.symbol,
+                       o.name
+                  from Ortholog o
+                 where o.organism.commonName in ('Human', 'Mouse')
+                   and o.zebrafishGene.markerType.name = 'GENE'
+                 order by o.zebrafishGene.abbreviation
+                """;
         List<Object[]> raw = HibernateUtil.currentSession()
             .createQuery(hql, Object[].class)
             .list();
