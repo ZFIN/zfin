@@ -81,6 +81,17 @@ task loadNoctuaGpad(type: JavaExec) {
     ]
 }
 
+task oneTimeOrthoInconsistencyReport(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.orthology.jobs.OrthoInconsistencyReportJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "One-Time-Ortho-Inconsistency-Report"
+    ]
+}
+
 task loadFlankSeq(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
