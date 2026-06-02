@@ -8,18 +8,18 @@ use DBI;
 use JSON;
 use POSIX qw(strftime);
 
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 ## set environment variables
 
 
-$instance = "<!--|INSTANCE|-->";
+$instance = "$ENV{'INSTANCE'}";
 
 sub reportOrthoNameChanges() {
 
     
-    &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
+    &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined $ENV{'ROOT_PATH'}/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
     
     open (ALREADY, "alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
 
@@ -138,12 +138,12 @@ print LOG "\ntotal number of lines parsed: $ctLines\nnumber of human genes: $ctH
 
 close(NCBI);
 
-$dbname = "<!--|DB_NAME|-->";
+$dbname = "$ENV{'DB_NAME'}";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
+my $dbhost = "$ENV{'PGHOST'}";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
@@ -436,27 +436,27 @@ close(PREVIOUSLYREPORTED);
 close(LOG);
 
 ##this is taken care of in the bulk name/chromosome/position/accessionnumber update.
-##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> updateOrthologyNames.sql >updateOrthologyNameSQLlog1 2> updateOrthologyNameSQLlog2";
+##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DB_NAME'} updateOrthologyNames.sql >updateOrthologyNameSQLlog1 2> updateOrthologyNameSQLlog2";
 ##&doSystemCommand($cmd);
 #&doSystemCommand("/bin/cat updateOrthologyNameSQLlog2 >> updateOrthologyNameSQLlog1");
 #$subject = "Auto from $instance: " . "NCBIorthology.pl :: updateOrthologyNameSQLlog";
-#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateOrthologyNameSQLlog1");
+#ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","updateOrthologyNameSQLlog1");
 
 
 ### These should all just be artifacts in jenkins job.  Commenting out for now.
 #$subject = "Auto from $instance: " . "update.pl :: updateOrthologyNamePerlLog";
-#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
+#ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","logOrthologyUpdateName");
 
 #$subject = "Auto from $instance: " . "$ctUpdatedOrthNames ortholog names have been updated by the script";
-#ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
+#ZFINPerlModules->sendMailWithAttachedReport("$ENV{'VALIDATION_EMAIL_GENE'}","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
 
 #$subject = "Auto from $instance: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";
-#ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","inconsistentZebrafishGeneNamesReport") if $ctDiffrentZFgeneNames > 0;
+#ZFINPerlModules->sendMailWithAttachedReport("$ENV{'VALIDATION_EMAIL_GENE'}","$subject","inconsistentZebrafishGeneNamesReport") if $ctDiffrentZFgeneNames > 0;
 
 #$subject = "Auto from $instance: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
-#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
+#ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","inconsistentZebrafishGeneNamesReport");
 
-system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
+system("scp $ENV{'ROOT_PATH'}/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
 
 # ---------------------------------------------------------------------------
 # Persistent inconsistency report (ZFIN-10286)
@@ -484,7 +484,7 @@ sub writePersistentInconsistencyReport {
     # Use plain system() so a flaky scp doesn't kill the whole orthology job
     # (matches how the existing alreadyExamined scp at job end is handled).
     if (-e $archivePath) {
-        system("scp $archivePath <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/");
+        system("scp $archivePath $ENV{'ROOT_PATH'}/server_apps/data_transfer/ORTHO/");
     }
 
     my %firstSeen;
@@ -614,7 +614,7 @@ sub doSystemCommand {
 
 sub reportErrAndExit {
   $subjectError = $_[0];
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logOrthologyUpdateName");
+  ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subjectError","logOrthologyUpdateName");
   close LOG;
   exit -1;
 }
