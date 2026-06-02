@@ -43,7 +43,13 @@ public class UserCommentController {
                                                             @RequestParam("yiw-email") String email,
                                                             @RequestParam("yiw-subject") String subject,
                                                             @RequestParam("yiw-comments") String comments,
-                                                            @RequestParam("altcha") String altcha,
+                                                            // altcha is empty/missing when this visitor doesn't need to solve a
+                                                            // captcha (logged-in, bypassed IP, or already verified). The
+                                                            // isCaptchaRequired branch below skips verification entirely in
+                                                            // that case; the StringUtils.isEmpty(altcha) guard catches the
+                                                            // session-expired path. Required-by-default would 400 the request
+                                                            // before either of those checks ran.
+                                                            @RequestParam(value = "altcha", required = false, defaultValue = "") String altcha,
                                                             @RequestParam("email") String hiddenEmail,
                                                             @RequestHeader(value = "referer", defaultValue = "<none>") String referer,
                                                             HttpServletRequest request
