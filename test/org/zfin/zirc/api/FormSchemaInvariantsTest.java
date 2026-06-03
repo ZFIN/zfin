@@ -82,7 +82,10 @@ public class FormSchemaInvariantsTest {
                 ZircMutationFormSchema.uiSchema(),
                 ZircMutationFormSchema.FIELDS.keySet(),
                 MutationDTO.class,
-                Set.of("id", "lineSubmissionId", "sortOrder"),
+                // alleleName is server-resolved from Feature.abbreviation when
+                // alleleDesignation holds a ZDB-ID; it's display-only, never
+                // in the form schema.
+                Set.of("id", "lineSubmissionId", "sortOrder", "alleleName"),
                 Set.of("/assays", "/genes", "/lesions", "/phenotypes")));
     }
 

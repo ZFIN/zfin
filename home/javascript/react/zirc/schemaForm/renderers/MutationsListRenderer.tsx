@@ -16,6 +16,7 @@ import { useAddMutation, useDeleteMutation } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
 import { FieldStatus, StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
@@ -96,6 +97,11 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     — {m.alleleDesignation}
                                 </span>
                             )}
+                            <FieldHistory
+                                recId={`ZIRC-MUT-${m.id}`}
+                                scope='entity'
+                                label={`Mutation ${i + 1}`}
+                            />
                         </div>
                         <div className='card-body py-2'>
                             <JsonForms

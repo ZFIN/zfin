@@ -121,7 +121,7 @@ public class ZircDashboardController {
                 mutationLabels.add(label);
                 subSubSections.put(label, mutationSubSectionLabels);
                 subSubSectionStatus.put(label, r.bySection());
-                if (mut.getGenes() != null) {
+                if (mut.getGenes() != null) {0 lrwxrwxrwx 1 gradle fishadmin 57 Mar  4 10:20 /opt/zfin/download-files/current -> /opt/zfin/www_homes/zfin.org/home/data_transfer/Downloads
                     for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
                         geneFieldStatus.put(g.getId(), GeneStatusComputer.compute(g).byField());
                     }
@@ -741,9 +741,17 @@ public class ZircDashboardController {
             if (mutationsWorst != null) submissionSectionStatus.put("Mutations", mutationsWorst);
         }
 
+        // Field -> section name, used by the right-hand Change-History panel
+        // to label each audit entry with its containing top-level section.
+        // Inverted from SchemaSections.groupsToFields(ZircFormSchema.uiSchema()).
+        Map<String, String> fieldSectionMap = new LinkedHashMap<>();
+        SchemaSections.groupsToFields(ZircFormSchema.uiSchema())
+                .forEach((section, fields) -> fields.forEach(f -> fieldSectionMap.put(f, section)));
+
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("fieldStatus",     submissionFieldStatus);
         payload.put("sectionStatus",   submissionSectionStatus);
+        payload.put("fieldSectionMap", fieldSectionMap);
         payload.put("mutationFieldStatus",   perMutationFieldStatus);
         payload.put("mutationSectionStatus", perMutationSectionStatus);
         payload.put("mutationOverallStatus", mutationOverallJson);
