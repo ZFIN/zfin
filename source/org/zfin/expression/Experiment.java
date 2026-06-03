@@ -168,18 +168,22 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return displayConditions;
     }
 
+    // Identity by zdbID, matching every other ZDB entity. The previous
+    // content-based equals (HashSet of experimentConditions) silently
+    // collapsed every Experiment row sharing the same condition recipe
+    // into one Java collection key — e.g. the ChebiPhenotypeIndexer
+    // groupingBy(Experiment) was bucketing thousands of distinct DB
+    // experiments together, producing wildly inflated figure/publication
+    // counts on the ChEBI term page (ZFIN-10317).
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Experiment that = (Experiment) o;
-        return new HashSet<>(experimentConditions).equals(new HashSet<>(that.experimentConditions));
+        if (!(o instanceof Experiment that)) return false;
+        return Objects.equals(zdbID, that.zdbID);
     }
 
     @Override
     public int hashCode() {
-        if (experimentConditions == null)
-            return 11;
-        return experimentConditions.stream().mapToInt(ExperimentCondition::hashCode).sum();
+        return Objects.hashCode(zdbID);
     }
 }
