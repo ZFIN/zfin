@@ -121,7 +121,7 @@ public class ZircDashboardController {
                 mutationLabels.add(label);
                 subSubSections.put(label, mutationSubSectionLabels);
                 subSubSectionStatus.put(label, r.bySection());
-                if (mut.getGenes() != null) {0 lrwxrwxrwx 1 gradle fishadmin 57 Mar  4 10:20 /opt/zfin/download-files/current -> /opt/zfin/www_homes/zfin.org/home/data_transfer/Downloads
+                if (mut.getGenes() != null) {
                     for (org.zfin.zirc.entity.Gene g : mut.getGenes()) {
                         geneFieldStatus.put(g.getId(), GeneStatusComputer.compute(g).byField());
                     }

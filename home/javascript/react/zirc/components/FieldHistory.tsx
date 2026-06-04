@@ -71,12 +71,15 @@ export function FieldHistory({ recId, scope, fieldName, sectionName, label }: Pr
                 className='btn btn-link p-0 text-muted field-history-trigger'
                 aria-label={`Show change history for ${label} in the panel`}
                 title={`Show change history for ${label} in the panel`}
-                onClick={() => setFocus({
+                onClick={(e) => setFocus({
                     recId: recId!,
                     scope,
                     fieldName: fieldName ?? null,
                     sectionName: sectionName ?? null,
                     label,
+                    // Pin the panel at the trigger's current viewport y so it
+                    // appears at the same vertical level as the clicked icon.
+                    anchorY: (e.currentTarget as HTMLElement).getBoundingClientRect().top,
                 })}
             >
                 <i className='fas fa-history'/>

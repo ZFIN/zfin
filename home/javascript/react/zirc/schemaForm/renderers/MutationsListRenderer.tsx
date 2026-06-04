@@ -121,6 +121,14 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     sectionStatus:
                                         outerCfg.mutationSectionStatus?.[String(m.id)] ?? {},
                                     recId: `ZIRC-MUT-${m.id}`,
+                                    // Server-resolved abbreviation when the
+                                    // curator picked an existing ZFIN feature
+                                    // for alleleInZfin=true. AutocompleteRenderer
+                                    // uses this to show the name instead of
+                                    // the raw ZDB-ID and links to /{zdbID}.
+                                    displayLabels: m.alleleName
+                                        ? { alleleDesignation: m.alleleName }
+                                        : {},
                                     // Pass child maps unchanged; the inner
                                     // list renderers index them by their own
                                     // entity id.

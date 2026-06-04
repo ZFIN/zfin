@@ -63,6 +63,13 @@ function AutocompleteRenderer({
     const view = viewConfigFrom(config);
     const fieldNameView = leafOf(path);
     if (view.readonly) {
+        // When the stored value is a ZDB-ID (autocomplete picked from a server
+        // entity), render it as a hyperlink to the entity's detail page and
+        // use the optional displayLabel override for the link text so the
+        // curator sees the human-readable name instead of the raw ID.
+        const valueAsString = typeof data === 'string' ? data : null;
+        const isZdbId = valueAsString != null && valueAsString.startsWith('ZDB-');
+        const displayLabel = view.displayLabels[fieldNameView];
         return (
             <tr>
                 <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>
@@ -70,7 +77,9 @@ function AutocompleteRenderer({
                     {label}
                 </th>
                 <td>
-                    <ValueDisplay value={data}/>
+                    {isZdbId
+                        ? <a href={`/${valueAsString}`}>{displayLabel ?? valueAsString}</a>
+                        : <ValueDisplay value={data}/>}
                     <FieldHistory
                         recId={view.recId}
                         scope='field'
