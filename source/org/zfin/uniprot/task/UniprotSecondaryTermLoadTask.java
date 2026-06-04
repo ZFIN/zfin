@@ -1,15 +1,15 @@
 package org.zfin.uniprot.task;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.report.LegacyReportAdapter;
+import org.zfin.report.ReportWriter;
 import org.zfin.uniprot.UniProtLoadSummaryService;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.InterProProteinDTO;
@@ -46,8 +46,6 @@ import static org.zfin.util.FileUtil.writeToFileOrZip;
 public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private static final int ACTION_SIZE_ERROR_THRESHOLD = 30_000;
-    private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/secondary-load-report.html";
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private final String domainFile;
     private final String contextInputFile;
 
@@ -71,6 +69,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private List<InterProProteinDTO> downloadedInterproDomainRecords;
 
     private SecondaryTermLoadPipeline pipeline;
+    private final boolean rerunLatestProcessed;
 
     public static void main(String[] args) throws Exception {
 
@@ -105,6 +104,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             }
         }
 
+        boolean rerunLatestProcessed = false;
         if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             inputFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE", "");
             ipToGoTranslationFile = getArgOrEnvironmentVar(args, 2, "IP2GO_FILE", "");
@@ -113,12 +113,13 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
+            rerunLatestProcessed = "true".equals(getArgOrEnvironmentVar(args, 7, "UNIPROT_RERUN_LATEST_PROCESSED", "false"));
         } else {
             printUsage();
             System.exit(1);
         }
 
-        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName);
+        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName, rerunLatestProcessed);
         task.runTask();
     }
 
@@ -142,6 +143,10 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     public UniprotSecondaryTermLoadTask(LoadTaskMode mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName) {
+        this(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName, false);
+    }
+
+    public UniprotSecondaryTermLoadTask(LoadTaskMode mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName, boolean rerunLatestProcessed) {
         this.mode = mode;
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
@@ -165,6 +170,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         this.domainFile = domainFile;
         this.contextInputFile = contextInputFile;
         this.actionsFileName = actionsFileName;
+        this.rerunLatestProcessed = rerunLatestProcessed;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -373,28 +379,23 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     /**
-     * Write the actions to a report file for display.
-     * It replaces the placeholder in the template with the JSON string.
-     * The rest of the display logic is handled by the HTML file.
-     * @param container
+     * Write the actions to an HTML report through the unified report viewer.
+     * The container is adapted to a {@code ZfinReport} and rendered through
+     * {@link LegacyReportAdapter} + {@link ReportWriter}, matching the
+     * UniProt-Diff-Load, NCBI, and GAF/GOA reports.
      */
     private void writeOutputReportFile(SecondaryTermLoadActionsContainer container) {
         String reportFile = this.outputReportName;
-
         log.info("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJsonString(container);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            writeToFileOrZip(new File(reportFile), filledTemplate, "UTF-8");
+            var zfinReport = new UniProtSecondaryReportAdapter()
+                .adapt("UniProt Secondary Term Load", container.getReleaseID(), container);
+            var report = new LegacyReportAdapter().adapt(zfinReport);
+            String html = new ReportWriter().render(report);
+            writeToFileOrZip(new File(reportFile), html, "UTF-8");
         } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+            log.error("Error creating report (" + reportFile + ")\n" + e.getMessage(), e);
         }
-    }
-
-    private String actionsToJsonString(SecondaryTermLoadActionsContainer actionsContainer) throws JsonProcessingException {
-        return (new ObjectMapper()).writeValueAsString(actionsContainer);
     }
 
     private void writeContext(SecondaryLoadContext context) {
@@ -418,6 +419,14 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
                 inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
                 release = releaseOptional.get();
+            } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
+                UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+                if (latestProcessed == null) {
+                    throw new RuntimeException("No input file specified, no release pending secondary load, and no processed UniProt release to re-run against.");
+                }
+                log.info("No release pending secondary load; re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
+                inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+                release = latestProcessed;
             } else if (inputFileName.isEmpty()) {
                 throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
             }

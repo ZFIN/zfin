@@ -18,7 +18,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 
-import static org.zfin.infrastructure.captcha.CaptchaService.isSuccessfulCaptchaToken;
+import static org.zfin.infrastructure.captcha.CaptchaService.isCaptchaRequired;
 import static org.zfin.infrastructure.captcha.CaptchaService.verifyCaptcha;
 
 
@@ -43,7 +43,13 @@ public class UserCommentController {
                                                             @RequestParam("yiw-email") String email,
                                                             @RequestParam("yiw-subject") String subject,
                                                             @RequestParam("yiw-comments") String comments,
-                                                            @RequestParam("altcha") String altcha,
+                                                            // altcha is empty/missing when this visitor doesn't need to solve a
+                                                            // captcha (logged-in, bypassed IP, or already verified). The
+                                                            // isCaptchaRequired branch below skips verification entirely in
+                                                            // that case; the StringUtils.isEmpty(altcha) guard catches the
+                                                            // session-expired path. Required-by-default would 400 the request
+                                                            // before either of those checks ran.
+                                                            @RequestParam(value = "altcha", required = false, defaultValue = "") String altcha,
                                                             @RequestParam("email") String hiddenEmail,
                                                             @RequestHeader(value = "referer", defaultValue = "<none>") String referer,
                                                             HttpServletRequest request
@@ -62,14 +68,21 @@ public class UserCommentController {
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid field"), HttpStatus.BAD_REQUEST);
         }
 
-        boolean isCaptchaValid = true; //default to true if exception occurs
-        try {
-            boolean alreadyCaptchaValidated = isSuccessfulCaptchaToken(request);
-            isCaptchaValid = (!StringUtils.isEmpty(altcha) && verifyCaptcha(altcha)) || alreadyCaptchaValidated;
-        } catch (IOException e) {}
-
-        if (!isCaptchaValid) {
-            return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Captcha Response"), HttpStatus.BAD_REQUEST);
+        // Only enforce captcha when this request actually requires it. Logged-in users, bypassed
+        // IPs, and sessions that already passed captcha are exempt (see CaptchaService). If the
+        // session expired since the form was opened, captcha may have become required - in that
+        // case we return a CaptchaRequired status so the client can surface the widget and let the
+        // user resend without losing their comment.
+        if (isCaptchaRequired(request)) {
+            boolean isCaptchaValid = true; //default to true if verification errors, to avoid blocking legitimate input
+            try {
+                isCaptchaValid = !StringUtils.isEmpty(altcha) && verifyCaptcha(altcha);
+            } catch (IOException e) {
+                log.error("Error verifying captcha for user comment submission", e);
+            }
+            if (!isCaptchaValid) {
+                return new ResponseEntity<>(new JSONStatusResponse("CaptchaRequired", "Captcha verification required"), HttpStatus.BAD_REQUEST);
+            }
         }
 
         logSubmissionRequest(request, name, institution, email, subject);

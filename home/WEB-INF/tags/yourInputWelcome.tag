@@ -8,7 +8,15 @@
             Your Input Welcome
         </div>
         <div class="popup-body" id="input-welcome-body">
-            <form id="input-welcome-form">
+            <%-- novalidate: the Altcha widget injects a hidden <input type="checkbox" required>
+                 inside #input-welcome-captcha. When the server tells us the visitor doesn't
+                 need a captcha (logged-in / already verified), we hide that container via
+                 display:none — but the required checkbox is still in the DOM, so the browser's
+                 native validation tries to focus an unfocusable element on submit and logs
+                 "An invalid form control with name='' is not focusable." The form's JS does
+                 its own field validation (see `validators` in your-input-welcome.js) and gates
+                 the submit button on captcha state, so we don't need the browser's pass. --%>
+            <form id="input-welcome-form" novalidate>
                 We welcome your input and comments. Please use this form to report issues or recommend updates to the information in ZFIN. We
                 appreciate as much detail as possible and references as appropriate. We will review your comments promptly.
                 <div id="input-welcome-form-controls">
@@ -41,7 +49,12 @@
                         <label for="input-welcome-comments">Comments:</label>
                         <textarea id="input-welcome-comments" name="yiw-comments"></textarea>
                     </div>
-                    <div class="control" style="padding-left: 135px; height: 80px;">
+                    <%-- captcha is hidden by default; your-input-welcome.js reveals it only when the
+                         server says this visitor needs to pass one (anonymous, not yet verified). --%>
+                    <div class="control" id="input-welcome-captcha-message" style="display: none;">
+                        Please complete the verification below and resend your comments.
+                    </div>
+                    <div class="control" id="input-welcome-captcha" style="padding-left: 135px; height: 80px; display: none;">
                         <altcha-widget id="altcha-widget" challengeurl="/action/altcha/challenge"></altcha-widget>
                     </div>
                     <div class="control">
@@ -61,12 +74,3 @@
 </div>
 
 <script async defer src="https://cdn.jsdelivr.net/npm/altcha/dist/altcha.min.js" type="module"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector("#altcha-widget").addEventListener("statechange", (ev) => {
-            if (ev.detail.state === "verified") {
-                document.querySelector("#input-welcome-submit").disabled = false;
-            }
-        });
-    });
-</script>
