@@ -1513,6 +1513,10 @@ processTestResources.dependsOn copyClasspathTemplates
 tasks.withType(JavaExec).configureEach {
     dependsOn copyClasspathTemplates
 }
+// jar packages the main sourceSet output, which includes home/WEB-INF/classes
+// (the dir copyClasspathTemplates writes into). Without this edge, installDist ->
+// jar fails the same Gradle 8.x strict validation (e.g. during installUtilities).
+jar.dependsOn copyClasspathTemplates
 
 // ============================================================================
 // GWT COMPILATION TASKS
