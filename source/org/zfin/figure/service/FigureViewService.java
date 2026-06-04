@@ -436,6 +436,9 @@ public class FigureViewService {
     }
 
     public Clone getProbeForFigure(Figure figure) {
+        if (figure == null) {
+            return null;
+        }
         Clone probe = null;
         if (!CollectionUtils.isEmpty(figure.getExpressionFigureStage())) {
             ExpressionFigureStage figureStage = figure.getExpressionFigureStage().iterator().next();

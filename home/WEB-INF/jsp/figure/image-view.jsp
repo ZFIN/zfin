@@ -53,25 +53,41 @@
                         <zfin2:toggledLinkList collection="${antibodyList}" maxNumber="5" commaDelimited="true"/>
                     </z:attributeListItem>
                 </c:if>
-                <z:attributeListItem label="Source">
-                    <c:if test="${!empty image.figure && fn:length(image.figure.publication.figures) > 1}">
-                        <c:set var="probeUrlPart" value=""/>
-                        <c:set var="probeDisplay" value=""/>
-                        <c:if test="${!empty probe}">
-                            <c:set var="probeUrlPart" value="?probeZdbID=${probe.zdbID}"/>
-                            <c:set var="probeDisplay" value="[${probe.abbreviation}]"/>
-                        </c:if>
 
-                        <c:if test="${image.figure.publication.type == CURATION}">
+
+                <c:if test="${!empty image.figure && !empty image.figure.publication}">
+                    <z:attributeListItem label="Publication">
+                        <zfin:link entity="${image.figure.publication}" longVersion="true"/> -
+                        ${image.figure.publication.title}
+                    </z:attributeListItem>
+                </c:if>
+
+
+
+
+
+
+                <c:if test="${!empty image.figure && fn:length(image.figure.publication.figures) > 1}">
+                    <c:if test="${!isLargeDataPublication}">
+                        <z:attributeListItem label="All Figures">
+                            <c:set var="probeUrlPart" value=""/>
+                            <c:set var="probeDisplay" value=""/>
                             <c:if test="${!empty probe}">
-                                <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+                                <c:set var="probeUrlPart" value="?probeZdbID=${probe.zdbID}"/>
+                                <c:set var="probeDisplay" value="[${probe.abbreviation}]"/>
                             </c:if>
-                        </c:if>
-                        <c:if test="${image.figure.publication.type != CURATION}">
-                            <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
-                        </c:if>
+
+                            <c:if test="${image.figure.publication.type == CURATION}">
+                                <c:if test="${!empty probe}">
+                                    <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+                                </c:if>
+                            </c:if>
+                            <c:if test="${image.figure.publication.type != CURATION}">
+                                <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
+                            </c:if>
+                        </z:attributeListItem>
                     </c:if>
-                </z:attributeListItem>
+                </c:if>
             </z:attributeList>
         </div>
 
