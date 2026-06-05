@@ -34,12 +34,15 @@ public class CommandLineUtilityRegistry {
                 "Manage token storage operations",
                 "token-storage <operation> [options] \n eg. token-storage read NCBI_API_TOKEN\n     token-storage write NCBI_API_TOKEN 'your_token_value'");
 
-        // Add more utilities as they are discovered/created. Example of a database-backed tool:
-        // register("ortho-inconsistency-report",
-        //         "org.zfin.orthology.OrthoInconsistencyReportJob",
-        //         "Report orthology inconsistencies",
-        //         "ortho-inconsistency-report [<output.csv>]",
-        //         true);
+        // Merge one marker into another (port of cgi-bin/merge_markers.pl). Database-backed, so it
+        // runs inside ToolBootstrap.run's managed transaction.
+        register("merge-markers",
+                "org.zfin.marker.MergeMarkersCommandLine",
+                "Merge one marker into another (reassign references, then delete the old record)",
+                "merge-markers <zdbIdToDelete> <zdbIdToMergeInto> [--dry-run] [--skip-regen]",
+                true);
+
+        // Add more utilities as they are discovered/created.
     }
 
     /**
