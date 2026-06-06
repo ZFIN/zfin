@@ -58,9 +58,18 @@ public class ZircAuditApiController {
                         "sectionName is required for scope='section'");
             }
             rows = auditService.listSection(recId, sectionName);
+        } else if ("submission".equals(scope)) {
+            // Whole-submission history — used by the right-hand Change History
+            // panel on the React detail page. recId is the submission ZDB-ID.
+            rows = auditService.listAllForSubmission(recId);
+        } else if ("entity".equals(scope)) {
+            // Whole-entity-tree history. For a mutation that's the mutation's
+            // own rows plus every row for its genes / lesions / assays /
+            // phenotypes; for leaf entities it's just that entity's rows.
+            rows = auditService.listForEntityTree(recId);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "scope must be 'field' or 'section'");
+                    "scope must be 'field', 'section', 'entity', or 'submission'");
         }
         if (rows.isEmpty()) return List.of();
 

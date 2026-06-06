@@ -4,6 +4,7 @@ import org.zfin.profile.Person;
 import org.zfin.zirc.entity.AuditEntry;
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Wire shape for one audit-log row. Mirrors the shape FieldHistory expects:
@@ -19,6 +20,10 @@ public record AuditEntryDTO(
         String actor,
         String actorName,
         String action,
+        // 'submission' | 'mutation' | 'gene' | 'lesion' | 'assay' | 'phenotype'.
+        // Used client-side by ChangeHistoryPanel to bucket child-entity rows
+        // under the form's "Mutations" section.
+        String entityKind,
         String path,
         String oldValue,
         String newValue) {
@@ -32,14 +37,21 @@ public record AuditEntryDTO(
                     ? "" : actorPerson.getFirstName().charAt(0) + ". ";
             name = initial + (actorPerson.getLastName() == null ? a.getActor() : actorPerson.getLastName());
         }
+        // ISO-8601 with explicit offset so the React panel can format it
+        // relative to the user's local day (Today / Yesterday / older).
+        String whenIso = null;
+        if (a.getAt() != null) {
+            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+            iso.setTimeZone(TimeZone.getDefault());
+            whenIso = iso.format(a.getAt());
+        }
         return new AuditEntryDTO(
                 a.getId(),
-                a.getAt() == null
-                        ? null
-                        : new SimpleDateFormat("yyyy-MM-dd HH:mm").format(a.getAt()),
+                whenIso,
                 a.getActor(),
                 name,
                 a.getAction(),
+                a.getEntityKind(),
                 a.getPath(),
                 a.getOldValue(),
                 a.getNewValue());

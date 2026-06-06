@@ -16,6 +16,7 @@ import { useAddMutation, useDeleteMutation } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 import { aggregateRenderers } from '../aggregateRenderers';
 import { FieldStatus, StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
@@ -96,6 +97,11 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     — {m.alleleDesignation}
                                 </span>
                             )}
+                            <FieldHistory
+                                recId={`ZIRC-MUT-${m.id}`}
+                                scope='entity'
+                                label={`Mutation ${i + 1}`}
+                            />
                         </div>
                         <div className='card-body py-2'>
                             <JsonForms
@@ -115,6 +121,14 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     sectionStatus:
                                         outerCfg.mutationSectionStatus?.[String(m.id)] ?? {},
                                     recId: `ZIRC-MUT-${m.id}`,
+                                    // Server-resolved abbreviation when the
+                                    // curator picked an existing ZFIN feature
+                                    // for alleleInZfin=true. AutocompleteRenderer
+                                    // uses this to show the name instead of
+                                    // the raw ZDB-ID and links to /{zdbID}.
+                                    displayLabels: m.alleleName
+                                        ? { alleleDesignation: m.alleleName }
+                                        : {},
                                     // Pass child maps unchanged; the inner
                                     // list renderers index them by their own
                                     // entity id.

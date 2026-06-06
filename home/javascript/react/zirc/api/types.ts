@@ -34,6 +34,7 @@ export interface MutationDTO {
     lineSubmissionId: string;
     sortOrder: number;
     alleleDesignation: string | null;
+    alleleName: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
     zfinRecordEstablished: boolean | null;

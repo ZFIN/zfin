@@ -741,9 +741,17 @@ public class ZircDashboardController {
             if (mutationsWorst != null) submissionSectionStatus.put("Mutations", mutationsWorst);
         }
 
+        // Field -> section name, used by the right-hand Change-History panel
+        // to label each audit entry with its containing top-level section.
+        // Inverted from SchemaSections.groupsToFields(ZircFormSchema.uiSchema()).
+        Map<String, String> fieldSectionMap = new LinkedHashMap<>();
+        SchemaSections.groupsToFields(ZircFormSchema.uiSchema())
+                .forEach((section, fields) -> fields.forEach(f -> fieldSectionMap.put(f, section)));
+
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("fieldStatus",     submissionFieldStatus);
         payload.put("sectionStatus",   submissionSectionStatus);
+        payload.put("fieldSectionMap", fieldSectionMap);
         payload.put("mutationFieldStatus",   perMutationFieldStatus);
         payload.put("mutationSectionStatus", perMutationSectionStatus);
         payload.put("mutationOverallStatus", mutationOverallJson);
