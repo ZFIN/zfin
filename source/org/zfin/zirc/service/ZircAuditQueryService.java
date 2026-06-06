@@ -41,14 +41,15 @@ public class ZircAuditQueryService {
     public List<AuditEntry> listField(String recId, String fieldName) {
         EntityRef ref = parseRecId(recId);
         if (ref == null) return List.of();
+        String hql = """
+                from ZircAuditEntry
+                where entityKind = :kind
+                  and entityId   = :id
+                  and (path = :pathExact or path like :pathSuffix)
+                order by at asc
+                """;
         return HibernateUtil.currentSession()
-                .createQuery(
-                    "from ZircAuditEntry "
-                  + "where entityKind = :kind "
-                  + "  and entityId   = :id "
-                  + "  and (path = :pathExact or path like :pathSuffix) "
-                  + "order by at asc",
-                    AuditEntry.class)
+                .createQuery(hql, AuditEntry.class)
                 .setParameter("kind", ref.kind)
                 .setParameter("id",   ref.id)
                 .setParameter("pathExact",  "/" + fieldName)
@@ -90,9 +91,10 @@ public class ZircAuditQueryService {
         String deleteAction = childKind == null ? null : "delete-" + childKind;
 
         Session session = HibernateUtil.currentSession();
-        List<AuditEntry> parentRows = session.createQuery(
-                "from ZircAuditEntry where entityKind = :kind and entityId = :id",
-                AuditEntry.class)
+        List<AuditEntry> parentRows = session.createQuery("""
+                        from ZircAuditEntry
+                        where entityKind = :kind and entityId = :id
+                        """, AuditEntry.class)
                 .setParameter("kind", ref.kind)
                 .setParameter("id",   ref.id)
                 .list();
@@ -114,9 +116,10 @@ public class ZircAuditQueryService {
         if (childKind != null) {
             List<String> childIds = childIdsForParent(ref.kind, ref.id, childKind);
             if (!childIds.isEmpty()) {
-                result.addAll(session.createQuery(
-                        "from ZircAuditEntry where entityKind = :ck and entityId in :ids",
-                        AuditEntry.class)
+                result.addAll(session.createQuery("""
+                                from ZircAuditEntry
+                                where entityKind = :ck and entityId in :ids
+                                """, AuditEntry.class)
                         .setParameter("ck", childKind)
                         .setParameterList("ids", childIds)
                         .list());
@@ -204,10 +207,11 @@ public class ZircAuditQueryService {
             case "submission" -> listAllForSubmission(ref.id);
             case "mutation"   -> listForMutationTree(ref.id);
             default           -> HibernateUtil.currentSession()
-                    .createQuery(
-                        "from ZircAuditEntry where entityKind = :k and entityId = :i "
-                      + "order by at desc, id desc",
-                        AuditEntry.class)
+                    .createQuery("""
+                            from ZircAuditEntry
+                            where entityKind = :k and entityId = :i
+                            order by at desc, id desc
+                            """, AuditEntry.class)
                     .setParameter("k", ref.kind)
                     .setParameter("i", ref.id)
                     .list();
@@ -216,17 +220,23 @@ public class ZircAuditQueryService {
 
     private List<AuditEntry> listForMutationTree(String mutationId) {
         long mid = Long.parseLong(mutationId);
-        String hql = "from ZircAuditEntry a where "
-                + "  (a.entityKind = 'mutation' and a.entityId = :mid) "
-                + "  or (a.entityKind = 'gene'      and a.entityId in "
-                + "      (select cast(g.id as string) from ZircGene g where g.mutation.id = :midLong)) "
-                + "  or (a.entityKind = 'lesion'    and a.entityId in "
-                + "      (select cast(l.id as string) from ZircLesion l where l.mutation.id = :midLong)) "
-                + "  or (a.entityKind = 'assay'     and a.entityId in "
-                + "      (select cast(ga.id as string) from ZircGenotypingAssay ga where ga.mutation.id = :midLong)) "
-                + "  or (a.entityKind = 'phenotype' and a.entityId in "
-                + "      (select cast(p.id as string) from ZircPhenotype p where p.mutation.id = :midLong)) "
-                + "order by a.at desc, a.id desc";
+        String hql = """
+                from ZircAuditEntry a where
+                    (a.entityKind = 'mutation' and a.entityId = :mid)
+                 or (a.entityKind = 'gene'      and a.entityId in
+                       (select cast(g.id as string) from ZircGene g
+                         where g.mutation.id = :midLong))
+                 or (a.entityKind = 'lesion'    and a.entityId in
+                       (select cast(l.id as string) from ZircLesion l
+                         where l.mutation.id = :midLong))
+                 or (a.entityKind = 'assay'     and a.entityId in
+                       (select cast(ga.id as string) from ZircGenotypingAssay ga
+                         where ga.mutation.id = :midLong))
+                 or (a.entityKind = 'phenotype' and a.entityId in
+                       (select cast(p.id as string) from ZircPhenotype p
+                         where p.mutation.id = :midLong))
+                order by a.at desc, a.id desc
+                """;
         return HibernateUtil.currentSession()
                 .createQuery(hql, AuditEntry.class)
                 .setParameter("mid", mutationId)
@@ -245,19 +255,26 @@ public class ZircAuditQueryService {
         // The child-entity IDs are numeric Longs but audit.entityId is text;
         // we cast on the subquery side so the IN-comparison matches without
         // a per-row coercion.
-        String hql = "from ZircAuditEntry a where "
-                + "  (a.entityKind = 'submission' and a.entityId = :sub) "
-                + "  or (a.entityKind = 'mutation' and a.entityId in "
-                + "      (select cast(m.id as string) from ZircMutation m where m.lineSubmission.zdbID = :sub)) "
-                + "  or (a.entityKind = 'gene'      and a.entityId in "
-                + "      (select cast(g.id as string) from ZircGene g where g.mutation.lineSubmission.zdbID = :sub)) "
-                + "  or (a.entityKind = 'lesion'    and a.entityId in "
-                + "      (select cast(l.id as string) from ZircLesion l where l.mutation.lineSubmission.zdbID = :sub)) "
-                + "  or (a.entityKind = 'assay'     and a.entityId in "
-                + "      (select cast(ga.id as string) from ZircGenotypingAssay ga where ga.mutation.lineSubmission.zdbID = :sub)) "
-                + "  or (a.entityKind = 'phenotype' and a.entityId in "
-                + "      (select cast(p.id as string) from ZircPhenotype p where p.mutation.lineSubmission.zdbID = :sub)) "
-                + "order by a.at desc, a.id desc";
+        String hql = """
+                from ZircAuditEntry a where
+                    (a.entityKind = 'submission' and a.entityId = :sub)
+                 or (a.entityKind = 'mutation' and a.entityId in
+                       (select cast(m.id as string) from ZircMutation m
+                         where m.lineSubmission.zdbID = :sub))
+                 or (a.entityKind = 'gene'      and a.entityId in
+                       (select cast(g.id as string) from ZircGene g
+                         where g.mutation.lineSubmission.zdbID = :sub))
+                 or (a.entityKind = 'lesion'    and a.entityId in
+                       (select cast(l.id as string) from ZircLesion l
+                         where l.mutation.lineSubmission.zdbID = :sub))
+                 or (a.entityKind = 'assay'     and a.entityId in
+                       (select cast(ga.id as string) from ZircGenotypingAssay ga
+                         where ga.mutation.lineSubmission.zdbID = :sub))
+                 or (a.entityKind = 'phenotype' and a.entityId in
+                       (select cast(p.id as string) from ZircPhenotype p
+                         where p.mutation.lineSubmission.zdbID = :sub))
+                order by a.at desc, a.id desc
+                """;
         return HibernateUtil.currentSession()
                 .createQuery(hql, AuditEntry.class)
                 .setParameter("sub", submissionZdbID)
