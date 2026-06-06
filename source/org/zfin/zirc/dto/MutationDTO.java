@@ -1,6 +1,8 @@
 package org.zfin.zirc.dto;
 
 import jakarta.validation.constraints.NotNull;
+import org.zfin.feature.Feature;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.zirc.entity.Gene;
 import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.entity.Lesion;
@@ -16,6 +18,12 @@ public record MutationDTO(
         @NotNull Integer sortOrder,
         // General
         String alleleDesignation,
+        // Server-resolved display label when alleleDesignation holds a ZDB-ID
+        // (alleleInZfin=true → the field stores the Feature ZDB-ID). Null
+        // when alleleInZfin=false (alleleDesignation is just free text and
+        // the UI displays it directly) or when the referenced Feature can't
+        // be resolved. Read-only — not part of the form schema.
+        String alleleName,
         Boolean alleleInZfin,
         String mutationType,
         Boolean zfinRecordEstablished,
@@ -78,11 +86,25 @@ public record MutationDTO(
                                 Comparator.nullsLast(Comparator.naturalOrder())))
                         .map(PhenotypeSummaryDTO::of)
                         .toList();
+        String alleleName = null;
+        // Resolve a display label only when the curator picked an existing
+        // ZFIN feature (alleleInZfin=true → alleleDesignation stores the
+        // ZDB-ID returned by the /features autocomplete). Free-text designations
+        // are rendered as-is.
+        if (Boolean.TRUE.equals(m.getAlleleInZfin())
+                && m.getAlleleDesignation() != null
+                && m.getAlleleDesignation().startsWith("ZDB-")) {
+            Feature f = HibernateUtil.currentSession().get(Feature.class, m.getAlleleDesignation());
+            if (f != null) {
+                alleleName = f.getAbbreviation();
+            }
+        }
         return new MutationDTO(
                 m.getId(),
                 m.getLineSubmission().getZdbID(),
                 m.getSortOrder(),
                 m.getAlleleDesignation(),
+                alleleName,
                 m.getAlleleInZfin(),
                 m.getMutationType(),
                 m.getZfinRecordEstablished(),

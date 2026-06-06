@@ -8,7 +8,10 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { viewConfigFrom, leafOf } from '../useViewConfig';
+import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
+import { StatusBadge } from '../../components/StatusBadge';
+import { FieldHistory } from '../../components/FieldHistory';
+import { FieldComments } from '../../components/FieldComments';
 
 /**
  * List-of-strings widget rendered as one text input per entry with a
@@ -59,7 +62,10 @@ function PublicationsListRenderer({
     if (view.readonly) {
         return (
             <tr>
-                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>{label}</th>
+                <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }}>
+                    <StatusBadge status={view.fieldStatus[fieldName]}/>
+                    {label}
+                </th>
                 <td>
                     {items.length === 0
                         ? <span className='text-muted'>&mdash;</span>
@@ -68,6 +74,20 @@ function PublicationsListRenderer({
                                 {items.map((p, i) => <li key={i}>{p}</li>)}
                             </ul>
                         )}
+                    <FieldHistory
+                        recId={view.recId}
+                        scope='field'
+                        fieldName={fieldName}
+                        label={label ?? fieldName}
+                    />
+                    {commentsEnabled(uischema) && (
+                        <FieldComments
+                            recId={view.recId}
+                            scope='field'
+                            fieldName={fieldName}
+                            label={label ?? fieldName}
+                        />
+                    )}
                 </td>
             </tr>
         );
