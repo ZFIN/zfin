@@ -1,11 +1,7 @@
 FROM tomcat:10-jdk21
 
-#Add imagemagick for generating thumbnails
-RUN apt-get update && apt-get install -y \
-  imagemagick \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN ln -s /usr/bin/convert /usr/local/bin/convert
+# ImageMagick is no longer needed: thumbnail/medium image generation is now done
+# in pure Java by org.zfin.figure.service.ImageService (no `convert` binary).
 
 #Delete the user with id 1000 (ubuntu) if they exist -- will also delete group with id of 1000
 RUN id -u 1000 && userdel $(id -un 1000)
@@ -32,10 +28,20 @@ RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -Dcom.sun.management.jmxremote.rmi.port=9012 \
 -Dcom.sun.management.jmxremote.ssl=false"' > bin/setenv.sh
 
-USER zfishweb
+# PostgreSQL JDBC driver. The checksum is for the 42.7.8 version of the driver.
+# If updating here, match it in the solr Dockerfile and the build.gradle file
+# (for the web app) as well. (Also update the checksum.)
+#
+# Fetched via `curl + sha256sum` because BuildKit is currently disabled, and run
+# as root (before USER zfishweb) because /usr/local/tomcat/lib is root-owned.
+# To re-enable BuildKit, this RUN can be replaced by the one-liner below (which
+# may live after USER zfishweb, since ADD writes the file privileged):
+#   ADD --checksum=sha256:2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7 \
+#       https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
+#       /usr/local/tomcat/lib/postgresql-42.7.8.jar
+RUN curl -fsSL https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
+        -o /usr/local/tomcat/lib/postgresql-42.7.8.jar \
+    && echo "2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7  /usr/local/tomcat/lib/postgresql-42.7.8.jar" \
+        | sha256sum -c -
 
-# The checksum is for the 42.7.8 version of the driver. If updating here, match it in the solr Dockerfile
-# and the build.gradle file (for the web app) as well. (Also update the checksum.)
-ADD --checksum=sha256:2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7 \
-    https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
-    /usr/local/tomcat/lib/postgresql-42.7.8.jar
+USER zfishweb

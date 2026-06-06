@@ -5,6 +5,9 @@ DOCKER_DB_UNLOADS_PATH=/research/zunloads/databases/zfindb
 DOCKER_SOLR_UNLOADS_PATH=/research/zunloads/solr/zfindb
 DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=/research/zblastfiles/zmore/dev_blastdb
 DOCKER_ABBLAST_PATH=/opt/ab-blast
+# Host dir containing bowtie/ and bowtie2/ subdirs (each with the tool binaries).
+# Mounted to /opt/misc/bowtie and /opt/misc/bowtie2, mirroring the ab-blast pattern.
+DOCKER_BOWTIE_PATH=/opt/bowtie
 DOCKER_RESEARCH_PATH=/research
 DOCKER_DOWNLOADS_PATH=/research/zunloads/download-files/dazed
 DOCKER_LOADUP_PATH=/research/zcentral/loadUp
@@ -25,6 +28,10 @@ OPENIDC_CRYPTOPASSPHRASE=passphrase-changeme
 OPENIDC_CLIENTID=dazed.zfin.org
 OPENIDC_CLIENTSECRET=secret-from-keycloak
 DOCKER_GFF3_PATH=/research/zprod/gff3/
+# Optional fast mirror for the (slow) Groovy zip downloaded during the base image
+# build. A URL to apache-groovy-binary-4.0.29.zip; falls back to the canonical
+# jfrog URL if unset or unreachable. The sha256 is verified either way.
+#GROOVY_DOWNLOAD_PATH=https://myserver.example/archives/apache-groovy-binary-4.0.29.zip
 DOCKER_HTTPD_HTTP_PORT=8080-8089
 DOCKER_HTTPD_HTTPS_PORT=8443-8452
 ZFIN_RELEASE=latest

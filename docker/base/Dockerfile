@@ -1,104 +1,119 @@
-FROM gradle:8-jdk21
+# Pin the Ubuntu release (noble) so we can hardcode "noble" in the apt repo
+# lists below and drop the lsb-release package. If you bump this tag, update the
+# "noble" strings in this file and in docker/compile/Dockerfile to match.
+FROM gradle:8-jdk21-noble
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y --no-install-recommends \
-       ant tcsh sudo \
-       vim nano emacs iputils-ping imagemagick \
-       libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
-       cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release msmtp jq
 
-#add the postgresql repo so we can have a postgresql client that matches the server
+# --- APT packages (single layer, cache cleaned in the same layer) ---
+# Add the PostgreSQL and NodeSource repos, install everything in one shot, then
+# purge packages we inherit from the base gradle image but never use.
+#
+# Both repo signing keys are dropped into /etc/apt/trusted.gpg.d as
+# ASCII-armored files (.asc), which apt reads directly — so we don't need a
+# `gpg --dearmor` step (and therefore don't depend on gnupg being preinstalled).
 ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
-    && apt update && apt install -y postgresql-client-18
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+        -o /etc/apt/trusted.gpg.d/nodesource.asc \
+    && echo "deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main" \
+        > /etc/apt/sources.list.d/pgdg.list \
+    && echo "deb https://deb.nodesource.com/node_24.x nodistro main" \
+        > /etc/apt/sources.list.d/nodesource.list \
+    && apt update && apt install -y --no-install-recommends \
+       ant tcsh sudo \
+       vim nano iputils-ping \
+       libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl libjson-perl \
+       rsync bind9-dnsutils \
+       gnupg msmtp jq file \
+       postgresql-client-18 \
+       nodejs \
+    && npm install -g npm \
+    # Remove unused packages inherited from the base gradle image
+    && apt purge -y python3-breezy mercurial subversion binutils git-lfs \
+    && apt autoremove -y \
+    && apt clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x \
-  nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null
-
-RUN apt update && apt install -y --no-install-recommends \
-       nodejs && \
-       npm install -g npm
-
-RUN cpanm Devel::Camelcadedb
-RUN cpanm JSON
-
+# --- Mail config ---
 COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
-RUN mkdir /opt/misc 
-COPY ./apache-groovy-binary-4.0.29.zip.sha256 /opt/misc
-#COPY ./init.d-httpd /etc/init.d/httpd
-#RUN chmod 755 /etc/init.d/httpd
+# --- Groovy (extracted at build time) ---
+# The Groovy zip lives on a slow upstream (jfrog). To speed up builds you can
+# point GROOVY_DOWNLOAD_PATH at a fast local mirror, e.g.:
+#   docker compose build --build-arg GROOVY_DOWNLOAD_PATH=https://mymirror/groovy.zip base
+# (docker-compose wires this through from the ${GROOVY_DOWNLOAD_PATH} env var).
+# If the override is unset, or the download from it fails, we fall back to the
+# canonical jfrog URL. Either way the sha256 in apache-groovy-binary-4.0.29.zip.sha256
+# is verified, so a bad/mismatched mirror is caught.
+ARG GROOVY_DOWNLOAD_PATH=
+RUN mkdir /opt/misc
+COPY ./apache-groovy-binary-4.0.29.zip.sha256 /opt/misc/
+RUN cd /opt/misc \
+    && GROOVY_FALLBACK_URL=https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip \
+    && ( [ -n "$GROOVY_DOWNLOAD_PATH" ] && wget -q -O apache-groovy-binary-4.0.29.zip "$GROOVY_DOWNLOAD_PATH" \
+         || wget -q -O apache-groovy-binary-4.0.29.zip "$GROOVY_FALLBACK_URL" ) \
+    && sha256sum -c apache-groovy-binary-4.0.29.zip.sha256 \
+    && unzip -q apache-groovy-binary-4.0.29.zip \
+    && ln -s groovy-4.0.29 groovy \
+    && rm apache-groovy-binary-4.0.29.zip
 
-RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1/bowtie-1.3.1-linux-x86_64.zip/download -O bowtie-1.3.1.zip && \
-        unzip bowtie-1.3.1.zip && ln -s bowtie-1.3.1-linux-x86_64 bowtie
-RUN cd /opt/misc && wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.5.3/bowtie2-2.5.3-linux-x86_64.zip/download -O bowtie2-2.5.3.zip && \
-        unzip bowtie2-2.5.3.zip && ln -s bowtie2-2.5.3-linux-x86_64 bowtie2
+# Java 11+ removed JAXB from the standard library, so add it back in for Groovy
+RUN cd /opt/misc/groovy/lib \
+    && wget -q https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.2.3/jaxb-api-2.2.3.jar \
+    && wget -q https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/4.0.5/jaxb-impl-4.0.5.jar \
+    && chown -R gradle:gradle /opt/misc
 
-RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip && \
-        sha256sum -c apache-groovy-binary-4.0.29.zip.sha256 && unzip apache-groovy-binary-4.0.29.zip
+# --- Bowtie / Bowtie2 ---
+# These tools (~555MB extracted) are no longer baked into the image. Like
+# ab-blast, they are mounted in from the host at runtime by docker-compose at
+# /opt/misc/bowtie and /opt/misc/bowtie2 (see ${DOCKER_BOWTIE_PATH}). The few
+# Jenkins jobs that need them reference /opt/misc/bowtie/bowtie etc. directly.
 
-RUN ln -s /opt/misc/groovy-4.0.29 /opt/misc/groovy
+# --- Directory structure + symlinks + groups (single layer) ---
+RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
+             /opt/zfin/tls/certs /opt/zfin/tls/private \
+             /opt/zfin/catalina_bases/zfin.org \
+             /opt/zfin/download-files /opt/zfin/bin \
+             /usr/local/tomcat/lib /local/bin \
+             /research /mnt/research \
+    && ln -s /usr/bin/perl /opt/zfin/bin/perl \
+    && chown -R gradle:gradle /opt/zfin/ \
+    && ln -s /usr/bin/wget /local/bin/wget \
+    && ln -s /usr/bin/gunzip /local/bin/gunzip \
+    && ln -s /mnt/research/vol/archive /research/zarchive \
+    && ln -s /mnt/research/vol/blast /research/zblast \
+    && ln -s /mnt/research/vol/blast /research/zblastfiles \
+    && ln -s /mnt/research/vol/central /research/zcentral \
+    && ln -s /mnt/research/vol/prod /research/zprod \
+    && ln -s /mnt/research/vol/prod /research/zprodmore \
+    && ln -s /mnt/research/vol/unloads /research/zunloads \
+    && ln -s /mnt/research/vol/users /research/zusers \
+    # Groups and user membership
+    && groupmod -n zfin gradle \
+    && groupadd -g 1076 fishadmin && usermod -aG fishadmin gradle \
+    && groupadd -g 1476 zfishweb  && usermod -aG zfishweb gradle \
+    && groupadd -g 1477 zfloadup  && usermod -aG zfloadup gradle \
+    && groupadd -g 8983 solr \
+    && adduser gradle root \
+    && adduser gradle solr
 
-#Java 11 has removed JAXB from the standard library, so we need to add it back in for Groovy
-RUN cd /opt/misc/groovy/lib && wget https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.2.3/jaxb-api-2.2.3.jar && \
-        wget https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/4.0.5/jaxb-impl-4.0.5.jar
-
-#RUN chsh -s /usr/bin/tcsh gradle
-RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
-RUN mkdir -p /opt/zfin/tls/certs
-RUN mkdir -p /opt/zfin/tls/private
-RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
-RUN mkdir -p /opt/zfin/download-files/
-RUN mkdir -p /opt/zfin/bin
-RUN ln -s /usr/bin/perl /opt/zfin/bin/perl
-RUN chown -R gradle:gradle /opt/zfin/
-#RUN mkdir -p /opt/apache/apache-tomcat/conf && chown -R gradle /opt/apache/apache-tomcat
-#RUN mkdir -p /opt/zfin/log/httpd && cd /opt/zfin/log/httpd && touch zfin_access zfin_access.json zfin_errors && chmod 664 *
-RUN mkdir -p /usr/local/tomcat/lib
-RUN mkdir -p /local/bin
-RUN ln -s /usr/bin/wget /local/bin/wget
-RUN ln -s /usr/bin/gunzip /local/bin/gunzip
-
-RUN mkdir /research
-RUN mkdir /mnt/research
-RUN ln -s /mnt/research/vol/archive /research/zarchive
-RUN ln -s /mnt/research/vol/blast /research/zblast
-RUN ln -s /mnt/research/vol/blast /research/zblastfiles
-RUN ln -s /mnt/research/vol/central /research/zcentral
-RUN ln -s /mnt/research/vol/prod /research/zprod
-RUN ln -s /mnt/research/vol/prod /research/zprodmore
-RUN ln -s /mnt/research/vol/unloads /research/zunloads
-RUN ln -s /mnt/research/vol/users /research/zusers
-
-RUN groupmod -n zfin gradle
-RUN groupadd -g 1076 fishadmin
-RUN usermod  -aG fishadmin gradle
-RUN groupadd -g 1476 zfishweb
-RUN usermod  -aG zfishweb gradle
-RUN groupadd -g 1477 zfloadup
-RUN usermod  -aG zfloadup gradle
-RUN groupadd -g 8983 solr 
-RUN adduser gradle root
-RUN adduser gradle solr
-#RUN mkdir -p /var/solr/data/site_index/data/snapshot_metadata && \
-#    mkdir -p /var/solr/data/site_index/data/index && \
-#    mkdir -p /var/solr/data/site_index/data/tlog && \
-#    chgrp -R solr /var/solr && chmod -R g+ws /var/solr
-
-#COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
-#RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
-
-# install the file command for checking file types
-RUN apt install -y file
 USER gradle
 COPY ./bash_profile /tmp/bash_profile
-RUN cat /tmp/bash_profile >> /home/gradle/.profile
-RUN git config --global --add safe.directory /opt/zfin/source_roots/zfin.org
-
-RUN echo 'cd /opt/zfin/source_roots/zfin.org' >> /home/gradle/.bashrc
+RUN cat /tmp/bash_profile >> /home/gradle/.profile \
+    && git config --global --add safe.directory /opt/zfin/source_roots/zfin.org \
+    && echo 'cd /opt/zfin/source_roots/zfin.org' >> /home/gradle/.bashrc
 
 CMD ["/bin/bash","-l"]
+
+# --- Optional: JetBrains Perl debugger (Devel::Camelcadedb) ---
+# Uncomment the lines below to install the Camelcadedb module for remote Perl
+# debugging with IntelliJ/WebStorm. This requires build-essential to compile XS
+# extensions and adds ~1-2 min to the build. Do not commit uncommented.
+#
+# USER root
+# RUN apt update && apt install -y --no-install-recommends build-essential cpanminus \
+#     && cpanm --notest Devel::Camelcadedb \
+#     && apt purge -y build-essential cpp gcc g++ make dpkg-dev cpanminus \
+#     && apt autoremove -y \
+#     && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
+# USER gradle
