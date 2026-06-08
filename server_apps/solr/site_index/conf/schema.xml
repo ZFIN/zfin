@@ -727,6 +727,7 @@
         <field name="labeled_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 
         <field name="source" type="keyword" indexed="true" stored="true"  multiValued="true"   />
+        <field name="library" type="keyword" indexed="true" stored="true" multiValued="false" />
 
         <field name="host_organism" type="keyword" indexed="true" stored="true"   />
         <field name="organism" type="organism_abbrev" indexed="true" stored="true" multiValued="true"   />

@@ -1091,6 +1091,18 @@
                     where="idsup_data_zdb_id=marker.id"
             />
 
+            <!-- Marker / Clone "Library" facet (ZFIN-10220). Only clones carry a
+                 probe-library link (clone.clone_probelib_zdb_id → probe_library);
+                 non-clone markers join no rows and the library field stays empty. -->
+            <entity name="marker_library"
+                    query="select probe_library.probelib_name as library,
+                                  clone.clone_mrkr_zdb_id as marker_zdb_id
+                           from clone
+                           join probe_library on probe_library.probelib_zdb_id = clone.clone_probelib_zdb_id;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="marker_zdb_id=marker.id"
+            />
+
             <entity name="marker_mrel_xrefs"
                     query="
                         select mrel_mrkr_1_zdb_id as xref, mrel_mrkr_2_zdb_id as mrkr_zdb_id
