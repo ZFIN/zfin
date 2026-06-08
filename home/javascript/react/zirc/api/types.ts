@@ -27,6 +27,7 @@ export interface LineSubmissionDTO {
     createdAt: string | null;
     updatedAt: string | null;
     submitterNames: string | null;
+    piNames: string | null;
 }
 
 export interface MutationDTO {

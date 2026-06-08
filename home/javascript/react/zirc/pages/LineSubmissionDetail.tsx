@@ -4,6 +4,7 @@ import { queryClient } from '../queryClient';
 import { useLineSubmission } from '../api/queries';
 import { SchemaForm } from '../schemaForm/SchemaForm';
 import { StatusOverviewBar } from '../components/StatusOverviewBar';
+import { LineSubmissionHeader } from '../components/LineSubmissionHeader';
 import { ChangeHistoryPanel } from '../components/ChangeHistoryPanel';
 import { StatusRefetchContext } from '../statusRefetchContext';
 import { HistoryFocusContext, type HistoryFocus } from '../historyFocusContext';
@@ -117,10 +118,13 @@ function LineSubmissionDetailInner({
         <StatusRefetchContext.Provider value={refetchStatus}>
             <HistoryFocusContext.Provider value={historyCtx}>
                 {submission && (
-                    <StatusOverviewBar
-                        submission={submission}
-                        sectionStatus={payload.sectionStatus}
-                    />
+                    <>
+                        <LineSubmissionHeader submission={submission}/>
+                        <StatusOverviewBar
+                            submission={submission}
+                            sectionStatus={payload.sectionStatus}
+                        />
+                    </>
                 )}
                 {/* Two-column layout: schema-driven form on the left/center,
                     Change History panel pinned to the right. The right column

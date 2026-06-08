@@ -964,12 +964,29 @@ public class ZircDashboardController {
 
     /**
      * Add a person to a line submission as a submitter (POST). Idempotent — returns silently
-     * if the (submission, person, role) tuple already exists.
+     * if the (submission, person) row already exists with that role.
      */
     @PostMapping("/line-submission/{zdbID}/add-submitter")
     @ResponseBody
     public Map<String, String> addSubmitter(@PathVariable String zdbID,
                                             @RequestParam("personZdbID") String personZdbID) {
+        return addPersonWithRole(zdbID, personZdbID, org.zfin.zirc.entity.LineSubmissionRole.SUBMITTER);
+    }
+
+    /**
+     * Add a person to a line submission as a PI (POST). Same shape as add-submitter;
+     * separate endpoint per the ZFIN-10325 product directive to keep the PI picker
+     * visually distinct from the submitter picker in the curation UI.
+     */
+    @PostMapping("/line-submission/{zdbID}/add-pi")
+    @ResponseBody
+    public Map<String, String> addPi(@PathVariable String zdbID,
+                                     @RequestParam("personZdbID") String personZdbID) {
+        return addPersonWithRole(zdbID, personZdbID, org.zfin.zirc.entity.LineSubmissionRole.PI);
+    }
+
+    private Map<String, String> addPersonWithRole(String zdbID, String personZdbID,
+                                                  org.zfin.zirc.entity.LineSubmissionRole role) {
         LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
         if (submission == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
@@ -978,15 +995,17 @@ public class ZircDashboardController {
         if (person == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Person " + personZdbID + " not found");
         }
-        // Skip if already linked as submitter.
+        // Skip if already linked at all on this submission — the DB enforces
+        // one role per person via the UNIQUE (submission, person) constraint
+        // added by the ZFIN-10325 migration, so this client-side gate just
+        // returns a friendlier 200 instead of letting the insert blow up.
         boolean alreadyLinked = submission.getPersons().stream()
-                .anyMatch(lsp -> lsp.getPerson().getZdbID().equals(personZdbID)
-                        && "submitter".equals(lsp.getRole()));
+                .anyMatch(lsp -> lsp.getPerson().getZdbID().equals(personZdbID));
         if (!alreadyLinked) {
             LineSubmissionPerson lsp = new LineSubmissionPerson();
             lsp.setLineSubmission(submission);
             lsp.setPerson(person);
-            lsp.setRole("submitter");
+            lsp.setRole(role.wire());
             lsp.setSortOrder(submission.getPersons().size() + 1);
             HibernateUtil.createTransaction();
             try {
@@ -999,6 +1018,7 @@ public class ZircDashboardController {
         }
         Map<String, String> result = new HashMap<>();
         result.put("status", "ok");
+        result.put("role", role.wire());
         result.put("personZdbID", personZdbID);
         result.put("personName", person.getFullName());
         return result;

@@ -69,12 +69,8 @@ export function StatusOverviewBar({ submission, sectionStatus }: Props) {
                 <table style={{ borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>Line</th>
                             <th style={{ ...alleleCell, fontWeight: 600, background: '#fff' }}>
                                 Allele<br/>Designation
-                            </th>
-                            <th style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>
-                                Date<br/>Started
                             </th>
                             {SECTIONS.map((s) => (
                                 <th key={s} style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>
@@ -85,9 +81,6 @@ export function StatusOverviewBar({ submission, sectionStatus }: Props) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={{ ...cellBase, background: '#fffbe6', fontWeight: 500 }}>
-                                {submission.name ?? <span className='text-muted'>&mdash;</span>}
-                            </td>
                             <td title={alleleTitle} style={{ ...alleleCell, background: '#fffbe6', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {alleleEntries.length === 0
                                     ? <span className='text-muted'>&mdash;</span>
@@ -99,9 +92,6 @@ export function StatusOverviewBar({ submission, sectionStatus }: Props) {
                                                 : e.label}
                                         </React.Fragment>
                                     ))}
-                            </td>
-                            <td style={{ ...cellBase, background: '#fffbe6', fontWeight: 500 }}>
-                                {submission.createdAt ?? <span className='text-muted'>&mdash;</span>}
                             </td>
                             {SECTIONS.map((s) => {
                                 const st = sectionStatus[s];

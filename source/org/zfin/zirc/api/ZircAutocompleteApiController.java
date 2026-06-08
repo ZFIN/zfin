@@ -44,4 +44,11 @@ public class ZircAutocompleteApiController {
             @RequestParam(value = "term", required = false) String term) {
         return autocompleteService.searchPersons(term);
     }
+
+    /** Persons restricted to PI-level lab positions (PI/Director, Co-PI). */
+    @GetMapping("/pis")
+    public List<AutocompleteItemDTO> searchPIs(
+            @RequestParam(value = "term", required = false) String term) {
+        return autocompleteService.searchPIs(term);
+    }
 }

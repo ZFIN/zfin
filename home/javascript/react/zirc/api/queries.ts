@@ -265,7 +265,7 @@ export function useDeletePhenotype() {
 
 // ─── Autocomplete (M5.2) ────────────────────────────────────────────────────
 
-export type AutocompleteEndpoint = 'markers' | 'features' | 'persons';
+export type AutocompleteEndpoint = 'markers' | 'features' | 'persons' | 'pis';
 
 /**
  * Type-ahead lookup against {@code /api/zirc/autocomplete/{endpoint}}.

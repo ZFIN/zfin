@@ -179,15 +179,27 @@
                             <fmt:formatDate value="${submission.createdAt}" pattern="yyyy-MM-dd HH:mm"/> - <fmt:formatDate value="${submission.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
                         </td>
                     </tr>
+                    <%-- Filter by lsp_role so each row shows only the people who
+                         hold that role on the submission (ZFIN-10325). --%>
+                    <c:set var="submitters" value="${[]}"/>
+                    <c:set var="pis"        value="${[]}"/>
+                    <c:forEach items="${submission.persons}" var="lsp">
+                        <c:if test="${lsp.role eq 'submitter'}">
+                            <c:set var="submitters" value="${submitters.add(lsp) ? submitters : submitters}"/>
+                        </c:if>
+                        <c:if test="${lsp.role eq 'pi'}">
+                            <c:set var="pis" value="${pis.add(lsp) ? pis : pis}"/>
+                        </c:if>
+                    </c:forEach>
                     <tr>
                         <th><span class="status-slot"></span>Submitter</th>
                         <td>
                             <c:choose>
-                                <c:when test="${empty submission.persons}">
+                                <c:when test="${empty submitters}">
                                     <span class="text-muted">&mdash;</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:forEach items="${submission.persons}" var="lsp" varStatus="loop">
+                                    <c:forEach items="${submitters}" var="lsp" varStatus="loop">
                                         <a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!loop.last}">, </c:if>
                                     </c:forEach>
                                 </c:otherwise>
@@ -198,6 +210,35 @@
                                data-toggle="modal" data-target="#addSubmitterModal">
                                 <i class="fas fa-plus-circle"></i>
                             </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span class="status-slot"></span>PI</th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${empty pis}">
+                                    <span class="text-muted">&mdash;</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:forEach items="${pis}" var="lsp" varStatus="loop">
+                                        <a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!loop.last}">, </c:if>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+                            <a href="javascript:void(0)" id="add-pi-icon"
+                               class="ml-2 text-success"
+                               title="Add a PI"
+                               data-toggle="modal" data-target="#addPiModal">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span class="status-slot"></span>Admin</th>
+                        <td>
+                            <%-- Hard-coded list per ZFIN-10325; revisit once admin
+                                 tagging is modeled per-submission. --%>
+                            Andrzej Nasdiaka, Amy Singer, Zoltan Varga, April Freeman
                         </td>
                     </tr>
                     <tr>
@@ -856,6 +897,30 @@
             </div>
         </div>
 
+        <%-- Modal for adding a PI via person-name autocomplete (ZFIN-10325). --%>
+        <div class="modal fade" id="addPiModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add a PI</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="add-pi-person-input" class="form-label">Search for a person by name</label>
+                        <input type="text" id="add-pi-person-input" class="form-control" autocomplete="off" placeholder="Start typing a name&hellip;"/>
+                        <div class="form-text text-muted small mt-1">Pick a name from the dropdown to add.</div>
+                        <div id="add-pi-error" class="text-danger small mt-2" style="display:none;"></div>
+                        <div id="add-pi-progress" class="text-muted small mt-2" style="display:none;">Adding&hellip;</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
         jQuery(function () {
             // Copy ZDB ID to clipboard when the copy icon is clicked
@@ -957,6 +1022,93 @@
                 .on('shown.bs.modal', function () {
                     initAutocomplete();
                     jQuery('#add-submitter-person-input').trigger('focus');
+                });
+
+            // ─── Add-PI modal (ZFIN-10325) ──────────────────────────────────
+            // Independent of the submitter flow but uses the same person
+            // autocomplete + role-specific endpoint. The DB has a UNIQUE
+            // (submission, person) constraint, so picking the same person
+            // here who is already a submitter returns a friendly 200 without
+            // inserting (server-side gate in addPersonWithRole).
+            var piInitialized = false;
+
+            function postAddPi(personZdbID) {
+                var $input    = jQuery('#add-pi-person-input');
+                var $error    = jQuery('#add-pi-error');
+                var $progress = jQuery('#add-pi-progress');
+                $error.hide();
+                $progress.show();
+                $input.prop('disabled', true);
+                jQuery.ajax({
+                    url: '/action/zirc/line-submission/${submission.zdbID}/add-pi',
+                    type: 'POST',
+                    data: { personZdbID: personZdbID },
+                    success: function () {
+                        window.location.reload();
+                    },
+                    error: function (xhr) {
+                        $progress.hide();
+                        $input.prop('disabled', false);
+                        $error.text('Failed to add PI: ' +
+                            (xhr.responseJSON && xhr.responseJSON.message || xhr.statusText)).show();
+                    }
+                });
+            }
+
+            function initPiAutocomplete() {
+                if (piInitialized) return;
+                var $input = jQuery('#add-pi-person-input');
+                if (!$input.length || typeof $input.autocomplete !== 'function') {
+                    return;
+                }
+                $input.autocomplete({
+                    appendTo: '#addPiModal .modal-body',
+                    source: function (request, response) {
+                        jQuery.ajax({
+                            url: '/action/zirc/persons/search',
+                            dataType: 'json',
+                            data: { term: request.term },
+                            success: function (data) { response(data); },
+                            error: function (xhr) {
+                                jQuery('#add-pi-error')
+                                    .text('Search failed: ' + xhr.statusText).show();
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function (event, ui) {
+                        event.preventDefault();
+                        jQuery('#add-pi-person-input').val(ui.item.value);
+                        postAddPi(ui.item.zdbID);
+                    }
+                });
+
+                jQuery(document).on('mousedown.addpi',
+                    '#addPiModal .ui-autocomplete .ui-menu-item',
+                    function (e) {
+                        var data = jQuery(this).data('ui-autocomplete-item');
+                        if (data && data.zdbID) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            jQuery('#add-pi-person-input').val(data.value);
+                            jQuery('#add-pi-person-input').autocomplete('close');
+                            postAddPi(data.zdbID);
+                        }
+                    });
+
+                piInitialized = true;
+            }
+
+            jQuery('#addPiModal')
+                .on('show.bs.modal', function () {
+                    var $input = jQuery('#add-pi-person-input');
+                    $input.val('').prop('disabled', false);
+                    jQuery('#add-pi-error').hide();
+                    jQuery('#add-pi-progress').hide();
+                })
+                .on('shown.bs.modal', function () {
+                    initPiAutocomplete();
+                    jQuery('#add-pi-person-input').trigger('focus');
                 });
 
             // ─── Per-field / per-section comments modal ───────────────────

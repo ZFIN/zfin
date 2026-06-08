@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import org.zfin.profile.Person;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.entity.LineSubmissionPerson;
+import org.zfin.zirc.entity.LineSubmissionRole;
 import org.zfin.zirc.entity.Mutation;
 
 import java.text.SimpleDateFormat;
@@ -33,7 +34,8 @@ public record LineSubmissionDTO(
         boolean draft,
         String createdAt,
         String updatedAt,
-        String submitterNames) {
+        String submitterNames,
+        String piNames) {
 
     public static LineSubmissionDTO of(LineSubmission s) {
         List<MutationDTO> muts = s.getMutations() == null ? List.of() :
@@ -73,17 +75,23 @@ public record LineSubmissionDTO(
                 Boolean.TRUE.equals(s.getIsDraft()),
                 formatDate(s.getCreatedAt()),
                 formatDate(s.getUpdatedAt()),
-                formatSubmitters(s));
+                formatPersons(s, LineSubmissionRole.SUBMITTER),
+                formatPersons(s, LineSubmissionRole.PI));
     }
 
     private static String formatDate(Date d) {
         return d == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm").format(d);
     }
 
-    /** "F. Last, G. Other" in submission sort order; null when none. */
-    private static String formatSubmitters(LineSubmission s) {
+    /**
+     * "F. Last, G. Other" in submission sort order, filtered by role; null
+     * when no person holds that role on the submission. Used to populate
+     * the Submitter and PI cells in the Status Overview bar.
+     */
+    private static String formatPersons(LineSubmission s, LineSubmissionRole role) {
         if (s.getPersons() == null || s.getPersons().isEmpty()) return null;
         String joined = s.getPersons().stream()
+                .filter(lsp -> role.wire().equalsIgnoreCase(lsp.getRole()))
                 .sorted(Comparator.comparing(LineSubmissionPerson::getSortOrder,
                         Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(LineSubmissionPerson::getPerson)

@@ -64,11 +64,11 @@ public class FormSchemaInvariantsTest {
                 // (server-set on create); abbreviation and
                 // backgroundChangeConcerns are columns curators don't
                 // edit through this form; draft is a server-flipped flag.
-                // createdAt / updatedAt / submitterNames are server-managed
-                // metadata read by the detail-page StatusOverviewBar but
-                // not rendered in any form section.
+                // createdAt / updatedAt / submitterNames / piNames are
+                // server-managed metadata read by the detail-page
+                // StatusOverviewBar but not rendered in any form section.
                 Set.of("zdbID", "abbreviation", "backgroundChangeConcerns", "draft",
-                        "createdAt", "updatedAt", "submitterNames"),
+                        "createdAt", "updatedAt", "submitterNames", "piNames"),
                 // Schema paths managed through dedicated POST/DELETE
                 // endpoints rather than the field-path PATCH.
                 Set.of("/mutations", "/linkedFeatures")));
