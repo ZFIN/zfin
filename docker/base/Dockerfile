@@ -38,20 +38,10 @@ COPY ./msmtprc /etc/
 RUN ln -s /usr/bin/msmtp /usr/lib/sendmail
 
 # --- Groovy (extracted at build time) ---
-# The Groovy zip lives on a slow upstream (jfrog). To speed up builds you can
-# point GROOVY_DOWNLOAD_PATH at a fast local mirror, e.g.:
-#   docker compose build --build-arg GROOVY_DOWNLOAD_PATH=https://mymirror/groovy.zip base
-# (docker-compose wires this through from the ${GROOVY_DOWNLOAD_PATH} env var).
-# If the override is unset, or the download from it fails, we fall back to the
-# canonical jfrog URL. Either way the sha256 in apache-groovy-binary-4.0.29.zip.sha256
-# is verified, so a bad/mismatched mirror is caught.
-ARG GROOVY_DOWNLOAD_PATH=
 RUN mkdir /opt/misc
 COPY ./apache-groovy-binary-4.0.29.zip.sha256 /opt/misc/
 RUN cd /opt/misc \
-    && GROOVY_FALLBACK_URL=https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip \
-    && ( [ -n "$GROOVY_DOWNLOAD_PATH" ] && wget -q -O apache-groovy-binary-4.0.29.zip "$GROOVY_DOWNLOAD_PATH" \
-         || wget -q -O apache-groovy-binary-4.0.29.zip "$GROOVY_FALLBACK_URL" ) \
+    && wget -q https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-4.0.29.zip \
     && sha256sum -c apache-groovy-binary-4.0.29.zip.sha256 \
     && unzip -q apache-groovy-binary-4.0.29.zip \
     && ln -s groovy-4.0.29 groovy \

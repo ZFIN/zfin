@@ -2,10 +2,6 @@ services:
   base:
     build:
       context: ./base/
-      args:
-        # Optional fast mirror for the (slow) Groovy download. Leave unset to
-        # use the canonical jfrog URL. See docker/base/Dockerfile.
-        GROOVY_DOWNLOAD_PATH: ${GROOVY_DOWNLOAD_PATH:-}
     image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
     environment:
       TZ: ${TZ}
