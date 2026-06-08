@@ -67,7 +67,14 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     // Pagination has multiple children (StartPage/EndPage/MedlinePgn/ELocationID)
     // for article-number papers; .text() on the parent concatenates them all,
     // producing 'eadf5142eadf5142'. Pull the canonical MedlinePgn child explicitly.
-    row.add(article.Pagination.MedlinePgn.text())
+    // For article-number papers where <Pagination> is absent entirely
+    // (e.g. Hum Mol Genet 2026;35(4):ddaf203 — pages live only in
+    // <ELocationID EIdType="pii">), fall back to the pii ELocationID.
+    pages = article.Pagination.MedlinePgn.text()
+    if (!pages) {
+        pages = article.ELocationID.find { it.@EIdType == 'pii' }?.text() ?: ''
+    }
+    row.add(pages)
 
     fullAbstract = ''
     article.Abstract.AbstractText.each { abstractText ->
