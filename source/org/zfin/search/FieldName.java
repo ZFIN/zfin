@@ -114,6 +114,7 @@ public enum FieldName {
     KEYWORD_AC("keyword_ac"),
     LAB_OF_ORIGIN("lab_of_origin"),
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
+    LIBRARY("library", "Library"),
     MESH_TERM("full_mesh_term","MeSH Term"),
     MESH_TERM_TEXT("full_mesh_term_t","MeSH Term"),
     MISEXPRESSED_GENE("misexpressed_gene"),
