@@ -1112,9 +1112,12 @@
         </script>
 
         <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'}">
-            <form id="mergeTheGenes" action="/cgi-bin/merge_markers.pl">
-                <input type="hidden" id="zdbIDToDelete" name="OID" value="${formBean.zdbIDToDelete}">
-                <input type="hidden" id="merge_oid" name="merge_oid" value="none">
+            <c:if test="${not empty mergeError}">
+                <div class="error" style="color:red; font-weight:bold;">${mergeError}</div>
+            </c:if>
+            <form id="mergeTheGenes" action="/action/marker/merge" method="post">
+                <input type="hidden" id="zdbIDToDelete" name="zdbIDToDelete" value="${formBean.zdbIDToDelete}">
+                <input type="hidden" id="merge_oid" name="zdbIDToMergeInto" value="none">
                 <input type="hidden" id="intoMarkerAbbrev" name="intoMarkerAbbrev" value="none">
                 <p/>
                 Merge <a target="_blank" class="external" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> into
@@ -1179,31 +1182,8 @@
         </c:if>
 
 
-        <c:if test="${formBean.markerToDelete.markerType.name eq 'ATB'}">
-            <form:form modelAttribute="formBean" action="/action/marker/merge" onsubmit="return confirmMergeAntibody();" >
-                <form:hidden path="zdbIDToDelete"/>
-                <form:errors path="*" cssClass="error"/><br>
-                <table>
-                    <tr>
-                        <td valign="top">
-                            Merge <a target="_blank" class="external"
-                                     href="/${formBean.zdbIDToDelete}">
-                                ${formBean.markerToDeleteViewString}</a>
-                                <%--<a target="_blank"  class="external"--%>
-                                <%--href="/action/marker/marker-edit?zdbID=${formBean.zdbIDToDelete}">--%>
-                                <%--[Edit]</a>--%>
-                            into
-                        </td>
-                        <td valign="top">
-                            <div id="antibodyLookup" style="display:inline;"></div>
-                        </td>
-                    </tr>
-                </table>
-                <br>
-
-                <input type="submit" value="Merge Antibodies"/>
-            </form:form>
-        </c:if>
+<%-- (removed a dead ATB-only form:form that never rendered on this non-ATB page; antibody merges
+     are handled by merge-antibody.jsp, and both now post to /action/marker/merge -> MarkerMergeService) --%>
 
         <div id="confirm-dialog">
 

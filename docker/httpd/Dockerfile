@@ -2,9 +2,7 @@ FROM fedora:latest
 
 # Install Apache
 RUN yum -y update
-RUN yum -y install httpd httpd-tools mod_ssl mod_ldap mod_auth_openidc \
-                   perl-DBI perl-DBD-Pg \
-                   perl-CGI perl-Carp perl-Net-HTTP perl-libwww-perl perl-URI
+RUN yum -y install httpd httpd-tools mod_ssl mod_ldap mod_auth_openidc
 
 RUN sed -i \
 		-e 's/^\(SSLCertificateFile \/etc\/pki\/tls\/certs\/localhost.crt\)/#\1/' \
@@ -14,8 +12,6 @@ RUN sed -i \
 RUN groupadd -g 1000 zfin && \
     usermod -a -G zfin apache
 
-RUN mkdir -p /opt/zfin/bin
-RUN /bin/ln -s /usr/bin/perl /opt/zfin/bin/perl
 RUN /bin/ln -s /opt/zfin/www_homes /srv/www
 
 COPY ./httpd.conf /etc/httpd/conf/httpd.conf
