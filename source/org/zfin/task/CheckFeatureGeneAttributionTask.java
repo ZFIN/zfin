@@ -10,6 +10,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.io.BufferedWriter;
@@ -20,11 +21,18 @@ import java.util.*;
 
 import static org.zfin.publication.PublicationType.JOURNAL;
 import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.util.ZfinSystemUtils.env;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
 
 public class CheckFeatureGeneAttributionTask extends AbstractScriptWrapper {
 
+    // Person whose ZDB ID is supplied via SUBMITTER_PERSON_ID; the history records this task
+    // writes are attributed to this person. Required whenever COMMIT_CHANGES is set, so that
+    // committed changes are never logged against the anonymous "Guest" fallback (see ZFIN-9940).
+    private static final String SUBMITTER_PERSON_ID_ENV = "SUBMITTER_PERSON_ID";
+
     private boolean dryRun = true;
+    private Person submitter;
     private BufferedWriter csvWriter;
     private File outputFile;
 
@@ -53,11 +61,32 @@ public class CheckFeatureGeneAttributionTask extends AbstractScriptWrapper {
         if (envTrue("COMMIT_CHANGES")) {
             System.out.println("COMMIT_CHANGES is set, will commit changes to the database.");
             dryRun = false;
+            submitter = resolveSubmitter();
+            System.out.println("Attributing changes to " + submitter.getFullName() + " (" + submitter.getZdbID() + ")");
         } else {
             System.out.println("Dry run mode, will NOT commit changes to the database.");
             System.out.println("Set COMMIT_CHANGES environment variable to commit changes.");
             dryRun = true;
         }
+    }
+
+    /**
+     * Resolve the {@link Person} that committed changes will be attributed to, from the
+     * SUBMITTER_PERSON_ID environment variable. This task runs without a logged-in user, so
+     * without an explicit submitter the history would default to the "Guest" fallback. Fail
+     * fast (rather than silently logging "Guest") when committing.
+     */
+    private Person resolveSubmitter() {
+        String submitterId = env(SUBMITTER_PERSON_ID_ENV);
+        if (submitterId == null || submitterId.isBlank()) {
+            throw new IllegalStateException("COMMIT_CHANGES is set but " + SUBMITTER_PERSON_ID_ENV
+                + " is not provided. Set " + SUBMITTER_PERSON_ID_ENV + " to the ZDB person ID to attribute changes to.");
+        }
+        Person person = getProfileRepository().getPerson(submitterId.trim());
+        if (person == null) {
+            throw new IllegalStateException("No person found for " + SUBMITTER_PERSON_ID_ENV + "=" + submitterId);
+        }
+        return person;
     }
 
     private void checkFeature(Feature feature) {
@@ -83,7 +112,7 @@ public class CheckFeatureGeneAttributionTask extends AbstractScriptWrapper {
                 return;
             }
             infrastructureRepository.insertRecordAttribution(gene.zdbID, pub.getZdbID());
-            infrastructureRepository.insertUpdatesTable(gene.zdbID, "record attribution", pub.getZdbID(), "Added direct attribution to gene related to feature");
+            infrastructureRepository.insertUpdatesTable(gene.zdbID, submitter, "record attribution", null, pub.getZdbID(), "Added direct attribution to gene related to feature");
         }
     }
 
