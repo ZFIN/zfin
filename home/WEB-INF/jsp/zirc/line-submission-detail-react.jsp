@@ -19,7 +19,6 @@
             <a class="col-sm" href="/action/zirc/dashboard">Dashboard</a>
             <span class="col-sm">Detail</span>
             <a class="col-sm" href="/action/zirc/line-submission/${submission.zdbID}/edit">Edit</a>
-            <a class="col-sm small" href="/action/zirc/line-submission/${submission.zdbID}">(Static detail)</a>
         </nav>
     </jsp:attribute>
 
