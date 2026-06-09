@@ -45,8 +45,6 @@ class SimpleDirectoryCopyTask extends DefaultTask {
             'server_apps/data_transfer/ExternalSearch/CreateMarkerSearchPage.sql',
             'server_apps/data_transfer/GO/validateUniprotIDsZFIN.pl',
             'server_apps/data_transfer/Genbank/gbaccession.pl',
-            'server_apps/data_transfer/Load/ReNo/Nomenclature/generate_special_Sanger_uniprot_nomenclature_run.sh',
-            'server_apps/data_transfer/Load/ReNo/load_run_report_hit.sh',
             'server_apps/data_transfer/Load/blast_withdrawn.pl',
             'server_apps/data_transfer/MEOW/meow.pl',
             'server_apps/data_transfer/NCBIStartEnd/NCBIStartEnd.pl',

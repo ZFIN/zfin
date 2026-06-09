@@ -18,6 +18,6 @@ OBJECTIVE
 EXECUTION
 --------------------------
 
-   Run:	gmake run  (OMIM.pl)
+   Run:	./OMIM.pl
 
-   This is run weekly by cron (may be too frequent?). 
+   This is run weekly by the Jenkins job OMIM-Update_w (may be too frequent?).
