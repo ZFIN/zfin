@@ -1,7 +1,6 @@
 services:
   base:
-    build:
-      context: ./base/
+    build: ./base/
     image: ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
     environment:
       TZ: ${TZ}
