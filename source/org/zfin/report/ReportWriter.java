@@ -2,11 +2,14 @@ package org.zfin.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Base64;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Serializes a {@link Report} to JSON and inlines it into the report HTML
@@ -56,14 +59,23 @@ public class ReportWriter {
             throw new IOException("Template missing " + PLACEHOLDER_START + " / "
                 + PLACEHOLDER_END + " markers (or end precedes start).");
         }
-        // Escape "</" → "<\/" so user-controlled strings can't break out of the
-        // surrounding <script> block (e.g. an error blob containing "</script>")
-        // and so the inlined JSON can't accidentally reproduce our PLACEHOLDER_END
-        // sentinel. "<\/" is a JSON-legal escape that decodes back to "</".
-        String json = mapper.writeValueAsString(report).replace("</", "<\\/");
+        // Gzip then Base64-encode the JSON: report payloads are highly
+        // repetitive and compress ~5-15x, and the viewer inflates them with the
+        // browser's native DecompressionStream. Base64 is also <script>-safe by
+        // construction — its alphabet can't contain "</" to break out of the tag
+        // or reproduce our PLACEHOLDER_END sentinel — so no escaping is needed.
+        String b64 = gzipBase64(mapper.writeValueAsBytes(report));
         String payload = PLACEHOLDER_START
-            + "\n        window.REPORT_DATA = " + json + ";\n        ";
+            + "\n        window.REPORT_DATA_GZ = \"" + b64 + "\";\n        ";
         return template.substring(0, start) + payload + template.substring(end);
+    }
+
+    private static String gzipBase64(byte[] data) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (GZIPOutputStream gz = new GZIPOutputStream(bos)) {
+            gz.write(data);
+        }
+        return Base64.getEncoder().encodeToString(bos.toByteArray());
     }
 
     private String loadDefaultTemplate() throws IOException {
