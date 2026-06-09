@@ -28,20 +28,23 @@ RUN echo 'CATALINA_OPTS="${CATALINA_OPTS} \
 -Dcom.sun.management.jmxremote.rmi.port=9012 \
 -Dcom.sun.management.jmxremote.ssl=false"' > bin/setenv.sh
 
-# PostgreSQL JDBC driver. The checksum is for the 42.7.8 version of the driver.
-# If updating here, match it in the solr Dockerfile and the build.gradle file
-# (for the web app) as well. (Also update the checksum.)
+# PostgreSQL JDBC driver. The version and checksum are build ARGs (build-scoped,
+# not baked into the image like ENV would be) so they're named and easy to find/
+# update together. When bumping PG_JDBC_VERSION, match it in the solr Dockerfile
+# and the build.gradle file (for the web app) as well, and update the checksum.
 #
 # Fetched via `curl + sha256sum` because BuildKit is currently disabled, and run
 # as root (before USER zfishweb) because /usr/local/tomcat/lib is root-owned.
 # To re-enable BuildKit, this RUN can be replaced by the one-liner below (which
 # may live after USER zfishweb, since ADD writes the file privileged):
-#   ADD --checksum=sha256:2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7 \
-#       https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
-#       /usr/local/tomcat/lib/postgresql-42.7.8.jar
-RUN curl -fsSL https://jdbc.postgresql.org/download/postgresql-42.7.8.jar \
-        -o /usr/local/tomcat/lib/postgresql-42.7.8.jar \
-    && echo "2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7  /usr/local/tomcat/lib/postgresql-42.7.8.jar" \
+#   ADD --checksum=sha256:${PG_JDBC_SHA256} \
+#       https://jdbc.postgresql.org/download/postgresql-${PG_JDBC_VERSION}.jar \
+#       /usr/local/tomcat/lib/postgresql-${PG_JDBC_VERSION}.jar
+ARG PG_JDBC_VERSION=42.7.8
+ARG PG_JDBC_SHA256=2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7
+RUN curl -fsSL "https://jdbc.postgresql.org/download/postgresql-${PG_JDBC_VERSION}.jar" \
+        -o "/usr/local/tomcat/lib/postgresql-${PG_JDBC_VERSION}.jar" \
+    && echo "${PG_JDBC_SHA256}  /usr/local/tomcat/lib/postgresql-${PG_JDBC_VERSION}.jar" \
         | sha256sum -c -
 
 USER zfishweb
