@@ -18,7 +18,15 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle --no-daemon updateOrthologyReport; rc=$?; mkdir -p $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w; mv -f server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w/ 2&gt;/dev/null || true; exit $rc</command>
+      <command><![CDATA[
+cd $SOURCEROOT
+gradle --no-daemon updateOrthologyReport
+rc=$?
+mkdir -p $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w
+mv -f server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w/ 2>/dev/null || true
+exit $rc
+      ]]>
+      </command>
     </hudson.tasks.Shell>
   </builders> 
   <publishers>
