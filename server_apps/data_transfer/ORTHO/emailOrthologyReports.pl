@@ -1,10 +1,6 @@
 #!/opt/zfin/bin/perl
 # emailOrthologyReports.pl
 #
-# TODO-BY: 2026-09-01 Delete this script. It is orphaned (referenced by nothing
-# in the codebase) and predates moving orthology email handling to the Jenkins
-# job's failure/success triggers.
-#
 
 use MIME::Lite;
 use Try::Tiny;

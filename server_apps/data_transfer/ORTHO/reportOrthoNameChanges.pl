@@ -477,9 +477,6 @@ sub doSystemCommand {
 
 sub reportErrAndExit {
   $subjectError = $_[0];
-  # Email handling is done by the Jenkins job's failure trigger; just log and fail the build.
-  print STDERR "$subjectError\n";
-  print LOG "$subjectError\n";
   close LOG;
   exit -1;
 }
