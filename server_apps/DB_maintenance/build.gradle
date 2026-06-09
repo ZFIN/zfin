@@ -113,6 +113,33 @@ task oneTimeOrthoInconsistencyReport(type: JavaExec) {
     ]
 }
 
+// Wrapper around the weekly Update-Orthology Perl pipeline
+// (server_apps/data_transfer/ORTHO/runOrthology.pl). Runs the Perl, then parses
+// its seven output text files into a single navigable HTML report. The Perl
+// does all DB work and still writes the flat .txt files Jenkins emails — the
+// HTML is purely additive.
+//
+// Run from the project root (TARGETROOT must be exported so the Perl finds its
+// working directory and the env it needs: ROOT_PATH, DB_NAME, INSTANCE, …):
+//   gradle --no-daemon :server_apps:DB_maintenance:updateOrthologyReport
+//
+// --no-daemon matters: a reused gradle daemon would hand the Perl subprocess a
+// stale environment instead of the live shell's.
+//
+// Output:
+//   server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html
+task updateOrthologyReport(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.orthology.jobs.OrthoUpdateReportJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Update-Orthology_w",
+            "${env.TARGETROOT}/server_apps/data_transfer/ORTHO"
+    ]
+}
+
 task loadFlankSeq(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
