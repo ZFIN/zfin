@@ -1,0 +1,106 @@
+Solr 9 Upgrade — Full Journey
+
+Starting point
+
+A code review of 8d3ac4fa9 ZFIN-10171: Solr 9 changes. — a 3-file commit that bumped the docker image to Solr 9.10.1, swapped cache classes (FastLRUCache / LRUCache → CaffeineCache), and switched the XSLT response writer to the scripting
+module. The review surfaced three problems:
+
+1. The postgres JDBC driver ADD target was still /opt/solr-8.11.3/server/lib/... — a path that doesn't exist in the new image.
+2. DataImportHandler was removed from Solr core in 9.x; just changing the FQN in solrconfig.xml doesn't bring it back.
+3. luceneMatchVersion was still 8.6.3.
+
+Round 1: minimal patch attempt (didn't survive testing)
+
+The first plan was a surgical fix: pull the SearchScale community DIH fork's prebuilt JAR into /opt/solr/server/lib/, add a matching <lib> directive in solrconfig.xml, and bump luceneMatchVersion. The build succeeded but the core failed
+to load with NoClassDefFoundError: org/apache/solr/util/plugin/SolrCoreAware.
+
+Investigation revealed three layered problems:
+- /opt/solr/server/lib/ is on Jetty's server classloader, isolated from the webapp classloader where solr-core-9.10.1.jar (containing SolrCoreAware) actually lives. JARs there can't see solr-core's interfaces.
+- Solr 9 disables <lib/> directives by default (solr.config.lib.enabled system property required to opt in).
+- The solr_data named volume from the 8.x deployment still contained solr-dataimporthandler-8.6.3.jar and postgresql-9.4.1210.jar in /var/solr/data/site_index/lib/. Those auto-loaded ahead of anything new and broke the core.
+
+Once stale jars were removed and the new DIH 9.7.0 jar was placed in /var/solr/data/site_index/lib/ (per-core, visible to the webapp classloader), the core loaded cleanly.
+
+Round 2: discovering the real architectural issue
+
+Tracing how config gets into that volume revealed that the existing setup was held together by ant restore-solr-core from a backup tarball, and gradle loadsolr populated environments by extracting a SOLR_HOME snapshot taken by ant
+backup-solr-core after each Jenkins reindex. That backup was a full tree — conf/, lib/, data/, core.properties — so any stale lib jar from a prior generation rode along on every restore. ant deploy-solr was effectively dead in the docker
+setup (SOLR_HOME=/var/solr while files actually lived at /var/solr/data/site_index/, off by one level).
+
+The conversation pivoted to the right design: make the docker image authoritative for everything except the Lucene segments.
+
+Round 3: image-baked configuration (commit 4bfd7e0d5)
+
+A 38-file change that moved server_apps/solr/site_index/{conf, core.properties, data/external_popularity.txt} into docker/solr/site_index/ and let the Dockerfile COPY the lot into /var/solr/data/site_index/. Other moves:
+
+- core.properties: name=@SOLR_CORE@ → hardcoded name=site_index.
+- db-data-config.xml: @JDBC_DRIVER@ / @JDBC_URL@ Ant filterset templates → Solr-style sysprop substitution (we'd revisit this).
+- <lib> directives removed from solrconfig.xml — the per-core lib/ dir auto-loads.
+- The solr_data:/var/solr volume was replaced by three narrow named volumes (solr_index, solr_tlog, solr_snapshots) mounted at the three Lucene subdirs only. external_popularity.txt (an ExternalFileField asset) lives in the image,
+parallel to the volume mount points.
+- Dead Ant targets pruned: deploy-solr, copySolr, backup-solr-core, restore-solr-core, upgrade-solr, remove-solr-client-lib, remove-solr-home, cleanup-solr-backup-files, pid-solr, drs. Matching gradle tasks (getLatestSolrUnload,
+getLatestSolrIndex, loadsolr, getsolr, loadSolrIndex, downloadSolrIndex) removed. build.xml's make-prod/make-dev no longer depend on deploy-solr.
+
+A subtle Dockerfile bug surfaced: ADD --chmod=644 propagated 644 onto the auto-created parent lib/ dir (no +x), blocking classloader traversal. Fixed with an explicit chmod 755 on the lib directory.
+
+End-state: fresh container, empty volumes, core loads with initFailures: {}, external_popularity.txt reachable, doc-write survives container restart.
+
+Round 4: backup/restore restored (commit a882ac34b)
+
+The team needed fast environment seeding — running a full reindex from postgres on every dev/staging refresh wasn't acceptable. Out of three options (Solr replication API, manual volume tar, decoupled backup job), B1 (replication API)
+won: native, atomic, online, and pure-HTTP from Jenkins so no docker socket access needed.
+
+Implementation:
+- Solr service got a ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr bind mount and -Dsolr.allowPaths=/opt/zfin/unloads/solr (Solr 9 sandboxes backup paths by default — discovered by smoke-testing the API).
+- SolrAdminClient (org.zfin.solr.admin) owns the shared "hit endpoint, poll async command to completion" plumbing (DIH import, core RELOAD, wipe, backup, restore); SolrReindexOrchestrator and the SolrSnapshotTool backup/restore CLI both use it. Backup polls details.backup, restore polls restorestatus, until success/failed/timeout.
+- Ant targets backup-solr-index / restore-solr-index shell `gradlew solrBackup` / `solrRestore`; gradle loadsolr (getLatestSolrIndex) runs SolrAdmin restore via in-process javaexec (no nested gradle). build-solr-index-jenkins re-acquired its trailing backup step.
+- Gradle getLatestSolrUnload / getLatestSolrIndex / getsolr / loadsolr re-added, working against the new snapshot.<timestamp>/ directory format.
+
+Round-trip verified: backup, delete-by-query, restore, doc count comes back.
+
+Round 5: actual indexer test (commit c7a66c350)
+
+You asked to spin up the image, run the indexer against the real postgres data, and run search queries. DIH consistently failed at ~5s with Unable to execute query: ... Processing Document # 1 — and Solr's default %ex{short} log pattern
+truncated the cause chain after one line.
+
+Several diagnostic dead-ends got ruled out: TCP from solr to db worked, direct JDBC from the compile container worked, simplifying the SQL to a trivial query still failed, swapping user= between attribute and URL parameter didn't help.
+Your suggestion to enable log_connections / log_statement = 'all' in postgres turned out to be the breakthrough — postgres logged connections from psql and the compile-container JDBC test, but never any attempt from DIH. That redirected
+the question from "what query?" to "why no connection?", which justified patching the running container's log4j2.xml to use %ex (full chain) instead of %ex{short}.
+
+The next run revealed:
+
+Caused by: java.security.AccessControlException:
+access denied ("java.io.FilePermission" "/home/solr/.pgpass" "read")
+at org.postgresql.jdbcurlresolver.PgPassParser...
+at org.postgresql.Driver.parseURL...
+at org.postgresql.Driver.connect...
+
+Solr 9 ships with a Java Security Manager enabled by default. The postgres JDBC driver tries to read ~/.pgpass during URL parsing — the security policy denies it, the connection dies before any TCP. Solr's own startup log already flagged
+the security manager as deprecated and slated for upstream removal.
+
+Fix: SOLR_SECURITY_MANAGER_ENABLED=false on the solr service. Plus the realization that DIH doesn't substitute Solr-style ${prop:default} syntax — it just leaves the literal string — so db-data-config.xml's JDBC driver/url/user got
+hardcoded.
+
+Final test: full publication-entity import indexed 66,945 documents in 3m9s (5.9M rows fetched across 28 DIH sub-queries). Search queries returned expected results: q=*:* → 66,945; q=zebrafish → 64,217; faceted by year worked; q=CRISPR
+AND name:zebrafish sorted by year descending → 5 results in the expected order.
+
+Final branch state
+
+c7a66c350  ZFIN-10171: disable Solr Security Manager so postgres JDBC can connect
+a882ac34b  ZFIN-10171: add Solr backup/restore via /replication API
+4bfd7e0d5  ZFIN-10171: bake Solr config into image; narrow volumes to index data
+8d3ac4fa9  ZFIN-10171: Solr 9 changes.
+
+Each commit is independently coherent. The first is the bare 8→9 surgery; the second (massive) restructures the whole deploy model; the third reintroduces a backup mechanism appropriate to the new model; the fourth is the security-manager
+unlock that makes a real indexer run possible.
+
+Things worth flagging for production rollout
+
+- Backup format incompatibility. The old /research/zunloads/solr/<INSTANCE>/<timestamp>/ dumps are full-SOLR_HOME trees; the new format is snapshot.<timestamp>/ with bare Lucene segments. gradle loadsolr against an old dump will fail.
+Cutover requires running one Index-Faceted-Search job under the new code first to populate at least one new-format snapshot.
+- external_popularity.txt is now image-owned, no longer regenerated/restored from backup. If something out-of-band updates that file in production, it needs to start updating docker/solr/site_index/data/external_popularity.txt in the
+source tree instead.
+- The dataimport.properties shipped in the image has 2014-vintage timestamps. DIH may write to it during indexing; image rebuilds will reset it. Probably harmless given the existing contents are already stale, but worth confirming with
+whoever uses delta-import features.
+- Temporary log4j patch on the running solr container (%ex instead of %ex{short}) lives only in the writable layer of the current container — it'll evaporate on next rebuild. The image's bundled log4j2.xml still uses the truncating
+pattern. Worth either reverting now for clean state or considering whether to make full-trace logging the default.

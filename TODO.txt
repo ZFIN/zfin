@@ -1,0 +1,8 @@
+Remove:
+
+	server_apps/solr/scripts/solr-affected-fields.txt
+	server_apps/solr/scripts/solr-analyze-inputs.txt
+	server_apps/solr/scripts/solr-analyze.sh
+	server_apps/solr/scripts/solr-dump.sh
+	server_apps/solr/scripts/solr-terms.sh
+	solr-9-upgrade-notes.txt

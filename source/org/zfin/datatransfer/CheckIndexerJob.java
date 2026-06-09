@@ -38,7 +38,10 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
             } else if (status.getStatusMessages() != null) {
                 if (status.getStatusMessages().getTimeElapsed() != null) {
                     log.info("Elapsed Time: " + status.getStatusMessages().getTimeElapsed());
-                } else {
+                } else if (status.getStatus().equals(IndexerStatus.Status.BUSY.name().toLowerCase())) {
+                    // DIH only emits "Time Elapsed" while an import is running; an idle
+                    // status carries "Time taken" instead and never has it. So a missing
+                    // "Time Elapsed" is only unexpected when the indexer is still BUSY.
                     log.info("Unexpected Behavior. Elapsed Time Missing. Status Object:");
                     log.info(new ObjectMapper().writeValueAsString(status));
                 }

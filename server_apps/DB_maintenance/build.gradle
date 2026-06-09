@@ -86,6 +86,130 @@ task loadFlankSeq(type: JavaExec) {
     mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
 }
 
+// Ad-hoc runner for the registered Java SolrIndexers. Use during
+// development to push docs for migrated entities; pass
+// -PsolrEntities=lab,company to limit the run to a subset (default: all
+// registered indexers). For the nightly full reindex, use solrReindex
+// below instead — this task does NOT clear the index or run any
+// still-DIH entities.
+task solrIndex(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.indexer.SolrIndexerJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Index_m",
+            project.findProperty('solrEntities') ?: ''
+    ]
+}
+
+// Nightly Solr reindex orchestrator (Java port of solr-reindex-pipeline.sh).
+// Interleaves DIH entities (those still in db-data-config.xml) with the
+// migrated Java indexers from IndexerRegistry, running them in
+// heavy/medium/light batches with a core RELOAD between batches to
+// release Lucene state. Replaces the prior `curl dataimport?full-import`
+// invocation from buildfiles/solr-ant.xml.
+//
+//   gradle solrReindex
+//   gradle solrReindex -PsolrResumeFrom=construct   # skip until 'construct'
+//   gradle solrReindex -PsolrNoClean=true           # skip initial wipe
+task solrReindex(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.indexer.SolrReindexOrchestrator'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Reindex_m",
+            project.findProperty('solrResumeFrom') ?: '',
+            project.findProperty('solrNoClean') ?: ''
+    ]
+}
+
+// Solr replication snapshot backup / restore (org.zfin.solr.admin.SolrSnapshotTool).
+// Java successors to solr-backup.groovy / solr-restore.groovy; the ant
+// backup-solr-index / restore-solr-index targets shell these. Location is the
+// v9/<INSTANCE> snapshot dir; backup names by timestamp, restore picks a
+// snapshot by name (-PsolrIndex, matching getLatestSolrIndex).
+task solrBackup(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.admin.SolrSnapshotTool'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Backup_d",
+            "backup",
+            project.findProperty('solrBackupLocation') ?: '',
+            project.findProperty('solrBackupName') ?: ''
+    ]
+}
+
+task solrRestore(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.admin.SolrSnapshotTool'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Restore_d",
+            "restore",
+            project.findProperty('solrBackupLocation') ?: '',
+            project.findProperty('solrIndex') ?: ''
+    ]
+}
+
+// Diagnostic suite for cutover characterization — Java port of the
+// solr-*.sh script cluster. Two entry points:
+//
+//   gradle solrCharacterize -PdiagArgs="<outdir> [queries-file]"
+//       runs the full pipeline (meta + fields + docs + terms + queries)
+//
+//   gradle solrDiag -PdiagArgs="<subcommand> [args...]"
+//       runs one subcommand: dump, fields, terms, queries, analyze,
+//       queries-from-log. See SolrCharacterizer.usage() for the full list.
+//
+// Endpoint defaults: ZfinPropertiesEnum.SOLR_*, with SOLR/CORE env vars
+// taking precedence so the same task can target a remote prod Solr.
+//
+// workingDir is set to rootProject.projectDir so relative output paths
+// (e.g. `-PdiagArgs="dump ./out/foo.ndjson"`) resolve against the repo
+// root rather than this subproject — matches how the legacy bash
+// scripts behaved (run from any cwd, write where you told them).
+task solrCharacterize(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.diagnostics.SolrCharacterizer'
+    workingDir = rootProject.projectDir
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Characterize_d",
+            "all " + (project.findProperty('diagArgs') ?: '')
+    ]
+}
+
+task solrDiag(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.solr.diagnostics.SolrCharacterizer'
+    workingDir = rootProject.projectDir
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Solr-Diag_d",
+            project.findProperty('diagArgs') ?: ''
+    ]
+}
+
+// Standalone runner for CheckIndexerJob — same class the ant
+// check-indexer target invokes, but reachable without a deployed
+// classpath. Useful for verifying nightly DIH state outside of the
+// full Jenkins ant chain.
+task checkIndexer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.datatransfer.CheckIndexerJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data"
+    ]
+}
+
 task checkEapPatoTerms(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.ontology.jobs.CheckEapPatoTermsJob'

@@ -3,10 +3,7 @@
 <config>
 
   <schemaFactory class="ClassicIndexSchemaFactory"/>
-  <luceneMatchVersion>8.6.3</luceneMatchVersion>
-
-  <lib dir="${solr.install.dir:../../../..}/dist/" regex="solr-dataimporthandler-.*\.jar" />
-  <lib dir="${solr.install.dir:../../../..}/server/lib/" regex="postgresql-.*\.jar" />
+  <luceneMatchVersion>9.10.1</luceneMatchVersion>
 
   <dataDir>${solr.data.dir:}</dataDir>
 
@@ -53,6 +50,13 @@
       -->
      <autoCommit>
        <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
+       <!-- Added in ZFIN-10171 cutover work: cap docs between hard commits at
+            50k so the index-writer's RAM buffer flushes to disk on schedule
+            even during high-throughput DIH bursts. Without this, only maxTime
+            triggers a commit; the in-memory writer state could grow unbounded
+            within a 15s window during entity-fanout phases that emit 60k+
+            docs/min, leading to JVM heap pressure. -->
+       <maxDocs>50000</maxDocs>
        <openSearcher>false</openSearcher>
      </autoCommit>
 
@@ -83,7 +87,16 @@
   <query>
 
     <slowQueryThresholdMillis>5000</slowQueryThresholdMillis>
-    <maxBooleanClauses>${solr.max.booleanClauses:1024}</maxBooleanClauses>
+    <!-- Bumped from the Solr-default 1024 because Solr 9's edismax expands
+         multi-word user queries into more BooleanClauses than Solr 8 did
+         for the same input. During the ZFIN-10171 cutover, 36 long
+         queries from our prod access log (pasted publication titles,
+         transgene names with many tokens, abstracts) overflowed 1024 on
+         Solr 9 with "Query contains too many nested clauses" — same
+         queries returned results on Solr 8. 4096 covers them all with
+         margin to spare; the cost is bounded peak memory per query, not
+         steady-state. -->
+    <maxBooleanClauses>${solr.max.booleanClauses:4096}</maxBooleanClauses>
 
 
     <!-- Solr Internal Query Caches

@@ -1,13 +1,36 @@
 <dataConfig>
+    <!-- DIH writes its last-indexed-timestamp state file here on every import.
+         Pointed at the core's instance directory (volume-resident, outside
+         conf/) so the image's config sync can never trample DIH runtime state.
+         Without this, DIH would default to conf/dataimport.properties which
+         the initdb sync script overwrites on every container start. -->
+    <propertyWriter type="SimplePropertiesWriter"
+                    directory="/var/solr/data/site_index"
+                    filename="dataimport.properties"
+                    dateFormat="yyyy-MM-dd HH:mm:ss" />
 
+    <!--
+      autoCommit=false + batchSize>0 makes the postgres JDBC driver use a
+      server-side cursor instead of materializing the full result set in JVM
+      memory. Some of these DIH queries return millions of rows; without
+      streaming, both postgres (sending) and solr (receiving) push the host
+      into OOM-kill territory on 32g VMs. With autoCommit=false set here the
+      transactionIsolation attribute above is also actually honoured (it
+      requires a transaction). 1000 rows per fetch is the conventional
+      sweet spot — small enough to bound peak memory, large enough that
+      round-trip overhead is negligible.
+    -->
     <dataSource name="db"
-                driver="@JDBC_DRIVER@"
-                url="@JDBC_URL@"
+                driver="org.postgresql.Driver"
+                url="jdbc:postgresql://db:5432/zfindb"
+                user="postgres"
+                password="ignored"
                 transactionIsolation="TRANSACTION_READ_UNCOMMITTED"
+                autoCommit="false"
+                batchSize="1000"
     />
 
     <document>
-
         <entity name="gene"
                 query="
                     select
@@ -869,7 +892,6 @@
             />
 
         </entity>
-
         <entity name="marker"
                 query="select
                            mrkr_zdb_id as id,
@@ -1025,7 +1047,7 @@
                       from marker_relationship g_produces_t, marker_relationship c_contains_t, data_alias, alias_group
                       where g_produces_t.mrel_type = 'gene produces transcript'
                         and c_contains_t.mrel_type = 'clone contains transcript'
-                        and g_produces_t.mrel_mrkr_2_zdb_id = c_contains_t.mrel_mrkr_2_zdb_id 
+                        and g_produces_t.mrel_mrkr_2_zdb_id = c_contains_t.mrel_mrkr_2_zdb_id
                         and g_produces_t.mrel_mrkr_1_zdb_id = dalias_data_zdb_id
 		        and aliasgrp_pk_id = dalias_group_id
         		and aliasgrp_name != 'sequence similarity'
@@ -1127,7 +1149,6 @@
                     where="marker_zdb_id=marker.id"/>-->
 
         </entity>
-
         <entity name="fish"
                 query="
                 SELECT
@@ -1969,7 +1990,6 @@
             />
 
         </entity>
-
         <entity name="construct"
                 query="
                     select
@@ -2298,7 +2318,6 @@
             />
 
         </entity>
-
         <entity name="str"
                 query="
                 SELECT
@@ -2428,7 +2447,6 @@
             />
 
         </entity>
-
         <entity name="phenotype"
                 query="select distinct
                         'Phenotype' as category,
@@ -2594,7 +2612,7 @@
             />
 
 
-        <entity name="phenotype_misexpressed_gene"
+            <entity name="phenotype_misexpressed_gene"
                     transformer="RegexTransformer"
                     query="select mrkr_abbrev || '!Any' as misexpressed_gene,
                                  mrkr_abbrev || ' misexpression' as expression_observation,
@@ -3168,7 +3186,6 @@
             />
 
         </entity>
-
         <entity name="expression"
                 query="select
                         'Expression' as category,
@@ -3762,7 +3779,6 @@
             />
 
         </entity>
-
         <entity name="antibody"
                 query="select
                         mrkr_zdb_id as id,
@@ -3970,7 +3986,6 @@
             />
 
         </entity>
-
         <entity name="feature"
                 query="select
                         feature_zdb_id as id,
@@ -4755,7 +4770,6 @@
             />
 
         </entity>
-
         <entity name="term"
                 query="select term_ont_id as id,
                              term_zdb_id as internal_id,
@@ -4927,7 +4941,7 @@
                     query="select
                             dalias_alias as	gene_previous_name,
                             term_zdb_id as term_zdb_id
-                            from term, term_xref, omim_phenotype, ortholog, data_alias,omimp_termxref_mapping 
+                            from term, term_xref, omim_phenotype, ortholog, data_alias,omimp_termxref_mapping
                                  where tx_term_zdb_id = term_zdb_id
                                   and  otm_tx_id = tx_pk_id
                                 and otm_omimp_id = omimp_pk_id
@@ -5005,7 +5019,6 @@ and child.term_ontology = 'disease_ontology';
 
 
         </entity>
-
         <entity name="publication"
                 query="select zdb_id as id,
                              title as name,
@@ -5478,7 +5491,6 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
         <entity name="figure"
                 transformer="HTMLStripTransformer"
                 query="select fig_zdb_id as id,
@@ -6065,7 +6077,6 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
         <entity name="person"
                 transformer="HTMLStripTransformer"
                 query=" select zdb_id as id,
@@ -6102,48 +6113,10 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
-        <entity name="lab"
-                transformer="HTMLStripTransformer"
-                query="select zdb_id as id,
-                             name as name,
-                             name as proper_name,
-                             name as full_name,
-                             lower(name) as name_sort,
-                             'Community' as category,
-                             'Lab' as type,
-                             '/' || zdb_id as url,
-                             to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                             image as profile_image,
-                             bio as biography,
-                             address as postal_address,
-                             nvl(country, 'Unknown') as country,
-                             email as email_address
-                      from lab;"
-        >
-            <field column="biography" stripHTML="true"/>
-
-            <entity name="lab_PI"
-                    query="select first_name || ' ' || last_name as lab_member_name,
-                                   target_id as lab_zdb_id
-                            from int_person_lab
-                                 join person on source_id = person.zdb_id
-                            where position_id in (1,7);"
-                    cacheImpl="SortedMapBackedCache"
-                    where="lab_zdb_id=lab.id"
-            />
-
-            <entity name="lab_person_xref"
-                    query="select
-                            source_id as xref,
-                            target_id as lab_zdb_id
-                           from int_person_lab;"
-                    cacheImpl="SortedMapBackedCache"
-                    where="lab_zdb_id=lab.id"
-            />
-
-        </entity>
-
+        <!-- lab migrated to Java in ZFIN-10171: see LabIndexer + IndexerRegistry.
+             SolrReindexOrchestrator picks the Java path for this entity via its
+             BATCHES table; do not re-add a DIH definition here without also
+             flipping Source.JAVA back to Source.DIH in the orchestrator. -->
         <entity name="company"
                 transformer="HTMLStripTransformer"
                 query=" select zdb_id as id,
@@ -6164,8 +6137,6 @@ and child.term_ontology = 'disease_ontology';
         >
             <field column="biography" stripHTML="true"/>
         </entity>
-
-
         <entity name="journal"
                 query="select
                       jrnl_name as full_name,
@@ -6209,7 +6180,6 @@ and child.term_ontology = 'disease_ontology';
         <!-- these documents are for counting annotations
              for gene/term pairs in the go section of the gene page,
               required fields are just minimally filled, since they won't be used -->
-
         <entity name="go_annotation"
                 query="select
                            marker_go_term_evidence.mrkrgoev_zdb_id as id,
@@ -6248,7 +6218,6 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache">
             </entity>
         </entity>
-
         <entity name="expression_result"
                 query="select
                         'Expression Result' as category,
@@ -6426,8 +6395,6 @@ and child.term_ontology = 'disease_ontology';
                     where="id=expression_result.id"/>
             />
         </entity>
-
-
         <entity name="phenotype_observation"
                 query="select distinct
                         'Phenotype Observation' as category,
@@ -6639,8 +6606,6 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
-        <!-- this fills the STR categories on marker search, but is excluded from site search -->
         <entity name="str_relationship"
                 query="select mrel_zdb_id as id,
                                'STR Relationship' as Category,
@@ -6720,7 +6685,5 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
     </document>
-
 </dataConfig>
