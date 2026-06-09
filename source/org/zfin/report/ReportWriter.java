@@ -1,7 +1,6 @@
 package org.zfin.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +27,10 @@ public class ReportWriter {
     private static final String PLACEHOLDER_START = "//PLACEHOLDER_START";
     private static final String PLACEHOLDER_END   = "//PLACEHOLDER_END";
 
-    private final ObjectMapper mapper = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT);
+    // Compact (non-indented) JSON: the payload is machine-read by the report
+    // viewer, never hand-edited, so indentation is pure byte bloat in a file
+    // that can grow large.
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /** Render using the bundled classpath template. */
     public String render(Report report) throws IOException {
