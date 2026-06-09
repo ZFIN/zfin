@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+# Enable better error handling and tracing for debugging
+# Keep -e from the shebang; add pipefail and tracing
+set -o pipefail
+set -x
+
 # Remove old reports
 
 rm -f "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt"
@@ -19,6 +24,18 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "done with runchromosomemart on $DB_NAME"
+
+# Drop UCSCStartEndLoader rows whose accession isn't in UCSC's danRer11 refGene
+# track (those would 404 on the mapping detail page).
+chmod +x "$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinks.sh"
+"$ROOT_PATH/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/pruneUcscLinks.sh"
+
+if [ $? -ne 0 ]; then
+  echo "UCSC link prune failed"
+  exit 1
+fi
+
+echo "done pruning UCSC links"
 
 # Run the validation tests via Ant
 cd "$SOURCEROOT" || exit 1

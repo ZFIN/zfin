@@ -88,7 +88,16 @@
             <param-value>true</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
-        <multipart-config />
+        <!-- Cap per-file uploads at 50 MB and the whole request at 100 MB
+             so a curator-supplied upload can't fill the container's
+             scratch disk. Tomcat's default is unlimited. file-size-
+             threshold is the in-memory buffer; anything larger spills
+             to disk under java.io.tmpdir. -->
+        <multipart-config>
+            <max-file-size>52428800</max-file-size>
+            <max-request-size>104857600</max-request-size>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
     </servlet>
 
     <servlet>
@@ -304,6 +313,18 @@
     <session-config>
         <session-timeout>-1</session-timeout>
     </session-config>
+
+    <!-- Treat every .jsp file's source bytes AND its rendered output as
+         UTF-8. Without this, JSP defaults to ISO-8859-1, so literal
+         non-ASCII characters in the source (em-dashes, ellipses, etc.)
+         get mojibaked in the browser. -->
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+    </jsp-config>
 
     <!-- The Usual Welcome File List -->
     <welcome-file-list>

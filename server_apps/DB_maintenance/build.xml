@@ -150,6 +150,17 @@
 
         <property name="parserClassName" value="org.zfin.datatransfer.go.GpadParser"/>
 
+        <!-- ZFIN-10230: archive a byte-identical copy of the source GPAD as a build artifact
+             for forensic investigation. Filename matches the Jenkins archive pattern
+             (Load-GPAD-Noctua*) so it ships with the build. ignoreerrors keeps a transient
+             upstream hiccup from failing the load, which has its own download path. -->
+        <mkdir dir="${validateData}/gafLoad/${jobName}"/>
+        <get src="${downloadUrl}"
+             dest="${validateData}/gafLoad/${jobName}/${jobName}-source.gpad.gz"
+             verbose="false"
+             usetimestamp="true"
+             ignoreerrors="true"/>
+
         <echo message="Running GafLoadJob with arguments:"/>
         <echo message="  propertyFilePath: ${web-inf.dir}/zfin.properties"/>
         <echo message="  baseDir: ${validateData}/gafLoad"/>
@@ -319,6 +330,36 @@
         <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
         <echo message="Property File: ${web-inf.dir}/zfin.properties"/>
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
+    <target name="check-sequence-of-reference-drift" description="ZFIN-10280: report features whose stored fgmd_sequence_of_reference disagrees with the FASTA-computed sequence at the stored coordinates. Read-only.">
+        <echo message="Check Sequence of Reference drift"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+        <java classname="org.zfin.infrastructure.ant.CheckSequenceOfReferenceDriftTask" fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
+    <target name="check-deletion-size-drift" description="ZFIN-10280: report features whose stored fdmd_number_removed_dna_base_pairs disagrees with (sfcl_end_position - sfcl_start_position + 1). Read-only.">
+        <echo message="Check Deletion Size drift"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+        <java classname="org.zfin.infrastructure.ant.CheckDeletionSizeDriftTask" fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>

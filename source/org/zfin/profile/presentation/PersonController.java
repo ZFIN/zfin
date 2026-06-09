@@ -19,12 +19,17 @@ import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.zirc.entity.LineSubmission;
+import org.zfin.zirc.service.LineSubmissionStatusComputer;
+import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -323,6 +328,25 @@ public class PersonController {
         List<LabPresentation> labs = profileRepository.getLabsForPerson(zdbID);
         model.addAttribute("labs", labs);
         model.addAttribute("country", profileService.getCountryDisplayName(person.getCountry()));
+
+        // ZIRC Line Submissions section: every line_submission this person has any role on.
+        List<LineSubmission> lineSubmissions = HibernateUtil.currentSession()
+                .createQuery(
+                    "select distinct lsp.lineSubmission " +
+                    "from ZircLineSubmissionPerson lsp " +
+                    "where lsp.person.zdbID = :zdbID " +
+                    "order by lsp.lineSubmission.createdAt desc",
+                    LineSubmission.class)
+                .setParameter("zdbID", zdbID)
+                .list();
+        Map<String, FieldStatus> overallByZdbId = new LinkedHashMap<>();
+        for (LineSubmission s : lineSubmissions) {
+            overallByZdbId.put(s.getZdbID(), LineSubmissionStatusComputer.compute(s).overall());
+        }
+        model.addAttribute("activeSubmissions", lineSubmissions);
+        model.addAttribute("closedSubmissions", java.util.Collections.emptyList());
+        model.addAttribute("overallStatus", overallByZdbId);
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/person-view";
     }

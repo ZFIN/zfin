@@ -508,6 +508,14 @@ public class GafService {
         }
     }
 
+    private static GenericTerm lookupRelationTerm(String relationName, Collection<Ontology> ontologies) {
+        OntologyRepository repo = RepositoryFactory.getOntologyRepository();
+        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+            return repo.getTermByOboID(relationName);
+        }
+        return repo.getTermByName(relationName, ontologies);
+    }
+
     protected void saveAnnoExtns(String annotationExtensionString, MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
         throws GafValidationError {
 
@@ -520,9 +528,17 @@ public class GafService {
         int closeParanIndex = annotationExtensionString.indexOf(")");
         String relationName = annotationExtensionString.substring(0, openParanIndex);
         String identifierText = annotationExtensionString.substring(openParanIndex + 1, closeParanIndex);
-        Term relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+        GenericTerm relationTerm = lookupRelationTerm(relationName, ontologies);
         if (relationTerm == null) {
             throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
+        }
+        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+            // ZFIN-10230: this row previously would have failed under getTermByName lookup.
+            logger.info("ZFIN-10230 recovered annotExtn: entryId={} goid={} qualifier={} pmid={} evidence={} annotExtnPiece='{}' relation={} -> {} ({}) identifier={}",
+                gafEntry.getEntryId(), gafEntry.getGoTermId(), gafEntry.getQualifier(),
+                gafEntry.getPubmedId(), gafEntry.getEvidenceCode(),
+                annotationExtensionString, relationName,
+                relationTerm.getZdbID(), relationTerm.getTermName(), identifierText);
         }
         MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn(relationTerm.getZdbID(), identifierText);
         mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
@@ -601,11 +617,7 @@ public class GafService {
             if (relationName.contains("negative")) {
                 relationName = relationName.replace("_negative", ",_negative");
             }
-            if (relationName.contains("RO:") || relationName.contains("BFO:")) {
-                relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
-            } else {
-                relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
-            }
+            relationTerm = lookupRelationTerm(relationName, ontologies);
 
             if (relationTerm == null) {
                 throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
@@ -819,6 +831,11 @@ public class GafService {
     public void updateEntriesBatch(List<MarkerGoTermEvidence> batchToUpdate) {
         for (MarkerGoTermEvidence evidence : batchToUpdate) {
             markerGoTermEvidenceRepository.updateEvidence(evidence);
+            // Materialize the lazy noctuaModels collection while the session is
+            // still open. The HTML report builder reads it after the load closes
+            // the session, at which point an uninitialized proxy would throw
+            // LazyInitializationException.
+            org.hibernate.Hibernate.initialize(evidence.getNoctuaModels());
         }
     }
 

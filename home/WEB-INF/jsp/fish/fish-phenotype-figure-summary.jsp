@@ -2,41 +2,41 @@
 
 <jsp:useBean id="phenotypeSummaryCriteria" class="org.zfin.fish.presentation.PhenotypeSummaryCriteria" scope="request"/>
 
-<z:page>
-    <div class="titlebar">
-        <h1>Phenotype Summary</h1>
-    </div>
+<c:set var="SUMMARY" value="Summary"/>
+<c:set var="PHENOTYPES" value="Phenotypes"/>
 
-    <table class="primary-entity-attributes">
-        <tr>
-            <th>Fish:</th>
-            <td>
-                <zfin:link entity="${fish}"/>
-            </td>
-        </tr>
-        <tr>
-            <th>Conditions:</th>
-            <td>
-                All
-            </td>
-        </tr>
-        <c:if test="${!empty phenotypeSummaryCriteria.searchCriteriaPhenotype}">
-            <tr>
-                <th>Matching Terms:</th>
-                <td>
-                    <c:forEach var="term" items="${phenotypeSummaryCriteria.searchCriteriaPhenotype}" varStatus="index">
-                        ${term.name}<c:if test="${!index.last}">,</c:if>
-                    </c:forEach>
-                </td>
-            </tr>
-        </c:if>
-    </table>
-    <p/>
+<z:dataPage sections="${[SUMMARY, PHENOTYPES]}">
 
-    <p/>
+    <jsp:attribute name="entityName">
+        ${zfn:getTruncatedName(fish.name, 30)}
+    </jsp:attribute>
 
-    <div class="summary">
-        <span class="summaryTitle">Phenotypes</span>
-        <zfin2:figurePhenotypeSummary figureSummaryDisplayList="${figureSummaryDisplay}"/>
-    </div>
-</z:page>
+    <jsp:body>
+        <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <div class="small text-uppercase text-muted">FISH PHENOTYPE SUMMARY</div>
+            <h1><zfin:name entity="${fish}"/></h1>
+            <z:attributeList>
+                <z:attributeListItem label="Fish">
+                    <zfin:link entity="${fish}"/>
+                </z:attributeListItem>
+                <z:attributeListItem label="Conditions">
+                    All
+                </z:attributeListItem>
+                <c:if test="${!empty phenotypeSummaryCriteria.searchCriteriaPhenotype}">
+                    <z:attributeListItem label="Matching Terms">
+                        <c:forEach var="term" items="${phenotypeSummaryCriteria.searchCriteriaPhenotype}" varStatus="index">
+                            ${term.name}<c:if test="${!index.last}">,</c:if>
+                        </c:forEach>
+                    </z:attributeListItem>
+                </c:if>
+            </z:attributeList>
+        </div>
+
+        <z:section title="${PHENOTYPES}">
+            <z:section title=" ">
+                <zfin2:figurePhenotypeSummary figureSummaryDisplayList="${figureSummaryDisplay}"/>
+            </z:section>
+        </z:section>
+    </jsp:body>
+
+</z:dataPage>

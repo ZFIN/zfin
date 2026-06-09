@@ -41,11 +41,14 @@ if [ ! -f "$CLI_JAR" ]; then
 fi
 
 # 2. Authentication setup
+# JENKINS_CLI_USER and JENKINS_CLI_PASSWORD env vars override the initialAdminPassword file.
 AUTH_ARGS=""
-if [ -f "$SECRET_PATH" ]; then
+if [ -n "$JENKINS_CLI_USER" ] && [ -n "$JENKINS_CLI_PASSWORD" ]; then
+    AUTH_ARGS="-auth $JENKINS_CLI_USER:$JENKINS_CLI_PASSWORD"
+elif [ -f "$SECRET_PATH" ]; then
     AUTH_ARGS="-auth admin:$(cat "$SECRET_PATH")"
 fi
 
 # 3. Execution
 # Passes current URL, auth, and all user arguments ("$@") to the real binary
-exec java -jar "$CLI_JAR" -s "$BASE_URL" $AUTH_ARGS "$@"
+exec java -jar "$CLI_JAR" -s "$BASE_URL" -http $AUTH_ARGS "$@"

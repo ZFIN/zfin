@@ -33,15 +33,22 @@ import java.net.URLEncoder;
 public class PriorityRESTAllianceService extends RestAllianceService {
 
     private final PriorityRESTInterface api = AllianceRestManager.getPriorityEndpoint();
+
+    // Pass -Dpriority.useAuth=true to attach an Authorization: Bearer <token> header on outgoing
+    // calls. Default off — useful when the upstream service is open or the token is unavailable.
     private final String literatureToken;
 
     public PriorityRESTAllianceService() {
-        TokenStorage tokenStorage = new TokenStorage();
-        literatureToken = tokenStorage.getValue(TokenStorage.ServiceKey.ALLIANCE_LITERATURE_API_TOKEN)
-                .orElseGet(() -> {
-                    log.error("Could not find Alliance Literature API token. Use: gradle tokenStorage --args='write ALLIANCE_LITERATURE_API_TOKEN <token>'");
-                    return null;
-                });
+        if (Boolean.getBoolean("priority.useAuth")) {
+            TokenStorage tokenStorage = new TokenStorage();
+            literatureToken = tokenStorage.getValue(TokenStorage.ServiceKey.ALLIANCE_LITERATURE_API_TOKEN)
+                    .orElseGet(() -> {
+                        log.error("Could not find Alliance Literature API token. Use: gradle tokenStorage --args='write ALLIANCE_LITERATURE_API_TOKEN <token>'");
+                        return null;
+                    });
+        } else {
+            literatureToken = null;
+        }
     }
 
     public PriorityTag findPriority(String publicationID) {
@@ -53,7 +60,9 @@ public class PriorityRESTAllianceService extends RestAllianceService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + literatureToken);
+            if (literatureToken != null) {
+                conn.setRequestProperty("Authorization", "Bearer " + literatureToken);
+            }
             log.info("Request: GET " + urlString);
             log.info("Response code: " + conn.getResponseCode());
             if (conn.getResponseCode() == 200) {

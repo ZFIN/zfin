@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.genomebrowser.GenomeBrowserBuild.CURRENT;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
@@ -141,17 +140,32 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             StringUtils.isEmpty(dto.getEvidence()) &&
             dto.getFeatureStartLoc() == null &&
             dto.getFeatureEndLoc() == null) {
-            infrastructureRepository.deleteRecordAttribution(fl.getZdbID(), dto.getPublicationZdbID());
+            // Remove ALL attribution rows for this FL — not just the one matching
+            // dto.getPublicationZdbID() — because Location.references no longer
+            // cascades deletes, and any surviving record_attribution row whose
+            // recattrib_data_zdb_id points at this FL would block the FL delete
+            // (or, worse, leave dangling rows referencing a non-existent FL).
+            infrastructureRepository.deleteRecordAttributionsForData(fl.getZdbID());
             HibernateUtil.currentSession().delete(fl);
+            // Clear the in-memory fields too. The caller may still hold this reference
+            // (e.g. validateReferenceSequence reads fl.getStartLocation() etc.), and
+            // without this it would keep observing the pre-delete coordinates and
+            // attempt a FASTA lookup against a location the curator just removed.
+            fl.setChromosome(null);
+            fl.setAssembly(null);
+            fl.setStartLocation(null);
+            fl.setEndLocation(null);
+            fl.setLocationEvidence(null);
             return;
         }
-        // If the assembly is changing, only allow changing to GRCz12tu
+        // If the assembly is changing, only allow changing to a current assembly (GRCz12tu or GRCz11)
         String previousAssembly = fl.getAssembly();
         String newAssembly = dto.getFeatureAssembly();
         if (previousAssembly != null && newAssembly != null
                 && !previousAssembly.equals(newAssembly)
-                && !AssemblyEnum.GRCZ12TU.getName().equals(newAssembly)) {
-            throw new ValidationException("Assembly can only be changed to " + AssemblyEnum.GRCZ12TU.getName());
+                && currentAssemblyEnum(newAssembly) == null) {
+            throw new ValidationException("Assembly can only be changed to "
+                    + AssemblyEnum.GRCZ12TU.getName() + " or " + AssemblyEnum.GRCZ11.getName());
         }
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
@@ -281,6 +295,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            // When the curator removes all location info (marking "Assembly information
+            // not known as of <date>"), the calculated Sequence of Reference no longer
+            // has a source. Drop both sequence fields before the validate step so we
+            // don't compare the stale GUI value against a no-longer-applicable
+            // assembly, and so the persisted FGMD reflects the empty-location state.
+            if (locationDeleted) {
+                fgmd.setFgmdSeqRef(null);
+                fgmd.setFgmdSeqVar(null);
+            }
             validateReferenceSequence(fgmd, fgl);
 
             if (fgmd.getZdbID() == null) {
@@ -307,15 +330,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         boolean variationExists = featureDTO.getFgmdChangeDTO() != null;
-        // calculate and save flanking sequences for GRCz12tu
-        if ((variationExists || locationUpdated) && fgl.getAssembly() != null && fgl.getAssembly().equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService();
-            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        // calculate and save flanking sequences for current assemblies (GRCz12tu, GRCz11)
+        AssemblyEnum currentAssembly = currentAssemblyEnum(fgl.getAssembly());
+        if ((variationExists || locationUpdated) && currentAssembly != null) {
+            new GenomicLocationService().upsertFlankingSequence(feature, currentAssembly);
         }
         // clean up flanking sequences when location is deleted
-        if (locationDeleted && previousAssembly != null && previousAssembly.equals(CURRENT.getValue())) {
-            GenomicLocationService service = new GenomicLocationService();
-            service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+        AssemblyEnum prevAssembly = currentAssemblyEnum(previousAssembly);
+        if (locationDeleted && prevAssembly != null) {
+            new GenomicLocationService().upsertFlankingSequence(feature, prevAssembly);
         }
 
 
@@ -351,6 +374,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            // Mirror the FGMD cleanup above: when the curator marks
+            // "Assembly information not known as of <date>", the deletion size
+            // (bp) is derived from the now-removed start/end coordinates and
+            // must not linger on the DNA mutation detail. The DTO still
+            // carries the previous value, so updateDnaMutationDetailWithDTO
+            // wrote it back — null it explicitly here.
+            if (locationDeleted) {
+                detail.setNumberRemovedBasePair(null);
+            }
+            validateDeletionLength(detail, fgl, feature.getType());
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
                 if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair()) {
                     if (detail.getNumberRemovedBasePair() > 1) {
@@ -718,9 +751,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
                 currentSession().save(pa);
 
-                if (fgl.getAssembly() != null && fgl.getAssembly().equals(AssemblyEnum.GRCZ12TU.getName())) {
-                    GenomicLocationService service = new GenomicLocationService();
-                    service.upsertFlankingSequence(feature, AssemblyEnum.GRCZ12TU);
+                AssemblyEnum addedAssembly = currentAssemblyEnum(fgl.getAssembly());
+                if (addedAssembly != null) {
+                    new GenomicLocationService().upsertFlankingSequence(feature, addedAssembly);
                 }
 
 
@@ -1211,6 +1244,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
 
+    // Assemblies for which we generate/refresh flanking sequences and accept new
+    // location entries on the curation form. Other AssemblyEnum values (GRCz10, Zv9)
+    // are read-only legacy options shown in the edit dropdown only.
+    private static AssemblyEnum currentAssemblyEnum(String name) {
+        if (name == null) return null;
+        if (AssemblyEnum.GRCZ12TU.getName().equals(name)) return AssemblyEnum.GRCZ12TU;
+        if (AssemblyEnum.GRCZ11.getName().equals(name)) return AssemblyEnum.GRCZ11;
+        return null;
+    }
+
     @Override
     public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
         AssemblyEnum assemblyEnum = null;
@@ -1225,6 +1268,24 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         GenomicLocationService genomicLocationService = new GenomicLocationService();
         return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
+    }
+
+    private void validateDeletionLength(FeatureDnaMutationDetail detail, FeatureLocation fgl, FeatureTypeEnum featureType) throws ValidationException {
+        if (detail == null || detail.getNumberRemovedBasePair() == null) {
+            return;
+        }
+        if (fgl == null || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
+            return;
+        }
+        if (featureType != FeatureTypeEnum.DELETION
+                && featureType != FeatureTypeEnum.INDEL
+                && featureType != FeatureTypeEnum.MNV) {
+            return;
+        }
+        int expected = fgl.getEndLocation() - fgl.getStartLocation() + 1;
+        if (detail.getNumberRemovedBasePair() != expected) {
+            throw new ValidationException("Deletion size does not match the auto-calculated value from the start/end locations");
+        }
     }
 
     private void validateReferenceSequence(FeatureGenomicMutationDetail fgmd, FeatureLocation fgl) throws ValidationException {

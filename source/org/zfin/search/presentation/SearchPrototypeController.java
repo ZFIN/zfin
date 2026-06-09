@@ -358,7 +358,7 @@ public class SearchPrototypeController {
         }
         model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
         model.addAttribute("rows", rows);
-        model.addAttribute("allowDownload", solrService.allowDownload(q, filterQuery));
+        model.addAttribute("allowDownload", solrService.allowDownload(q, filterQuery, category));
         model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
 
         paginationBean.setPage(page.toString());
@@ -601,7 +601,9 @@ public class SearchPrototypeController {
                                 HttpServletResponse response,
                                 HttpServletRequest request) {
 
-        if (!solrService.allowDownload(q, filterQuery)) {
+        category = getCategory(filterQuery, category);
+
+        if (!solrService.allowDownload(q, filterQuery, category)) {
             try {
                 response.sendError(403);
                 return;
@@ -614,8 +616,6 @@ public class SearchPrototypeController {
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
         SolrQuery query = new SolrQuery();
-
-        category = getCategory(filterQuery, category);
 
         if (StringUtils.isNotEmpty(category) && !category.equals("Any")) {
             query.addFilterQuery("category:\"" + category + "\"");

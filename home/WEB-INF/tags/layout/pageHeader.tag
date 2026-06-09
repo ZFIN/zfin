@@ -204,6 +204,7 @@
                                 </form>
                             </li>
                             <li><a href="/action/reno/run-list">ReNo Pipeline</a></li>
+                            <li><a href="/action/zirc/dashboard">Line Submission Dashboard</a></li>
                         </ul>
                     </div>
 
@@ -306,10 +307,23 @@
                 </c:when>
                 <c:otherwise>
                     <li class="no-border">
-                        <a href="/action/login">Sign In</a>
+                        <a href="/action/login" data-zfin-signin-link>Sign In</a>
                     </li>
                 </c:otherwise>
             </c:choose>
         </ul>
     </div>
+    <script>
+        // Add the current page URL as a redirect param to the Sign In link so the user
+        // returns here after logging in. If JS is disabled, the bare /action/login href
+        // still works (user just lands on the default page after login).
+        (function () {
+            var link = document.querySelector('a[data-zfin-signin-link]');
+            if (!link) return;
+            var here = window.location.pathname + window.location.search + window.location.hash;
+            // Skip on the auth pages themselves to avoid redirect loops.
+            if (/^\/action\/(login|logout|j_security-check|profile\/expired-password)/.test(window.location.pathname)) return;
+            link.href = '/action/login?redirect=' + encodeURIComponent(here);
+        })();
+    </script>
 </header>

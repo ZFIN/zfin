@@ -1,6 +1,5 @@
 package org.zfin.sequence.gff;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,7 +18,6 @@ import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.FileUtil;
@@ -27,7 +25,6 @@ import org.zfin.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -45,7 +42,6 @@ public class NCBIGff3PostProcessor extends AbstractScriptWrapper {
     private ReportBuilder.SummaryTable summaryTableGeneLocation;
     private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
     private final AssemblyDAO assemblyDAO = new AssemblyDAO();
-    private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
 
     public static void main(String[] args) throws IOException {
         init();
@@ -366,32 +362,10 @@ public class NCBIGff3PostProcessor extends AbstractScriptWrapper {
     }
 
     private void createReport(ReportBuilder builder) {
-        ObjectNode report = builder.build();
         try {
-            String jsonString = builder.getJsonString(report);
-
-            // Write to file
-            FileUtils.writeStringToFile(new File(".", "gff3_ncbi_report.json"), jsonString, StandardCharsets.UTF_8);
-            writeOutputReportFile(jsonString);
-
+            builder.writeHtmlReport(new File(".", "gff3_ncbi_report.html"));
         } catch (IOException e) {
-            log.error("JSON reporting failed: " + e.getMessage(), e);
-        }
-    }
-
-    private void writeOutputReportFile(String jsonString) {
-        String sourceRoot = ZfinPropertiesEnum.SOURCEROOT.value();
-        if (sourceRoot == null) {
-            sourceRoot = System.getenv("SOURCEROOT");
-        }
-        File reportFile = new File(".", "gff3_ncbi_report.html");
-        try {
-            String template = "./home/uniprot/zfin-report-template.html";
-            String templateContents = FileUtils.readFileToString(new File(template));
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonString);
-            FileUtils.writeStringToFile(reportFile, filledTemplate);
-        } catch (IOException e) {
-            System.out.println("ERROR: Could not write report file: " + e.getMessage());
+            log.error("HTML report write failed: " + e.getMessage(), e);
         }
     }
 

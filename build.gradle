@@ -427,11 +427,6 @@ task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludes = ['Makefile']
 }
 
-task "server_apps;sysexecs;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'server_apps/sysexecs'
-    excludes = ['Makefile', 'build.gradle']
-}
-
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
     excludes = ['Makefile', 'build.gradle']
@@ -523,7 +518,6 @@ task make(type: GradleBuild) {
              'home;zf_info;deployFiles',
              'home;ZFIN;deployFiles',
              'server_apps;apache;deployFiles',
-             'server_apps;sysexecs;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
              'server_apps;data_transfer;Downloads;createSymlink',
@@ -769,7 +763,7 @@ task uploadGHCRImages(dependsOn: ['buildGHCRImages',
     description "Build and upload containers to Github Container Registry"
 }
 
-def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat']
+def containerList = ['base', 'compile', 'db', 'fail2ban', 'httpd', 'jenkins', 'solr', 'tomcat', 'kibana', 'elasticsearch', 'filebeat', 'metricbeat']
 
 task buildGHCRImages() {
     doLast {
@@ -899,7 +893,6 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.15.2"  // Required by robot.jar
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2"
     implementation "com.fasterxml.woodstox:woodstox-core:6.5.1"
     implementation "com.github.rtaylorzfin:google-analytics-reporting-app:1.0.4"
@@ -1139,9 +1132,21 @@ sourceSets {
             exclude '**/SolrUnitTests.java'
             exclude '**/SmokeTestsReadWrite.java'
         }
+        groovy {
+            // Without this, Spock specs in test/ never reach compileTestGroovy
+            // (the Groovy plugin defaults look in test/groovy/). Discovered
+            // while wiring ZircOpenApiDriftSpec.
+            srcDirs = ['test']
+            exclude '**/*.java'
+            // PublicationServiceSpec imports org.apache.bcel.Repository which
+            // isn't on the test classpath; pre-existing dead Groovy spec from
+            // before this source set was even compiling.
+            exclude 'org/zfin/publication/PublicationServiceSpec.groovy'
+        }
         resources {
             srcDirs = ['test']
             exclude '**/*.java'
+            exclude '**/*.groovy'
         }
     }
 }
@@ -1149,6 +1154,20 @@ sourceSets {
 test {
 //    maxHeapSize = "2048m"
     maxHeapSize = "8g"
+
+    // FormSchemaSnapshotTest baselines — without this Gradle won't know to
+    // invalidate :test when only a snapshot changes.
+    inputs.dir('test/resources/zirc/snapshot')
+
+    // Forward the snapshot-update flag through to the test JVM so callers can
+    // do `gradle test -Dzirc.snapshot.update=true ...` to regenerate the
+    // FormSchemaSnapshotTest baselines.
+    if (project.hasProperty('zirc.snapshot.update') ||
+            System.getProperty('zirc.snapshot.update') != null) {
+        systemProperty 'zirc.snapshot.update',
+                project.findProperty('zirc.snapshot.update') ?:
+                System.getProperty('zirc.snapshot.update')
+    }
 
 //    useJUnitPlatform() //do we want this (junit 4 specific)
 
@@ -1256,6 +1275,12 @@ test {
             includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
             includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
             includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+
+            // ZIRC drift checks (no DB, pure reflection)
+            includeTestsMatching "org.zfin.zirc.api.ZircOpenApiDriftTest"
+            includeTestsMatching "org.zfin.zirc.api.FormSchemaSnapshotTest"
+            includeTestsMatching "org.zfin.zirc.api.uischema.UiSchemaSerializationTest"
+            includeTestsMatching "org.zfin.zirc.api.jsonschema.JsonSchemaSerializationTest"
 
             /*need to figure out ..all tests fail here
         includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"*/
@@ -1403,12 +1428,13 @@ def copyWebAppFiles(String webappRoot) {
         include 'mchange-log.properties'
     }
 
-    // Copy Hibernate mappings and properties from source
+    // Copy Hibernate mappings, properties, and HTML templates from source
     copy {
         from 'source'
         into webappRoot + '/WEB-INF/classes'
         include '**/*.hbm.xml'
         include '**/*.properties'
+        include '**/*.html'
     }
 
     // Copy asset manifest from TARGETROOT
@@ -1517,9 +1543,51 @@ compileJava {
     options.forkOptions.memoryMaximumSize = '556m'
 }
 
+// Copy classpath-loaded templates next to their compiled consumers so they
+// resolve via getResourceAsStream from both the Ant DB_maintenance runtime
+// (which only has home/WEB-INF/classes on its classpath) and the deployed
+// webapp. Scoped narrowly to the org.zfin.report package so unrelated HTML
+// assets dropped under source/ later don't silently land on the classpath.
+task copyClasspathTemplates(type: Copy) {
+    from('source') {
+        include 'org/zfin/report/*.html'
+    }
+    into 'home/WEB-INF/classes'
+}
+compileJava.finalizedBy copyClasspathTemplates
+// compileTestJava reads from home/WEB-INF/classes (the same dir that
+// copyClasspathTemplates writes into), so Gradle needs the dependency
+// declared explicitly. Same applies to test runtime / processTestResources.
+compileTestJava.dependsOn copyClasspathTemplates
+processTestResources.dependsOn copyClasspathTemplates
+// Every JavaExec task uses sourceSets.main.runtimeClasspath, which includes
+// home/WEB-INF/classes (the dir copyClasspathTemplates writes into). Gradle 8.x
+// strict validation fails any such task without an explicit dependency edge, so
+// wire them all up here rather than per-task.
+tasks.withType(JavaExec).configureEach {
+    dependsOn copyClasspathTemplates
+}
+
 // ============================================================================
 // GWT COMPILATION TASKS
 // ============================================================================
+
+// Regenerate home/javascript/react/zirc/api/types.ts from the Java DTO
+// records in org.zfin.zirc.dto. See reference/zirc-architecture.md §3.
+//
+// Run via:  gradle generateZircTypes
+// CI verifies cleanliness via a JUnit test that calls the generator
+// in-process and asserts the committed file is byte-equal.
+task generateZircTypes(type: JavaExec) {
+    description = 'Regenerate the ZIRC TypeScript DTO mirror from Java records.'
+    group = 'build'
+    dependsOn 'compileJava'
+
+    mainClass = 'org.zfin.zirc.dto.GenerateTypeScript'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = project.projectDir
+    // No args → writes to the default home/javascript/react/zirc/api/types.ts
+}
 
 // Task to compile a single GWT module
 task compileGwtModule(type: JavaExec) {
@@ -1628,9 +1696,13 @@ task npmBuild(type: Exec) {
 
     commandLine 'npm', 'run', 'build'
 
-    inputs.dir 'home/javascript/react'
+    inputs.dir 'home/javascript'
+    inputs.dir 'home/css'
     inputs.file 'webpack.config.js'
     inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+    inputs.file '.babelrc'
+    inputs.file 'tsconfig.json'
     outputs.dir targetroot + '/home/dist'
 }
 
@@ -1641,7 +1713,7 @@ task npmBuild(type: Exec) {
 task dirtycopy {
     description = 'Incremental sync of classes, JSPs, and configs to Tomcat (no lib jars)'
     group = 'development'
-    dependsOn compileJava
+    dependsOn compileJava, copyClasspathTemplates
 
     def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
     def webappRoot = catBase + '/webapps/ROOT'
@@ -1652,6 +1724,7 @@ task dirtycopy {
     inputs.files fileTree('source') {
         include '**/*.hbm.xml'
         include '**/*.properties'
+        include '**/*.html'
     }
 
     doLast {

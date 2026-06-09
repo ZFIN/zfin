@@ -231,6 +231,22 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         );
     }
 
+    public void autoCalcDeletionLength() {
+        String featureType = view.featureTypeBox.getSelected();
+        if (featureType == null) return;
+
+        boolean hasDeletionLength = featureType.equals(FeatureTypeEnum.DELETION.getName())
+                || featureType.equals(FeatureTypeEnum.INDEL.getName())
+                || featureType.equals(FeatureTypeEnum.MNV.getName());
+        if (!hasDeletionLength) return;
+
+        Integer start = view.featureStartLoc.getBoxValue();
+        Integer end = view.featureEndLoc.getBoxValue();
+        if (start == null || end == null || end < start) return;
+
+        view.mutationDetailDnaView.setDeletionLength(end - start + 1);
+    }
+
     public FeatureDTO createDTOFromGUI(AbstractFeatureView view) {
 
         FeatureDTO featureDTO = new FeatureDTO();

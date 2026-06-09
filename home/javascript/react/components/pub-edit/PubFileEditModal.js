@@ -36,7 +36,7 @@ const PubFileEditModal = ({ file, fileTypeOptions, pubHasOriginalArticle, onClos
         try {
             await onDelete(file);
             onClose();
-        } catch (err) {
+        } catch {
             setError('Unable to delete file. Try again later.')
         }
         setDeleting(false);
@@ -51,7 +51,7 @@ const PubFileEditModal = ({ file, fileTypeOptions, pubHasOriginalArticle, onClos
                 type: formType,
             });
             onClose();
-        } catch (err) {
+        } catch {
             setError('Unable to save update. Try again later.')
         }
         setSaving(false);

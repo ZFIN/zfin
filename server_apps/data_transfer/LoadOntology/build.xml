@@ -32,14 +32,8 @@
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/Ontology_Files/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///research/zusers/informix/Curation/zeco-taxonomy.obo"/>
-    <property name="zecoTaxonomySourceURL" value="/research/zusers/informix/Curation/zeco-taxonomy-source.txt"/>
-<!-- For local development
-    <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
--->
     <property name="zroSourceURL" value="file:///research/zusers/informix/Curation/zfin-ro.obo"/>
     <property name="obiURL" value="file:///research/zusers/informix/Curation/obi.obo"/>
-    <property name="goQualifierSourceURL" value="file:///research/zusers/informix/Curation/go-qualifier.obo"/>
-    <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/research/zusers/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="https://raw.githubusercontent.com/ZFIN/zebrafish-anatomical-ontology/refs/heads/master/src/ontology/zfa-edit.obo"/>
     <property name="stageOboURL" value="file:///research/zusers/informix/Curation/zfs.obo"/>
@@ -49,6 +43,14 @@
     <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=log4j2.xml"/>
     <property name="jvm.mem" value="-Xmx4g"/>
     <property name="run-directory" value="./obo-files"/>
+    <!-- Where the per-job report directory (named by ${JobName}) is created and
+         where the Java loader runs. Defaults to ${basedir} (= this build file's
+         dir under SOURCEROOT) for backwards compatibility. Override per-job by
+         passing -Djob.output.basedir=<absolute-path> to ant; e.g. the
+         Load-Zeco-Taxonomy-Ontology Jenkins job sets it to its TARGETROOT
+         counterpart so Jenkins's workspace-relative archive patterns find the
+         outputs. -->
+    <property name="job.output.basedir" value="${basedir}"/>
 
     <property environment="env"/>
 
@@ -351,7 +353,7 @@
             <echo>base.dir Files: ${basedir}</echo>
             <antcall target="clear-output-directory"/>
             <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="4g"
-                  failonerror="true">
+                  failonerror="true" dir="${job.output.basedir}">
                 <classpath refid="combined.classpath"/>
                 <arg value="-localOboFileName"/>
                 <arg value="@{oboDirectory}/@{oboFileName}"/>
@@ -373,8 +375,8 @@
     </macrodef>
 
     <target name="clear-output-directory">
-        <delete dir="${JobName}"/>
-        <mkdir dir="${JobName}"/>
+        <delete dir="${job.output.basedir}/${JobName}"/>
+        <mkdir dir="${job.output.basedir}/${JobName}"/>
     </target>
 
 
@@ -383,7 +385,7 @@
         <property name="dbScriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
-              failonerror="true">
+              failonerror="true" dir="${job.output.basedir}">
             <classpath refid="combined.classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="${localOboFilePath}"/>
@@ -495,41 +497,6 @@
     <tstamp>
         <format property="time.now" pattern="dd:MM:yyyy HH:mm"/>
     </tstamp>
-
-    <target name="create-zeco-taxonomy-owl-file">
-        <create-obo-file file-name="zeco-taxonomy" source-file-name="${zecoTaxonomySourceURL}"/>
-        <setHeaderForObo obo-file-name="zeco-taxonomy" namespace="zeco_taxonomy"/>
-    </target>
-
-    <target name="create-go-qualifier-file">
-        <create-obo-file file-name="go-qualifier" source-file-name="${goQualifierSourceURL}"/>
-        <setHeaderForObo obo-file-name="go-qualifier" namespace="go-qualifier"/>
-    </target>
-
-
-    <macrodef name="create-obo-file">
-        <attribute name="file-name"/>
-        <attribute name="source-file-name"/>
-        <sequential>
-            <echo message="Create a new @{file-name} file from @{source-file-name}"/>
-            <echo message="Connecting to ontofox.hegroup.org..."/>
-
-            <!-- Generate owl file at ontofox.hegroup.org from source file-->
-            <exec executable="curl" failonerror="true">
-                <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl https://ontofox.hegroup.org/service.php"/>
-            </exec>
-
-            <!-- convert owl file into an obo file -->
-            <java fork="true" failonerror="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot-cleaned.jar">
-                <arg value="convert"/>
-                <arg value="--input"/>
-                <arg value="obo-files/@{file-name}.owl"/>
-                <arg value="--output"/>
-                <arg value="obo-files/@{file-name}.obo"/>
-            </java>
-
-        </sequential>
-    </macrodef>
 
     <macrodef name="setHeaderForObo">
         <attribute name="namespace"/>

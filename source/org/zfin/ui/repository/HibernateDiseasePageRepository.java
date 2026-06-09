@@ -105,7 +105,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += "order by fishStat.fish.order, fishStat.fish.nameOrder, fishStat.geneSymbolSearch";
+        hql += "order by fishStat.fish.order, fishStat.fish.nameOrder, fishStat.geneSymbolSearch, " +
+               "fishStat.fish.zdbID, fishStat.figure.zdbID, fishStat.publication.zdbID, fishStat.term.zdbID";
         Query<FishStatistics> query = HibernateUtil.currentSession().createQuery(hql, FishStatistics.class);
         if (includeChildren) {
             query.setParameterList("ids", matchingIds);
@@ -138,7 +139,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += " order by fishModelDisplay.order, fishModelDisplay.fish.order, upper(fishModelDisplay.fish.displayName) ";
+        hql += " order by fishModelDisplay.order, fishModelDisplay.fish.order, upper(fishModelDisplay.fish.displayName), " +
+               "fishModelDisplay.fish.zdbID, fishModelDisplay.experiment.zdbID, fishModelDisplay.publication.zdbID, fishModelDisplay.disease.zdbID ";
         Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
         if (includeChildren) {
             query.setParameterList("ids", matchingIds);
@@ -165,7 +167,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
             hql = "select chebiDisplay from ChebiFishModelDisplay as chebiDisplay " +
                   "where chebiDisplay.id in :ids ";
         }
-        hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
+        hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName), " +
+               "chebiDisplay.fishModelDisplay.fish.zdbID, chebiDisplay.fishModelDisplay.experiment.zdbID, chebiDisplay.fishModelDisplay.publication.zdbID, chebiDisplay.term.zdbID ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         if (includeChildren) {
             query.setParameterList("ids", matchingIds);
@@ -224,7 +227,8 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += entry + " is not null ";
             }
         }
-        hql += "order by chebiPhenotype.fish.displayName";
+        hql += "order by chebiPhenotype.fish.displayName, " +
+               "chebiPhenotype.fish.zdbID, chebiPhenotype.figure.zdbID, chebiPhenotype.publication.zdbID, chebiPhenotype.experiment.zdbID, chebiPhenotype.term.zdbID";
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         if (includeChildren) {
             query.setParameterList("ids", matchingIds);

@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import static org.zfin.framework.services.VocabularyEnum.TRANSCRIPT_ANNOTATION_METHOD;
 import static org.zfin.marker.Marker.Type.TSCRIPT;
-import static org.zfin.marker.TranscriptType.Type.MRNA;
+import static org.zfin.marker.TranscriptType.Type.*;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
 import static org.zfin.sequence.load.EnsemblLoadAction.HTTPS_WWW_ENSEMBL_ORG_DANIO_RERIO_GENE_SUMMARY_G;
@@ -103,8 +103,76 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
 
     private List<RichSequence> sequenceListToBeGenerated = new ArrayList<>();
 
+    /**
+     * Ensembl biotype → ZFIN TranscriptType.Type. Populated for every biotype
+     * currently present in {@code transcript_ensembl_name}. Unmapped biotypes
+     * cause the loader to skip the transcript with a warning (ZFIN-10222).
+     *
+     * Curator-reviewed groupings:
+     *   - protein-coding & coding-pseudogene-decay variants → mRNA
+     *   - Mt_rRNA, rRNA                                     → rRNA
+     *   - Mt_tRNA                                           → tRNA
+     *   - miRNA / snRNA / snoRNA / scaRNA                   → miRNA / snRNA / snoRNA / snoRNA
+     *   - lincRNA, antisense                                → lincRNA / antisense
+     *   - miscellaneous non-coding                          → ncRNA
+     *   - all *_pseudogene flavours                         → pseudogenic transcript
+     */
+    static final Map<String, TranscriptType.Type> BIOTYPE_TO_ZFIN_TYPE;
+    static {
+        Map<String, TranscriptType.Type> m = new HashMap<>();
+        // Protein-coding (and coding variants Ensembl tags separately)
+        m.put("protein_coding",                       MRNA);
+        // retained_intron / nonsense_mediated_decay / non_stop_decay:
+        // per Sridhar (ZFIN-10222 review) all three should be ncRNA.
+        m.put("retained_intron",                      NCRNA);
+        m.put("nonsense_mediated_decay",              NCRNA);
+        m.put("non_stop_decay",                       NCRNA);
+        m.put("IG_C_gene",                            MRNA);
+        m.put("TR_J_gene",                            MRNA);
+        m.put("TR_V_gene",                            MRNA);
+        m.put("TR_D_gene",                            MRNA);
+        // rRNA (incl. mitochondrial)
+        m.put("rRNA",                                 RRNA);
+        m.put("Mt_rRNA",                              RRNA);
+        // tRNA (mitochondrial; Ensembl doesn't ship a plain tRNA biotype)
+        m.put("Mt_tRNA",                              TRNA);
+        // Small RNAs
+        m.put("miRNA",                                MIRNA);
+        m.put("snRNA",                                SNRNA);
+        m.put("snoRNA",                               SNORNA);
+        m.put("scaRNA",                               SNORNA);
+        // Long non-coding
+        m.put("lincRNA",                              LINCRNA);
+        m.put("antisense",                            ANTISENSE);
+        // Miscellaneous non-coding
+        m.put("misc_RNA",                             NCRNA);
+        m.put("sRNA",                                 NCRNA);
+        m.put("sense_intronic",                       NCRNA);
+        m.put("sense_overlapping",                    NCRNA);
+        m.put("processed_transcript",                 NCRNA);
+        m.put("ribozyme",                             NCRNA);
+        m.put("TEC",                                  NCRNA);
+        // Pseudogenes
+        m.put("pseudogene",                           PSEUDOGENIC_TRANSCRIPT);
+        m.put("processed_pseudogene",                 PSEUDOGENIC_TRANSCRIPT);
+        m.put("unprocessed_pseudogene",               PSEUDOGENIC_TRANSCRIPT);
+        m.put("transcribed_unprocessed_pseudogene",   PSEUDOGENIC_TRANSCRIPT);
+        m.put("polymorphic_pseudogene",               PSEUDOGENIC_TRANSCRIPT);
+        m.put("IG_V_pseudogene",                      PSEUDOGENIC_TRANSCRIPT);
+        m.put("IG_C_pseudogene",                      PSEUDOGENIC_TRANSCRIPT);
+        m.put("IG_J_pseudogene",                      PSEUDOGENIC_TRANSCRIPT);
+        m.put("IG_pseudogene",                        PSEUDOGENIC_TRANSCRIPT);
+        m.put("TR_V_pseudogene",                      PSEUDOGENIC_TRANSCRIPT);
+        BIOTYPE_TO_ZFIN_TYPE = Collections.unmodifiableMap(m);
+    }
+
     private final MarkerType transcriptMarkerType = getMarkerRepository().getMarkerTypeByName(TSCRIPT.name());
-    private final TranscriptType transcriptTypeForName = getMarkerRepository().getTranscriptTypeForName(MRNA.toString());
+    private final Map<TranscriptType.Type, TranscriptType> transcriptTypeCache = new EnumMap<>(TranscriptType.Type.class);
+
+    private TranscriptType resolveTranscriptType(TranscriptType.Type type) {
+        return transcriptTypeCache.computeIfAbsent(
+            type, t -> getMarkerRepository().getTranscriptTypeForName(t.toString()));
+    }
     private final MarkerRelationshipType markerRelationshipType = getMarkerRepository().getMarkerRelationshipType(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT.toString());
     private final VocabularyService vocabularyService = new VocabularyService();
     private final ReferenceDatabase database = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ENSEMBL_TRANS, ForeignDBDataType.DataType.RNA, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
@@ -174,32 +242,18 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         transcript.setAbbreviation(transcriptName);
         transcript.setName(transcriptName);
         transcript.setMarkerType(transcriptMarkerType);
-        // if biotype = protein_coding => mRNA
-        // otherwise exception
-        if (!(bioType.equals("protein_coding")
-              || bioType.equals("pseudogene")
-              || bioType.equals("lincRNA")
-              || bioType.equals("miRNA")
-              || bioType.equals("misc_RNA")
-              || bioType.equals("scaRNA")
-              || bioType.equals("snRNA")
-              || bioType.equals("antisense")
-              || bioType.equals("transcribed_unprocessed_pseudogene")
-              || bioType.equals("snoRNA")
-              || bioType.equals("retained_intron"))) {
-            if (bioType.equals("processed_transcript") || bioType.equals("nonsense_mediated_decay")
-                || bioType.equals("unprocessed_pseudogene") || bioType.equals("ribozyme") || bioType.equals("sense_overlapping")) {
-                LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
-                HashMap<String, String> columns = new HashMap<>();
-                columns.put("biotype", bioType);
-                LoadAction newTranscript = new LoadAction(LoadAction.Type.WARNING, UNSUPPTORTED_BIOTYPE, transcriptRecord.ensdartID, "", "This ENSDARG is not loaded into ZFIN: biotype = " + bioType, 0, columns);
-                newTranscript.addLink(unsupprtedBioTypeLink);
-                actions.add(newTranscript);
-                return;
-            }
-            throw new RuntimeException("Could not map biotype " + bioType + " for transcript " + transcriptName + " with accession " + ensdartID);
+
+        TranscriptType.Type zfinType = BIOTYPE_TO_ZFIN_TYPE.get(bioType);
+        if (zfinType == null) {
+            LoadLink unsupprtedBioTypeLink = new LoadLink(transcriptRecord.ensdartID, "https://zfin.org/" + transcript.getZdbID());
+            HashMap<String, String> columns = new HashMap<>();
+            columns.put("biotype", bioType);
+            LoadAction newTranscript = new LoadAction(LoadAction.Type.WARNING, UNSUPPTORTED_BIOTYPE, transcriptRecord.ensdartID, "", "This ENSDARG is not loaded into ZFIN: biotype = " + bioType, 0, columns);
+            newTranscript.addLink(unsupprtedBioTypeLink);
+            actions.add(newTranscript);
+            return;
         }
-        transcript.setTranscriptType(transcriptTypeForName);
+        transcript.setTranscriptType(resolveTranscriptType(zfinType));
 
         HibernateUtil.createTransaction();
         try {

@@ -329,6 +329,22 @@
         <mapping class="org.zfin.mutant.GeneGenotypeExperiment"/>
         <mapping class="org.zfin.datatransfer.ncbi.NcbiGeneInfo"/>
 
+        <!-- ZIRC line submission entities -->
+        <mapping class="org.zfin.zirc.entity.LineSubmission"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionComment"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionSectionApproval"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionPerson"/>
+        <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
+        <mapping class="org.zfin.zirc.entity.Mutation"/>
+        <mapping class="org.zfin.zirc.entity.Gene"/>
+        <mapping class="org.zfin.zirc.entity.Lesion"/>
+        <mapping class="org.zfin.zirc.entity.GenotypingAssay"/>
+        <mapping class="org.zfin.zirc.entity.GenotypingAssayFile"/>
+        <mapping class="org.zfin.zirc.entity.Phenotype"/>
+        <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
+        <mapping class="org.zfin.zirc.entity.AuditEntry"/>
+        <mapping class="org.zfin.zirc.entity.LineSubmissionComment"/>
+
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
 
 <listener class="org.hibernate.envers.event.AuditEventListener" type="post-update"/>

@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <jsp:useBean id="person" class="org.zfin.profile.Person" scope="request"/>
 
@@ -6,9 +7,18 @@
 <c:set var="BIOGRAPHY" value="Biography and Research Interest"/>
 <c:set var="CITATIONS" value="Publications"/>
 <c:set var="NON_ZFIN_CITATIONS" value="Non-Zebrafish Publications"/>
+<c:set var="ZIRC_LINE_SUBMISSIONS" value="ZIRC Line Submissions"/>
 
-<c:set var="secs"
-       value="${[SUMMARY, BIOGRAPHY, CITATIONS, NON_ZFIN_CITATIONS]}"/>
+<c:choose>
+    <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.ZIRC_LINE_SUBMISSIONS)}">
+        <c:set var="secs"
+               value="${[SUMMARY, BIOGRAPHY, ZIRC_LINE_SUBMISSIONS, CITATIONS, NON_ZFIN_CITATIONS]}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="secs"
+               value="${[SUMMARY, BIOGRAPHY, CITATIONS, NON_ZFIN_CITATIONS]}"/>
+    </c:otherwise>
+</c:choose>
 
 <z:dataPage sections="${secs}">
 
@@ -63,6 +73,87 @@
             </div>
 
         </z:section>
+
+        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.ZIRC_LINE_SUBMISSIONS)}">
+        <z:section title="${ZIRC_LINE_SUBMISSIONS}">
+            <p>
+                <a href="/action/zirc/line-submission/new" class="btn btn-primary">
+                    <i class="fas fa-plus-circle mr-1"></i>Start a new line submission
+                </a>
+            </p>
+            <h5>Active Line Submissions</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Line Submission Name</th>
+                        <th>Date Started</th>
+                        <th>Status</th>
+                        <th>Submitter(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${empty activeSubmissions}">
+                            <tr>
+                                <td colspan="4" class="text-muted">No active submissions.</td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach items="${activeSubmissions}" var="sub" varStatus="loop">
+                                <tr>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
+                                    <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
+                                    <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${empty sub.persons}">&mdash;</c:when>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+
+            <h5 class="mt-4">Closed Line Submissions</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Line Submission Name</th>
+                        <th>Date Started</th>
+                        <th>Status</th>
+                        <th>Submitter(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${empty closedSubmissions}">
+                            <tr>
+                                <td colspan="4" class="text-muted">No closed submissions.</td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach items="${closedSubmissions}" var="sub" varStatus="loop">
+                                <tr>
+                                    <td><a href="/action/zirc/line-submission/${sub.zdbID}">${sub.name}</a></td>
+                                    <td><fmt:formatDate value="${sub.createdAt}" pattern="yyyy-MM-dd"/></td>
+                                    <td><z:zirc-status-badge status="${overallStatus[sub.zdbID]}"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${empty sub.persons}">&mdash;</c:when>
+                                            <c:otherwise><c:forEach items="${sub.persons}" var="lsp" varStatus="ploop"><a href="/action/profile/person/view/${lsp.person.zdbID}"><c:if test="${not empty lsp.person.firstName}">${fn:substring(lsp.person.firstName, 0, 1)}. </c:if><c:out value="${lsp.person.lastName}"/></a><c:if test="${!ploop.last}">, </c:if></c:forEach></c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </z:section>
+        </c:if>
 
         <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
             <div class="__react-root" id="CitationTable" data-marker-id="${person.zdbID}"></div>

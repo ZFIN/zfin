@@ -1,0 +1,270 @@
+{
+  "schema" : {
+    "properties" : {
+      "additionalInfo" : {
+        "maxLength" : 5000,
+        "title" : "Additional Info",
+        "type" : [ "string", "null" ]
+      },
+      "deletedSequence" : {
+        "maxLength" : 5000,
+        "title" : "Deleted sequence",
+        "type" : [ "string", "null" ]
+      },
+      "fivePrimeFlank" : {
+        "maxLength" : 5000,
+        "title" : "5′ flank",
+        "type" : [ "string", "null" ]
+      },
+      "hasLargeVariant" : {
+        "title" : "Has large variant",
+        "type" : [ "boolean", "null" ]
+      },
+      "insertedSequence" : {
+        "maxLength" : 5000,
+        "title" : "Inserted sequence",
+        "type" : [ "string", "null" ]
+      },
+      "insertionSizeBp" : {
+        "title" : "Insertion size (bp)",
+        "type" : [ "number", "null" ]
+      },
+      "lesionSizeBp" : {
+        "title" : "Lesion size (bp)",
+        "type" : [ "number", "null" ]
+      },
+      "lesionType" : {
+        "maxLength" : 255,
+        "title" : "Lesion Type",
+        "type" : [ "string", "null" ]
+      },
+      "locationInline" : {
+        "maxLength" : 5000,
+        "title" : "Location (inline)",
+        "type" : [ "string", "null" ]
+      },
+      "mutatedAminoAcids" : {
+        "maxLength" : 2000,
+        "title" : "Mutated amino acids",
+        "type" : [ "string", "null" ]
+      },
+      "mutatedAminoAcidsHgvs" : {
+        "maxLength" : 2000,
+        "title" : "Mutated amino acids (HGVS)",
+        "type" : [ "string", "null" ]
+      },
+      "nucleotideChange" : {
+        "maxLength" : 2000,
+        "title" : "Nucleotide change",
+        "type" : [ "string", "null" ]
+      },
+      "threePrimeFlank" : {
+        "maxLength" : 5000,
+        "title" : "3′ flank",
+        "type" : [ "string", "null" ]
+      },
+      "transgeneSequence" : {
+        "maxLength" : 5000,
+        "title" : "Transgene sequence",
+        "type" : [ "string", "null" ]
+      }
+    },
+    "required" : [ "lesionType" ],
+    "type" : "object"
+  },
+  "uiSchema" : {
+    "elements" : [ {
+      "elements" : [ {
+        "options" : {
+          "refreshesParent" : true,
+          "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/lesionType",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo",
+        "type" : "Control"
+      } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "suffix" : "bp"
+        },
+        "scope" : "#/properties/lesionSizeBp",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation", "deletion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "suffix" : "bp"
+        },
+        "scope" : "#/properties/insertionSizeBp",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true,
+          "placeholder" : "WT → mutant, e.g. A → T"
+        },
+        "scope" : "#/properties/nucleotideChange",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/deletedSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "deletion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/insertedSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/transgeneSequence",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/hasLargeVariant",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "transgene" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "helpText" : "Annotated inline; list at least 5 nt before and after.",
+          "multi" : true
+        },
+        "scope" : "#/properties/locationInline",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
+          "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
+          "multi" : true
+        },
+        "scope" : "#/properties/fivePrimeFlank",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "helpText" : "At least 20 nt directly following the lesion / transgene.",
+          "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
+          "multi" : true
+        },
+        "scope" : "#/properties/threePrimeFlank",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation", "deletion", "insertion", "indel", "transgene" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. p.Gly12Val"
+        },
+        "scope" : "#/properties/mutatedAminoAcids",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "HGVS protein notation"
+        },
+        "scope" : "#/properties/mutatedAminoAcidsHgvs",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    } ],
+    "type" : "VerticalLayout"
+  }
+}

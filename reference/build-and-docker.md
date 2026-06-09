@@ -125,6 +125,34 @@ docker compose run --rm compile bash -lc "gradle test -PnonSmokeTests"
 docker compose run --rm compile bash -lc "gradle test -PsmokeTests"
 ```
 
+## Running Commands in the Compile Container
+
+The compile container's `/home/gradle/.profile` sources `commons/env/load-properties.bash`, which
+reads `home/WEB-INF/zfin.properties` and exports the variables listed in
+`commons/env/env-exports.properties` — including `TARGETROOT`, `CATALINA_BASE`, `SOURCEROOT`,
+`NODE_ENV`, `WIKI_HOST`, and `ZFIN_ADMIN`. Webpack's `EnvironmentPlugin` requires the latter
+three; gradle deployment tasks rely on `TARGETROOT` and `CATALINA_BASE`.
+
+**This means every invocation must use a login shell** so `.profile` runs. Two equivalent
+patterns:
+
+```bash
+# Preferred: the zrun helper in ~/bin (defaults to the compile service, always bash -l).
+zrun -c "npm run compile && gradle dirtycopy"
+
+# Equivalent raw docker compose invocation:
+docker compose --profile compile run --rm --entrypoint bash compile \
+  -lc "npm run compile && gradle dirtycopy"
+```
+
+A non-login shell (`bash -c`, `--entrypoint bash compile -c "..."`, etc.) skips `.profile`
+entirely and the build will fail with errors like `EnvironmentPlugin - NODE_ENV environment
+variable is undefined`. Pass `-e VAR=value` only as a last resort — prefer fixing the shell
+invocation.
+
+For one-off interactive work, `zrun` with no args drops you into a login shell at
+`/opt/zfin/source_roots/zfin.org`.
+
 ## Key Deployment Steps (Simplified)
 
 Ignoring data loads, Docker image builds, and test runs, the essential deployment steps are:

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.persistence.LoadFileLog;
 import org.zfin.datatransfer.service.DownloadService;
+import org.zfin.report.Report;
+import org.zfin.report.ReportWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -216,8 +218,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             // Generate categorized error summary
             File errorSummaryFile = new File(new File(dataDirectory, jobName), jobName + "_error_summary.txt");
+            GafErrorSummary errorSummary = null;
             try {
-                GafErrorSummary errorSummary = new GafErrorSummary();
+                errorSummary = new GafErrorSummary();
                 errorSummary.setParserRejections(gafParser.getRejectionCounts());
                 errorSummary.processErrors(gafJobData.getErrors());
                 errorSummary.writeToFile(errorSummaryFile);
@@ -226,6 +229,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             } catch (Exception ex) {
                 logger.warn("Failed to generate error summary", ex);
             }
+
+            writeHtmlReport(gafJobData, errorSummary);
 
             //throw an exception if parser encountered an error
             //do this at the end so the load works for records that are valid
@@ -320,6 +325,23 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    /** Generate the HTML report viewer alongside the .txt artifacts. */
+    private void writeHtmlReport(GafJobData gafJobData, GafErrorSummary errorSummary) {
+        try {
+            File htmlReport = new File(new File(dataDirectory, jobName), jobName + ".html");
+            List<String> sources = organization.equals("GOA")
+                ? List.of(downloadUrl, downloadUrl2, downloadUrl3)
+                : List.of(downloadUrl);
+            Report report = new GafReportBuilder()
+                .build(jobName, organization, sources, gafJobData, errorSummary);
+            new ReportWriter().write(report, htmlReport);
+            logger.info("HTML report written to: {}", htmlReport.getAbsolutePath());
+            System.out.println("HTML report written to: " + htmlReport.getAbsolutePath());
+        } catch (Exception ex) {
+            logger.warn("Failed to generate HTML report", ex);
+        }
     }
 
     private void addAnnotations(GafJobData gafJobData) {
