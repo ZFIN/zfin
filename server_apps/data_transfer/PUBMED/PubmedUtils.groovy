@@ -83,7 +83,25 @@ class PubmedUtils {
                 }
                 int responseCode = connection.getResponseCode()
                 if (responseCode >= 200 && responseCode < 300) {
-                    return connection.getInputStream()
+                    // Read the full body here, inside the retry loop, so a truncated
+                    // response (e.g. "Premature EOF" mid-stream after a 200 OK) is
+                    // retried instead of escaping to the caller's parse step, which
+                    // has no retry protection. NCBI efetch occasionally closes large
+                    // responses early; buffering to a byte[] also guarantees the
+                    // downstream XmlSlurper parses a complete document.
+                    byte[] body
+                    try {
+                        body = connection.inputStream.bytes
+                    } catch (IOException readError) {
+                        if (attempt == MAX_RETRIES) {
+                            throw readError
+                        }
+                        println("[Retry] ${readError.class.simpleName}: ${readError.message} while reading body from $url (attempt $attempt/$MAX_RETRIES). Waiting ${delay}ms before retry...")
+                        Thread.sleep(delay)
+                        delay = Math.min(delay * 2, MAX_RETRY_DELAY_MS)
+                        continue
+                    }
+                    return new ByteArrayInputStream(body)
                 }
                 if (RETRYABLE_HTTP_CODES.contains(responseCode)) {
                     println("[Retry] HTTP $responseCode from $url (attempt $attempt/$MAX_RETRIES). Waiting ${delay}ms before retry...")
