@@ -40,6 +40,7 @@ task validateBlastDatabases(type: JavaExec) {
 }
 
 task loadGafGoa(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.datatransfer.go.service.GafLoadJob'
     args = [

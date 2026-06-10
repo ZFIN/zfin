@@ -168,6 +168,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
             List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
             System.out.println("Removed entries: " + optional.size());
+
+            // Snapshot DB counts attributed to this organization just before any
+            // mutation, then again after add/update/remove, for the report's
+            // "Load impact" section. GOA-only because that's where the user-
+            // requested before/after comparison applies.
+            GoaLoadSnapshot beforeSnapshot = captureSnapshotIfGoa(gafOrganization);
+
             logger.info("Before adding new one");
             addAnnotations(gafJobData);
             logger.info("Before updating");
@@ -175,6 +182,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             logger.info("Before removing");
             removeAnnotations(gafJobData);
+
+            GoaLoadSnapshot afterSnapshot = captureSnapshotIfGoa(gafOrganization);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
             FileWriter details = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_details.txt"));
 
@@ -230,7 +239,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 logger.warn("Failed to generate error summary", ex);
             }
 
-            writeHtmlReport(gafJobData, errorSummary);
+            writeHtmlReport(gafJobData, errorSummary, beforeSnapshot, afterSnapshot);
 
             //throw an exception if parser encountered an error
             //do this at the end so the load works for records that are valid
@@ -328,19 +337,36 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     }
 
     /** Generate the HTML report viewer alongside the .txt artifacts. */
-    private void writeHtmlReport(GafJobData gafJobData, GafErrorSummary errorSummary) {
+    private void writeHtmlReport(GafJobData gafJobData, GafErrorSummary errorSummary,
+                                 GoaLoadSnapshot beforeSnapshot, GoaLoadSnapshot afterSnapshot) {
         try {
             File htmlReport = new File(new File(dataDirectory, jobName), jobName + ".html");
             List<String> sources = organization.equals("GOA")
                 ? List.of(downloadUrl, downloadUrl2, downloadUrl3)
                 : List.of(downloadUrl);
             Report report = new GafReportBuilder()
-                .build(jobName, organization, sources, gafJobData, errorSummary);
+                .build(jobName, organization, sources, gafJobData, errorSummary,
+                       beforeSnapshot, afterSnapshot);
             new ReportWriter().write(report, htmlReport);
             logger.info("HTML report written to: {}", htmlReport.getAbsolutePath());
             System.out.println("HTML report written to: " + htmlReport.getAbsolutePath());
         } catch (Exception ex) {
             logger.warn("Failed to generate HTML report", ex);
+        }
+    }
+
+    /**
+     * Capture a DB snapshot of GOA-attributed annotations, or return null for
+     * non-GOA loads or if the query fails. Snapshot failures are reported but
+     * never fail the load — the report just won't include the impact section.
+     */
+    private GoaLoadSnapshot captureSnapshotIfGoa(GafOrganization gafOrganization) {
+        if (!"GOA".equals(organization)) return null;
+        try {
+            return GoaLoadSnapshot.capture(gafOrganization);
+        } catch (Exception ex) {
+            logger.warn("Failed to capture GOA load snapshot", ex);
+            return null;
         }
     }
 
