@@ -14,9 +14,10 @@ OBJECTIVE
 EXECUTION
 --------------------------
 
-  To run:	% gmake run
+  To run:	% perl gbaccession.pl
 
-  This will be automated run every night by cron job.
+  This is run automatically every night by the Jenkins job
+  GenBank-Accession-Update_d.
 
 ----------------------------
 PROCEDURE

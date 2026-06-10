@@ -24,7 +24,7 @@ update_ensembl_release_version.sql
 
 *** NOTE ***
 
-it is also very important to do 'gmake run' first
+it is also very important to run ./fetch_ensdarg.sh first
 as it can happen a new ensembl release (danio_rerio_core_xx_x)
 is in ftp://ftp.ensembl.org/pub/current_mysql/
 
@@ -42,12 +42,16 @@ Nov 2006
 
 there is a script that pings Ensembl looking for updates.
 when one is found an email alert goes out and
-someone comes to this dir and types:
+someone comes to this dir and runs the load script directly
+(the old `gmake run` / `gmake run_commit` targets are gone; the Makefile
+and its make.include build were removed in ZFIN-10113 / ZFIN-10327):
 
-> gmake run
-> gmake run_commit
+> ./fetch_ensdarg.sh
 
-which executes fetch_ensdarg.sh
+which (per the script) makes the remote mysql connection and loads/commits
+the results.  Note: the currently-automated Ensembl load is the Jenkins
+job Load-Missing-Uniprot-IDs (ant target load-missing-uniprots in
+build.xml); the fetch_ensdarg.sh path below is the older manual workflow.
 
 	fetch_ensdarg.sh tries to determind the
 	most recent Ensembl database release.
