@@ -84,13 +84,40 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
                 ForeignDBDataType.SuperType.SUMMARY_PAGE,
                 Species.Type.ZEBRAFISH);
 
+        if (signafishDb == null) {
+            throw new RuntimeException("Could not find the Signafish reference database "
+                    + "(" + ForeignDB.AvailableName.SIGNAFISH + "/" + ForeignDBDataType.DataType.OTHER
+                    + "/" + ForeignDBDataType.SuperType.SUMMARY_PAGE + "/" + Species.Type.ZEBRAFISH + "). "
+                    + "Aborting before any links are modified.");
+        }
+
+        long existingLinkCount = getMarkerRepository().getSignafishLinkCount(signafishDb);
+        logger.info("Signafish reference database: " + signafishDb.getZdbID());
+        logger.info("Existing Signafish links before load: " + existingLinkCount);
+        logger.info("Gene IDs parsed from source: " + geneIdList.size());
+
+        // Guard against a destructive load. The load deletes every existing link not present in the
+        // incoming list, so an empty (or anomalously small) input file would silently wipe out all
+        // links. Abort before touching the database so the transaction rolls back and the build fails
+        // loudly instead of reporting "0 links" as a success. See ZFIN Load-Signafish_w build #516.
+        if (geneIdList.isEmpty()) {
+            throw new RuntimeException("Parsed an empty Signafish gene ID list from the source file. "
+                    + "Refusing to delete the " + existingLinkCount + " existing Signafish link(s). "
+                    + "Check that the source file is reachable and populated.");
+        }
+
         int numberOfDeletedIds = getMarkerRepository().deleteMarkerDBLinksNotInList(signafishDb, geneIdList);
         getMarkerRepository().addMarkerDBLinks(signafishDb, geneIdList);
+        long finalLinkCount = getMarkerRepository().getSignafishLinkCount(signafishDb);
+        logger.info("Deleted " + numberOfDeletedIds + " Signafish link(s) not in the incoming list");
+        logger.info("Signafish links after load: " + finalLinkCount + " (was " + existingLinkCount + ")");
+
         ReportGenerator rg = new ReportGenerator();
         rg.setReportTitle("Report for " + jobName);
         rg.includeTimestamp();
-        rg.addIntroParagraph("With this load there are now " + getMarkerRepository().getSignafishLinkCount(signafishDb) + " Signafish links in total.");
-        rg.addIntroParagraph("Deleted Records: " +numberOfDeletedIds);
+        rg.addIntroParagraph("Gene IDs parsed from source: " + geneIdList.size());
+        rg.addIntroParagraph("With this load there are now " + finalLinkCount + " Signafish links in total (was " + existingLinkCount + ").");
+        rg.addIntroParagraph("Deleted Records: " + numberOfDeletedIds);
         rg.writeFiles(new File(dataDirectory, jobName), "signafish-report");
     }
 
@@ -98,18 +125,28 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
     private List<String> parseFile() throws Exception {
         String fileName = "zfin_ids.lst";
 
-        String url = "http://signalink.org/" + fileName;
+        // Must be https: the http URL 302-redirects to https, and URL.openStream() does not follow
+        // cross-protocol redirects, so http yields an empty body (0 IDs). See Load-Signafish_w build #516.
+        String url = "https://signalink.org/" + fileName;
+        logger.info("Fetching Signafish gene ID list from " + url);
 
         URL oracle = new URL(url);
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(oracle.openStream()));
 
         String inputLine;
+        int totalLines = 0;
         List<String> idd = new ArrayList<>();
-        while ((inputLine = in.readLine()) != null)
-            idd.add(inputLine);
+        while ((inputLine = in.readLine()) != null) {
+            totalLines++;
+            String trimmed = inputLine.trim();
+            if (!trimmed.isEmpty()) {
+                idd.add(trimmed);
+            }
+        }
         in.close();
 
+        logger.info("Read " + totalLines + " line(s) from " + url + ", " + idd.size() + " non-blank gene ID(s)");
         return idd;
     }
 

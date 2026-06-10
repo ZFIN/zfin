@@ -2830,31 +2830,48 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public int addMarkerDBLinks(final ReferenceDatabase referenceDatabase, List<String> geneIdList) {
+        if (CollectionUtils.isEmpty(geneIdList)) {
+            return 0;
+        }
+
+        // Find which of the incoming IDs already have a link, so we add only the missing ones.
+        // (Previously this short-circuited the entire batch if ANY link already existed, so new
+        // IDs were never added once the table was non-empty.)
         String hql = "from MarkerDBLink where referenceDatabase = :database and accessionNumber in (:list) ";
         Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
         query.setParameter("database", referenceDatabase);
         query.setParameter("list", geneIdList);
-        List<MarkerDBLink> dbLinks = query.list();
-        if (CollectionUtils.isEmpty(dbLinks)) {
-            Query<Marker> query1 = currentSession().createQuery("from Marker where zdbID in (:idList)", Marker.class);
-            query1.setParameter("idList", geneIdList);
-            List<Marker> markerList = query1.list();
-            markerList.forEach(gene -> {
-                MarkerDBLink signafishLink = new MarkerDBLink();
-                signafishLink.setMarker(gene);
-                signafishLink.setLinkInfo(String.format("Uncurated: signafish load for %tF", new Date()));
-                signafishLink.setAccessionNumber(gene.getZdbID());
-                signafishLink.setAccessionNumberDisplay(gene.getZdbID());
-                signafishLink.setReferenceDatabase(referenceDatabase);
-                HibernateUtil.currentSession().save(signafishLink);
-                RecordAttribution recAttr = new RecordAttribution();
-                recAttr.setDataZdbID(signafishLink.getZdbID());
-                recAttr.setSourceZdbID("ZDB-PUB-160316-7");
-                recAttr.setSourceType(RecordAttribution.SourceType.STANDARD);
-                HibernateUtil.currentSession().save(recAttr);
-            });
+        Set<String> alreadyLinked = query.list().stream()
+                .map(MarkerDBLink::getAccessionNumber)
+                .collect(Collectors.toSet());
+
+        List<String> idsToAdd = geneIdList.stream()
+                .distinct()
+                .filter(id -> !alreadyLinked.contains(id))
+                .collect(Collectors.toList());
+        if (idsToAdd.isEmpty()) {
+            return 0;
         }
-        return 0;
+
+        // Only IDs that resolve to an existing marker get a link; unknown IDs are silently skipped.
+        Query<Marker> markerQuery = currentSession().createQuery("from Marker where zdbID in (:idList)", Marker.class);
+        markerQuery.setParameter("idList", idsToAdd);
+        List<Marker> markerList = markerQuery.list();
+        markerList.forEach(gene -> {
+            MarkerDBLink signafishLink = new MarkerDBLink();
+            signafishLink.setMarker(gene);
+            signafishLink.setLinkInfo(String.format("Uncurated: signafish load for %tF", new Date()));
+            signafishLink.setAccessionNumber(gene.getZdbID());
+            signafishLink.setAccessionNumberDisplay(gene.getZdbID());
+            signafishLink.setReferenceDatabase(referenceDatabase);
+            HibernateUtil.currentSession().save(signafishLink);
+            RecordAttribution recAttr = new RecordAttribution();
+            recAttr.setDataZdbID(signafishLink.getZdbID());
+            recAttr.setSourceZdbID("ZDB-PUB-160316-7");
+            recAttr.setSourceType(RecordAttribution.SourceType.STANDARD);
+            HibernateUtil.currentSession().save(recAttr);
+        });
+        return markerList.size();
     }
 
     public Long getSignafishLinkCount(ReferenceDatabase referenceDatabase) {
