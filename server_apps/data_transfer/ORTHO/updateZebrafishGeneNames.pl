@@ -7,14 +7,14 @@
 
 use DBI;
 
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 use Try::Tiny;
 
 ## set environment variables
 
-$dbname = "<!--|DB_NAME|-->";
-$instance = "<!--|INSTANCE|-->";
+$dbname = "$ENV{'DB_NAME'}";
+$instance = "$ENV{'INSTANCE'}";
 
 system("/bin/rm -f geneNamesToUpdate");
 system("/bin/rm -f new_names");
@@ -24,7 +24,7 @@ system("/bin/rm -f updateZebrafishGeneNameSQLlog2");
 system("/bin/rm -f namesToUpdate.unl");
 system("/bin/rm -f geneNamesUpdatedReport");
 
-system("scp /research/zarchive/load_files/Orthology/geneNamesToUpdate <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/");
+system("scp /research/zarchive/load_files/Orthology/geneNamesToUpdate $ENV{'ROOT_PATH'}/server_apps/data_transfer/ORTHO/");
 
 open (INPUTNAMES, "geneNamesToUpdate") ||  die "Cannot open geneNamesToUpdate : $!\n";
 
@@ -60,7 +60,7 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbhost = "<!--|PGHOST|-->";
+my $dbhost = "$ENV{'PGHOST'}";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
@@ -172,7 +172,7 @@ close(UPDATELIST);
 
 if ($ctProblem == 0) {
     try {
-      ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1");
+      ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1");
     } catch {
       warn "Failed to execute updateZebrafishGeneNames.sql - $_";
       exit -1;
@@ -181,14 +181,14 @@ if ($ctProblem == 0) {
     system("/bin/cat updateZebrafishGeneNameSQLlog2 >> updateZebrafishGeneNameSQLlog1");
 
     $subject = "Auto from $instance: " . "updateZebrafishGeneNames.pl :: updateZebrafishGeneNameSQLlog";
-    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","updateZebrafishGeneNameSQLlog1");
+    ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","updateZebrafishGeneNameSQLlog1");
 
 
     $subject = "Auto from $instance: " . "List of $ctValidNewGeneNames gene names that have been updated based on inputfile by Ken according to NCBI orthology info";
-    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","geneNamesUpdatedReport");
+    ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","geneNamesUpdatedReport");
 } else {
     $subject = "Auto from $instance: " . "List of $ctProblem problematic gene names";
-    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","problemNames");
+    ZFINPerlModules->sendMailWithAttachedReport("$ENV{'SWISSPROT_EMAIL_ERR'}","$subject","problemNames");
 }
 
 exit;

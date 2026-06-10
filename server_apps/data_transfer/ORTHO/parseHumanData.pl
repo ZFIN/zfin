@@ -2,7 +2,7 @@
 
 #set environment variables
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 system("rm -f updateHumanOrthologyLog1");
@@ -88,7 +88,7 @@ return();
 }
 1;
 
-#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DB_NAME'} update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
 
 
 

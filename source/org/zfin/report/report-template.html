@@ -237,6 +237,10 @@
         }
         .data-table th { background: #c9e0e0; }
         .data-table tr:nth-child(even) { background: #f6fafa; }
+        /* Inline diff highlights: producers emit <u>…</u> around character ranges
+           that differ from a paired cell (see OrthoNameDiff). The underline is what
+           Excel preserves on export; the yellow background is the in-browser cue. */
+        .data-table u { background-color: #ffeb3b; text-decoration-thickness: 1.5px; }
         /* The children-list is the main navigation surface for a structural
            node; keep it full width so titles + columns line up across siblings. */
         .children-list .data-table { width: 100%; }
