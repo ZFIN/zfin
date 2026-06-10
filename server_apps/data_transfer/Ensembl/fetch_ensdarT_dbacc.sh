@@ -26,7 +26,7 @@ if ($1 == "commit") then
 else
 	echo ""
 	echo "*** Just Testing load_ensdarT_dbacc.sql into $DB_NAME .***  "
-	echo "To load use:  gmake run_transcript_commit"
+	echo "To load use:  ./fetch_ensdarT_dbacc.sh commit"
 	echo ""
 	cat load_ensdarT_dbacc.sql rollback.sql | ${PGBINDIR}/psql $DB_NAME
 endif
