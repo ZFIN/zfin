@@ -24,10 +24,10 @@ RUN mkdir -p /opt/solr/server/solr/configsets/site_index/lib \
 
 # DataImportHandler was removed from Solr core in 9.x. Use the community-maintained
 # fork from SearchScale (https://github.com/SearchScale/dataimporthandler).
-ARG DIHJAR_SHA256=02f5f5839910811db6112b0274203d1bed31f1bc86bf4f416506a18e519a6952
+ARG DIH_JAR_SHA256=02f5f5839910811db6112b0274203d1bed31f1bc86bf4f416506a18e519a6952
 RUN curl -fsSL https://github.com/SearchScale/dataimporthandler/releases/download/v9.7.0/data-import-handler-9.7.0.jar \
         -o /opt/solr/server/solr/configsets/site_index/lib/data-import-handler-9.7.0.jar \
- && echo "${DIHJAR_SHA256}  /opt/solr/server/solr/configsets/site_index/lib/data-import-handler-9.7.0.jar" \
+ && echo "${DIH_JAR_SHA256}  /opt/solr/server/solr/configsets/site_index/lib/data-import-handler-9.7.0.jar" \
         | sha256sum -c - \
  && chown solr:solr /opt/solr/server/solr/configsets/site_index/lib/data-import-handler-9.7.0.jar
 
