@@ -198,8 +198,8 @@ INSERT INTO sequence_feature_chromosome_location_generated
 
 -- §G. DirectSubmission re-import from sequence_feature_chromosome_location. -
 insert into sequence_feature_chromosome_location_generated (
-  sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)
-select sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, 'DirectSubmission', '', sfcl_assembly, recattrib_source_zdb_id
+  sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_acc_num, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)
+select sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, sfcl_chromosome_reference_accession_number, 'DirectSubmission', '', sfcl_assembly, recattrib_source_zdb_id
   from sequence_feature_chromosome_location
   left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id;
 
