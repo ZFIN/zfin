@@ -1,5 +1,5 @@
 #!/bin/bash
-//opt/misc/groovy/bin/groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
+//opt/misc/groovy/bin/groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
 import org.zfin.properties.ZfinProperties
 ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
