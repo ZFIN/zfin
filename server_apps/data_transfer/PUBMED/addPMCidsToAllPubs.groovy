@@ -19,7 +19,9 @@ PubmedUtils.dbaccess DBNAME, """
   and (pub_pmc_id is null or pub_pmc_id = '') ) to '$PUB_PMCIDS_TO_CHECK' delimiter ',';
 """
 
-batchSize = 2000
+// NCBI recommends ~200 UIDs per efetch request; larger batches produce multi-MB
+// responses that NCBI sometimes truncates mid-stream (see ZFIN-10329).
+batchSize = 200
 count = 0
 println("Fetching pubs from PubMed")
 
