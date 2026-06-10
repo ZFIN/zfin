@@ -550,10 +550,15 @@ task createEmptyDirsIfNotExists() {
 // it into the running Solr container via the /replication API.
 task getLatestSolrUnload() {
     doLast {
-        def instance = env['INSTANCE']
-        if (!instance) throw new GradleException("INSTANCE env var not set")
-        def remoteDir = "/research/zunloads/solr/v9/${instance}"
-        def localDir  = "${solrunloadspath}/v9/${instance}"
+        // dev/test/stage VMs load PROD's solr backup, not their own instance's
+        // — same convention as getLatestDatabaseUnload's hardcoded zfindb.
+        // Override with -PsolrSourceInstance=<name> to pull a different one.
+        // Remote layout is /research/zunloads/solr/<INSTANCE>/v9/.
+        def sourceInstance = project.findProperty('solrSourceInstance') ?: 'zfindb'
+        def remoteDir = "/research/zunloads/solr/${sourceInstance}/v9"
+        // Local dumps are stored flat under v9, so the remote snapshot.* dir
+        // lands directly in v9/. `loadsolr` restores from the same location.
+        def localDir  = "${solrunloadspath}/v9"
         // One ssh, list everything, classify locally. We need both the
         // snapshot.* match and a way to detect the legacy full-SOLR_HOME
         // dump format (no snapshot. prefix) so the cutover message is
@@ -642,20 +647,28 @@ task getLatestPostgresFilesTrunk() {
 
 // Restore the most recent snapshot.<NAME> dir from the local solrunloadspath
 // into the running Solr container via /replication?command=restore. Pass
-// -PsolrIndex=<NAME> to pick a specific snapshot.
+// -DsolrDump=<path/to/snapshot.NAME> to restore that exact snapshot dir from
+// anywhere instead (mirrors loaddb's -DB=<dump>).
 task getLatestSolrIndex() {
     doLast {
-        def instance = env['INSTANCE']
-        if (!instance) throw new GradleException("INSTANCE env var not set")
-        def location = "${solrunloadspath}/v9/${instance}"
+        // Local dumps live flat under v9 (no per-instance subdir); matches the
+        // layout `getsolr` writes into.
+        def location = "${solrunloadspath}/v9"
         def selectedName
-        if (project.hasProperty('solrIndex')) {
-            selectedName = project.property('solrIndex').toString()
-            println "Restoring Solr snapshot.${selectedName}"
+
+        if (System.getProperty("solrDump")) {
+            //use -DsolrDump=<snapshot dir> to restore a specific snapshot,
+            //mirroring loaddb's -DB=<dump>. It points straight at a
+            //snapshot.<name> dir, which we split into the parent (the Solr API's
+            //`location`) and the snapshot name; the scan below is skipped.
+            def dumpDir = new File(System.getProperty("solrDump"))
+            location = dumpDir.parent
+            selectedName = dumpDir.name.replaceFirst(/^snapshot\./, '')
+            println "Restoring Solr ${dumpDir.name} from ${location}"
         } else {
             def baseDir = new File(location)
             if (!baseDir.isDirectory()) {
-                throw new GradleException("no snapshots at ${baseDir}; run `gradle getsolr` first or pass -PsolrIndex=<name>")
+                throw new GradleException("no snapshots at ${baseDir}; run `gradle getsolr` first")
             }
             def all = baseDir.listFiles().findAll { it.isDirectory() }
             def snaps = all.findAll { it.name.startsWith('snapshot.') }

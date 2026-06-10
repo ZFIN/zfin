@@ -125,11 +125,11 @@ task solrReindex(type: JavaExec) {
     ]
 }
 
-// Solr replication snapshot backup / restore (org.zfin.solr.admin.SolrSnapshotTool).
-// Java successors to solr-backup.groovy / solr-restore.groovy; the ant
-// backup-solr-index / restore-solr-index targets shell these. Location is the
-// v9/<INSTANCE> snapshot dir; backup names by timestamp, restore picks a
-// snapshot by name (-PsolrIndex, matching getLatestSolrIndex).
+// Solr replication snapshot backup (org.zfin.solr.admin.SolrSnapshotTool).
+// Java successor to solr-backup.groovy; the ant backup-solr-index target
+// shells this. Location is the flat v9 snapshot dir; backup names by timestamp.
+// Restore is handled by the root-project `loadsolr` task (getLatestSolrIndex),
+// which the ant restore-solr-index target shells.
 task solrBackup(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.solr.admin.SolrSnapshotTool'
@@ -140,19 +140,6 @@ task solrBackup(type: JavaExec) {
             "backup",
             project.findProperty('solrBackupLocation') ?: '',
             project.findProperty('solrBackupName') ?: ''
-    ]
-}
-
-task solrRestore(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.zfin.solr.admin.SolrSnapshotTool'
-    args = [
-            "${webDir}/zfin.properties",
-            "${validateData}/report_data",
-            "Solr-Restore_d",
-            "restore",
-            project.findProperty('solrBackupLocation') ?: '',
-            project.findProperty('solrIndex') ?: ''
     ]
 }
 

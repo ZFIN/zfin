@@ -14,7 +14,7 @@
     <target name="backup-solr-index"
             description="Snapshot the Solr index via /replication?command=backup">
         <tstamp><format property="solr.backup.stamp" pattern="yyyy.MM.dd-HH.mm"/></tstamp>
-        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/v9/${env.INSTANCE}"/>
+        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/v9"/>
         <exec executable="${SOURCEROOT}/gradlew" failonerror="true" dir="${SOURCEROOT}">
             <arg value="solrBackup"/>
             <arg value="-PsolrBackupLocation=${solr.unloads.dir}"/>
@@ -23,14 +23,13 @@
     </target>
 
     <target name="restore-solr-index"
-            description="Restore the Solr index from a snapshot. Pass -DsolrIndex=&lt;name&gt; to pick the snapshot.">
-        <fail unless="solrIndex"
-              message="Set -DsolrIndex=&lt;name&gt; to pick a snapshot.&lt;name&gt; to restore from. Run via 'gradle loadsolr' for auto-selection of the latest."/>
-        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/v9/${env.INSTANCE}"/>
+            description="Restore the latest Solr snapshot via gradle loadsolr. Pass -DsolrDump=&lt;path/to/snapshot.NAME&gt; to restore a specific snapshot instead.">
+        <!-- Default to empty so an unset solrDump passes -DsolrDump= (falsy in
+             loadsolr, which then auto-selects the latest snapshot). -->
+        <property name="solrDump" value=""/>
         <exec executable="${SOURCEROOT}/gradlew" failonerror="true" dir="${SOURCEROOT}">
-            <arg value="solrRestore"/>
-            <arg value="-PsolrBackupLocation=${solr.unloads.dir}"/>
-            <arg value="-PsolrIndex=${solrIndex}"/>
+            <arg value="loadsolr"/>
+            <arg value="-DsolrDump=${solrDump}"/>
         </exec>
     </target>
 
