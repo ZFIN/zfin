@@ -142,6 +142,9 @@ public class Report {
         public static FieldDef link(String label, String hrefTemplate) {
             return new FieldDef().label(label).type("link").hrefTemplate(hrefTemplate);
         }
+        public static FieldDef html(String label) {
+            return new FieldDef().label(label).type("html");
+        }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

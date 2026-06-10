@@ -13,7 +13,7 @@ create index geneNameUpdate_updated_name_idx on geneNameUpdate(updated_name) ;
 create index geneNameUpdate_gene_symbol_idx on geneNameUpdate(gene_symbol) ;
 
 --!echo 'Load from namesToUpdate.unl'
-\copy geneNameUpdate from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/namesToUpdate.unl' (delimiter '|');
+\copy geneNameUpdate from 'namesToUpdate.unl' (delimiter '|');
 
 alter table geneNameUpdate add nomen_zdb_id text;
 
@@ -44,7 +44,7 @@ insert into marker_history (mhist_zdb_id,mhist_mrkr_zdb_id,mhist_event,mhist_rea
 select nomen_zdb_id,gene_zdb_id,'renamed','renamed to conform with zebrafish guidelines' as text2,now(),updated_name,gene_symbol,existing_name,'Renamed as part of ZFIN nomenclature update project'  as text3
   from geneNameUpdate;
   
-\copy (select * from geneNameUpdate) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/geneNamesUpdatedReport' with delimiter as '|' null as '';
+\copy (select * from geneNameUpdate) to 'geneNamesUpdatedReport' with delimiter as '|' null as '';
 
 commit work;
 

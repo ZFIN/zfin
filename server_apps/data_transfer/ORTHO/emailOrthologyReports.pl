@@ -1,23 +1,28 @@
 #!/opt/zfin/bin/perl
 # emailOrthologyReports.pl
 # 
+# #
+# TODO-BY: 2026-12-31 Delete this script. It is orphaned (referenced by nothing
+# in the codebase) and predates moving orthology email handling to the Jenkins
+# job's failure/success triggers.
+#
 
 use MIME::Lite;
 use Try::Tiny;
 
 # set environment variables
 
-$instance = "<!--|INSTANCE|-->";
+$instance = "$ENV{'INSTANCE'}";
 
 try {
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_REPORT|-->","log/report from the mouse part of orthology scripts","updateMouseOrthologyLog1");
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_ERR|-->","log2 from the mouse part of orthology scripts","updateMouseOrthologyLog2");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_REPORT'}","log/report from the mouse part of orthology scripts","updateMouseOrthologyLog1");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_ERR'}","log2 from the mouse part of orthology scripts","updateMouseOrthologyLog2");
   
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_REPORT|-->","log/report from the human part of orthology scripts","updateHumanOrthologyLog1");
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_ERR|-->","log2 from the human part of orthology scripts","updateHumanOrthologyLog2");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_REPORT'}","log/report from the human part of orthology scripts","updateHumanOrthologyLog1");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_ERR'}","log2 from the human part of orthology scripts","updateHumanOrthologyLog2");
   
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_REPORT|-->","log/report from the fly part of orthology scripts","updateFlyOrthologyLog1");
-  &sendMail("Auto from $instance: ","<!--|SWISSPROT_EMAIL_ERR|-->","log2 from the fly part of orthology scripts","updateFlyOrthologyLog2");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_REPORT'}","log/report from the fly part of orthology scripts","updateFlyOrthologyLog1");
+  &sendMail("Auto from $instance: ","$ENV{'SWISSPROT_EMAIL_ERR'}","log2 from the fly part of orthology scripts","updateFlyOrthologyLog2");
 } catch {
   warn "Failed to send email - $_";
   exit -1;

@@ -81,6 +81,65 @@ task loadNoctuaGpad(type: JavaExec) {
     ]
 }
 
+// One-time scan of Human + Mouse orthologs whose stored name or symbol
+// disagrees with the ZFIN gene's. Uses the same substring + chopped-letter
+// match rule as the weekly Update-Orthology_w report. Read-only — safe to
+// re-run as often as needed; no DB writes anywhere in the job.
+//
+// Run from the project root:
+//   ./gradlew :server_apps:DB_maintenance:oneTimeOrthoInconsistencyReport
+//
+// Reads DB connection from home/WEB-INF/zfin.properties. Override at the
+// shell by exporting PGHOST / PGDATABASE before invoking gradle.
+//
+// Output:
+//   server_apps/DB_maintenance/report_data/
+//     One-Time-Ortho-Inconsistency-Report/
+//       One-Time-Ortho-Inconsistency-Report.html
+//
+// Open in a browser to see diffs highlighted (yellow + underline). Save as
+// .xls or copy a table row into Excel — the underlines survive (background
+// colour does not; that's an Excel HTML-import limitation).
+//
+// Runtime: ~25 seconds against ~32k orthologs on dazed.
+task oneTimeOrthoInconsistencyReport(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.orthology.jobs.OrthoInconsistencyReportJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "One-Time-Ortho-Inconsistency-Report"
+    ]
+}
+
+// Wrapper around the weekly Update-Orthology Perl pipeline
+// (server_apps/data_transfer/ORTHO/runOrthology.pl). Runs the Perl, then parses
+// its seven output text files into a single navigable HTML report. The Perl
+// does all DB work and still writes the flat .txt files Jenkins emails — the
+// HTML is purely additive.
+//
+// Run from the project root (TARGETROOT must be exported so the Perl finds its
+// working directory and the env it needs: ROOT_PATH, DB_NAME, INSTANCE, …):
+//   gradle --no-daemon :server_apps:DB_maintenance:updateOrthologyReport
+//
+// --no-daemon matters: a reused gradle daemon would hand the Perl subprocess a
+// stale environment instead of the live shell's.
+//
+// Output:
+//   server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html
+task updateOrthologyReport(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.orthology.jobs.OrthoUpdateReportJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Update-Orthology_w",
+            "${env.TARGETROOT}/server_apps/data_transfer/ORTHO"
+    ]
+}
+
 task loadFlankSeq(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'

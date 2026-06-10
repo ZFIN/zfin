@@ -14,7 +14,7 @@ create temporary table tmp_orthos (taxonId integer,
 --have to tab delimit the file because pipes are used throughout 
 --the chromosome and position fields
 
-\copy tmp_orthos from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt' (delimiter '	');
+\copy tmp_orthos from 'parsedOrthos.txt' (delimiter '	');
 
 delete from tmp_orthos
  where taxonId not in ('10090','7227','9606');
@@ -64,7 +64,7 @@ select ncbiGeneId, name, symbol
  where ncbiGeneId = noi_ncbi_gene_id
  and symbol != noi_symbol;
  
-\copy (select * from changedSymbols) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/changedSymbols.txt' with delimiter as '|' null as '';
+\copy (select * from changedSymbols) to 'changedSymbols.txt' with delimiter as '|' null as '';
 
 drop view changedSymbols;
 
@@ -137,7 +137,7 @@ create view missingNcbiGeneIdsWithOrthos as
   select * from ortholog
  where not exists (Select 'x' from ncbi_ortholog
        	   	  	  where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id);
-\copy (select * from missingNcbiGeneIdsWithOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/missingNcbiGeneIdsWithOrthos.txt' with delimiter as '|' null as '';
+\copy (select * from missingNcbiGeneIdsWithOrthos) to 'missingNcbiGeneIdsWithOrthos.txt' with delimiter as '|' null as '';
 drop view missingNcbiGeneIdsWithOrthos;
 
 
@@ -298,7 +298,7 @@ select 'ncbi ortho load' as namer, now()::timestamp(0) as dater,
     WHERE ortho_other_species_ncbi_gene_is_obsolete ='t'
     ORDER BY mrkr_zdb_id;
 
-\copy (select * from obsoleteOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ortho_obsolete.txt' with delimiter as '|'  null as '';
+\copy (select * from obsoleteOrthos) to 'ortho_obsolete.txt' with delimiter as '|'  null as '';
 drop view obsoleteOrthos;
 
 create view orthoStats as
@@ -316,7 +316,7 @@ union
 					olt_number_of_flybase_links from ortholog_load_tracking
    where olt_last_run > NOW() - INTERVAL '30 days';
    
-\copy (select * from orthoStats) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ortho_statistics.txt' with delimiter as '	' null as '';
+\copy (select * from orthoStats) to 'ortho_statistics.txt' with delimiter as '	' null as '';
 drop view orthoStats;
 
 

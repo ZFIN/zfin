@@ -18,12 +18,20 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/ORTHO &amp;&amp; ./runOrthology.pl</command>
+      <command><![CDATA[
+cd $SOURCEROOT
+gradle --no-daemon updateOrthologyReport
+rc=$?
+mkdir -p $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w
+mv -f server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w/ 2>/dev/null || true
+exit $rc
+      ]]>
+      </command>
     </hudson.tasks.Shell>
   </builders> 
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/ORTHO/*.txt</artifacts>
+      <artifacts>server_apps/data_transfer/ORTHO/*.txt, server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -39,7 +47,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>$TARGETROOT/server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
+            <attachmentsPattern>$TARGETROOT/server_apps/data_transfer/ORTHO/orth*.txt, $TARGETROOT/server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
@@ -55,7 +63,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/ORTHO/orth*.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/data_transfer/ORTHO/orth*.txt, server_apps/DB_maintenance/report_data/Update-Orthology_w/Update-Orthology_w.html</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>

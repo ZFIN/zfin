@@ -1,12 +1,12 @@
 #!/opt/zfin/bin/perl
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 ## set environment variables
 
-$dbname = "<!--|DB_NAME|-->";
+$dbname = "$ENV{'DB_NAME'}";
 
 
 
@@ -30,7 +30,7 @@ doSystemCommand("/bin/rm -f Homo_sapiens.gene_info");
 doSystemCommand("/bin/rm -f Mus_musculus.gene_info");
 doSystemCommand("/bin/rm -f Drosophila_melanogaster.gene_info");
 
-doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
+doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined $ENV{'ROOT_PATH'}/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
 
 ## download new copies of files of interest and get them organized, unpacked, etc...
 doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
