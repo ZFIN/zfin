@@ -12,6 +12,7 @@ import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.feature.FeatureNote;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,7 +67,8 @@ public class VariantLinkMLInfo extends LinkMLInfo {
                 dto.setDataProviderDto(dataProvider);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
 
-                FeatureLocation ftrLoc = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
+                FeatureLocation ftrLoc = getFeatureRepository()
+                        .getAllFeatureLocationsForAssembly(AssemblyEnum.GRCZ12TU, feature);
                 if (ftrLoc != null
                     && ftrLoc.getStartLocation() != null && ftrLoc.getEndLocation() != null
                     && StringUtils.isNotEmpty(ftrLoc.getAssembly()) && StringUtils.isNotEmpty(ftrLoc.getReferenceSequenceAccessionNumber())
