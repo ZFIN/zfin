@@ -2,12 +2,9 @@ package org.zfin.datatransfer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.marker.Marker;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.util.ReportGenerator;
 
@@ -17,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -85,16 +83,9 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
 
     private void load(List<String> geneIdList) {
 
-        ReferenceDatabase signafishDb = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.SIGNAFISH,
-                ForeignDBDataType.DataType.OTHER,
-                ForeignDBDataType.SuperType.SUMMARY_PAGE,
-                Species.Type.ZEBRAFISH);
-
+        ReferenceDatabase signafishDb = getMarkerRepository().getSignafishReferenceDatabase();
         if (signafishDb == null) {
-            throw new RuntimeException("Could not find the Signafish reference database "
-                    + "(" + ForeignDB.AvailableName.SIGNAFISH + "/" + ForeignDBDataType.DataType.OTHER
-                    + "/" + ForeignDBDataType.SuperType.SUMMARY_PAGE + "/" + Species.Type.ZEBRAFISH + "). "
+            throw new RuntimeException("Could not find the Signafish reference database. "
                     + "Aborting before any links are modified.");
         }
 
@@ -113,10 +104,29 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
                     + "Check that the source file is reachable and populated.");
         }
 
-        int numberOfDeletedIds = getMarkerRepository().deleteMarkerDBLinksNotInList(signafishDb, geneIdList);
-        getMarkerRepository().addMarkerDBLinks(signafishDb, geneIdList);
+        // Resolve the source IDs to their current markers up front, following merges
+        // (zdb_replaced_data), so links are keyed on the surviving marker. Using these resolved IDs
+        // for both deletion and addition means a source ID that was later merged still links to the
+        // new marker, and the link is not churned (deleted + re-added) on every subsequent run.
+        List<String> resolvedIds = getMarkerRepository().getMarkersByZdbIDsIncludingReplaced(geneIdList)
+                .stream()
+                .map(Marker::getZdbID)
+                .collect(Collectors.toList());
+        logger.info("Resolved " + geneIdList.size() + " source ID(s) to " + resolvedIds.size() + " current marker(s)");
+
+        // Same destructive-load guard, applied after resolution: if a non-empty source list resolves
+        // to zero current markers, the delete below would wipe every link. Abort instead.
+        if (resolvedIds.isEmpty()) {
+            throw new RuntimeException("None of the " + geneIdList.size() + " source ID(s) resolved to a current marker. "
+                    + "Refusing to delete the " + existingLinkCount + " existing Signafish link(s). "
+                    + "Check that the source file contains valid ZFIN gene IDs.");
+        }
+
+        int numberOfDeletedIds = getMarkerRepository().deleteMarkerDBLinksNotInList(signafishDb, resolvedIds);
+        int numberOfAdded = getMarkerRepository().addSignafishMarkerDBLinks(resolvedIds);
         long finalLinkCount = getMarkerRepository().getSignafishLinkCount(signafishDb);
         logger.info("Deleted " + numberOfDeletedIds + " Signafish link(s) not in the incoming list");
+        logger.info("Added " + numberOfAdded + " new Signafish link(s)");
         logger.info("Signafish links after load: " + finalLinkCount + " (was " + existingLinkCount + ")");
 
         ReportGenerator rg = new ReportGenerator();

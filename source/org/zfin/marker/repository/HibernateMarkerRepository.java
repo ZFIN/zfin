@@ -118,6 +118,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public List<Marker> getMarkersByZdbIDsIncludingReplaced(List<String> zdbIDs) {
+        if (CollectionUtils.isEmpty(zdbIDs)) {
+            return new ArrayList<>();
+        }
+        // getMarker() already follows zdb_replaced_data when the ID itself no longer resolves.
+        // Dedup by surviving ZDB ID (merged IDs collapse together); keep input order; drop unknowns.
+        Map<String, Marker> resolved = new LinkedHashMap<>();
+        for (String zdbID : zdbIDs) {
+            Marker marker = getMarker(zdbID);
+            if (marker != null) {
+                resolved.putIfAbsent(marker.getZdbID(), marker);
+            }
+        }
+        return new ArrayList<>(resolved.values());
+    }
+
+    @Override
     public List<Marker> getMarkersByZdbIDsJoiningAliases(List<String> zdbIDs) {
         String hql = "select m from Marker m join fetch m.aliases where m.zdbID in (:IDs) ";
 
@@ -2829,23 +2846,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public int addMarkerDBLinks(final ReferenceDatabase referenceDatabase, List<String> geneIdList) {
-        if (CollectionUtils.isEmpty(geneIdList)) {
+    public ReferenceDatabase getSignafishReferenceDatabase() {
+        return RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                ForeignDB.AvailableName.SIGNAFISH,
+                ForeignDBDataType.DataType.OTHER,
+                ForeignDBDataType.SuperType.SUMMARY_PAGE,
+                Species.Type.ZEBRAFISH);
+    }
+
+    @Override
+    public int addSignafishMarkerDBLinks(List<String> markerIds) {
+        if (CollectionUtils.isEmpty(markerIds)) {
             return 0;
         }
+        ReferenceDatabase referenceDatabase = getSignafishReferenceDatabase();
 
         // Find which of the incoming IDs already have a link, so we add only the missing ones.
         // (Previously this short-circuited the entire batch if ANY link already existed, so new
         // IDs were never added once the table was non-empty.)
-        String hql = "from MarkerDBLink where referenceDatabase = :database and accessionNumber in (:list) ";
-        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
-        query.setParameter("database", referenceDatabase);
-        query.setParameter("list", geneIdList);
-        Set<String> alreadyLinked = query.list().stream()
+        Set<String> alreadyLinked = getMarkerDBLinksInList(referenceDatabase, markerIds).stream()
                 .map(MarkerDBLink::getAccessionNumber)
                 .collect(Collectors.toSet());
 
-        List<String> idsToAdd = geneIdList.stream()
+        List<String> idsToAdd = markerIds.stream()
                 .distinct()
                 .filter(id -> !alreadyLinked.contains(id))
                 .collect(Collectors.toList());
@@ -2854,9 +2877,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         // Only IDs that resolve to an existing marker get a link; unknown IDs are silently skipped.
-        Query<Marker> markerQuery = currentSession().createQuery("from Marker where zdbID in (:idList)", Marker.class);
-        markerQuery.setParameter("idList", idsToAdd);
-        List<Marker> markerList = markerQuery.list();
+        // Callers should pass IDs already resolved through zdb_replaced_data (see
+        // getMarkersByZdbIDsIncludingReplaced) so links land on the surviving marker after a merge.
+        List<Marker> markerList = getMarkersByZdbIDs(idsToAdd);
         markerList.forEach(gene -> {
             MarkerDBLink signafishLink = new MarkerDBLink();
             signafishLink.setMarker(gene);

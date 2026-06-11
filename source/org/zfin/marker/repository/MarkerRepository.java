@@ -38,6 +38,15 @@ public interface MarkerRepository {
 
     List<Marker> getMarkersByZdbIDs(List<String> zdbIDs);
 
+    /**
+     * Resolve a list of marker ZDB IDs to their current markers, following the zdb_replaced_data
+     * merge table when an ID has been replaced. Several input IDs may collapse onto the same
+     * surviving marker after a merge, so the result is deduplicated by ZDB ID (input order
+     * preserved). IDs that match no marker even after resolution are dropped. Use this for external
+     * loads whose input may contain pre-merge IDs so links land on the surviving marker.
+     */
+    List<Marker> getMarkersByZdbIDsIncludingReplaced(List<String> zdbIDs);
+
     List<Marker> getMarkersByZdbIDsJoiningAliases(List<String> zdbIDs);
 
     SNP getSNPByID(String zdbID);
@@ -563,7 +572,9 @@ public interface MarkerRepository {
 
     List<FluorescentMarker> getAllFluorescentConstructs();
 
-    int addMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> geneIdList);
+    ReferenceDatabase getSignafishReferenceDatabase();
+
+    int addSignafishMarkerDBLinks(List<String> markerIds);
 
     Long getSignafishLinkCount(ReferenceDatabase referenceDatabase);
 
