@@ -75,60 +75,6 @@ update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ('t',now())
  where zflag_name = 'regen_phenotypemart';
 
--- =========================================================================
--- PHASE B -- fast metadata swap. This is the ONLY part that takes an
--- AccessExclusiveLock on the live tables; every statement below is a
--- metadata-only rename, so the lock is held just until the commit that
--- immediately follows.
--- =========================================================================
-
--- 1. Rename the current live tables OUT to *_old_<ts>, freeing the canonical
---    table / index / constraint names. Left for regen_cleanup_renamed_tables().
-
--- phenotype_generated_curated_mapping (no FKs pointing to it, simplest)
-IF EXISTS (SELECT 1 FROM information_schema.tables
-           WHERE table_name = 'phenotype_generated_curated_mapping' AND table_schema = 'public') THEN
-    pgcm_old_name := 'phenotype_generated_curated_mapping_old_' || ts;
-    RAISE NOTICE 'Renaming phenotype_generated_curated_mapping to %', pgcm_old_name;
-    EXECUTE 'ALTER TABLE phenotype_generated_curated_mapping RENAME TO ' || pgcm_old_name;
-END IF;
-
--- phenotype_observation_generated (child of phenotype_source_generated)
-IF EXISTS (SELECT 1 FROM information_schema.tables
-           WHERE table_name = 'phenotype_observation_generated' AND table_schema = 'public') THEN
-    pog_old_name := 'phenotype_observation_generated_old_' || ts;
-    RAISE NOTICE 'Renaming phenotype_observation_generated to %', pog_old_name;
-    EXECUTE 'ALTER TABLE phenotype_observation_generated RENAME TO ' || pog_old_name;
-
-    -- Free the canonical index/constraint names for the incoming table.
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_observation_generated_pkey RENAME TO ' || pog_old_name || '_pkey';
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT phenotype_warehouse_foreign_key TO ' || pog_old_name || '_wh_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT marker_foreign_key TO ' || pog_old_name || '_mrkr_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1a_foreign_key TO ' || pog_old_name || '_e1a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1b_foreign_key TO ' || pog_old_name || '_e1b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2a_foreign_key TO ' || pog_old_name || '_e2a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2b_foreign_key TO ' || pog_old_name || '_e2b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT quality_foreign_key TO ' || pog_old_name || '_q_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-END IF;
-
--- phenotype_source_generated (parent)
-IF EXISTS (SELECT 1 FROM information_schema.tables
-           WHERE table_name = 'phenotype_source_generated' AND table_schema = 'public') THEN
-    psg_old_name := 'phenotype_source_generated_old_' || ts;
-    RAISE NOTICE 'Renaming phenotype_source_generated to %', psg_old_name;
-    EXECUTE 'ALTER TABLE phenotype_source_generated RENAME TO ' || psg_old_name;
-
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_pkey RENAME TO ' || psg_old_name || '_pkey';
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_genox RENAME TO ' || psg_old_name || '_genox';
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_fig RENAME TO ' || psg_old_name || '_fig';
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_start RENAME TO ' || psg_old_name || '_start';
-    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_end RENAME TO ' || psg_old_name || '_end';
-    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk1 TO ' || psg_old_name || '_fk1'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk2 TO ' || psg_old_name || '_fk2'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk3 TO ' || psg_old_name || '_fk3'; EXCEPTION WHEN undefined_object THEN NULL; END;
-    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk4 TO ' || psg_old_name || '_fk4'; EXCEPTION WHEN undefined_object THEN NULL; END;
-END IF;
-
 -- Drop any *_new tables left behind by a previously failed run (a failed run
 -- rolls back atomically, so these only appear if someone left them manually).
 -- Drop the child (FK) table before its parent.
@@ -218,6 +164,60 @@ CREATE TABLE phenotype_generated_curated_mapping_new (LIKE phenotype_generated_c
 
 insert into phenotype_generated_curated_mapping_new (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
  select pgcm_pg_id, pgcm_source_id, pgcm_id_type from phenotype_generated_curated_mapping_temp;
+
+-- =========================================================================
+-- PHASE B -- fast metadata swap. This is the ONLY part that takes an
+-- AccessExclusiveLock on the live tables; every statement below is a
+-- metadata-only rename, so the lock is held just until the commit that
+-- immediately follows.
+-- =========================================================================
+
+-- 1. Rename the current live tables OUT to *_old_<ts>, freeing the canonical
+--    table / index / constraint names. Left for regen_cleanup_renamed_tables().
+
+-- phenotype_generated_curated_mapping (no FKs pointing to it, simplest)
+IF EXISTS (SELECT 1 FROM information_schema.tables
+           WHERE table_name = 'phenotype_generated_curated_mapping' AND table_schema = 'public') THEN
+    pgcm_old_name := 'phenotype_generated_curated_mapping_old_' || ts;
+    RAISE NOTICE 'Renaming phenotype_generated_curated_mapping to %', pgcm_old_name;
+    EXECUTE 'ALTER TABLE phenotype_generated_curated_mapping RENAME TO ' || pgcm_old_name;
+END IF;
+
+-- phenotype_observation_generated (child of phenotype_source_generated)
+IF EXISTS (SELECT 1 FROM information_schema.tables
+           WHERE table_name = 'phenotype_observation_generated' AND table_schema = 'public') THEN
+    pog_old_name := 'phenotype_observation_generated_old_' || ts;
+    RAISE NOTICE 'Renaming phenotype_observation_generated to %', pog_old_name;
+    EXECUTE 'ALTER TABLE phenotype_observation_generated RENAME TO ' || pog_old_name;
+
+    -- Free the canonical index/constraint names for the incoming table.
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_observation_generated_pkey RENAME TO ' || pog_old_name || '_pkey';
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT phenotype_warehouse_foreign_key TO ' || pog_old_name || '_wh_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT marker_foreign_key TO ' || pog_old_name || '_mrkr_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1a_foreign_key TO ' || pog_old_name || '_e1a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1b_foreign_key TO ' || pog_old_name || '_e1b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2a_foreign_key TO ' || pog_old_name || '_e2a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2b_foreign_key TO ' || pog_old_name || '_e2b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT quality_foreign_key TO ' || pog_old_name || '_q_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
+END IF;
+
+-- phenotype_source_generated (parent)
+IF EXISTS (SELECT 1 FROM information_schema.tables
+           WHERE table_name = 'phenotype_source_generated' AND table_schema = 'public') THEN
+    psg_old_name := 'phenotype_source_generated_old_' || ts;
+    RAISE NOTICE 'Renaming phenotype_source_generated to %', psg_old_name;
+    EXECUTE 'ALTER TABLE phenotype_source_generated RENAME TO ' || psg_old_name;
+
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_pkey RENAME TO ' || psg_old_name || '_pkey';
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_genox RENAME TO ' || psg_old_name || '_genox';
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_fig RENAME TO ' || psg_old_name || '_fig';
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_start RENAME TO ' || psg_old_name || '_start';
+    EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_end RENAME TO ' || psg_old_name || '_end';
+    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk1 TO ' || psg_old_name || '_fk1'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk2 TO ' || psg_old_name || '_fk2'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk3 TO ' || psg_old_name || '_fk3'; EXCEPTION WHEN undefined_object THEN NULL; END;
+    BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk4 TO ' || psg_old_name || '_fk4'; EXCEPTION WHEN undefined_object THEN NULL; END;
+END IF;
 
 -- 2. Rename the *_new tables IN to the canonical live names, restoring the
 --    canonical index/constraint names so the next run's rename-out matches.
