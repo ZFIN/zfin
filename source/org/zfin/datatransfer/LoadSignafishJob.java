@@ -27,6 +27,13 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
 
     private static Logger logger = LogManager.getLogger(LoadSignafishJob.class);
 
+    // Must be https: the http URL 302-redirects to https, and URL.openStream() does not follow
+    // cross-protocol redirects, so http yields an empty body (0 IDs). See Load-Signafish_w build #516.
+    static final String DEFAULT_SOURCE_URL = "https://signalink.org/zfin_ids.lst";
+
+    // Environment variable to override the upstream source URL (e.g. for testing against a fixture).
+    static final String SOURCE_URL_ENV_VAR = "SIGNAFISH_SOURCE_URL";
+
     public LoadSignafishJob(String jobName, String propertyPath, String baseDir) {
         super(jobName, propertyPath, baseDir);
     }
@@ -122,12 +129,17 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
     }
 
 
-    private List<String> parseFile() throws Exception {
-        String fileName = "zfin_ids.lst";
+    private String getSourceUrl() {
+        String override = System.getenv(SOURCE_URL_ENV_VAR);
+        if (override != null && !override.trim().isEmpty()) {
+            logger.info("Overriding Signafish source URL from $" + SOURCE_URL_ENV_VAR);
+            return override.trim();
+        }
+        return DEFAULT_SOURCE_URL;
+    }
 
-        // Must be https: the http URL 302-redirects to https, and URL.openStream() does not follow
-        // cross-protocol redirects, so http yields an empty body (0 IDs). See Load-Signafish_w build #516.
-        String url = "https://signalink.org/" + fileName;
+    private List<String> parseFile() throws Exception {
+        String url = getSourceUrl();
         logger.info("Fetching Signafish gene ID list from " + url);
 
         URL oracle = new URL(url);
