@@ -1,4 +1,7 @@
 #!/bin/bash -e
+# pipefail so a psql failure in a "psql ... | tee" pipeline still aborts the
+# script -- tee always exits 0, which would otherwise mask the failure.
+set -o pipefail
 
 # rm old reports
 date;
@@ -40,7 +43,10 @@ echo "done with phenotype mart building public" ;
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME < $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql &> $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
+# tee so the swap's transaction markers / NOTICEs (rename-out, *_new drops,
+# any lock_timeout retries) show on the Jenkins console as well as the report
+# file. pipefail (above) keeps a psql failure from being masked by tee.
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME < $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql 2>&1 | tee $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 if [ $? -ne 0 ]; then
  echo "refresh phenotype mart (the public tables) failed and was rolled back";
