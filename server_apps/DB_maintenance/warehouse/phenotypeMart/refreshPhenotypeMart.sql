@@ -1,302 +1,179 @@
--- Refresh phenotype mart tables by swapping in data from *_temp tables.
+-- Incrementally apply the freshly-recomputed *_temp tables onto the live
+-- phenotype mart tables: insert new rows, update changed denormalized columns,
+-- delete gone rows -- matching on NATURAL KEYS so existing rows keep their
+-- (bigint) pg_id / psg_id across runs.
 --
--- Run as TWO separate transactions to keep the AccessExclusiveLock window on
--- the live tables tiny AND bounded. runPhenotypeMart.sh deliberately does NOT
--- wrap this file in begin/commit -- the transaction boundaries below are load
--- bearing.
+-- There is NO table swap and NO AccessExclusiveLock: the only locks taken are
+-- row locks on the rows that actually change (the nightly delta is small), and
+-- those do not block the read-only application (MVCC). Everything runs in one
+-- transaction so readers see either the whole old state or the whole new state.
+-- runPhenotypeMart.sh does not wrap this file in begin/commit (the transaction
+-- boundary below is load-bearing).
 --
---   TRANSACTION 1 (build) -- no conflicting lock on the live tables.
---     Back up current data to *_bkup (AccessShare only) and build the
---     fully-populated / indexed / FK'd *_new replacement tables that the
---     application never reads. Committing here releases the SHARE ROW
---     EXCLUSIVE locks the FK-adds hold on the referenced parent tables
---     (fish_experiment, figure, stage, marker, term) and makes *_new durable.
+-- Matching:
+--   psg  -- natural key (pg_genox/fig/start/end). No non-key columns, so
+--           insert-new / delete-gone only.
+--   pog  -- (psg natural key + the 11 identity columns); the 7 denormalized
+--           name columns (psg_*_name, psg_mrkr_abbrev, psg_short_name) are
+--           UPDATEd in place when matched, so a term/marker rename stays an
+--           in-place update rather than a new identity.
+--   pgcm -- (psg natural key + source_id + id_type). Insert-new / delete-gone.
+-- The *_temp surrogate ids differ from live's, so temp rows are resolved onto
+-- the live pg_id via the psg natural key before pog/pgcm are matched.
 --
---   TRANSACTION 2 (swap) -- the only AccessExclusiveLock window on the live
---     tables. Metadata-only renames (live -> *_old_<ts>, *_new -> live),
---     guarded by a short lock_timeout and a bounded retry loop. Because this
---     transaction touches ONLY the live phenotype_* tables (no *_bkup copy, no
---     FK-adds), it holds nothing during the back-off sleeps -- production reads
---     are fully unblocked between attempts, so the swap lands in the next gap
---     between long-running readers instead of starving (which is what made the
---     old single-transaction rebuild-under-lock hang ~7 min and roll back).
---
--- Old tables are renamed with a timestamp suffix and left for later cleanup by
--- regen_cleanup_renamed_tables().
+-- ASSUMES the live tables already hold unique natural keys (psg built with
+-- DISTINCT; pog deduped -- see populateTables.sql). Cut over from the old
+-- rebuild-and-swap only after one clean deduped rebuild.
 
--- =========================================================================
--- TRANSACTION 1 -- build the replacement tables (slow; no lock on live).
--- =========================================================================
 BEGIN;
 
-DO $$
-BEGIN
-
--- Flag the (slow) rebuild as in progress; cleared once the *_new tables are
--- built, just before the swap.
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ('t',now())
  where zflag_name = 'regen_phenotypemart';
 
--- Back up current data into *_bkup tables (reads live = AccessShareLock only).
-truncate phenotype_generated_curated_mapping_bkup;
-truncate phenotype_source_generated_bkup;
-truncate phenotype_observation_generated_bkup;
+-- =========================================================================
+-- PSG -- insert brand-new natural keys (pg_id assigned by the live default
+-- sequence). Gone psg are deleted LAST, after their pog/pgcm children.
+-- =========================================================================
+INSERT INTO phenotype_source_generated (pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id)
+SELECT t.pg_genox_zdb_id, t.pg_fig_zdb_id, t.pg_start_stg_zdb_id, t.pg_end_stg_zdb_id
+  FROM phenotype_source_generated_temp t
+ WHERE NOT EXISTS (
+   SELECT 1 FROM phenotype_source_generated l
+    WHERE coalesce(l.pg_genox_zdb_id,'')    = coalesce(t.pg_genox_zdb_id,'')
+      AND coalesce(l.pg_fig_zdb_id,'')      = coalesce(t.pg_fig_zdb_id,'')
+      AND coalesce(l.pg_start_stg_zdb_id,'') = coalesce(t.pg_start_stg_zdb_id,'')
+      AND coalesce(l.pg_end_stg_zdb_id,'')   = coalesce(t.pg_end_stg_zdb_id,''));
 
-insert into phenotype_source_generated_bkup (pg_id,
-       	     			 pg_genox_zdb_id,
-				 pg_fig_zdb_id,
-				 pg_start_stg_zdb_id,
-				 pg_end_stg_zdb_id)
-select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
-  from phenotype_source_generated;
+-- =========================================================================
+-- POG -- resolve temp rows onto live psg ids, then delete / update / insert.
+-- A single text match key over the resolved psg_pg_id + the 11 identity
+-- columns keeps the joins hashable and null-safe (coalesce, not IS DISTINCT).
+-- =========================================================================
+CREATE TEMP TABLE _pog_desired ON COMMIT DROP AS
+SELECT lpsg.pg_id AS psg_pg_id,
+       t.psg_mrkr_zdb_id, t.psg_mrkr_abbrev, t.psg_mrkr_relation,
+       t.psg_e1a_zdb_id, t.psg_e1a_name, t.psg_e1_relation_name,
+       t.psg_e1b_zdb_id, t.psg_e1b_name,
+       t.psg_e2a_zdb_id, t.psg_e2a_name, t.psg_e2_relation_name,
+       t.psg_e2b_zdb_id, t.psg_e2b_name,
+       t.psg_tag, t.psg_quality_zdb_id, t.psg_quality_name,
+       t.psg_short_name, t.psg_pre_eap_phenotype,
+       concat_ws('|', lpsg.pg_id::text, coalesce(t.psg_mrkr_zdb_id,''),
+                 coalesce(t.psg_mrkr_relation,''), coalesce(t.psg_e1a_zdb_id,''),
+                 coalesce(t.psg_e1_relation_name,''), coalesce(t.psg_e1b_zdb_id,''),
+                 coalesce(t.psg_e2a_zdb_id,''), coalesce(t.psg_e2_relation_name,''),
+                 coalesce(t.psg_e2b_zdb_id,''), coalesce(t.psg_tag,''),
+                 coalesce(t.psg_quality_zdb_id,''), t.psg_pre_eap_phenotype::text) AS k
+  FROM phenotype_observation_generated_temp t
+  JOIN phenotype_source_generated_temp tpsg ON tpsg.pg_id = t.psg_pg_id
+  JOIN phenotype_source_generated lpsg
+    ON coalesce(lpsg.pg_genox_zdb_id,'')    = coalesce(tpsg.pg_genox_zdb_id,'')
+   AND coalesce(lpsg.pg_fig_zdb_id,'')      = coalesce(tpsg.pg_fig_zdb_id,'')
+   AND coalesce(lpsg.pg_start_stg_zdb_id,'') = coalesce(tpsg.pg_start_stg_zdb_id,'')
+   AND coalesce(lpsg.pg_end_stg_zdb_id,'')   = coalesce(tpsg.pg_end_stg_zdb_id,'');
+CREATE INDEX ON _pog_desired (k);
 
-insert into phenotype_observation_generated_bkup (psg_id,
-       	     				   psg_pg_id,
-       	     				   psg_mrkr_zdb_id,
-					   psg_mrkr_abbrev,
-					   psg_mrkr_relation,
-					   psg_e1a_zdb_id,
-					   psg_e1a_name,
-					   psg_e1_relation_name,
-					   psg_e1b_zdb_id,
-					   psg_e1b_name,
-					   psg_e2a_zdb_id,
-					   psg_e2a_name,
-					   psg_e2_relation_name,
-					   psg_e2b_zdb_id,
-					   psg_e2b_name,
-					   psg_tag,
-					   psg_quality_zdb_id,
-					   psg_quality_name,
-					   psg_short_name,
-					   psg_pre_eap_phenotype)
-select psg_id, psg_pg_id,psg_mrkr_zdb_id, psg_mrkr_abbrev,psg_mrkr_relation,psg_e1a_zdb_id,
-	psg_e1a_name,psg_e1_relation_name, psg_e1b_zdb_id, psg_e1b_name,
-	psg_e2a_zdb_id,psg_e2a_name, psg_e2_relation_name, psg_e2b_zdb_id,
-	psg_e2b_name,psg_tag,psg_quality_zdb_id, psg_quality_name, psg_short_name, psg_pre_eap_phenotype
-  from phenotype_observation_generated;
+CREATE TEMP TABLE _pog_live ON COMMIT DROP AS
+SELECT psg_id,
+       concat_ws('|', psg_pg_id::text, coalesce(psg_mrkr_zdb_id,''),
+                 coalesce(psg_mrkr_relation,''), coalesce(psg_e1a_zdb_id,''),
+                 coalesce(psg_e1_relation_name,''), coalesce(psg_e1b_zdb_id,''),
+                 coalesce(psg_e2a_zdb_id,''), coalesce(psg_e2_relation_name,''),
+                 coalesce(psg_e2b_zdb_id,''), coalesce(psg_tag,''),
+                 coalesce(psg_quality_zdb_id,''), psg_pre_eap_phenotype::text) AS k
+  FROM phenotype_observation_generated;
+CREATE INDEX ON _pog_live (k);
 
-insert into phenotype_generated_curated_mapping_bkup (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
- select pgcm_pg_id, pgcm_source_id, pgcm_id_type from phenotype_generated_curated_mapping;
+-- delete gone pog (live key not in desired)
+DELETE FROM phenotype_observation_generated l
+ USING _pog_live lk
+ WHERE l.psg_id = lk.psg_id
+   AND NOT EXISTS (SELECT 1 FROM _pog_desired d WHERE d.k = lk.k);
 
--- Drop any *_new tables left behind by a previously failed/interrupted run.
--- Drop the child (FK) table before its parent.
-DROP TABLE IF EXISTS phenotype_observation_generated_new;
-DROP TABLE IF EXISTS phenotype_source_generated_new;
-DROP TABLE IF EXISTS phenotype_generated_curated_mapping_new;
+-- update changed denormalized columns on matched rows (psg_id preserved)
+UPDATE phenotype_observation_generated l
+   SET psg_mrkr_abbrev  = d.psg_mrkr_abbrev,
+       psg_e1a_name     = d.psg_e1a_name,
+       psg_e1b_name     = d.psg_e1b_name,
+       psg_e2a_name     = d.psg_e2a_name,
+       psg_e2b_name     = d.psg_e2b_name,
+       psg_quality_name = d.psg_quality_name,
+       psg_short_name   = d.psg_short_name
+  FROM _pog_live lk
+  JOIN _pog_desired d ON d.k = lk.k
+ WHERE l.psg_id = lk.psg_id
+   AND ( l.psg_mrkr_abbrev  IS DISTINCT FROM d.psg_mrkr_abbrev
+      OR l.psg_e1a_name     IS DISTINCT FROM d.psg_e1a_name
+      OR l.psg_e1b_name     IS DISTINCT FROM d.psg_e1b_name
+      OR l.psg_e2a_name     IS DISTINCT FROM d.psg_e2a_name
+      OR l.psg_e2b_name     IS DISTINCT FROM d.psg_e2b_name
+      OR l.psg_quality_name IS DISTINCT FROM d.psg_quality_name
+      OR l.psg_short_name   IS DISTINCT FROM d.psg_short_name );
 
--- -------------------------------------------------------------------------
--- Build phenotype_source_generated_new (parent table)
--- -------------------------------------------------------------------------
-CREATE TABLE phenotype_source_generated_new (LIKE phenotype_source_generated_temp INCLUDING ALL);
-ALTER TABLE phenotype_source_generated_new ADD CONSTRAINT phenotype_source_generated_new_pkey PRIMARY KEY (pg_id);
--- Detach the sequence so cleanup's DROP of the renamed _old_ table can't
--- cascade-drop it. OWNED BY NONE avoids PG's role-ownership-must-match
--- check that re-linking OWNED BY <col> would impose.
-IF pg_get_serial_sequence('phenotype_source_generated_new', 'pg_id') IS NOT NULL THEN
-    EXECUTE 'ALTER SEQUENCE ' || pg_get_serial_sequence('phenotype_source_generated_new', 'pg_id')
-        || ' OWNED BY NONE';
-END IF;
-CREATE INDEX phenotype_source_generated_new_genox ON phenotype_source_generated_new (pg_genox_zdb_id);
-CREATE INDEX phenotype_source_generated_new_fig ON phenotype_source_generated_new (pg_fig_zdb_id);
-CREATE INDEX phenotype_source_generated_new_start ON phenotype_source_generated_new (pg_start_stg_zdb_id);
-CREATE INDEX phenotype_source_generated_new_end ON phenotype_source_generated_new (pg_end_stg_zdb_id);
-ALTER TABLE phenotype_source_generated_new ADD CONSTRAINT phenotype_source_generated_new_fk1 FOREIGN KEY (pg_genox_zdb_id) REFERENCES fish_experiment (genox_zdb_id);
-ALTER TABLE phenotype_source_generated_new ADD CONSTRAINT phenotype_source_generated_new_fk2 FOREIGN KEY (pg_fig_zdb_id) REFERENCES figure (fig_zdb_id);
-ALTER TABLE phenotype_source_generated_new ADD CONSTRAINT phenotype_source_generated_new_fk3 FOREIGN KEY (pg_start_stg_zdb_id) REFERENCES stage (stg_zdb_id);
-ALTER TABLE phenotype_source_generated_new ADD CONSTRAINT phenotype_source_generated_new_fk4 FOREIGN KEY (pg_end_stg_zdb_id) REFERENCES stage (stg_zdb_id);
+-- insert new pog (desired key not in live); psg_id from the live default sequence
+INSERT INTO phenotype_observation_generated
+   (psg_pg_id, psg_mrkr_zdb_id, psg_mrkr_abbrev, psg_mrkr_relation,
+    psg_e1a_zdb_id, psg_e1a_name, psg_e1_relation_name, psg_e1b_zdb_id, psg_e1b_name,
+    psg_e2a_zdb_id, psg_e2a_name, psg_e2_relation_name, psg_e2b_zdb_id, psg_e2b_name,
+    psg_tag, psg_quality_zdb_id, psg_quality_name, psg_short_name, psg_pre_eap_phenotype)
+SELECT d.psg_pg_id, d.psg_mrkr_zdb_id, d.psg_mrkr_abbrev, d.psg_mrkr_relation,
+       d.psg_e1a_zdb_id, d.psg_e1a_name, d.psg_e1_relation_name, d.psg_e1b_zdb_id, d.psg_e1b_name,
+       d.psg_e2a_zdb_id, d.psg_e2a_name, d.psg_e2_relation_name, d.psg_e2b_zdb_id, d.psg_e2b_name,
+       d.psg_tag, d.psg_quality_zdb_id, d.psg_quality_name, d.psg_short_name, d.psg_pre_eap_phenotype
+  FROM _pog_desired d
+ WHERE NOT EXISTS (SELECT 1 FROM _pog_live lk WHERE lk.k = d.k);
 
-insert into phenotype_source_generated_new (pg_id,
-       	     			 pg_genox_zdb_id,
-				 pg_fig_zdb_id,
-				 pg_start_stg_zdb_id,
-				 pg_end_stg_zdb_id)
-select pg_id, pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id
-  from phenotype_source_generated_temp;
+-- =========================================================================
+-- PGCM -- resolve onto live psg ids, then delete-gone / insert-new (no
+-- non-key columns). pgcm has no surrogate id; identify live rows by ctid.
+-- =========================================================================
+CREATE TEMP TABLE _pgcm_desired ON COMMIT DROP AS
+SELECT lpsg.pg_id AS pgcm_pg_id, t.pgcm_source_id, t.pgcm_id_type,
+       concat_ws('|', lpsg.pg_id::text, coalesce(t.pgcm_source_id,''), coalesce(t.pgcm_id_type,'')) AS k
+  FROM phenotype_generated_curated_mapping_temp t
+  JOIN phenotype_source_generated_temp tpsg ON tpsg.pg_id = t.pgcm_pg_id
+  JOIN phenotype_source_generated lpsg
+    ON coalesce(lpsg.pg_genox_zdb_id,'')    = coalesce(tpsg.pg_genox_zdb_id,'')
+   AND coalesce(lpsg.pg_fig_zdb_id,'')      = coalesce(tpsg.pg_fig_zdb_id,'')
+   AND coalesce(lpsg.pg_start_stg_zdb_id,'') = coalesce(tpsg.pg_start_stg_zdb_id,'')
+   AND coalesce(lpsg.pg_end_stg_zdb_id,'')   = coalesce(tpsg.pg_end_stg_zdb_id,'');
+CREATE INDEX ON _pgcm_desired (k);
 
--- -------------------------------------------------------------------------
--- Build phenotype_observation_generated_new (child table). Its FK points at
--- phenotype_source_generated_new so that, after the swap, it references the
--- new live parent table (FKs track by OID, surviving the rename).
--- -------------------------------------------------------------------------
-CREATE TABLE phenotype_observation_generated_new (LIKE phenotype_observation_generated_temp INCLUDING ALL);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT phenotype_observation_generated_new_pkey PRIMARY KEY (psg_id);
--- Detach the sequence (see note above).
-IF pg_get_serial_sequence('phenotype_observation_generated_new', 'psg_id') IS NOT NULL THEN
-    EXECUTE 'ALTER SEQUENCE ' || pg_get_serial_sequence('phenotype_observation_generated_new', 'psg_id')
-        || ' OWNED BY NONE';
-END IF;
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_wh_fk FOREIGN KEY (psg_pg_id) REFERENCES phenotype_source_generated_new (pg_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_mrkr_fk FOREIGN KEY (psg_mrkr_zdb_id) REFERENCES marker (mrkr_zdb_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_e1a_fk FOREIGN KEY (psg_e1a_zdb_id) REFERENCES term (term_zdb_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_e1b_fk FOREIGN KEY (psg_e1b_zdb_id) REFERENCES term (term_zdb_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_e2a_fk FOREIGN KEY (psg_e2a_zdb_id) REFERENCES term (term_zdb_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_e2b_fk FOREIGN KEY (psg_e2b_zdb_id) REFERENCES term (term_zdb_id);
-ALTER TABLE phenotype_observation_generated_new ADD CONSTRAINT pog_new_q_fk FOREIGN KEY (psg_quality_zdb_id) REFERENCES term (term_zdb_id);
+CREATE TEMP TABLE _pgcm_live ON COMMIT DROP AS
+SELECT ctid AS row_ctid,
+       concat_ws('|', pgcm_pg_id::text, coalesce(pgcm_source_id,''), coalesce(pgcm_id_type,'')) AS k
+  FROM phenotype_generated_curated_mapping;
+CREATE INDEX ON _pgcm_live (k);
 
-insert into phenotype_observation_generated_new (psg_id,
-       	     				   psg_pg_id,
-       	     				   psg_mrkr_zdb_id,
-					   psg_mrkr_abbrev,
-					   psg_mrkr_relation,
-					   psg_e1a_zdb_id,
-					   psg_e1a_name,
-					   psg_e1_relation_name,
-					   psg_e1b_zdb_id,
-					   psg_e1b_name,
-					   psg_e2a_zdb_id,
-					   psg_e2a_name,
-					   psg_e2_relation_name,
-					   psg_e2b_zdb_id,
-					   psg_e2b_name,
-					   psg_tag,
-					   psg_quality_zdb_id,
-					   psg_quality_name,
-					   psg_short_name,
-					   psg_pre_eap_phenotype)
-select psg_id, psg_pg_id,psg_mrkr_zdb_id, psg_mrkr_abbrev,psg_mrkr_relation,psg_e1a_zdb_id,
-	psg_e1a_name,psg_e1_relation_name, psg_e1b_zdb_id, psg_e1b_name,
-	psg_e2a_zdb_id,psg_e2a_name, psg_e2_relation_name, psg_e2b_zdb_id,
-	psg_e2b_name,psg_tag,psg_quality_zdb_id, psg_quality_name, psg_short_name, psg_pre_eap_phenotype
-  from phenotype_observation_generated_temp;
+DELETE FROM phenotype_generated_curated_mapping l
+ USING _pgcm_live lk
+ WHERE l.ctid = lk.row_ctid
+   AND NOT EXISTS (SELECT 1 FROM _pgcm_desired d WHERE d.k = lk.k);
 
--- -------------------------------------------------------------------------
--- Build phenotype_generated_curated_mapping_new
--- -------------------------------------------------------------------------
-CREATE TABLE phenotype_generated_curated_mapping_new (LIKE phenotype_generated_curated_mapping_temp INCLUDING ALL);
+INSERT INTO phenotype_generated_curated_mapping (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
+SELECT d.pgcm_pg_id, d.pgcm_source_id, d.pgcm_id_type
+  FROM _pgcm_desired d
+ WHERE NOT EXISTS (SELECT 1 FROM _pgcm_live lk WHERE lk.k = d.k);
 
-insert into phenotype_generated_curated_mapping_new (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
- select pgcm_pg_id, pgcm_source_id, pgcm_id_type from phenotype_generated_curated_mapping_temp;
+-- =========================================================================
+-- PSG deletes -- now that gone pog/pgcm children are gone, remove gone psg
+-- (natural key no longer in temp).
+-- =========================================================================
+DELETE FROM phenotype_source_generated l
+ WHERE NOT EXISTS (
+   SELECT 1 FROM phenotype_source_generated_temp t
+    WHERE coalesce(t.pg_genox_zdb_id,'')    = coalesce(l.pg_genox_zdb_id,'')
+      AND coalesce(t.pg_fig_zdb_id,'')      = coalesce(l.pg_fig_zdb_id,'')
+      AND coalesce(t.pg_start_stg_zdb_id,'') = coalesce(l.pg_start_stg_zdb_id,'')
+      AND coalesce(t.pg_end_stg_zdb_id,'')   = coalesce(l.pg_end_stg_zdb_id,''));
 
--- *_new tables are built and durable; clear the rebuild-in-progress flag.
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ('f',now())
  where zflag_name = 'regen_phenotypemart';
 
-END $$;
-
-COMMIT;
-
--- =========================================================================
--- TRANSACTION 2 -- fast metadata swap, lock_timeout + bounded retry.
--- The ONLY AccessExclusiveLock window on the live tables. Holds nothing on
--- the live or parent tables during back-off sleeps.
--- =========================================================================
-BEGIN;
-
-DO $$
-DECLARE
-    psg_old_name text;
-    pog_old_name text;
-    pgcm_old_name text;
-    ts text := to_char(now(), 'YYMMDDHH24MI') || '_' || substring(md5(random()::text), 1, 4);
-    swap_attempts constant int := 5;   -- max tries before giving up
-    swap_wait     constant text := '10s';   -- per-attempt lock_timeout
-    swap_backoff  constant int  := 20;   -- seconds to wait between attempts
-    swap_attempt int := 0;
-BEGIN
-    LOOP
-        swap_attempt := swap_attempt + 1;
-        BEGIN
-            -- Bound how long any single rename will wait for the exclusive
-            -- lock; if a live reader is mid-query we fail fast rather than
-            -- block (and head-of-line-block) the whole site. Transaction-local,
-            -- re-applied each attempt (a sub-transaction rollback reverts it).
-            PERFORM set_config('lock_timeout', swap_wait, true);
-
-            -- 1. Rename the current live tables OUT to *_old_<ts>, freeing the
-            --    canonical table / index / constraint names. Left for
-            --    regen_cleanup_renamed_tables().
-
-            -- phenotype_generated_curated_mapping (no FKs pointing to it)
-            IF EXISTS (SELECT 1 FROM information_schema.tables
-                       WHERE table_name = 'phenotype_generated_curated_mapping' AND table_schema = 'public') THEN
-                pgcm_old_name := 'phenotype_generated_curated_mapping_old_' || ts;
-                RAISE NOTICE 'Renaming phenotype_generated_curated_mapping to %', pgcm_old_name;
-                EXECUTE 'ALTER TABLE phenotype_generated_curated_mapping RENAME TO ' || pgcm_old_name;
-            END IF;
-
-            -- phenotype_observation_generated (child of phenotype_source_generated)
-            IF EXISTS (SELECT 1 FROM information_schema.tables
-                       WHERE table_name = 'phenotype_observation_generated' AND table_schema = 'public') THEN
-                pog_old_name := 'phenotype_observation_generated_old_' || ts;
-                RAISE NOTICE 'Renaming phenotype_observation_generated to %', pog_old_name;
-                EXECUTE 'ALTER TABLE phenotype_observation_generated RENAME TO ' || pog_old_name;
-
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_observation_generated_pkey RENAME TO ' || pog_old_name || '_pkey';
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT phenotype_warehouse_foreign_key TO ' || pog_old_name || '_wh_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT marker_foreign_key TO ' || pog_old_name || '_mrkr_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1a_foreign_key TO ' || pog_old_name || '_e1a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e1b_foreign_key TO ' || pog_old_name || '_e1b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2a_foreign_key TO ' || pog_old_name || '_e2a_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT e2b_foreign_key TO ' || pog_old_name || '_e2b_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || pog_old_name || ' RENAME CONSTRAINT quality_foreign_key TO ' || pog_old_name || '_q_fk'; EXCEPTION WHEN undefined_object THEN NULL; END;
-            END IF;
-
-            -- phenotype_source_generated (parent)
-            IF EXISTS (SELECT 1 FROM information_schema.tables
-                       WHERE table_name = 'phenotype_source_generated' AND table_schema = 'public') THEN
-                psg_old_name := 'phenotype_source_generated_old_' || ts;
-                RAISE NOTICE 'Renaming phenotype_source_generated to %', psg_old_name;
-                EXECUTE 'ALTER TABLE phenotype_source_generated RENAME TO ' || psg_old_name;
-
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_pkey RENAME TO ' || psg_old_name || '_pkey';
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_genox RENAME TO ' || psg_old_name || '_genox';
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_fig RENAME TO ' || psg_old_name || '_fig';
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_start RENAME TO ' || psg_old_name || '_start';
-                EXECUTE 'ALTER INDEX IF EXISTS phenotype_source_generated_end RENAME TO ' || psg_old_name || '_end';
-                BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk1 TO ' || psg_old_name || '_fk1'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk2 TO ' || psg_old_name || '_fk2'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk3 TO ' || psg_old_name || '_fk3'; EXCEPTION WHEN undefined_object THEN NULL; END;
-                BEGIN EXECUTE 'ALTER TABLE ' || psg_old_name || ' RENAME CONSTRAINT constraint_fk4 TO ' || psg_old_name || '_fk4'; EXCEPTION WHEN undefined_object THEN NULL; END;
-            END IF;
-
-            -- 2. Rename the *_new tables IN to the canonical live names,
-            --    restoring the canonical index/constraint names so the next
-            --    run's rename-out matches.
-            ALTER TABLE phenotype_source_generated_new RENAME TO phenotype_source_generated;
-            ALTER INDEX phenotype_source_generated_new_pkey RENAME TO phenotype_source_generated_pkey;
-            ALTER INDEX phenotype_source_generated_new_genox RENAME TO phenotype_source_generated_genox;
-            ALTER INDEX phenotype_source_generated_new_fig RENAME TO phenotype_source_generated_fig;
-            ALTER INDEX phenotype_source_generated_new_start RENAME TO phenotype_source_generated_start;
-            ALTER INDEX phenotype_source_generated_new_end RENAME TO phenotype_source_generated_end;
-            ALTER TABLE phenotype_source_generated RENAME CONSTRAINT phenotype_source_generated_new_fk1 TO constraint_fk1;
-            ALTER TABLE phenotype_source_generated RENAME CONSTRAINT phenotype_source_generated_new_fk2 TO constraint_fk2;
-            ALTER TABLE phenotype_source_generated RENAME CONSTRAINT phenotype_source_generated_new_fk3 TO constraint_fk3;
-            ALTER TABLE phenotype_source_generated RENAME CONSTRAINT phenotype_source_generated_new_fk4 TO constraint_fk4;
-
-            ALTER TABLE phenotype_observation_generated_new RENAME TO phenotype_observation_generated;
-            ALTER INDEX phenotype_observation_generated_new_pkey RENAME TO phenotype_observation_generated_pkey;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_wh_fk TO phenotype_warehouse_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_mrkr_fk TO marker_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_e1a_fk TO e1a_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_e1b_fk TO e1b_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_e2a_fk TO e2a_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_e2b_fk TO e2b_foreign_key;
-            ALTER TABLE phenotype_observation_generated RENAME CONSTRAINT pog_new_q_fk TO quality_foreign_key;
-
-            ALTER TABLE phenotype_generated_curated_mapping_new RENAME TO phenotype_generated_curated_mapping;
-
-            EXIT;  -- swap succeeded
-
-        EXCEPTION
-            WHEN lock_not_available OR deadlock_detected THEN
-                -- The sub-transaction rolled back: every rename in this attempt
-                -- is undone and the exclusive locks released, so the back-off
-                -- sleep below holds nothing on the live tables.
-                IF swap_attempt >= swap_attempts THEN
-                    RAISE EXCEPTION 'phenotype mart swap could not acquire the AccessExclusiveLock on the live tables after % attempts (lock_timeout %); aborting. The live tables are unchanged; the *_new tables remain for a manual swap or the next run.', swap_attempts, swap_wait;
-                END IF;
-                RAISE NOTICE 'phenotype mart swap: attempt %/% timed out waiting for the exclusive lock; backing off %s before retry', swap_attempt, swap_attempts, swap_backoff;
-                PERFORM pg_sleep(swap_backoff);
-        END;
-    END LOOP;
-
-    update warehouse_run_tracking
-     set wrt_last_loaded_date = now()
-     where wrt_mart_name = 'phenotype mart';
-
-END $$;
+update warehouse_run_tracking
+ set wrt_last_loaded_date = now()
+ where wrt_mart_name = 'phenotype mart';
 
 COMMIT;
