@@ -21,9 +21,12 @@
 -- The *_temp surrogate ids differ from live's, so temp rows are resolved onto
 -- the live pg_id via the psg natural key before pog/pgcm are matched.
 --
--- ASSUMES the live tables already hold unique natural keys (psg built with
--- DISTINCT; pog deduped -- see populateTables.sql). Cut over from the old
--- rebuild-and-swap only after one clean deduped rebuild.
+-- ASSUMES the live tables already hold unique natural keys (psg is built with
+-- DISTINCT; pog is kept unique by populateTables.sql going forward, and the
+-- incremental only ever inserts one row per key). The one-time cleanup of
+-- legacy pog duplicates left by the old pre-dedup rebuild is handled by a
+-- deploy-time Liquibase migration that runs before any job -- not here -- so
+-- the nightly apply stays simple.
 
 BEGIN;
 
