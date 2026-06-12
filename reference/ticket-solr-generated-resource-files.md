@@ -140,3 +140,80 @@ commit/reload. `generatePopularity.groovy` already exists.
 - `server_apps/solr/scripts/generatePopularity.groovy` — existing popularity generator
 - `docker/solr/site_index/conf/generate-*.sql`, `index-solr.groovy` — the legacy
   (broken) analyzer-file generators to fix/replace
+
+## Appendix: prototyped generator fix + scope verification
+
+The corrected Track-A query for the two `all-term-contains` files has already been
+worked out and verified against prod-scale data (coral `all_term_contains` =
+6,478,688 rows, == prod). Numbers below are a starting point, not gospel — re-verify
+on the chosen DB at implementation time.
+
+**Verified scope (same-ontology, in-scope set, identity rows dropped):**
+
+| ontology | mappings | ontology | mappings |
+|---|---:|---|---:|
+| biological_process | 452,268 | quality | 10,546 |
+| molecular_function | 65,270 | behavior_ontology | 3,808 |
+| zebrafish_anatomy | 43,222 | mouse_pathology.ontology | 3,410 |
+| cellular_component | 42,283 | uberon/phenoscape-anatomy | 2,675 |
+| uberon | 20,827 | **total distinct pairs** | **643,383** |
+
+Sanity check vs the current committed file (562,300 distinct non-identity mappings):
+the regenerated set is *larger* (643 k) because it gains current GO growth and drops
+the ~155 k obsolete mappings the stale file still carries. Expected and healthy.
+
+**Uberon decision (the one open scope question):** the committed file contained
+uberon only at collision-level (~3.6 k by-child, i.e. names shared with other
+ontologies), so it likely was **not** intentionally in scope. Including `uberon` +
+`uberon/phenoscape-anatomy` adds ~23.5 k mappings that weren't really there before
+(total 643 k with, **619,881 without**). Decide deliberately; the draft includes them
+flagged.
+
+**Drafted SQL** (replaces the anatomy-only `generate-all-term-contains-synonyms-file.sql`;
+parameterize `@OUTDIR@` to the configset location; `delimiter '|'` matches the legacy
+single-column dump format that `SynonymGraphFilter` consumes):
+
+```sql
+-- Forward (child => parent): index-analyzer expansion, specific -> ancestor
+\copy (
+  select distinct child.term_name || ' => ' || parent.term_name
+  from term parent
+  join all_term_contains on alltermcon_container_zdb_id = parent.term_zdb_id
+  join term child         on alltermcon_contained_zdb_id = child.term_zdb_id
+  where parent.term_ontology = child.term_ontology
+    and child.term_ontology in (
+      'biological_process','molecular_function','cellular_component',
+      'zebrafish_anatomy','quality','behavior_ontology','mouse_pathology.ontology',
+      'uberon','uberon/phenoscape-anatomy')      -- CONFIRM uberon (see note above)
+    and child.term_zdb_id <> parent.term_zdb_id  -- drop identity / reflexive no-ops
+) to '@OUTDIR@/all-term-contains-synonyms.txt' delimiter '|';
+
+-- Reversed (parent => child): query-analyzer expansion, broad -> descendants
+\copy (
+  select distinct parent.term_name || ' => ' || child.term_name
+  from term parent
+  join all_term_contains on alltermcon_container_zdb_id = parent.term_zdb_id
+  join term child         on alltermcon_contained_zdb_id = child.term_zdb_id
+  where parent.term_ontology = child.term_ontology
+    and child.term_ontology in (
+      'biological_process','molecular_function','cellular_component',
+      'zebrafish_anatomy','quality','behavior_ontology','mouse_pathology.ontology',
+      'uberon','uberon/phenoscape-anatomy')
+    and child.term_zdb_id <> parent.term_zdb_id
+) to '@OUTDIR@/all-term-contains-synonyms-reversed.txt' delimiter '|';
+```
+
+Key changes vs the legacy SQL: (1) covers the full ontology set instead of
+`zebrafish_anatomy` only; (2) requires both endpoints in the **same** ontology
+(avoids cross-ontology name-collision noise); (3) `distinct` (the old file had dup
+lines); (4) drops identity/reflexive rows via `term_zdb_id` inequality; (5) writes to
+`@OUTDIR@` instead of the dead `@TARGETROOT@/server_apps/solr/prototype/conf/`.
+
+**The other two analyzer files are simpler** — `generate-organism-name-file.sql`
+(`select organism_common_name from organism`) and `generate-reporter-name-file.sql`
+(EFG marker abbrevs) are *not* scope-broken, only path-broken: they just need the
+output repointed to `@OUTDIR@` (and a `distinct` is reasonable).
+
+**Still to do in impl (not yet prototyped):** the Jenkins wiring, the empty-stub
+files in the image, the drift guard, and confirming the generated output format
+loads cleanly into `SynonymGraphFilter` (no header/quoting surprises from `\copy`).
