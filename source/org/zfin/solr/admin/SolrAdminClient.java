@@ -55,6 +55,10 @@ public final class SolrAdminClient {
     private static final Duration SNAPSHOT_TIMEOUT = Duration.ofHours(1);
     /** Poll interval while waiting for an async backup/restore. */
     private static final Duration SNAPSHOT_POLL_INTERVAL = Duration.ofSeconds(5);
+    /** Grace for a backup's snapshot dir to appear; if it never does, the backup couldn't start, so fail fast rather than poll out {@link #SNAPSHOT_TIMEOUT}. */
+    private static final Duration BACKUP_DIR_APPEAR_GRACE = Duration.ofMinutes(2);
+    /** Emit an in-progress progress line at most this often while polling. */
+    private static final Duration SNAPSHOT_PROGRESS_LOG_INTERVAL = Duration.ofSeconds(60);
 
     private final String coreBaseUrl;   // http://host:port/solr/<core>/
     private final String adminBaseUrl;  // http://host:port/solr/admin/
@@ -191,8 +195,9 @@ public final class SolrAdminClient {
         get(coreBaseUrl + "replication?command=backup"
             + "&location=" + enc(location) + "&name=" + enc(name) + "&wt=json", GET_TIMEOUT);
         logger.info("backup triggered: {}/snapshot.{}", location, name);
-        // Solr reports the backup snapshotName as the bare NAME (no prefix).
-        awaitSnapshot("details", new String[]{"details", "backup"}, name, "backup", location, name);
+        // snapshotName is the bare NAME (no prefix); pass the on-disk dir so the poll can fail fast if Solr never creates it.
+        awaitSnapshot("details", new String[]{"details", "backup"}, name, "backup",
+            location, name, new File(location, "snapshot." + name));
     }
 
     /**
@@ -205,8 +210,9 @@ public final class SolrAdminClient {
         get(coreBaseUrl + "replication?command=restore"
             + "&location=" + enc(location) + "&name=" + enc(name) + "&wt=json", GET_TIMEOUT);
         logger.info("restore triggered: {}/snapshot.{}", location, name);
-        // Solr reports the restore snapshotName WITH the "snapshot." prefix.
-        awaitSnapshot("restorestatus", new String[]{"restorestatus"}, "snapshot." + name, "restore", location, name);
+        // snapshotName comes back WITH the "snapshot." prefix; restore reads an existing snapshot, so no dir-creation gate (snapshotDir = null).
+        awaitSnapshot("restorestatus", new String[]{"restorestatus"}, "snapshot." + name, "restore",
+            location, name, null);
     }
 
     /**
@@ -217,17 +223,36 @@ public final class SolrAdminClient {
      * {@code curl ... || true} poll loop).
      */
     private void awaitSnapshot(String command, String[] blockPath, String expectedSnapshotName,
-                               String label, String location, String name) throws Exception {
-        long deadline = System.currentTimeMillis() + SNAPSHOT_TIMEOUT.toMillis();
+                               String label, String location, String name, File snapshotDir) throws Exception {
+        long start = System.currentTimeMillis();
+        long deadline = start + SNAPSHOT_TIMEOUT.toMillis();
+        boolean snapshotDirSeen = false;
+        long lastProgressLogMs = 0;
         while (System.currentTimeMillis() < deadline) {
+            long elapsedMs = System.currentTimeMillis() - start;
+
+            // Solr creates the snapshot dir within ~1s of starting; if it never appears the backup couldn't start (typically permissions), so fail fast.
+            if (snapshotDir != null) {
+                if (snapshotDir.isDirectory()) {
+                    snapshotDirSeen = true;
+                } else if (!snapshotDirSeen && elapsedMs > BACKUP_DIR_APPEAR_GRACE.toMillis()) {
+                    throw new RuntimeException(label + " did not start: Solr never created "
+                        + snapshotDir + " within " + BACKUP_DIR_APPEAR_GRACE.toSeconds() + "s. "
+                        + "The Solr process (a non-root user) most likely cannot write to the "
+                        + "backup location — check ownership/permissions on " + location + ".");
+                }
+            }
+
             String status = "";
             String snapshotName = "";
+            String exception = "";
             try {
                 String body = get(coreBaseUrl + "replication?command=" + command + "&wt=json", GET_TIMEOUT);
                 JsonNode block = mapper.readTree(body);
                 for (String seg : blockPath) block = block.path(seg);
                 snapshotName = block.path("snapshotName").asText("");
                 status = block.path("status").asText("");
+                exception = block.path("exception").asText("");
             } catch (Exception transientErr) {
                 /* core mid-operation / transient HTTP — keep polling */
             }
@@ -237,12 +262,41 @@ public final class SolrAdminClient {
                     return;
                 }
                 if ("failed".equals(status)) {
-                    throw new RuntimeException(label + " failed for snapshot." + name);
+                    throw new RuntimeException(label + " failed for snapshot." + name
+                        + (exception.isBlank() ? "" : ": " + exception));
                 }
+            }
+
+            // Periodic progress (slow copy vs stall); on-disk size is the live signal since Solr reports the previous snapshot until this one completes.
+            if (elapsedMs - lastProgressLogMs >= SNAPSHOT_PROGRESS_LOG_INTERVAL.toMillis()) {
+                lastProgressLogMs = elapsedMs;
+                logger.info("  {} in progress: {}s elapsed{}; solr reports snapshotName={} status={}",
+                    label, elapsedMs / 1000,
+                    snapshotDir != null ? ", on-disk=" + humanSize(dirSizeBytes(snapshotDir)) : "",
+                    snapshotName.isEmpty() ? "(none)" : snapshotName,
+                    status.isEmpty() ? "(none)" : status);
             }
             Thread.sleep(SNAPSHOT_POLL_INTERVAL.toMillis());
         }
         throw new RuntimeException(label + " timed out after " + SNAPSHOT_TIMEOUT.toSeconds() + "s");
+    }
+
+    /** Sum of file sizes directly under a snapshot directory (flat; 0 if absent). */
+    private static long dirSizeBytes(File dir) {
+        File[] files = dir.listFiles();
+        if (files == null) return 0;
+        long total = 0;
+        for (File f : files) {
+            if (f.isFile()) total += f.length();
+        }
+        return total;
+    }
+
+    private static String humanSize(long bytes) {
+        if (bytes < 1024) return bytes + "B";
+        if (bytes < 1024L * 1024) return String.format("%.1fKB", bytes / 1024.0);
+        if (bytes < 1024L * 1024 * 1024) return String.format("%.1fMB", bytes / (1024.0 * 1024));
+        return String.format("%.1fGB", bytes / (1024.0 * 1024 * 1024));
     }
 
     // ---------- HTTP plumbing ----------------------------------------------
