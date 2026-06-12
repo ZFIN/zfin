@@ -55,6 +55,18 @@ public record Rule(Effect effect, RuleCondition condition) {
                 new RuleCondition(scope, Map.of("enum", List.of(values))));
     }
 
+    /**
+     * SHOW when the scoped <em>array</em> value contains {@code value}.
+     * Emits a JSON Schema {@code {"contains": {"const": value}}} fragment,
+     * which JSON Forms validates against the array via AJV. Used for the
+     * Non-Mendelian percentage/comment reveal keyed off the multi-select
+     * {@code segregation} array (ZFIN-10348).
+     */
+    public static Rule showWhenContains(String scope, String value) {
+        return new Rule(Effect.SHOW,
+                new RuleCondition(scope, Map.of("contains", Map.of("const", value))));
+    }
+
     /** SHOW when the scoped value is one of the listed values. */
     public static Rule showWhenIn(String scope, List<String> values) {
         return new Rule(Effect.SHOW,

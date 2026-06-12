@@ -5,6 +5,7 @@ import { textareaRowRendererEntry } from './renderers/TextareaRowRenderer';
 import { yesNoRadioRendererEntry } from './renderers/YesNoRadioRenderer';
 import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
+import { checkboxGroupRendererEntry } from './renderers/CheckboxGroupRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
 import { assaysListRendererEntry } from './renderers/AssaysListRenderer';
@@ -31,6 +32,7 @@ export const aggregateRenderers = [
     yesNoRadioRendererEntry,
     checkboxRendererEntry,
     selectWithOtherRendererEntry,
+    checkboxGroupRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,
     assaysListRendererEntry,
