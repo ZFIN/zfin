@@ -92,13 +92,43 @@
     }, {
       "elements" : [ {
         "options" : {
+          "noOther" : true,
+          "standardValues" : [ "Mendelian recessive", "Mendelian dominant", "Non-Mendelian" ],
+          "widget" : "checkboxGroup"
+        },
+        "scope" : "#/properties/segregation",
+        "type" : "Control"
+      }, {
+        "options" : {
           "suffix" : "%"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "contains" : {
+                "const" : "Non-Mendelian"
+              }
+            },
+            "scope" : "#/properties/segregation"
+          },
+          "effect" : "SHOW"
         },
         "scope" : "#/properties/nonMendelianPercentage",
         "type" : "Control"
       }, {
         "options" : {
           "multi" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "contains" : {
+                "const" : "Non-Mendelian"
+              }
+            },
+            "scope" : "#/properties/segregation"
+          },
+          "effect" : "SHOW"
         },
         "scope" : "#/properties/nonMendelianComment",
         "type" : "Control"
@@ -107,20 +137,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "addLabel" : "+ Add segregation",
-          "placeholder" : "Segregation pattern",
-          "widget" : "stringList"
-        },
-        "scope" : "#/properties/segregation",
-        "type" : "Control"
-      } ],
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "addLabel" : "+ Add phenotype type",
-          "placeholder" : "Phenotype type",
-          "widget" : "stringList"
+          "standardValues" : [ "Zygotic (Z)", "Maternal (M)", "Maternal-Zygotic (M-Z)" ],
+          "widget" : "checkboxGroup"
         },
         "scope" : "#/properties/type",
         "type" : "Control"
