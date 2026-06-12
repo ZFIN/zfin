@@ -103,6 +103,9 @@ services:
     mem_limit: 16g
     ulimits:
       nofile: 65536
+    # Add fishadmin (gid 1076) so the non-root solr user can write backup snapshots to the group-owned unloads dir (which must also be g+w).
+    group_add:
+      - "1076"   # fishadmin
     environment:
       SOLR_MODULES: "scripting"
       SOLR_HEAP: 12g
