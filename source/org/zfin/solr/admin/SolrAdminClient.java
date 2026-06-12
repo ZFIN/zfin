@@ -2,17 +2,16 @@ package org.zfin.solr.admin;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /**
@@ -98,8 +97,11 @@ public final class SolrAdminClient {
      * HTTP 400 without {@code -Dsolr.enableStreamBody=true}.
      */
     public void deleteAll() throws Exception {
-        String url = coreBaseUrl + "update?commit=true&wt=json";
-        HttpRequest req = HttpRequest.newBuilder(URI.create(url))
+        URI uri = new URIBuilder(coreBaseUrl + "update")
+            .addParameter("commit", "true")
+            .addParameter("wt", "json")
+            .build();
+        HttpRequest req = HttpRequest.newBuilder(uri)
             .timeout(Duration.ofSeconds(60))
             .header("Content-Type", "text/xml")
             .POST(HttpRequest.BodyPublishers.ofString("<delete><query>*:*</query></delete>"))
@@ -119,14 +121,15 @@ public final class SolrAdminClient {
      * optimize on a multi-GB index is murderous and pointless mid-run).
      */
     public void runDihImport(String entity) throws Exception {
-        String url = coreBaseUrl + "dataimport?"
-            + "command=full-import"
-            + "&entity=" + enc(entity)
-            + "&clean=false"
-            + "&commit=true"
-            + "&optimize=false"
-            + "&wt=json";
-        get(url, GET_TIMEOUT);
+        URI uri = new URIBuilder(coreBaseUrl + "dataimport")
+            .addParameter("command", "full-import")
+            .addParameter("entity", entity)
+            .addParameter("clean", "false")
+            .addParameter("commit", "true")
+            .addParameter("optimize", "false")
+            .addParameter("wt", "json")
+            .build();
+        get(uri, GET_TIMEOUT);
         // DIH takes a moment to flip from idle to busy; without the settle the
         // first status poll can catch it still idle from the prior step.
         Thread.sleep(DIH_SETTLE.toMillis());
@@ -141,8 +144,12 @@ public final class SolrAdminClient {
      * real memory-pressure events.
      */
     private void waitForDihIdle(String entity) throws Exception {
+        URI uri = new URIBuilder(coreBaseUrl + "dataimport")
+            .addParameter("command", "status")
+            .addParameter("wt", "json")
+            .build();
         while (true) {
-            String body = get(coreBaseUrl + "dataimport?command=status&wt=json", GET_TIMEOUT);
+            String body = get(uri, GET_TIMEOUT);
             if (body.contains("\"status\":\"idle\"")) {
                 if (body.contains("Full Import failed")) {
                     String snippet = body.length() > 500 ? body.substring(0, 500) : body;
@@ -164,16 +171,23 @@ public final class SolrAdminClient {
      */
     public void reloadCore() throws Exception {
         logger.info("  ... reloading core to release Lucene state");
-        String url = adminBaseUrl + "cores?action=RELOAD&core=" + enc(core) + "&wt=json";
-        get(url, RELOAD_TIMEOUT);
+        URI uri = new URIBuilder(adminBaseUrl + "cores")
+            .addParameter("action", "RELOAD")
+            .addParameter("core", core)
+            .addParameter("wt", "json")
+            .build();
+        get(uri, RELOAD_TIMEOUT);
         waitForCorePing();
     }
 
     private void waitForCorePing() throws Exception {
+        URI uri = new URIBuilder(coreBaseUrl + "admin/ping")
+            .addParameter("wt", "json")
+            .build();
         long deadline = System.currentTimeMillis() + RELOAD_TIMEOUT.toMillis();
         while (System.currentTimeMillis() < deadline) {
             try {
-                String body = get(coreBaseUrl + "admin/ping?wt=json", GET_TIMEOUT);
+                String body = get(uri, GET_TIMEOUT);
                 if (body.contains("\"status\":\"OK\"") || body.contains("\"status\":0")) return;
             } catch (Exception ignored) { /* core mid-reload — retry */ }
             Thread.sleep(5000);
@@ -192,8 +206,12 @@ public final class SolrAdminClient {
     public void backup(String location, String name) throws Exception {
         name = stripSnapshotPrefix(name);
         new File(location).mkdirs();
-        get(coreBaseUrl + "replication?command=backup"
-            + "&location=" + enc(location) + "&name=" + enc(name) + "&wt=json", GET_TIMEOUT);
+        get(new URIBuilder(coreBaseUrl + "replication")
+            .addParameter("command", "backup")
+            .addParameter("location", location)
+            .addParameter("name", name)
+            .addParameter("wt", "json")
+            .build(), GET_TIMEOUT);
         logger.info("backup triggered: {}/snapshot.{}", location, name);
         // snapshotName is the bare NAME (no prefix); pass the on-disk dir so the poll can fail fast if Solr never creates it.
         awaitSnapshot("details", new String[]{"details", "backup"}, name, "backup",
@@ -207,8 +225,12 @@ public final class SolrAdminClient {
      */
     public void restore(String location, String name) throws Exception {
         name = stripSnapshotPrefix(name);
-        get(coreBaseUrl + "replication?command=restore"
-            + "&location=" + enc(location) + "&name=" + enc(name) + "&wt=json", GET_TIMEOUT);
+        get(new URIBuilder(coreBaseUrl + "replication")
+            .addParameter("command", "restore")
+            .addParameter("location", location)
+            .addParameter("name", name)
+            .addParameter("wt", "json")
+            .build(), GET_TIMEOUT);
         logger.info("restore triggered: {}/snapshot.{}", location, name);
         // snapshotName comes back WITH the "snapshot." prefix; restore reads an existing snapshot, so no dir-creation gate (snapshotDir = null).
         awaitSnapshot("restorestatus", new String[]{"restorestatus"}, "snapshot." + name, "restore",
@@ -224,6 +246,10 @@ public final class SolrAdminClient {
      */
     private void awaitSnapshot(String command, String[] blockPath, String expectedSnapshotName,
                                String label, String location, String name, File snapshotDir) throws Exception {
+        URI statusUri = new URIBuilder(coreBaseUrl + "replication")
+            .addParameter("command", command)
+            .addParameter("wt", "json")
+            .build();
         long start = System.currentTimeMillis();
         long deadline = start + SNAPSHOT_TIMEOUT.toMillis();
         boolean snapshotDirSeen = false;
@@ -247,7 +273,7 @@ public final class SolrAdminClient {
             String snapshotName = "";
             String exception = "";
             try {
-                String body = get(coreBaseUrl + "replication?command=" + command + "&wt=json", GET_TIMEOUT);
+                String body = get(statusUri, GET_TIMEOUT);
                 JsonNode block = mapper.readTree(body);
                 for (String seg : blockPath) block = block.path(seg);
                 snapshotName = block.path("snapshotName").asText("");
@@ -301,19 +327,15 @@ public final class SolrAdminClient {
 
     // ---------- HTTP plumbing ----------------------------------------------
 
-    private String get(String url, Duration timeout) throws Exception {
-        HttpRequest req = HttpRequest.newBuilder(URI.create(url)).timeout(timeout).GET().build();
+    private String get(URI uri, Duration timeout) throws Exception {
+        HttpRequest req = HttpRequest.newBuilder(uri).timeout(timeout).GET().build();
         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
         if (resp.statusCode() / 100 != 2) {
             String body = resp.body();
             if (body.length() > 500) body = body.substring(0, 500) + "…";
-            throw new RuntimeException("HTTP " + resp.statusCode() + " for " + url + " — body: " + body);
+            throw new RuntimeException("HTTP " + resp.statusCode() + " for " + uri + " — body: " + body);
         }
         return resp.body();
-    }
-
-    private static String enc(String s) {
-        return URLEncoder.encode(s, StandardCharsets.UTF_8);
     }
 
     /**
