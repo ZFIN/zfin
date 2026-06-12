@@ -11,6 +11,7 @@ import org.zfin.zirc.api.jsonschema.StringSchema;
 import org.zfin.zirc.api.uischema.Control;
 import org.zfin.zirc.api.uischema.Group;
 import org.zfin.zirc.api.uischema.Options;
+import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Phenotype;
@@ -46,6 +47,30 @@ public final class ZircPhenotypeFormSchema {
             BiConsumer<Phenotype, JsonNode> write) {
     }
 
+    /**
+     * Canonical segregation patterns (ZFIN-10348). Rendered as a
+     * singleSelect dropdown — one inheritance pattern per phenotype, stored
+     * as a 0/1-element array in the {@code text[]} column. The
+     * {@link #NON_MENDELIAN} value gates the Non-Mendelian %/comment reveal.
+     */
+    private static final List<String> SEGREGATION_OPTIONS = List.of(
+            "Mendelian recessive",
+            "Mendelian dominant",
+            "Non-Mendelian");
+
+    private static final String NON_MENDELIAN = "Non-Mendelian";
+
+    /**
+     * Canonical phenotype types (ZFIN-10349). Rendered as a singleSelect
+     * dropdown with an "Other" free-text entry for values outside the list.
+     * One type per phenotype, stored as a 0/1-element array in the
+     * {@code text[]} column.
+     */
+    private static final List<String> PHENOTYPE_TYPE_OPTIONS = List.of(
+            "Zygotic (Z)",
+            "Maternal (M)",
+            "Maternal-Zygotic (M-Z)");
+
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("description",             StringSchema.of("Description", 5000));
@@ -73,6 +98,11 @@ public final class ZircPhenotypeFormSchema {
         // All groups are headless — the inline phenotype editor card
         // already carries the "Phenotype #N — <description-snippet>"
         // header. Group structure is retained as a layout container.
+        // Non-Mendelian %/comment only render once "Non-Mendelian" is among
+        // the selected segregation patterns (ZFIN-10348).
+        Rule showWhenNonMendelian =
+                Rule.showWhenContains("#/properties/segregation", NON_MENDELIAN);
+
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         // The parent phenotype card shows the description snippet —
@@ -92,26 +122,26 @@ public final class ZircPhenotypeFormSchema {
                         new Control("#/properties/zircImagePermission",
                                 Options.of().widget("yesNoRadio"), null)
                 )),
-                Group.of(null, List.of(
-                        new Control("#/properties/nonMendelianPercentage",
-                                Options.of().suffix("%"), null),
-                        new Control("#/properties/nonMendelianComment",
-                                Options.of().multi(true), null)
-                )),
+                // Segregation sits directly below image permissions
+                // (ZFIN-10348). The %/comment fields follow it and only
+                // reveal when Non-Mendelian is selected.
                 Group.of(null, List.of(
                         new Control("#/properties/segregation",
                                 Options.of()
-                                        .widget("stringList")
-                                        .placeholder("Segregation pattern")
-                                        .addLabel("+ Add segregation"),
-                                null)
+                                        .widget("singleSelect")
+                                        .standardValues(SEGREGATION_OPTIONS)
+                                        .noOther(true),
+                                null),
+                        new Control("#/properties/nonMendelianPercentage",
+                                Options.of().suffix("%"), showWhenNonMendelian),
+                        new Control("#/properties/nonMendelianComment",
+                                Options.of().multi(true), showWhenNonMendelian)
                 )),
                 Group.of(null, List.of(
                         new Control("#/properties/type",
                                 Options.of()
-                                        .widget("stringList")
-                                        .placeholder("Phenotype type")
-                                        .addLabel("+ Add phenotype type"),
+                                        .widget("singleSelect")
+                                        .standardValues(PHENOTYPE_TYPE_OPTIONS),
                                 null)
                 ))
         ));

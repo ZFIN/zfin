@@ -211,6 +211,10 @@
         "scope" : "#/properties/alleleDesignation",
         "type" : "Control"
       }, {
+        "options" : {
+          "standardValues" : [ "Null (complete loss of function)", "Hypomorphic (partial loss of function)", "Hypermorphic (gain of function, increased activity)", "Neomorphic (gain of function, new function)", "Unknown" ],
+          "widget" : "selectWithOther"
+        },
         "scope" : "#/properties/mutationType",
         "type" : "Control"
       }, {
