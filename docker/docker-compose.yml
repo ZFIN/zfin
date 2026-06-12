@@ -61,6 +61,8 @@ services:
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BOWTIE_PATH}/bowtie:/opt/misc/bowtie
+      - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
@@ -150,6 +152,8 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BOWTIE_PATH}/bowtie:/opt/misc/bowtie
+      - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
@@ -175,6 +179,8 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BOWTIE_PATH}/bowtie:/opt/misc/bowtie
+      - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
@@ -185,6 +191,8 @@ services:
       TZ: ${TZ}
     volumes:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BOWTIE_PATH}/bowtie:/opt/misc/bowtie
+      - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
   mailpit:
     image: axllent/mailpit
@@ -224,6 +232,8 @@ services:
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_BOWTIE_PATH}/bowtie:/opt/misc/bowtie
+      - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files

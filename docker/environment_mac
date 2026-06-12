@@ -5,6 +5,9 @@ DOCKER_DB_UNLOADS_PATH=~/development/unloads/db
 DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
 DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=~/development/blast
 DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
+# Host dir containing bowtie/ and bowtie2/ subdirs (each with the tool binaries).
+# Mounted to /opt/misc/bowtie and /opt/misc/bowtie2, mirroring the ab-blast pattern.
+DOCKER_BOWTIE_PATH=~/development/bowtie
 DOCKER_RESEARCH_PATH=~/development/research
 DOCKER_DOWNLOADS_PATH=~/development/download-files
 DOCKER_LOADUP_PATH=~/development/loadUp
