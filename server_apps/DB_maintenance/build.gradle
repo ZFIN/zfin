@@ -9,6 +9,17 @@ if (project.hasProperty("jobName")) {
     ext.cmdargs = ""
 }
 
+// Every JavaExec task here uses sourceSets.main.runtimeClasspath, which includes
+// home/WEB-INF/classes (the dir the root-project copyClasspathTemplates task
+// writes into). Gradle 8.x strict validation fails any such task without an
+// explicit dependency edge. The root build.gradle wires this for its own
+// JavaExec tasks, but tasks.withType only sees the project it runs in, so the
+// subproject tasks need their own edge to the root task.
+// TODO: this can be replaced once we use the conventional path for src/main/resources/...
+tasks.withType(JavaExec).configureEach {
+    dependsOn rootProject.tasks.named('copyClasspathTemplates')
+}
+
 task updateDOIs(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.datatransfer.doi.UpdateDOIJob'
