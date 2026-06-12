@@ -19,10 +19,14 @@ insert into phenotype_source_generated_temp (pg_genox_zdb_id, pg_fig_zdb_id, pg_
 select distinct genox_id, fig_id, start_id, end_id
   from tmp_pheno;
 
+-- The three inserts below SELECT DISTINCT: the expression / labeling / part-of
+-- joins fan out (a single observation is backed by several result/statement
+-- rows) and project identical tuples, which would otherwise leave pure
+-- duplicate rows in the mart. psg and pgcm already DISTINCT for the same reason.
 insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id, psg_mrkr_Relation, psg_e1a_zdb_id, psg_e1_relation_name,
                                                   psg_e1b_zdb_id, psg_e2a_zdb_id, psg_e2_relation_name,
                                                   psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id, psg_pre_eap_phenotype)
-  select pg_id, xpatex_gene_zdb_id, 'expression', xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, '', '', '', ept_tag, ept_quality_term_zdb_id, 'f'
+  select distinct pg_id, xpatex_gene_zdb_id, 'expression', xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, '', '', '', ept_tag, ept_quality_term_zdb_id, false
     from expression_experiment2, expression_figure_stage, expression_result2, expression_phenotype_term, phenotype_source_generated_temp
     where xpatex_zdb_id = efs_xpatex_zdb_id
     and efs_pk_id = xpatres_efs_id
@@ -36,7 +40,7 @@ insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id, ps
 insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id,  psg_mrkr_Relation,psg_e1a_zdb_id, psg_e1_relation_name,
                                                   psg_e1b_zdb_id, psg_e2a_zdb_id, psg_e2_relation_name,
                                                   psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id, psg_pre_eap_phenotype)
-  select pg_id, xpatex_atb_zdb_id, 'labeling', xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, '', '', '', ept_tag, ept_quality_term_zdb_id, 'f'
+  select distinct pg_id, xpatex_atb_zdb_id, 'labeling', xpatres_superterm_zdb_id, ept_relational_term, xpatres_subterm_zdb_id, '', '', '', ept_tag, ept_quality_term_zdb_id, false
     from expression_experiment2, expression_figure_stage, expression_result2, expression_phenotype_term, phenotype_source_generated_temp
     where xpatex_zdb_id = efs_xpatex_zdb_id
     and efs_pk_id = xpatres_efs_id
@@ -50,7 +54,7 @@ insert into phenotype_observation_generated_temp (psg_pg_id, psg_mrkr_Zdb_id,  p
 insert into phenotype_observation_generated_temp (psg_pg_id,  psg_e1a_zdb_id, psg_e1_relation_name,
                                                   psg_e1b_zdb_id, psg_e2a_zdb_id, psg_e2_relation_name,
                                                   psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id, psg_pre_eap_phenotype)
-  select pg_id, phenos_entity_1_superterm_zdb_id, 'part of', phenos_entity_1_subterm_Zdb_id,
+  select distinct pg_id, phenos_entity_1_superterm_zdb_id, 'part of', phenos_entity_1_subterm_Zdb_id,
          phenos_entity_2_superterm_zdb_id, 'part of', phenos_entity_2_subterm_Zdb_id,
          phenos_tag, phenos_quality_zdb_id, case when phenox_created_date < '2016-02-15 00:00:00'::date then true else false end
     from phenotype_experiment, phenotype_statement, phenotype_source_generated_temp

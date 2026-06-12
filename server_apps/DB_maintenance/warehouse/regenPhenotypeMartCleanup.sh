@@ -26,16 +26,9 @@ if [ $? -ne 0 ]; then
     exit 1;
 fi
 
-for i in phenotype_source_generated phenotype_observation_generated phenotype_generated_curated_mapping
-do
-    TABLE=${i}_old_
-    echo "Cleaning $TABLE";
-    echo "select regen_cleanup_renamed_tables('$TABLE')" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
-    if [ $? -ne 0 ]; then
-        echo "regen_cleanup_renamed_tables('$TABLE') failed";
-        exit 1;
-    fi
-done
+# The phenotype_*_generated tables are now maintained by an incremental apply
+# (refreshPhenotypeMart.sql) rather than rename-and-swap, so they no longer
+# leave *_old_ tables to clean up.
 
 date;
 echo "done with regen finish cleanup";

@@ -24,10 +24,10 @@ set phenotypeMartScripts=( begin.sql \
 	     commit.sql \
 	    );
  
-set regenPhenotypeMartScripts=( begin.sql \
-	     refreshPhenotypeMart.sql \
-	     commit.sql \
-	     );
+# refreshPhenotypeMart.sql manages its own transactions (it runs the slow
+# rebuild and the fast lock-timeout-guarded swap as two separate transactions),
+# so it must NOT be wrapped in an outer begin/commit here.
+set regenPhenotypeMartScripts=( refreshPhenotypeMart.sql );
 
 touch $FULL_SCRIPT_FILE
 touch $CONVERT_PHENOTYPEMART_FILE
