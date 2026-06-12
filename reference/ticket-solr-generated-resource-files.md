@@ -39,15 +39,26 @@ produced and kept fresh.
 |------|--------|-------|
 | `conf/all-term-contains-synonyms.txt` | DB `all_term_contains` (term containment) | 47 MB; analyzer synonyms |
 | `conf/all-term-contains-synonyms-reversed.txt` | same query, reversed direction | 47 MB |
-| `conf/organism-name.txt` | `organism` table | tiny |
-| `conf/reporter-names.txt` | EFG markers (`ZDB-EFG…`) | tiny |
+| `conf/organism-name.txt` | `organism.organism_common_name` | tiny; mildly stale (40 in file vs 44 in DB) |
+| `conf/reporter-names.txt` | EFG marker abbrevs (`ZDB-EFG…`) | tiny; **~3× stale** (76 in file vs 227 in DB — KeepWordFilter is dropping ~150 current reporters) |
 | `data/external_popularity.txt` | prod Apache access logs | ~11 MB; `ExternalFileField` |
 
 ## Out of scope
 
-- **Hand-curated small config files stay in git** (stopwords, colors,
-  country/organism/superstage synonyms, `wdgff_types.txt`, `protwords.txt`, etc.) —
-  these are config, not generated data, and are correctly version-controlled.
+These stay in git — but they fall into two groups (classified by **whether a DB
+source exists**, not by whether a `generate-*.sql` happens to exist):
+
+- **Truly static config** — `stopwords.txt`, `term_stopwords.txt`,
+  `publication-keyword-stopwords.txt`, `protwords.txt`, `wdgff_types.txt`,
+  `colors.txt`, `country-synonyms.txt`, `chromosome_keepwords.txt`,
+  `superstage-keepwords.txt`, `superstage-synonyms.txt`. No DB source; rarely change.
+- **Hand-curated, *no* DB source, but can drift** — `organism-abbrev.txt` (`Hsa`,
+  `Dme`), `organism-synonyms.txt` (`Hsa => Human`…), `reporter-color-synonyms.txt`
+  (`GFP => Green`…). Verified there is **nothing to generate them from** (the
+  `organism` table has only `organism_common_name`; fluorophore→color is domain
+  knowledge, not a column). A job **cannot** produce these — but they *can* fall
+  behind as species/fluorophores are added, so they want **occasional human review**,
+  not automation. Flagging so they aren't mistaken for "set and forget."
 - **Already done** (commit `ba292306b5`, do not redo): removed the dead
   `admin-extra.html`, `scripts.conf`, `synonyms.txt`, `zfin_synonyms.txt`, and the
   stale `conf/popularity.txt`.
