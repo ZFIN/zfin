@@ -369,10 +369,10 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,restart,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,restart"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
-            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,unittests-quiet"/>
 
     <target name="pre-deploy" depends="do,gwt,npmInstall,npmBuild,deployGitInfoFile,gradle-tomcat-deploy"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
