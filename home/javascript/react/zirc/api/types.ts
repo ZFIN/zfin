@@ -168,8 +168,8 @@ export interface PhenotypeDTO {
     zircImagePermission: boolean | null;
     nonMendelianPercentage: number | null;
     nonMendelianComment: string | null;
-    segregation: string[];
-    type: string[];
+    segregation: string | null;
+    type: string | null;
 }
 
 export interface AutocompleteItemDTO {

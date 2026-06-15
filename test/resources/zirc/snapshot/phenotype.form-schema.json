@@ -24,11 +24,9 @@
         "type" : [ "number", "null" ]
       },
       "segregation" : {
-        "items" : {
-          "type" : "string"
-        },
+        "maxLength" : 255,
         "title" : "Segregation",
-        "type" : "array"
+        "type" : [ "string", "null" ]
       },
       "stage" : {
         "maxLength" : 255,
@@ -36,11 +34,9 @@
         "type" : [ "string", "null" ]
       },
       "type" : {
-        "items" : {
-          "type" : "string"
-        },
+        "maxLength" : 255,
         "title" : "Phenotype type",
-        "type" : "array"
+        "type" : [ "string", "null" ]
       },
       "zfinImagePermission" : {
         "title" : "ZFIN image permission",
@@ -94,7 +90,7 @@
         "options" : {
           "noOther" : true,
           "standardValues" : [ "Mendelian recessive", "Mendelian dominant", "Non-Mendelian" ],
-          "widget" : "singleSelect"
+          "widget" : "selectWithOther"
         },
         "scope" : "#/properties/segregation",
         "type" : "Control"
@@ -105,9 +101,7 @@
         "rule" : {
           "condition" : {
             "schema" : {
-              "contains" : {
-                "const" : "Non-Mendelian"
-              }
+              "enum" : [ "Non-Mendelian" ]
             },
             "scope" : "#/properties/segregation"
           },
@@ -122,9 +116,7 @@
         "rule" : {
           "condition" : {
             "schema" : {
-              "contains" : {
-                "const" : "Non-Mendelian"
-              }
+              "enum" : [ "Non-Mendelian" ]
             },
             "scope" : "#/properties/segregation"
           },
@@ -138,7 +130,7 @@
       "elements" : [ {
         "options" : {
           "standardValues" : [ "Zygotic (Z)", "Maternal (M)", "Maternal-Zygotic (M-Z)" ],
-          "widget" : "singleSelect"
+          "widget" : "selectWithOther"
         },
         "scope" : "#/properties/type",
         "type" : "Control"
