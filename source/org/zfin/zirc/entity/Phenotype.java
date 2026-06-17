@@ -13,15 +13,13 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
 /**
- * Per-mutation phenotype description. {@code p_segregation} and {@code p_type} are stored
- * as native PostgreSQL {@code text[]} arrays (per ZFIN-10162 simplification — replaced
- * the original phenotype_segregation / phenotype_type child tables).
+ * Per-mutation phenotype description. {@code p_segregation} and {@code p_type} are
+ * single-valued scalar {@code text} columns — one inheritance pattern and one
+ * phenotype type per phenotype, edited via single-select dropdowns.
  */
 @Entity(name = "ZircPhenotype")
 @Table(schema = "zirc", name = "phenotype")
@@ -69,12 +67,10 @@ public class Phenotype implements Serializable {
     @Column(name = "p_non_mendelian_comment")
     private String nonMendelianComment;
 
-    @Column(name = "p_segregation", columnDefinition = "text[]")
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] segregation;
+    @Column(name = "p_segregation")
+    private String segregation;
 
-    @Column(name = "p_type", columnDefinition = "text[]")
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] type;
+    @Column(name = "p_type")
+    private String type;
 
 }

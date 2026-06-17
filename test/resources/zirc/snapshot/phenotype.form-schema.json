@@ -24,11 +24,9 @@
         "type" : [ "number", "null" ]
       },
       "segregation" : {
-        "items" : {
-          "type" : "string"
-        },
+        "maxLength" : 255,
         "title" : "Segregation",
-        "type" : "array"
+        "type" : [ "string", "null" ]
       },
       "stage" : {
         "maxLength" : 255,
@@ -36,11 +34,9 @@
         "type" : [ "string", "null" ]
       },
       "type" : {
-        "items" : {
-          "type" : "string"
-        },
+        "maxLength" : 255,
         "title" : "Phenotype type",
-        "type" : "array"
+        "type" : [ "string", "null" ]
       },
       "zfinImagePermission" : {
         "title" : "ZFIN image permission",
@@ -92,13 +88,39 @@
     }, {
       "elements" : [ {
         "options" : {
+          "noOther" : true,
+          "standardValues" : [ "Mendelian recessive", "Mendelian dominant", "Non-Mendelian" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/segregation",
+        "type" : "Control"
+      }, {
+        "options" : {
           "suffix" : "%"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "Non-Mendelian" ]
+            },
+            "scope" : "#/properties/segregation"
+          },
+          "effect" : "SHOW"
         },
         "scope" : "#/properties/nonMendelianPercentage",
         "type" : "Control"
       }, {
         "options" : {
           "multi" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "Non-Mendelian" ]
+            },
+            "scope" : "#/properties/segregation"
+          },
+          "effect" : "SHOW"
         },
         "scope" : "#/properties/nonMendelianComment",
         "type" : "Control"
@@ -107,20 +129,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "addLabel" : "+ Add segregation",
-          "placeholder" : "Segregation pattern",
-          "widget" : "stringList"
-        },
-        "scope" : "#/properties/segregation",
-        "type" : "Control"
-      } ],
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "addLabel" : "+ Add phenotype type",
-          "placeholder" : "Phenotype type",
-          "widget" : "stringList"
+          "standardValues" : [ "Zygotic (Z)", "Maternal (M)", "Maternal-Zygotic (M-Z)" ],
+          "widget" : "selectWithOther"
         },
         "scope" : "#/properties/type",
         "type" : "Control"
