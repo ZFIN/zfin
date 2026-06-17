@@ -24,8 +24,12 @@ const OTHER_SENTINEL = '__other';
  * "Other selected" is tracked as local UI state so picking Other on an empty
  * field doesn't immediately hide the revealed input again.
  *
- * Used by Background's maternal/paternal strain selects and Mutagenesis's
- * protocol select.
+ * Used by Background's maternal/paternal strain selects, Mutagenesis's
+ * protocol select, mutation type, and the phenotype segregation/type fields.
+ *
+ * TODO (optional cleanup): this is now the only select widget —
+ * Consider renaming the widget "selectWithOther" -> plain "select" (the noOther
+ * option already covers the closed-list case). Looks weird to have selectWithOther({noOther: true})
  */
 function SelectWithOtherRenderer({ data, handleChange, path, label, uischema, visible, config }: ControlProps) {
     if (visible === false) {return null;}
