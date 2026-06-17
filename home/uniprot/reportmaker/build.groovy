@@ -58,11 +58,16 @@ if (startIdx < 0 || endIdx < 0) {
     System.exit(3)
 }
 
-// Escape "</" → "<\/" so any string in the data can't break out of the
-// surrounding <script> block (e.g. an error blob containing "</script>")
-// and can't reproduce our PLACEHOLDER_END sentinel. "<\/" is JSON-legal.
-def json    = JsonOutput.prettyPrint(JsonOutput.toJson(data)).replace('</', '<\\/')
-def payload = "${START}\n        window.REPORT_DATA = ${json};\n        "
+// Gzip + Base64-encode the JSON so this matches what the Java ReportWriter
+// emits (window.REPORT_DATA_GZ); the viewer inflates it with the browser's
+// native DecompressionStream. Base64 is <script>-safe by construction — its
+// alphabet can't contain "</" to break out of the tag or reproduce the
+// PLACEHOLDER_END sentinel — so no escaping is needed.
+def json = JsonOutput.toJson(data)
+def bos  = new ByteArrayOutputStream()
+new java.util.zip.GZIPOutputStream(bos).withCloseable { it.write(json.getBytes('UTF-8')) }
+def b64  = bos.toByteArray().encodeBase64().toString()
+def payload = "${START}\n        window.REPORT_DATA_GZ = \"${b64}\";\n        "
 def out     = template.substring(0, startIdx) + payload + template.substring(endIdx)
 
 if (opts.output) {

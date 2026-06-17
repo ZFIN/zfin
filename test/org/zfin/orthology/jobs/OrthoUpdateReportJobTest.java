@@ -167,9 +167,24 @@ public class OrthoUpdateReportJobTest {
         children.forEach(c -> assertNotNull("nav count for " + c.getTitle(), c.getCount()));
 
         String html = new org.zfin.report.ReportWriter().render(report);
-        assertTrue(html.contains("window.REPORT_DATA"));
-        assertTrue(html.contains("Inconsistent ZF gene names"));
+        assertTrue(html.contains("window.REPORT_DATA_GZ"));
+        // The payload is gzipped + Base64-encoded, so assert against the
+        // inflated JSON rather than the (now opaque) HTML.
+        String json = inflateReportData(html);
+        assertTrue(json.contains("Inconsistent ZF gene names"));
         // Diff highlighting reached the output (OrthoNameDiff wraps changes in <u>).
-        assertTrue(html.contains("<u>") || html.contains("<\\/u>"));
+        assertTrue(json.contains("<u>"));
+    }
+
+    /** Extract and gunzip the {@code window.REPORT_DATA_GZ} payload from rendered report HTML. */
+    private static String inflateReportData(String html) throws Exception {
+        var matcher = java.util.regex.Pattern
+            .compile("window\\.REPORT_DATA_GZ = \"([^\"]*)\"")
+            .matcher(html);
+        assertTrue("REPORT_DATA_GZ payload present", matcher.find());
+        byte[] gz = java.util.Base64.getDecoder().decode(matcher.group(1));
+        try (var in = new java.util.zip.GZIPInputStream(new java.io.ByteArrayInputStream(gz))) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 }

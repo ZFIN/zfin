@@ -13,7 +13,7 @@
 
     <script>
         //PLACEHOLDER_START
-        window.REPORT_DATA = JSON_GOES_HERE;
+        window.REPORT_DATA_GZ = "BASE64_GZIP_GOES_HERE";
         //PLACEHOLDER_END
     </script>
 
@@ -818,10 +818,41 @@
         `;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    async function loadReportData() {
+        // Newer reports inline a gzipped + Base64-encoded payload
+        // (REPORT_DATA_GZ); older reports inline the raw JSON object
+        // (REPORT_DATA). Support both so previously generated reports keep
+        // rendering.
+        if (typeof window.REPORT_DATA_GZ === 'string') {
+            if (typeof DecompressionStream !== 'function') {
+                throw new Error('This report is compressed, but your browser does not support ' +
+                    'DecompressionStream. Please open it in a current version of Chrome, Edge, Firefox, or Safari.');
+            }
+            const bytes = Uint8Array.from(atob(window.REPORT_DATA_GZ), c => c.charCodeAt(0));
+            const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+            return JSON.parse(await new Response(stream).text());
+        }
+        return window.REPORT_DATA;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
         const root = document.getElementById('root');
-        root.innerHTML = '';
-        render(html`<${App} data=${window.REPORT_DATA} />`, root);
+        try {
+            const data = await loadReportData();
+            root.innerHTML = '';
+            render(html`<${App} data=${data} />`, root);
+        } catch (e) {
+            root.innerHTML = '';
+            const div = document.createElement('div');
+            div.className = 'error';
+            const h = document.createElement('h2');
+            h.textContent = 'Error Loading Report';
+            const p = document.createElement('p');
+            p.textContent = (e && e.message) ? e.message : String(e);
+            div.appendChild(h);
+            div.appendChild(p);
+            root.appendChild(div);
+        }
     });
 })();
 </script>
