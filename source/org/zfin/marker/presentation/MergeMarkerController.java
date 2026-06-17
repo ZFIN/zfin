@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.feature.Feature;
@@ -16,7 +17,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MergeService;
+import org.zfin.marker.MarkerMergeService;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Fish;
@@ -41,7 +42,6 @@ import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 @RequestMapping("/marker")
 public class MergeMarkerController {
 
-    private MergeMarkerValidator validator = new MergeMarkerValidator();
     private Logger logger = LogManager.getLogger(MergeMarkerController.class);
 
     @RequestMapping(value = "/merge", method = RequestMethod.GET)
@@ -67,55 +67,44 @@ public class MergeMarkerController {
         }
     }
 
+    /**
+     * Perform the merge and redirect to the surviving marker. Both the gene and antibody merge forms
+     * (merge-marker.jsp / merge-antibody.jsp) post here with the two ZDB ids. The actual merge is the
+     * shared, equivalence-tested {@link MarkerMergeService} (same logic as {@code zfin-util
+     * merge-markers}); on failure we redirect back to the merge form with an error message.
+     */
     @RequestMapping(value = "/merge", method = RequestMethod.POST)
     protected String mergeMarkers(
-            Model model
-            , @ModelAttribute("formBean") MergeBean formBean
-            , BindingResult result
-    ) throws Exception {
-        Marker markerTobeMerged = formBean.getMarkerToDelete();
-        if (markerTobeMerged == null) {
-            markerTobeMerged = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
-            formBean.setMarkerToDelete(markerTobeMerged);
-        }
-        if (markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB) || markerTobeMerged.isInTypeGroup(Marker.TypeGroup.GENE) || markerTobeMerged.isInTypeGroup(Marker.TypeGroup.MRPHLNO)) {
-            Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
-            formBean.setMarkerToDelete(markerToDelete);
-            // get abbrev
-            Marker markerToMergeInto = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(formBean.getMarkerToMergeIntoViewString());
-            formBean.setMarkerToMergeInto(markerToMergeInto);
-
-            if (markerToMergeInto == null && markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB)) {
-                Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName(formBean.getMarkerToMergeIntoViewString());
-                if (antibodyToMergeInto == null) {
-                    result.rejectValue(null, "nocode", new String[]{formBean.getMarkerToMergeIntoViewString()}, "Bad antibody name [{0}]");
-                }
-            }
-
-            if (markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB))
-                validator.validate(formBean, result);
-
-            if (result.hasErrors()) {
-                return getView(model, formBean.getZdbIDToDelete(), formBean, result);
-            }
-
-
-            try {
-                HibernateUtil.createTransaction();
-                MergeService.mergeMarker(markerToDelete, markerToMergeInto);
-                HibernateUtil.flushAndCommitCurrentSession();
-            } catch (Exception e) {
-                logger.error("Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]", e);
-                HibernateUtil.rollbackTransaction();
-                result.reject("no lookup", "Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]:\n" + e);
-                return getView(model, formBean.getZdbIDToDelete(), formBean, result);
-            }
-
-            model.addAttribute(LookupStrings.FORM_BEAN, formBean);
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
+            @RequestParam("zdbIDToDelete") String zdbIDToDelete,
+            @RequestParam("zdbIDToMergeInto") String zdbIDToMergeInto,
+            RedirectAttributes redirectAttributes
+    ) {
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        Marker markerToDelete = markerRepository.getMarkerByID(zdbIDToDelete);
+        Marker markerToMergeInto = markerRepository.getMarkerByID(zdbIDToMergeInto);
+        if (markerToDelete == null || markerToMergeInto == null) {
+            redirectAttributes.addFlashAttribute("mergeError",
+                    "Could not resolve both markers to merge (delete=" + zdbIDToDelete
+                            + ", into=" + zdbIDToMergeInto + ").");
+            return "redirect:/action/marker/merge?zdbIDToDelete=" + zdbIDToDelete;
         }
 
-        return "marker/merge-marker-finish";
+        try {
+            HibernateUtil.createTransaction();
+            // Shared, equivalence-tested merge (same logic as `zfin-util merge-markers`).
+            new MarkerMergeService(zdbIDToDelete, zdbIDToMergeInto, false).merge();
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error("Error merging marker [" + zdbIDToDelete + "] into [" + zdbIDToMergeInto + "]", e);
+            HibernateUtil.rollbackTransaction();
+            redirectAttributes.addFlashAttribute("mergeError",
+                    "Error merging " + markerToDelete.getAbbreviation() + " into "
+                            + markerToMergeInto.getAbbreviation() + ": " + e.getMessage());
+            return "redirect:/action/marker/merge?zdbIDToDelete=" + zdbIDToDelete;
+        }
+
+        // Merge succeeded: send the curator to the surviving marker (matches the Perl's redirect).
+        return "redirect:/" + zdbIDToMergeInto;
     }
 
     // looks up gene to be merged into

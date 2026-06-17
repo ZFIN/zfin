@@ -56,13 +56,6 @@ SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.
     Require not env RejectRequest
   </RequireAll>
 </Directory>
-<Directory /srv/www/*/cgi-bin*>
-  Options FollowSymLinks
-  <RequireAll>
-    Require all granted
-    Require not env RejectRequest
-  </RequireAll>
-</Directory>
 <Directory /srv/www/*/home/WEB-INF>
   Require all denied
 </Directory>

@@ -238,9 +238,12 @@
         </script>
 
 
-        <form id="mergeTheAntibodies" action="/cgi-bin/merge_markers.pl">
-            <input type="hidden" id="zdbIDToDelete" name="OID" value="${formBean.zdbIDToDelete}">
-            <input type="hidden" id="merge_oid" name="merge_oid" value="none">
+        <c:if test="${not empty mergeError}">
+            <div class="error" style="color:red; font-weight:bold;">${mergeError}</div>
+        </c:if>
+        <form id="mergeTheAntibodies" action="/action/marker/merge" method="post">
+            <input type="hidden" id="zdbIDToDelete" name="zdbIDToDelete" value="${formBean.zdbIDToDelete}">
+            <input type="hidden" id="merge_oid" name="zdbIDToMergeInto" value="none">
             <input type="hidden" id="intoMarkerAbbrev" name="intoMarkerAbbrev" value="none">
             <p/>
             Merge <a target="_blank" class="external" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> into

@@ -1,5 +1,8 @@
 package org.zfin.util.commandline;
 
+import org.zfin.framework.ToolBootstrap;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -12,7 +15,14 @@ public class CommandLineUtilityRegistry {
     private static final Map<String, UtilityInfo> UTILITIES = new LinkedHashMap<>();
 
     static {
-        // Register available utilities here
+        // Register available utilities here.
+        //
+        // Use the 4-arg register(...) for utilities that do NOT need the database (pure file/IO tools);
+        // their main() is invoked directly. Use the 5-arg register(..., requiresDatabase=true) for
+        // data tools (reports, audits, loads): they run inside ToolBootstrap.run(...), which loads
+        // ZfinProperties, brings up Hibernate, and wraps the run in a single managed transaction
+        // (commit on success, rollback on failure). Such tools should let main() return normally
+        // rather than calling System.exit(), so the transaction commits and the session closes.
         register("csv2xlsx",
                 "org.zfin.datatransfer.util.CSVToXLSXConverter",
                 "Convert CSV file to XLSX format",
@@ -24,7 +34,15 @@ public class CommandLineUtilityRegistry {
                 "Manage token storage operations",
                 "token-storage <operation> [options] \n eg. token-storage read NCBI_API_TOKEN\n     token-storage write NCBI_API_TOKEN 'your_token_value'");
 
-        // Add more utilities as they are discovered/created
+        // Merge one marker into another (port of cgi-bin/merge_markers.pl). Database-backed, so it
+        // runs inside ToolBootstrap.run's managed transaction.
+        register("merge-markers",
+                "org.zfin.marker.MergeMarkersCommandLine",
+                "Merge one marker into another (reassign references, then delete the old record)",
+                "merge-markers <zdbIdToDelete> <zdbIdToMergeInto> [--dry-run] [--skip-regen]",
+                true);
+
+        // Add more utilities as they are discovered/created.
     }
 
     /**
@@ -36,7 +54,18 @@ public class CommandLineUtilityRegistry {
      * @param usage       Usage example (without the 'zfin-util' prefix)
      */
     private static void register(String name, String mainClass, String description, String usage) {
-        UTILITIES.put(name.toLowerCase(), new UtilityInfo(name, mainClass, description, usage));
+        register(name, mainClass, description, usage, false);
+    }
+
+    /**
+     * Register a utility, specifying whether it needs the database.
+     *
+     * @param requiresDatabase if true, the utility runs inside {@link ToolBootstrap#run}, which loads
+     *                         properties, brings up Hibernate, and manages a single transaction; if
+     *                         false, its main() is invoked directly with no environment setup.
+     */
+    private static void register(String name, String mainClass, String description, String usage, boolean requiresDatabase) {
+        UTILITIES.put(name.toLowerCase(), new UtilityInfo(name, mainClass, description, usage, requiresDatabase));
     }
 
     /**
@@ -94,7 +123,32 @@ public class CommandLineUtilityRegistry {
         // Load the main class and invoke its main method
         Class<?> mainClass = Class.forName(util.mainClass);
         Method mainMethod = mainClass.getMethod("main", String[].class);
-        mainMethod.invoke(null, (Object) args);
+
+        if (util.requiresDatabase) {
+            // Run inside the ToolBootstrap environment: properties + Hibernate + a managed transaction.
+            ToolBootstrap.run(util.name, args, () -> invokeMain(mainMethod, args));
+        } else {
+            invokeMain(mainMethod, args);
+        }
+    }
+
+    /**
+     * Invoke a utility's static main(String[]), unwrapping the reflection wrapper so the utility's
+     * own exception propagates (and, for database-backed tools, reaches ToolBootstrap's rollback).
+     */
+    private static void invokeMain(Method mainMethod, String[] args) throws Exception {
+        try {
+            mainMethod.invoke(null, (Object) args);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception ex) {
+                throw ex;
+            }
+            if (cause instanceof Error err) {
+                throw err;
+            }
+            throw e;
+        }
     }
 
     /**
@@ -105,12 +159,14 @@ public class CommandLineUtilityRegistry {
         final String mainClass;
         final String description;
         final String usage;
+        final boolean requiresDatabase;
 
-        UtilityInfo(String name, String mainClass, String description, String usage) {
+        UtilityInfo(String name, String mainClass, String description, String usage, boolean requiresDatabase) {
             this.name = name;
             this.mainClass = mainClass;
             this.description = description;
             this.usage = usage;
+            this.requiresDatabase = requiresDatabase;
         }
     }
 }

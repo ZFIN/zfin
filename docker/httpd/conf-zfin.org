@@ -23,7 +23,6 @@
     </Location>
     #FIXME: Where should this point?
     Alias		/zfin_doc /research/zprod/Commons/doc
-    ScriptAlias	/cgi-bin /srv/www/zfin.org/cgi-bin
 
     RedirectMatch permanent /zirc(.*)      http://zebrafish.org/zirc$1
     RedirectMatch permanent /zf_info/stckctr/* http://zebrafish.org/zirc/home/guide.php
@@ -104,7 +103,6 @@
     ServerAlias stage.zfin.org
     SSLProxyEngine on
     DocumentRoot	/srv/www/zfin.org/home
-    ScriptAlias	/cgi-bin /srv/www/zfin.org/cgi-bin
     LogFormat "%{X-Real-IP}i %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
     #LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D \"zfin_login:%{zfin_login}C\"" timing_with_cookie
     LogFormat "{ \"@timestamp\": \"%{%Y-%m-%dT%H:%M:%S%z}t\", \"@fields\": { \"client\": \"%a\", \"duration_usec\": %D, \"status\": %s, \"request\": \"%U%q\", \"method\": \"%m\", \"referrer\": \"%{Referer}i\", \"zfin_login\": \"%{zfin_login}C\"} }" logstash_json
@@ -154,15 +152,6 @@
     <Location /users/>
         AuthType openid-connect
         Require valid-user
-    </Location>
-    <Location /cgi-bin/>
-        <If "osenv('DISABLE_OIDC') == 'true'">
-            Require all granted
-        </If>
-        <Else>
-            AuthType openid-connect
-            Require valid-user
-        </Else>
     </Location>
     <Location /jobs>
         <If "osenv('DISABLE_OIDC') == 'true'">
