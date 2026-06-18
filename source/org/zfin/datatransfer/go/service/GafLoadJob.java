@@ -87,6 +87,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected File downloadedFile3;
     protected String organization;
     protected Boolean skipDownloadIfUnchanged; //default to false
+    // ZFIN-10025 Phase 0: when true, compute the add/update/remove diff and write the
+    // reports, but perform NO database writes (no add/update/remove, no LoadFileLog). Lets
+    // the unified DANRE-mod load be QC'd against staging through the real pipeline safely.
+    protected Boolean reportOnly; //default to false
+
+    private boolean isReportOnly() {
+        return reportOnly != null && reportOnly;
+    }
 
     public int execute() {
         int exitCode = 0;
@@ -175,13 +183,18 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // requested before/after comparison applies.
             GoaLoadSnapshot beforeSnapshot = captureSnapshotIfGoa(gafOrganization);
 
-            logger.info("Before adding new one");
-            addAnnotations(gafJobData);
-            logger.info("Before updating");
-            updateAnnotations(gafJobData);
+            if (isReportOnly()) {
+                logger.info("REPORT-ONLY mode: skipping add/update/remove — diffs are reported but NOT written to the database.");
+                System.out.println("REPORT-ONLY mode: no database writes (skipping add/update/remove).");
+            } else {
+                logger.info("Before adding new one");
+                addAnnotations(gafJobData);
+                logger.info("Before updating");
+                updateAnnotations(gafJobData);
 
-            logger.info("Before removing");
-            removeAnnotations(gafJobData);
+                logger.info("Before removing");
+                removeAnnotations(gafJobData);
+            }
 
             GoaLoadSnapshot afterSnapshot = captureSnapshotIfGoa(gafOrganization);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
@@ -269,7 +282,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = null;
             HibernateUtil.closeSession();
         }
-        if (exitCode == 0) {
+        if (exitCode == 0 && !isReportOnly()) {
             logValidationReport(organizationEnum.toString(), "GAF Load Job completed successfully.", lastModified);
         }
         return exitCode;
@@ -514,6 +527,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         String parserClassName = args[5];
 
         job.skipDownloadIfUnchanged = envTrue("SKIP_DOWNLOAD_IF_UNCHANGED");
+        job.reportOnly = envTrue("GAF_LOAD_REPORT_ONLY");
 
         try {
             job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
