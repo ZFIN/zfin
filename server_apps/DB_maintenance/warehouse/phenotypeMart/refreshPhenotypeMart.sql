@@ -6,6 +6,8 @@
 -- change), and RAISE NOTICEs the per-table insert/update/delete counts (which
 -- regenPhenotypeMart.sh tees to the console).
 --
--- runPhenotypeMart.sh does not wrap this file in begin/commit; the single
--- statement below is its own transaction, so the whole apply is atomic.
+-- regenPhenotypeMart.sh runs this file in its own psql invocation, not wrapped
+-- in begin/commit; the single statement below is its own transaction, so the
+-- whole apply is atomic. It runs after regen_phenotype_mart_populate_temp_tables()
+-- has built and committed the *_temp tables in a separate, earlier transaction.
 SELECT regen_phenotype_mart();
