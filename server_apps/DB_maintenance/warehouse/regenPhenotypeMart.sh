@@ -1,4 +1,7 @@
 #!/bin/bash -e
+# pipefail so a psql failure in a "psql ... | tee" pipeline still aborts the
+# script -- tee always exits 0, which would otherwise mask the failure.
+set -o pipefail
 
 # rm old reports
 date;
@@ -10,9 +13,12 @@ rm -f $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMar
 
 
 echo "done with file delete" ;
-# build up the warehouse
-chmod +x "$ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh"
-"$ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh" $DB_NAME &> "$ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt"
+# build up the warehouse: (re)build the *_temp staging tables from source. This
+# is the slow part; it runs in its own transaction, committed before the apply
+# below, so the build/apply staging boundary holds (a failed apply can retry
+# without rebuilding). tee for console visibility; pipefail (top) unmasks a
+# psql failure that tee's exit 0 would otherwise hide.
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME -c 'SELECT regen_phenotype_mart_populate_temp_tables();' 2>&1 | tee "$ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt"
 
 if [ $? -ne 0 ]; then
  echo "regen phenotype mart (the building tables, not the public tables) failed on";
@@ -38,9 +44,12 @@ date;
 echo "done with phenotype mart building public" ;
 
 
-# move the current table data to backup, move the new data to current.
+# apply the freshly-built *_temp tables onto the live tables, incrementally.
 
-${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME < $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql &> $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
+# tee so the apply's per-table insert/update/delete NOTICEs show on the Jenkins
+# console as well as the report file. pipefail (above) keeps a psql failure from
+# being masked by tee.
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DB_NAME < $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/refreshPhenotypeMart.sql 2>&1 | tee $ROOT_PATH/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 if [ $? -ne 0 ]; then
  echo "refresh phenotype mart (the public tables) failed and was rolled back";
