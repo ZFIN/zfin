@@ -40,7 +40,10 @@ public record UpdatesDTO(
         String whenUpdatedString,
 
         @JsonView(View.API.class)
-        String submitterZdbID
+        String submitterZdbID,
+
+        @JsonView(View.API.class)
+        String recordID
 ) {
 
     @JsonView(View.API.class)
@@ -70,7 +73,8 @@ public record UpdatesDTO(
                 update.getComments(),
                 update.getWhenUpdated(),
                 formatDate(update.getWhenUpdated()),
-                zdbID
+                zdbID,
+                update.getRecID()
         );
     }
 
@@ -128,7 +132,9 @@ public record UpdatesDTO(
                 display,
                 date.getTime(),
                 formatCalendar(date),
-                submitterZdbID
+                submitterZdbID,
+                // publications are not merged, so publication tracking events have no merged-away source record
+                null
         );
     }
 }

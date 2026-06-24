@@ -19,6 +19,21 @@ const EntityUpdatesTable = ({entityId, fieldNameFilter}) => {
 
     const columns = [
         {
+            label: 'Record',
+            content: ({recordID}) => {
+                if (!recordID) {
+                    return null;
+                }
+                const merged = recordID !== entityId;
+                return (
+                    <a href={'/' + recordID} target='_blank' rel='noreferrer'
+                        title={merged ? 'History attached to ' + recordID + ', which was merged into ' + entityId : undefined}>
+                        {recordID}{merged ? ' (merged)' : ''}
+                    </a>
+                );
+            },
+        },
+        {
             label: 'Submitter',
             content: ({submitterName, submitterZdbID}) => {
                 return submitterZdbID ? <a href={'/' + submitterZdbID} target='_blank' rel='noreferrer'>{submitterName}</a> : <span>{submitterName}</span>;

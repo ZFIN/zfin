@@ -93,6 +93,22 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getReplacementsForNewZdbID() {
+        // ZDB-GENE-001106-12 (among others) was merged into the surviving gene ZDB-GENE-001106-11
+        String survivingZdbID = "ZDB-GENE-001106-11";
+        List<ReplacementZdbID> mergedAway = infrastructureRepository.getReplacementsForNewZdbID(survivingZdbID);
+
+        assertNotNull(mergedAway);
+        assertThat("merged-away records found for survivor", mergedAway.size(), greaterThan(0));
+        // every returned record must point to the survivor as its replacement
+        assertTrue("all replacements point to the survivor",
+                mergedAway.stream().allMatch(r -> survivingZdbID.equals(r.getReplacementZdbID())));
+        // and a known merged-away id is among them
+        assertTrue("known merged-away id present",
+                mergedAway.stream().anyMatch(r -> "ZDB-GENE-001106-12".equals(r.getOldZdbID())));
+    }
+
+    @Test
     public void dataAliasAbbrev() {
         String name = "acerebellar";
         List<String> list = infrastructureRepository.getDataAliasesWithAbbreviation(name);
