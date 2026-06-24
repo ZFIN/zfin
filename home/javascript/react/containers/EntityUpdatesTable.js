@@ -26,8 +26,12 @@ const EntityUpdatesTable = ({entityId, fieldNameFilter}) => {
                 }
                 const merged = recordID !== entityId;
                 return (
-                    <a href={'/' + recordID} target='_blank' rel='noreferrer'
-                        title={merged ? 'History attached to ' + recordID + ', which was merged into ' + entityId : undefined}>
+                    <a
+                        href={'/' + recordID}
+                        target='_blank'
+                        rel='noreferrer'
+                        title={merged ? 'History attached to ' + recordID + ', which was merged into ' + entityId : undefined}
+                    >
                         {recordID}{merged ? ' (merged)' : ''}
                     </a>
                 );
