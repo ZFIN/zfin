@@ -174,6 +174,13 @@ public class OrthoUpdateReportJobTest {
         assertTrue(json.contains("Inconsistent ZF gene names"));
         // Diff highlighting reached the output (OrthoNameDiff wraps changes in <u>).
         assertTrue(json.contains("<u>"));
+        // Gene-symbol columns are present (ZFIN + human + mouse abbreviations) so
+        // curators can spot abbreviation-only changes.
+        assertTrue(json.contains("ZFIN symbol"));
+        assertTrue(json.contains("Human symbol"));
+        assertTrue(json.contains("Mouse symbol"));
+        // The parsed human ortholog symbol made it into a row cell.
+        assertTrue(json.contains("MYGA"));
     }
 
     /** Extract and gunzip the {@code window.REPORT_DATA_GZ} payload from rendered report HTML. */

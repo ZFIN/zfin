@@ -205,23 +205,34 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
     private ReportTable inconsistencyTable(List<IncRow> rows, String schema, String title, boolean dated) {
         ReportTable table = new ReportTable().schemaRef(schema).title(title);
         for (IncRow r : rows) {
-            // Diff the ZFIN gene name against whichever ortholog name is present.
+            // Diff the ZFIN gene name/symbol against whichever ortholog value is
+            // present (a row carries human, mouse, or both). Symbols get their
+            // own columns because sometimes only the abbreviation differs.
             String hName = orEmpty(r.hName);
             String mName = orEmpty(r.mName);
             String zName = orEmpty(r.zName);
+            String hSym  = orEmpty(r.hSym);
+            String mSym  = orEmpty(r.mSym);
+            String zSym  = orEmpty(r.symbol);
+            String otherName = !hName.isEmpty() ? hName : mName;
+            String otherSym  = !hSym.isEmpty()  ? hSym  : mSym;
             if (dated) {
                 table.addRow(
                     "firstSeen", orEmpty(r.firstSeen),
                     "zdbID",     r.zdbId,
-                    "symbol",    orEmpty(r.symbol),
-                    "zfinName",  OrthoNameDiff.highlightOld(zName, !hName.isEmpty() ? hName : mName),
+                    "zfinSym",   otherSym.isEmpty() ? zSym : OrthoNameDiff.highlightOld(zSym, otherSym),
+                    "humanSym",  hSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, hSym),
+                    "mouseSym",  mSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, mSym),
+                    "zfinName",  OrthoNameDiff.highlightOld(zName, otherName),
                     "humanName", hName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, hName),
                     "mouseName", mName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, mName));
             } else {
                 table.addRow(
                     "zdbID",     r.zdbId,
-                    "symbol",    orEmpty(r.symbol),
-                    "zfinName",  OrthoNameDiff.highlightOld(zName, !hName.isEmpty() ? hName : mName),
+                    "zfinSym",   otherSym.isEmpty() ? zSym : OrthoNameDiff.highlightOld(zSym, otherSym),
+                    "humanSym",  hSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, hSym),
+                    "mouseSym",  mSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, mSym),
+                    "zfinName",  OrthoNameDiff.highlightOld(zName, otherName),
                     "humanName", hName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, hName),
                     "mouseName", mName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, mName));
             }
@@ -303,17 +314,21 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
                 .addColumn(ReportTable.Column.of("gene",     "GENE links"))
                 .addColumn(ReportTable.Column.of("flybase",  "FLYBASE links")))
             .tableSchema(SCHEMA_INCONSISTENT, new Report.TableSchema()
-                .description("ZFIN gene names inconsistent with the NCBI ortholog name — new since the last run.")
+                .description("ZFIN gene names/symbols inconsistent with the NCBI ortholog — new since the last run.")
                 .addColumn(ReportTable.Column.of("zdbID",     "ZDB ID", "zdbID"))
-                .addColumn(ReportTable.Column.of("symbol",    "Symbol"))
+                .addColumn(ReportTable.Column.of("zfinSym",   "ZFIN symbol", "htmlCell"))
+                .addColumn(ReportTable.Column.of("humanSym",  "Human symbol", "htmlCell"))
+                .addColumn(ReportTable.Column.of("mouseSym",  "Mouse symbol", "htmlCell"))
                 .addColumn(ReportTable.Column.of("zfinName",  "ZFIN gene name", "htmlCell"))
                 .addColumn(ReportTable.Column.of("humanName", "Human ortholog name", "htmlCell"))
                 .addColumn(ReportTable.Column.of("mouseName", "Mouse ortholog name", "htmlCell")))
             .tableSchema(SCHEMA_INCONSISTENT_DATED, new Report.TableSchema()
-                .description("Full current set of ZFIN/ortholog name inconsistencies, newest first.")
+                .description("Full current set of ZFIN/ortholog name & symbol inconsistencies, newest first.")
                 .addColumn(ReportTable.Column.of("firstSeen", "First seen"))
                 .addColumn(ReportTable.Column.of("zdbID",     "ZDB ID", "zdbID"))
-                .addColumn(ReportTable.Column.of("symbol",    "Symbol"))
+                .addColumn(ReportTable.Column.of("zfinSym",   "ZFIN symbol", "htmlCell"))
+                .addColumn(ReportTable.Column.of("humanSym",  "Human symbol", "htmlCell"))
+                .addColumn(ReportTable.Column.of("mouseSym",  "Mouse symbol", "htmlCell"))
                 .addColumn(ReportTable.Column.of("zfinName",  "ZFIN gene name", "htmlCell"))
                 .addColumn(ReportTable.Column.of("humanName", "Human ortholog name", "htmlCell"))
                 .addColumn(ReportTable.Column.of("mouseName", "Mouse ortholog name", "htmlCell")))
