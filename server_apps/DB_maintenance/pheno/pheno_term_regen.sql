@@ -1,6 +1,15 @@
 -- Regenerate pheno_term_fast_search using rename-and-recreate pattern
 -- to avoid deadlocks with the indexer during the swap.
 -- Old tables are renamed with a timestamp suffix for later cleanup.
+--
+-- TODO(ZFIN-10350): consider converting this to an incremental apply like the
+-- phenotype mart tables (regen_phenotype_mart). This table still rebuilds
+-- wholesale every run while its FK parent (phenotype_observation_generated) is
+-- now mutated incrementally, which is the mismatch that forced the ON DELETE
+-- CASCADE on pheno_term_fast_search_psg_fk below. An incremental rebuild
+-- (insert new / update changed / delete gone, matched on natural key) would
+-- keep ptfs_psg_id stable across runs and remove the cross-run FK churn, so the
+-- cascade would no longer be load-bearing.
 
 DO $$
 DECLARE
@@ -220,9 +229,18 @@ ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
 ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
     OWNED BY NONE;
 
--- Add foreign key constraints
+-- Add foreign key constraints.
+-- ON DELETE CASCADE: phenotype_observation_generated is now maintained by an
+-- incremental apply (regen_phenotype_mart, ZFIN-10350) that DELETEs gone psg
+-- rows in place. This fast-search table is still rebuilt wholesale and is
+-- rebuilt LATER in the same regen run, so between the mart apply and this
+-- rebuild its FK still points at the prior run's psg rows. Without the cascade
+-- the incremental POG deletes violate this constraint. The orphaned search
+-- rows the cascade drops are rebuilt by this very script moments later, so
+-- cascading them is safe.
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
-    FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id);
+    FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id)
+    ON DELETE CASCADE;
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_term_fk
     FOREIGN KEY (ptfs_term_zdb_id) REFERENCES term (term_zdb_id);
 
