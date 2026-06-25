@@ -1,0 +1,27 @@
+# Sample inputs for the analyze diagnostic
+# (gradle solrDiag -PdiagArgs="analyze server_apps/solr/diagnostics/solr-analyze-inputs.txt <out.json>").
+# One value per line; blank lines and `#` comments ignored.
+# Extend with real query strings from access logs.
+
+# The original ZFIN-10262 bug case: AND-query with inline tags
+adssl<sup>hi3081Tg</sup>
+
+# Common Tg construct names with sub/sup tags
+Tg(EF1a:GFP)<sup>hi1234Tg</sup>
+pdgfra<sup>+/-</sup>
+
+# Compound (semicolon-separated allele list)
+adssl<sup>hi3081Tg</sup>;cdkn1a<sup>hi3</sup>
+
+# Italic / bold inline markup
+<i>foo</i> bar
+<b>strong</b> term
+
+# Control: same content without HTML, must continue to work
+adssl hi3081Tg
+plain text no html
+
+# Edge: empty tag, malformed tag, unicode
+foo<>bar
+foo<unclosed bar
+naïve résumé

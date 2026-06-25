@@ -100,6 +100,8 @@ docker compose run --rm compile bash -lc "gradle getLatestSolrIndex"
 docker compose up --detach solr
 ```
 
+`getLatestSolrIndex` restores the most recent nightly snapshot produced by the Jenkins reindex job. For the producer side (how the snapshot is built, how to migrate entities off DIH, how to recover from a failed nightly), see [solr-reindex.md](solr-reindex.md).
+
 ### 4. Deploy Jenkins
 
 ```bash

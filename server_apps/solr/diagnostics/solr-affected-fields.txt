@@ -1,0 +1,45 @@
+# Named fields in schema.xml that use one of the field types modified by
+# ZFIN-10262 (text, edgytext, simplified-international-text). Comment
+# out fields you don't want to dump terms for; large multivalued fields
+# (text, abstract, name, full_name) will be the slowest.
+
+abstract
+affected_gene_full_name
+affected_gene_previous_name
+antigen_gene_full_name
+antigen_gene_previous_name
+attributed_publication
+author_string
+author_year
+biography
+caption
+coding_sequence_full_name
+definition
+email_address
+engineered_region_full_name
+expressed_gene_full_name
+expressed_gene_previous_name
+expression_observation
+full_name
+gene_full_name
+gene_full_name_ac
+gene_previous_name
+gene_previous_name_ac
+inserted_in_gene_full_name
+inserted_in_gene_previous_name
+journal_name
+lab_member_name
+name
+note
+person_name
+postal_address
+promoter_full_name
+related_marker
+related_species_name_ac
+reporter_gene_full_name
+reporter_gene_previous_name
+target_full_name
+target_previous_name
+text
+zebrafish_gene_full_name
+zebrafish_gene_previous_name
