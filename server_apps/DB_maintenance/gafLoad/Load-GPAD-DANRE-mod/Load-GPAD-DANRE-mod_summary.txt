@@ -1,13 +1,13 @@
 Gaf Entries
 processed: 142612 gaf entries 
-added: 25826
+added: 57496
 updated: 1807
 removed: 0
-errors: 52273
+errors: 20603
 existing: 62704
 cell Terms: 0
 subset Failures: 17
 col 8 Inferences with Pipes: 0
 col 8 Inferences with Commas: 0
 col 8 Inferences with Both: 0
-time: 971.232 seconds
+time: 940.462 seconds

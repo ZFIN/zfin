@@ -138,6 +138,8 @@ Ran `load-gpad-danre-mod` (report-only) end-to-end through the real pipeline (ge
 
 Report artifacts from this run are committed under `server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod/` (SOURCEROOT; the live run writes to TARGETROOT which is not committed): `*_summary.txt` and `*_error_summary.txt`. The 75 MB `_details.txt` and 2.3 MB `.html` are not committed (size).
 
+**Run 2 (2026-06-25) — after mapping GO_REF:0000002 + 0000003 (§7 decision):** errors **52,273 → 20,603** (−31,670); added **25,826 → 57,496**; `GO_REF not known` **34,044 → 2,180**. The 31,864 cleared split into 31,670 added + 194 newly-detected duplicates (`Duplicate annotation entry` 77 → 271) — accounts exactly. Remaining errors collapse to one big item — **`ECO:0007322` SubCell IEA (17,350)**, the `eco_go_mapping` gap — plus small open decisions: `GO_REF:0000108` GOC (2,125), `EXP` (105), `ECO:0005547` (21), `GO_REF:0000115` RNAcentral (55).
+
 ---
 
 ## 5. Pre-adoption blockers (from status doc §2, still gating)
@@ -158,7 +160,12 @@ Report artifacts from this run are committed under `server_apps/DB_maintenance/g
 ---
 
 ## 7. Open decisions
-- **`GO_REF:0000002` InterPro2GO IEA (28,691 rows, NEW from §4a):** map to a pub and take from DANRE-mod, or keep excluding and keep loading via UniProt-Secondary interpro2go? Biggest single error bucket; ties to the secondary-load consolidation.
+- **✅ DECIDED (2026-06-25) — *2go GO_REFs come from DANRE-mod.** The UniProt-Secondary load will **drop all the *2go GO-mapping handlers** (interpro2go / ec2go / kw2go), so their annotations must now come from the DANRE-mod file. **Map** these GO_REFs to ZFIN pubs (do NOT exclude):
+    - `GO_REF:0000002` → InterPro2GO (InterPro / ECO:0000256, **28,691 rows**) — reuse existing InterPro2GO pub `ZDB-PUB-020724-1`.
+    - `GO_REF:0000003` → EC2GO (UniProt / ECO:0000501, **3,173 rows**) — reuse existing EC2GO pub `ZDB-PUB-031118-3`.
+    - Clears **31,864 of the 34,044** GO_REF errors. kw2go (`GO_REF:0000004`) is absent from the file (retired, ZFIN-10135) — nothing to take over.
+    - Implementation: add `GoDefaultPublication` entries whose `title()` is the GO_REF string (so they land in `goRefPubMap`) → the pub ZDB IDs above; ensure `getGoRefPubs()` returns them. Reconfirms §1 Correction: drop ONLY the secondary load's GO-mapping handlers, keep its dblink/domain/PDB refresh.
+- **`GO_REF:0000115` RNAcentral InterPro-family (55 rows):** map alongside `0000002` or leave? Tiny; likely map for consistency.
 - **GOC / `GO_REF:0000108` (~2,125 rows):** adopt (new org or fold into GOA) or keep rejecting? Currently net-new.
 - **Phylo IBA org:** keep under GOA, or a dedicated org to preserve the FP-Inference identity in reporting?
 - **GPAD vs GAF:** plan assumes GPAD (RO relations + model-ids + existing parser). Confirm.
