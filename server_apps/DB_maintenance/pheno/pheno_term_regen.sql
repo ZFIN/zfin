@@ -229,15 +229,8 @@ ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
 ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
     OWNED BY NONE;
 
--- Add foreign key constraints.
--- ON DELETE CASCADE: phenotype_observation_generated is now maintained by an
--- incremental apply (regen_phenotype_mart, ZFIN-10350) that DELETEs gone psg
--- rows in place. This fast-search table is still rebuilt wholesale and is
--- rebuilt LATER in the same regen run, so between the mart apply and this
--- rebuild its FK still points at the prior run's psg rows. Without the cascade
--- the incremental POG deletes violate this constraint. The orphaned search
--- rows the cascade drops are rebuilt by this very script moments later, so
--- cascading them is safe.
+-- Add foreign key constraints (ON DELETE CASCADE): 
+-- phenotype_observation_generated deletes should cascade through to pheno_term_fast_search
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
     FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id)
     ON DELETE CASCADE;
