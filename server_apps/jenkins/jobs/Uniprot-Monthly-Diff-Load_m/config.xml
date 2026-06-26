@@ -66,14 +66,11 @@ export UNIPROT_RERUN_LATEST_PROCESSED=true
 
 # Re-check before loading: a synchronizing re-run (RERUN_LATEST_PROCESSED=true) must NOT
 # touch a pending new release - that is handled by the manual UniProt-Diff-Load /
-# UniProt-Secondary-Term-Load jobs. If RERUN_LATEST_PROCESSED is false/unset, processing
-# the unprocessed release is the intended behavior, so we do not skip.
-if [ "$UNIPROT_RERUN_LATEST_PROCESSED" = "true" ]; then
-    UNPROCESSED_COUNT=$(psql -At -d $DBNAME -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
-    if [ "$UNPROCESSED_COUNT" != "0" ]; then
-        echo "RERUN_LATEST_PROCESSED=true but $UNPROCESSED_COUNT unprocessed UniProt release(s) pending - skipping primary load."
-        exit 0
-    fi
+# UniProt-Secondary-Term-Load jobs. 
+UNPROCESSED_COUNT=$(psql -At -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
+if [ "$UNPROCESSED_COUNT" != "0" ]; then
+    echo "RERUN_LATEST_PROCESSED=true but $UNPROCESSED_COUNT unprocessed UniProt release(s) pending - skipping primary load."
+    exit 0
 fi
 
 cd $SOURCEROOT
@@ -96,12 +93,10 @@ export UNIPROT_RERUN_LATEST_PROCESSED=true
 # touch a pending new release - that is handled by the manual UniProt-Diff-Load /
 # UniProt-Secondary-Term-Load jobs. If RERUN_LATEST_PROCESSED is false/unset, processing
 # the unprocessed release is the intended behavior, so we do not skip.
-if [ "$UNIPROT_RERUN_LATEST_PROCESSED" = "true" ]; then
-    UNPROCESSED_COUNT=$(psql -At -d $DBNAME -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
-    if [ "$UNPROCESSED_COUNT" != "0" ]; then
-        echo "RERUN_LATEST_PROCESSED=true but $UNPROCESSED_COUNT unprocessed UniProt release(s) pending - skipping secondary load."
-        exit 0
-    fi
+UNPROCESSED_COUNT=$(psql -At -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
+if [ "$UNPROCESSED_COUNT" != "0" ]; then
+    echo "RERUN_LATEST_PROCESSED=true but $UNPROCESSED_COUNT unprocessed UniProt release(s) pending - skipping primary load."
+    exit 0
 fi
 
 cd $SOURCEROOT
