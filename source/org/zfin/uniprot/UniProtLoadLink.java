@@ -11,8 +11,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 public record UniProtLoadLink(String title, String href)  implements Comparable<UniProtLoadLink> {
 
     // foreign_db is effectively static reference data; cache each database's URL prefix so we
-    // don't run a getForeignDBByName() query for every link we build. During a full UniProt load
-    // this was ~462k identical FOREIGN_DB queries (one per link), each in its own transaction.
+    // don't run a getForeignDBByName() query for every link we build. 
     private static final Map<ForeignDB.AvailableName, String> URL_PREFIX_CACHE =
             new EnumMap<>(ForeignDB.AvailableName.class);
     @Override
