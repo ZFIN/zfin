@@ -15,7 +15,6 @@ services:
     environment:
       PGHOST: db
       PGUSER: postgres
-      SOLR_HOME: /var/solr
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       SSH_USER: ${DOCKER_SSH_USER}
       SSH_HOST: ${DOCKER_SSH_HOST}
@@ -67,7 +66,6 @@ services:
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
-      - solr_data:/var/solr
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
@@ -76,7 +74,11 @@ services:
   db:
     build: ./postgresql/
     image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}
-    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
+    # Memory settings sized down from a prior 16g shared_buffers / 8g work_mem
+    # configuration that contributed to repeated container OOMs during heavy
+    # DIH workloads on a 32g host. Dial back up if you have a clearly RAM-rich
+    # host and a workload that benefits.
+    command: -c 'max_connections=7500' -c 'shared_buffers=4GB' -c 'huge_pages=try' -c 'temp_buffers=256MB' -c 'work_mem=256MB' -c 'maintenance_work_mem=1GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
@@ -96,13 +98,41 @@ services:
   solr:
     build: ./solr/
     image: ghcr.io/zfin/zfin-solr:${ZFIN_RELEASE}
+    # Cap memory at heap + ~4g headroom (direct buffers, metaspace, jit code
+    # cache, stack, native libs). Without this the kernel chooses which
+    # container to OOM when the host gets tight, and Solr is always the
+    # biggest target.
+    mem_limit: 16g
+    ulimits:
+      nofile: 65536
+    # Add fishadmin (gid 1076) so the non-root solr user can write backup snapshots to the group-owned unloads dir (which must also be g+w).
+    group_add:
+      - "1076"   # fishadmin
     environment:
-      SOLR_HEAP: 10g
+      SOLR_MODULES: "scripting"
+      SOLR_HEAP: 12g
+      # solr.max.booleanClauses: Solr 9.x reads this at JVM startup and uses
+      # it as the ceiling for IndexSearcher.MAX_CLAUSE_COUNT. The per-core
+      # <maxBooleanClauses> in solrconfig.xml can't exceed this JVM-level
+      # value, so bumping it there alone doesn't help. Edismax query
+      # expansion can produce more clauses on Solr 9 than Solr 8 did for
+      # the same user input — 4096 covers the long queries from our prod
+      # access log that overflowed 1024 during cutover characterization.
+      SOLR_OPTS: "-Dsolr.allowPaths=/opt/zfin/unloads/solr -Dsolr.max.booleanClauses=4096"
+      SOLR_SECURITY_MANAGER_ENABLED: "false"
       TZ: ${TZ}
     ports:
       - "8983-8992:8983"
     volumes:
-      - solr_data:/var/solr
+      # Single volume covering everything Solr persists. The image's
+      # /docker-entrypoint-initdb.d/sync-config.sh refreshes conf/, lib/, and
+      # log4j2.xml from image-baked templates on every container start, so
+      # this volume only legitimately holds index data, tlog, snapshots,
+      # external_popularity.txt, and runtime logs. Renamed from `solr_data`
+      # so VMs upgrading from Solr 8 get a clean volume instead of
+      # inheriting stale 8-era config + jars.
+      - solr_var:/var/solr
+      - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
   httpd:
     hostname: zfin.org
     build: ./httpd/
@@ -228,7 +258,6 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - downloads_data:/opt/zfin/download-files
-      - solr_data:/var/solr
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
@@ -236,6 +265,7 @@ services:
       - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
+      - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
@@ -367,7 +397,7 @@ volumes:
   keystore:
   catalina_base:
   pg_data:
-  solr_data:
+  solr_var:
   downloads_data:
   jenkins_data:
   fail2ban_config:

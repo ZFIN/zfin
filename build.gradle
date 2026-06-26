@@ -156,14 +156,6 @@ task downloadDB(type: GradleBuild) {
     tasks = ['getLatestDatabaseUnload']
 }
 
-task downloadSolrIndex(type: GradleBuild) {
-    tasks = ['getLatestSolrUnload']
-}
-
-task loadSolrIndex(type: GradleBuild) {
-    tasks = ['getLatestSolrIndex']
-}
-
 task getdb(dependsOn: downloadDB) //alias for downloadDB (aka getLatestDatabaseUnload)
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
@@ -462,11 +454,6 @@ task "server_apps;DB_maintenance;deployFiles" (type: SimpleDirectoryCopyTask) {
     excludeDirs = ['postgres/liquibase']
 }
 
-task "cgi-bin;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'cgi-bin'
-    excludes = ['Makefile', 'build.gradle']
-}
-
 task "server_apps;perl_lib;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/perl_lib'
 }
@@ -534,7 +521,6 @@ task make(type: GradleBuild) {
              'server_apps;tokens;deployFiles',
              'server_apps;data_transfer;BLAST;deployFiles',
              'deployGitInfoFile',
-             'cgi-bin;deployFiles',
              'server_apps;perl_lib;deployFiles',
     ]
 }
@@ -553,44 +539,94 @@ task createEmptyDirsIfNotExists() {
     }
 }
 
+// Pull the latest snapshot.* directory from the production solr unloads on the
+// remote host into the local solrunloadspath. Pair with `loadsolr` to restore
+// it into the running Solr container via the /replication API.
 task getLatestSolrUnload() {
     doLast {
-        if (solrunloadspath != '/research/zunloads/solr/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
-            def filepath = command.execute().text.trim()
-            println "Getting " + filepath
-            exec {
-                ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":" + filepath, solrunloadspath
+        // dev/test/stage VMs load PROD's solr backup, not their own instance's
+        // — same convention as getLatestDatabaseUnload's hardcoded zfindb.
+        // Override with -PsolrSourceInstance=<name> to pull a different one.
+        // Remote layout is /research/zunloads/solr/<INSTANCE>/v9/.
+        def sourceInstance = project.findProperty('solrSourceInstance') ?: 'zfindb'
+        def remoteDir = "/research/zunloads/solr/${sourceInstance}/v9"
+        // Local dumps are stored flat under v9, so the remote snapshot.* dir
+        // lands directly in v9/. `loadsolr` restores from the same location.
+        def localDir  = "${solrunloadspath}/v9"
+        // One ssh, list everything, classify locally. We need both the
+        // snapshot.* match and a way to detect the legacy full-SOLR_HOME
+        // dump format (no snapshot. prefix) so the cutover message is
+        // accurate for the case "yes there are backups, but they're the
+        // wrong format" vs "directory empty / missing entirely".
+        def cmd = "ssh ${env['SSH_USER']}@${env['SSH_HOST']} ls -1 ${remoteDir}/ 2>/dev/null"
+        def entries = cmd.execute().text.trim().tokenize('\n')
+        def snapshots = entries.findAll { it.startsWith('snapshot.') }
+        def legacy    = entries - snapshots
+        if (!snapshots) {
+            if (legacy) {
+                throw new GradleException(
+                    "no snapshot.* dirs at ${remoteDir} on ${env['SSH_HOST']}, but ${legacy.size()} " +
+                    "non-snapshot dir(s) are present (e.g. ${legacy[0]}). The backup format changed " +
+                    "in ZFIN-10171 — the legacy full-SOLR_HOME dumps under this path can no longer be " +
+                    "restored. Cutover: run Index-Faceted-Search-Step-2-Solr under Solr 9 first to " +
+                    "produce a snapshot.* backup, then re-run `gradle getsolr`."
+                )
             }
-        } else {
-            println 'SOLR_UNLOADS_PATH is set to ' + solrunloadspath + '. Please change before attempting to copy.'
+            throw new GradleException("no backups found at ${remoteDir} on ${env['SSH_HOST']}")
         }
-    }
-}
-
-task getLatestSolrIndexFilesTrunk() {
-    doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zunloads/solr/trunkdb/current current.solr.dump"
-        }
+        // Newest first by name — snapshot names are yyyy.MM.dd-HH.mm timestamps so
+        // a lexical sort is identical to a chronological sort.
+        def filepath = "${remoteDir}/" + snapshots.sort().reverse()[0]
+        println "Getting " + filepath
+        exec { commandLine "mkdir", "-p", localDir }
+        // Default exec semantics fail the task on non-zero scp exit. Print
+        // the command so a failure (host-key verification, auth, no such
+        // path) surfaces in the log instead of being masked as SUCCESS.
+        def scpArgs = ["scp", "-r", "${env['SSH_USER']}@${env['SSH_HOST']}:${filepath}", localDir.toString()]
+        println "  command: " + scpArgs.join(' ')
+        exec { commandLine scpArgs }
     }
 }
 
 task getLatestDatabaseUnload() {
     doLast {
-        if (dbunloadspath != '/research/zunloads/databases/zfindb') {
-            def command = "ssh " + env['SSH_USER'] + "@" + env['SSH_HOST'] + " " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
-            def filepath = command.execute().text.trim()
-            println "Getting " + filepath
-            exec {
-                ignoreExitValue = true
-                commandLine "scp", "-r", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":"  + filepath, dbunloadspath
-            }
-        } else {
+        if (dbunloadspath == '/research/zunloads/databases/zfindb') {
             println 'DB_UNLOADS_PATH is set to ' + dbunloadspath + '. Please change before attempting to copy.'
+            return
         }
+        def remoteHost = "${env['SSH_USER']}@${env['SSH_HOST']}"
+        // Locate the newest dated unload directory under the remote unloads path.
+        def lsCmd = ['ssh', remoteHost,
+                     'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n | tail -n 1']
+        def sout = new StringBuilder(), serr = new StringBuilder()
+        def proc = lsCmd.execute()
+        proc.consumeProcessOutput(sout, serr)
+        proc.waitForOrKill(60_000)
+        def filepath = sout.toString().trim()
+        if (proc.exitValue() != 0 || !filepath) {
+            // Surface the actual command + stderr so host-key, auth, and "no
+            // unloads found" failures aren't masked by a generic exit. Also
+            // print the scp command that would have followed, using a
+            // YYYY.MM.DD.1 placeholder, so a curator can run the two steps
+            // by hand once they've fixed the underlying ssh problem.
+            throw new GradleException(
+                "Failed to locate latest DB unload on ${env['SSH_HOST']}.\n" +
+                "  Command:   ${lsCmd.join(' ')}\n" +
+                "  Exit code: ${proc.exitValue()}\n" +
+                "  Stderr:    ${serr.toString().trim()}\n" +
+                "\n" +
+                "Once the ssh issue is resolved, the second step would be:\n" +
+                "  scp -r ${remoteHost}:/research/zunloads/databases/zfindb/YYYY.MM.DD.1 ${dbunloadspath}"
+            )
+        }
+        println "Getting " + filepath
+        // Default exec semantics (no ignoreExitValue) fail the task on a
+        // non-zero scp exit. Print the command so the failure log shows what
+        // was attempted, not just "Process 'command 'scp'' finished with
+        // non-zero exit value 1".
+        def scpArgs = ['scp', '-r', "${remoteHost}:${filepath}", dbunloadspath]
+        println "  command: " + scpArgs.join(' ')
+        exec { commandLine scpArgs }
     }
 }
 
@@ -603,51 +639,76 @@ task getLatestPostgresFilesTrunk() {
     }
 }
 
+// Restore the most recent snapshot.<NAME> dir from the local solrunloadspath
+// into the running Solr container via /replication?command=restore. Pass
+// -DsolrDump=<path/to/snapshot.NAME> to restore that exact snapshot dir from
+// anywhere instead (mirrors loaddb's -DB=<dump>).
 task getLatestSolrIndex() {
     doLast {
-        def selectedIndex
-        if (project.hasProperty('solrIndex')) {
-            def raw = project.property('solrIndex').toString()
-            selectedIndex = new File(raw)
-            if (!selectedIndex.isAbsolute()) {
-                selectedIndex = new File(solrunloadspath, raw)
-            }
-            if (!selectedIndex.isDirectory()) {
-                throw new GradleException("solrIndex path not found or not a directory: " + selectedIndex)
-            }
-            println "Restoring Solr index from specified path: " + selectedIndex
+        // Local dumps live flat under v9 (no per-instance subdir); matches the
+        // layout `getsolr` writes into.
+        def location = "${solrunloadspath}/v9"
+        def selectedName
+
+        if (System.getProperty("solrDump")) {
+            //use -DsolrDump=<snapshot dir> to restore a specific snapshot,
+            //mirroring loaddb's -DB=<dump>. It points straight at a
+            //snapshot.<name> dir, which we split into the parent (the Solr API's
+            //`location`) and the snapshot name; the scan below is skipped.
+            def dumpDir = new File(System.getProperty("solrDump"))
+            location = dumpDir.parent
+            selectedName = dumpDir.name.replaceFirst(/^snapshot\./, '')
+            println "Restoring Solr ${dumpDir.name} from ${location}"
         } else {
-            println 'Upgrade Solr index to the latest production one... Use -PsolrIndex=/path/to/unload to load a specific index instead.'
-            println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
-
-            def folder = solrunloadspath
-            def baseDir = new File(folder)
-            def files = baseDir.listFiles()
-            Arrays.sort(files, new Comparator<File>() {
-                int compare(File f1, File f2) {
-                    return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
+            def baseDir = new File(location)
+            if (!baseDir.isDirectory()) {
+                throw new GradleException("no snapshots at ${baseDir}; run `gradle getsolr` first")
+            }
+            def all = baseDir.listFiles().findAll { it.isDirectory() }
+            def snaps = all.findAll { it.name.startsWith('snapshot.') }
+            if (!snaps) {
+                // Distinguish "directory empty" from "directory has legacy
+                // pre-Solr-9 dumps which can't be restored via /replication."
+                def legacy = all.findAll { !it.name.startsWith('snapshot.') }
+                if (legacy) {
+                    throw new GradleException(
+                        "no snapshot.* dirs in ${baseDir}, but ${legacy.size()} legacy dump dir(s) " +
+                        "present (e.g. ${legacy[0].name}). The Solr 9 backup format changed in " +
+                        "ZFIN-10171 — legacy full-SOLR_HOME dumps can't be restored via /replication. " +
+                        "Run Index-Faceted-Search-Step-2-Solr under Solr 9 first, then re-fetch with " +
+                        "`gradle getsolr`."
+                    )
                 }
-            })
-            selectedIndex = files[0]
-            println selectedIndex
+                throw new GradleException("no snapshot.* dirs in ${baseDir}; run `gradle getsolr` first")
+            }
+            snaps.sort { -it.lastModified() }
+            selectedName = snaps[0].name.replaceFirst(/^snapshot\./, '')
+            println "Latest snapshot: ${snaps[0].name} -> restoring as ${selectedName}"
         }
-
-        def sout = new StringBuilder(), serr = new StringBuilder()
-        def procString = "ant restore-solr-core -DRESTORE_FROM=" + selectedIndex.getAbsolutePath()
-        def proc = procString.execute()
-        def b = new StringBuffer()
-        proc.consumeProcessErrorStream(b)
-
-        println proc.text
-        println b.toString()
-
+        // Run the restore in a forked JVM via the SolrSnapshotTool. We deliberately
+        // do NOT shell `ant restore-solr-index` (which now shells gradlew): that
+        // would be a nested gradle build inside this one and can deadlock on the
+        // project lock. javaexec forks a plain JVM with no gradle reentrancy.
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'org.zfin.solr.admin.SolrSnapshotTool'
+            workingDir = rootProject.projectDir
+            args = [
+                    "${rootProject.projectDir}/home/WEB-INF/zfin.properties",
+                    "${rootProject.projectDir}/server_apps/DB_maintenance/report_data",
+                    "Solr-Restore_d",
+                    "restore",
+                    location,
+                    selectedName
+            ]
+        }
     }
 }
 
-//getsolr as alias for getLatestSolrUnload
+// getsolr as alias for getLatestSolrUnload
 task getsolr(dependsOn: getLatestSolrUnload)
 
-//loadsolr as alias for getLatestSolrIndex
+// loadsolr as alias for getLatestSolrIndex
 task loadsolr(dependsOn: getLatestSolrIndex)
 
 task getBlastAllDatabases() {
@@ -865,6 +926,7 @@ dependencies {
     implementation "commons-math:commons-math:1.2"
     implementation "commons-net:commons-net:3.11.1"
     implementation "commons-validator:commons-validator:1.1.4"
+    implementation "io.github.java-diff-utils:java-diff-utils:4.15"
     implementation "io.micrometer:micrometer-commons:1.14.2"
     implementation "io.micrometer:micrometer-observation"
     implementation "io.netty:netty-all:4.1.116.Final"
@@ -1501,18 +1563,14 @@ task copyClasspathTemplates(type: Copy) {
     into 'home/WEB-INF/classes'
 }
 compileJava.finalizedBy copyClasspathTemplates
-// compileTestJava reads from home/WEB-INF/classes (the same dir that
-// copyClasspathTemplates writes into), so Gradle needs the dependency
-// declared explicitly. Same applies to test runtime / processTestResources.
-compileTestJava.dependsOn copyClasspathTemplates
-processTestResources.dependsOn copyClasspathTemplates
-// Every JavaExec task uses sourceSets.main.runtimeClasspath, which includes
-// home/WEB-INF/classes (the dir copyClasspathTemplates writes into). Gradle 8.x
-// strict validation fails any such task without an explicit dependency edge, so
-// wire them all up here rather than per-task.
-tasks.withType(JavaExec).configureEach {
-    dependsOn copyClasspathTemplates
-}
+// Register home/WEB-INF/classes as an output of the main source set, built by
+// copyClasspathTemplates. Because it is part of sourceSets.main.output, every task
+// that consumes that output -- jar, war, all JavaExec (via runtimeClasspath),
+// compileTestJava and the tests (via classpath) -- automatically gains a dependency
+// on copyClasspathTemplates. This replaces the per-task dependsOn edges that Gradle
+// 8.x strict validation otherwise demands (and that new tasks kept forgetting).
+// Custom tasks that copy this dir by hand (e.g. dirtycopy) still declare it explicitly.
+sourceSets.main.output.dir('home/WEB-INF/classes', builtBy: copyClasspathTemplates)
 
 // ============================================================================
 // GWT COMPILATION TASKS

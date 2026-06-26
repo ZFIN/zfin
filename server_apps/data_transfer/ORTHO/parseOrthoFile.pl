@@ -1,17 +1,17 @@
 #!/opt/zfin/bin/perl
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/perl_lib/";
+use lib "$ENV{'ROOT_PATH'}/server_apps/perl_lib/";
 use ZFINPerlModules;
 
 ## set environment variables
 
-$dbname = "<!--|DB_NAME|-->";
+$dbname = "$ENV{'DB_NAME'}";
 
 sub parseOrthoFiles() {
-system("rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt");
-open (NCBI, "<!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
-open PARSED, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt" or die "Cannot open parsed ortho file : $!\n" ;
+system("rm -rf $ENV{'TARGETROOT'}/server_apps/data_transfer/ORTHO/parsedOrthos.txt");
+open (NCBI, "$ENV{'TARGETROOT'}/server_apps/data_transfer/ORTHO/ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
+open PARSED, ">$ENV{'TARGETROOT'}/server_apps/data_transfer/ORTHO/parsedOrthos.txt" or die "Cannot open parsed ortho file : $!\n" ;
 $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
 while (<NCBI>) {

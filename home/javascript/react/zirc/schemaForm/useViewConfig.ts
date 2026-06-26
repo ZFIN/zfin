@@ -23,6 +23,14 @@ export type ViewConfig = {
      * and {@code FieldHistory}.
      */
     recId: string | null;
+    /**
+     * Per-field display-label overrides keyed by leaf field name. Used in
+     * view mode when the raw stored value is a server-resolvable
+     * identifier (e.g. a Feature ZDB-ID picked from autocomplete) but the
+     * UI should render a human-friendly label instead. Renderers fall
+     * back to the raw value when there is no override.
+     */
+    displayLabels: Record<string, string>;
 };
 
 export function viewConfigFrom(config: unknown): ViewConfig {
@@ -33,6 +41,7 @@ export function viewConfigFrom(config: unknown): ViewConfig {
         sectionStatus: cfg.sectionStatus ?? {},
         idPrefix: cfg.idPrefix ?? '',
         recId: cfg.recId ?? null,
+        displayLabels: cfg.displayLabels ?? {},
     };
 }
 

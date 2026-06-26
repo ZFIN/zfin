@@ -15,8 +15,9 @@ OBJECTIVE
 EXECUTION
 --------------------------
 
-   Run:	gmake run  (zfishbook.pl)
+   Run:	./zfishbook.sh
 
-   This will be run manualy. 
+   Triggered manually via the Jenkins job Zfishbook-Data-Load, but that job
+   has not run since 2019 (build #3) -- this load appears dormant.
 
 

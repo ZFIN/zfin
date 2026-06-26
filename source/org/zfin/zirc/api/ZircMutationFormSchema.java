@@ -47,6 +47,19 @@ public final class ZircMutationFormSchema {
             BiConsumer<Mutation, JsonNode> write) {
     }
 
+    /**
+     * Canonical mutation-type list (ZFIN-10347). Rendered as a
+     * selectWithOther dropdown — the widget appends an "Other" option
+     * that reveals a free-text input, so curators aren't limited to the
+     * standard values. Stored verbatim as the mutationType string.
+     */
+    private static final List<String> MUTATION_TYPES = List.of(
+            "Null (complete loss of function)",
+            "Hypomorphic (partial loss of function)",
+            "Hypermorphic (gain of function, increased activity)",
+            "Neomorphic (gain of function, new function)",
+            "Unknown");
+
     private static final List<String> MUTAGENESIS_STAGES = List.of(
             "oocyte", "sperm", "embryo", "larva", "adult", "unknown");
 
@@ -142,7 +155,9 @@ public final class ZircMutationFormSchema {
                                         .placeholder("Start typing an allele or ZDB-ID…")
                                         .helpText("Resolves to the ZFIN feature ZDB-ID."),
                                 showIfInZfin),
-                        Control.of("#/properties/mutationType"),
+                        new Control("#/properties/mutationType",
+                                Options.of().widget("selectWithOther").standardValues(MUTATION_TYPES),
+                                null),
                         new Control("#/properties/zfinRecordEstablished",
                                 Options.of().widget("yesNoRadio"), null),
                         new Control("#/properties/cellGenomicFeature",

@@ -42,6 +42,26 @@ const cellBase: React.CSSProperties = {
  * rolled-up status. Clicking a section cell jumps to its anchor.
  */
 export function StatusOverviewBar({ submission, sectionStatus }: Props) {
+    // One LineSubmission can carry many Mutations. Each mutation contributes
+    // one entry: the display label is the server-resolved alleleName when
+    // alleleInZfin=true (DTO sets it from Feature.abbreviation), otherwise
+    // the raw alleleDesignation typed in by the curator. If the designation
+    // is a ZDB-ID we render it as a link to the feature page (/{zdbID});
+    // free-text designations are plain text. Empty entries are dropped.
+    type AlleleEntry = { label: string; href: string | null };
+    const alleleEntries: AlleleEntry[] = (submission.mutations ?? [])
+        .map((m) => {
+            const id = m.alleleDesignation;
+            const label = m.alleleName ?? id;
+            if (!label || label.trim().length === 0) {return null;}
+            const href = id && id.startsWith('ZDB-') ? `/${id}` : null;
+            return { label, href };
+        })
+        .filter((e): e is AlleleEntry => e !== null);
+    // Designations can be longer than the section cells; let this column
+    // stretch but keep a hard cap so it never crowds the section cells.
+    const alleleCell: React.CSSProperties = { ...cellBase, minWidth: '8em', maxWidth: '16em' };
+    const alleleTitle = alleleEntries.map((e) => e.label).join(', ');
     return (
         <div className='mb-4'>
             <h5 className='mt-3 mb-1'>Status Overview</h5>
@@ -49,9 +69,8 @@ export function StatusOverviewBar({ submission, sectionStatus }: Props) {
                 <table style={{ borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>Line</th>
-                            <th style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>
-                                Date<br/>Started
+                            <th style={{ ...alleleCell, fontWeight: 600, background: '#fff' }}>
+                                Allele<br/>Designation
                             </th>
                             {SECTIONS.map((s) => (
                                 <th key={s} style={{ ...cellBase, fontWeight: 600, background: '#fff' }}>
@@ -62,11 +81,17 @@ export function StatusOverviewBar({ submission, sectionStatus }: Props) {
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={{ ...cellBase, background: '#fffbe6', fontWeight: 500 }}>
-                                {submission.name ?? <span className='text-muted'>&mdash;</span>}
-                            </td>
-                            <td style={{ ...cellBase, background: '#fffbe6', fontWeight: 500 }}>
-                                {submission.createdAt ?? <span className='text-muted'>&mdash;</span>}
+                            <td title={alleleTitle} style={{ ...alleleCell, background: '#fffbe6', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {alleleEntries.length === 0
+                                    ? <span className='text-muted'>&mdash;</span>
+                                    : alleleEntries.map((e, i) => (
+                                        <React.Fragment key={i}>
+                                            {i > 0 && ', '}
+                                            {e.href
+                                                ? <a href={e.href}>{e.label}</a>
+                                                : e.label}
+                                        </React.Fragment>
+                                    ))}
                             </td>
                             {SECTIONS.map((s) => {
                                 const st = sectionStatus[s];

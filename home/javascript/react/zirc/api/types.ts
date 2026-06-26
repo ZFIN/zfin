@@ -27,6 +27,7 @@ export interface LineSubmissionDTO {
     createdAt: string | null;
     updatedAt: string | null;
     submitterNames: string | null;
+    piNames: string | null;
 }
 
 export interface MutationDTO {
@@ -34,6 +35,7 @@ export interface MutationDTO {
     lineSubmissionId: string;
     sortOrder: number;
     alleleDesignation: string | null;
+    alleleName: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
     zfinRecordEstablished: boolean | null;
@@ -166,8 +168,8 @@ export interface PhenotypeDTO {
     zircImagePermission: boolean | null;
     nonMendelianPercentage: number | null;
     nonMendelianComment: string | null;
-    segregation: string[];
-    type: string[];
+    segregation: string | null;
+    type: string | null;
 }
 
 export interface AutocompleteItemDTO {

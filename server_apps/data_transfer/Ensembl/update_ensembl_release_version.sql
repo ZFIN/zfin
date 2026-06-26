@@ -22,7 +22,7 @@ WHERE fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
 --WHERE fdb_db_name = 'PreEnsembl'
 --;
 
--- change to commit and gmake on production as needed
+-- change to commit and run on production as needed
 --
 --rollback work;
 

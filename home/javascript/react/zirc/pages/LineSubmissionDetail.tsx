@@ -4,7 +4,10 @@ import { queryClient } from '../queryClient';
 import { useLineSubmission } from '../api/queries';
 import { SchemaForm } from '../schemaForm/SchemaForm';
 import { StatusOverviewBar } from '../components/StatusOverviewBar';
+import { LineSubmissionHeader } from '../components/LineSubmissionHeader';
+import { ChangeHistoryPanel } from '../components/ChangeHistoryPanel';
 import { StatusRefetchContext } from '../statusRefetchContext';
+import { HistoryFocusContext, type HistoryFocus } from '../historyFocusContext';
 import type { FieldStatus } from '../components/StatusBadge';
 
 export type LineSubmissionDetailProps = {
@@ -21,6 +24,9 @@ type PerEntityStatus = Record<string, Record<string, FieldStatus>>;
 type StatusPayload = {
     fieldStatus: Record<string, FieldStatus>;
     sectionStatus: Record<string, FieldStatus>;
+    // Top-level submission field name → its containing section label. Used
+    // by ChangeHistoryPanel to label/scope audit entries.
+    fieldSectionMap: Record<string, string>;
     mutationFieldStatus: PerEntityStatus;
     mutationSectionStatus: PerEntityStatus;
     mutationOverallStatus: Record<string, FieldStatus>;
@@ -51,6 +57,7 @@ function LineSubmissionDetailInner({
         const empty: StatusPayload = {
             fieldStatus: {},
             sectionStatus: {},
+            fieldSectionMap: {},
             mutationFieldStatus: {},
             mutationSectionStatus: {},
             mutationOverallStatus: {},
@@ -74,6 +81,14 @@ function LineSubmissionDetailInner({
 
     // Reactive copy so a comment change can refresh the badges in place.
     const [payload, setPayload] = React.useState<StatusPayload>(initialPayload);
+
+    // Right-panel focus dispatched by FieldHistory icon clicks. Until the
+    // user clicks one, the panel stays empty.
+    const [historyFocus, setHistoryFocus] = React.useState<HistoryFocus>(null);
+    const historyCtx = React.useMemo(
+        () => ({ focus: historyFocus, setFocus: setHistoryFocus }),
+        [historyFocus],
+    );
 
     // Re-pull the server-computed status (incl. the open-comment IN_PROGRESS
     // overlay + section/overall rollups) without a full page reload. The
@@ -101,29 +116,48 @@ function LineSubmissionDetailInner({
     const submission = query.data ?? null;
     return (
         <StatusRefetchContext.Provider value={refetchStatus}>
-            {submission && (
-                <StatusOverviewBar
-                    submission={submission}
-                    sectionStatus={payload.sectionStatus}
-                />
-            )}
-            <SchemaForm
-                submission={submission}
-                mode='view'
-                fieldStatus={payload.fieldStatus}
-                sectionStatus={payload.sectionStatus}
-                mutationFieldStatus={payload.mutationFieldStatus}
-                mutationSectionStatus={payload.mutationSectionStatus}
-                mutationOverallStatus={payload.mutationOverallStatus}
-                geneFieldStatus={payload.geneFieldStatus}
-                geneSectionStatus={payload.geneSectionStatus}
-                lesionFieldStatus={payload.lesionFieldStatus}
-                lesionSectionStatus={payload.lesionSectionStatus}
-                assayFieldStatus={payload.assayFieldStatus}
-                assaySectionStatus={payload.assaySectionStatus}
-                phenotypeFieldStatus={payload.phenotypeFieldStatus}
-                phenotypeSectionStatus={payload.phenotypeSectionStatus}
-            />
+            <HistoryFocusContext.Provider value={historyCtx}>
+                {submission && (
+                    <>
+                        <LineSubmissionHeader submission={submission}/>
+                        <StatusOverviewBar
+                            submission={submission}
+                            sectionStatus={payload.sectionStatus}
+                        />
+                    </>
+                )}
+                {/* Two-column layout: schema-driven form on the left/center,
+                    Change History panel pinned to the right. The right column
+                    is fixed-width; the left column flexes to fill the rest so
+                    the existing renderers don't reflow. */}
+                <div className='d-flex' style={{ gap: '1rem', alignItems: 'flex-start' }}>
+                    <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                        <SchemaForm
+                            submission={submission}
+                            mode='view'
+                            fieldStatus={payload.fieldStatus}
+                            sectionStatus={payload.sectionStatus}
+                            mutationFieldStatus={payload.mutationFieldStatus}
+                            mutationSectionStatus={payload.mutationSectionStatus}
+                            mutationOverallStatus={payload.mutationOverallStatus}
+                            geneFieldStatus={payload.geneFieldStatus}
+                            geneSectionStatus={payload.geneSectionStatus}
+                            lesionFieldStatus={payload.lesionFieldStatus}
+                            lesionSectionStatus={payload.lesionSectionStatus}
+                            assayFieldStatus={payload.assayFieldStatus}
+                            assaySectionStatus={payload.assaySectionStatus}
+                            phenotypeFieldStatus={payload.phenotypeFieldStatus}
+                            phenotypeSectionStatus={payload.phenotypeSectionStatus}
+                        />
+                    </div>
+                    <div style={{ flex: '0 0 22rem' }}>
+                        <ChangeHistoryPanel
+                            submissionId={submissionId}
+                            fieldSectionMap={payload.fieldSectionMap ?? {}}
+                        />
+                    </div>
+                </div>
+            </HistoryFocusContext.Provider>
         </StatusRefetchContext.Provider>
     );
 }

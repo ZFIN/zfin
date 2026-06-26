@@ -64,11 +64,11 @@ public class FormSchemaInvariantsTest {
                 // (server-set on create); abbreviation and
                 // backgroundChangeConcerns are columns curators don't
                 // edit through this form; draft is a server-flipped flag.
-                // createdAt / updatedAt / submitterNames are server-managed
-                // metadata read by the detail-page StatusOverviewBar but
-                // not rendered in any form section.
+                // createdAt / updatedAt / submitterNames / piNames are
+                // server-managed metadata read by the detail-page
+                // StatusOverviewBar but not rendered in any form section.
                 Set.of("zdbID", "abbreviation", "backgroundChangeConcerns", "draft",
-                        "createdAt", "updatedAt", "submitterNames"),
+                        "createdAt", "updatedAt", "submitterNames", "piNames"),
                 // Schema paths managed through dedicated POST/DELETE
                 // endpoints rather than the field-path PATCH.
                 Set.of("/mutations", "/linkedFeatures")));
@@ -82,7 +82,10 @@ public class FormSchemaInvariantsTest {
                 ZircMutationFormSchema.uiSchema(),
                 ZircMutationFormSchema.FIELDS.keySet(),
                 MutationDTO.class,
-                Set.of("id", "lineSubmissionId", "sortOrder"),
+                // alleleName is server-resolved from Feature.abbreviation when
+                // alleleDesignation holds a ZDB-ID; it's display-only, never
+                // in the form schema.
+                Set.of("id", "lineSubmissionId", "sortOrder", "alleleName"),
                 Set.of("/assays", "/genes", "/lesions", "/phenotypes")));
     }
 

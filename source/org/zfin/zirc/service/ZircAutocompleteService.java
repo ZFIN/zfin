@@ -108,4 +108,37 @@ public class ZircAutocompleteService {
                         p.getZdbID()))
                 .toList();
     }
+
+    /**
+     * Scoped variant of {@link #searchPersons} that only returns people
+     * holding a PI-level position in some lab — {@code lab_position}
+     * rows id=7 ("PI/Director") and id=2 ("Co-PI/Senior Scientist") per
+     * the live schema. Used by the ZIRC line-submission "Add PI" picker
+     * so curators don't accidentally tag a tech / postdoc as a PI.
+     *
+     * <p>Native SQL because the Person→Lab join exposes the lab side
+     * but not the {@code int_person_lab.position_id} qualifier through
+     * Hibernate.
+     */
+    @SuppressWarnings("unchecked")
+    public List<AutocompleteItemDTO> searchPIs(String term) {
+        if (term == null || term.isBlank()) {return List.of();}
+        List<Object[]> rows = HibernateUtil.currentSession()
+                .createNativeQuery("""
+                        select distinct p.zdb_id, p.full_name
+                        from person p
+                        join int_person_lab ipl on ipl.source_id = p.zdb_id
+                        where ipl.position_id in (2, 7)
+                          and lower(p.full_name) like :q
+                        order by p.full_name
+                        """)
+                .setParameter("q", "%" + term.toLowerCase() + "%")
+                .setMaxResults(MAX_RESULTS)
+                .list();
+        return rows.stream()
+                .map(r -> new AutocompleteItemDTO(
+                        r[1] + " (" + r[0] + ")",
+                        (String) r[0]))
+                .toList();
+    }
 }
