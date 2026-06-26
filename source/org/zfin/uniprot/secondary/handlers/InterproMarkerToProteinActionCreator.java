@@ -8,6 +8,7 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,11 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<MarkerToProteinDTO> existingRecords = context.getExistingMarkerToProteinRecords();
-        List<MarkerToProteinDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
+        // HashSets for O(1) membership: the existing-set drives the per-record "is it new?" check
+        // and keepRecords drives the delete-loop check. Previously both were ArrayList.contains,
+        // making this handler O(N*M).
+        Set<MarkerToProteinDTO> existingRecordsSet = new HashSet<>(existingRecords);
+        Set<MarkerToProteinDTO> keepRecords = new HashSet<>(); //all the records to keep (not delete) includes new records too
         List <SecondaryTermLoadAction> newActions = new ArrayList<>();
 
         //create new records
@@ -46,7 +51,7 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
                     continue;
                 }
 
-                if (!existingRecords.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
+                if (!existingRecordsSet.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
                     newActions.add(createLoadAction(newRecord, richSequenceAdapter));
                     keepRecords.add(newRecord);
                 } else {
