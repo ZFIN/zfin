@@ -1,7 +1,6 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -15,8 +14,10 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -146,11 +147,21 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         //create markerGoTermEvidences for all db links
         log.info("Joining DBLinks (" + dbName + "): with translation records...");
-        //join the set of allDbLinks (load actions and existing db links) to the interpro/ec/spkw translation records
-        List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = Seq.seq(allDbLinks)
-                .innerJoin(translationRecords,
-                        (dbLink, item2go) -> dbLink.getAccession().equals(item2go.dbAccession()))
-                .toList();
+        //join the set of allDbLinks (load actions and existing db links) to the interpro/ec/spkw
+        //translation records. Hash join (group translation records by accession, then look up per
+        //db link) rather than Seq.innerJoin's nested-loop scan, which was O(N*M).
+        Map<String, List<SecondaryTerm2GoTerm>> translationByAccession = translationRecords.stream()
+                .filter(item2go -> item2go.dbAccession() != null)
+                .collect(Collectors.groupingBy(SecondaryTerm2GoTerm::dbAccession));
+        List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = new ArrayList<>();
+        for (DBLinkSlimDTO dbLink : allDbLinks) {
+            List<SecondaryTerm2GoTerm> matches = translationByAccession.get(dbLink.getAccession());
+            if (matches != null) {
+                for (SecondaryTerm2GoTerm item2go : matches) {
+                    joined.add(new Tuple2<>(dbLink, item2go));
+                }
+            }
+        }
         log.info("Count of joined records (" + dbName + "): " + joined.size());
 
         //convert to markerGoTermEvidenceSlimDTOs
