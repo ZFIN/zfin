@@ -116,8 +116,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pf_pub_zdb_id")
-    @OrderBy("originalFileName")
-    private Set<PublicationFile> files;
+    @org.hibernate.annotations.SortNatural
+    private SortedSet<PublicationFile> files;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pth_pub_zdb_id")
     private Set<PublicationTrackingHistory> statusHistory;

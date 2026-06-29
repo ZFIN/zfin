@@ -52,6 +52,12 @@ public class PublicationFile implements Comparable<PublicationFile> {
         if (typeCompare != 0) {
             return typeCompare;
         }
-        return ObjectUtils.compare(originalFileName, o.getOriginalFileName());
+        int nameCompare = ObjectUtils.compare(originalFileName, o.getOriginalFileName());
+        if (nameCompare != 0) {
+            return nameCompare;
+        }
+        // Final tiebreaker on the PK so distinct rows that share a type and filename
+        // (e.g. duplicate Original Article uploads) are never collapsed when held in a SortedSet.
+        return Long.compare(id, o.getId());
     }
 }
