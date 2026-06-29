@@ -1,6 +1,15 @@
 -- Regenerate pheno_term_fast_search using rename-and-recreate pattern
 -- to avoid deadlocks with the indexer during the swap.
 -- Old tables are renamed with a timestamp suffix for later cleanup.
+--
+-- TODO(ZFIN-10350): consider converting this to an incremental apply like the
+-- phenotype mart tables (regen_phenotype_mart). This table still rebuilds
+-- wholesale every run while its FK parent (phenotype_observation_generated) is
+-- now mutated incrementally, which is the mismatch that forced the ON DELETE
+-- CASCADE on pheno_term_fast_search_psg_fk below. An incremental rebuild
+-- (insert new / update changed / delete gone, matched on natural key) would
+-- keep ptfs_psg_id stable across runs and remove the cross-run FK churn, so the
+-- cascade would no longer be load-bearing.
 
 DO $$
 DECLARE
@@ -220,9 +229,11 @@ ALTER TABLE pheno_term_fast_search ADD PRIMARY KEY (ptfs_pk_id);
 ALTER SEQUENCE IF EXISTS pheno_term_fast_search_ptfs_pk_id_seq
     OWNED BY NONE;
 
--- Add foreign key constraints
+-- Add foreign key constraints (ON DELETE CASCADE): 
+-- phenotype_observation_generated deletes should cascade through to pheno_term_fast_search
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_psg_fk
-    FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id);
+    FOREIGN KEY (ptfs_psg_id) REFERENCES phenotype_observation_generated (psg_id)
+    ON DELETE CASCADE;
 ALTER TABLE pheno_term_fast_search ADD CONSTRAINT pheno_term_fast_search_term_fk
     FOREIGN KEY (ptfs_term_zdb_id) REFERENCES term (term_zdb_id);
 
