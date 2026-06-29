@@ -5,6 +5,9 @@ DOCKER_DB_UNLOADS_PATH=/research/zunloads/databases/zfindb
 DOCKER_SOLR_UNLOADS_PATH=/research/zunloads/solr/zfindb
 DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=/research/zblastfiles/zmore/dev_blastdb
 DOCKER_ABBLAST_PATH=/opt/ab-blast
+# Host dir containing bowtie/ and bowtie2/ subdirs (each with the tool binaries).
+# Mounted to /opt/misc/bowtie and /opt/misc/bowtie2, mirroring the ab-blast pattern.
+DOCKER_BOWTIE_PATH=/opt/bowtie
 DOCKER_RESEARCH_PATH=/research
 DOCKER_DOWNLOADS_PATH=/research/zunloads/download-files/dazed
 DOCKER_LOADUP_PATH=/research/zcentral/loadUp
