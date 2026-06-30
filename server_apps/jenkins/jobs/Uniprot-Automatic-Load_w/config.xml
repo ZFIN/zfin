@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>
-    Monthly auto-run of the UniProt primary and secondary loads against the latest
+    Weekly automatic run of the UniProt primary and secondary loads against the latest
     processed UniProt release file (re-integrates changes that came from our own
     database since the release was originally loaded).
 
@@ -50,7 +50,7 @@ if [ "$UNPROCESSED_COUNT" != "0" ]; then
     echo "Run UniProt-Diff-Load and UniProt-Secondary-Term-Load manually to pull in the new release."
 fi
 
-echo "Proceeding with monthly re-run against latest processed release."
+echo "Proceeding with scheduled re-run against latest processed release."
         ]]>
       </command>
     </hudson.tasks.Shell>
