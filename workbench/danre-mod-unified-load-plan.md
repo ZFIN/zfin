@@ -140,6 +140,8 @@ Report artifacts from this run are committed under `server_apps/DB_maintenance/g
 
 **Run 2 (2026-06-25) — after mapping GO_REF:0000002 + 0000003 (§7 decision):** errors **52,273 → 20,603** (−31,670); added **25,826 → 57,496**; `GO_REF not known` **34,044 → 2,180**. The 31,864 cleared split into 31,670 added + 194 newly-detected duplicates (`Duplicate annotation entry` 77 → 271) — accounts exactly. Remaining errors collapse to one big item — **`ECO:0007322` SubCell IEA (17,350)**, the `eco_go_mapping` gap — plus small open decisions: `GO_REF:0000108` GOC (2,125), `EXP` (105), `ECO:0005547` (21), `GO_REF:0000115` RNAcentral (55).
 
+**Run 3 (2026-06-30) — first run vs the PUBLISHED PROD file** (`current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz`, now live; generated 2026-06-17, 142,612 rows; default URL flipped from staging to prod). Run against a freshly `loaddb`'d DB: errors **20,627** (≈ run 2's 20,603), `ECO:0007322` still **17,350**, `GO_REF not known` still **2,180** — the interpro2go/ec2go fix holds on the real file and the error profile is stable. Existing **78,352** / added **43,608** / updated **23** (the shift vs run 2 is just the fresh full DB matching more rows as "existing"). Note: the prod file (142,612 rows) natively equals what the larger staging file (188,529) *processed* after `postProcessing` drops — so the staging QC was representative. **`ECO:0007322` (17,350) remains the single dominant remaining lever.**
+
 ---
 
 ## 5. Pre-adoption blockers (from status doc §2, still gating)

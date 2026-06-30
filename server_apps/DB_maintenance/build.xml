@@ -199,17 +199,17 @@
 
     <!-- ZFIN-10025 Phase 0: unified GO Central "DANRE-mod" GPAD load.
          Consumes the single MOD-ID-keyed file that will replace the separate Noctua GPAD,
-         FP-inference, and GOA GAF loads. Defaults to the staging (skyhook) URL since the
-         prod URL (current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz) is not yet
-         published; override with env DANRE_MOD_GPAD_URL. Ships REPORT-ONLY by default
-         (GAF_LOAD_REPORT_ONLY=true): the load computes the add/update/remove diff and writes
-         the HTML/txt reports but performs NO database writes. Remove the <env> line (or set
-         it false) only after the diff is trusted and the Phase 1 per-source removal scoping
-         is in place. -->
+         FP-inference, and GOA GAF loads. Defaults to the published prod URL (live as of
+         2026-06-30); override with env DANRE_MOD_GPAD_URL (e.g. the skyhook staging copy at
+         https://skyhook.geneontology.io/pipeline-from-goa/main/annotations/gpad/DANRE-mod.gpad.gz).
+         Ships REPORT-ONLY by default (GAF_LOAD_REPORT_ONLY=true): the load computes the
+         add/update/remove diff and writes the HTML/txt reports but performs NO database
+         writes. Remove the <env> line (or set it false) only after the diff is trusted and
+         the Phase 1 per-source removal scoping is in place. -->
     <target name="load-gpad-danre-mod" description="Unified GO Central DANRE-mod GPAD load (ZFIN-10025); report-only by default">
         <property environment="env"/>
         <condition property="downloadUrl" value="${env.DANRE_MOD_GPAD_URL}"
-                   else="https://skyhook.geneontology.io/pipeline-from-goa/main/annotations/gpad/DANRE-mod.gpad.gz">
+                   else="https://current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz">
             <isset property="env.DANRE_MOD_GPAD_URL"/>
         </condition>
 
