@@ -2,7 +2,7 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.tuple.Tuple2;
-import org.zfin.uniprot.persistence.BatchInserter;
+import org.zfin.uniprot.persistence.BatchOperations;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
@@ -47,8 +47,7 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
                         "mtp_mrkr_zdb_id", (Object)action.v1(),
                         "mtp_uniprot_id", action.v2()))
                 .toList();
-        BatchInserter batchInserter = new BatchInserter("marker_to_protein", insertionRows);
-        batchInserter.execute();
+        BatchOperations.bulkInsert("marker_to_protein", insertionRows);
     }
 
 
@@ -61,7 +60,7 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
                         "mtp_mrkr_zdb_id", (Object) action.getGeneZdbID(),
                         "mtp_uniprot_id", action.getAccession()))
                 .toList();
-        BatchInserter.bulkDelete("marker_to_protein", List.of("mtp_mrkr_zdb_id", "mtp_uniprot_id"), keyRows);
+        BatchOperations.bulkDelete("marker_to_protein", List.of("mtp_mrkr_zdb_id", "mtp_uniprot_id"), keyRows);
     }
 
 }

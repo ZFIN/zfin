@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
- * This class is used to bulk load data into a table.
- * It will insert the data in batches of 100.
+ * Bulk operations against a table: batched inserts (in batches of 100) and set-based
+ * deletes (via a temp-table join). Used to avoid per-row round trips in the loads.
  */
 @Log4j2
 @Getter
 @Setter
-public class BatchInserter {
+public class BatchOperations {
 
     private static final String TEMP_TABLE_PREFIX = "temp_bulk_load_";
     private static final int BATCH_SIZE = 100;
@@ -38,7 +38,7 @@ public class BatchInserter {
      * @param rowsOfKeyValuePairsToInsert The data to be inserted.  Each row is a list of key-value pairs.
      *                                    The key is the column name, the value is the value to be inserted.
      */
-    public BatchInserter(String baseTableName,
+    public BatchOperations(String baseTableName,
                           List<Map<String, Object>> rowsOfKeyValuePairsToInsert) {
         this.baseTableName = baseTableName;
         this.rowsOfKeyValuePairsToInsert = rowsOfKeyValuePairsToInsert;
@@ -62,8 +62,23 @@ public class BatchInserter {
         }
     }
 
-    public static void bulkInsert(String tableName, List<Map<String, Object>> tuples) {
-        BatchInserter inserter = new BatchInserter(tableName, tuples);
+    /**
+     * Bulk-insert rows into a table, staging through a temp table. Mirrors {@link #bulkDelete}.
+     *
+     * @param baseTableName the table to insert into (e.g. marker_to_protein)
+     * @param rows          one map per row; each map's keys are the column names to populate
+     */
+    public static void bulkInsert(String baseTableName, List<Map<String, Object>> rows) {
+        new BatchOperations(baseTableName, rows).execute();
+    }
+
+    /**
+     * Batch-insert rows directly into an already-existing table (no temp staging). Used when the
+     * caller manages the target table itself - e.g. populating a temp table it created in order to
+     * run custom follow-up SQL.
+     */
+    public static void loadRowsIntoTable(String tableName, List<Map<String, Object>> rows) {
+        BatchOperations inserter = new BatchOperations(tableName, rows);
         inserter.setTempTableOverride(tableName);
         inserter.loadBatchData();
     }
@@ -91,7 +106,7 @@ public class BatchInserter {
         ).executeUpdate();
 
         // batched insert of the keys into the temp table
-        bulkInsert(tempTable, keyRows);
+        loadRowsIntoTable(tempTable, keyRows);
 
         String joinCondition = keyColumns.stream()
                 .map(col -> baseTableName + "." + col + " = t." + col)
