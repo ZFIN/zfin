@@ -88,11 +88,12 @@ public class InterproProteinActionProcessor implements ActionProcessor {
     }
 
     private static void processDeleteQueries(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action: actions) {
-                currentSession().createNativeQuery("DELETE FROM protein WHERE up_uniprot_id = :uniprot")
-                        .setParameter("uniprot", action.getAccession())
-                        .executeUpdate();
-        }
+        // Bulk delete via a temp-table join instead of one DELETE per action (which ran ~0.4s/row
+        // -> ~2h for 16k deletes on staging).
+        List<Map<String, Object>> keyRows = actions.stream()
+                .map(action -> Map.of("up_uniprot_id", (Object) action.getAccession()))
+                .toList();
+        BatchInserter.bulkDelete("protein", List.of("up_uniprot_id"), keyRows);
     }
 
 }

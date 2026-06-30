@@ -91,22 +91,15 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
     }
 
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            processDelete(action);
-        }
-    }
-
-    private void processDelete(SecondaryTermLoadAction action) {
-        ProteinToInterproDTO proteinToInterproDTO = ProteinToInterproDTO.fromMap(action.getRelatedEntityFields());
-        String sql = """
-                delete from protein_to_interpro
-                where pti_uniprot_id = :uniprot
-                and pti_interpro_id = :interpro
-                """;
-        currentSession().createNativeQuery(sql)
-                .setParameter("uniprot", proteinToInterproDTO.uniprot())
-                .setParameter("interpro", proteinToInterproDTO.interpro())
-                .executeUpdate();
+        // Bulk delete via a temp-table join instead of one DELETE per action (~1.4h for 12k
+        // deletes on staging).
+        List<Map<String, Object>> keyRows = actions.stream()
+                .map(action -> ProteinToInterproDTO.fromMap(action.getRelatedEntityFields()))
+                .map(dto -> Map.of(
+                        "pti_uniprot_id", (Object) dto.uniprot(),
+                        "pti_interpro_id", dto.interpro()))
+                .toList();
+        BatchInserter.bulkDelete("protein_to_interpro", List.of("pti_uniprot_id", "pti_interpro_id"), keyRows);
     }
 
 }

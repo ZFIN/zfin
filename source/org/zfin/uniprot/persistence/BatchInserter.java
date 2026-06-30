@@ -68,6 +68,41 @@ public class BatchInserter {
         inserter.loadBatchData();
     }
 
+    /**
+     * Bulk-delete rows from a table by matching a set of key tuples, using a single set-based
+     * "DELETE ... USING <temp>" instead of one DELETE per row. Avoids N round trips (and, for
+     * tables without an index on the key columns, N sequential scans).
+     *
+     * @param baseTableName the table to delete from (e.g. marker_to_protein)
+     * @param keyColumns    the key columns used to match rows (e.g. [mtp_mrkr_zdb_id, mtp_uniprot_id])
+     * @param keyRows       one map per row to delete; each map's keys must be the keyColumns
+     */
+    public static void bulkDelete(String baseTableName, List<String> keyColumns, List<Map<String, Object>> keyRows) {
+        if (keyRows == null || keyRows.isEmpty()) {
+            return;
+        }
+        String tempTable = "temp_bulk_delete_" + baseTableName;
+        String keyColsCsv = String.join(", ", keyColumns);
+
+        // temp table inherits the exact column types of the key columns from the base table
+        currentSession().createNativeQuery("drop table if exists " + tempTable).executeUpdate();
+        currentSession().createNativeQuery(
+                "create temp table " + tempTable + " as select " + keyColsCsv + " from " + baseTableName + " where false"
+        ).executeUpdate();
+
+        // batched insert of the keys into the temp table
+        bulkInsert(tempTable, keyRows);
+
+        String joinCondition = keyColumns.stream()
+                .map(col -> baseTableName + "." + col + " = t." + col)
+                .collect(Collectors.joining(" and "));
+        currentSession().createNativeQuery(
+                "delete from " + baseTableName + " using " + tempTable + " t where " + joinCondition
+        ).executeUpdate();
+
+        currentSession().createNativeQuery("drop table " + tempTable).executeUpdate();
+    }
+
     public final void execute() {
         log.info("creating temp table for bulk load: " + tempTable());
         createTempTable();
