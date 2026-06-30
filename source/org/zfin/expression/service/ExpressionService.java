@@ -1008,7 +1008,7 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
             response.setTotal(0);
             response.setResults(Collections.emptyList());
         } else {
-            Integer total = (Integer) Optional.of(images.get("numBuckets")).orElse(0);
+            int total = ((Number) Optional.ofNullable(images.get("numBuckets")).orElse(0)).intValue();
             List<String> imageIds = ((List<NamedList<Object>>) images.get("buckets")).stream()
                 .map(bucket -> bucket.get("val").toString())
                 .collect(Collectors.toList());
