@@ -1,0 +1,39 @@
+TODO — ZFIN-10367: ZIRC submission UI (remove zfinRecordEstablished + cellGenomicFeature, rename alleleInZfin label)
+================================================================================
+
+This file tracks follow-up steps that could not be run in the dev worktree
+(it is missing home/WEB-INF/zfin.properties, so Gradle cannot configure the
+project). Complete these in a properly configured environment before merge.
+
+REMAINING STEPS
+--------------------------------------------------------------------------------
+[ ] 1. Compile the Java changes:
+          gradle compileJava
+
+[ ] 2. Run the affected tests and confirm they pass:
+          gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest
+          gradle test --tests org.zfin.zirc.service.MutationStatusComputerTest
+
+       The mutation form-schema snapshot was hand-edited
+       (test/resources/zirc/snapshot/mutation.form-schema.json). If the
+       snapshot test drifts, regenerate and review the diff:
+          gradle test -Dzirc.snapshot.update=true \
+              --tests org.zfin.zirc.api.FormSchemaSnapshotTest
+
+[ ] 3. Rebuild the React bundle (types.ts changed) and smoke-test the form at
+       /action/zirc/mutation/<id>/edit — confirm:
+          - field 1 is now labeled "ZFIN Record Established"
+          - the old "ZFIN Record Established" radio is gone
+          - "Cell Genomic Feature" is gone
+       And the read-only view at the line-submission detail page matches.
+
+[ ] 4. Apply / verify the Liquibase migration that drops the two columns:
+          source/org/zfin/db/postGmakePostloaddb/1184/migrations/
+              0010-ZFIN-10367-zirc-drop-mutation-zfin-record-cell-feature.sql
+
+[ ] 5. Consider the "Improve interface" note on the Allele Designation field
+       (from the ticket screenshot) — not yet addressed; confirm scope with
+       the requester.
+
+[ ] 6. Remove this TODO.txt from the repo before merging the PR:
+          git rm TODO.txt

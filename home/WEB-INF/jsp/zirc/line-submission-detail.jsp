@@ -302,14 +302,14 @@
                                 <table class="table table-borderless w-auto">
                                     <tbody>
                                         <tr>
-                                            <th><span class="status-slot"><z:zirc-status-badge status="${mFieldStatus['alleleInZfin']}"/></span>Allele in ZFIN</th>
+                                            <th><span class="status-slot"><z:zirc-status-badge status="${mFieldStatus['alleleInZfin']}"/></span>ZFIN Record Established</th>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${m.alleleInZfin == true}">Yes</c:when>
                                                     <c:when test="${m.alleleInZfin == false}">No</c:when>
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
-                                                <z:zirc-field-history fieldName="alleleInZfin" label="Allele in ZFIN" updates="${mFieldUpdates['alleleInZfin']}" scope="${mScope}"/><z:zirc-field-comments recId="${mRecId}" scope="field" fieldName="alleleInZfin" label="Allele in ZFIN"/>
+                                                <z:zirc-field-history fieldName="alleleInZfin" label="ZFIN Record Established" updates="${mFieldUpdates['alleleInZfin']}" scope="${mScope}"/><z:zirc-field-comments recId="${mRecId}" scope="field" fieldName="alleleInZfin" label="ZFIN Record Established"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -362,27 +362,6 @@
                                                     <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
                                                 </c:choose>
                                                 <z:zirc-field-history fieldName="mutationType" label="Mutation Type" updates="${mFieldUpdates['mutationType']}" scope="${mScope}"/><z:zirc-field-comments recId="${mRecId}" scope="field" fieldName="mutationType" label="Mutation Type"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><span class="status-slot"><z:zirc-status-badge status="${mFieldStatus['zfinRecordEstablished']}"/></span>ZFIN Record Established</th>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${m.zfinRecordEstablished == true}">Yes</c:when>
-                                                    <c:when test="${m.zfinRecordEstablished == false}">No</c:when>
-                                                    <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                                </c:choose>
-                                                <z:zirc-field-history fieldName="zfinRecordEstablished" label="ZFIN Record Established" updates="${mFieldUpdates['zfinRecordEstablished']}" scope="${mScope}"/><z:zirc-field-comments recId="${mRecId}" scope="field" fieldName="zfinRecordEstablished" label="ZFIN Record Established"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><span class="status-slot"><z:zirc-status-badge status="${mFieldStatus['cellGenomicFeature']}"/></span>ZDB Genomic Feature #</th>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${not empty m.cellGenomicFeature}"><c:out value="${m.cellGenomicFeature}"/></c:when>
-                                                    <c:otherwise><span class="text-muted">&mdash;</span></c:otherwise>
-                                                </c:choose>
-                                                <z:zirc-field-history fieldName="cellGenomicFeature" label="ZDB Genomic Feature #" updates="${mFieldUpdates['cellGenomicFeature']}" scope="${mScope}"/><z:zirc-field-comments recId="${mRecId}" scope="field" fieldName="cellGenomicFeature" label="ZDB Genomic Feature #"/>
                                             </td>
                                         </tr>
                                         <tr>
