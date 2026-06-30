@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {columnDefinitionType, downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import DataProvider from './DataProvider';
@@ -39,7 +39,6 @@ const DataTable = ({
     tableFixed = true,
 }) => {
     [tableState, setTableState] = useTableState(tableState, setTableState);
-    const [processedColumns, setProcessedColumns] = useState(columns);
 
     const handleFilterChange = (field, value) => {
         setTableState(produce(state => {
@@ -66,12 +65,7 @@ const DataTable = ({
             ...column,
             hidden: column.hidden || shouldHideColumn(response.results, column)
         }));
-        
-        // Update state if columns have changed
-        if (JSON.stringify(updatedColumns) !== JSON.stringify(processedColumns)) {
-            setProcessedColumns(updatedColumns);
-        }
-        
+
         return (
             <Table
                 columnHeaderFormat={columnHeaderFormat}
