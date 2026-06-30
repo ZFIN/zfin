@@ -422,7 +422,7 @@ public class ExpressionSearchService {
             return response;
         }
 
-        Integer total = (Integer) Optional.of(imagesFacet.get("numBuckets")).orElse(0);
+        Integer total = ((Number) Optional.of(imagesFacet.get("numBuckets")).orElse(0)).intValue();
         @SuppressWarnings("unchecked")
         List<org.apache.solr.common.util.NamedList<Object>> buckets =
                 (List<org.apache.solr.common.util.NamedList<Object>>) imagesFacet.get("buckets");

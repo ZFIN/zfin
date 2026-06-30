@@ -255,16 +255,16 @@ public class RibbonService {
         NamedList<Object> facets = (NamedList<Object>) response.getResponse().get("facets");
         if (CollectionUtils.isEmpty(includeTermIDs)) {
             RibbonSubjectGroupCounts counts = new RibbonSubjectGroupCounts();
-            counts.setNumberOfAnnotations((Integer) Optional.ofNullable(facets.get("count")).orElse(0));
-            counts.setNumberOfClasses((Integer) Optional.ofNullable(facets.get("num_terms")).orElse(0));
+            counts.setNumberOfAnnotations(((Number) Optional.ofNullable(facets.get("count")).orElse(0)).intValue());
+            counts.setNumberOfClasses(((Number) Optional.ofNullable(facets.get("num_terms")).orElse(0)).intValue());
             termCounts.put(GLOBAL_ALL, counts);
         } else {
             for (String id : includeTermIDs) {
                 NamedList<Object> facet = (NamedList<Object>) facets.get(id);
                 RibbonSubjectGroupCounts counts = new RibbonSubjectGroupCounts();
                 if (facet != null) {
-                    counts.setNumberOfAnnotations((Integer) Optional.ofNullable(facet.get("count")).orElse(0));
-                    counts.setNumberOfClasses((Integer) Optional.ofNullable(facet.get("num_terms")).orElse(0));
+                    counts.setNumberOfAnnotations(((Number) Optional.ofNullable(facet.get("count")).orElse(0)).intValue());
+                    counts.setNumberOfClasses(((Number) Optional.ofNullable(facet.get("num_terms")).orElse(0)).intValue());
                 } else {
                     counts.setNumberOfAnnotations(0);
                     counts.setNumberOfClasses(0);
