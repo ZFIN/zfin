@@ -1,9 +1,13 @@
-TODO — ZFIN-10367: ZIRC submission UI (remove zfinRecordEstablished + cellGenomicFeature, rename alleleInZfin label)
+TODO — ZFIN-10367: ZIRC submission UI
 ================================================================================
+Covers two changes on this branch:
+  A. Remove zfinRecordEstablished + cellGenomicFeature; rename alleleInZfin label.
+  B. Chip/badge UI for the ZDB-ID autocomplete inputs (allele + gene), backed by
+     an exactMatch lookup on the existing autocomplete endpoint.
 
-This file tracks follow-up steps that could not be run in the dev worktree
-(it is missing home/WEB-INF/zfin.properties, so Gradle cannot configure the
-project). Complete these in a properly configured environment before merge.
+These follow-ups could not be run in the dev worktree: it is missing
+home/WEB-INF/zfin.properties (Gradle can't configure) and has no node_modules
+(no tsc/eslint/webpack). Complete them in a configured environment before merge.
 
 REMAINING STEPS
 --------------------------------------------------------------------------------
@@ -20,20 +24,35 @@ REMAINING STEPS
           gradle test -Dzirc.snapshot.update=true \
               --tests org.zfin.zirc.api.FormSchemaSnapshotTest
 
-[ ] 3. Rebuild the React bundle (types.ts changed) and smoke-test the form at
-       /action/zirc/mutation/<id>/edit — confirm:
+[ ] 3. Typecheck, lint, and rebuild the React bundle:
+          npm run typecheck
+          npm run lint
+          npm run build
+
+[ ] 4. Smoke-test the field-removal changes at /action/zirc/mutation/<id>/edit:
           - field 1 is now labeled "ZFIN Record Established"
           - the old "ZFIN Record Established" radio is gone
           - "Cell Genomic Feature" is gone
        And the read-only view at the line-submission detail page matches.
 
-[ ] 4. Apply / verify the Liquibase migration that drops the two columns:
+[ ] 5. Smoke-test the autocomplete chip UI (allele field with "ZFIN Record
+       Established" = Yes, and a Gene card's gene field):
+          - existing saved value shows a chip with symbol + ZDB-ID on load
+            (symbol resolves via the exactMatch lookup, not just the raw id)
+          - × removes the chip and restores the text input (focused)
+          - picking a suggestion creates a chip
+          - pasting a valid ZDB-ID + blur -> chip; a bogus one -> inline error,
+            no commit
+          - only one value can be entered (input is replaced by the chip)
+       Also verify the AddPersonPicker (submitter/PI search) still works — it
+       shares useAutocomplete but not the chip renderer.
+
+[ ] 6. Apply / verify the Liquibase migration that drops the two columns:
           source/org/zfin/db/postGmakePostloaddb/1184/migrations/
               0010-ZFIN-10367-zirc-drop-mutation-zfin-record-cell-feature.sql
 
-[ ] 5. Consider the "Improve interface" note on the Allele Designation field
-       (from the ticket screenshot) — not yet addressed; confirm scope with
-       the requester.
+[ ] 7. Optional: add a ZircAutocompleteServiceTest covering the exactMatch
+       branch (features/markers/persons) — no such test exists today.
 
-[ ] 6. Remove this TODO.txt from the repo before merging the PR:
+[ ] 8. Remove this TODO.txt from the repo before merging the PR:
           git rm TODO.txt
