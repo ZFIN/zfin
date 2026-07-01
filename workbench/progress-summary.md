@@ -1,6 +1,8 @@
 # ZFIN-10025 Unified DANRE-mod GO Load — Progress Summary
 
-_Last updated 2026-06-25. Branch: `ZFIN-10025-danre-mod-unified-load`. Companion to `danre-mod-unified-load-plan.md` (full plan) and `../tmp/go-annotation-loads-status.md` (background)._
+_Last updated 2026-07-01. Branch: `ZFIN-10025-danre-mod-unified-load`. Companion to `danre-mod-unified-load-plan.md` (full plan) and `../tmp/go-annotation-loads-status.md` (background)._
+
+**Branch/history note (2026-07-01):** rebased onto latest `origin/main`, then onto `gaf-load-report-improvements` so history is linear: `main → [1 squashed ZFIN-8948 commit: before/after DB snapshot + diff tooling] → [8 ZFIN-10025 commits]`. This brings the legacy-load before/after DB snapshot+diff apparatus (`snapshot_mgte.sh/.sql`, `diff_mgte.sh/.sql`, `CSVDiff`, wired into `Load-GAF-GOA_m` + `Load-GPAD-Noctua_w`) onto our branch for same-vintage legacy-vs-unified comparison. Pre-rebase safety backups: branches `ZFIN-10025-prerebase-backup`, `ZFIN-10025-reconciled-backup`.
 
 Goal: replace the three GO-annotation loads (GAF-GOA, Noctua GPAD, FP-Inference) with **one** load consuming GO Central's single MOD-ID-keyed file `annotations/gpad/DANRE-mod.gpad.gz`, retaining per-source provenance so removal stays scoped per source.
 
@@ -67,7 +69,8 @@ Goal: replace the three GO-annotation loads (GAF-GOA, Noctua GPAD, FP-Inference)
   1. ✅ **DONE — `assigned_by → GafOrganization` map + per-source removal loop** (`DanreModSourceOrganization`, `GafService.perSourceOrganization`, per-org loop in `GafLoadJob`). Verified in run 4: `removed` 0 → 69,838, scoped per owning org. Mechanism works and is report-only-safe. **It surfaced the #1 cutover blocker** (matching/ownership churn — see §5 / plan §5.0).
   2. ⬜ **Port the GAF-path exclusion/ownership rules** — deferred: entangled with open decisions (EXP now *allowed* per ZFIN-10258; `GO_REF:0000002` now *wanted*), so not a clean lift-and-shift. Revisit with the ECO/EXP decisions.
 - **Phase 2:** resolve the ECO/GO_REF/EXP decisions above; verify relation→`qualifier_relation` mapping; build the old-vs-new QC diff (per source); get sign-off on annotation loss + net-new rows.
-- **Phase 3 (cutover — prod URL now LIVE as of 2026-06-30; remaining blocker is Phase 2 sign-off):** flip report-only off; retire Noctua + FP-Inference Jenkins jobs; drop the secondary load's *2go GO-mapping handlers. (Old `zfin.gaf.gz` + `/products/` files still served too — coexistence window.)
+- **Jenkins job (2026-07-01): `Load-GPAD-DANRE-mod_m` created** (`server_apps/jenkins/jobs/Load-GPAD-DANRE-mod_m/config.xml`, registered in `jobs.production.properties`; trigger left empty/manual for now). Mirrors the legacy jobs' before/after DB snapshot+diff (ZFIN-8948) but runs it for **both** orgs the unified load owns (GOA + Noctua) → two `mgoe_dbdiff_<org>.xlsx` workbooks directly comparable to the legacy per-load diffs. Currently report-only (Ant target ships `GAF_LOAD_REPORT_ONLY=true`), so before==after until cutover.
+- **Phase 3 (cutover — prod URL now LIVE as of 2026-06-30; remaining blocker is Phase 2 sign-off):** flip report-only off; **schedule `Load-GPAD-DANRE-mod_m`** + retire Noctua + FP-Inference Jenkins jobs; drop the secondary load's *2go GO-mapping handlers. (Old `zfin.gaf.gz` + `/products/` files still served too — coexistence window.)
 
 ---
 
