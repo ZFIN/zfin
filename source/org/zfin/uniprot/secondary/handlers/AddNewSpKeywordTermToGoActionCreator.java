@@ -1,7 +1,6 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
@@ -14,6 +13,9 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.zfin.util.ZfinCollectionUtils.uniqueBy;
 
@@ -86,11 +88,20 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
         }
         log.info("Found " + geneKeywords.size() + " keywords for " + uniProtRecords.size() + " uniprot records. " + unmatchedGeneCount + " uniprot records had no matching gene");
 
-        //join the resulting keywords from above to the translation records to get GO terms
-        List<Tuple2<GeneKeyword, SecondaryTerm2GoTerm>> joined = Seq.seq(geneKeywords)
-                .innerJoin(translationRecords,
-                        (geneKeyword, item2go) -> geneKeyword.keyword().equals(item2go.dbTermName()))
-                .toList();
+        //join the keywords above to the translation records (keyword == dbTermName) to get GO terms.
+        //Hash join instead of Seq.innerJoin's nested-loop scan, which was O(N*M).
+        Map<String, List<SecondaryTerm2GoTerm>> translationByTermName = translationRecords.stream()
+                .filter(item2go -> item2go.dbTermName() != null)
+                .collect(Collectors.groupingBy(SecondaryTerm2GoTerm::dbTermName));
+        List<Tuple2<GeneKeyword, SecondaryTerm2GoTerm>> joined = new ArrayList<>();
+        for (GeneKeyword geneKeyword : geneKeywords) {
+            List<SecondaryTerm2GoTerm> matches = translationByTermName.get(geneKeyword.keyword());
+            if (matches != null) {
+                for (SecondaryTerm2GoTerm item2go : matches) {
+                    joined.add(new Tuple2<>(geneKeyword, item2go));
+                }
+            }
+        }
 
         //create new MarkerGoTermEvidenceLoadAction for each joined record
         for(var joinedRecord : joined) {
@@ -120,22 +131,18 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
     }
 
     private List<SecondaryTermLoadAction> filterExistingTerms(List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions, SecondaryLoadContext context) {
+        //Precompute existing-record keys once (goID + markerZdbID + inferredFrom) so filtering is
+        //O(N+M) instead of scanning all existing records for every new action.
+        Set<String> existingKeys = context.getExistingMarkerGoTermEvidenceRecords().stream()
+                .map(record -> record.getGoID() + ' ' + record.getMarkerZdbID() + ' ' + record.getInferredFrom())
+                .collect(Collectors.toSet());
         return newMarkerGoTermEvidenceLoadActions.stream()
-                .filter( newAction -> !spKwAlreadyExists(context, newAction))
+                .filter(newAction -> {
+                    String inferredFrom = MarkerGoTermEvidenceSlimDTO.fromMap(newAction.getRelatedEntityFields()).getInferredFrom();
+                    String key = newAction.getGoID() + ' ' + newAction.getGeneZdbID() + ' ' + inferredFrom;
+                    return !existingKeys.contains(key);
+                })
                 .toList();
-    }
-
-
-    private boolean spKwAlreadyExists(SecondaryLoadContext context, SecondaryTermLoadAction newAction) {
-        List<MarkerGoTermEvidenceSlimDTO> existingRecords = context.getExistingMarkerGoTermEvidenceRecords();
-        String goID = newAction.getGoID();
-        String geneZdbID = newAction.getGeneZdbID();
-        String inferredFrom = MarkerGoTermEvidenceSlimDTO.fromMap(newAction.getRelatedEntityFields()).getInferredFrom();
-        return existingRecords
-                .stream()
-                .anyMatch( record -> record.getGoID().equals(goID) &&
-                        record.getMarkerZdbID().equals(geneZdbID) &&
-                        record.getInferredFrom().equals(inferredFrom));
     }
 
 }

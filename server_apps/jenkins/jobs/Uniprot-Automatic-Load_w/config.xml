@@ -2,17 +2,19 @@
 <project>
   <actions/>
   <description>
-    Monthly auto-run of the UniProt primary and secondary loads against the latest
+    Weekly automatic run of the UniProt primary and secondary loads against the latest
     processed UniProt release file (re-integrates changes that came from our own
     database since the release was originally loaded).
 
     Behavior:
-    - If an unprocessed UniProt release exists (i.e. a newer release was downloaded
-      by UniProt-Release-Check_d but not yet manually loaded), this job marks the
-      build UNSTABLE and skips the loads. The new release should be handled with the
-      manual UniProt-Diff-Load / UniProt-Secondary-Term-Load jobs instead.
-    - Otherwise, this job runs UniProtLoadTask and UniprotSecondaryTermLoadTask
-      against the latest processed release file, with changes committed.
+    - This job always runs UniProtLoadTask and UniprotSecondaryTermLoadTask against the
+      most recent ALREADY-PROCESSED UniProt release (UNIPROT_RERUN_LATEST_PROCESSED=true),
+      with changes committed. This catches up on changes from the NCBI load and other
+      local edits since that release was loaded.
+    - If a newer UniProt release has been downloaded by UniProt-Release-Check_d but not
+      yet loaded, this job does NOT pull it in - it keeps running against the latest
+      processed release and logs a reminder. Pulling in the new release is a deliberate,
+      manual action via the UniProt-Diff-Load / UniProt-Secondary-Term-Load jobs.
 
     See also: UniProt-Diff-Load, UniProt-Secondary-Term-Load, UniProt-Release-Check_d.
   </description>
@@ -37,19 +39,20 @@
         <![CDATA[
 set -e
 
+# Informational only: this job always runs against the latest ALREADY-PROCESSED release
+# (the load tasks honor UNIPROT_RERUN_LATEST_PROCESSED=true and never auto-load a pending
+# release). If a newer release is pending, remind curators to load it manually - but do
+# NOT skip the catch-up run.
 UNPROCESSED_COUNT=$(psql -At -d $DBNAME -c "SELECT count(*) FROM uniprot_release WHERE upr_processed_date IS NULL")
 
 if [ "$UNPROCESSED_COUNT" != "0" ]; then
-    echo "Found $UNPROCESSED_COUNT unprocessed UniProt release(s)."
-    echo "A new release is pending - skipping monthly auto-run."
-    echo "Run UniProt-Diff-Load and UniProt-Secondary-Term-Load manually."
-    exit 2
+    echo "NOTE: $UNPROCESSED_COUNT new UniProt release(s) pending - NOT loaded by this job."
+    echo "Run UniProt-Diff-Load and UniProt-Secondary-Term-Load manually to pull in the new release."
 fi
 
-echo "No unprocessed UniProt releases - proceeding with monthly re-run against latest processed release."
+echo "Proceeding with scheduled re-run against latest processed release."
         ]]>
       </command>
-      <unstableReturn>2</unstableReturn>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>
@@ -63,6 +66,9 @@ export UNIPROT_CONTEXT_FILE="$PWD/uniprot_context_$TIMESTAMP.json.zip"
 export NCBI_FETCH_CACHE_OUTPUT_FILE="$PWD/ncbi_refseq_api_results.json"
 export UNIPROT_COMMIT_CHANGES=true
 export UNIPROT_RERUN_LATEST_PROCESSED=true
+
+# UNIPROT_RERUN_LATEST_PROCESSED=true makes UniProtLoadTask run against the latest
+# already-processed release and ignore any pending new release, so no shell-side skip is needed.
 cd $SOURCEROOT
 gradle uniprotLoadTask
         ]]>
@@ -78,6 +84,9 @@ rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report
 export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report_$TIMESTAMP.json.zip"
 export UNIPROT_COMMIT_CHANGES=true
 export UNIPROT_RERUN_LATEST_PROCESSED=true
+
+# UNIPROT_RERUN_LATEST_PROCESSED=true makes UniprotSecondaryTermLoadTask run against the latest
+# already-processed release and ignore any pending new release, so no shell-side skip is needed.
 cd $SOURCEROOT
 gradle uniprotSecondaryTermLoadTask
         ]]>
