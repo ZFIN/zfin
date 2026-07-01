@@ -63,9 +63,9 @@ Goal: replace the three GO-annotation loads (GAF-GOA, Noctua GPAD, FP-Inference)
 
 ## 4. Work REMAINING (by phase)
 
-- **Phase 1 (engineering, can proceed now, stays report-only):**
-  1. `assigned_by → GafOrganization` map + **per-source diff/removal loop** (core of approach B; turns the blended report into per-source buckets).
-  2. **Port the GAF-path exclusion/ownership rules** (`goRefExcludePubMap`, `EXCLUDED_EVIDENCE_CODES`) into the DANRE-mod path so it stops surfacing rows legacy silently dropped (EXP, etc.).
+- **Phase 1 (engineering):**
+  1. ✅ **DONE — `assigned_by → GafOrganization` map + per-source removal loop** (`DanreModSourceOrganization`, `GafService.perSourceOrganization`, per-org loop in `GafLoadJob`). Verified in run 4: `removed` 0 → 69,838, scoped per owning org. Mechanism works and is report-only-safe. **It surfaced the #1 cutover blocker** (matching/ownership churn — see §5 / plan §5.0).
+  2. ⬜ **Port the GAF-path exclusion/ownership rules** — deferred: entangled with open decisions (EXP now *allowed* per ZFIN-10258; `GO_REF:0000002` now *wanted*), so not a clean lift-and-shift. Revisit with the ECO/EXP decisions.
 - **Phase 2:** resolve the ECO/GO_REF/EXP decisions above; verify relation→`qualifier_relation` mapping; build the old-vs-new QC diff (per source); get sign-off on annotation loss + net-new rows.
 - **Phase 3 (cutover — prod URL now LIVE as of 2026-06-30; remaining blocker is Phase 2 sign-off):** flip report-only off; retire Noctua + FP-Inference Jenkins jobs; drop the secondary load's *2go GO-mapping handlers. (Old `zfin.gaf.gz` + `/products/` files still served too — coexistence window.)
 

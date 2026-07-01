@@ -118,6 +118,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
 
             gafService = new GafService(organizationEnum);
+            // ZFIN-10025: the unified DANRE-mod load owns each annotation by its source
+            // assigned_by (per-source add/update/remove scoping); legacy loads stay single-org.
+            gafService.setPerSourceOrganization(gafParser instanceof DanreModGpadParser);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
             downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
@@ -173,7 +176,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 gafEntry.setEntryId(entryId.substring(entryId.indexOf(":") + 1));
             });
             gafService.processEntries(gafEntries, gafJobData);
-            gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            if (gafParser instanceof DanreModGpadParser) {
+                // ZFIN-10025: per-source removal — compute outdated rows once per owning org so
+                // each source only prunes the annotations it owns (no cross-source mass-deletes).
+                for (GafOrganization.OrganizationEnum orgEnum : DanreModSourceOrganization.allTargetOrganizations()) {
+                    GafOrganization org = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(orgEnum);
+                    gafService.generateRemovedEntries(gafJobData, org);
+                }
+            } else {
+                gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            }
             List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
             System.out.println("Removed entries: " + optional.size());
 

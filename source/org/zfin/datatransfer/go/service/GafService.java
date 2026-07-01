@@ -65,6 +65,13 @@ public class GafService {
     protected ReferenceDatabase genpept;
     protected GafOrganization.OrganizationEnum organizationEnum;
 
+    // ZFIN-10025 Phase 1: when true (unified DANRE-mod load), each annotation is owned by the
+    // org resolved from its source assigned_by (DanreModSourceOrganization), instead of the
+    // single organizationEnum this service was constructed with. Lets one merged file scope
+    // add/update/remove per source. Off for the legacy single-source loads.
+    protected boolean perSourceOrganization = false;
+    private final Map<GafOrganization.OrganizationEnum, GafOrganization> gafOrganizationCache = new HashMap<>();
+
 
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     protected Map<String, Publication> goRefPubMap = new HashMap<>();
@@ -76,6 +83,15 @@ public class GafService {
         for (GoDefaultPublication goDefaultPublication : GoDefaultPublication.getGoRefPubs()) {
             goRefPubMap.put(goDefaultPublication.title(), publicationRepository.getPublication(goDefaultPublication.zdbID()));
         }
+    }
+
+    public void setPerSourceOrganization(boolean perSourceOrganization) {
+        this.perSourceOrganization = perSourceOrganization;
+    }
+
+    /** Cached lookup of the GafOrganization DB row for an enum value. */
+    private GafOrganization gafOrganizationFor(GafOrganization.OrganizationEnum org) {
+        return gafOrganizationCache.computeIfAbsent(org, markerGoTermEvidenceRepository::getGafOrganization);
     }
 
 
@@ -135,7 +151,12 @@ public class GafService {
 
                 // for each gene, create an entry
                 for (Marker gene : genes) {
-                    MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
+                    // ZFIN-10025: in the unified DANRE-mod load, own each annotation by the org
+                    // resolved from its source assigned_by; otherwise use this load's single org.
+                    GafOrganization orgForEntry = perSourceOrganization
+                        ? gafOrganizationFor(DanreModSourceOrganization.resolve(gafEntry.getCreatedBy()))
+                        : gafOrganization;
+                    MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, orgForEntry);
                     // System.out.println(annotationToAdd.getZdbID());
                     if (annotationToAdd == null) {
                         throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
