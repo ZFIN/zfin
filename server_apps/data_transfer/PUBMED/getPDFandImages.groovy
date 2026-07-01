@@ -8,7 +8,6 @@
  */
 
 import groovy.transform.Field
-import groovy.io.FileType
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 import groovy.xml.slurpersupport.GPathResult
@@ -79,18 +78,6 @@ if (specificPubZdbIDs.size() > 0) {
     """
 }
 
-def addSummaryPDF(String zdbId, String pmcId, pubYear) {
-
-    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/")
-
-    dir.eachFileRecurse(FileType.FILES) { file ->
-        if (file.name.endsWith('.pdf')) {
-            ADD_BASIC_PDFS_TO_DB.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name, file.name].join('|'))
-        }
-    }
-
-}
-
 @Field final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
 
 def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear) {
@@ -135,6 +122,42 @@ def recordPdfFromS3(String s3PdfKey, String pmcId, String zdbId, String pubYear)
     }
 }
 
+/**
+ * Classify the PDFs in a PMC Open Access package into the single "main article" PDF
+ * and any supplemental PDFs.
+ *
+ * The robust signal (the same one used by the Alliance literature pipeline) is that the
+ * main article PDF shares its basename with the article's full-text XML/NXML — both are
+ * named after the accession+version, e.g. PMC4679720.1.pdf <-> PMC4679720.1.xml. Supplements
+ * (NIHMS688930-supplement-N.pdf) and figures never match that basename.
+ *
+ * Returns a map: [main: <key or null>, supplements: [<key>...], fellBack: <boolean>].
+ * If no XML/NXML basename match is found but PDFs exist, falls back to the first PDF as the
+ * main article (fellBack=true) so we never silently drop an article.
+ */
+def classifyPdfs(List<String> s3Keys) {
+    def xmlKey = s3Keys.find { def l = it.toLowerCase(); l.endsWith('.xml') || l.endsWith('.nxml') }
+    def xmlBase = xmlKey ? FilenameUtils.getBaseName(xmlKey) : null
+    def pdfKeys = s3Keys.findAll { it.toLowerCase().endsWith('.pdf') }
+
+    def mainPdfKey = xmlBase ? pdfKeys.find { FilenameUtils.getBaseName(it) == xmlBase } : null
+    boolean fellBack = false
+    if (!mainPdfKey && !pdfKeys.isEmpty()) {
+        mainPdfKey = pdfKeys.first()
+        fellBack = true
+    }
+
+    def supplementPdfKeys = pdfKeys.findAll { it != mainPdfKey }
+    return [main: mainPdfKey, supplements: supplementPdfKeys, fellBack: fellBack]
+}
+
+def recordSupplementFromS3(String s3Key, String pmcId, String zdbId, String pubYear) {
+    // Supplement PDFs were already downloaded under their own S3 filename and keep it.
+    // load_pub_files.sql records these as Supplemental Material (file type 3).
+    def filename = s3Key.split('/').last()
+    PUB_FILES_TO_LOAD.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|'))
+}
+
 def recordNonOpenPub(String pmcId, String zdbId) {
     def ncbiUrl = "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcId.toString().replace("PMC", "")}/"
     def zfinUrl = "https://zfin.org/${zdbId}"
@@ -159,30 +182,11 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
 
     if (tagMatch.size() == 1) {
 
-        def tag = tagMatch[0][1]  // extract the XML namespace tag pattern for use in extracting supplements, figures, images downstream.
+        def tag = tagMatch[0][1]  // extract the XML namespace tag pattern for use in extracting figures, images downstream.
 
-        def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
-        def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
-        if (supplimentMatches.size() > 0) {
-            supplimentMatches.each {
-                def supplement = it
-                if (pmcId == 'PMC:4679720') {
-                    println(it)
-                }
-                def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
-                def filenameMatch = supplimentMatches =~ /${filenamePattern}/
-                if (filenameMatch.size() > 0) {
-                    def filename = filenameMatch[0][1]
-                    if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")) {
-                        parseLabelCaptionImage(supplement,zdbId,pmcId,imageFilePath,pubYear, tag)
-                        println("videos")
-                        println(filename)
-                    } else {
-                        PUB_FILES_TO_LOAD.add([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|'))
-                    }
-                }
-            }
-        }
+        // Supplemental PDFs are classified directly from the S3 package listing (see classifyPdfs);
+        // we no longer parse them out of the OAI XML body here.
+
         // extract figures one by one from the grouping 'fig' tags
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
@@ -206,7 +210,6 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 }
             }
         }
-        addSummaryPDF(zdbId, pmcId, pubYear)
     }
 }
 
@@ -340,10 +343,23 @@ def fetchBundlesForExistingPubs(Map idsToGrab) {
             downloadS3FilesForArticle(s3Files, zdbId, pubYear)
             PUBS_WITH_PDFS_TO_UPDATE.add("s3://${s3Files[0].split('/')[0]}")
 
-            // Check for PDF
-            def pdfKey = s3Files.find { it.toLowerCase().endsWith('.pdf') }
+            // Classify PDFs: the single main article PDF vs. supplemental PDFs, using the
+            // XML/NXML-basename rule (see classifyPdfs). The main article is marked Original
+            // Article (file type 1); every other PDF is marked Supplemental Material (type 3).
+            def classification = classifyPdfs(s3Files)
+            def pdfKey = classification.main
             if (pdfKey) {
+                if (classification.fellBack) {
+                    println("  WARNING: no XML/NXML basename match in S3 package for $pmcId ($zdbId); " +
+                            "fell back to first PDF (${pdfKey.split('/').last()}) as the main article — review.")
+                }
                 recordPdfFromS3(pdfKey, pmcId, zdbId, pubYear)
+                classification.supplements.each { suppKey ->
+                    recordSupplementFromS3(suppKey, pmcId, zdbId, pubYear)
+                }
+                if (classification.supplements.size() > 0) {
+                    println("  Supplements: ${classification.supplements.size()} PDF(s) → Supplemental Material")
+                }
             } else {
                 noPdfIds << [pmcId: pmcId, zdbId: zdbId]
                 recordNonOpenPub(pmcId, zdbId)
