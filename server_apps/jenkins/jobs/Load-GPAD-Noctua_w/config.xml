@@ -28,14 +28,48 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Capture the BEFORE snapshot of Noctua marker_go_term_evidence (artifact).
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+mkdir -p "$OUT"
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+$PSQL -v org=Noctua -v stage=tmp_gpad_mgoe_before -f $SQL/snapshot_mgte.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gpad_mgoe_before ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_before.csv"
+echo "BEFORE snapshot rows: $(( $(wc -l < "$OUT/mgoe_before.csv") - 1 ))"
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
             <!-- Need to use shell task to get unstable return code handling -->
             <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
             <unstableReturn>2</unstableReturn>
         </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Capture the AFTER snapshot (post-load) and produce the database-level diff.
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+$PSQL -v org=Noctua -v stage=tmp_gpad_mgoe_after -f $SQL/snapshot_mgte.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gpad_mgoe_after ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_after.csv"
+$PSQL -c "DROP TABLE IF EXISTS tmp_gpad_mgoe_before, tmp_gpad_mgoe_after"
+
+cd $SOURCEROOT
+
+# Row-level (database) diff: key = every column except zdb_id, ignore zdb_id so a
+# row that only got a recycled id lands in updates_ignored rather than add+delete.
+# CSVDIFF_XLSX_ONLY -> single mgoe_dbdiff.xlsx workbook (deletes/adds/updated_1/
+# updated_2 sheets); the intermediate CSVs are removed.
+export CSVDIFF_XLSX_ONLY=true
+gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id"
+]]></command>
+        </hudson.tasks.Shell>
     </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/mgoe_*.csv,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/mgoe_*.xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

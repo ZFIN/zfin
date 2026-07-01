@@ -37,7 +37,17 @@ Input File Details:
 
   </description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_MGTE_CLEANUP</name>
+          <description>If checked, run cleanMarkerGoTermEvidenceDuplicatesTask after the load (and before the "after" snapshot is captured).</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -51,14 +61,74 @@ Input File Details:
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# Capture the BEFORE snapshot of GOA marker_go_term_evidence (artifact).
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+mkdir -p "$OUT"
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+$PSQL -v org=GOA -v stage=tmp_gaf_mgoe_before -f $SQL/snapshot_mgte.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gaf_mgoe_before ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_before.csv"
+echo "BEFORE snapshot rows: $(( $(wc -l < "$OUT/mgoe_before.csv") - 1 ))"
+]]></command>
+    </hudson.tasks.Shell>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>load-gaf-goa -DjobName=Load-GAF-GOA_m</targets>
       <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# Optional: run the marker_go_term_evidence duplicate cleanup after the load.
+# When enabled, the AFTER snapshot below reflects the post-cleanup state.
+if [ "$RUN_MGTE_CLEANUP" = "true" ]; then
+    echo "RUN_MGTE_CLEANUP=true -> running cleanMarkerGoTermEvidenceDuplicatesTask"
+    cd $SOURCEROOT
+    gradle cleanMarkerGoTermEvidenceDuplicatesTask
+else
+    echo "RUN_MGTE_CLEANUP not true -> skipping cleanup"
+fi
+]]></command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# Capture the AFTER snapshot (post-load, and post-cleanup when RUN_MGTE_CLEANUP=true).
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+$PSQL -v org=GOA -v stage=tmp_gaf_mgoe_after -f $SQL/snapshot_mgte.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gaf_mgoe_after ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_after.csv"
+
+# SECONDARY diff: logical (churn-excluded) rollup for curators -- collapses protein
+# isoforms and id/protein churn to show annotations that truly appeared/disappeared.
+$PSQL -f $SQL/diff_mgte.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gaf_real_removed ORDER BY publication,gene_zdb_id,go_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_logical_removed.csv"
+$PSQL -c "\copy (SELECT * FROM tmp_gaf_real_added   ORDER BY publication,gene_zdb_id,go_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_logical_added.csv"
+$PSQL -c "DROP TABLE IF EXISTS tmp_gaf_mgoe_before, tmp_gaf_mgoe_after, tmp_gaf_real_removed, tmp_gaf_real_added"
+echo "Logical (churn-excluded): removed=$(( $(wc -l < "$OUT/mgoe_logical_removed.csv") - 1 )) added=$(( $(wc -l < "$OUT/mgoe_logical_added.csv") - 1 ))"
+
+cd $SOURCEROOT
+
+# PRIMARY diff (row-level / database): key = every column except zdb_id, ignore
+# zdb_id so a row that only got a recycled id lands in updates_ignored rather than
+# add+delete. CSVDIFF_XLSX_ONLY -> single mgoe_dbdiff.xlsx workbook (deletes/adds/
+# updated_1/updated_2 sheets); the intermediate CSVs are removed.
+export CSVDIFF_XLSX_ONLY=true
+gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id"
+
+# Fold the logical rollup into its own workbook (removed/added sheets), then drop
+# the intermediate CSVs so only mgoe_logical.xlsx is archived.
+gradle csv2xlsx --args="$OUT/mgoe_logical.xlsx $OUT/mgoe_logical_removed.csv $OUT/mgoe_logical_added.csv"
+rm -f "$OUT/mgoe_logical_removed.csv" "$OUT/mgoe_logical_added.csv"
+]]></command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA*</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA*,server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/mgoe_*.csv,server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/mgoe_*.xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

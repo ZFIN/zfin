@@ -501,12 +501,50 @@ public class CSVDiff {
         CSVDiff utility = new CSVDiff(outputPrefix, keyColumns, ignoreColumns);
 
         try {
-            utility.process(file1Path, file2Path);
+            List<File> outputs = utility.process(file1Path, file2Path);
+            // Combine the output CSVs into a single <outputPrefix>.xlsx workbook
+            // (one sheet per output file) for a tidy single-file artifact.
+            //   CSVDIFF_XLSX       -> build workbook, keep the intermediate CSVs
+            //   CSVDIFF_XLSX_ONLY  -> build workbook, delete the intermediate CSVs
+            boolean xlsxOnly = envTrue("CSVDIFF_XLSX_ONLY");
+            if (xlsxOnly || envTrue("CSVDIFF_XLSX")) {
+                writeCombinedWorkbook(outputPrefix, outputs, xlsxOnly);
+            }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    /**
+     * Combine the CSV outputs of a diff run into one {@code <outputPrefix>.xlsx}
+     * workbook, one sheet per file (named by the file's suffix, e.g. "deletes",
+     * "adds", "updated_1").
+     *
+     * @param deleteOriginals if true, the intermediate CSVs are removed after the
+     *                        workbook is written (leaving the xlsx as the sole output).
+     */
+    private static void writeCombinedWorkbook(String outputPrefix, List<File> outputs, boolean deleteOriginals) {
+        if (outputs == null || outputs.isEmpty()) {
+            return;
+        }
+        String prefixName = new File(outputPrefix).getName();
+        List<String> sheetNames = new ArrayList<>();
+        for (File f : outputs) {
+            String label = f.getName();
+            if (label.startsWith(prefixName + "_")) {
+                label = label.substring(prefixName.length() + 1);
+            }
+            if (label.endsWith(".csv")) {
+                label = label.substring(0, label.length() - 4);
+            }
+            sheetNames.add(label);
+        }
+        File xlsx = new File(outputPrefix + ".xlsx");
+        new CSVToXLSXConverter().run(xlsx, outputs, sheetNames, deleteOriginals);
+        System.out.println("Wrote combined workbook: " + xlsx.getAbsolutePath()
+            + (deleteOriginals ? " (intermediate CSVs removed)" : ""));
     }
 
     /**
