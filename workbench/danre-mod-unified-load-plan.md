@@ -146,8 +146,29 @@ Report artifacts from this run are committed under `server_apps/DB_maintenance/g
 
 ---
 
+## 4b. Matching investigation — WHY the run-4 churn happens (2026-07-01)
+
+Sampled the run-4 removed set, ran a (gene, GO) presence test against the prod file, and broke removals down by owning org / pub / evidence. **The 69,838 removals are not one problem — three distinct causes:**
+
+1. **`ECO:0007322` gap drives ~24,283 GOA removals (the largest single bucket) AND the 17,350 errors.** UniProtKB-SubCell IEAs are stored in ZFIN as IEA (pub `ZDB-PUB-120306-4` / `GO_REF:0000044`) but carry `ECO:0007322` in the file. Because that ECO is unmapped, `GpadParser.postProcessing` drops those rows, so they neither load nor match the stored rows → the stored rows get flagged removed. Confirmed by side-by-side: the file has the exact gene→GO under `GO_REF:0000044`, just tagged `ECO:0007322`. **One fix (map `ECO:0007322`→IEA) both clears the 17,350 errors and prevents ~24k spurious removals.**
+2. **Genuine Noctua loss — 11,751 of 12,040 removed (gene,GO) pairs (97.6%) are absent from the file.** Dominated by `RO:0002264` ("acts upstream of or within", ~10k) + `ND` root-term annotations the GOA pipeline doesn't carry. This is **real annotation loss** (Pascale's warning), ~2× the earlier 5,404 file-level estimate — a GO/curator conversation, not a code fix.
+3. **Remaining ~23k GOA** (UniRule `ZDB-PUB-170525-1` 12,778, ARBA `ZDB-PUB-221108-21` 10,654, PAINT 4,365, …). Present-in-file as (gene,GO) but not matched — mostly month-to-month UniProt IEA turnover.
+
+**Caveat:** the DB under test is a `loaddb` **production snapshot**, likely older than the 2026-06-17 file; UniProt IEAs churn heavily monthly, so part of bucket 3 is legitimate upstream turnover, not cutover loss. A true churn number needs the DB re-synced with same-vintage legacy loads.
+
+**Match key (reference):** an incoming row matches a stored annotation only when **publication + marker + evidence code + flag + qualifier-relation** all agree (`getLikeMarkerGoTermEvidencesButGo`), then GO-term specificity + inferences (`isMoreSpecificAnnotation`). Any field differing → no match → incoming counts as "added", stored counts as "removed".
+
+### Implementation from this investigation — part (b): `ECO:0007322` → IEA
+Migration `source/org/zfin/db/postGmakePostloaddb/1184/migrations/0010-ZFIN-10025-eco-0007322-subcell-iea-mapping.sql` adds one row to **`eco_go_mapping`** mapping `ECO:0007322` (`ZDB-TERM-190614-116`, "curator inference used in automatic assertion") to the GO evidence code **IEA**.
+
+_What this does:_ `GpadParser.postProcessing` translates each row's ECO code to a ZFIN 3-letter evidence code via `eco_go_mapping`; an unmapped ECO makes it reject the row. `ECO:0007322` is a granular automatic-assertion code **not present in GO's flat `gaf-eco-mapping.txt`**, so it was never in our table. IEA is the correct target — it is the automatic-assertion sibling of `ECO:0000501`/`ECO:0000256` (both already → IEA) and matches how these SubCell annotations are already stored. With the row present, the ~17,350 SubCell rows load (clearing the errors) and match their stored IEA counterparts (preventing spurious removals — see Run 5 below) — resolving cause #1 above. `ECO:0005547` (manual-assertion, ~21–56 rows) is deliberately **left unmapped** pending a curator call on its target code.
+
+_Verified — Run 5 (2026-07-01, ECO row applied to dev DB, prod file):_ **errors 20,627 → 3,317** (−17,310; `ECO:0007322` fully cleared, as predicted). **Removed 69,838 → 60,265** (−9,573); existing 78,352 → 87,959; added 43,608 → 51,311. The removal drop (9,573) is **less than the theoretical 24,283**: the loaded production DB snapshot holds more SubCell IEA rows (24,283) than the current file carries (17,350), so ~7k are genuine monthly turnover (correctly removed) and ~7,703 of the file's rows load as new rather than matching (the §4b snapshot caveat). Against a same-vintage DB the fix would prevent more. Remaining 3,317 errors are all small open-decision items (`GO_REF:0000108`/`0000115` 2,180, duplicates 293, `EXP` 105, gene/pub-not-found ~45, `ECO:0005547` 21).
+
+---
+
 ## 5. Pre-adoption blockers (from status doc §2, still gating)
-0. **⭐ MATCHING & OWNERSHIP CHURN (NEW, from run 4 — the #1 cutover blocker).** With per-source removal active, a cutover would churn ~69,838 removes + ~43,608 adds — mostly **matching failure, not genuine loss** (GOA 53,985 ≈ half of GOA; Noctua 15,853 ≈ 3× the true 5,404 loss). Two fixes required before removal can be un-gated: **(a)** make DANRE-mod GPAD rows *match* their stored MGTE form (pub/inference/qualifier/evidence representation), and **(b)** give the `assigned_by → org` map `GO_REF` granularity + model the secondary-load ownership transition (the 111,089 `UniProt`-owned rows currently outside removal scope). Until then, keep report-only.
+0. **⭐ MATCHING & OWNERSHIP CHURN (from run 4; root-caused in §4b — the #1 cutover blocker).** With per-source removal active, a cutover would churn ~69,838 removes + ~43,608 adds. Per §4b this splits three ways: **(1)** ~24,283 GOA removals from the `ECO:0007322` gap — **fixed by part (b)**; **(2)** ~11,751 genuine Noctua losses (`RO:0002264`/`ND`) — a GO/curator conversation; **(3)** ~23k GOA IEA (UniRule/ARBA) mostly monthly upstream turnover, confounded by the DB being an older snapshot. Also unaddressed: the 111,089 `UniProt`-owned secondary-load rows sit outside the removal scope (map needs `GO_REF` granularity + the ownership transition). Until this is resolved, keep report-only.
 1. **ECO gap:** 4 of 22 ECO codes unmapped — **confirmed live as 17,406 erroring rows** (`ECO:0007322` SubCell 17,350 + `ECO:0005547` 56); needs `eco_go_mapping` rows (curator/GO call).
 1b. **GO_REF mapping/exclusion gap (NEW, from §4a):** 34,044 rows error on unmapped GO_REFs, dominated by `GO_REF:0000002` (28,691). Decide map-vs-exclude per source (ties to the secondary-load InterPro2GO ownership).
 2. **Relation→qualifier mapping:** confirm every col-3 RO/BFO relation resolves to a ZFIN `qualifier_relation`.
