@@ -7,7 +7,7 @@
         "type" : [ "string", "null" ]
       },
       "alleleInZfin" : {
-        "title" : "Allele already in ZFIN",
+        "title" : "ZFIN Record Established",
         "type" : [ "boolean", "null" ]
       },
       "assays" : {
@@ -28,11 +28,6 @@
         "maxItems" : 10,
         "title" : "Genotyping Assays",
         "type" : "array"
-      },
-      "cellGenomicFeature" : {
-        "maxLength" : 255,
-        "title" : "Cell Genomic Feature",
-        "type" : [ "string", "null" ]
       },
       "genes" : {
         "items" : {
@@ -158,10 +153,6 @@
         },
         "title" : "Publications",
         "type" : "array"
-      },
-      "zfinRecordEstablished" : {
-        "title" : "ZFIN Record Established",
-        "type" : [ "boolean", "null" ]
       }
     },
     "required" : [ "alleleDesignation", "mutagenesisStage", "mutagenesisProtocol", "mutationType" ],
@@ -216,28 +207,6 @@
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/mutationType",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "widget" : "yesNoRadio"
-        },
-        "scope" : "#/properties/zfinRecordEstablished",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "helpText" : "ZFIN feature record once established; leave blank until assigned.",
-          "placeholder" : "e.g. ENSDARG…"
-        },
-        "rule" : {
-          "condition" : {
-            "schema" : {
-              "const" : true
-            },
-            "scope" : "#/properties/zfinRecordEstablished"
-          },
-          "effect" : "SHOW"
-        },
-        "scope" : "#/properties/cellGenomicFeature",
         "type" : "Control"
       }, {
         "options" : {

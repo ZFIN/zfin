@@ -94,12 +94,6 @@ public class Mutation implements Serializable {
     @Column(name = "m_lethality_additional_info")
     private String lethalityAdditionalInfo;
 
-    @Column(name = "m_zfin_record_established")
-    private Boolean zfinRecordEstablished;
-
-    @Column(name = "m_cell_genomic_feature")
-    private String cellGenomicFeature;
-
     @Column(name = "m_mutation_discoverer")
     private String mutationDiscoverer;
 

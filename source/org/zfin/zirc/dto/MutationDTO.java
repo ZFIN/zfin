@@ -26,9 +26,6 @@ public record MutationDTO(
         String alleleName,
         Boolean alleleInZfin,
         String mutationType,
-        Boolean zfinRecordEstablished,
-        // Conditional on zfinRecordEstablished — uiSchema rule gates visibility.
-        String cellGenomicFeature,
         String mutationDiscoverer,
         String mutationInstitution,
         // Mutagenesis
@@ -107,8 +104,6 @@ public record MutationDTO(
                 alleleName,
                 m.getAlleleInZfin(),
                 m.getMutationType(),
-                m.getZfinRecordEstablished(),
-                m.getCellGenomicFeature(),
                 m.getMutationDiscoverer(),
                 m.getMutationInstitution(),
                 m.getMutagenesisStage(),

@@ -33,6 +33,10 @@ public class ZircAutocompleteService {
         return searchMarkers(term, null);
     }
 
+    public List<AutocompleteItemDTO> searchMarkers(String term, String typeGroup) {
+        return searchMarkers(term, typeGroup, false);
+    }
+
     /**
      * Same shape as {@link #searchMarkers(String)} but narrows results
      * to a {@link Marker.TypeGroup} (e.g. {@code GENEDOM} for the gene
@@ -46,9 +50,20 @@ public class ZircAutocompleteService {
      * <p>Bad group names quietly return {@code []} so the dropdown
      * stays silent rather than 4xx'ing mid-keystroke. Empty/null
      * {@code typeGroup} skips the filter entirely.
+     *
+     * <p>When {@code exactMatch} is true, {@code term} is treated as a
+     * ZDB-ID and resolved by primary key (the {@code typeGroup} filter is
+     * skipped — the id already identifies the record). This backs the form
+     * chip that needs the symbol for an already-stored id.
      */
-    public List<AutocompleteItemDTO> searchMarkers(String term, String typeGroup) {
+    public List<AutocompleteItemDTO> searchMarkers(String term, String typeGroup, boolean exactMatch) {
         if (term == null || term.isBlank()) {return List.of();}
+        if (exactMatch) {
+            Marker m = HibernateUtil.currentSession().get(Marker.class, term.trim());
+            return m == null ? List.of()
+                    : List.of(new AutocompleteItemDTO(
+                            m.getAbbreviation() + " (" + m.getZdbID() + ")", m.getZdbID()));
+        }
         String groupString = null;
         if (typeGroup != null && !typeGroup.isBlank()) {
             try {
@@ -78,7 +93,17 @@ public class ZircAutocompleteService {
     }
 
     public List<AutocompleteItemDTO> searchFeatures(String term) {
+        return searchFeatures(term, false);
+    }
+
+    public List<AutocompleteItemDTO> searchFeatures(String term, boolean exactMatch) {
         if (term == null || term.isBlank()) {return List.of();}
+        if (exactMatch) {
+            Feature f = HibernateUtil.currentSession().get(Feature.class, term.trim());
+            return f == null ? List.of()
+                    : List.of(new AutocompleteItemDTO(
+                            f.getAbbreviation() + " (" + f.getZdbID() + ")", f.getZdbID()));
+        }
         return HibernateUtil.currentSession()
                 .createQuery(
                     "from Feature where lower(abbreviation) like :q order by abbreviationOrder",
@@ -94,7 +119,17 @@ public class ZircAutocompleteService {
     }
 
     public List<AutocompleteItemDTO> searchPersons(String term) {
+        return searchPersons(term, false);
+    }
+
+    public List<AutocompleteItemDTO> searchPersons(String term, boolean exactMatch) {
         if (term == null || term.isBlank()) {return List.of();}
+        if (exactMatch) {
+            Person p = HibernateUtil.currentSession().get(Person.class, term.trim());
+            return p == null ? List.of()
+                    : List.of(new AutocompleteItemDTO(
+                            p.getFullName() + " (" + p.getZdbID() + ")", p.getZdbID()));
+        }
         return HibernateUtil.currentSession()
                 .createQuery(
                     "from Person where lower(fullName) like :q order by fullName",

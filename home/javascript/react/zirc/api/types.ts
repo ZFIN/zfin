@@ -38,8 +38,6 @@ export interface MutationDTO {
     alleleName: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
-    zfinRecordEstablished: boolean | null;
-    cellGenomicFeature: string | null;
     mutationDiscoverer: string | null;
     mutationInstitution: string | null;
     mutagenesisStage: string | null;
