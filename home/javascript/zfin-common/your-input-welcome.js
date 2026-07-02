@@ -1,4 +1,9 @@
-$(function () {
+// Wires up the "Your Input Welcome" feedback widget (floating trigger button +
+// modal form). Exported so statically-served pages can re-run it AFTER the footer
+// (which now carries the widget markup) has been fetched and injected by
+// zfin-chrome.js -- on those pages the widget does not exist at DOM-ready, so the
+// default ready-init below is a harmless no-op and this call does the real binding.
+export function initYourInputWelcome() {
     var $overlay = jQuery("#input-welcome-overlay"),
         $successMessage = jQuery("#input-welcome-success-message"),
         $errorMessage = jQuery("#input-welcome-error-message"),
@@ -170,4 +175,7 @@ $(function () {
             }
         });
     });
-});
+}
+
+// Default init for normal server-rendered pages (widget present at load).
+$(initYourInputWelcome);

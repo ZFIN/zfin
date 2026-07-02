@@ -4,6 +4,7 @@ require('./animated-placeholder.jquery');
 require('./autocompletify');
 require('./blast');
 require('./header-menu');
+require('./zfin-chrome');
 require('./form-reset');
 require('./popups');
 require('./your-input-welcome');

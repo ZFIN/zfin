@@ -397,7 +397,9 @@ public enum ZfinPropertiesEnum {
 
 task 'home;root;deployFiles' {
     doLast {
-        def sourceFiles = [file('home/robots.txt'), file('home/favicon.ico')]
+        // Sources moved to static/ but still deploy into $TARGETROOT/home (Apache
+        // DocumentRoot), so no Apache change is needed. See static/ vs home/ split.
+        def sourceFiles = [file('static/robots.txt'), file('static/favicon.ico'), file('static/analytics.js')]
         def targetDir = file("${targetroot}/home")
 
         if (!targetDir.exists()) {
@@ -414,16 +416,25 @@ task 'home;root;deployFiles' {
 }
 
 task "home;images;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'home/images'
+    sourcePath = 'static/images'
+    targetPath = 'home/images'
 }
 
+// static/zf_info holds the zf_info reference pages (zfbook, monitor, anatomy, ...) as
+// plain static HTML, deployed to $TARGETROOT/home/zf_info and served directly by
+// Apache -- see convert-zfbook-to-static.groovy for how they are generated from the
+// former JSP views, and reference/deploying-changes.md for the serving model (chrome
+// header/footer are injected client-side; head assets use the *.latest webpack
+// aliases). The pages themselves carry no boilerplate comment.
 task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'home/zf_info'
+    sourcePath = 'static/zf_info'
+    targetPath = 'home/zf_info'
     excludes = ['Makefile']
 }
 
 task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'home/ZFIN'
+    sourcePath = 'static/ZFIN'
+    targetPath = 'home/ZFIN'
     excludes = ['Makefile']
 }
 
@@ -1419,9 +1430,12 @@ def copyWebAppFiles(String webappRoot) {
     copy {
         from 'home'
         into webappRoot
-        exclude 'robots.txt', 'sitemap.xml', 'favicon.ico', 'zfin_is_down.html'
-        exclude 'images/**', 'css/**', 'javascript/**'
-        exclude 'ZFIN/**', 'zf_info/**', 'ensembl/**', 'uniprot/**', 'unavailable/**'
+        // Served static content now lives under static/ (deployed to $TARGETROOT/home
+        // by the home;*;deployFiles tasks), so it is no longer under 'home' here.
+        // What remains to exclude: the frontend sources (bundled via webpack, not
+        // copied raw) and uniprot (a task template, not part of the webapp).
+        exclude 'css/**', 'javascript/**'
+        exclude 'uniprot/**'
         exclude '.DS_Store'
         exclude 'WEB-INF/lib/**'
     }
@@ -1693,6 +1707,10 @@ task npmInstall(type: Exec) {
     inputs.file 'package-lock.json'
     outputs.dir 'node_modules'
 }
+
+// analytics.js is now a committed static file (static/analytics.js) that selects the
+// GA4 id by hostname at runtime; it deploys via the `home;root;deployFiles` task
+// (into $TARGETROOT/home) like robots.txt/favicon.ico. No per-instance generation step.
 
 task npmBuild(type: Exec) {
     description = 'Build frontend assets with webpack'

@@ -7,7 +7,46 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { EnvironmentPlugin } = require('webpack');
 const webpack = require('webpack');
 
+const fs = require('fs');
+
 const isProd = process.env.NODE_ENV === 'production';
+
+/**
+ * Emits stable, un-hashed copies of selected entrypoint bundles, e.g.
+ *   style.bundle.<hash>.css  -> style.latest.css
+ *   zfin-common.<hash>.js    -> zfin-common.latest.js
+ *
+ * Statically-served HTML pages (see the zfbook conversion) reference the
+ * ".latest" names so their baked-in <head> tags never go stale across deploys.
+ * IMPORTANT: the ".latest.*" files must be served with a short/no-cache header
+ * (they intentionally share a name across builds) -- the 1-year cache rule on
+ * home/dist has a FilesMatch carve-out for them in docker/httpd/conf-local.
+ */
+class LatestAliasPlugin {
+    constructor(entryNames) {
+        this.entryNames = entryNames;
+    }
+
+    apply(compiler) {
+        compiler.hooks.afterEmit.tapAsync('LatestAliasPlugin', (compilation, callback) => {
+            const outPath = compilation.outputOptions.path;
+            const stats = compilation.getStats().toJson({ all: false, entrypoints: true });
+            Object.entries(stats.entrypoints)
+                .filter(([name]) => this.entryNames.includes(name))
+                .forEach(([name, entrypoint]) => {
+                    entrypoint.assets
+                        .map(asset => asset.name)
+                        .filter(file => /\.(js|css)$/.test(file))
+                        .forEach(file => {
+                            const ext = path.extname(file);
+                            const dest = path.join(outPath, `${name}.latest${ext}`);
+                            fs.copyFileSync(path.join(outPath, file), dest);
+                        });
+                });
+            callback();
+        });
+    }
+}
 
 const config = {
     context: path.resolve(__dirname, 'home/javascript'),
@@ -89,6 +128,8 @@ const config = {
             publicPath: true,
         }),
         new HtmlWebpackPlugin(),
+        // Stable un-hashed aliases for the bundles referenced by static HTML pages.
+        new LatestAliasPlugin(['style', 'vendor-common', 'zfin-common']),
         // expose certain environment variables via process.env
         new EnvironmentPlugin([
             'NODE_ENV',

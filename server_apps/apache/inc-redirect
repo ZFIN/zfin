@@ -54,6 +54,11 @@ RewriteRule ^/$ /action/ [PT]
 #lab designation page
 RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
 
+# The canonical sitemap is the generated /sitemaps/sitemap-index.xml
+# (GenerateSitemapTask). Point the well-known /sitemap.xml at it for crawlers/tools
+# that probe that path. There is no static /sitemap.xml anymore.
+RewriteRule ^/sitemap\.xml$ /sitemaps/sitemap-index.xml [R=301,L]
+
 #wild-type lines
 RewriteCond %{QUERY_STRING}     ^MIval=aa-wtlist.apg$    [NC]
 RewriteRule ^.*$ /action/feature/wildtype-list? [NC,R=301]
@@ -230,7 +235,11 @@ RewriteRule ^/downloads/([\S]+[.][\S]+) /data-transfer/current/$1 [NC,L]
 RewriteRule ^/downloads/([\S]*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads [NC,L,PT]
 
-RewriteRule ^/zf_info/(.*).html /action/zf_info/$1.html [NC,L,PT]
+# NOTE: all of /zf_info is now served as static HTML straight from the Apache
+# DocumentRoot ($TARGETROOT/home/zf_info); StaticFileController and the JSP views
+# have been retired. There is intentionally no /zf_info/*.html -> /action rewrite
+# anymore -- Apache serves the file directly, and a missing page just 404s.
+# (Specific one-off redirects like lab_desig.html above are unaffected.)
 
 #this rule should be below anything else webdriver related,
 #This passthrough is required so that any url altered in

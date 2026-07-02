@@ -1,6 +1,11 @@
 import Popper from 'popper.js';
 
-$(() => {
+// Wires up the site header behaviors (dropdown menus, mobile toggle, jump-to-pub,
+// search autocomplete). Exported so statically-served pages can re-run it AFTER
+// the header HTML has been fetched and injected by zfin-chrome.js -- on those
+// pages the header does not exist at DOM-ready, so the default ready-init below
+// is a harmless no-op and this call does the real binding.
+export function initHeaderMenu() {
     const poppers = [];
     const openState = [];
     const openDelay = 200;
@@ -127,5 +132,8 @@ $(() => {
                 localStorage.setItem(storageKey, JSON.stringify(deduped));
             });
     });
-});
+}
+
+// Default init for normal server-rendered pages (header present at load).
+$(initHeaderMenu);
 

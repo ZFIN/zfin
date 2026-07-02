@@ -17,6 +17,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +49,7 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
         writeZdbIDs(getImages(), "images", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getPeople(), "people", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getOrganizations(), "organizations", XmlUrl.Priority.MEDIUM);
-        writeZdbIDs(getZfishBookPages(), "zfishbook", XmlUrl.Priority.MEDIUM);
+        writeZdbIDs(getZfInfoPages(), "zf_info", XmlUrl.Priority.MEDIUM);
         writeZdbIDs(getMiscellaneousPages(), "miscellaneous", XmlUrl.Priority.MEDIUM);
 
         outputIndex(basedir + "/sitemap-index.xml", xmlSitemapIndexSet);
@@ -102,12 +103,17 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
         return getProfileRepository().getAllOrganizations().stream().map(Organization::getZdbID).toList();
     }
 
-    private List<String> getZfishBookPages() {
-        File jspLocalFileLocation = new File(ZfinPropertiesEnum.SOURCEROOT.value(), "home/WEB-INF/jsp/zf_info");
-        return FileUtils.listFiles(jspLocalFileLocation, new String[]{"jsp"}, false).stream()
-                .map(f -> "zf_info/" + f.getName())
-                .map(f -> f.replaceAll("--", "/").replace(".jsp", ""))
-                .map(f -> f + ".html")
+    // zf_info pages (zfbook, monitor, anatomy, catch, news, dbase/PAPERS, sequence,
+    // and the misc single pages) are now plain static HTML served straight from the
+    // Apache DocumentRoot -- the StaticFileController + zf_info JSPs were retired.
+    // Enumerate the actual static files under home/zf_info instead of the old JSP
+    // views; the on-disk path already matches the served URL (no "--" decoding).
+    private List<String> getZfInfoPages() {
+        File staticFileLocation = new File(ZfinPropertiesEnum.SOURCEROOT.value(), "static/zf_info");
+        Path base = staticFileLocation.toPath();
+        return FileUtils.listFiles(staticFileLocation, new String[]{"html"}, true).stream()
+                .map(f -> "zf_info/" + base.relativize(f.toPath()).toString().replace(File.separatorChar, '/'))
+                .sorted()
                 .toList();
     }
 

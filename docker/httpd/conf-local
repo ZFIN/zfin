@@ -67,7 +67,22 @@ SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.
 <Directory /srv/www/*/home/dist>
   ExpiresActive On
   ExpiresDefault "access 1 year"
+
+  # ".latest.*" aliases keep a stable name across builds (referenced by static
+  # HTML pages), so they must NOT be long-cached or clients get stale bundles
+  # after a deploy. Force revalidation on just these files.
+  <FilesMatch "\.latest\.(css|js)$">
+    ExpiresActive Off
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
 </Directory>
+
+# Static analytics loader (home/analytics.js; picks the GA4 id by hostname).
+# Stable name -> must revalidate rather than long-cache so switch-logic changes
+# take effect promptly.
+<Files "analytics.js">
+  Header set Cache-Control "no-cache, must-revalidate"
+</Files>
 
 # Add alias for images stored in filesystem
 Alias /imageLoadUp "/opt/zfin/loadUp/pubs"
