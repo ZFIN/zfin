@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class MutationStatusComputerTest {
 
@@ -30,12 +28,8 @@ public class MutationStatusComputerTest {
 
         assertEquals(FieldStatus.COMPLETE, r.byField().get("alleleInZfin"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("molecularlyCharacterized"));
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("zfinRecordEstablished"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("mutationDiscoverer"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("mutationInstitution"));
-
-        assertFalse("cellGenomicFeature must be absent when zfinRecordEstablished != true",
-                r.byField().containsKey("cellGenomicFeature"));
 
         assertEquals(FieldStatus.MISSING, r.bySection().get("General"));
         assertEquals(FieldStatus.MISSING, r.bySection().get("Genes"));
@@ -109,34 +103,6 @@ public class MutationStatusComputerTest {
         Set<Gene> genes = new HashSet<>();
         genes.add(g);
         return genes;
-    }
-
-    @Test
-    public void cellGenomicFeature_appliesOnlyWhenZfinRecordEstablishedIsYes() {
-        // null → not applicable
-        Mutation m1 = new Mutation();
-        FieldStatusResult r1 = MutationStatusComputer.compute(m1);
-        assertFalse(r1.byField().containsKey("cellGenomicFeature"));
-
-        // false → not applicable
-        Mutation m2 = new Mutation();
-        m2.setZfinRecordEstablished(Boolean.FALSE);
-        FieldStatusResult r2 = MutationStatusComputer.compute(m2);
-        assertFalse(r2.byField().containsKey("cellGenomicFeature"));
-
-        // true + empty → still COMPLETE (field is optional even when applicable)
-        Mutation m3 = new Mutation();
-        m3.setZfinRecordEstablished(Boolean.TRUE);
-        FieldStatusResult r3 = MutationStatusComputer.compute(m3);
-        assertTrue(r3.byField().containsKey("cellGenomicFeature"));
-        assertEquals(FieldStatus.COMPLETE, r3.byField().get("cellGenomicFeature"));
-
-        // true + filled → COMPLETE
-        Mutation m4 = new Mutation();
-        m4.setZfinRecordEstablished(Boolean.TRUE);
-        m4.setCellGenomicFeature("ZDB-GENO-123");
-        FieldStatusResult r4 = MutationStatusComputer.compute(m4);
-        assertEquals(FieldStatus.COMPLETE, r4.byField().get("cellGenomicFeature"));
     }
 
     @Test

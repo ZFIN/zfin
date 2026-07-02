@@ -73,10 +73,8 @@ public final class ZircMutationFormSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         // General
         properties.put("alleleDesignation",          StringSchema.of("Allele Designation", 255));
-        properties.put("alleleInZfin",               BooleanSchema.nullable("Allele already in ZFIN"));
+        properties.put("alleleInZfin",               BooleanSchema.nullable("ZFIN Record Established"));
         properties.put("mutationType",               StringSchema.of("Mutation Type", 255));
-        properties.put("zfinRecordEstablished",      BooleanSchema.nullable("ZFIN Record Established"));
-        properties.put("cellGenomicFeature",         StringSchema.of("Cell Genomic Feature", 255));
         properties.put("mutationDiscoverer",         StringSchema.of("Discoverer", 255));
         properties.put("mutationInstitution",        StringSchema.of("Institution", 255));
         // Mutagenesis
@@ -106,9 +104,7 @@ public final class ZircMutationFormSchema {
         properties.put("lesions",                    lesionsSummaryArrayProp());
         // Phenotypes — same inline-expand pattern; no type matrix.
         properties.put("phenotypes",                 phenotypesSummaryArrayProp());
-        // Required fields per the General + Mutagenesis sections. Conditional
-        // applicability (e.g. cellGenomicFeature only when zfinRecordEstablished)
-        // remains a hand-coded exception in MutationStatusComputer.compute().
+        // Required fields per the General + Mutagenesis sections.
         return ObjectSchema.of(null, properties, List.of(
                 "alleleDesignation",
                 "mutagenesisStage",
@@ -125,9 +121,6 @@ public final class ZircMutationFormSchema {
         // marker autocomplete renders when they do.
         Rule hideIfInZfin = Rule.hideWhenTrue("#/properties/alleleInZfin");
         Rule showIfInZfin = Rule.showWhenTrue("#/properties/alleleInZfin");
-        // Cell Genomic Feature only applies when the ZFIN-side record has
-        // been established; until then the field stays hidden.
-        Rule showWhenZfinEstablished = Rule.showWhenTrue("#/properties/zfinRecordEstablished");
 
         return new VerticalLayout(List.of(
                 Group.of("General", List.of(
@@ -158,13 +151,6 @@ public final class ZircMutationFormSchema {
                         new Control("#/properties/mutationType",
                                 Options.of().widget("selectWithOther").standardValues(MUTATION_TYPES),
                                 null),
-                        new Control("#/properties/zfinRecordEstablished",
-                                Options.of().widget("yesNoRadio"), null),
-                        new Control("#/properties/cellGenomicFeature",
-                                Options.of()
-                                        .placeholder("e.g. ENSDARG…")
-                                        .helpText("ZFIN feature record once established; leave blank until assigned."),
-                                showWhenZfinEstablished),
                         new Control("#/properties/mutationDiscoverer",
                                 Options.of().placeholder("Person who first identified the mutation"),
                                 null),
@@ -249,10 +235,6 @@ public final class ZircMutationFormSchema {
                     Mutation::getAlleleInZfin,              (m, v) -> m.setAlleleInZfin(boolNullable(v))),
             field("/mutationType",
                     Mutation::getMutationType,              (m, v) -> m.setMutationType(text(v))),
-            field("/zfinRecordEstablished",
-                    Mutation::getZfinRecordEstablished,     (m, v) -> m.setZfinRecordEstablished(boolNullable(v))),
-            field("/cellGenomicFeature",
-                    Mutation::getCellGenomicFeature,        (m, v) -> m.setCellGenomicFeature(text(v))),
             field("/mutationDiscoverer",
                     Mutation::getMutationDiscoverer,        (m, v) -> m.setMutationDiscoverer(text(v))),
             field("/mutationInstitution",

@@ -39,10 +39,6 @@ public final class MutationStatusComputer {
         MUTAGENESIS_PROTOCOL        ("mutagenesisProtocol"),
         MOLECULARLY_CHARACTERIZED   ("molecularlyCharacterized"),
         MUTATION_TYPE               ("mutationType"),
-        ZFIN_RECORD_ESTABLISHED     ("zfinRecordEstablished"),
-        // Conditional applicability — the compute loop skips it unless
-        // zfinRecordEstablished is explicitly Yes.
-        CELL_GENOMIC_FEATURE        ("cellGenomicFeature"),
         MUTATION_DISCOVERER         ("mutationDiscoverer"),
         MUTATION_INSTITUTION        ("mutationInstitution");
 
@@ -90,10 +86,6 @@ public final class MutationStatusComputer {
     public static FieldStatusResult compute(Mutation m) {
         Map<String, FieldStatus> byField = new LinkedHashMap<>();
         for (Field f : Field.values()) {
-            if (f == Field.CELL_GENOMIC_FEATURE
-                    && !Boolean.TRUE.equals(m.getZfinRecordEstablished())) {
-                continue;
-            }
             byField.put(f.getPath(), statusFor(m, f.getPath()));
         }
 
@@ -103,7 +95,6 @@ public final class MutationStatusComputer {
         // group boundaries; the legacy "Overview" key is gone.
         FieldStatus general = rollup(byField,
                 Field.ALLELE_IN_ZFIN, Field.ALLELE_DESIGNATION, Field.MUTATION_TYPE,
-                Field.ZFIN_RECORD_ESTABLISHED, Field.CELL_GENOMIC_FEATURE,
                 Field.MUTATION_DISCOVERER, Field.MUTATION_INSTITUTION);
         FieldStatus mutagenesis = rollup(byField,
                 Field.MUTAGENESIS_STAGE, Field.MUTAGENESIS_PROTOCOL,

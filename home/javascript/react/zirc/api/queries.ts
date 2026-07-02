@@ -300,6 +300,33 @@ export function useAutocomplete(
 }
 
 /**
+ * Resolves a single stored ZDB-ID back to its {@link AutocompleteItemDTO}
+ * via {@code exactMatch=true}, so the form's record chip can show the
+ * symbol for a value that was saved earlier (the form data only carries
+ * the raw id). Returns at most one row; an empty list means the id didn't
+ * resolve. {@code typeGroup} is accepted for call-site symmetry with
+ * {@link useAutocomplete} but the server ignores it for exact lookups.
+ */
+export function useAutocompleteResolve(
+    endpoint: AutocompleteEndpoint,
+    value: string | null | undefined,
+    typeGroup?: string | null,
+) {
+    const id = (value ?? '').trim();
+    const params = new URLSearchParams({ term: id, exactMatch: 'true' });
+    if (typeGroup) { params.set('typeGroup', typeGroup); }
+    return useQuery({
+        queryKey: ['zirc', 'autocomplete-resolve', endpoint, id],
+        queryFn: () =>
+            api.get<AutocompleteItemDTO[]>(
+                `/autocomplete/${endpoint}?${params.toString()}`,
+            ),
+        enabled: id.length > 0,
+        staleTime: 60_000,
+    });
+}
+
+/**
  * Debounces a fast-changing value (e.g. a search-input keystroke
  * stream) so downstream effects see at most one value per {@code delay}
  * window. Used with {@link useAutocomplete} to keep request volume
