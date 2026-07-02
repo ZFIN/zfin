@@ -200,6 +200,14 @@ public interface InfrastructureRepository {
     List<ReplacementZdbID> getAllReplacementZdbIds(List<String> oldZdbIDs);
 
     /**
+     * Reverse lookup in zdb_replaced_data: find the records that were replaced by (merged into)
+     * the given surviving zdbID. Returns the rows whose replacement (new) id equals newZdbID.
+     * @param newZdbID the surviving zdbID
+     * @return matching replaced objects (the merged-away old ids)
+     */
+    List<ReplacementZdbID> getReplacementsForNewZdbID(String newZdbID);
+
+    /**
      * Retrieve all data aliases for a given zdbID.
      *
      * @param aliasLowerName Lower-case alias name.
