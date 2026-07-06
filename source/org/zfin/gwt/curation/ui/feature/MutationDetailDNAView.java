@@ -253,6 +253,14 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         minusBasePair.setNumber(length);
     }
 
+    /**
+     * When {@code editable} is true the (normally auto-calculated) deletion length may be typed
+     * in by hand - used when the genome assembly location is not known.
+     */
+    public void setDeletionLengthEditable(boolean editable) {
+        minusBasePair.setReadOnly(!editable);
+    }
+
     public MutationDetailDnaChangeDTO getDto() {
         if (!hasEnteredValues())
             return null;

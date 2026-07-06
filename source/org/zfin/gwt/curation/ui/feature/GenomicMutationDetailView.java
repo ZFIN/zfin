@@ -249,6 +249,15 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         seqReferenceSmall.setText("Loading...");
     }
 
+    /**
+     * When {@code editable} is true the (normally auto-calculated) reference sequence may be typed
+     * in by hand - used when the genome assembly location is not known.
+     */
+    public void setReferenceSequenceEditable(boolean editable) {
+        seqReference.setReadOnly(!editable);
+        seqReferenceSmall.setReadOnly(!editable);
+    }
+
     public void populateFields(FeatureGenomeMutationDetailChangeDTO dto, FeatureTypeEnum type, Boolean knownInsSite) {
         if (dto == null) {
             seqReference.setText("");

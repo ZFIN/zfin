@@ -181,6 +181,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("assemblyInfoDate")
     void onKeyUpDate(@SuppressWarnings("unused") KeyUpEvent event) {
+        // Toggle the auto-calculated fields between read-only and manual entry. When switching
+        // back to auto (date cleared) re-run the calculations from the current location.
+        presenter.updateAutoCalcEditability();
+        presenter.autoCalcDeletionLength();
+        presenter.fetchReferenceSequenceIfReady();
         handleChanges();
     }
 
@@ -414,6 +419,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
+        presenter.updateAutoCalcEditability();
         presenter.autoCalcDeletionLength();
     }
 

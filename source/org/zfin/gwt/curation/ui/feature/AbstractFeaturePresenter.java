@@ -188,6 +188,27 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     }
 
+    /**
+     * True when the curator has recorded that the genome assembly location is not (yet) known,
+     * i.e. the "Assembly information not known as of" date is filled in. In that case the
+     * normally auto-calculated fields (reference sequence, deletion length) are entered by hand
+     * and must not be overwritten or cleared by the auto-calc routines.
+     */
+    protected boolean isAssemblyInfoNotKnown() {
+        String date = view.assemblyInfoDate.getText();
+        return date != null && !date.trim().isEmpty();
+    }
+
+    /**
+     * Auto-calculated fields are read-only while the assembly location is known and editable once
+     * the assembly location is marked as not known, so a curator can supply the values by hand.
+     */
+    public void updateAutoCalcEditability() {
+        boolean manualEntry = isAssemblyInfoNotKnown();
+        view.mutationDetailDnaView.setDeletionLengthEditable(manualEntry);
+        view.genomicMutationDetailView.setReferenceSequenceEditable(manualEntry);
+    }
+
     public void fetchReferenceSequenceIfReady() {
         String featureType = view.featureTypeBox.getSelected();
         if (featureType == null) return;
@@ -197,6 +218,9 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.INDEL.getName())
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!needsRefSeq) return;
+
+        // Assembly location not known: the reference sequence is entered manually - leave it be.
+        if (isAssemblyInfoNotKnown()) return;
 
         String chromosome = view.featureChromosome.getText();
         String assembly = view.featureAssembly.getSelectedItemText();
@@ -208,10 +232,15 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
             endLoc = view.featureEndLoc.getBoxValue();
         }
 
-        if (chromosome == null || chromosome.trim().isEmpty()) return;
-        if (assembly == null || assembly.trim().isEmpty()) return;
-        if (startLoc == null || endLoc == null) return;
-        if (!assembly.equals("GRCz11") && !assembly.equals("GRCz12tu")) return;
+        // Location incomplete: clear any previously auto-calculated value rather than keeping it stale.
+        boolean locationComplete = chromosome != null && !chromosome.trim().isEmpty()
+                && assembly != null && !assembly.trim().isEmpty()
+                && startLoc != null && endLoc != null
+                && (assembly.equals("GRCz11") || assembly.equals("GRCz12tu"));
+        if (!locationComplete) {
+            view.genomicMutationDetailView.setReferenceSequence("");
+            return;
+        }
 
         view.genomicMutationDetailView.setReferenceSequenceLoading();
 
@@ -240,9 +269,16 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!hasDeletionLength) return;
 
+        // Assembly location not known: the deletion length is entered manually - leave it be.
+        if (isAssemblyInfoNotKnown()) return;
+
         Integer start = view.featureStartLoc.getBoxValue();
         Integer end = view.featureEndLoc.getBoxValue();
-        if (start == null || end == null || end < start) return;
+        // Location incomplete: clear any previously auto-calculated value rather than keeping it stale.
+        if (start == null || end == null || end < start) {
+            view.mutationDetailDnaView.setDeletionLength(null);
+            return;
+        }
 
         view.mutationDetailDnaView.setDeletionLength(end - start + 1);
     }
