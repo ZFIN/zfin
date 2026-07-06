@@ -228,6 +228,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
         view.genomicMutationDetailView.populateFields(dto.getFgmdChangeDTO(),dto.getFeatureType(),dto.getKnownInsertionSite());
 
+        // The assembly-info date is set above, so now reconcile whether the auto-calculated
+        // fields should be read-only (assembly known) or hand-editable (assembly not known).
+        updateAutoCalcEditability();
+
         // Recalculate dirty state after all fields are populated
         handleDirty();
     }
