@@ -14,7 +14,11 @@
     <target name="backup-solr-index"
             description="Snapshot the Solr index via /replication?command=backup">
         <tstamp><format property="solr.backup.stamp" pattern="yyyy.MM.dd-HH.mm"/></tstamp>
-        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/v9"/>
+        <!-- Back up into this instance's own subdir (<base>/<INSTANCE>/v9) so a
+             stage/dev instance never overwrites the shared production (zfindb)
+             snapshot that `loadsolr` restores from. Override with
+             -Dsolr.unloads.dir=<dir> (e.g. a prod job writing .../zfindb/v9). -->
+        <property name="solr.unloads.dir" value="/opt/zfin/unloads/solr/${env.INSTANCE}/v9"/>
         <exec executable="${SOURCEROOT}/gradlew" failonerror="true" dir="${SOURCEROOT}">
             <arg value="solrBackup"/>
             <arg value="-PsolrBackupLocation=${solr.unloads.dir}"/>

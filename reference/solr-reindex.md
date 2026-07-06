@@ -127,7 +127,7 @@ If the failure is DIH-side, `dataimport?command=status` on the running Solr will
 
 ## Snapshot / restore
 
-The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm/` under `/research/zunloads/solr/v9/${INSTANCE}/`. The `v9/` segment segregates Solr 9 snapshots from the legacy pre-9 full-SOLR_HOME dumps (which can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`).
+The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm/` under the **backing-up instance's own** subdir, `<base>/${INSTANCE}/v9/` (where `<base>` is the container mount `/opt/zfin/unloads/solr`). Restore is the mirror: `loadsolr`/`getsolr` read the shared production snapshot from `<base>/zfindb/v9/` by default (override with `-PsolrSourceInstance=<name>`). Backing up per-instance means a stage/dev index build never clobbers the `zfindb` snapshot everyone restores from. The `v9/` segment segregates Solr 9 snapshots from the legacy pre-9 full-SOLR_HOME dumps (which can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`).
 
 ### GoCD deployment pipeline
 
