@@ -167,6 +167,29 @@ _Verified — Run 5 (2026-07-01, ECO row applied to dev DB, prod file):_ **error
 
 ---
 
+## 4c. Org-mismatch DUPLICATION of the *2go content (2026-07-07, legacy-vs-new DB comparison)
+
+Full legacy-vs-new end-state comparison (real writes, per-org `csvDiff` on `marker_go_term_evidence`, 2026.07.05.1 snapshot). The `UniProt`-org diff is **0 deletes / 0 adds** — but that zero is misleading. The secondary UniProt load and the unified load **own the same InterPro2GO/EC2GO content under different organizations**, so a per-org diff can never net them:
+
+| snapshot (org) | InterPro2GO `ZDB-PUB-020724-1` | EC2GO `ZDB-PUB-031118-3` |
+|---|--:|--:|
+| legacy `UniProt` | 65,327 | 4,735 |
+| new `UniProt`    | 65,327 | 4,735 |
+| legacy `GOA`     | 0 | 0 |
+| new `GOA`        | **28,509** | **3,161** |
+
+(`created_by=InterPro` in `GOA`: legacy 0 → new 28,509.)
+
+**Mechanism.** `csvDiff` compares only within an org. The secondary load stores `*2go` rows as `gafOrganization=UniProt` (`organizationCreatedBy=ZFIN`); the unified load resolves the same rows to `GOA` (`assigned_by=InterPro`/`UniProt` → GOA, per `DanreModSourceOrganization`). So the old copies sit **untouched in the `UniProt` org** (0 diff — the unified load's removal scope is GOA+Noctua only) while the new copies land as **`GOA` adds**. They never meet → at cutover both coexist: **duplication** (65,327 UniProt + 28,509 GOA InterPro2GO rows).
+
+**Two consequences for the *2go handover (D6):**
+1. **Duplication** unless cutover explicitly purges the `UniProt` org. Identify those rows by **`gafOrganization='UniProt'` (pk 5)** — NOT by `created_by=ZFIN`, which also tags the 36,011 genuine Noctua curated rows.
+2. **Under-coverage.** `DANRE-mod` supplies only **28,509** InterPro2GO (and 3,161 EC2GO) vs the secondary load's **65,327 / 4,735** — less than half. `DANRE-uniprot.gpad.gz` carries **43,882 / 5,400** (closer, still short). So `DANRE-mod` alone is an insufficient source for the mapping2go replacement — see the file-choice question in §7.
+
+**Fix direction:** to make the handover a clean swap rather than a duplicate-and-shrink, the unified load must (a) own the `*2go` content under the **same org the secondary load uses** (or run an explicit `UniProt`-org migration/purge at cutover), and (b) consume a source file that covers the full `*2go` volume (likely `DANRE-uniprot`, or `DANRE-mod` + `DANRE-uniprot`).
+
+---
+
 ## 5. Pre-adoption blockers (from status doc §2, still gating)
 0. **⭐ MATCHING & OWNERSHIP CHURN (from run 4; root-caused in §4b — the #1 cutover blocker).** With per-source removal active, a cutover would churn ~69,838 removes + ~43,608 adds. Per §4b this splits three ways: **(1)** ~24,283 GOA removals from the `ECO:0007322` gap — **fixed by part (b)**; **(2)** ~11,751 genuine Noctua losses (`RO:0002264`/`ND`) — a GO/curator conversation; **(3)** ~23k GOA IEA (UniRule/ARBA) mostly monthly upstream turnover, confounded by the DB being an older snapshot. Also unaddressed: the 111,089 `UniProt`-owned secondary-load rows sit outside the removal scope (map needs `GO_REF` granularity + the ownership transition). Until this is resolved, keep report-only.
 1. **ECO gap:** 4 of 22 ECO codes unmapped — **confirmed live as 17,406 erroring rows** (`ECO:0007322` SubCell 17,350 + `ECO:0005547` 56); needs `eco_go_mapping` rows (curator/GO call).
@@ -174,6 +197,7 @@ _Verified — Run 5 (2026-07-01, ECO row applied to dev DB, prod file):_ **error
 2. **Relation→qualifier mapping:** confirm every col-3 RO/BFO relation resolves to a ZFIN `qualifier_relation`.
 3. **ZFIN round-trip QC** (§4 above).
 4. **Removal-scope safety:** the per-source partition + reject-unmapped rule (§2) is the mitigation for the mass-delete risk.
+5. **⭐ *2go ORG-MISMATCH DUPLICATION (from §4c, 2026-07-07).** The secondary load owns InterPro2GO/EC2GO under `gafOrganization=UniProt`; the unified load writes the same content under `GOA`, so cutover **duplicates** it (65,327 UniProt + 28,509 GOA InterPro2GO) rather than replacing it — and `DANRE-mod` under-covers the volume (28,509 vs 65,327). Blocks the D6 handover until we settle (a) same-org ownership or an explicit `UniProt`-org purge, and (b) the source file (§7).
 
 ---
 
@@ -191,6 +215,9 @@ _Verified — Run 5 (2026-07-01, ECO row applied to dev DB, prod file):_ **error
     - `GO_REF:0000003` → EC2GO (UniProt / ECO:0000501, **3,173 rows**) — reuse existing EC2GO pub `ZDB-PUB-031118-3`.
     - Clears **31,864 of the 34,044** GO_REF errors. kw2go (`GO_REF:0000004`) is absent from the file (retired, ZFIN-10135) — nothing to take over.
     - Implementation: add `GoDefaultPublication` entries whose `title()` is the GO_REF string (so they land in `goRefPubMap`) → the pub ZDB IDs above; ensure `getGoRefPubs()` returns them. Reconfirms §1 Correction: drop ONLY the secondary load's GO-mapping handlers, keep its dblink/domain/PDB refresh.
+    - ⚠️ **REVISIT (2026-07-07, §4c):** the *mapping* is done, but the handover isn't clean: `DANRE-mod` supplies only **28,509** InterPro2GO vs the secondary load's **65,327** (under-coverage), and the unified load writes them to `GOA` while the secondary load owns them under `UniProt` (duplication). Resolve the source-file and org questions below before treating D6 as complete.
+- **Source file: `DANRE-mod` vs `DANRE-uniprot` vs both (NEW, 2026-07-07, §4c).** Both exist at `https://current.geneontology.org/annotations/gpad/` — note `http://` **301-redirects**, so fetch via `https`/`curl -L` or you get an empty 167-byte redirect page. `DANRE-uniprot` carries far more of the UniProt-derived IEA the secondary load replaces (InterPro2GO **43,882** vs 28,691; EC2GO 5,400 vs 3,173; UniProt 71,243 vs 52,732; RNAcentral 8,969 vs 55; GOC 6,477 vs 2,125). The branch consumes `DANRE-mod` only → under-covers mapping2go. Decide: switch to `DANRE-uniprot`, or consume both. (Neither file recovers the Noctua experimental loss — flt1 absent as subject from both; see §4b.)
+- **`*2go` ownership org (NEW, 2026-07-07, §4c).** Route the `*2go` GO_REFs to the **same organization the secondary load uses (`UniProt`)** instead of `GOA`, or add an explicit `UniProt`-org purge/migration at cutover — otherwise the old (UniProt) and new (GOA) copies coexist. Identify the existing rows by `gafOrganization='UniProt'`, NOT `created_by=ZFIN` (which also tags the 36,011 Noctua rows).
 - **`GO_REF:0000115` RNAcentral InterPro-family (55 rows):** map alongside `0000002` or leave? Tiny; likely map for consistency.
 - **GOC / `GO_REF:0000108` (~2,125 rows):** adopt (new org or fold into GOA) or keep rejecting? Currently net-new.
 - **Phylo IBA org:** keep under GOA, or a dedicated org to preserve the FP-Inference identity in reporting?
