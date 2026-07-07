@@ -53,7 +53,7 @@ for ORG in GOA Noctua; do
   $PSQL -c "DROP TABLE IF EXISTS tmp_danre_mgoe_before_$ORG, tmp_danre_mgoe_after_$ORG"
   # key = every column except zdb_id; ignore zdb_id so a recycled id lands in
   # updates_ignored rather than add+delete.
-  gradle csvDiff --args="$OUT/mgoe_dbdiff_$ORG $OUT/mgoe_before_$ORG.csv $OUT/mgoe_after_$ORG.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id"
+  gradle csvDiff --args="$OUT/mgoe_dbdiff_$ORG $OUT/mgoe_before_$ORG.csv $OUT/mgoe_after_$ORG.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id,gene,go_id,go_term,go_aspect,relation_name"
 done
 ]]></command>
         </hudson.tasks.Shell>

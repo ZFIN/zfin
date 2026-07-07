@@ -117,7 +117,7 @@ cd $SOURCEROOT
 # add+delete. CSVDIFF_XLSX_ONLY -> single mgoe_dbdiff.xlsx workbook (deletes/adds/
 # updated_1/updated_2 sheets); the intermediate CSVs are removed.
 export CSVDIFF_XLSX_ONLY=true
-gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id"
+gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id,gene,go_id,go_term,go_aspect,relation_name"
 
 # Fold the logical rollup into its own workbook (removed/added sheets), then drop
 # the intermediate CSVs so only mgoe_logical.xlsx is archived.
