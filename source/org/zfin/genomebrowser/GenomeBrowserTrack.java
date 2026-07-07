@@ -50,6 +50,7 @@ public enum GenomeBrowserTrack {
         Map<GenomeBrowserTrack, String> trackIDMap12 = new HashMap<>();
         trackIDMap12.put(GENES, "zfin-gene12");
         trackIDMap12.put(REFSEQ, "refseq12");
+        trackIDMap12.put(KNOCKDOWN_REAGENT, "zfin_knockdown_reagent12");
         trackMap.put("GRCz12tu", trackIDMap12);
 
         Map<GenomeBrowserTrack, String> trackIDMap10 = new HashMap<>();

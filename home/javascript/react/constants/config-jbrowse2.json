@@ -665,6 +665,36 @@
         },
         {
             "type": "FeatureTrack",
+            "trackId": "zfin_knockdown_reagent12",
+            "name": "Knockdown Reagent",
+            "assemblyNames": ["GRCz12tu"],
+            "formatDetails": {
+                "feature": "jexl:{ ZFIN: '<a href=\"http://zfin.org/'+feature.zdb_id+' \">'+feature.name+'</a>'}"
+            },
+            "adapter": {
+                "type": "NCListAdapter",
+                "rootUrlTemplate": {
+                    "locationType": "UriLocation",
+                    "uri": "https://s3.amazonaws.com/agrjbrowse/MOD-jbrowses/zfin/GRCz12tu/tracks/Knockdown_Reagent/{refseq}/trackData.jsonz"
+                }
+            },
+            "displays": [
+                {
+                    "type": "LinearBasicDisplay",
+                    "displayId": "zfin_knockdown_reagent12-LinearBasicDisplay",
+                    "renderer": {
+                        "type": "SvgFeatureRenderer",
+                        "color1": "#3DB471"
+                    }
+                },
+                {
+                    "type": "LinearArcDisplay",
+                    "displayId": "zfin_knockdown_reagent12-LinearArcDisplay"
+                }
+            ]
+        },
+        {
+            "type": "FeatureTrack",
             "trackId": "GRCz10_zfin_knockdown_reagent",
             "name": "Knockdown Reagent",
             "assemblyNames": ["GRCz10"],

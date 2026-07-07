@@ -242,19 +242,31 @@ public class SequenceTargetingReagentViewController {
         ));
         sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
 
-        // get gbrowse genomic location of each targeted gene
+        // get gbrowse genomic locations of str itself. STR locations exist for both
+        // GRCz11 and GRCz12tu under the same ZFIN (ZfinGbrowseStartEndLoader) source,
+        // distinguished only by assembly. Prefer GRCz12tu; fall back to GRCz11 for STRs
+        // that have no GRCz12tu placement yet (e.g. sequence didn't align to the new assembly).
+        List<MarkerGenomeLocation> allStrLocations = linkageRepository.getGenomeLocation(sequenceTargetingReagent, GenomeLocation.Source.ZFIN);
+        GenomeBrowserBuild genomeBuild = GenomeBrowserBuild.CURRENT;
+        // targeted-gene locations are sourced per assembly: ZFIN_NCBI for GRCz12tu, ZFIN for GRCz11.
+        GenomeLocation.Source geneSource = GenomeLocation.Source.ZFIN_NCBI;
+        List<MarkerGenomeLocation> strLocations = filterByAssembly(allStrLocations, GenomeBrowserBuild.CURRENT.getValue());
+        if (strLocations.isEmpty()) {
+            strLocations = filterByAssembly(allStrLocations, GenomeBrowserBuild.GRCZ11.getValue());
+            genomeBuild = GenomeBrowserBuild.GRCZ11;
+            geneSource = GenomeLocation.Source.ZFIN;
+        }
+
+        // get gbrowse genomic location of each targeted gene on the chosen assembly
         List<MarkerGenomeLocation> targetedGeneLocations = new ArrayList<>();
         for (MarkerRelationshipPresentation knockdownRelationship : knockdownRelationships) {
             Marker targetedGene = markerRepository.getGeneByID(knockdownRelationship.getZdbId());
-            List<MarkerGenomeLocation> locations = linkageRepository.getGenomeLocation(targetedGene, GenomeLocation.Source.ZFIN);
+            List<MarkerGenomeLocation> locations = linkageRepository.getGenomeLocation(targetedGene, geneSource);
             if (CollectionUtils.isNotEmpty(locations)) {
                 // if we have location(s) for targeted gene, just take the first one... i guess
                 targetedGeneLocations.add(locations.get(0));
             }
         }
-
-        // get gbrowse genomic locations of str itself
-        List<MarkerGenomeLocation> strLocations = linkageRepository.getGenomeLocation(sequenceTargetingReagent, GenomeLocation.Source.ZFIN);
 
         // for talens there should be two location that need to be combined into one. it might be better to do this upstream
         // in the GFF3 track generation (e.g. with parent-child relationships), but this works for now.
@@ -285,7 +297,7 @@ public class SequenceTargetingReagentViewController {
                     .withRelativePadding(0.1)
                     .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_STRS))
                     .highlight(sequenceTargetingReagent)
-                    .genomeBuild(GenomeBrowserBuild.GRCZ11)
+                    .genomeBuild(genomeBuild)
                     .build()
             );
         } else {
@@ -296,12 +308,18 @@ public class SequenceTargetingReagentViewController {
                         .withPadding(10000)
                         .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                         .highlight(sequenceTargetingReagent)
-                        .genomeBuild(GenomeBrowserBuild.GRCZ11)
+                        .genomeBuild(genomeBuild)
                         .build()
                 );
             }
         }
 
+    }
+
+    private static List<MarkerGenomeLocation> filterByAssembly(List<MarkerGenomeLocation> locations, String assembly) {
+        return locations.stream()
+                .filter(location -> assembly.equals(location.getAssembly()))
+                .toList();
     }
 }
 
