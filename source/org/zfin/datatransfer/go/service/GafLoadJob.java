@@ -542,7 +542,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         job.reportOnly = envTrue("GAF_LOAD_REPORT_ONLY");
 
         try {
-            job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
+            // Resolve the parser by its conventional bean name rather than by type: since
+            // DanreModGpadParser extends GpadParser (ZFIN-10025), a by-type lookup for the
+            // legacy Noctua load's GpadParser matches two beans (gpadParser, danreModGpadParser)
+            // and throws NoUniqueBeanDefinitionException. The by-name lookup selects the exact
+            // parser each load asked for. (FpInferenceGafParser stays @Primary for its own load.)
+            Class<?> parserClass = Class.forName(parserClassName);
+            String parserBeanName = java.beans.Introspector.decapitalize(parserClass.getSimpleName());
+            job.gafParser = (FpInferenceGafParser) context.getBean(parserBeanName, parserClass);
 
             //if load-noctua-gpad job, then make sure to validate all ZDB IDs in inferences.
             if (job.gafParser instanceof GpadParser) {
