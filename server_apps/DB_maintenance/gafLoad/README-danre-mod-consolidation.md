@@ -89,27 +89,52 @@ IMP/IGI `acts_upstream_of_or_within` rows are gone.
 GPAD load as a supplementary source until then, or (c) accept the loss with a rationale.
 It must not be dropped silently at cutover.
 
-### 2. `*2go` handover: org-mismatch duplication + under-coverage
-The UniProt-Secondary load's InterPro2GO / EC2GO IEA mappings are stored under
-`gafOrganization=UniProt`; the unified load resolves the same content to `GOA`. A per-org
-diff never compares across orgs, so the old copies show as "unchanged in UniProt" (0/0)
-and the new copies as "GOA adds":
+### 2. `*2go` handover: org-mismatch duplication, under-coverage, and a fully-dropped stream
+The UniProt-Secondary load produces **three** `*2go` IEA streams, all stored under
+`gafOrganization=UniProt` (`organizationCreatedBy=ZFIN`). The unified load resolves the
+equivalent content to `GOA` (`assigned_by=InterPro`/`UniProt` → GOA). A per-org `csvDiff`
+never compares across orgs, so the old copies read "unchanged in UniProt" (0/0) while the
+new copies land as "GOA adds":
 
-| org | InterPro2GO `ZDB-PUB-020724-1` | EC2GO `ZDB-PUB-031118-3` |
-|---|--:|--:|
-| legacy UniProt | 65,327 | 4,735 |
-| unified UniProt | 65,327 | 4,735 |
-| legacy GOA | 0 | 0 |
-| unified GOA | 28,509 | 3,161 |
+| `*2go` stream | pub | legacy `UniProt` | GO_REF | in `DANRE-mod` (→GOA) | in `DANRE-uniprot` |
+|---|---|--:|---|--:|--:|
+| InterPro2GO | ZDB-PUB-020724-1 | 65,327 | GO_REF:0000002 | 28,509 | 43,882 |
+| **UniProtKB-Keyword (kw2go/spkw2go)** | ZDB-PUB-020723-1 | **41,027** | GO_REF:0000004 | **0** | **0** |
+| EC2GO | ZDB-PUB-031118-3 | 4,735 | GO_REF:0000003 | 3,161 | 5,400 |
 
-Two problems at cutover:
+Three problems at cutover:
 - **Duplication.** The unified load's removal scope is GOA+Noctua only, so it never
   touches the 111,089 UniProt-org rows — dropping the secondary `*2go` handlers leaves
   those *and* the new GOA copies, storing each mapping twice. Purge by
-  `gafOrganization='UniProt'`, **not** `created_by=ZFIN`.
+  `gafOrganization='UniProt'`, **not** `created_by=ZFIN` (which also tags Noctua).
 - **Under-coverage.** `DANRE-mod` supplies only **28,509** InterPro2GO vs the secondary
-  load's **65,327** (< half); `DANRE-uniprot.gpad.gz` carries **43,882** (closer, still
-  short). See the source-file decision below.
+  load's **65,327** (< half); `DANRE-uniprot` has **43,882** (closer, still short).
+- **kw2go is dropped entirely.** GO Central retired keyword→GO mapping (`GO_REF:0000004`);
+  it is absent from *both* files. So the 41,027 UniProtKB-Keyword annotations have **no
+  file successor** — the branch's `GoDefaultPublication` maps GO_REF:0000002/0000003 but
+  nothing for keyword2go, because there is nothing to map.
+
+**How bad is the kw2go loss? — mostly not real biological loss (spot-checked).** Of the
+41,027 keyword rows (40,409 distinct gene→GO), 11,436 are covered by another source in
+`DANRE-mod`; 28,973 are not (10,871 of those on 4,048 genes that would keep *no* GO in
+`DANRE-mod` at all). But sampling the uncovered pairs shows the lost terms are **broad
+molecular-function terms that are GO ancestors of more-specific terms the protein still
+carries** (verified against `term_relationship`):
+
+| gene | keyword term lost | more-specific term retained (DANRE-uniprot) |
+|---|---|---|
+| igfbp2a | GO:0019838 growth factor binding | GO:0005520 insulin-like growth factor binding |
+| urod | GO:0016829 lyase / GO:0016831 carboxy-lyase | GO:0004853 uroporphyrinogen decarboxylase activity |
+| dlc | GO:0030154 cell differentiation | GO:0030855 epithelial cell differentiation |
+
+By the GO true-path rule the specific term entails the general one, so these keyword
+annotations are largely **redundant broad terms**, not lost knowledge. Two caveats: (i)
+the specific survivors are in `DANRE-uniprot` (protein-keyed) — with `DANRE-mod` even the
+specific term is often missing, so the loss is partly a *source-file* artifact (see below);
+(ii) some accessions (e.g. ppardb/A9C4A5, pbx4, calr3a) have **zero** rows in either file,
+a gene↔protein `db_link` mapping gap. Recommended before treating kw2go as a hard loss:
+quantify across all 28,973 uncovered pairs how many `GO_lost` are ancestors of a surviving
+term for the same gene (needs the GO ancestor closure).
 
 ### 3. `ECO:0007322 → IEA` mapping (done)
 `DANRE-mod` tags ~17,350 UniProtKB-SubCell annotations with `ECO:0007322` ("curator
@@ -142,15 +167,21 @@ UniProt turnover (the 7/5 DB is ~3 weeks newer than the 6/17 file) plus net-new 
    fetch via `https`/`curl -L`, or you get a 167-byte redirect page that looks empty).
    `DANRE-uniprot` carries far more of the UniProt-derived IEA the secondary load replaces
    (InterPro2GO 43,882 vs 28,691; UniProt 71,243 vs 52,732; RNAcentral 8,969 vs 55; GOC
-   6,477 vs 2,125). `DANRE-mod` alone under-covers mapping2go. Neither file recovers the
-   Noctua loss.
+   6,477 vs 2,125) — **but it is keyed by UniProtKB accession, not ZFIN gene id**, so
+   consuming it needs a UniProt→gene `db_link` mapping layer (like the legacy GAF-GOA path,
+   with its own protein↔gene gaps). `DANRE-mod` (gene-keyed) is a drop-in but under-covers
+   mapping2go. Neither file recovers the Noctua loss or carries keyword2go.
 3. **`*2go` ownership org** — route the `*2go` GO_REFs to the same org the secondary load
    uses (`UniProt`) or add an explicit `UniProt`-org purge/migration at cutover, so old and
    new copies don't coexist.
-4. **`GO_REF:0000108` (GOC, ~2,125)** — adopt (net-new content) or keep rejecting?
-5. **`GO_REF:0000115` (RNAcentral, 55)** and **`ECO:0005547` (manual, ~21)** — map or leave.
-6. **`EXP` evidence (~105)** — ZFIN-10258 says allow; currently surfaced as errors.
-7. **Relation → `qualifier_relation`** — confirm every col-3 RO/BFO relation resolves.
+4. **kw2go (UniProtKB-Keyword, 41,027 rows)** — no file successor (GO retired
+   `GO_REF:0000004`). Keep the secondary load's `spkw2go` handler, or accept the loss? The
+   loss is largely broad ancestor terms subsumed by more-specific surviving terms (spot-
+   checked); quantify the ancestor-subsumption before deciding.
+5. **`GO_REF:0000108` (GOC, ~2,125)** — adopt (net-new content) or keep rejecting?
+6. **`GO_REF:0000115` (RNAcentral, 55)** and **`ECO:0005547` (manual, ~21)** — map or leave.
+7. **`EXP` evidence (~105)** — ZFIN-10258 says allow; currently surfaced as errors.
+8. **Relation → `qualifier_relation`** — confirm every col-3 RO/BFO relation resolves.
 
 ## Reproduce
 
