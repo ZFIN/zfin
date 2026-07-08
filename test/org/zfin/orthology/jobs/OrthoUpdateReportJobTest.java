@@ -33,17 +33,18 @@ public class OrthoUpdateReportJobTest {
     @Test
     public void readDelimitedSplitsPipesAndKeepsTrailingEmptyField() throws Exception {
         write("orthoNamesUpdateList.txt",
-            "ZDB-GENE-001|Human|old name|new name|\n" +
-            "ZDB-GENE-002|Mouse|foo|bar|\n");
+            "ZDB-GENE-001|myga|Human|old name|new name|\n" +
+            "ZDB-GENE-002|mygb|Mouse|foo|bar|\n");
 
         List<String[]> rows = OrthoUpdateReportJob.readDelimited(
             tmp.getRoot(), "orthoNamesUpdateList.txt", "\\|");
 
         assertEquals(2, rows.size());
         // -1 split limit keeps the trailing empty field after the last pipe.
-        assertEquals(5, rows.get(0).length);
+        assertEquals(6, rows.get(0).length);
         assertEquals("ZDB-GENE-001", rows.get(0)[0]);
-        assertEquals("new name",     rows.get(0)[3]);
+        assertEquals("myga",         rows.get(0)[1]);
+        assertEquals("new name",     rows.get(0)[4]);
     }
 
     @Test
@@ -148,7 +149,7 @@ public class OrthoUpdateReportJobTest {
             "# header\n\nfirst seen: 2026-06-09\nZDB-GENE-123     myga\n" +
             "gene name (z): my gene a\ngene name (h): MY GENE ALPHA\n" +
             "gene symbol (h): MYGA\ngene name (m):\ngene symbol (m):\n\n");
-        write("orthoNamesUpdateList.txt", "ZDB-GENE-999|Human|old name|new name|\n");
+        write("orthoNamesUpdateList.txt", "ZDB-GENE-999|mygz|Human|old name|new name|\n");
         write("ortho_obsolete.txt",
             "ZDB-GENE-777|abc|gene abc|ABC|12345|gene ABC|IEA|ZDB-PUB-1\n");
         write("orthoNcbiIdsNotFoundReport.txt", "ZDB-GENE-555\tdef\t67890\tMouse\n");
@@ -181,6 +182,8 @@ public class OrthoUpdateReportJobTest {
         assertTrue(json.contains("Mouse symbol"));
         // The parsed human ortholog symbol made it into a row cell.
         assertTrue(json.contains("MYGA"));
+        // The ZFIN gene symbol reached the "Ortholog names updated" table too.
+        assertTrue(json.contains("mygz"));
     }
 
     /** Extract and gunzip the {@code window.REPORT_DATA_GZ} payload from rendered report HTML. */

@@ -241,18 +241,19 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
     }
 
     private ReportNode buildNamesUpdatedNode() {
-        // orthoNamesUpdateList.txt: zdbId|species|oldName|newName|
+        // orthoNamesUpdateList.txt: zdbId|zfinSym|species|oldName|newName|
         List<String[]> rows = readDelimited(orthoDir, FILE_NAMES_UPDATED, "\\|");
         ReportNode node = new ReportNode().id("namesUpdated").title("Ortholog names updated");
         ReportTable table = new ReportTable()
             .schemaRef(SCHEMA_NAMES_UPDATED)
             .title("Ortholog names changed to match NCBI (" + rows.size() + ")");
         for (String[] r : rows) {
-            String oldName = col(r, 2);
-            String newName = col(r, 3);
+            String oldName = col(r, 3);
+            String newName = col(r, 4);
             table.addRow(
                 "zdbID",   col(r, 0),
-                "species", col(r, 1),
+                "zfinSym", col(r, 1),
+                "species", col(r, 2),
                 "oldName", OrthoNameDiff.highlightOld(oldName, newName),
                 "newName", OrthoNameDiff.highlightNew(oldName, newName));
         }
@@ -335,6 +336,7 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
             .tableSchema(SCHEMA_NAMES_UPDATED, new Report.TableSchema()
                 .description("Ortholog names that were changed to match NCBI.")
                 .addColumn(ReportTable.Column.of("zdbID",   "ZDB ID", "zdbID"))
+                .addColumn(ReportTable.Column.of("zfinSym", "ZFIN symbol"))
                 .addColumn(ReportTable.Column.of("species", "Species"))
                 .addColumn(ReportTable.Column.of("oldName", "Old name (ZFIN)", "htmlCell"))
                 .addColumn(ReportTable.Column.of("newName", "New name (NCBI)", "htmlCell")))
