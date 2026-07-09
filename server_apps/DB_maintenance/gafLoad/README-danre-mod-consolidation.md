@@ -192,6 +192,43 @@ GOA's 42,131 deletes / 50,585 adds are almost all IEA representation change + mo
 UniProt turnover (the 7/5 DB is ~3 weeks newer than the 6/17 file) plus net-new content
 (GOC `GO_REF:0000108`, the `*2go` IEAs). Not curation loss.
 
+### 6. Merged/retyped ZFIN IDs aren't remapped on import (small bug, ~23 annotations)
+The Noctua GPAD load (and FP / DANRE-mod, which share `GafLoadJob`) throw
+`No gene found for ID: …` for genes merged or type-changed in ZFIN *after* they were curated
+in Noctua — the file still carries the old id. ~11 genes / ~23 annotations currently; all
+resolve in one hop via `zdb_replaced_data`:
+
+| old id (in file) | resolves to | kind |
+|---|---|---|
+| ZDB-GENE-080305-14 | fbxw12 (ZDB-GENE-090311-15) | merge |
+| ZDB-GENE-080723-5 | si:dkey-199f5.7 (ZDB-GENE-100922-57) | merge |
+| ZDB-GENE-080723-51 | zgc:194215 (ZDB-GENE-080723-25) | merge |
+| ZDB-GENE-131121-474 | ccdc162 (ZDB-GENE-131121-612) | merge |
+| ZDB-GENE-150701-2 | cdh16 (ZDB-GENE-140106-140) | merge |
+| ZDB-GENE-200316-1 | cd44b (ZDB-GENE-110429-2) | merge |
+| ZDB-GENE-080410-2 | nc.terc (ZDB-NCRNAG-080410-1) | type change |
+| ZDB-GENE-090929-315 | nc.rny2 (ZDB-NCRNAG-090929-1) | type change |
+| ZDB-GENE-111201-3 | nc.rny1 (ZDB-NCRNAG-111201-1) | type change |
+| ZDB-GENE-150915-1 | sno.scarna1 (ZDB-SNORNAG-150915-1) | type change |
+| ZDB-LINCRNAG-050208-65 | bin1b (ZDB-GENE-030425-1) | type change |
+
+**Root cause — two gaps in the existing `GafService.replaceMergedZDBIds` (the resolver
+already exists, it just misses these):**
+1. **Prefix mismatch (primary).** It remaps `entryId` at `GafLoadJob:164`, *before* the
+   `ZFIN:` prefix is stripped (line 174), but `replaceAttributeOnGafEntry` does
+   `containsKey(fullEntryId)` against a map keyed by **bare** `ZDB-…` ids — so a
+   `ZFIN:ZDB-GENE-…` entryId never matches. (The with/from remap strips `ZFIN:` correctly;
+   the entryId branch doesn't.) Net: entryId-level merge handling has effectively never
+   worked for the ZFIN-id GPAD loads — which is why even plain GENE→GENE merges error.
+2. **Type coverage.** The map is built only for old-id types `GENE` + `MRPHLNO`
+   (`getReplacedDataMapFromEntities(GENE, MRPHLNO)`), so a non-GENE old id like
+   `ZDB-LINCRNAG-050208-65` is missed even after fixing #1.
+
+**Fix:** strip a leading `ZFIN:` before the entryId map lookup (mirror the with/from
+handling), and broaden the replaced-data map to all gene/RNA marker types (or resolve
+type-agnostically). `getGenes()` already routes `*RNAG` ids to `getGeneByID`, so
+type-changed targets (NCRNAG/SNORNAG) load once remapped. Priority: medium-high, not urgent.
+
 ---
 
 ## Open decisions before cutover
