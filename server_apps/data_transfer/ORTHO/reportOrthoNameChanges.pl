@@ -392,8 +392,8 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
        $ctUpdatedOrthNames++;
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "human orthology name at ZFIN: $namesHumanOrthZFIN{$zdbGeneId}\n";
-       print ORTHNAMEREPORT "human orthology name at NCBI: $namesHumanOrthNCBI{$zdbGeneId}\n\n";  
-       print ORTHNAMEUPDATE "$zdbGeneId|Human|$namesHumanOrthZFIN{$zdbGeneId}|$namesHumanOrthNCBI{$zdbGeneId}|\n";
+       print ORTHNAMEREPORT "human orthology name at NCBI: $namesHumanOrthNCBI{$zdbGeneId}\n\n";
+       print ORTHNAMEUPDATE "$zdbGeneId|$symbolsZFgene{$zdbGeneId}|Human|$namesHumanOrthZFIN{$zdbGeneId}|$namesHumanOrthNCBI{$zdbGeneId}|\n";
    }
    
    if(exists($namesMouseOrthZFIN{$zdbGeneId}) && exists($namesMouseOrthNCBI{$zdbGeneId}) && $namesMouseOrthZFIN{$zdbGeneId} ne $namesMouseOrthNCBI{$zdbGeneId}) {
@@ -401,7 +401,7 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "mouse orthology name at ZFIN: $namesMouseOrthZFIN{$zdbGeneId}\n";
        print ORTHNAMEREPORT "mouse orthology name at NCBI: $namesMouseOrthNCBI{$zdbGeneId}\n\n";
-       print ORTHNAMEUPDATE "$zdbGeneId|Mouse|$namesMouseOrthZFIN{$zdbGeneId}|$namesMouseOrthNCBI{$zdbGeneId}|\n";
+       print ORTHNAMEUPDATE "$zdbGeneId|$symbolsZFgene{$zdbGeneId}|Mouse|$namesMouseOrthZFIN{$zdbGeneId}|$namesMouseOrthNCBI{$zdbGeneId}|\n";
    }   
    
    if(exists($namesFlyOrthZFIN{$zdbGeneId}) && exists($namesFlyOrthNCBI{$zdbGeneId}) && $namesFlyOrthZFIN{$zdbGeneId} ne $namesFlyOrthNCBI{$zdbGeneId}) {
@@ -409,7 +409,7 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "fly orthology name at ZFIN: $namesFlyOrthZFIN{$zdbGeneId}\n";
        print ORTHNAMEREPORT "fly orthology name at NCBI: $namesFlyOrthNCBI{$zdbGeneId}\n\n";
-       print ORTHNAMEUPDATE "$zdbGeneId|Fruit fly|$namesFlyOrthZFIN{$zdbGeneId}|$namesFlyOrthNCBI{$zdbGeneId}|\n";
+       print ORTHNAMEUPDATE "$zdbGeneId|$symbolsZFgene{$zdbGeneId}|Fruit fly|$namesFlyOrthZFIN{$zdbGeneId}|$namesFlyOrthNCBI{$zdbGeneId}|\n";
    }      
 }
 
