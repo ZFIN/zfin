@@ -37,6 +37,36 @@ Noctua curated rows *and* the UniProt-Secondary `*2go` rows (see below). Identif
 
 ---
 
+## What the secondary UniProt load consumes (its GO inputs)
+
+The UniProt-Secondary load does **not** ingest ready-made GO annotations — it *derives*
+them in-house by joining two inputs:
+
+**(A) per-protein cross-references** from the primary UniProt load's processed `.dat`
+release (`UNIPROT_INPUT_FILE`): each zebrafish protein's UniProt **keywords**, **InterPro
+domains**, and **EC numbers**.
+
+**(B) GO's `external2go` translation tables**, downloaded at run time, mapping each
+cross-reference to a GO term:
+
+| stream | protein feature (A) | external2go file (B) | pub | evidence |
+|---|---|---|---|---|
+| interpro2go | InterPro domain | `current.geneontology.org/ontology/external2go/interpro2go` | ZDB-PUB-020724-1 | IEA |
+| kw2go ⚠ | UniProt keyword | `…/external2go/uniprotkb_kw2go` | ZDB-PUB-020723-1 | IEA |
+| ec2go | EC number | `…/external2go/ec2go` | ZDB-PUB-031118-3 | IEA |
+
+Plus InterPro `entry.list` (`ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list`)
+— the domain catalog, used for the dblink/domain refresh, **not** GO terms.
+
+So each GO row = *(protein has feature F in the UniProt release)* × *(external2go maps
+F → GO term)*, attributed to the stream's pub with evidence IEA. Code:
+`UniprotSecondaryTermLoadTask.loadTranslationFiles()` + `SecondaryTerm2GoTermTranslator`.
+Consequence for cutover: taking these from the DANRE file instead only works where GO
+still produces the mapping **and** ships it in the file — true for interpro2go/ec2go
+(though `DANRE-mod` under-covers), false for kw2go (GO retired `GO_REF:0000004`).
+
+---
+
 ## Comparison method (QC harness)
 
 `snapshot_mgte.sql` flattens one org's annotations (with child-table dimensions:
@@ -114,27 +144,32 @@ Three problems at cutover:
   file successor** — the branch's `GoDefaultPublication` maps GO_REF:0000002/0000003 but
   nothing for keyword2go, because there is nothing to map.
 
-**How bad is the kw2go loss? — mostly not real biological loss (spot-checked).** Of the
-41,027 keyword rows (40,409 distinct gene→GO), 11,436 are covered by another source in
-`DANRE-mod`; 28,973 are not (10,871 of those on 4,048 genes that would keep *no* GO in
-`DANRE-mod` at all). But sampling the uncovered pairs shows the lost terms are **broad
-molecular-function terms that are GO ancestors of more-specific terms the protein still
-carries** (verified against `term_relationship`):
+**How much of the would-be-lost `*2go` is a true loss vs. subsumed by a more-specific
+retained term?** Quantified across all three streams (built the GO `is_a`+`part_of`
+ancestor closure, 357,043 pairs; a lost `(gene, GO_lost)` is "subsumed" if the gene retains
+a descendant of `GO_lost` in `DANRE-mod`):
 
-| gene | keyword term lost | more-specific term retained (DANRE-uniprot) |
-|---|---|---|
-| igfbp2a | GO:0019838 growth factor binding | GO:0005520 insulin-like growth factor binding |
-| urod | GO:0016829 lyase / GO:0016831 carboxy-lyase | GO:0004853 uroporphyrinogen decarboxylase activity |
-| dlc | GO:0030154 cell differentiation | GO:0030855 epithelial cell differentiation |
+| | distinct (gene, GO) |
+|---|--:|
+| all `*2go` pairs | 74,763 |
+| would-be-lost (not reproduced by DANRE-mod) | 40,477 |
+| ↳ subsumed by a retained more-specific term (**not** true loss) | 9,726 (**24%**) |
+| ↳ **not** subsumed (true loss vs DANRE-mod) | 30,751 (**76%**) |
 
-By the GO true-path rule the specific term entails the general one, so these keyword
-annotations are largely **redundant broad terms**, not lost knowledge. Two caveats: (i)
-the specific survivors are in `DANRE-uniprot` (protein-keyed) — with `DANRE-mod` even the
-specific term is often missing, so the loss is partly a *source-file* artifact (see below);
-(ii) some accessions (e.g. ppardb/A9C4A5, pbx4, calr3a) have **zero** rows in either file,
-a gene↔protein `db_link` mapping gap. Recommended before treating kw2go as a hard loss:
-quantify across all 28,973 uncovered pairs how many `GO_lost` are ancestors of a surviving
-term for the same gene (needs the GO ancestor closure).
+Subsumption rate by stream: kw2go **32%** (9,298/28,972 — broad keyword terms, the most
+rescuable), ec2go **14%**, interpro2go **2%** (InterPro maps to specific terms that mostly
+aren't retained). So the true-path rule rescues only ~a quarter — the bulk is genuine loss
+relative to `DANRE-mod`.
+
+**Two caveats pull in opposite directions.** (i) This is measured against the sparse,
+gene-keyed `DANRE-mod`. The specific terms that *would* subsume many lost broad terms exist
+in `DANRE-uniprot` (protein-keyed) — e.g. igfbp2a's lost `GO:0019838 growth factor binding`
+is subsumed by `GO:0005520 insulin-like growth factor binding`, urod's lost `lyase`/
+`carboxy-lyase` by `uroporphyrinogen decarboxylase activity`, dlc's `cell differentiation`
+by `epithelial cell differentiation` — but those aren't in `DANRE-mod`, so they count as
+losses here. A `DANRE-uniprot`-based load would rescue far more, so **76% is the pessimistic
+`DANRE-mod` bound**. (ii) Some accessions have a gene↔protein `db_link` gap (e.g. ppardb/
+A9C4A5) — genuinely uncovered in either file.
 
 ### 3. `ECO:0007322 → IEA` mapping (done)
 `DANRE-mod` tags ~17,350 UniProtKB-SubCell annotations with `ECO:0007322` ("curator
@@ -175,9 +210,11 @@ UniProt turnover (the 7/5 DB is ~3 weeks newer than the 6/17 file) plus net-new 
    uses (`UniProt`) or add an explicit `UniProt`-org purge/migration at cutover, so old and
    new copies don't coexist.
 4. **kw2go (UniProtKB-Keyword, 41,027 rows)** — no file successor (GO retired
-   `GO_REF:0000004`). Keep the secondary load's `spkw2go` handler, or accept the loss? The
-   loss is largely broad ancestor terms subsumed by more-specific surviving terms (spot-
-   checked); quantify the ancestor-subsumption before deciding.
+   `GO_REF:0000004`). Keep the secondary load's `spkw2go` handler, or accept the loss?
+   Quantified: only ~32% of would-be-lost kw2go pairs are subsumed by a more-specific
+   retained term in `DANRE-mod` — the rest are genuine losses there (though a
+   `DANRE-uniprot`-based load would rescue more). Decision is entangled with the source-file
+   choice (#2).
 5. **`GO_REF:0000108` (GOC, ~2,125)** — adopt (net-new content) or keep rejecting?
 6. **`GO_REF:0000115` (RNAcentral, 55)** and **`ECO:0005547` (manual, ~21)** — map or leave.
 7. **`EXP` evidence (~105)** — ZFIN-10258 says allow; currently surfaced as errors.
