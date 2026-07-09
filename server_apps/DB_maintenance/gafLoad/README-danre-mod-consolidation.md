@@ -217,7 +217,12 @@ UniProt turnover (the 7/5 DB is ~3 weeks newer than the 6/17 file) plus net-new 
    choice (#2).
 5. **`GO_REF:0000108` (GOC, ~2,125)** — adopt (net-new content) or keep rejecting?
 6. **`GO_REF:0000115` (RNAcentral, 55)** and **`ECO:0005547` (manual, ~21)** — map or leave.
-7. **`EXP` evidence (~105)** — ZFIN-10258 says allow; currently surfaced as errors.
+7. **`EXP` evidence (105) — DECIDED: allow** (ZFIN-10258). All 105 EXP (`ECO:0000269`)
+   rows in DANRE-mod are `assigned_by=UniProt` and attributed to **PMIDs** — literature-
+   backed experimental annotations, not the default-excluded GAF-path EXP. They currently
+   surface as load errors only because the GAF path lists `EXP` in
+   `EXCLUDED_EVIDENCE_CODES`; the DANRE-mod path should permit them (verified 2026-07-09:
+   105 rows, 100% UniProt / 100% PMID).
 8. **Relation → `qualifier_relation`** — confirm every col-3 RO/BFO relation resolves.
 
 ## Reproduce
