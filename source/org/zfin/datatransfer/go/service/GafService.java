@@ -861,22 +861,49 @@ public class GafService {
     }
 
     /**
-     * Loop over all entries and replace marker IDs if they are merged into new zdb IDs
+     * Loop over all entries and replace marker IDs that were merged or type-changed in ZFIN
+     * after the annotation was created upstream (e.g. curated in Noctua), so a stale old ID
+     * still in the file loads against the surviving marker instead of failing "No gene found".
+     * Rewrites the column-2 object id and the with/from field via {@code zdb_replaced_data}.
      *
-     * @param gafEntries entries to be modified
+     * @param gafEntries entries to be modified (mutated in place)
+     * @return the distinct object-id remaps applied, each as {oldId, newId, newSymbol}, so the
+     *         load report can surface which annotations were corrected on import
      */
-    public void replaceMergedZDBIds(List<GafEntry> gafEntries) {
+    public List<String[]> replaceMergedZDBIds(List<GafEntry> gafEntries) {
         String[] withFieldPieces;
-        Map<String, String> oldNewZDBIds = getReplacedDataMapFromEntities(ActiveData.Type.GENE, ActiveData.Type.MRPHLNO);
+        // Cover every marker type that can be a GO annotation subject or with/from (genes, RNA
+        // genes, morpholinos) — not just GENE/MRPHLNO, or a type-changed old id such as
+        // ZDB-LINCRNAG-* (now a gene) would be missed.
+        Map<String, String> oldNewZDBIds = getReplacedDataMapFromEntities(
+                ActiveData.Type.GENE, ActiveData.Type.GENEP, ActiveData.Type.LINCRNAG,
+                ActiveData.Type.LNCRNAG, ActiveData.Type.NCRNAG, ActiveData.Type.SNORNAG,
+                ActiveData.Type.MIRNAG, ActiveData.Type.TRNAG, ActiveData.Type.SCRNAG,
+                ActiveData.Type.PIRNAG, ActiveData.Type.RRNAG, ActiveData.Type.MRPHLNO);
+        List<String[]> remaps = new ArrayList<>();
+        Set<String> remapSeen = new HashSet<>();
         for (GafEntry gafEntry : gafEntries) {
 
-            // replace the ZDB Id with replaced one for column 2, object id
-            if (StringUtils.startsWith(gafEntry.getEntryId(), "ZFIN:")) {
-
-                replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
-            }
-            if (StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
-                replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
+            // Replace the ZDB id for column 2 (object id). The file may carry it bare
+            // ("ZDB-...") or prefixed ("ZFIN:ZDB-..."); the replacement map is keyed by bare ZDB
+            // ids, so strip a leading "ZFIN:" before the lookup and re-apply it afterwards.
+            String entryId = gafEntry.getEntryId();
+            if (entryId != null) {
+                String prefix = "";
+                String bareId = entryId;
+                if (StringUtils.startsWith(entryId, "ZFIN:")) {
+                    prefix = "ZFIN:";
+                    bareId = entryId.substring(prefix.length());
+                }
+                if (StringUtils.startsWith(bareId, "ZDB-") && oldNewZDBIds.containsKey(bareId)) {
+                    String newId = oldNewZDBIds.get(bareId);
+                    gafEntry.setEntryId(prefix + newId);
+                    if (remapSeen.add(bareId)) {
+                        Marker newMarker = markerRepository.getMarkerByID(newId);
+                        remaps.add(new String[]{bareId, newId,
+                                newMarker != null ? newMarker.getAbbreviation() : ""});
+                    }
+                }
             }
 
             // FB case 7957 "GAF load should handle merged markers"
@@ -920,6 +947,7 @@ public class GafService {
             gafEntry.setInferences(sb.toString());
 
         }
+        return remaps;
     }
 
     public void replaceAttributeOnGafEntry(GafEntry gafEntry, String fieldName, Map<String, String> translationMap) {

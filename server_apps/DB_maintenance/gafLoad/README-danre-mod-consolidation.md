@@ -224,10 +224,18 @@ already exists, it just misses these):**
    (`getReplacedDataMapFromEntities(GENE, MRPHLNO)`), so a non-GENE old id like
    `ZDB-LINCRNAG-050208-65` is missed even after fixing #1.
 
-**Fix:** strip a leading `ZFIN:` before the entryId map lookup (mirror the with/from
-handling), and broaden the replaced-data map to all gene/RNA marker types (or resolve
-type-agnostically). `getGenes()` already routes `*RNAG` ids to `getGeneByID`, so
-type-changed targets (NCRNAG/SNORNAG) load once remapped. Priority: medium-high, not urgent.
+**Fix (IMPLEMENTED, ZFIN-10025 branch):** `replaceMergedZDBIds` now strips a leading
+`ZFIN:` before the entryId map lookup (mirroring the with/from handling), broadens the
+replaced-data map to all gene/RNA + morpholino marker types, dedupes, and returns the
+applied remaps as `{oldId, newId, symbol}`. `GafLoadJob` stashes them on `GafJobData`;
+`GafReportBuilder` surfaces them (a summary "IDs corrected (merged/retyped)" count + an INFO
+node listing `old id → current marker`). `getGenes()` already routes `*RNAG` ids to
+`getGeneByID`, so type-changed targets (NCRNAG/SNORNAG) load once remapped.
+
+**Verified** (report-only Noctua run, 2026-07-10): gene-not-found errors → **0**; the
+annotations load under their current markers (nc.terc, fbxw12, nc.rny2, sno.scarna1, …);
+the report's new section reports **58** corrected IDs (superset of the 11 above — the
+entryId remap was fully broken before, so every merged subject id was erroring).
 
 ---
 

@@ -161,7 +161,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafJobData.setInfCommaCount(gafEntries.get(sizeentry - 1).getCol8commas());
             gafJobData.setInfBothCount(gafEntries.get(sizeentry - 1).getCol8both());
 
-            gafService.replaceMergedZDBIds(gafEntries);
+            gafJobData.setRemappedMarkerIds(gafService.replaceMergedZDBIds(gafEntries));
 
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
                 .getGafOrganization(organizationEnum);

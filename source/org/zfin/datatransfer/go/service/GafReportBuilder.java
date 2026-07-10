@@ -92,6 +92,9 @@ public class GafReportBuilder {
         root.addChild(buildRemoved(data));
         root.addChild(buildErrors(data, errorSummary));
         root.addChild(buildExisting(data));
+        if (data.getRemappedMarkerIds() != null && !data.getRemappedMarkerIds().isEmpty()) {
+            root.addChild(buildRemappedIds(data));
+        }
 
         return report;
     }
@@ -165,7 +168,8 @@ public class GafReportBuilder {
             .addRow("label", "Updated",  "count", data.getUpdateEntries().size())
             .addRow("label", "Removed",  "count", data.getRemovedEntries().size())
             .addRow("label", "Errors",   "count", data.getErrors().size())
-            .addRow("label", "Existing (skipped, no detail)", "count", data.getExistingEntries().size());
+            .addRow("label", "Existing (skipped, no detail)", "count", data.getExistingEntries().size())
+            .addRow("label", "IDs corrected (merged/retyped)", "count", data.getRemappedMarkerIds().size());
         root.addTable(counts);
 
         ReportTable parserStats = new ReportTable()
@@ -550,6 +554,34 @@ public class GafReportBuilder {
                 + " already existed in the database and were skipped. " +
                 "Per-entry detail is omitted to keep this report small; consult " +
                 "_details.txt for the full list."));
+    }
+
+    /**
+     * Merged/retyped ZFIN object ids that were corrected against zdb_replaced_data on import,
+     * so curators can see which annotations were remapped to a surviving marker rather than
+     * silently loaded under a new id.
+     */
+    private ReportNode buildRemappedIds(GafJobData data) {
+        List<String[]> remaps = data.getRemappedMarkerIds();
+        ReportNode node = new ReportNode()
+            .id("cat-remapped")
+            .title("IDs corrected (merged/retyped)")
+            .categoryRef(CAT_INFO)
+            .count(remaps.size())
+            .body(Report.Body.text(
+                remaps.size() + " object id" + (remaps.size() == 1 ? "" : "s")
+                + " in the file were merged or type-changed in ZFIN after upstream curation; "
+                + "each was remapped to its current marker via zdb_replaced_data before load."));
+        ReportTable table = new ReportTable()
+            .schemaRef(SCHEMA_KV)
+            .title("Old id → current marker");
+        for (String[] r : remaps) {
+            String newLabel = (r.length > 2 && r[2] != null && !r[2].isEmpty())
+                ? r[2] + " (" + r[1] + ")" : r[1];
+            table.addRow("key", r[0], "value", newLabel);
+        }
+        node.addTable(table);
+        return node;
     }
 
     // -------- helpers --------
