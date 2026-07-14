@@ -718,6 +718,14 @@ public class ZircSubmissionService {
         JsonNode oldValue = descriptor.read().apply(lesion);
         HibernateUtil.createTransaction();
         descriptor.write().accept(lesion, update.value());
+        // Invariant: a point mutation is a single-nucleotide change, so its
+        // lesion size is always 1 bp. The client renders the size box
+        // read-only for this type; enforce the stored value here too so it
+        // stays correct regardless of what the (disabled) field submits.
+        if ("point_mutation".equals(lesion.getLesionType())
+                && !Integer.valueOf(1).equals(lesion.getLesionSizeBp())) {
+            lesion.setLesionSizeBp(1);
+        }
         writeAudit("lesion", String.valueOf(lesionId), "update",
                 update.path(), oldValue, update.value());
         HibernateUtil.flushAndCommitCurrentSession();

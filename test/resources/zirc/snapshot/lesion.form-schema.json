@@ -13,7 +13,7 @@
       },
       "fivePrimeFlank" : {
         "maxLength" : 5000,
-        "title" : "5′ flank",
+        "title" : "5′ flanking sequence",
         "type" : [ "string", "null" ]
       },
       "hasLargeVariant" : {
@@ -38,11 +38,6 @@
         "title" : "Lesion Type",
         "type" : [ "string", "null" ]
       },
-      "locationInline" : {
-        "maxLength" : 5000,
-        "title" : "Location (inline)",
-        "type" : [ "string", "null" ]
-      },
       "mutatedAminoAcids" : {
         "maxLength" : 2000,
         "title" : "Mutated amino acids",
@@ -60,7 +55,7 @@
       },
       "threePrimeFlank" : {
         "maxLength" : 5000,
-        "title" : "3′ flank",
+        "title" : "3′ flanking sequence",
         "type" : [ "string", "null" ]
       },
       "transgeneSequence" : {
@@ -77,23 +72,28 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
+          "standardLabels" : [ "Point Mutation", "Deletion", "Insertion", "Indel", "Transgene", "Other", "Unknown" ],
           "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/lesionType",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "multi" : true
-        },
-        "scope" : "#/properties/additionalInfo",
         "type" : "Control"
       } ],
       "type" : "Group"
     }, {
       "elements" : [ {
         "options" : {
+          "disabledValue" : 1,
           "suffix" : "bp"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "point_mutation" ]
+            },
+            "scope" : "#/properties/lesionType"
+          },
+          "effect" : "DISABLE"
         },
         "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
@@ -129,8 +129,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true,
-          "placeholder" : "WT → mutant, e.g. A → T"
+          "noOther" : true,
+          "standardValues" : [ "A>T", "A>C", "A>G", "T>A", "T>C", "T>G", "C>A", "C>T", "C>G", "G>A", "G>T", "G>C" ],
+          "widget" : "selectWithOther"
         },
         "scope" : "#/properties/nucleotideChange",
         "type" : "Control"
@@ -208,13 +209,6 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "Annotated inline; list at least 5 nt before and after.",
-          "multi" : true
-        },
-        "scope" : "#/properties/locationInline",
-        "type" : "Control"
-      }, {
-        "options" : {
           "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
           "multi" : true
@@ -263,6 +257,15 @@
         },
         "effect" : "SHOW"
       },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo",
+        "type" : "Control"
+      } ],
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

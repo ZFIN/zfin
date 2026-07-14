@@ -124,7 +124,9 @@ public class FormSchemaInvariantsTest {
                 ZircLesionFormSchema.uiSchema(),
                 ZircLesionFormSchema.FIELDS.keySet(),
                 LesionDTO.class,
-                Set.of("id", "mutationId", "sortOrder"),
+                // locationInline is no longer edited through the form (its
+                // box was removed) but the column/DTO component remains.
+                Set.of("id", "mutationId", "sortOrder", "locationInline"),
                 Set.of()));
     }
 

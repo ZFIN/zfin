@@ -34,6 +34,9 @@ type RowOptions = {
     helpText?: string;
     infoHref?: string;
     suffix?: string;
+    // Fixed value forced into the field while a rule disables it (e.g.
+    // lesionSizeBp = 1 for point mutations). See ZircLesionFormSchema.
+    disabledValue?: number;
 };
 
 function isNumericSchema(schemaType: unknown): boolean {
@@ -50,18 +53,29 @@ function RowControlRenderer({
     required,
     errors,
     visible,
+    enabled,
     uischema,
     schema,
     config,
 }: ControlProps) {
-    if (visible === false) {return null;}
-
     const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const opts = ((uischema as { options?: RowOptions } | undefined)?.options) ?? {};
-    const { placeholder, helpText, infoHref, suffix } = opts;
+    const { placeholder, helpText, infoHref, suffix, disabledValue } = opts;
     const view = viewConfigFrom(config);
+
+    // A DISABLE rule (e.g. lesionType === point_mutation) flips enabled off.
+    // When the schema also pins a disabledValue, force it into the data so
+    // the locked box both shows and persists that value (lesionSizeBp = 1).
+    const locked = enabled === false;
+    React.useEffect(() => {
+        if (!view.readonly && locked && disabledValue != null && data !== disabledValue) {
+            handleChange(path, disabledValue);
+        }
+    }, [view.readonly, locked, disabledValue, data, path, handleChange]);
+
+    if (visible === false) {return null;}
 
     // Read-only sources: (a) the whole form is in view mode; (b) the schema
     // marks this field as server-managed (e.g. createdAt). Both render the
@@ -114,10 +128,13 @@ function RowControlRenderer({
             type={numeric ? 'number' : 'text'}
             step={numeric ? 'any' : undefined}
             className='form-control'
-            value={(data as string | number | undefined) ?? ''}
+            value={locked && disabledValue != null
+                ? disabledValue
+                : ((data as string | number | undefined) ?? '')}
             onChange={(e) => onChange(e.target.value)}
             autoComplete='off'
             placeholder={placeholder}
+            disabled={locked}
         />
     );
 

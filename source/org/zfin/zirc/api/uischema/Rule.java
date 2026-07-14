@@ -60,4 +60,15 @@ public record Rule(Effect effect, RuleCondition condition) {
         return new Rule(Effect.SHOW,
                 new RuleCondition(scope, Map.of("enum", values)));
     }
+
+    /**
+     * DISABLE (render read-only) when the scoped value is one of the listed
+     * values. The complement of the SHOW rules — same enum matcher, ENABLE
+     * effect inverted — for fields that stay visible but become fixed for
+     * certain discriminator values (e.g. lesionSizeBp for point mutations).
+     */
+    public static Rule disableWhenIn(String scope, List<String> values) {
+        return new Rule(Effect.DISABLE,
+                new RuleCondition(scope, Map.of("enum", values)));
+    }
 }
