@@ -15,7 +15,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
@@ -568,9 +568,9 @@ public interface MarkerRepository {
 
     List<FluorescentProtein> getAllFluorescentProteins();
 
-    List<FluorescentMarker> getAllFluorescentEfgs();
+    List<FluorescentMarkerDTO> getAllFluorescentEfgs();
 
-    List<FluorescentMarker> getAllFluorescentConstructs();
+    List<FluorescentMarkerDTO> getAllFluorescentConstructs();
 
     ReferenceDatabase getSignafishReferenceDatabase();
 

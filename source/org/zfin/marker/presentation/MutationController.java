@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.*;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.wiki.presentation.Version;
@@ -92,9 +92,9 @@ public class MutationController {
 
     @JsonView(View.API.class)
     @RequestMapping("/marker/efg-proteins")
-    protected JsonResultResponse<FluorescentMarker> showEfgProteins(@Version Pagination pagination) {
+    protected JsonResultResponse<FluorescentMarkerDTO> showEfgProteins(@Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
-        JsonResultResponse<FluorescentMarker> response;
+        JsonResultResponse<FluorescentMarkerDTO> response;
         try {
             response = markerService.getFfgFluorescenceJsonResultResponse(pagination);
         } catch (Exception e) {
@@ -110,9 +110,9 @@ public class MutationController {
 
     @JsonView(View.API.class)
     @RequestMapping("/marker/construct-proteins")
-    protected JsonResultResponse<FluorescentMarker> showConstructProteins(@Version Pagination pagination) {
+    protected JsonResultResponse<FluorescentMarkerDTO> showConstructProteins(@Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
-        JsonResultResponse<FluorescentMarker> response;
+        JsonResultResponse<FluorescentMarkerDTO> response;
         try {
             response = markerService.getConstructFluorescenceJsonResultResponse(pagination);
         } catch (Exception e) {

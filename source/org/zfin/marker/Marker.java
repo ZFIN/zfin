@@ -18,7 +18,7 @@ import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -817,14 +817,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     // ZFIN-10352: the fluorescent_marker table was retired. Derive the marker's
     // fluorescence rows on the fly from the live protein links (fpProtein_efg for EFGs,
     // fpProtein_construct for constructs) instead of a stale cached table.
-    public Set<FluorescentMarker> getFluorescentMarkers() {
-        Set<FluorescentMarker> result = new LinkedHashSet<>();
+    public Set<FluorescentMarkerDTO> getFluorescentMarkers() {
+        Set<FluorescentMarkerDTO> result = new LinkedHashSet<>();
         if (fluorescentProteinEfgs != null)
             for (FluorescentProtein p : fluorescentProteinEfgs)
-                result.add(FluorescentMarker.of(this, p));
+                result.add(FluorescentMarkerDTO.of(this, p));
         if (fluorescentProteinConstructs != null)
             for (FluorescentProtein p : fluorescentProteinConstructs)
-                result.add(FluorescentMarker.of(this, p));
+                result.add(FluorescentMarkerDTO.of(this, p));
         return result;
     }
 

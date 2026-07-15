@@ -32,7 +32,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
@@ -3459,7 +3459,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<FluorescentMarker> getAllFluorescentEfgs() {
+    public List<FluorescentMarkerDTO> getAllFluorescentEfgs() {
         Session session = HibernateUtil.currentSession();
         // ZFIN-10352: derive from the live EFG->protein links (fluorescent_marker table retired).
         String hql = "select efg, fp from Marker efg join efg.fluorescentProteinEfgs fp " +
@@ -3467,12 +3467,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query<Object[]> query = session.createQuery(hql, Object[].class);
         query.setParameter("type", Marker.Type.EFG.toString()); //...markerType.name is a String
         return query.getResultList().stream()
-            .map(row -> FluorescentMarker.of((Marker) row[0], (FluorescentProtein) row[1]))
+            .map(row -> FluorescentMarkerDTO.of((Marker) row[0], (FluorescentProtein) row[1]))
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<FluorescentMarker> getAllFluorescentConstructs() {
+    public List<FluorescentMarkerDTO> getAllFluorescentConstructs() {
         Session session = HibernateUtil.currentSession();
         // ZFIN-10352: derive from the live construct->protein links (fluorescent_marker table retired).
         String hql = "select efg, fp from Marker efg join efg.fluorescentProteinConstructs fp " +
@@ -3481,7 +3481,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<String> types = List.of(Marker.Type.ETCONSTRCT.toString(), Marker.Type.GTCONSTRCT.toString(), Marker.Type.TGCONSTRCT.toString());
         query.setParameterList("type", types);
         return query.getResultList().stream()
-            .map(row -> FluorescentMarker.of((Marker) row[0], (FluorescentProtein) row[1]))
+            .map(row -> FluorescentMarkerDTO.of((Marker) row[0], (FluorescentProtein) row[1]))
             .collect(Collectors.toList());
     }
 

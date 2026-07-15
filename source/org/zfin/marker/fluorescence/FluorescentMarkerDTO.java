@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Setter
 @Getter
-public class FluorescentMarker extends AbstractFluorescence {
+public class FluorescentMarkerDTO extends AbstractFluorescence {
 
     @JsonView(View.API.class)
     private Marker efg;
@@ -48,12 +48,12 @@ public class FluorescentMarker extends AbstractFluorescence {
     private String excitationColor;
 
     /**
-     * Build a transient FluorescentMarker for a marker↔protein link, copying the
+     * Build a transient FluorescentMarkerDTO for a marker↔protein link, copying the
      * protein's lengths and (post-ZFIN-10352-fix) colors. Replaces reading a
      * {@code fluorescent_marker} row.
      */
-    public static FluorescentMarker of(Marker marker, FluorescentProtein protein) {
-        FluorescentMarker fm = new FluorescentMarker();
+    public static FluorescentMarkerDTO of(Marker marker, FluorescentProtein protein) {
+        FluorescentMarkerDTO fm = new FluorescentMarkerDTO();
         fm.setEfg(marker);
         fm.setProtein(protein);
         fm.setEmissionLength(protein.getEmissionLength());

@@ -23,7 +23,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
@@ -140,13 +140,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testFluorescentEfg() {
-        List<FluorescentMarker> efgList = markerRepository.getAllFluorescentEfgs();
+        List<FluorescentMarkerDTO> efgList = markerRepository.getAllFluorescentEfgs();
         assertNotNull(efgList);
     }
 
     @Test
     public void testFluorescentConstruct() {
-        List<FluorescentMarker> constructs = markerRepository.getAllFluorescentConstructs();
+        List<FluorescentMarkerDTO> constructs = markerRepository.getAllFluorescentConstructs();
         assertNotNull(constructs);
     }
 
