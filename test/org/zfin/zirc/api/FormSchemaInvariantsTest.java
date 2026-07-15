@@ -127,7 +127,10 @@ public class FormSchemaInvariantsTest {
                 // locationInline is no longer edited through the form (its
                 // box was removed) but the column/DTO component remains.
                 Set.of("id", "mutationId", "sortOrder", "locationInline"),
-                Set.of()));
+                // lesionSizeBp / insertionSizeBp are server-computed
+                // (recalcLesionSizes) and read-only, so they're in the schema
+                // + DTO but deliberately absent from the patchable FIELDS map.
+                Set.of("/lesionSizeBp", "/insertionSizeBp")));
     }
 
     @Test

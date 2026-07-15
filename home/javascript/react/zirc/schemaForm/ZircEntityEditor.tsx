@@ -14,6 +14,7 @@ import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
+import { autoSizeRendererEntry } from './renderers/AutoSizeRenderer';
 import { attachmentsRendererEntry } from './renderers/AttachmentsRenderer';
 import { phenotypeTimingRendererEntry } from './renderers/PhenotypeTimingRenderer';
 
@@ -47,6 +48,7 @@ const renderers = [
     selectWithOtherRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,
+    autoSizeRendererEntry,
     attachmentsRendererEntry,
     phenotypeTimingRendererEntry,
 ];

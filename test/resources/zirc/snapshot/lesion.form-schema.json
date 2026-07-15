@@ -72,8 +72,8 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardLabels" : [ "Point Mutation", "Deletion", "Insertion", "Indel", "Transgene", "Other", "Unknown" ],
-          "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
+          "standardLabels" : [ "Point Mutation", "Deletion", "Insertion", "Indel", "Transgene", "Unknown" ],
+          "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "unknown" ],
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/lesionType",
@@ -83,57 +83,31 @@
     }, {
       "elements" : [ {
         "options" : {
-          "disabledValue" : 1,
-          "suffix" : "bp"
-        },
-        "rule" : {
-          "condition" : {
-            "schema" : {
-              "enum" : [ "point_mutation" ]
-            },
-            "scope" : "#/properties/lesionType"
-          },
-          "effect" : "DISABLE"
-        },
-        "scope" : "#/properties/lesionSizeBp",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "point_mutation", "deletion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "suffix" : "bp"
-        },
-        "scope" : "#/properties/insertionSizeBp",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
           "noOther" : true,
           "standardValues" : [ "A>T", "A>C", "A>G", "T>A", "T>C", "T>G", "C>A", "C>T", "C>G", "G>A", "G>T", "G>C" ],
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/nucleotideChange",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "constantValue" : 1,
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {
@@ -167,9 +141,49 @@
     }, {
       "elements" : [ {
         "options" : {
+          "sourceField" : "deletedSequence",
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/lesionSizeBp",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "deletion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
           "multi" : true
         },
         "scope" : "#/properties/insertedSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "sourceField" : "insertedSequence",
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/insertionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {
