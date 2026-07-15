@@ -91,9 +91,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             inverseJoinColumns = @JoinColumn(name = "fc_fl_protein_id"))
     private Set<FluorescentProtein> fluorescentProteinConstructs;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fm_mrkr_zdb_id")
-    private Set<FluorescentMarker> fluorescentMarkers;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ortho_zdb_id")
@@ -817,10 +814,18 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.secondaryMarkerSet = secondaryMarkerSet;
     }
 
+    // ZFIN-10352: the fluorescent_marker table was retired. Derive the marker's
+    // fluorescence rows on the fly from the live protein links (fpProtein_efg for EFGs,
+    // fpProtein_construct for constructs) instead of a stale cached table.
     public Set<FluorescentMarker> getFluorescentMarkers() {
-        if (fluorescentMarkers == null)
-            return null;
-        return fluorescentMarkers;
+        Set<FluorescentMarker> result = new LinkedHashSet<>();
+        if (fluorescentProteinEfgs != null)
+            for (FluorescentProtein p : fluorescentProteinEfgs)
+                result.add(FluorescentMarker.of(this, p));
+        if (fluorescentProteinConstructs != null)
+            for (FluorescentProtein p : fluorescentProteinConstructs)
+                result.add(FluorescentMarker.of(this, p));
+        return result;
     }
 
     @JsonView(View.SequenceAPI.class)

@@ -11,8 +11,7 @@ RunSQLFiles runScriptFiles = new RunSQLFiles("Build solr index", propertiesFile,
 runScriptFiles.initializeLogger("./log4j.xml")
 runScriptFiles.initDatabase()
 runScriptFiles.setQueryFiles("generate-all-term-contains-synonyms-file.sql",
-        "generate-organism-name-file.sql",
-        "generate-reporter-name-file.sql")
+        "generate-organism-name-file.sql")
 runScriptFiles.execute()
 
 println 'Finished unloading synonym, stopwords and keepwords files.'

@@ -3461,20 +3461,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<FluorescentMarker> getAllFluorescentEfgs() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select efl from FluorescentMarker efl  where efl.efg.markerType.name = :type order by efl.efg.abbreviation";
-        Query<FluorescentMarker> query = session.createQuery(hql, FluorescentMarker.class);
+        // ZFIN-10352: derive from the live EFG->protein links (fluorescent_marker table retired).
+        String hql = "select efg, fp from Marker efg join efg.fluorescentProteinEfgs fp " +
+                     "where efg.markerType.name = :type order by efg.abbreviation";
+        Query<Object[]> query = session.createQuery(hql, Object[].class);
         query.setParameter("type", Marker.Type.EFG.toString()); //...markerType.name is a String
-        return query.getResultList();
+        return query.getResultList().stream()
+            .map(row -> FluorescentMarker.of((Marker) row[0], (FluorescentProtein) row[1]))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<FluorescentMarker> getAllFluorescentConstructs() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select efl from FluorescentMarker efl where efl.efg.markerType.name in (:type)";
-        Query<FluorescentMarker> query = session.createQuery(hql, FluorescentMarker.class);
+        // ZFIN-10352: derive from the live construct->protein links (fluorescent_marker table retired).
+        String hql = "select efg, fp from Marker efg join efg.fluorescentProteinConstructs fp " +
+                     "where efg.markerType.name in (:type) order by efg.abbreviation";
+        Query<Object[]> query = session.createQuery(hql, Object[].class);
         List<String> types = List.of(Marker.Type.ETCONSTRCT.toString(), Marker.Type.GTCONSTRCT.toString(), Marker.Type.TGCONSTRCT.toString());
         query.setParameterList("type", types);
-        return query.getResultList();
+        return query.getResultList().stream()
+            .map(row -> FluorescentMarker.of((Marker) row[0], (FluorescentProtein) row[1]))
+            .collect(Collectors.toList());
     }
 
     public List<String> getProblemTypes() {

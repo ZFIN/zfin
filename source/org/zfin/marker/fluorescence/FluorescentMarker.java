@@ -7,27 +7,26 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
-import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Read-model pairing a marker (EFG or construct) with one of its FPBase fluorescent
+ * proteins, plus that protein's emission/excitation lengths and colors.
+ *
+ * <p>ZFIN-10352 retired the {@code fluorescent_marker} table (a stale, unmaintained
+ * denormalized cache). This was formerly a Hibernate {@code @Entity} mapped to that
+ * table; it is now a plain transient POJO built from the live link chain
+ * ({@code fpProtein_efg}/{@code fpProtein_construct} → {@code fluorescent_protein}) via
+ * {@link #of(Marker, FluorescentProtein)}. Colors/lengths come straight off the protein.
+ */
 @Setter
 @Getter
-@Entity
-@Table(name = "fluorescent_marker")
 public class FluorescentMarker extends AbstractFluorescence {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fm_pk_id")
-    private long id;
-    @ManyToOne
-    @JoinColumn(name = "fm_mrkr_zdb_id")
     @JsonView(View.API.class)
     private Marker efg;
 
-    @ManyToOne
-    @JoinColumn(name = "fm_protein_pk_id")
     @JsonView(View.API.class)
     private FluorescentProtein protein;
 
@@ -36,20 +35,32 @@ public class FluorescentMarker extends AbstractFluorescence {
         return new ArrayList<>(efg.getFluorescentProteinEfgs());
     }
 
-    @Column(name = "fm_excitation_length")
     @JsonView(View.API.class)
     private Integer excitationLength;
 
-    @Column(name = "fm_emission_length")
     @JsonView(View.API.class)
     private Integer emissionLength;
 
-    @Column(name = "fm_emission_color")
     @JsonView(View.API.class)
     private String emissionColor;
 
-    @Column(name = "fm_excitation_color")
     @JsonView(View.API.class)
     private String excitationColor;
+
+    /**
+     * Build a transient FluorescentMarker for a marker↔protein link, copying the
+     * protein's lengths and (post-ZFIN-10352-fix) colors. Replaces reading a
+     * {@code fluorescent_marker} row.
+     */
+    public static FluorescentMarker of(Marker marker, FluorescentProtein protein) {
+        FluorescentMarker fm = new FluorescentMarker();
+        fm.setEfg(marker);
+        fm.setProtein(protein);
+        fm.setEmissionLength(protein.getEmissionLength());
+        fm.setExcitationLength(protein.getExcitationLength());
+        fm.setEmissionColor(protein.getEmissionColor());
+        fm.setExcitationColor(protein.getExcitationColor());
+        return fm;
+    }
 
 }

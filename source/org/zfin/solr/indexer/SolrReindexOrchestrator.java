@@ -84,15 +84,21 @@ public class SolrReindexOrchestrator extends AbstractValidateDataReportTask {
      * the heap-hungry ones.
      */
     private static final List<Batch> BATCHES = List.of(
-        new Batch("heavy", List.of(
-            new Step("figure",                       Source.DIH),
-            new Step("phenotype",                    Source.DIH),
-            new Step("phenotype_misexpressed_gene",  Source.DIH),
-            new Step("expression",                   Source.DIH),
-            new Step("feature",                      Source.DIH),
-            new Step("expression_result",            Source.DIH),
-            new Step("phenotype_observation",        Source.DIH)
-        )),
+        // The heavy entities are split one-per-batch so a core RELOAD runs
+        // between each, rather than once after all seven. A RELOAD releases
+        // Lucene's IndexWriter buffers (the dominant heap-growth source; see
+        // ZFIN-10171); accumulating all seven before the first reload pushed
+        // the 12g heap into OutOfMemoryError partway through `expression`
+        // (~600k docs already buffered from figure + phenotype). Each entity
+        // fits comfortably in 12g on its own, so reloading between them bounds
+        // peak heap. Costs a few extra reloads (~minutes) for crash-safety.
+        new Batch("figure",                      List.of(new Step("figure",                      Source.DIH))),
+        new Batch("phenotype",                   List.of(new Step("phenotype",                   Source.DIH))),
+        new Batch("phenotype_misexpressed_gene", List.of(new Step("phenotype_misexpressed_gene", Source.DIH))),
+        new Batch("expression",                  List.of(new Step("expression",                  Source.DIH))),
+        new Batch("feature",                     List.of(new Step("feature",                     Source.DIH))),
+        new Batch("expression_result",           List.of(new Step("expression_result",           Source.DIH))),
+        new Batch("phenotype_observation",       List.of(new Step("phenotype_observation",       Source.DIH))),
         new Batch("medium", List.of(
             new Step("fish",        Source.DIH),
             new Step("construct",   Source.DIH),
