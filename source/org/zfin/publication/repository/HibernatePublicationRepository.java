@@ -1512,8 +1512,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
                                                             int offset, String sort) {
 
-        Query<PublicationTrackingHistory> listCriteria = createPubsByStatusCriteria(status, location, owner, sort, false);
+        // Count-based sorts (e.g. number of features/genes/antibodies/STRs attributed to a pub) cannot be
+        // expressed as an HQL property, so they are applied in memory after the query runs.
+        boolean isCountSort = isCountBasedSort(sort);
+        String querySort = isCountSort ? null : sort;
+        Query<PublicationTrackingHistory> listCriteria = createPubsByStatusCriteria(status, location, owner, querySort, false);
         List<PublicationTrackingHistory> allResults = listCriteria.list();
+        if (isCountSort) {
+            allResults = sortByPublicationDataCount(allResults, sort);
+        }
         PaginationResult<PublicationTrackingHistory> histories = new PaginationResult<>();
         histories.setTotalCount(allResults.size());
         histories.setPopulatedResults(allResults.subList(
@@ -1537,6 +1544,126 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         converter.setRelatedLinks(result);
         result.setStatusCounts(counts);
 
+        return result;
+    }
+
+    // Sort values (optionally prefixed with "-" for descending) that order pubs by the number of
+    // records of a given type attributed to them, rather than by a simple publication property.
+    private static final String SORT_FEATURE_COUNT = "featureCount";
+    private static final String SORT_MARKER_COUNT = "markerCount";
+    private static final String SORT_ANTIBODY_COUNT = "antibodyCount";
+    private static final String SORT_STR_COUNT = "strCount";
+
+    private boolean isCountBasedSort(String sort) {
+        if (StringUtils.isEmpty(sort)) {
+            return false;
+        }
+        String field = sort.startsWith("-") ? sort.substring(1) : sort;
+        return field.equals(SORT_FEATURE_COUNT)
+            || field.equals(SORT_MARKER_COUNT)
+            || field.equals(SORT_ANTIBODY_COUNT)
+            || field.equals(SORT_STR_COUNT);
+    }
+
+    /**
+     * Re-orders the given tracking histories by the number of records (features, genes, antibodies or STRs)
+     * attributed to each publication. Counts are gathered in a single grouped query and applied as a stable
+     * sort so ties keep the incoming order.
+     */
+    private List<PublicationTrackingHistory> sortByPublicationDataCount(List<PublicationTrackingHistory> histories, String sort) {
+        boolean ascending = !sort.startsWith("-");
+        String field = ascending ? sort : sort.substring(1);
+
+        List<String> pubIds = histories.stream()
+            .map(history -> history.getPublication().getZdbID())
+            .distinct()
+            .collect(Collectors.toList());
+        Map<String, Long> countByPub = getPublicationDataCounts(pubIds, field);
+
+        Comparator<PublicationTrackingHistory> comparator = Comparator.comparingLong(
+            history -> countByPub.getOrDefault(history.getPublication().getZdbID(), 0L));
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+        return histories.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a map of publication zdbID to the number of attributed records of the given type.
+     * Publications with no matching records are absent from the map (treated as zero by the caller).
+     */
+    private Map<String, Long> getPublicationDataCounts(List<String> pubIds, String field) {
+        Map<String, Long> result = new HashMap<>();
+        if (CollectionUtils.isEmpty(pubIds)) {
+            return result;
+        }
+
+        String sql = switch (field) {
+            case SORT_FEATURE_COUNT -> """
+                select recattrib_source_zdb_id, count(distinct recattrib_data_zdb_id)
+                from record_attribution
+                where recattrib_source_zdb_id in (:pubIds)
+                  and recattrib_data_zdb_id like 'ZDB-ALT-%'
+                group by recattrib_source_zdb_id
+                """;
+            case SORT_ANTIBODY_COUNT -> """
+                select recattrib_source_zdb_id, count(distinct recattrib_data_zdb_id)
+                from record_attribution, marker
+                where recattrib_source_zdb_id in (:pubIds)
+                  and recattrib_data_zdb_id = mrkr_zdb_id
+                  and mrkr_type = 'ATB'
+                group by recattrib_source_zdb_id
+                """;
+            case SORT_STR_COUNT -> """
+                select recattrib_source_zdb_id, count(distinct recattrib_data_zdb_id)
+                from record_attribution, marker
+                where recattrib_source_zdb_id in (:pubIds)
+                  and recattrib_data_zdb_id = mrkr_zdb_id
+                  and mrkr_type in ('MRPHLNO', 'CRISPR', 'TALEN')
+                group by recattrib_source_zdb_id
+                """;
+            case SORT_MARKER_COUNT -> """
+                select src, count(*) from (
+                  select distinct recattrib_source_zdb_id as src, fmrel_mrkr_zdb_id as mrkr
+                  from record_attribution, feature_marker_relationship
+                  where recattrib_source_zdb_id in (:pubIds)
+                        and recattrib_data_zdb_id = fmrel_ftr_zdb_id
+                        and fmrel_type = 'is allele of'
+                  union
+                  select distinct recattrib_source_zdb_id as src, mrkr_zdb_id as mrkr
+                  from record_attribution, marker
+                  where recattrib_source_zdb_id in (:pubIds)
+                        and recattrib_data_zdb_id = mrkr_zdb_id
+                        and mrkr_type in
+                            (
+                              select mtgrpmem_mrkr_type
+                              from marker_type_group_member
+                              where mtgrpmem_mrkr_type_group in ('GENEDOM_AND_NTR', 'SEARCH_MK')
+                            )
+                        and (mrkr_type <> 'MRPHLNO' and mrkr_type <> 'EFG')
+                  union
+                  select distinct recattrib_source_zdb_id as src, mr.mrel_mrkr_2_zdb_id as mrkr
+                  from record_attribution ra, marker m, marker_relationship mr
+                  where recattrib_source_zdb_id in (:pubIds)
+                        and recattrib_data_zdb_id = mrkr_zdb_id
+                        and m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id
+                        and mrel_type = 'knockdown reagent targets gene'
+                ) as q group by src
+                """;
+            default -> null;
+        };
+        if (sql == null) {
+            return result;
+        }
+
+        NativeQuery query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameterList("pubIds", pubIds);
+        List<Object[]> rows = query.list();
+        for (Object[] row : rows) {
+            result.put((String) row[0], ((Number) row[1]).longValue());
+        }
         return result;
     }
 

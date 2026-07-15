@@ -34,6 +34,38 @@ const SORT_OPTIONS = [
     {
         value: '-pub.entryDate',
         display: 'Entry date (newest)'
+    },
+    {
+        value: '-featureCount',
+        display: 'Mutation/Tg (most)'
+    },
+    {
+        value: 'featureCount',
+        display: 'Mutation/Tg (least)'
+    },
+    {
+        value: '-markerCount',
+        display: 'Gene/Transcript (most)'
+    },
+    {
+        value: 'markerCount',
+        display: 'Gene/Transcript (least)'
+    },
+    {
+        value: '-antibodyCount',
+        display: 'Antibody (most)'
+    },
+    {
+        value: 'antibodyCount',
+        display: 'Antibody (least)'
+    },
+    {
+        value: '-strCount',
+        display: 'STR (most)'
+    },
+    {
+        value: 'strCount',
+        display: 'STR (least)'
     }
 ];
 
