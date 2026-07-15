@@ -661,6 +661,17 @@ public class GafService {
                 throw new GafValidationError("Goref ID is not known or loaded[" + pubMedID + "]", gafEntry);
             }
         }
+        else if (pubMedID.regionMatches(true, 0, "DOI:", 0, 4)) {
+            String doi = pubMedID.substring(4);
+            List<Publication> publications = RepositoryFactory.getPublicationRepository().getPublicationByDoi(doi);
+            if (publications == null || publications.isEmpty()) {
+                throw new GafValidationError("No pub found for DOI: " + pubMedID, gafEntry);
+            } else if (publications.size() == 1) {
+                publication = publications.getFirst();
+            } else {
+                throw new GafValidationError("Multiple pubs found for DOI: " + pubMedID, gafEntry);
+            }
+        }
 
         if (publication == null) {
             throw new GafValidationError("Unable to find pubmed ID[" + pubMedID + "]", gafEntry);

@@ -865,6 +865,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
+    public List<Publication> getPublicationByDoi(String doi) {
+        String hql = "from Publication where doi = :doi";
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(hql, Publication.class);
+        query.setParameter("doi", doi);
+        return query.list();
+    }
+
     @Override
     public int getNumberDirectPublications(String zdbID) {
         return Integer.parseInt(HibernateUtil.currentSession().createNativeQuery("""
