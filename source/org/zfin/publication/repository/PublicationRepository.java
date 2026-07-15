@@ -267,6 +267,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Publication> getPublicationByPmid(Integer pubMedID);
 
+    List<Publication> getPublicationByDoi(String doi);
+
     int getNumberDirectPublications(String zdbID);
 
     List<Ortholog> getOrthologListByPub(String pubID);
