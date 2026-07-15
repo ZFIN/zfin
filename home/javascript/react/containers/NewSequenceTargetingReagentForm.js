@@ -95,6 +95,9 @@ const NewSequenceTargetingReagentForm = ({ pubId: defaultPubId, strType: default
     }
 
     function handleNameChange(event) {
+        // This onChange overrides InputField's internal handler, so we must
+        // update the form value ourselves to keep the input editable.
+        setFieldValue('name', event.target.value);
         if (isManuallyNamed) {
             fetch(`/action/marker/name-exists?name=${encodeURIComponent(event.target.value)}`)
                 .then(response => response.text())
