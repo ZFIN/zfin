@@ -97,6 +97,17 @@ Known issues / follow-ups
         confirm.
 
 
+[ ] PRE-SHIP: /opt/zfin/static volume ownership. home;static;deployFromRelease runs
+    as the deploy user (gradle in the containers) and extracts into /opt/zfin/static.
+    A freshly-created Docker named volume is root-owned, so the tar extract fails with
+    "Permission denied" until the dir is chowned to the deploy user. Confirmed in the
+    dev stack (fix was: docker compose run --user root compile chown -R gradle:zfin
+    /opt/zfin/static). Before shipping, ensure /opt/zfin/static is provisioned owned by
+    the deploy user -- e.g. an init/chown step, correct volume ownership in compose, or
+    have the deploy task create+chown it. In real prod $TARGETROOT/home is already
+    deploy-user-owned, but /opt/zfin/static is a NEW top-level path that needs the same.
+
+
 [x] DONE -- analytics.js is now a committed STATIC file (home/analytics.js) that
     picks the GA4 id from window.location.hostname: zfin.org/www -> PRODUCTION
     (G-R5XJW0QW0Y), any other *.zfin.org + localhost -> ZFINLABS (G-5J7RMKMBWC),
