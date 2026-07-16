@@ -274,7 +274,6 @@
     </target>
 
     <property name="jobs" value="${SOURCEROOT}/server_apps/jenkins/jobs"/>
-    <property name="plugins" value="${SOURCEROOT}/server_apps/jenkins/plugins"/>
     <property name="jenkins" value="${SOURCEROOT}/server_apps/jenkins"/>
     <property name="jenkinsHomeJobs" value="${JENKINS_HOME}/jobs"/>
 
@@ -288,15 +287,27 @@
         </copy>
     </target>
 
-    <target name="deploy-plugins" depends="_deploy-email-configuration">
-        <copy todir="${JENKINS_HOME}/plugins">
-            <fileset file="${plugins}/*.jpi"/>
-        </copy>
+    <!-- Jenkins plugins are pinned by version+sha256 in
+         server_apps/jenkins/plugins.txt and downloaded from the Jenkins update
+         center at deploy time by deploy-plugins (via fetch-plugins.sh), instead
+         of being committed to the repo as *.jpi. The fetch is idempotent: a
+         plugin already present in JENKINS_HOME/plugins with the expected sha256
+         is left untouched. -->
+    <property name="plugins.manifest" value="${SOURCEROOT}/server_apps/jenkins/plugins.txt"/>
+    <property name="plugins.fetch-script" value="${SOURCEROOT}/server_apps/jenkins/fetch-plugins.sh"/>
+
+    <target name="deploy-plugins" depends="deploy-email-configuration"
+            description="Download the pinned Jenkins plugins into JENKINS_HOME/plugins (sha256-verified)">
+        <exec executable="bash" failonerror="true">
+            <arg value="${plugins.fetch-script}"/>
+            <arg value="${plugins.manifest}"/>
+            <arg value="${JENKINS_HOME}/plugins"/>
+        </exec>
     </target>
 
     <property name="mail-config.xml" value="hudson.tasks.Mailer.xml"/>
 
-    <target name="_deploy-email-configuration">
+    <target name="deploy-email-configuration" description="Deploy Mailer / email-ext config into JENKINS_HOME">
         <echo>Copying ${mail-config.xml} with default Email ${DEFAULT_EMAIL} to JENKINS_HOME</echo>
         <copy todir="${JENKINS_HOME}/" overwrite="true">
 	    <fileset dir="${jenkins}/">
@@ -795,7 +806,8 @@
             deploy-production-jobs deploy only the jobs meant to run on production
             copy-job-into-source -DjobName=[jobName]
             create-views creates daily/weekly/monthly job views.
-            deploy-plugins deploy jenkins plugins into JENKINS_HOME
+            deploy-plugins download the pinned plugins (plugins.txt) into JENKINS_HOME/plugins
+            deploy-email-configuration deploy Mailer/email-ext config into JENKINS_HOME
             deploy-email-templates deploy the email templates into JENKINS_HOME
             create-new-validatedata-job -DjobName=[jobName]
             create-new-report-data-job -DjobName=[jobName]
