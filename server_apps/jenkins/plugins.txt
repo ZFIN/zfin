@@ -3,6 +3,8 @@
 # from https://updates.jenkins.io/download/plugins/<name>/<version>/<name>.hpi into
 # $JENKINS_HOME/plugins -- replaces the previously-committed .jpi files (verified
 # byte-identical to them). Format: <name> <version> <sha256>. Bump by editing here.
+# To fetch from an internal mirror or local copy instead of updates.jenkins.io,
+# set ZFIN_JENKINS_PLUGIN_MIRROR (http(s):// or file://) -- see fetch-plugins.sh.
 #
 ant 520.vd082ecfb_16a_9 e30e1cbbd7eccc729ff94c7a569d39f9fe2bf8c904e08ab598cc10bf5a3c4c87
 antisamy-markup-formatter 173.v680e3a_b_69ff3 29b4765797f26c44574a2732ddf9d7d98ea0283295352497dd9eef84aed0102f

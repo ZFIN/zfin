@@ -292,7 +292,9 @@
          center at deploy time by deploy-plugins (via fetch-plugins.sh), instead
          of being committed to the repo as *.jpi. The fetch is idempotent: a
          plugin already present in JENKINS_HOME/plugins with the expected sha256
-         is left untouched. -->
+         is left untouched. To fetch from an internal mirror or a local copy
+         instead of updates.jenkins.io, set ZFIN_JENKINS_PLUGIN_MIRROR
+         (http(s):// or file://) in the environment; the <exec> below inherits it. -->
     <property name="plugins.manifest" value="${SOURCEROOT}/server_apps/jenkins/plugins.txt"/>
     <property name="plugins.fetch-script" value="${SOURCEROOT}/server_apps/jenkins/fetch-plugins.sh"/>
 

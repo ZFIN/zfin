@@ -11,15 +11,27 @@
 # it on the next restart. Plugins not listed here (e.g. installed via the UI) are
 # left alone.
 #
-# Usage: fetch-plugins.sh <plugins.txt> <target-dir>
+# Source (mirror) override: the base URL defaults to the Jenkins update center but
+# can be pointed at an internal mirror or a local copy -- e.g. to avoid depending
+# on updates.jenkins.io being reachable at deploy time. Precedence:
+#   1. the optional 3rd argument
+#   2. the ZFIN_JENKINS_PLUGIN_MIRROR environment variable
+#   3. https://updates.jenkins.io/download/plugins
+# Any base curl understands works, including file:// (curl handles it natively):
+#   ZFIN_JENKINS_PLUGIN_MIRROR=file:///opt/zfin/jenkins-plugin-mirror
+# The mirror must mirror the update-center layout: <base>/<name>/<version>/<name>.hpi
+# (which is exactly what you get by rsync/wget-mirroring the update center).
+#
+# Usage: fetch-plugins.sh <plugins.txt> <target-dir> [base-url]
 #   plugins.txt lines: "<name> <version> <sha256>"  (# comments / blanks ignored)
 #
 set -euo pipefail
 
-manifest="${1:?usage: fetch-plugins.sh <plugins.txt> <target-dir>}"
-target="${2:?usage: fetch-plugins.sh <plugins.txt> <target-dir>}"
-base="https://updates.jenkins.io/download/plugins"
+manifest="${1:?usage: fetch-plugins.sh <plugins.txt> <target-dir> [base-url]}"
+target="${2:?usage: fetch-plugins.sh <plugins.txt> <target-dir> [base-url]}"
+base="${3:-${ZFIN_JENKINS_PLUGIN_MIRROR:-https://updates.jenkins.io/download/plugins}}"
 
+echo "Plugin source: $base"
 mkdir -p "$target"
 downloaded=0
 skipped=0
