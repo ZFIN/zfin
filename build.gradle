@@ -438,10 +438,6 @@ public enum ZfinPropertiesEnum {
 // tag. If it already matches, the download+extract is skipped; symlinks are
 // re-asserted regardless (cheap). The tarball is integrity-checked against its
 // published .sha256 before extraction. Bump zfinStaticVersion to roll fwd/back.
-//
-// NOTE: supersedes the local static/ copy tasks below (home;root/images/zf_info/
-// ZFIN;deployFiles), kept defined but out of `make` as a local-copy fallback
-// until the static/ tree is removed from this repo.
 // ----------------------------------------------------------------------------
 task "home;static;deployFromRelease" {
     doLast {
@@ -511,50 +507,10 @@ task "home;static;deployFromRelease" {
     }
 }
 
-// SUPERSEDED by home;static;deployFromRelease (above) -- kept as a local-copy
-// fallback; no longer wired into `make`.
-task 'home;root;deployFiles' {
-    doLast {
-        // Sources moved to static/ but still deploy into $TARGETROOT/home (Apache
-        // DocumentRoot), so no Apache change is needed. See static/ vs home/ split.
-        def sourceFiles = [file('static/robots.txt'), file('static/favicon.ico'), file('static/analytics.js')]
-        def targetDir = file("${targetroot}/home")
-
-        if (!targetDir.exists()) {
-            targetDir.mkdirs()
-        }
-
-        sourceFiles.each { sourceFile ->
-            def targetFile = new File(targetDir, sourceFile.name)
-            targetFile.bytes = sourceFile.bytes
-        }
-
-        println "Copied ${sourceFiles.size()} files to ${targetDir}"
-    }
-}
-
-task "home;images;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'static/images'
-    targetPath = 'home/images'
-}
-
-// static/zf_info holds the zf_info reference pages (zfbook, monitor, anatomy, ...) as
-// plain static HTML, deployed to $TARGETROOT/home/zf_info and served directly by
-// Apache -- see convert-zfbook-to-static.groovy for how they are generated from the
-// former JSP views, and reference/deploying-changes.md for the serving model (chrome
-// header/footer are injected client-side; head assets use the *.latest webpack
-// aliases). The pages themselves carry no boilerplate comment.
-task "home;zf_info;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'static/zf_info'
-    targetPath = 'home/zf_info'
-    excludes = ['Makefile']
-}
-
-task "home;ZFIN;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'static/ZFIN'
-    targetPath = 'home/ZFIN'
-    excludes = ['Makefile']
-}
+// (The former home;root/images/zf_info/ZFIN;deployFiles tasks, which copied a
+// local static/ tree into $TARGETROOT/home, have been removed: the static
+// content now lives in the standalone zfin-static repo and is deployed by
+// home;static;deployFromRelease above.)
 
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
@@ -1545,10 +1501,11 @@ def copyWebAppFiles(String webappRoot) {
     copy {
         from 'home'
         into webappRoot
-        // Served static content now lives under static/ (deployed to $TARGETROOT/home
-        // by the home;*;deployFiles tasks), so it is no longer under 'home' here.
-        // What remains to exclude: the frontend sources (bundled via webpack, not
-        // copied raw) and uniprot (a task template, not part of the webapp).
+        // Served static content (zf_info, images, ZFIN, robots.txt, favicon.ico,
+        // analytics.js) is not under 'home' -- it lives in the standalone zfin-static
+        // repo and deploys via home;static;deployFromRelease. What remains to exclude:
+        // the frontend sources (bundled via webpack, not copied raw) and uniprot (a
+        // task template, not part of the webapp).
         exclude 'css/**', 'javascript/**'
         exclude 'uniprot/**'
         exclude '.DS_Store'

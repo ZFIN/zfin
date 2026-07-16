@@ -104,12 +104,14 @@ public class GenerateSitemapTask extends AbstractScriptWrapper {
     }
 
     // zf_info pages (zfbook, monitor, anatomy, catch, news, dbase/PAPERS, sequence,
-    // and the misc single pages) are now plain static HTML served straight from the
+    // and the misc single pages) are plain static HTML served straight from the
     // Apache DocumentRoot -- the StaticFileController + zf_info JSPs were retired.
-    // Enumerate the actual static files under home/zf_info instead of the old JSP
-    // views; the on-disk path already matches the served URL (no "--" decoding).
+    // Enumerate the DEPLOYED files under the DocumentRoot's zf_info (which is a
+    // symlink into the zfin-static volume; listFiles follows it), so the sitemap
+    // reflects exactly what is served and needs no static-content checkout. The
+    // on-disk path already matches the served URL (no "--" decoding).
     private List<String> getZfInfoPages() {
-        File staticFileLocation = new File(ZfinPropertiesEnum.SOURCEROOT.value(), "static/zf_info");
+        File staticFileLocation = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "zf_info");
         Path base = staticFileLocation.toPath();
         return FileUtils.listFiles(staticFileLocation, new String[]{"html"}, true).stream()
                 .map(f -> "zf_info/" + base.relativize(f.toPath()).toString().replace(File.separatorChar, '/'))
