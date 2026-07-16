@@ -155,7 +155,23 @@ Remaining work before this is production-ready
     10px jump (the header margin-bottom) -- 20px on a 2x display. Measured shift now
     0px (placeholder and injected header both put <main> at top:90). Footer not
     reserved (last on the page, doesn't shift content).
-[ ] Decide caching/behavior for the chrome fragments (short TTL? ETag?).
+[x] Chrome fragment caching: ChromeController sets Cache-Control: private,
+    max-age=300 + Vary: Cookie on /action/layout/{header,footer}. private keeps the
+    login-aware header out of shared caches; the 5-min TTL cuts the per-page-load
+    fetch; Vary: Cookie busts the cache on login/logout. Bust mechanism (NOT OIDC --
+    OIDC only fronts reverse-proxied URLs like /jobs): the app's Spring Security form
+    login sets/changes the `zfin_login` cookie -- Path=/ (COOKIE_PATH), so it is sent
+    to /action/layout/*; value is session-derived on login and GUEST-prefixed on
+    logout (Apg{Authentication,Logout}SuccessHandler) -- and JSESSIONID rotates on
+    login. Either change alters the Cookie header -> new cache key -> fresh fetch.
+    Verified END-TO-END in the dev stack (login as staylor via /action/j_security-check):
+    zfin_login goes absent -> "2D64..." (login) -> "GUEST_2D64..." (logout); the header
+    body flips logged-out (14085 B, Sign In) <-> logged-in (19767 B, Logout + user menu)
+    and logout restores the byte-identical logged-out body; same-state re-fetch is
+    identical (would cache-HIT), each login/logout changes the Cookie -> Vary: Cookie
+    MISS -> fresh fragment. Cache-Control/Vary headers confirmed on the logged-in fetch.
+    Optional tweak: chrome JSPs session="false" so the fragments stop emitting a fresh
+    Set-Cookie: JSESSIONID (cleaner caching).
 [x] No-JS / SEO: raw static HTML has the page content + <title> + in-content
     links inline (crawlable), and all pages are in the sitemap, but header/footer
     nav only appeared after zfin-chrome.js runs, so a no-JS client / non-rendering
@@ -210,19 +226,24 @@ Remaining work before this is production-ready
     the static home/zf_info/**.html files (recursively) instead of the deleted JSP
     views. Verified it enumerates the 388 zf_info URLs (was previously derived from
     the JSP filenames, which are now gone -> would have dropped all of zf_info).
-[ ] Re-verify existing one-off redirects still hold (e.g. inc-redirect:
-    /zf_info/zfbook/lab_desig.html -> /action/feature/line-designations).
-[ ] Confirm the zfbook pages currently reachable at the BARE /zf_info/... URL
-    keep working (they already resolve in prod per `curl`; ensure no regression).
+[x] Re-verify existing one-off redirects still hold: verified in the dev stack
+    (this branch's inc-redirect deployed) -- /zf_info/zfbook/lab_desig.html -> 301,
+    /zf_info/downloads.html -> 301.
+[x] Confirm the zfbook pages at the BARE /zf_info/... URL keep working: verified
+    served STATICALLY (200, ETag/Last-Modified, no JSESSIONID) after deploying this
+    branch's inc-redirect (before: JSESSIONID/Tomcat); missing page -> clean 404.
 [ ] Optional cleanup: have page.tag load /analytics.js instead of its inline
     gtag block, so there is a single analytics source of truth.
-[ ] Decide own-directory (current: in-repo static/) vs. separate repo. The in-repo
-    approach needs zero Apache changes; revisit a separate repo only if independent
-    versioning/deploys are wanted. See "DESIGN NOTE: static content in its own repo"
-    at the bottom of this file for the full restructuring plan.
-[ ] Run the frontend build (npm run build / gradle npmBuild) and confirm the
-    *.latest.* files and analytics.js are emitted, then smoke-test 1.4.html
-    end-to-end (styles, header dropdowns, mobile menu, footer, images, analytics).
+[x] Decide own-directory vs. separate repo: DECIDED + implemented -- moved to the
+    standalone zfin-static repo (Eleventy-templated, versioned release tarballs;
+    main repo consumes a pinned release via home;static;deployFromRelease + docroot
+    symlinks). The DESIGN NOTE below is now implemented, not just planned.
+[x] Run the frontend build + confirm *.latest.* / analytics emitted: ran gradle
+    npmBuild in the compile container -- style.latest.css, {vendor-common,zfin-
+    common}.latest.js, and the content-hashed search-background.{avif,webp} emit;
+    the built CSS carries the image-set + #192829 flash-fill; /analytics.js serves
+    200. REMAINING: a full visual smoke of a page (dropdowns / mobile menu) in a
+    real browser.
 
 
 ================================================================================

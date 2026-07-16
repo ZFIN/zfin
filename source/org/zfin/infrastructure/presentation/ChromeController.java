@@ -1,5 +1,6 @@
 package org.zfin.infrastructure.presentation;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -26,13 +27,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChromeController {
 
     @RequestMapping("/header")
-    public String header() {
+    public String header(HttpServletResponse response) {
+        cacheBriefly(response);
         return "layout/chrome-header";
     }
 
     @RequestMapping("/footer")
-    public String footer() {
+    public String footer(HttpServletResponse response) {
+        cacheBriefly(response);
         return "layout/chrome-footer";
+    }
+
+    /**
+     * Cache the chrome fragments in the user's browser for a short window.
+     *
+     * <p>{@code private} keeps them out of any shared/proxy cache -- the header
+     * is login-aware (Sign In vs. user menu, root Curation menu), so one user's
+     * copy must never be served to another. {@code Vary: Cookie} keys the cache
+     * entry on the request cookies, so logging in or out misses the cache and
+     * re-fetches a fresh fragment: the {@code zfin_login} cookie (Path=/, so it is
+     * sent with the fetch) changes value on login (session-derived) and on logout
+     * (GUEST-prefixed, see Apg{Authentication,Logout}SuccessHandler), and the
+     * JSESSIONID rotates on login -- either shift changes the Cookie header and
+     * therefore the cache key.
+     */
+    private static void cacheBriefly(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "private, max-age=300");
+        response.addHeader("Vary", "Cookie");
     }
 
 }
