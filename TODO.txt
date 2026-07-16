@@ -141,9 +141,9 @@ Remaining work before this is production-ready
     fig1, cont) serve statically (ETag/Last-Modified, no JSESSIONID); an unconverted
     page (glossary.html) still renders via JSP; lab_desig.html still 301-redirects;
     /analytics.js + *.latest.* bundles + /action/layout/{header,footer} all 200.
-[ ] ANALYTICS (still manual): confirm G-5J7RMKMBWC on cell-mac is the DEV/stage
-    property (NOT prod) and that a hit actually lands in GA4 Realtime. Re-verify per
-    the "MUST TEST" section after every prod/stage deploy.
+[x] ANALYTICS (manual): confirmed by rtaylor -- G-5J7RMKMBWC is the DEV/stage
+    property (NOT prod) and a hit lands in GA4 Realtime. (Still re-verify per the
+    "MUST TEST" section after every prod/stage deploy.)
 [x] PageLayoutControllerAdvice attributes populate on the fragment endpoints: it's
     an UNSCOPED @ControllerAdvice, so it applies to ChromeController too. Verified
     live -- footer renders copyrightYear (2016-2026); header renders login-aware
@@ -232,8 +232,12 @@ Remaining work before this is production-ready
 [x] Confirm the zfbook pages at the BARE /zf_info/... URL keep working: verified
     served STATICALLY (200, ETag/Last-Modified, no JSESSIONID) after deploying this
     branch's inc-redirect (before: JSESSIONID/Tomcat); missing page -> clean 404.
-[ ] Optional cleanup: have page.tag load /analytics.js instead of its inline
-    gtag block, so there is a single analytics source of truth.
+[x] Optional cleanup: page.tag AND emptyPage.tag now load /analytics.js (the same
+    host-switched loader the static pages use) instead of an inline gtag block --
+    one analytics source of truth. Removed their GA4_ANALYTICS_ID c:set; no view
+    references it anymore. Verified: dynamic home page loads /analytics.js, zero
+    inline googletagmanager gtag. Further optional: retire the now-unused
+    GA4_ANALYTICS_ID{,_PRODUCTION,_ZFINLABS} properties + enum.
 [x] Decide own-directory vs. separate repo: DECIDED + implemented -- moved to the
     standalone zfin-static repo (Eleventy-templated, versioned release tarballs;
     main repo consumes a pinned release via home;static;deployFromRelease + docroot
