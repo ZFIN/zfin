@@ -97,15 +97,16 @@ Known issues / follow-ups
         confirm.
 
 
-[ ] PRE-SHIP: /opt/zfin/static volume ownership. home;static;deployFromRelease runs
-    as the deploy user (gradle in the containers) and extracts into /opt/zfin/static.
-    A freshly-created Docker named volume is root-owned, so the tar extract fails with
-    "Permission denied" until the dir is chowned to the deploy user. Confirmed in the
-    dev stack (fix was: docker compose run --user root compile chown -R gradle:zfin
-    /opt/zfin/static). Before shipping, ensure /opt/zfin/static is provisioned owned by
-    the deploy user -- e.g. an init/chown step, correct volume ownership in compose, or
-    have the deploy task create+chown it. In real prod $TARGETROOT/home is already
-    deploy-user-owned, but /opt/zfin/static is a NEW top-level path that needs the same.
+[x] /opt/zfin/static volume ownership. home;static;deployFromRelease runs as the
+    deploy user (gradle) and extracts into /opt/zfin/static. A freshly-created Docker
+    named volume is root-owned, so the tar extract failed with "Permission denied"
+    (hit in the dev stack). FIXED the idiomatic way: added /opt/zfin/static to the
+    mkdir -p list in docker/base/Dockerfile, so the existing `chown -R gradle:gradle
+    /opt/zfin/` covers it and Docker seeds the empty static_data volume gradle-owned on
+    first mount -- exactly how www_homes/catalina_bases/download-files already get
+    their ownership. No init/manual chown needed. (Takes effect once the base image is
+    rebuilt from this branch; in the current dev stack it was worked around with a
+    one-off `chown -R gradle:zfin /opt/zfin/static`.)
 
 
 [x] DONE -- analytics.js is now a committed STATIC file (home/analytics.js) that
