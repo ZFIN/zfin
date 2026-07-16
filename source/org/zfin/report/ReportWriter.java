@@ -17,11 +17,8 @@ import java.util.zip.GZIPOutputStream;
  * and {@code //PLACEHOLDER_END} markers.
  *
  * <p>The default template is loaded from the classpath as a sibling resource
- * of this class ({@code report-template.html}). The same file is the source
- * of truth for the standalone {@code build.groovy} viewer in
- * {@code home/uniprot/reportmaker/}, which points at this resource path.
- * Tests and one-off callers may pass an alternative template via the {@code
- * File}-taking overloads.
+ * of this class ({@code report-template.html}). Tests and one-off callers may
+ * pass an alternative template via the {@code File}-taking overloads.
  */
 public class ReportWriter {
 

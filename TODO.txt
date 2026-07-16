@@ -83,22 +83,18 @@ Known issues / follow-ups
         dead conf-zfin.org `/cgi-bin/Webdriver -> /unavailable/...` redirects.
       - [x] copyWebAppFiles excludes trimmed to what's still under home/ (css, javascript,
         uniprot); the moved/deleted/never-existed entries were removed.
-      - home/uniprot: NOT served -- it's a template UniProtCompareTask reads from
-        SOURCEROOT/home/uniprot/uniprot-diff-report.html. Left in home/ for now.
-        PLAN: rather than relocate it, refactor the UniProt diff report to use the
-        standard reporting framework (org.zfin.datatransfer.report), after which
-        these assets (uniprot-diff-report.{html,schema.json,sample.json} +
-        reportmaker/) can be deleted outright. See the [ ] item below.
+      - [x] home/uniprot RETIRED: UniProtCompareTask no longer splices raw diff
+        JSON into a bespoke home/uniprot/uniprot-diff-report.html via JSON_GOES_HERE;
+        it now builds an org.zfin.report.Report (new UniProtDiffReportBuilder) and
+        renders it with ReportWriter (classpath template), like the other load
+        reports. All of home/uniprot deleted (bespoke report + reportmaker/ dev
+        viewer/schema -- recoverable from git history if wanted).
       - [x] Frontend extraction: home/css, home/javascript, home/images moved to
         frontend/{css,javascript,images} (webpack context, build.gradle npmBuild
         inputs, tsconfig(.typecheck), package.json lint/test, .githooks/pre-commit,
         GenerateTypeScript + its drift test, and docs all repointed). home/ now holds
-        only WEB-INF (the Java webapp) + uniprot. Needs a compile-container frontend
-        build to confirm.
-[ ] Retire home/uniprot by refactoring the UniProt diff report to the standard
-    reporting framework (org.zfin.datatransfer.report / ZfinReport), then delete the
-    home/uniprot assets. Until then, home/uniprot stays and is excluded from the
-    webapp copy.
+        only WEB-INF (the Java webapp). Needs a compile-container frontend build to
+        confirm.
 
 
 [x] DONE -- analytics.js is now a committed STATIC file (home/analytics.js) that

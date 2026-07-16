@@ -1501,11 +1501,9 @@ def copyWebAppFiles(String webappRoot) {
     copy {
         from 'home'
         into webappRoot
-        // home/ now holds only the webapp (WEB-INF) and uniprot. Frontend sources
-        // moved to frontend/ (bundled via webpack, never copied raw); served static
-        // content lives in the standalone zfin-static repo. uniprot is a data-task
-        // template, not part of the webapp, so it is excluded here.
-        exclude 'uniprot/**'
+        // home/ now holds only the webapp (WEB-INF). Frontend sources moved to
+        // frontend/ (bundled via webpack, never copied raw); served static content
+        // lives in the standalone zfin-static repo.
         exclude '.DS_Store'
         exclude 'WEB-INF/lib/**'
     }
