@@ -236,8 +236,10 @@ Remaining work before this is production-ready
     host-switched loader the static pages use) instead of an inline gtag block --
     one analytics source of truth. Removed their GA4_ANALYTICS_ID c:set; no view
     references it anymore. Verified: dynamic home page loads /analytics.js, zero
-    inline googletagmanager gtag. Further optional: retire the now-unused
-    GA4_ANALYTICS_ID{,_PRODUCTION,_ZFINLABS} properties + enum.
+    inline googletagmanager gtag. DONE: also retired the now-unused
+    GA4_ANALYTICS_ID{,_PRODUCTION,_ZFINLABS} properties (all-properties.yml,
+    test-unittest.properties) + their ZfinPropertiesEnum constants; the raw GA4
+    ids now live only in zfin-static's analytics.js.
 [x] Decide own-directory vs. separate repo: DECIDED + implemented -- moved to the
     standalone zfin-static repo (Eleventy-templated, versioned release tarballs;
     main repo consumes a pinned release via home;static;deployFromRelease + docroot
