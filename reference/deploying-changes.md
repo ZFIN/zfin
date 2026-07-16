@@ -18,7 +18,7 @@ docker compose -f ~/zfin/docker/docker-compose.yml run --rm compile \
 |---|---|---|
 | GWT client code (`source/org/zfin/gwt/**/*.java`, `*.ui.xml`) | `gradle gwtCompile` | Apache serves the compiled JS directly from `$TARGETROOT/home/gwt/`. No Tomcat redeploy needed. |
 | Server-side Java (RPC services, business logic, Hibernate entities) | `gradle dirtycopy` | Copies new `.class` files from `home/WEB-INF/classes/` into `webapps/ROOT/`. Tomcat hot-reloads the context. |
-| `home/css/**` or `home/javascript/**` (CSS, SCSS, JS, TSX) | `gradle dirtydeploy` | `npmBuild` rebuilds the webpack bundles **and** `dirtycopy` syncs the new `asset-manifest.json` into Tomcat's classpath. |
+| `frontend/css/**` or `frontend/javascript/**` (CSS, SCSS, JS, TSX) | `gradle dirtydeploy` | `npmBuild` rebuilds the webpack bundles **and** `dirtycopy` syncs the new `asset-manifest.json` into Tomcat's classpath. |
 | JSPs / tag files | `gradle jspcopy` (or `gradle dirtycopy`) | Tomcat recompiles JSPs on next request. |
 | `*.hbm.xml`, `*.properties` under `source/` | `gradle dirtycopy` | These get copied onto the Tomcat classpath. |
 | Hibernate config (`conf/hibernate.cfg.xml`), `log4j2.xml` | `gradle dirtycopy` + restart Tomcat | Read once at app startup. |
@@ -88,7 +88,7 @@ If `gradle npmBuild` reports `UP-TO-DATE` but you definitely just
 changed a CSS/JS file, check that the file's parent dir is in the
 task's declared `inputs` (build.gradle, `task npmBuild`). Webpack
 reads more than the entry-point dir — anything `require()`d
-transitively. Currently declared: `home/javascript`, `home/css`,
+transitively. Currently declared: `frontend/javascript`, `frontend/css`,
 `webpack.config.js`, `package.json`, `package-lock.json`, `.babelrc`,
 `tsconfig.json`. Add to that list if your change lives outside.
 

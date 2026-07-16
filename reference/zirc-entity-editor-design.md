@@ -26,7 +26,7 @@ per-aggregate config.
 ## Locked decisions
 
 ### Component
-- **One** component named `ZircEntityEditor`, in `home/javascript/react/zirc/`.
+- **One** component named `ZircEntityEditor`, in `frontend/javascript/react/zirc/`.
   Replaces the per-aggregate inline editors; each becomes a one-liner
   (or the list renderer mounts `ZircEntityEditor` directly).
 

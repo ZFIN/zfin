@@ -20,10 +20,10 @@ Proof-of-concept pieces already in this branch
                                         Apache; only missing pages fall through to StaticFileController
 - source/.../ChromeController.java       GET /action/layout/header|footer fragments
 - home/WEB-INF/jsp/layout/chrome-*.jsp   header/footer fragment views (reuse z:pageHeader/pageFooter)
-- home/javascript/zfin-common/zfin-chrome.js   client-side header/footer loader (guarded by mount points)
-- home/javascript/zfin-common/header-menu.js   refactored to export initHeaderMenu() for re-init after injection
+- frontend/javascript/zfin-common/zfin-chrome.js   client-side header/footer loader (guarded by mount points)
+- frontend/javascript/zfin-common/header-menu.js   refactored to export initHeaderMenu() for re-init after injection
 - home/WEB-INF/jsp/layout/chrome-footer.jsp     footer fragment also renders <zfin2:yourInputWelcome/>
-- home/javascript/zfin-common/your-input-welcome.js  refactored to export initYourInputWelcome();
+- frontend/javascript/zfin-common/your-input-welcome.js  refactored to export initYourInputWelcome();
                                         zfin-chrome.js re-runs it after footer injection so the
                                         "Your Input Welcome" floating control appears on static pages
 - home/zf_info/zfbook/chapt1/1.4.html   one converted page (example / template)
@@ -69,8 +69,8 @@ Known issues / follow-ups
 -------------------------
 [x] Moved served static content out of home/ into a new top-level static/ dir
     (zf_info, images, ZFIN, robots.txt, favicon.ico, analytics.js). Source layout
-    now separates static content (static/) from the frontend sources (home/css,
-    home/javascript) and the Java webapp (home/WEB-INF). DEPLOYED layout is
+    now separates static content (static/) from the frontend sources (frontend/css,
+    frontend/javascript) and the Java webapp (home/WEB-INF). DEPLOYED layout is
     unchanged: SimpleDirectoryCopyTask gained an optional `targetPath` so these
     still deploy into $TARGETROOT/home (Apache DocumentRoot) -- no Apache/Tomcat/URL
     change. Verified: `gradle make` redeploys to $TARGETROOT/home, pages still serve.
@@ -84,10 +84,21 @@ Known issues / follow-ups
       - [x] copyWebAppFiles excludes trimmed to what's still under home/ (css, javascript,
         uniprot); the moved/deleted/never-existed entries were removed.
       - home/uniprot: NOT served -- it's a template UniProtCompareTask reads from
-        SOURCEROOT/home/uniprot/uniprot-diff-report.html. Left in home/; better home
-        would be a non-served resources location (e.g. under server_apps/), not static/.
-      - Frontend (home/css, home/javascript) extraction to frontend/ is a separate
-        future step.
+        SOURCEROOT/home/uniprot/uniprot-diff-report.html. Left in home/ for now.
+        PLAN: rather than relocate it, refactor the UniProt diff report to use the
+        standard reporting framework (org.zfin.datatransfer.report), after which
+        these assets (uniprot-diff-report.{html,schema.json,sample.json} +
+        reportmaker/) can be deleted outright. See the [ ] item below.
+      - [x] Frontend extraction: home/css, home/javascript, home/images moved to
+        frontend/{css,javascript,images} (webpack context, build.gradle npmBuild
+        inputs, tsconfig(.typecheck), package.json lint/test, .githooks/pre-commit,
+        GenerateTypeScript + its drift test, and docs all repointed). home/ now holds
+        only WEB-INF (the Java webapp) + uniprot. Needs a compile-container frontend
+        build to confirm.
+[ ] Retire home/uniprot by refactoring the UniProt diff report to the standard
+    reporting framework (org.zfin.datatransfer.report / ZfinReport), then delete the
+    home/uniprot assets. Until then, home/uniprot stays and is excluded from the
+    webapp copy.
 
 
 [x] DONE -- analytics.js is now a committed STATIC file (home/analytics.js) that
@@ -251,7 +262,7 @@ Main-repo changes (small + bounded; these are ALL the references today)
   more correct in general.)
 - KEEP in the app (serving mechanism, not content): server_apps/apache/inc-redirect,
   docker/httpd/conf-zfin.org, ChromeController + home/WEB-INF/jsp/layout/chrome-*.jsp,
-  home/css/layout.scss (header height reserve), the webpack .latest aliases.
+  frontend/css/layout.scss (header height reserve), the webpack .latest aliases.
 
 Deploying the static repo (must land files at $TARGETROOT/home/{zf_info,images,ZFIN,
 ...} = Apache DocumentRoot on the www_data volume). Options, simplest first:

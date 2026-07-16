@@ -49,7 +49,7 @@ class LatestAliasPlugin {
 }
 
 const config = {
-    context: path.resolve(__dirname, 'home/javascript'),
+    context: path.resolve(__dirname, 'frontend/javascript'),
     devtool: isProd ? false : 'eval-cheap-module-source-map',
     mode: isProd ? 'production' : 'development',
     entry: {
