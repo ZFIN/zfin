@@ -28,6 +28,11 @@ public class CommandLineUtilityRegistry {
                 "Convert CSV file to XLSX format",
                 "csv2xlsx <output.xlsx> <input.csv>");
 
+        register("csv-diff",
+                "org.zfin.datatransfer.util.CSVDiff",
+                "Diff two CSV files by key column(s); writes <prefix>_{deletes,adds,updated_1,updated_2}.csv",
+                "csv-diff <outputPrefix> <file1.csv> <file2.csv> <keyCol1,keyCol2,...> [ignoreCol1,ignoreCol2,...]");
+
         //org.zfin.infrastructure.TokenStorage
         register("token-storage",
                 "org.zfin.infrastructure.TokenStorage",

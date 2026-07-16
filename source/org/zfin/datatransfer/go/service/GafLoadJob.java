@@ -87,6 +87,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected File downloadedFile3;
     protected String organization;
     protected Boolean skipDownloadIfUnchanged; //default to false
+    // ZFIN-10025 Phase 0: when true, compute the add/update/remove diff and write the
+    // reports, but perform NO database writes (no add/update/remove, no LoadFileLog). Lets
+    // the unified DANRE-mod load be QC'd against staging through the real pipeline safely.
+    protected Boolean reportOnly; //default to false
+
+    private boolean isReportOnly() {
+        return reportOnly != null && reportOnly;
+    }
 
     public int execute() {
         int exitCode = 0;
@@ -110,6 +118,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
 
             gafService = new GafService(organizationEnum);
+            // ZFIN-10025: the unified DANRE-mod load owns each annotation by its source
+            // assigned_by (per-source add/update/remove scoping); legacy loads stay single-org.
+            gafService.setPerSourceOrganization(gafParser instanceof DanreModGpadParser);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
             downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
@@ -150,7 +161,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafJobData.setInfCommaCount(gafEntries.get(sizeentry - 1).getCol8commas());
             gafJobData.setInfBothCount(gafEntries.get(sizeentry - 1).getCol8both());
 
-            gafService.replaceMergedZDBIds(gafEntries);
+            gafJobData.setRemappedMarkerIds(gafService.replaceMergedZDBIds(gafEntries));
 
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
                 .getGafOrganization(organizationEnum);
@@ -165,7 +176,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 gafEntry.setEntryId(entryId.substring(entryId.indexOf(":") + 1));
             });
             gafService.processEntries(gafEntries, gafJobData);
-            gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            if (gafParser instanceof DanreModGpadParser) {
+                // ZFIN-10025: per-source removal — compute outdated rows once per owning org so
+                // each source only prunes the annotations it owns (no cross-source mass-deletes).
+                for (GafOrganization.OrganizationEnum orgEnum : DanreModSourceOrganization.allTargetOrganizations()) {
+                    GafOrganization org = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(orgEnum);
+                    gafService.generateRemovedEntries(gafJobData, org);
+                }
+            } else {
+                gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            }
             List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
             System.out.println("Removed entries: " + optional.size());
 
@@ -175,13 +195,18 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // requested before/after comparison applies.
             GoaLoadSnapshot beforeSnapshot = captureSnapshotIfGoa(gafOrganization);
 
-            logger.info("Before adding new one");
-            addAnnotations(gafJobData);
-            logger.info("Before updating");
-            updateAnnotations(gafJobData);
+            if (isReportOnly()) {
+                logger.info("REPORT-ONLY mode: skipping add/update/remove — diffs are reported but NOT written to the database.");
+                System.out.println("REPORT-ONLY mode: no database writes (skipping add/update/remove).");
+            } else {
+                logger.info("Before adding new one");
+                addAnnotations(gafJobData);
+                logger.info("Before updating");
+                updateAnnotations(gafJobData);
 
-            logger.info("Before removing");
-            removeAnnotations(gafJobData);
+                logger.info("Before removing");
+                removeAnnotations(gafJobData);
+            }
 
             GoaLoadSnapshot afterSnapshot = captureSnapshotIfGoa(gafOrganization);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
@@ -269,7 +294,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = null;
             HibernateUtil.closeSession();
         }
-        if (exitCode == 0) {
+        if (exitCode == 0 && !isReportOnly()) {
             logValidationReport(organizationEnum.toString(), "GAF Load Job completed successfully.", lastModified);
         }
         return exitCode;
@@ -514,9 +539,17 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         String parserClassName = args[5];
 
         job.skipDownloadIfUnchanged = envTrue("SKIP_DOWNLOAD_IF_UNCHANGED");
+        job.reportOnly = envTrue("GAF_LOAD_REPORT_ONLY");
 
         try {
-            job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
+            // Resolve the parser by its conventional bean name rather than by type: since
+            // DanreModGpadParser extends GpadParser (ZFIN-10025), a by-type lookup for the
+            // legacy Noctua load's GpadParser matches two beans (gpadParser, danreModGpadParser)
+            // and throws NoUniqueBeanDefinitionException. The by-name lookup selects the exact
+            // parser each load asked for. (FpInferenceGafParser stays @Primary for its own load.)
+            Class<?> parserClass = Class.forName(parserClassName);
+            String parserBeanName = java.beans.Introspector.decapitalize(parserClass.getSimpleName());
+            job.gafParser = (FpInferenceGafParser) context.getBean(parserBeanName, parserClass);
 
             //if load-noctua-gpad job, then make sure to validate all ZDB IDs in inferences.
             if (job.gafParser instanceof GpadParser) {

@@ -1,0 +1,225 @@
+# Plan — Unified DANRE-mod GPAD Load (ZFIN-10025)
+
+_Branch: `ZFIN-10025-danre-mod-unified-load`. Drafted 2026-06-17. Companion to `tmp/go-annotation-loads-status.md`._
+
+Goal: replace the three GO-annotation loads (GAF-GOA, Noctua GPAD, FP-Inference) with **one** load that consumes GO Central's unified MOD-ID-keyed file `annotations/gpad/DANRE-mod.gpad.gz`, **while retaining per-source organization information** so removal stays scoped per source (approach **B** — no mass-deletes) and so we can prove every row maps back to the legacy load that used to own it.
+
+Staging source (live now): `https://skyhook.geneontology.io/pipeline-from-goa/main/annotations/gpad/DANRE-mod.gpad.gz`
+Prod target (still 403 as of 2026-06-17): `https://current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz`
+
+---
+
+## 1. Is the new file's organization matchable to the old loads? — YES
+
+**This is the key enabler for approach B, and it works at row granularity.** Two independent facts make it work:
+
+### 1a. The DB already records the source `assigned_by` on every row
+`MarkerGoTermEvidence` has **two** org fields, both populated on every load:
+- `gafOrganization` (FK → `marker_go_term_evidence_annotation_organization`) = **which load** brought the row in (`GOA` / `Noctua` / `FP Inferences` / `UniProt`).
+- `organizationCreatedBy` (`mrkrgoev_annotation_organization_created_by`, NOT NULL) = the source's own **`assigned_by`**, set from `gafEntry.getCreatedBy()` in `GafService.generateAnnotation:379`.
+
+DANRE-mod's `assigned_by` (GPAD col 10) is exactly the same vocabulary as `organizationCreatedBy`. So we can join **new-file row ↔ existing DB row on `assigned_by = organizationCreatedBy`** (plus gene/GO/evidence/ref) — a direct, per-row provenance comparison. No reverse-engineering needed.
+
+### 1b. The assigned_by distributions already line up (probed 2026-06-17)
+
+| assigned_by | EBI GOA GAF (legacy source) | DANRE-mod (new) | Legacy load that owns it today |
+|---|--:|--:|---|
+| UniProt | 74,217 | 65,878 | **GOA** |
+| GO_Central (≈ all `GO_REF:0000033` IBA/phylo) | 50,146 | 48,129 | **GOA** (+ small FP-Inference overlap) |
+| InterPro | 42,857 | 38,497 | **GOA** (+ UniProt-Secondary interpro2go overlap) |
+| ZFIN (our Noctua curation) | 31,690 | 31,784 | **Noctua** |
+| GOC (`GO_REF:0000108`) | 3,191 | 2,786 | **none — GOA rejects GOC today** ⚠ |
+| RHEA / IntAct / AgBase / MGI / BHF-UCL / … | ~1,500 | ~1,400 | **GOA** |
+
+The EBI GOA GAF and DANRE-mod are essentially the same GOA aggregation (DANRE-mod is gene-collapsed and slightly smaller). The same `assigned_by` vocabulary appears in both.
+
+### 1c. The legacy ownership rules we must reproduce (or deliberately change)
+The legacy loads already partition this shared vocabulary via parser filters — to keep the new load's ownership matching the old, the `assigned_by → organization` map must encode the same rules:
+- **`ZFIN` → Noctua.** The GAF/GOA path *rejects* `ZFIN`-created rows (`FpInferenceGafParser:145`, "skip own annotations"), deferring them to the Noctua load. (The GPAD path doesn't filter, which is why Noctua loads them.)
+- **`GOC` → currently dropped.** `GoaGafParser:19` rejects `createdBy == "GOC"`. The 2,786 `GOC`/`GO_REF:0000108` rows in DANRE-mod are therefore **net-new content** no current load ingests — a consolidation gain to flag, not a regression.
+- **`GO_Central`/`GO_REF:0000033` (phylo IBA) → GOA.** ~48k rows. The standalone FP-Inference file (`zfin-prediction.gaf`) is only **1,809 rows** (assigned_by `GOC` in that file) — a small overlapping subset. Consolidation makes FP-Inference essentially redundant (matches the doc's "consolidation candidate").
+- **Everything else (UniProt/InterPro/RHEA/IntAct/…) → GOA.**
+
+**Bottom line:** yes — a row the new load brings in under `assigned_by=ZFIN` is provably the same class the Noctua load owned; `assigned_by=UniProt/InterPro/etc` maps to GOA; and we can verify it per-row against `organizationCreatedBy`. The two honest caveats are (i) the new `GOC` rows that were previously dropped, and (ii) FP-Inference provenance shifting from `GOC` (own file) to `GO_Central` (merged file).
+
+---
+
+## 2. Architecture (approach B — retain per-source organization)
+
+Instead of one umbrella org, the unified load **partitions the file by `assigned_by`** and runs the existing add/update/**remove** diff **once per source organization**. Removal stays scoped by `getEvidencesForGafOrganization(org)` exactly as today, so no source can delete another's annotations.
+
+```
+DANRE-mod.gpad.gz ─► DanreModGpadParser (GPAD 2.0, reuses GpadParser)
+                         │  each GafEntry.createdBy = assigned_by
+                         ▼
+        group entries by  assigned_by → GafOrganization   (new mapping)
+                         │
+        ┌────────────────┼───────────────────────────┐
+        ▼                ▼                            ▼
+   org = Noctua      org = GOA                  org = GO_Central(phylo) …
+   (ZFIN rows)       (UniProt/InterPro/…)       (GO_REF:0000033)
+        │                │                            │
+   existing diff     existing diff                existing diff
+   add/update/remove add/update/remove            add/update/remove
+   scoped to Noctua  scoped to GOA                scoped to its org
+```
+
+### Mapping table (`assigned_by → GafOrganization`)
+Reproduce legacy ownership initially, so the first cutover is a no-op diff against existing rows:
+| assigned_by value(s) | → GafOrganization | Rationale |
+|---|---|---|
+| `ZFIN` | `Noctua` | matches legacy Noctua ownership |
+| `UniProt`, `InterPro`, `RHEA`, `IntAct`, `AgBase`, `MGI`, `BHF-UCL`, `HGNC*`, `Ensembl`, `Reactome`, `SynGO`, `ComplexPortal`, `RNAcentral`, `CACAO`, `DisProt`, `FlyBase`, `*-UCL` | `GOA` | matches legacy GOA ownership |
+| `GO_Central` (`GO_REF:0000033`) | `GOA` (or a dedicated phylo org) | legacy GOA already owns these |
+| `GOC` (`GO_REF:0000108`) | **decision needed** — new org, or fold into GOA | net-new; legacy dropped them |
+| anything unmapped | reject + report | fail safe — never silently mass-delete |
+
+> Implementation note: keep the map data-driven (a `Map<String,OrganizationEnum>` or a small DB table), not hard-coded `if`s, so curators can re-map a source without a code change. Unmapped `assigned_by` → row is rejected and counted in the report, **never** assigned to a catch-all org (which would put it at risk of removal under the wrong scope).
+
+---
+
+## 3. Components to build
+
+### 3.1 `DanreModGpadParser extends GpadParser`  (new, non-destructive)
+- `@Component` in `org.zfin.datatransfer.go` (auto-registered by `gaf-load.xml` component-scan).
+- Reuses GPAD 2.0 parsing + ECO→evidence `postProcessing` unchanged. `getGafEntry` already puts `assigned_by` into `createdBy`.
+- Likely needs to handle non-`ZFIN:` col-1 prefixes (23 `ComplexPortal:` rows) — reject-and-report rather than crash.
+
+### 3.2 Organization model
+- Add `OrganizationEnum` values for any new orgs (e.g. a phylo/`GO_Central` org and/or a `GOC` org if we don't fold them into GOA).
+- Add corresponding rows to `marker_go_term_evidence_annotation_organization` (SQL migration) so `getGafOrganization` resolves them.
+- Add the `assigned_by → OrganizationEnum` map.
+
+### 3.3 `GafLoadJob` changes
+- **Report-only flag** (`GAF_LOAD_REPORT_ONLY` via existing `envTrue`): compute add/update/remove diffs and write the HTML/txt reports, but skip the three mutation methods and the final `logValidationReport` save. Safe QC against staging with zero DB writes. *(This is the immediate, low-risk deliverable.)*
+- **Per-source loop**: when the parser is `DanreModGpadParser`, group `gafJobData` by resolved org and run `processEntries` / `generateRemovedEntries` / add / update / remove per org. (Today the job assumes one org for the whole file.)
+
+### 3.4 Ant target `load-gpad-danre-mod` (build.xml)
+- Modeled on `load-noctua-gpad`. Default URL = staging skyhook, overridable via `DANRE_MOD_GPAD_URL`.
+- Ships with `GAF_LOAD_REPORT_ONLY=true` initially (report-only by default until we trust the diff).
+- Parser arg = `org.zfin.datatransfer.go.DanreModGpadParser`.
+
+---
+
+## 4. QC / comparison harness (runs through the real load path)
+Because report-only mode runs the actual parse → gene-map → pub-map → ECO-map pipeline, its report **is** the QC artifact. For the old-vs-new diff (Pascale's "we lose some ZFIN annotations"):
+1. Run report-only against staging → get resolved (gene, GO, evidence, ref, **resolved org**) tuples.
+2. Compare against current `marker_go_term_evidence`, joining on `assigned_by = organizationCreatedBy` (§1a) per organization.
+3. Report three buckets **per source org**: in-both, legacy-only (would be lost), new-only (would be added — e.g. the GOC rows).
+
+Already-known numbers from raw-file diffing (file-level, pre-pipeline):
+- **Noctua/ZFIN: 5,404 of 31,681 (17%) Noctua annotations are absent from DANRE-mod** — genuine upstream loss (only 3 recover when ignoring relation), concentrated in `RO:0002264`/`RO:0002432` causal relations. Quantify through the pipeline and raise with GO/Pascale.
+
+---
+
+## 4a. First report-only run — RESULTS (2026-06-24, staging skyhook file)
+
+Ran `load-gpad-danre-mod` (report-only) end-to-end through the real pipeline (gene-map → pub-map → ECO-map → annotation-extension recovery). **Completed in ~16 min (971 s), zero DB writes**, full report set produced. Phase 0 is now validated, not just built.
+
+**Diff buckets (142,612 of 188,529 file rows reached processing; the ~46k gap is dropped earlier in parse/postProcessing — mostly invalid-ECO rows, still TBD to fully account):**
+| Bucket | Count | Meaning |
+|---|--:|---|
+| Existing | 62,704 | already in our DB (match what legacy loads brought in) |
+| Added | 25,826 | in DANRE-mod, not in our DB (would be new) |
+| Updated | 1,807 | exist but differ |
+| Errors | 52,273 | could not be processed |
+| Removed | 0 | expected (umbrella org empty + report-only) |
+
+**The 52,273 errors collapse to ~4 decisions, not 600 problems:**
+
+1. **GO_REF not mapped — 34,044 (exact).** Root-caused: `GO_REF:0000002` (28,691, InterPro2GO IEA) + `0000003` (3,173) + `0000108` (2,125, the net-new GOC rows) + `0000115` (55) = **34,044**. Cause: `GpadParser` **bypasses `isValidGafEntry`**, so refs the GAF path *silently excludes* via `goRefExcludePubMap` (`FpInferenceGafParser:50` lists `GO_REF:0000002`) flow through and fail at pub-mapping instead. This is an **ownership decision**: `GO_REF:0000002` is the InterPro2GO IEA stream UniProt-Secondary loads in-house today — under consolidation, either map it to a pub (take from DANRE-mod) or keep excluding it (keep from secondary).
+2. **Unmapped ECO — 17,406.** `ECO:0007322` (SubCell IEA, 17,350) + `ECO:0005547` (56) — the `eco_go_mapping` gap (file counts now 17,350 / 56, vs the 22,274 / 62 estimated earlier). Fix = add `eco_go_mapping` rows (curator/GO call).
+3. **EXP — 105.** Also a filter-bypass artifact (`EXP` is in the GAF path's `EXCLUDED_EVIDENCE_CODES`); ties to ZFIN-10258.
+4. **Long tail — ~700.** Root-term QC rejections (`Cannot add root-term … already has non-root terms`), 17 Do-Not-Annotate, ~45 gene/pub-not-found, 77 duplicates.
+
+**Mapped GO_REFs that loaded cleanly** (cross-checked vs `GoDefaultPublication`): `0000033` PAINT (36,227), `0000044` SubCell2 (16,211), `0000104` UniRule (11,116), `0000117` ARBA (10,480), `0000024` UniProt (10,268), `0000015` (2,124), `0000116` RHEA (701), `0000041` (438), `0000107` (11).
+
+**Phase 1 consequence (important):** because the parser inherits `GpadParser`'s filter-bypass, the unified load **surfaces annotations the legacy GAF load silently dropped** (GO_REF:0000002, EXP). Phase 1 must therefore port **explicit exclusion/ownership rules** from the GAF path (`goRefExcludePubMap`, `EXCLUDED_EVIDENCE_CODES`) and apply them per source — it is not only about per-source removal scoping.
+
+Report artifacts from this run are committed under `server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod/` (SOURCEROOT; the live run writes to TARGETROOT which is not committed): `*_summary.txt` and `*_error_summary.txt`. The 75 MB `_details.txt` and 2.3 MB `.html` are not committed (size).
+
+**Run 2 (2026-06-25) — after mapping GO_REF:0000002 + 0000003 (§7 decision):** errors **52,273 → 20,603** (−31,670); added **25,826 → 57,496**; `GO_REF not known` **34,044 → 2,180**. The 31,864 cleared split into 31,670 added + 194 newly-detected duplicates (`Duplicate annotation entry` 77 → 271) — accounts exactly. Remaining errors collapse to one big item — **`ECO:0007322` SubCell IEA (17,350)**, the `eco_go_mapping` gap — plus small open decisions: `GO_REF:0000108` GOC (2,125), `EXP` (105), `ECO:0005547` (21), `GO_REF:0000115` RNAcentral (55).
+
+**Run 4 (2026-06-30) — PHASE 1 per-source orgs active (vs prod file, fresh DB).** `DanreModSourceOrganization` map (ZFIN→Noctua, else→GOA) + per-source removal loop. `removed` **0 → 69,838** — the mechanism works (each source scopes its own removal), but the magnitude exposes the core Phase 2 problem: **massive churn, mostly matching failure, not loss.** By owning org: **GOA 53,985** (~49% of DB's 109,656 GOA rows) + **Noctua 15,853** (~44% of 36,025). Noctua removed (15,853) is ~3× the true file-level loss (5,404) → ~10k Noctua rows that ARE in the file don't match their stored form; GOA removed (53,985) is overwhelmingly representation mismatch (the file IS the GOA data). Added 43,608. Separately, the DB's **111,089 UniProt-owned** rows (secondary-load interpro2go/ec2go, stored `source=ZFIN`) aren't in the removal scope at all — the provisional map routes nothing to the `UniProt` org. **The report-only guard is why this is a report and not a mass-delete.** Two things must be reconciled before removal is trustworthy (core Phase 2): (a) **annotation matching** — how a DANRE-mod GPAD row equals a stored MGTE row (pub/inference/qualifier/evidence); (b) **ownership mapping** — needs `assigned_by`+`GO_REF` granularity and must model the secondary-load ownership transition.
+
+**Run 3 (2026-06-30) — first run vs the PUBLISHED PROD file** (`current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz`, now live; generated 2026-06-17, 142,612 rows; default URL flipped from staging to prod). Run against a freshly `loaddb`'d DB: errors **20,627** (≈ run 2's 20,603), `ECO:0007322` still **17,350**, `GO_REF not known` still **2,180** — the interpro2go/ec2go fix holds on the real file and the error profile is stable. Existing **78,352** / added **43,608** / updated **23** (the shift vs run 2 is just the fresh full DB matching more rows as "existing"). Note: the prod file (142,612 rows) natively equals what the larger staging file (188,529) *processed* after `postProcessing` drops — so the staging QC was representative. **`ECO:0007322` (17,350) remains the single dominant remaining lever.**
+
+---
+
+## 4b. Matching investigation — WHY the run-4 churn happens (2026-07-01)
+
+Sampled the run-4 removed set, ran a (gene, GO) presence test against the prod file, and broke removals down by owning org / pub / evidence. **The 69,838 removals are not one problem — three distinct causes:**
+
+1. **`ECO:0007322` gap drives ~24,283 GOA removals (the largest single bucket) AND the 17,350 errors.** UniProtKB-SubCell IEAs are stored in ZFIN as IEA (pub `ZDB-PUB-120306-4` / `GO_REF:0000044`) but carry `ECO:0007322` in the file. Because that ECO is unmapped, `GpadParser.postProcessing` drops those rows, so they neither load nor match the stored rows → the stored rows get flagged removed. Confirmed by side-by-side: the file has the exact gene→GO under `GO_REF:0000044`, just tagged `ECO:0007322`. **One fix (map `ECO:0007322`→IEA) both clears the 17,350 errors and prevents ~24k spurious removals.**
+2. **Genuine Noctua loss — 11,751 of 12,040 removed (gene,GO) pairs (97.6%) are absent from the file.** Dominated by `RO:0002264` ("acts upstream of or within", ~10k) + `ND` root-term annotations the GOA pipeline doesn't carry. This is **real annotation loss** (Pascale's warning), ~2× the earlier 5,404 file-level estimate — a GO/curator conversation, not a code fix.
+3. **Remaining ~23k GOA** (UniRule `ZDB-PUB-170525-1` 12,778, ARBA `ZDB-PUB-221108-21` 10,654, PAINT 4,365, …). Present-in-file as (gene,GO) but not matched — mostly month-to-month UniProt IEA turnover.
+
+**Caveat:** the DB under test is a `loaddb` **production snapshot**, likely older than the 2026-06-17 file; UniProt IEAs churn heavily monthly, so part of bucket 3 is legitimate upstream turnover, not cutover loss. A true churn number needs the DB re-synced with same-vintage legacy loads.
+
+**Match key (reference):** an incoming row matches a stored annotation only when **publication + marker + evidence code + flag + qualifier-relation** all agree (`getLikeMarkerGoTermEvidencesButGo`), then GO-term specificity + inferences (`isMoreSpecificAnnotation`). Any field differing → no match → incoming counts as "added", stored counts as "removed".
+
+### Implementation from this investigation — part (b): `ECO:0007322` → IEA
+Migration `source/org/zfin/db/postGmakePostloaddb/1184/migrations/0010-ZFIN-10025-eco-0007322-subcell-iea-mapping.sql` adds one row to **`eco_go_mapping`** mapping `ECO:0007322` (`ZDB-TERM-190614-116`, "curator inference used in automatic assertion") to the GO evidence code **IEA**.
+
+_What this does:_ `GpadParser.postProcessing` translates each row's ECO code to a ZFIN 3-letter evidence code via `eco_go_mapping`; an unmapped ECO makes it reject the row. `ECO:0007322` is a granular automatic-assertion code **not present in GO's flat `gaf-eco-mapping.txt`**, so it was never in our table. IEA is the correct target — it is the automatic-assertion sibling of `ECO:0000501`/`ECO:0000256` (both already → IEA) and matches how these SubCell annotations are already stored. With the row present, the ~17,350 SubCell rows load (clearing the errors) and match their stored IEA counterparts (preventing spurious removals — see Run 5 below) — resolving cause #1 above. `ECO:0005547` (manual-assertion, ~21–56 rows) is deliberately **left unmapped** pending a curator call on its target code.
+
+_Verified — Run 5 (2026-07-01, ECO row applied to dev DB, prod file):_ **errors 20,627 → 3,317** (−17,310; `ECO:0007322` fully cleared, as predicted). **Removed 69,838 → 60,265** (−9,573); existing 78,352 → 87,959; added 43,608 → 51,311. The removal drop (9,573) is **less than the theoretical 24,283**: the loaded production DB snapshot holds more SubCell IEA rows (24,283) than the current file carries (17,350), so ~7k are genuine monthly turnover (correctly removed) and ~7,703 of the file's rows load as new rather than matching (the §4b snapshot caveat). Against a same-vintage DB the fix would prevent more. Remaining 3,317 errors are all small open-decision items (`GO_REF:0000108`/`0000115` 2,180, duplicates 293, `EXP` 105, gene/pub-not-found ~45, `ECO:0005547` 21).
+
+---
+
+## 4c. Org-mismatch DUPLICATION of the *2go content (2026-07-07, legacy-vs-new DB comparison)
+
+Full legacy-vs-new end-state comparison (real writes, per-org `csvDiff` on `marker_go_term_evidence`, 2026.07.05.1 snapshot). The `UniProt`-org diff is **0 deletes / 0 adds** — but that zero is misleading. The secondary UniProt load and the unified load **own the same InterPro2GO/EC2GO content under different organizations**, so a per-org diff can never net them:
+
+| snapshot (org) | InterPro2GO `ZDB-PUB-020724-1` | EC2GO `ZDB-PUB-031118-3` |
+|---|--:|--:|
+| legacy `UniProt` | 65,327 | 4,735 |
+| new `UniProt`    | 65,327 | 4,735 |
+| legacy `GOA`     | 0 | 0 |
+| new `GOA`        | **28,509** | **3,161** |
+
+(`created_by=InterPro` in `GOA`: legacy 0 → new 28,509.)
+
+**Mechanism.** `csvDiff` compares only within an org. The secondary load stores `*2go` rows as `gafOrganization=UniProt` (`organizationCreatedBy=ZFIN`); the unified load resolves the same rows to `GOA` (`assigned_by=InterPro`/`UniProt` → GOA, per `DanreModSourceOrganization`). So the old copies sit **untouched in the `UniProt` org** (0 diff — the unified load's removal scope is GOA+Noctua only) while the new copies land as **`GOA` adds**. They never meet → at cutover both coexist: **duplication** (65,327 UniProt + 28,509 GOA InterPro2GO rows).
+
+**Two consequences for the *2go handover (D6):**
+1. **Duplication** unless cutover explicitly purges the `UniProt` org. Identify those rows by **`gafOrganization='UniProt'` (pk 5)** — NOT by `created_by=ZFIN`, which also tags the 36,011 genuine Noctua curated rows.
+2. **Under-coverage.** `DANRE-mod` supplies only **28,509** InterPro2GO (and 3,161 EC2GO) vs the secondary load's **65,327 / 4,735** — less than half. `DANRE-uniprot.gpad.gz` carries **43,882 / 5,400** (closer, still short). So `DANRE-mod` alone is an insufficient source for the mapping2go replacement — see the file-choice question in §7.
+
+**Fix direction:** to make the handover a clean swap rather than a duplicate-and-shrink, the unified load must (a) own the `*2go` content under the **same org the secondary load uses** (or run an explicit `UniProt`-org migration/purge at cutover), and (b) consume a source file that covers the full `*2go` volume (likely `DANRE-uniprot`, or `DANRE-mod` + `DANRE-uniprot`).
+
+---
+
+## 5. Pre-adoption blockers (from status doc §2, still gating)
+0. **⭐ MATCHING & OWNERSHIP CHURN (from run 4; root-caused in §4b — the #1 cutover blocker).** With per-source removal active, a cutover would churn ~69,838 removes + ~43,608 adds. Per §4b this splits three ways: **(1)** ~24,283 GOA removals from the `ECO:0007322` gap — **fixed by part (b)**; **(2)** ~11,751 genuine Noctua losses (`RO:0002264`/`ND`) — a GO/curator conversation; **(3)** ~23k GOA IEA (UniRule/ARBA) mostly monthly upstream turnover, confounded by the DB being an older snapshot. Also unaddressed: the 111,089 `UniProt`-owned secondary-load rows sit outside the removal scope (map needs `GO_REF` granularity + the ownership transition). Until this is resolved, keep report-only.
+1. **ECO gap:** 4 of 22 ECO codes unmapped — **confirmed live as 17,406 erroring rows** (`ECO:0007322` SubCell 17,350 + `ECO:0005547` 56); needs `eco_go_mapping` rows (curator/GO call).
+1b. **GO_REF mapping/exclusion gap (NEW, from §4a):** 34,044 rows error on unmapped GO_REFs, dominated by `GO_REF:0000002` (28,691). Decide map-vs-exclude per source (ties to the secondary-load InterPro2GO ownership).
+2. **Relation→qualifier mapping:** confirm every col-3 RO/BFO relation resolves to a ZFIN `qualifier_relation`.
+3. **ZFIN round-trip QC** (§4 above).
+4. **Removal-scope safety:** the per-source partition + reject-unmapped rule (§2) is the mitigation for the mass-delete risk.
+5. **⭐ *2go ORG-MISMATCH DUPLICATION (from §4c, 2026-07-07).** The secondary load owns InterPro2GO/EC2GO under `gafOrganization=UniProt`; the unified load writes the same content under `GOA`, so cutover **duplicates** it (65,327 UniProt + 28,509 GOA InterPro2GO) rather than replacing it — and `DANRE-mod` under-covers the volume (28,509 vs 65,327). Blocks the D6 handover until we settle (a) same-org ownership or an explicit `UniProt`-org purge, and (b) the source file (§7).
+
+---
+
+## 6. Phased rollout
+1. **Phase 0 (now, safe):** parser class + enum + Ant target + report-only flag. Run report-only vs staging. *No DB writes, no removal logic yet.*
+2. **Phase 1:** add the `assigned_by → org` map + per-source diff loop; **port the GAF-path exclusion/ownership rules** (`goRefExcludePubMap`, `EXCLUDED_EVIDENCE_CODES`) into the DANRE-mod path so it stops surfacing rows legacy silently dropped (see §4a); keep report-only. Validate per-org add/remove counts vs legacy DB.
+3. **Phase 2:** resolve ECO/relation/curator decisions; build the old-vs-new QC diff; get sign-off on annotation loss + the new GOC rows.
+4. **Phase 3 (cutover, prod URL live):** flip report-only off; retire Noctua + FP-Inference Jenkins jobs; drop only the GO-mapping handlers from UniProt-Secondary (keep its dblink/domain/PDB refresh — status doc §1 Correction).
+
+---
+
+## 7. Open decisions
+- **✅ DECIDED (2026-06-25) — *2go GO_REFs come from DANRE-mod.** The UniProt-Secondary load will **drop all the *2go GO-mapping handlers** (interpro2go / ec2go / kw2go), so their annotations must now come from the DANRE-mod file. **Map** these GO_REFs to ZFIN pubs (do NOT exclude):
+    - `GO_REF:0000002` → InterPro2GO (InterPro / ECO:0000256, **28,691 rows**) — reuse existing InterPro2GO pub `ZDB-PUB-020724-1`.
+    - `GO_REF:0000003` → EC2GO (UniProt / ECO:0000501, **3,173 rows**) — reuse existing EC2GO pub `ZDB-PUB-031118-3`.
+    - Clears **31,864 of the 34,044** GO_REF errors. ⚠️ **CORRECTION (2026-07-08, see committed README §2):** the earlier "kw2go — nothing to take over" was wrong. `GO_REF:0000004` (UniProtKB-Keyword) *is* absent from both DANRE files (GO retired it), but ZFIN's secondary load **still actively produces 41,027 kw2go annotations** (`ZDB-PUB-020723-1`, in the current DB) — so there is no successor and dropping the handler loses them. The loss is largely broad ancestor terms subsumed by more-specific surviving terms (spot-checked), but must be quantified/decided, not assumed empty. Also: `DANRE-mod` under-covers InterPro2GO (28,509 vs the secondary load's 65,327) and the `*2go` rows land in `GOA` while the secondary load owns them under `UniProt` (duplication) — see §4c and the committed `README-danre-mod-consolidation.md`.
+    - Implementation: add `GoDefaultPublication` entries whose `title()` is the GO_REF string (so they land in `goRefPubMap`) → the pub ZDB IDs above; ensure `getGoRefPubs()` returns them. Reconfirms §1 Correction: drop ONLY the secondary load's GO-mapping handlers, keep its dblink/domain/PDB refresh.
+    - ⚠️ **REVISIT (2026-07-07, §4c):** the *mapping* is done, but the handover isn't clean: `DANRE-mod` supplies only **28,509** InterPro2GO vs the secondary load's **65,327** (under-coverage), and the unified load writes them to `GOA` while the secondary load owns them under `UniProt` (duplication). Resolve the source-file and org questions below before treating D6 as complete.
+- **Source file: `DANRE-mod` vs `DANRE-uniprot` vs both (NEW, 2026-07-07, §4c).** Both exist at `https://current.geneontology.org/annotations/gpad/` — note `http://` **301-redirects**, so fetch via `https`/`curl -L` or you get an empty 167-byte redirect page. `DANRE-uniprot` carries far more of the UniProt-derived IEA the secondary load replaces (InterPro2GO **43,882** vs 28,691; EC2GO 5,400 vs 3,173; UniProt 71,243 vs 52,732; RNAcentral 8,969 vs 55; GOC 6,477 vs 2,125). The branch consumes `DANRE-mod` only → under-covers mapping2go. Decide: switch to `DANRE-uniprot`, or consume both. (Neither file recovers the Noctua experimental loss — flt1 absent as subject from both; see §4b.)
+- **`*2go` ownership org (NEW, 2026-07-07, §4c).** Route the `*2go` GO_REFs to the **same organization the secondary load uses (`UniProt`)** instead of `GOA`, or add an explicit `UniProt`-org purge/migration at cutover — otherwise the old (UniProt) and new (GOA) copies coexist. Identify the existing rows by `gafOrganization='UniProt'`, NOT `created_by=ZFIN` (which also tags the 36,011 Noctua rows).
+- **`GO_REF:0000115` RNAcentral InterPro-family (55 rows):** map alongside `0000002` or leave? Tiny; likely map for consistency.
+- **GOC / `GO_REF:0000108` (~2,125 rows):** adopt (new org or fold into GOA) or keep rejecting? Currently net-new.
+- **Phylo IBA org:** keep under GOA, or a dedicated org to preserve the FP-Inference identity in reporting?
+- **GPAD vs GAF:** plan assumes GPAD (RO relations + model-ids + existing parser). Confirm.
+- **Removal scope on first cutover:** initial map must reproduce legacy ownership so the first real diff is ~no-op, not a churn of mass add+remove.

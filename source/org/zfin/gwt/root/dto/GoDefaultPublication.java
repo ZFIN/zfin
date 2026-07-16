@@ -24,6 +24,13 @@ public enum GoDefaultPublication implements PubEnum {
     GOREF_ADD("GO_REF:0000015", "ZDB-PUB-031118-1"),
     GOREF_RHEA("GO_REF:0000116", "ZDB-PUB-221108-20", InferenceCategory.RHEA),
     GOREF_ARBA("GO_REF:0000117", "ZDB-PUB-221108-21", InferenceCategory.ARBA),
+    // ZFIN-10025: the unified DANRE-mod load takes the interpro2go / ec2go IEA annotations
+    // directly from the file, because the UniProt-Secondary load is dropping its *2go
+    // GO-mapping handlers. Map these GO_REFs to the same pubs those annotations have always
+    // been attributed to (declared after the legacy INTERPRO/EC entries so getPubForZdbID
+    // still resolves those shared pub IDs to the original constants).
+    GOREF_INTERPRO2GO("GO_REF:0000002", "ZDB-PUB-020724-1", InferenceCategory.INTERPRO, false),
+    GOREF_EC2GO("GO_REF:0000003", "ZDB-PUB-031118-3", InferenceCategory.EC, false),
     ;
 
     private final String title;
@@ -107,6 +114,8 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_ENSEMBL_NOTINF);
             goRefPubs.add(GOREF_RHEA);
             goRefPubs.add(GOREF_ARBA);
+            goRefPubs.add(GOREF_INTERPRO2GO);
+            goRefPubs.add(GOREF_EC2GO);
         }
         return goRefPubs;
     }
