@@ -42,6 +42,26 @@ def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 def zfinrelease = env['ZFIN_RELEASE']
 String targetroot = env['TARGETROOT']
 
+// Standalone zfin-static repo (served static content: zf_info reference pages,
+// images, ZFIN, robots.txt, favicon.ico, analytics.js). `make` downloads a
+// pinned release tarball from this repo and extracts it into the Apache
+// DocumentRoot instead of copying a local static/ tree.
+//
+// zfinStaticRepo is the "owner/name" GitHub slug -- parameterized because the
+// repo will graduate to a different namespace (e.g. ZFIN/zfin-static) later.
+// zfinStaticVersion is the release tag to deploy. Override either at runtime
+// with -PzfinStaticRepo=.../-PzfinStaticVersion=vX.Y.Z or the ZFIN_STATIC_REPO
+// / ZFIN_STATIC_VERSION env vars. Bump the version to deploy a new snapshot.
+// Releases: https://github.com/<zfinStaticRepo>/releases
+def zfinStaticRepo = env['ZFIN_STATIC_REPO'] ?: 'rtaylorzfin/zfin-static'
+def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.0.0'
+// Dedicated volume the release is extracted into. The static content lives here
+// (exclusively static-repo-owned) and is symlinked into the Apache DocumentRoot,
+// so the app's docroot and the static content stay on separate volumes with no
+// shared directory. Override with ZFIN_STATIC_DIR. Must be mounted in the httpd
+// container and granted in docker/httpd/conf-local (<Directory /opt/zfin/static>).
+def zfinStaticDir = env['ZFIN_STATIC_DIR'] ?: '/opt/zfin/static'
+
 
 task deployPostgres(dependsOn: ['deployPostgresFunctions',
                                 'deployPostgresTriggers']) {
@@ -395,6 +415,104 @@ public enum ZfinPropertiesEnum {
     }
 }
 
+// ----------------------------------------------------------------------------
+// Static content deploy from the standalone zfin-static release.
+//
+// `make` downloads the pinned zfinStaticVersion tarball from
+//   https://github.com/<zfinStaticRepo>/releases
+// and extracts it into a DEDICATED volume (zfinStaticDir, default /opt/zfin/static),
+// then symlinks each top-level entry (zf_info/, images/, ZFIN/, robots.txt,
+// favicon.ico, analytics.js) into the Apache DocumentRoot ($TARGETROOT/home). The
+// static content and the app's docroot thus live on separate volumes with NO
+// shared directory; Apache serves the symlinked paths as normal static files
+// (FollowSymLinks + a <Directory /opt/zfin/static> grant in conf-local). Deployed
+// URLs are unchanged.
+//
+// Because the static volume is exclusively static-repo-owned, the extract is
+// WIPE-FIRST: the release-owned entries in zfinStaticDir are cleared before
+// extracting, so files removed upstream don't linger. (Safe here precisely
+// because nothing else -- app build output, instance state -- lives in that
+// volume; contrast the co-tenanted docroot.)
+//
+// Idempotent: a stamp at zfinStaticDir/.zfin-static-version records the deployed
+// tag. If it already matches, the download+extract is skipped; symlinks are
+// re-asserted regardless (cheap). The tarball is integrity-checked against its
+// published .sha256 before extraction. Bump zfinStaticVersion to roll fwd/back.
+//
+// NOTE: supersedes the local static/ copy tasks below (home;root/images/zf_info/
+// ZFIN;deployFiles), kept defined but out of `make` as a local-copy fallback
+// until the static/ tree is removed from this repo.
+// ----------------------------------------------------------------------------
+task "home;static;deployFromRelease" {
+    doLast {
+        def repo      = project.hasProperty('zfinStaticRepo') ? project.zfinStaticRepo : zfinStaticRepo
+        def version   = project.hasProperty('zfinStaticVersion') ? project.zfinStaticVersion : zfinStaticVersion
+        def staticDir = new File(project.hasProperty('zfinStaticDir') ? project.zfinStaticDir : zfinStaticDir)
+        def homeDir   = new File("${targetroot}/home")
+        def stamp     = new File(staticDir, ".zfin-static-version")
+
+        def tarName = "zfin-static-${version}.tar.gz"
+        def tarUrl  = "https://github.com/${repo}/releases/download/${version}/${tarName}"
+        def shaUrl  = "${tarUrl}.sha256"
+
+        staticDir.mkdirs()
+        homeDir.mkdirs()
+
+        // (Re)create a docroot symlink for each release-owned top-level entry.
+        def linkEntriesIntoDocroot = {
+            staticDir.listFiles().findAll { !it.name.startsWith('.') }.each { entry ->
+                def link = new File(homeDir, entry.name)
+                exec { commandLine "rm", "-rf", link.absolutePath }        // drop stale file/dir/symlink
+                exec { commandLine "ln", "-s", entry.absolutePath, link.absolutePath }
+            }
+        }
+
+        // Idempotency: if already at this version, just re-assert the symlinks.
+        if (stamp.exists() && stamp.text.trim() == version) {
+            println "zfin-static ${version} already in ${staticDir}; re-asserting docroot symlinks."
+            linkEntriesIntoDocroot()
+            return
+        }
+
+        // Download + verify into a temp dir OUTSIDE the static volume (so the
+        // wipe-first step can clear the volume without touching the download).
+        def tmpDir = new File("${targetroot}/.zfin-static-download")
+        tmpDir.deleteDir()
+        tmpDir.mkdirs()
+        def tarFile = new File(tmpDir, tarName)
+        def shaFile = new File(tmpDir, "${tarName}.sha256")
+
+        println "Downloading ${tarUrl}"
+        exec { commandLine "curl", "-fsSL", "-o", tarFile.absolutePath, tarUrl }
+        exec { commandLine "curl", "-fsSL", "-o", shaFile.absolutePath, shaUrl }
+
+        // Verify integrity (pure-JVM SHA-256; no external checksum tool needed).
+        def expected = shaFile.text.trim().split(/\s+/)[0].toLowerCase()
+        def digest = java.security.MessageDigest.getInstance("SHA-256")
+        tarFile.eachByte(64 * 1024) { buf, len -> digest.update(buf, 0, len) }
+        def actual = digest.digest().encodeHex().toString().toLowerCase()
+        if (expected != actual) {
+            throw new GradleException("zfin-static ${version} checksum mismatch: expected ${expected}, got ${actual}")
+        }
+        println "Checksum OK (sha256 ${actual})"
+
+        // Wipe-first: clear release-owned entries (keep dotfiles like the stamp),
+        // then extract the new release into the dedicated volume.
+        staticDir.listFiles().findAll { !it.name.startsWith('.') }.each {
+            exec { commandLine "rm", "-rf", it.absolutePath }
+        }
+        exec { commandLine "tar", "-xzf", tarFile.absolutePath, "-C", staticDir.absolutePath }
+
+        stamp.text = version + "\n"
+        tmpDir.deleteDir()
+
+        linkEntriesIntoDocroot()
+        println "Deployed zfin-static ${version} into ${staticDir} and symlinked into ${homeDir}"
+    }
+}
+
+// SUPERSEDED by home;static;deployFromRelease (above) -- kept as a local-copy
+// fallback; no longer wired into `make`.
 task 'home;root;deployFiles' {
     doLast {
         // Sources moved to static/ but still deploy into $TARGETROOT/home (Apache
@@ -519,10 +637,7 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
-             'home;root;deployFiles',
-             'home;images;deployFiles',
-             'home;zf_info;deployFiles',
-             'home;ZFIN;deployFiles',
+             'home;static;deployFromRelease',
              'server_apps;apache;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
@@ -1708,9 +1823,10 @@ task npmInstall(type: Exec) {
     outputs.dir 'node_modules'
 }
 
-// analytics.js is now a committed static file (static/analytics.js) that selects the
-// GA4 id by hostname at runtime; it deploys via the `home;root;deployFiles` task
-// (into $TARGETROOT/home) like robots.txt/favicon.ico. No per-instance generation step.
+// analytics.js is a static file (in the zfin-static release, alongside robots.txt
+// and favicon.ico) that selects the GA4 id by hostname at runtime; it deploys into
+// $TARGETROOT/home via the `home;static;deployFromRelease` task. No per-instance
+// generation step.
 
 task npmBuild(type: Exec) {
     description = 'Build frontend assets with webpack'

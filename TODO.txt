@@ -137,24 +137,36 @@ Remaining work before this is production-ready
     0px (placeholder and injected header both put <main> at top:90). Footer not
     reserved (last on the page, doesn't shift content).
 [ ] Decide caching/behavior for the chrome fragments (short TTL? ETag?).
-[ ] No-JS / SEO (DEFERRED -- decision, no code yet): raw static HTML has the page
-    content + <title> + in-content links inline (crawlable), and all pages are in
-    the sitemap, but header/footer nav only appears after zfin-chrome.js runs, so a
-    no-JS client / non-rendering crawler sees no site navigation. Options: (1) accept
-    (Google renders JS; sitemap covers discovery); (2) add a small static nav +
-    skip-link (optionally in <noscript>) as cheap insurance -- RECOMMENDED; (3) bake
-    full chrome server-side (rejected: header is login-aware); (4) Apache SSI
-    (mod_include -- already loaded in the httpd image; /home dirs already have
-    Options IncludesNOEXEC, so only need `AddOutputFilter INCLUDES .html` or .shtml):
+[x] No-JS / SEO: raw static HTML has the page content + <title> + in-content
+    links inline (crawlable), and all pages are in the sitemap, but header/footer
+    nav only appeared after zfin-chrome.js runs, so a no-JS client / non-rendering
+    crawler saw no site navigation. DONE via option (2) -- implemented in the
+    zfin-static repo's shared Eleventy layout (src/_includes/layout.njk), so it is
+    baked into all ~388 pages at build time from one source:
+      - accessibility skip-link ("Skip to main content" -> <main id="main">),
+        off-screen until keyboard-focused;
+      - a <noscript> fallback nav with the app's real top-level links (Genes/
+        Clones, Expression, Mutants/Tg, Antibodies, Anatomy/GO, Publications,
+        Downloads, The Zebrafish Book) + the real search form (GET /search?q=).
+    Inside <noscript> so it never duplicates the JS-injected header -- NO change
+    to zfin-chrome.js. Ships to prod when a zfin-static release >= v1.1.0 is cut
+    and the pinned zfinStaticVersion (build.gradle) is bumped.
+    (NOTE: the pages are now Eleventy-templated in the zfin-static repo -- each is
+    a front-matter title + <main> body fragment wrapped by the single layout --
+    which is what makes a shell-wide change like this a one-file edit. The main
+    repo's static/ tree is the pre-templatization copy; it is no longer the source
+    of truth for the deployed pages.)
+    Options considered: (1) accept (Google renders JS; sitemap covers discovery);
+    (2) small static nav + skip-link in <noscript> -- CHOSEN; (3) bake full chrome
+    server-side (rejected: header is login-aware); (4) Apache SSI (mod_include --
+    already loaded in the httpd image; /home dirs already have Options
+    IncludesNOEXEC, so only need `AddOutputFilter INCLUDES .html` or .shtml):
     replace the data-zfin-chrome-* mounts with <!--#include virtual="..."-->. A
     `virtual` include runs the full request pipeline, so it can pull STATIC partials
     AND proxy the login-aware header from Tomcat (virtual="/action/layout/header").
     Trade-off: Apache must parse each page (no sendfile, weaker Last-Modified/ETag
     caching) and the dynamic-header include hits Tomcat on every request -- partly
-    undoing "pure static". Sweet spot = SSI-include only a STATIC footer + minimal
-    nav/skip-link partial (option 2 via SSI: single source of truth, no per-hit
-    Tomcat call) and keep the full login-aware header as the JS enhancement.
-    Left as (1) for now.
+    undoing "pure static". Option (4) left unused now that (2) covers the need.
 [x] Bulk conversion script: convert-zfbook-to-static.groovy (Groovy, no new language;
     takes [glob] [excludeGlob] so it converts any zf_info batch). Ported from the
     original Python; verified it reproduces the committed page bodies/titles byte-for-byte.

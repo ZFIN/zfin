@@ -59,8 +59,18 @@ SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.
 <Directory /srv/www/*/home/WEB-INF>
   Require all denied
 </Directory>
-<Directory /srv/www/*/home/ZFIN/APP_PAGES>
-  Require all denied
+
+# Static content (zf_info, images, ZFIN, robots.txt, favicon.ico, analytics.js)
+# is deployed to its own volume at /opt/zfin/static and symlinked into each
+# DocumentRoot (/srv/www/*/home). FollowSymLinks on the home dir (above) lets
+# Apache follow those links; this block grants access to the resolved target
+# path -- without it the global "<Directory /> Require all denied" would win.
+<Directory /opt/zfin/static>
+  Options FollowSymLinks IncludesNOEXEC
+  <RequireAll>
+    Require all granted
+    Require not env RejectRequest
+  </RequireAll>
 </Directory>
 
 #Don't expire webpack controlled files
