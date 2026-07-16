@@ -8,8 +8,8 @@ instead of rendering them through JSP/Tomcat via StaticFileController.
 Proof-of-concept pieces already in this branch
 ----------------------------------------------
 - convert-zfbook-to-static.groovy       one-shot zf_info JSP -> static HTML converter
-                                        (run `groovy convert-zfbook-to-static.groovy [glob] [excludeGlob]`
-                                        from the repo root; migration is complete, kept for the record)
+                                        (migration complete; the file has been removed --
+                                        recover from git history if ever needed again)
 - conf/analytics.js.template            per-instance GA4 loader template (@GA4_ANALYTICS_ID@)
 - build.gradle                          GA4_ANALYTICS_ID added to translateVariableSet;
                                         new `generateAnalyticsJs` task, run after `npmBuild`
