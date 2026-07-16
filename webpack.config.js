@@ -106,7 +106,7 @@ const config = {
             {
                 //old method was supposed to inline any assets smaller than 8k as base64 data-uris
                 //new method: https://stackoverflow.com/a/67514465
-                test: /\.(woff2?|ttf|eot|svg|gif|png)$/,
+                test: /\.(woff2?|ttf|eot|svg|gif|png|webp|avif)$/,
                 type: 'asset/resource'
             },
         ]

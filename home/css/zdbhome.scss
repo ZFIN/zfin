@@ -16,7 +16,16 @@ body.home {
     box-shadow: $shadow-elevated;
     margin-bottom: 60px;
     margin-top: -10px;
-    background: url(../images/search-background.png) 50% 90%;
+    // Dark tone sampled from the photo: renders instantly (no blank flash) and
+    // is the fallback for browsers without image-set/webp. The photo layers on top.
+    background-color: #192829;
+    // AVIF (~38KB) with a WebP (~50KB) fallback, replacing a 1.4MB PNG. The plain
+    // url() is the pre-image-set fallback; image-set picks AVIF where supported.
+    background-image: url(../images/search-background.webp);
+    background-image: image-set(
+        url(../images/search-background.avif) type("image/avif"),
+        url(../images/search-background.webp) type("image/webp"));
+    background-position: 50% 90%;
     background-size: cover;
     padding: 90px 0;
     position: relative;
