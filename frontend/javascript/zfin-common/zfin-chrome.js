@@ -41,15 +41,21 @@ function inject(mount, html) {
     mount.replaceWith(tpl.content);
 }
 
-// Client-side cache for the fetched fragments, in localStorage with a 15-minute
+// Client-side cache for the fetched fragments, in localStorage with a 24-hour
 // TTL. This is deliberately independent of the HTTP cache, which proved
 // unreliable for this response (Tomcat-proxied, chunked, login-aware): Vary:
 // Cookie never hits because Google Analytics rewrites its _ga_* cookies every
 // page view, and Chrome would not even store a response that Varies on a custom
 // request header. Here WE own the cache instead of the browser: on a hit we
 // inject with no network request at all.
+//
+// A long TTL is safe because the only things that change the chrome are handled
+// out-of-band: login/logout busts the cache immediately via the token below, and
+// the one deploy-sensitive bit (the footer's release number) is staff-only -- a
+// re-login refreshes it. So the TTL only bounds how long a rare header/footer
+// markup change takes to propagate.
 const CACHE_PREFIX = 'zfin-chrome:';
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 // A per-login-state token stored alongside each cache entry so the cache busts
 // automatically on login/logout (the value changes) and is per-session (so a
