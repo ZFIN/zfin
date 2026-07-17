@@ -725,6 +725,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return session.createQuery(query).list();
     }
 
+    @Override
+    public List<ReplacementZdbID> getReplacementsForNewZdbID(String newZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Query<ReplacementZdbID> query = session.createQuery(
+                "from ReplacementZdbID where replacementZdbID = :newZdbID", ReplacementZdbID.class);
+        query.setParameter("newZdbID", newZdbID);
+        return query.list();
+    }
+
     public List<DataAlias> getDataAliases(String aliasLowerName) {
         Session session = HibernateUtil.currentSession();
         Query<DataAlias> query = session.createQuery("from DataAlias WHERE aliasLowerCase = :aliasLowerCase", DataAlias.class);

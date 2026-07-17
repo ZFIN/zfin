@@ -27,6 +27,13 @@ docker/elasticsearch/state/
 .idea
 *.iml
 
+# Eclipse things
+.classpath
+.project
+.factorypath
+.settings/
+bin/
+
 # Mac cruft
 .DS_Store
 ._*

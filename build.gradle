@@ -634,9 +634,10 @@ task getLatestSolrUnload() {
         // Remote layout is /research/zunloads/solr/<INSTANCE>/v9/.
         def sourceInstance = project.findProperty('solrSourceInstance') ?: 'zfindb'
         def remoteDir = "/research/zunloads/solr/${sourceInstance}/v9"
-        // Local dumps are stored flat under v9, so the remote snapshot.* dir
-        // lands directly in v9/. `loadsolr` restores from the same location.
-        def localDir  = "${solrunloadspath}/v9"
+        // Local dumps mirror the remote per-instance layout: the fetched
+        // snapshot.* lands under <instance>/v9 (default zfindb), which is
+        // exactly where `loadsolr` restores from.
+        def localDir  = "${solrunloadspath}/${sourceInstance}/v9"
         // One ssh, list everything, classify locally. We need both the
         // snapshot.* match and a way to detect the legacy full-SOLR_HOME
         // dump format (no snapshot. prefix) so the cutover message is
@@ -729,9 +730,12 @@ task getLatestPostgresFilesTrunk() {
 // anywhere instead (mirrors loaddb's -DB=<dump>).
 task getLatestSolrIndex() {
     doLast {
-        // Local dumps live flat under v9 (no per-instance subdir); matches the
-        // layout `getsolr` writes into.
-        def location = "${solrunloadspath}/v9"
+        // Restore from the shared production snapshot by default: <base>/zfindb/v9.
+        // Override the source instance with -PsolrSourceInstance=<name> (same
+        // property `getsolr` uses); an explicit -DsolrDump=<snapshot dir> still
+        // wins below.
+        def restoreInstance = project.findProperty('solrSourceInstance') ?: 'zfindb'
+        def location = "${solrunloadspath}/${restoreInstance}/v9"
         def selectedName
 
         if (System.getProperty("solrDump")) {

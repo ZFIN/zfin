@@ -5,15 +5,10 @@ main() {
 
 if [[ -n "$2" ]]
 then
-  validateFile ZFIN_1.0.1.4_basicGeneInformation.json.gz BGI
-  validateFile ZFIN_1.0.1.4_allele.json.gz ALLELE
   validateFile ZFIN_1.0.1.4_STR.json.gz SQTR
-  validateFile ZFIN_1.0.1.4_disease.daf.json.gz DAF
-  validateFile ZFIN_1.0.1.4_Construct.json.gz CONSTRUCT
   validateFile ZFIN_1.0.1.4_HTP_Dataset.json.gz HTPDATASET
   validateFile ZFIN_1.0.1.4_HTP_DatasetSample.json.gz HTPDATASAMPLE
   validateFile ZFIN_1.0.1.4_phenotype.json.gz PHENOTYPE
-  validateFile ZFIN_1.0.1.4_AGM.json.gz AGM
   validateFile ZFIN_1.0.1.4_expression.json.gz EXPRESSION
   validateFile ZFIN_1.0.1.4_variant.json.gz VARIATION
   validateFile zfin_genes.gff3 GFF
