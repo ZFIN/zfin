@@ -41,12 +41,53 @@ function inject(mount, html) {
     mount.replaceWith(tpl.content);
 }
 
+// Client-side cache for the fetched fragments, in localStorage with a 5-minute
+// TTL. This is deliberately independent of the HTTP cache, which proved
+// unreliable for this response (Tomcat-proxied, chunked, login-aware): Vary:
+// Cookie never hits because Google Analytics rewrites its _ga_* cookies every
+// page view, and Chrome would not even store a response that Varies on a custom
+// request header. Here WE own the cache instead of the browser: on a hit we
+// inject with no network request at all.
+const CACHE_PREFIX = 'zfin-chrome:';
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+// A per-login-state token stored alongside each cache entry so the cache busts
+// automatically on login/logout (the value changes) and is per-session (so a
+// shared browser never reuses one user's cached header for the next). The
+// `zfin_login` cookie is the natural signal; the token stays in localStorage and
+// is never transmitted, so no hashing is needed. Logged out (no cookie) -> "0".
+function loginToken() {
+    const m = document.cookie.match(/(?:^|;\s*)zfin_login=([^;]+)/);
+    return m ? m[1] : '0';
+}
+
 async function loadFragment(url) {
-    const response = await fetch(url, { credentials: 'same-origin' });
+    const key = CACHE_PREFIX + url;
+    const token = loginToken();
+
+    try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+            const hit = JSON.parse(raw);
+            if (hit && hit.token === token && typeof hit.html === 'string'
+                && (Date.now() - hit.ts) < CACHE_TTL_MS) {
+                return hit.html; // fresh + same login state -> no network at all
+            }
+        }
+    } catch (e) { /* private mode / bad JSON -> fall through and fetch */ }
+
+    // Miss: fetch fresh. `no-store` bypasses the HTTP cache so a just-logged-in
+    // user can never be served a stale logged-out fragment; localStorage is the
+    // single source of truth for the TTL window.
+    const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
     if (!response.ok) {
         throw new Error(`chrome fetch failed: ${url} -> ${response.status}`);
     }
-    return response.text();
+    const html = await response.text();
+    try {
+        localStorage.setItem(key, JSON.stringify({ html, ts: Date.now(), token }));
+    } catch (e) { /* quota / private mode -> just skip caching */ }
+    return html;
 }
 
 $(async () => {
