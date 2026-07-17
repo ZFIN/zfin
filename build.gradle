@@ -47,14 +47,16 @@ String targetroot = env['TARGETROOT']
 // pinned release tarball from this repo and extracts it into the Apache
 // DocumentRoot instead of copying a local static/ tree.
 //
-// zfinStaticRepo is the "owner/name" GitHub slug -- parameterized because the
-// repo will graduate to a different namespace (e.g. ZFIN/zfin-static) later.
+// zfinStaticRepo is the "owner/name" GitHub slug. The default is the repo's
+// eventual home under the ZFIN org; while the content still lives on the
+// development fork, override it with ZFIN_STATIC_REPO=rtaylorzfin/zfin-static
+// (the dev stack does this in its compose override).
 // zfinStaticVersion is the release tag to deploy. Override either at runtime
 // with -PzfinStaticRepo=.../-PzfinStaticVersion=vX.Y.Z or the ZFIN_STATIC_REPO
 // / ZFIN_STATIC_VERSION env vars. Bump the version to deploy a new snapshot.
 // Releases: https://github.com/<zfinStaticRepo>/releases
-def zfinStaticRepo = env['ZFIN_STATIC_REPO'] ?: 'rtaylorzfin/zfin-static'
-def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.0.0'
+def zfinStaticRepo = env['ZFIN_STATIC_REPO'] ?: 'zfin/zfin-static'
+def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.3.1'
 // Dedicated volume the release is extracted into. The static content lives here
 // (exclusively static-repo-owned) and is symlinked into the Apache DocumentRoot,
 // so the app's docroot and the static content stay on separate volumes with no
@@ -494,8 +496,8 @@ task "home;static;deployFromRelease" {
 
         // Wipe-first: clear release-owned entries (keep dotfiles like the stamp),
         // then extract the new release into the dedicated volume.
-        staticDir.listFiles().findAll { !it.name.startsWith('.') }.each {
-            exec { commandLine "rm", "-rf", it.absolutePath }
+        staticDir.listFiles().findAll { !it.name.startsWith('.') }.each { entry ->
+            exec { commandLine "rm", "-rf", entry.absolutePath }
         }
         exec { commandLine "tar", "-xzf", tarFile.absolutePath, "-C", staticDir.absolutePath }
 
