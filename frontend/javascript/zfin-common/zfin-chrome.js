@@ -41,7 +41,7 @@ function inject(mount, html) {
     mount.replaceWith(tpl.content);
 }
 
-// Client-side cache for the fetched fragments, in localStorage with a 5-minute
+// Client-side cache for the fetched fragments, in localStorage with a 15-minute
 // TTL. This is deliberately independent of the HTTP cache, which proved
 // unreliable for this response (Tomcat-proxied, chunked, login-aware): Vary:
 // Cookie never hits because Google Analytics rewrites its _ga_* cookies every
@@ -49,7 +49,7 @@ function inject(mount, html) {
 // request header. Here WE own the cache instead of the browser: on a hit we
 // inject with no network request at all.
 const CACHE_PREFIX = 'zfin-chrome:';
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 // A per-login-state token stored alongside each cache entry so the cache busts
 // automatically on login/logout (the value changes) and is per-session (so a
