@@ -5,11 +5,6 @@
 <%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
 <%@ attribute name="omitZfinCommonJS" required="false" type="java.lang.Boolean" %>
 
-<c:set var="GA4_ANALYTICS_ID" value="${ZfinPropertiesEnum.GA4_ANALYTICS_ID.value()}" />
-<c:if test="${empty GA4_ANALYTICS_ID}">
-    <c:set var="GA4_ANALYTICS_ID" value="0" />
-</c:if>
-
 <c:set var="INSTANCE" value="${ZfinPropertiesEnum.INSTANCE.value()}" />
 <c:if test="${empty INSTANCE}">
     <c:set var="INSTANCE" value="Unknown Instance" />
@@ -36,14 +31,9 @@
             <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
         </c:if>
 
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA4_ANALYTICS_ID}');
-        </script>
+        <!-- Analytics: single host-switched loader (same /analytics.js the static
+             pages use) -- picks the GA4 id by hostname; one source of truth. -->
+        <script src="/analytics.js"></script>
 
     </head>
 

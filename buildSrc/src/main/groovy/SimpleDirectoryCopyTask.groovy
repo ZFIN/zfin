@@ -1,5 +1,6 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.GradleException
@@ -10,6 +11,14 @@ class SimpleDirectoryCopyTask extends DefaultTask {
 
     @Input
     String sourcePath
+
+    // Deploy destination relative to targetroot. Defaults to sourcePath (source layout
+    // == deployed layout). Set this when the source tree location differs from the
+    // deployed location, e.g. sourcePath='static/zf_info' but targetPath='home/zf_info'
+    // so Apache keeps serving it from $TARGETROOT/home without any config change.
+    @Input
+    @Optional
+    String targetPath
 
     @Input
     List<String> includes = []  // List of file extensions to include (e.g., 'sh', 'sql')
@@ -72,7 +81,7 @@ class SimpleDirectoryCopyTask extends DefaultTask {
         def debugMode = false
         println "Starting copy task for sourcePath: $sourcePath"
 
-        def targetDir = new File("$targetroot/$sourcePath")
+        def targetDir = new File("$targetroot/${targetPath ?: sourcePath}")
         def sourceDir = new File(sourcePath)
 
         if (!sourceDir.exists()) {

@@ -43,7 +43,7 @@ contain the whole architectural idea; everything else is plumbing.
      `Options`, `Rule`)
    - `FIELDS` is the path → (read, write) dispatch table
 
-3. **`home/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — the
+3. **`frontend/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — the
    React side. The whole client form is ~240 lines. Notice:
    - Fetches the schema from the server via React Query
    - The `diffLeaves` function (lines ~95–121) — recursively walks
@@ -108,23 +108,23 @@ order:
 
 ### Step 3 — Frontend, in the order React mounts (15 min)
 
-1. **`home/javascript/react/zirc/api/types.ts`** — TypeScript mirrors
+1. **`frontend/javascript/react/zirc/api/types.ts`** — TypeScript mirrors
    of the Java DTO records. Hand-typed, not generated. Source of truth
    on the wire.
 
-2. **`home/javascript/react/zirc/api/client.ts`** — ~50 lines. The
+2. **`frontend/javascript/react/zirc/api/client.ts`** — ~50 lines. The
    `api` object has `get` / `post` / `patch` / `delete` / `upload`
    methods. Notice the `FormData` detection in `request()` so the
    browser sets the multipart boundary itself.
 
-3. **`home/javascript/react/zirc/api/queries.ts`** — React Query hooks
+3. **`frontend/javascript/react/zirc/api/queries.ts`** — React Query hooks
    (`useLineSubmission`, `useAddMutation`, `useUploadAttachment`,
    etc.). Each is ~10 lines.
 
-4. **`home/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — covered
+4. **`frontend/javascript/react/zirc/schemaForm/SchemaForm.tsx`** — covered
    above. Re-read with the API client in mind now.
 
-5. **`home/javascript/react/zirc/schemaForm/renderers/`** — 17 custom
+5. **`frontend/javascript/react/zirc/schemaForm/renderers/`** — 17 custom
    JSON Forms renderers. Don't read all of them; pick:
    - `RowControlRenderer.tsx` — the workhorse table-row Control for
      string fields. Shows the `options` vocabulary
@@ -149,14 +149,14 @@ order:
    - `PhenotypeTimingRenderer.tsx` — escape-hatch for the hpf/dpf
      unit toggle that needs sibling-field access via `useJsonForms`.
 
-6. **`home/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts`**
+6. **`frontend/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts`**
    — the autosave state machine (schema fetch → null-gated seed →
    mirror-sync → debounced PATCH) shared by every aggregate editor. It
    derives its skip-set / mirror-keys / parent-refresh from the
    uiSchema's per-Control flags. Read this to understand the autosave
    model in one place.
 
-7. **`home/javascript/react/zirc/schemaForm/ZircEntityEditor.tsx`** +
+7. **`frontend/javascript/react/zirc/schemaForm/ZircEntityEditor.tsx`** +
    **`aggregateRegistry.ts`** — one component that renders any inline
    aggregate using the hook. The per-aggregate page files (`AssayEdit`,
    `GeneEdit`, `LesionEdit`, `PhenotypeEdit`) are ~25-line wrappers over
@@ -257,7 +257,7 @@ For Control-level rules, JSON Forms handles it automatically.
 
 ### "Add a new widget type"
 
-1. Write the renderer under `home/javascript/react/zirc/schemaForm/renderers/`
+1. Write the renderer under `frontend/javascript/react/zirc/schemaForm/renderers/`
 2. Register it with `rankWith(20, and(isControl, optionIs("widget",
    "yourWidgetName")))` higher than the default rank of 10
 3. Export it as `*RendererEntry` and add it to the renderers list where
@@ -269,7 +269,7 @@ For Control-level rules, JSON Forms handles it automatically.
 ### "I hit a bug related to autosave"
 
 The autosave state machine lives in one place —
-`home/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts` — used
+`frontend/javascript/react/zirc/schemaForm/useAutosavedSchemaForm.ts` — used
 by `ZircEntityEditor` (the four inline aggregates) and by `MutationEdit`
 directly. The submission page (`schemaForm/SchemaForm.tsx`) is the lone
 exception: it has a create-on-first-save flow and still carries its own
@@ -319,7 +319,7 @@ The most-likely-first answers to common confusions:
 | JSP fails to compile with "Must use jsp:body" | Comments between `<jsp:attribute>` blocks break the parser; move the comment inside an attribute body |
 | `FormSchemaSnapshotTest` fails | A schema/uiSchema change drifted the wire output; rerun with `-Pzirc.snapshot.update=true`, review the diff under `test/resources/zirc/snapshot/`, then commit if intended |
 | `FormSchemaInvariantsTest` fails | The three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the DTO drifted. The failure message names which form and which side is out of sync. Either add the missing entry on the other side, or whitelist the divergence as intentional in the test's `Spec` (e.g. a new server-managed child list) |
-| `GenerateTypeScriptDriftTest` fails | The committed `home/javascript/react/zirc/api/types.ts` is out of sync with the Java DTOs. Run `gradle generateZircTypes` and commit the regenerated file. If you added a new DTO, also list it in `GenerateTypeScript.DTO_CLASSES` so it's emitted. |
+| `GenerateTypeScriptDriftTest` fails | The committed `frontend/javascript/react/zirc/api/types.ts` is out of sync with the Java DTOs. Run `gradle generateZircTypes` and commit the regenerated file. If you added a new DTO, also list it in `GenerateTypeScript.DTO_CLASSES` so it's emitted. |
 | Liquibase says a changeset already ran but it didn't | The dev DB's tracker is out of sync; apply the SQL directly with `psql` for local work — CI runs cleanly |
 
 ---

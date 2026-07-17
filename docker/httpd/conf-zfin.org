@@ -28,9 +28,6 @@
     RedirectMatch permanent /zf_info/stckctr/* http://zebrafish.org/zirc/home/guide.php
 
     Redirect permanent /ZDB/PAPERS http://zfin.org/zf_info/dbase/PAPERS
-    Redirect permanent /cgi-bin/Webdriver http://zfin.org/unavailable/unsupportedLink.html
-    Redirect permanent /cgi-bin_B/webdriver http://zfin.org/unavailable/unsupportedLink.html
-    Redirect permanent /cgi-bin_B/Webdriver http://zfin.org/unavailable/unsupportedLink.html
     Redirect /cgi-bin/downloads http://zfin.org/downloads
     Redirect /tutorial http://zfin.org/zf_info/2006_tutorial/tutorial.html
     Redirect /DataModel http://zfin.org/zf_info/dbase/PAPERS/CurrentDataModel/Database/DataModel/index.htm 

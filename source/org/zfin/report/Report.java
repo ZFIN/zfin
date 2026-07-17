@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-memory model for a generic nested report, matching the schema in
- * {@code home/uniprot/reportmaker/report-schema.json}.
+ * In-memory model for a generic nested report. Serialized to JSON and inlined
+ * into {@code report-template.html} (a classpath resource beside this package)
+ * by {@link ReportWriter}.
  *
  * <p>A report is a tree of {@link ReportNode}s. Reusable definitions for fields,
  * table schemas, tags and categories live in {@link Definitions}. Long-form

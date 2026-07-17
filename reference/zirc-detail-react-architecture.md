@@ -81,7 +81,7 @@ contract from PR #1875) and
                                                  │ Jackson →  JSON over the wire
         =================================  WIRE BOUNDARY  ===================================
                                                  │
-        ┌──────────────── home/javascript/react/zirc ─────────────── (TS / React)
+        ┌──────────────── frontend/javascript/react/zirc ─────────────── (TS / React)
         │
         │  ┌─ containers/ (loader shims for react/index.js) ─┐
         │  │ LineSubmissionEdit.tsx    LineSubmissionDetail.tsx │

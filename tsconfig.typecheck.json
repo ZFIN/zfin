@@ -6,6 +6,6 @@
     "lib": ["es2020", "dom"]
   },
   "include": [
-    "home/javascript/react/zirc/**/*"
+    "frontend/javascript/react/zirc/**/*"
   ]
 }

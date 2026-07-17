@@ -47,6 +47,7 @@ services:
 #      - "127.0.0.1:12345-12354:12345"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
+      - static_data:/opt/zfin/static
       - downloads_data:/opt/zfin/download-files
       - httpd_log:/opt/zfin/log/httpd
       - tls_certs:/opt/zfin/tls
@@ -152,6 +153,7 @@ services:
       - "${DOCKER_HTTPD_HTTPS_PORT:-8443-8452}:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
+      - static_data:/opt/zfin/static
       - httpd_log:/var/log/httpd
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
@@ -392,6 +394,7 @@ volumes:
   gradle_cache:
   maven_cache:
   www_data:
+  static_data:
   httpd_log:
   tls_certs:
   keystore:
