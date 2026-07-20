@@ -411,25 +411,36 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void setInputFileName() {
-        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
-
         //only need an input file if we are generating a report of actions, otherwise, we are loading directly from the actions
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
-            if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
-                log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
-                inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
-                release = releaseOptional.get();
-            } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
-                UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
-                if (latestProcessed == null) {
-                    throw new RuntimeException("No input file specified, no release pending secondary load, and no processed UniProt release to re-run against.");
-                }
-                log.info("No release pending secondary load; re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
-                inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
-                release = latestProcessed;
-            } else if (inputFileName.isEmpty()) {
-                throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
+        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+            return;
+        }
+        if (!inputFileName.isEmpty()) {
+            return;
+        }
+
+        // rerunLatestProcessed is authoritative: a synchronizing re-run (e.g. the scheduled
+        // monthly catch-up load) must run against the most recent ALREADY-PROCESSED release and
+        // ignore any release pending secondary load from a brand-new UniProt release. Pulling in a
+        // new release is a deliberate, manual action (run without UNIPROT_RERUN_LATEST_PROCESSED).
+        if (rerunLatestProcessed) {
+            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+            if (latestProcessed == null) {
+                throw new RuntimeException("No input file specified, and no processed UniProt release to re-run against.");
             }
+            log.info("Re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
+            inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+            release = latestProcessed;
+            return;
+        }
+
+        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
+        if (releaseOptional.isPresent()) {
+            log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
+            inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
+            release = releaseOptional.get();
+        } else {
+            throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
     }
 

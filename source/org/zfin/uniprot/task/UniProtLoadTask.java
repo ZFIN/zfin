@@ -168,8 +168,31 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     }
 
     private void setInputFileName() {
+        if (!inputFileName.isEmpty()) {
+            return;
+        }
+
+        // rerunLatestProcessed is authoritative: a synchronizing re-run (e.g. the scheduled
+        // monthly catch-up load) must run against the most recent ALREADY-PROCESSED release and
+        // ignore any pending new release. Pulling in a new UniProt release is a deliberate,
+        // manual action (run without UNIPROT_RERUN_LATEST_PROCESSED). This is checked before the
+        // unprocessed-release branch so a pending release never silently gets auto-loaded here.
+        if (rerunLatestProcessed) {
+            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+            if (latestProcessed == null) {
+                throw new RuntimeException("No input file specified, and no processed UniProt release to re-run against.");
+            }
+            log.info("Re-running against latest processed UniProt release: " + latestProcessed.getLocalFile().getAbsolutePath() + ".");
+            inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+            release = latestProcessed;
+            if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
+                throw new RuntimeException("No such file (or empty): " + inputFileName);
+            }
+            return;
+        }
+
         Optional<UniProtRelease> latestUnprocessedUniProtRelease = getLatestUnprocessedUniProtRelease();
-        if (inputFileName.isEmpty() && latestUnprocessedUniProtRelease.isPresent()) {
+        if (latestUnprocessedUniProtRelease.isPresent()) {
 
             //if the latest unprocessed release is older than a processed release, throw an exception
             UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
@@ -183,18 +206,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
                 throw new RuntimeException("No such file (or empty): " + inputFileName);
             }
-        } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
-            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
-            if (latestProcessed == null) {
-                throw new RuntimeException("No input file specified, no unprocessed release, and no processed UniProt release to re-run against.");
-            }
-            log.info("No unprocessed UniProt release; re-running against latest processed release: " + latestProcessed.getLocalFile().getAbsolutePath() + ".");
-            inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
-            release = latestProcessed;
-            if (!new File(inputFileName).exists() || new File(inputFileName).length() == 0) {
-                throw new RuntimeException("No such file (or empty): " + inputFileName);
-            }
-        } else if (inputFileName.isEmpty()) {
+        } else {
             throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
     }

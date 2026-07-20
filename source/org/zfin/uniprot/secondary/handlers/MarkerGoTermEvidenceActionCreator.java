@@ -1,8 +1,6 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.ListUtils;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
@@ -16,8 +14,12 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,7 +88,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
         if (notForAnnotations == null) {
             throw new RuntimeException("Could not find subset " + GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS);
         }
-        List<String> termZdbIDs = notForAnnotations.getTerms().stream().map(GenericTerm::getZdbID).toList();
+        Set<String> termZdbIDs = notForAnnotations.getTerms().stream().map(GenericTerm::getZdbID).collect(Collectors.toSet());
         return markerGoTermEvidences.stream()
                 .filter(action -> !termZdbIDs.contains(action.getGoTermZdbID()))
                 .toList();
@@ -94,9 +96,9 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
     public static List<SecondaryTermLoadAction> filterWithdrawnMarkers(List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences) {
         List<Marker> withdrawnMarkers = getMarkerRepository().getWithdrawnMarkers();
-        List<String> withdrawnZdbIDs = withdrawnMarkers.stream()
+        Set<String> withdrawnZdbIDs = withdrawnMarkers.stream()
                 .map(Marker::getZdbID)
-                .toList();
+                .collect(Collectors.toSet());
         return filteredMarkerGoTermEvidences.stream()
                 .filter(action -> !withdrawnZdbIDs.contains(action.getGeneZdbID()))
                 .toList();
@@ -145,11 +147,21 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         //create markerGoTermEvidences for all db links
         log.info("Joining DBLinks (" + dbName + "): with translation records...");
-        //join the set of allDbLinks (load actions and existing db links) to the interpro/ec/spkw translation records
-        List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = Seq.seq(allDbLinks)
-                .innerJoin(translationRecords,
-                        (dbLink, item2go) -> dbLink.getAccession().equals(item2go.dbAccession()))
-                .toList();
+        //join the set of allDbLinks (load actions and existing db links) to the interpro/ec/spkw
+        //translation records. Hash join (group translation records by accession, then look up per
+        //db link) rather than Seq.innerJoin's nested-loop scan, which was O(N*M).
+        Map<String, List<SecondaryTerm2GoTerm>> translationByAccession = translationRecords.stream()
+                .filter(item2go -> item2go.dbAccession() != null)
+                .collect(Collectors.groupingBy(SecondaryTerm2GoTerm::dbAccession));
+        List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = new ArrayList<>();
+        for (DBLinkSlimDTO dbLink : allDbLinks) {
+            List<SecondaryTerm2GoTerm> matches = translationByAccession.get(dbLink.getAccession());
+            if (matches != null) {
+                for (SecondaryTerm2GoTerm item2go : matches) {
+                    joined.add(new Tuple2<>(dbLink, item2go));
+                }
+            }
+        }
         log.info("Count of joined records (" + dbName + "): " + joined.size());
 
         //convert to markerGoTermEvidenceSlimDTOs
@@ -183,10 +195,18 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidences = context.getExistingMarkerGoTermEvidenceRecords(dbName);
 
-        List<MarkerGoTermEvidenceSlimDTO> toAdd = ListUtils.subtract(calculatedMarkerGoTermEvidences, existingMarkerGoTermEvidences);
-        toAdd = toAdd.stream().distinct().toList();
+        // Set-based difference; was ListUtils.subtract, which is O(N*M) via repeated List.contains.
+        Set<MarkerGoTermEvidenceSlimDTO> existingSet = new HashSet<>(existingMarkerGoTermEvidences);
+        Set<MarkerGoTermEvidenceSlimDTO> calculatedSet = new HashSet<>(calculatedMarkerGoTermEvidences);
 
-        List<MarkerGoTermEvidenceSlimDTO> toDelete = ListUtils.subtract(existingMarkerGoTermEvidences, calculatedMarkerGoTermEvidences);
+        List<MarkerGoTermEvidenceSlimDTO> toAdd = calculatedMarkerGoTermEvidences.stream()
+                .filter(record -> !existingSet.contains(record))
+                .distinct()
+                .toList();
+
+        List<MarkerGoTermEvidenceSlimDTO> toDelete = existingMarkerGoTermEvidences.stream()
+                .filter(record -> !calculatedSet.contains(record))
+                .toList();
 
         log.info("Count of marker go term evidences to add (" + dbName + "):  " + toAdd.size());
         //convert marker_go_term_evidence records to load actions

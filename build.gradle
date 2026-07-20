@@ -141,8 +141,12 @@ task loadDatabase() {
             ignoreExitValue = true
             commandLine "bash", "-c", "pg_restore -j 8 -d $dbname $unloadPath"
         }
+        // Stats must be fresh after a reload: a DB with stale planner statistics makes
+        // downstream loads (e.g. UniProt) plan seq scans over large tables and run orders of
+        // magnitude slower (observed: ~1h39m vs ~6m for the UniProt diff load). Do NOT ignore
+        // the exit value here — fail loudly rather than silently leave stale statistics.
         exec {
-            ignoreExitValue = true
+            ignoreExitValue = false
             commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql -v ON_ERROR_STOP=1 $dbname"
         }
     }
