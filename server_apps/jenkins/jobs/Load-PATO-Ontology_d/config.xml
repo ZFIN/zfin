@@ -31,7 +31,7 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>load-quality -DJobName=Load-PATO-Ontology_d</targets>
+            <targets>load-quality -DJobName=Load-PATO-Ontology_d -Djob.output.basedir=$TARGETROOT/server_apps/data_transfer/LoadOntology</targets>
             <buildFile>$SOURCEROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
