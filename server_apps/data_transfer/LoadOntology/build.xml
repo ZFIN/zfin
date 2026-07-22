@@ -467,7 +467,7 @@
         <echo>Downloading OBO file: ${oboFileURL}</echo>
 
         <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes"
-              failonerror="true">
+              failonerror="true" dir="${job.output.basedir}">
             <classpath refid="combined.classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="${run-directory}/${localOboFile}"/>
