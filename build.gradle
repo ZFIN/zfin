@@ -857,6 +857,19 @@ task pushLatestGHCRImages() {
     }
 }
 
+task pushArm64Images() {
+    doLast {
+        println 'Pushing arm64 images to Github Container Registry'
+        for (container in containerList) {
+            println container
+            exec {
+                commandLine 'docker','push',"ghcr.io/zfin/zfin-"+container+":main-arm64"
+                workingDir 'docker/'
+            }
+        }
+    }
+}
+
 task dumpTomcatStack() {
     doLast {
         exec {
