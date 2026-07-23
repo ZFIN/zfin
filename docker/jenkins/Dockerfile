@@ -1,5 +1,6 @@
 ARG ZFIN_RELEASE=main
-FROM ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}
+ARG DOCKER_ARCH=''
+FROM ghcr.io/zfin/zfin-base:${ZFIN_RELEASE}${DOCKER_ARCH}
 
 USER root
 
