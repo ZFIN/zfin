@@ -89,6 +89,15 @@ task createBasicPhenotypeInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicPhenotypeInfo'
 }
 
+// ZFIN-10330 — one-off Moens lab HCR image load.
+// Pass -Pmanifest=<manifest.tsv> -PimageDir=<dir with the .tif files>
+task loadMoensHcrImages(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.figure.MoensHcrImageLoad'
+    args(project.findProperty('manifest') ?: 'tasks/ZFIN-10330/image_load_manifest.tsv',
+         project.findProperty('imageDir') ?: 'tasks/ZFIN-10330/Moens Lab Images')
+}
+
 task createBasicWTExpressionInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicExpressionInfo'
