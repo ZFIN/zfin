@@ -2,14 +2,13 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.tuple.Tuple2;
-import org.zfin.uniprot.persistence.BatchInserter;
+import org.zfin.uniprot.persistence.BatchOperations;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 /**
@@ -48,15 +47,20 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
                         "mtp_mrkr_zdb_id", (Object)action.v1(),
                         "mtp_uniprot_id", action.v2()))
                 .toList();
-        BatchInserter batchInserter = new BatchInserter("marker_to_protein", insertionRows);
-        batchInserter.execute();
+        BatchOperations.bulkInsert("marker_to_protein", insertionRows);
     }
 
 
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
-        }
+        // Bulk delete via a temp-table join. marker_to_protein has no index on
+        // (mtp_mrkr_zdb_id, mtp_uniprot_id), so the previous per-row delete did a sequential scan
+        // each time (~2h for 16k deletes on staging); the join scans the table once.
+        List<Map<String, Object>> keyRows = actions.stream()
+                .map(action -> Map.of(
+                        "mtp_mrkr_zdb_id", (Object) action.getGeneZdbID(),
+                        "mtp_uniprot_id", action.getAccession()))
+                .toList();
+        BatchOperations.bulkDelete("marker_to_protein", List.of("mtp_mrkr_zdb_id", "mtp_uniprot_id"), keyRows);
     }
 
 }
