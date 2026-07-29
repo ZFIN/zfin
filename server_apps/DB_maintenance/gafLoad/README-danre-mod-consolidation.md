@@ -65,6 +65,30 @@ Consequence for cutover: taking these from the DANRE file instead only works whe
 still produces the mapping **and** ships it in the file — true for interpro2go/ec2go
 (though `DANRE-mod` under-covers), false for kw2go (GO retired `GO_REF:0000004`).
 
+### ⚠️ What must SURVIVE in the secondary load (scope limit for ZFIN-10344)
+
+**The secondary load is two jobs in one. Only the GO half may be retired.** An early draft
+of the background notes had this backwards — it placed the InterPro/EC/protein/keyword
+*data refresh* in the **primary** UniProt load, leaving only the external2go GO mappings in
+the secondary load. Acting on that reading would delete the non-GO refresh along with the
+GO handlers, and **`DANRE-mod` supplies none of it**. Verified against the code
+(`UniprotSecondaryTermLoadTask.calculatePipelineActions()`):
+
+| lines | handlers | cutover disposition |
+|---|---|---|
+| 333–343 | dblink refresh: `Remove`/`AddNewDBLinksFromUniProts` × `INTERPRO`, `EC`, `PFAM`, `PROSITE` | **KEEP** |
+| 346–347 | `MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords)` / `(EC, ecToGoRecords)` — interpro2go + ec2go GO terms | **DROP** |
+| 349–350 | `AddNewSpKeywordTermToGo` / `RemoveSpKeywordTermToGo(UNIPROTKB, upToGoRecords)` — kw2go GO terms | **DROP** (no file successor) |
+| 352–355 | `InterproDomain`, `InterproProtein`, `InterproMarkerToProtein`, `ProteinToInterpro` | **KEEP** |
+| 356 | `PDBActionCreator` | **KEEP** |
+
+So ZFIN-10344 removes **four handler registrations (lines 346–350) covering the three
+`*2go` streams** — nothing else. The **primary** load (`UniProtLoadTask`, handlers at
+213–220) does *only* protein→gene matching (UniProtKB dblinks); its pipeline is entirely
+match / ignore / delete / obsolete handlers, with no dblink, domain, or GO work to inherit
+the refresh. Whichever DANRE file we adopt, the dblink/domain/PDB refresh has no
+replacement source and the secondary load must keep running for it.
+
 ---
 
 ## Comparison method (QC harness)
