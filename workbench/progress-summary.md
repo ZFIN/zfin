@@ -1,6 +1,11 @@
 # ZFIN-10025 Unified DANRE-mod GO Load — Progress Summary
 
-_Last updated 2026-07-01. Branch: `ZFIN-10025-danre-mod-unified-load`. Companion to `danre-mod-unified-load-plan.md` (full plan) and `../tmp/go-annotation-loads-status.md` (background)._
+_Last updated 2026-07-29. Branch: `ZFIN-10025-danre-mod-unified-load`. Companion to `danre-mod-unified-load-plan.md` (full plan) and the background status doc (below)._
+
+> **Background status doc — canonical copy (2026-07-29).** `go-annotation-loads-status.md` exists in several places; the only complete one is
+> `/opt/zfin/source_roots/coral/zfin.org/tmp/go-annotation-loads-status.md` (md5 `ab871d39…`, 224 lines, the `main` worktree — **untracked**, so it is absent from this worktree and the `../tmp/…` path above never resolved here).
+> It is the only copy carrying the **2026-06-16 Correction** (primary vs. secondary UniProt load responsibilities) and the 2026-06-17 re-probe. Stale copies in `~/Downloads`, `~/Documents`, and `~/Documents/GOA Load Report/…` stop at 2026-06-10 and state the primary/secondary split **backwards**; the `~/Desktop/Cleanup/…` copy looks newest (mtime 07-28, 2× the size) but is just the 06-16 draft concatenated with itself. Don't work from any of them.
+> The Correction's durable conclusion has been promoted into `README-danre-mod-consolidation.md` ("What must SURVIVE in the secondary load"), so it no longer depends on this untracked file.
 
 **Branch/history note (2026-07-01):** rebased onto latest `origin/main`, then onto `gaf-load-report-improvements` so history is linear: `main → [1 squashed ZFIN-8948 commit: before/after DB snapshot + diff tooling] → [8 ZFIN-10025 commits]`. This brings the legacy-load before/after DB snapshot+diff apparatus (`snapshot_mgte.sh/.sql`, `diff_mgte.sh/.sql`, `CSVDiff`, wired into `Load-GAF-GOA_m` + `Load-GPAD-Noctua_w`) onto our branch for same-vintage legacy-vs-unified comparison. Pre-rebase safety backups: branches `ZFIN-10025-prerebase-backup`, `ZFIN-10025-reconciled-backup`.
 
@@ -11,7 +16,7 @@ Goal: replace the three GO-annotation loads (GAF-GOA, Noctua GPAD, FP-Inference)
 ## 1. What we've done
 
 **Background / analysis**
-- Refreshed the live status of the GOC pipeline refactor: re-probed URLs 2026-06-17 and 2026-06-24 — prod `DANRE-mod` files still **403 (unpublished)**, legacy `/products/` files still 200. Cutoff now reads as **likely slipping** (recorded in the status doc §2/§4).
+- Refreshed the live status of the GOC pipeline refactor: re-probed URLs **2026-06-17** — prod `DANRE-mod` files still **403 (unpublished)**, legacy `/products/` files still 200. Cutoff read as **likely slipping** at the time (recorded in the status doc §2/§4). ⚠️ An earlier version of this line also claimed a **2026-06-24** re-probe "recorded in the status doc" — it isn't: the status doc contains only the 06-10 and 06-17 probes, so treat any 06-24 result as unrecorded. Moot either way: the prod `DANRE-mod` URL went **live 2026-06-30** (see §4a run 3).
 - Established that the new file is **matchable to legacy loads at row granularity**: every `marker_go_term_evidence` row already stores `organizationCreatedBy` (= the source `assigned_by`), so DANRE-mod's `assigned_by` joins directly to existing DB rows. Confirmed the `assigned_by` distributions of the EBI GOA GAF and DANRE-mod are near-identical.
 - File-level diff vs the legacy Noctua source: **5,404 of 31,681 (17%) Noctua annotations are absent from DANRE-mod** — genuine upstream loss (Pascale's "we lose some ZFIN annotations"), concentrated in `RO:0002264`/`RO:0002432` relations.
 
