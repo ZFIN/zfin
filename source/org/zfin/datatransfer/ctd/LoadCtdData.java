@@ -287,14 +287,21 @@ public class LoadCtdData extends AbstractScriptWrapper {
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
         List<TermExternalReference> referenceList = getOntologyRepository().getAllCasReferences();
+        if (referenceList.isEmpty()) {
+            // without any CAS xrefs the mapping below is empty, which would delete every
+            // existing mesh-chebi mapping record, so stop before that happens
+            throw new RuntimeException("No CAS cross references found on CHEBI terms. " +
+                "Check that the CHEBI ontology load populated term_xref with CAS accessions.");
+        }
         List<MeshCasChebiRelation> relations = new ArrayList<>();
 
         referenceList.forEach(reference -> {
             MeshCasChebiRelation relation = new MeshCasChebiRelation();
             relation.setChebi(reference.getTerm().getOboID());
             relation.setChebiName(reference.getTerm().getTermName());
-            if (reference.getPrefix().equals("CAS")) {
-                relation.setCas(reference.getPrefix() + ":" + reference.getAccessionNumber());
+            // CTD reports CAS IDs as CAS:<accession>, so normalize the obo prefix casing to match
+            if (reference.getPrefix().equalsIgnoreCase("CAS")) {
+                relation.setCas("CAS:" + reference.getAccessionNumber());
             }
             relations.add(relation);
         });
