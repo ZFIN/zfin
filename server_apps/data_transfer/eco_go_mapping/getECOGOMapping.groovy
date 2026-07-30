@@ -11,8 +11,8 @@ WORKING_DIR.mkdirs()
 
 // both files have to land in WORKING_DIR: ant runs this script with its working directory in
 // SOURCEROOT, but insert_eco_go_map.sql \copy's gafeco.txt out of TARGETROOT
-File inputFile = new File(WORKING_DIR, DOWNLOAD_URL.tokenize("/")[-1])
-def out = new BufferedOutputStream(new FileOutputStream(inputFile))
+File downloadedFile = new File(WORKING_DIR, DOWNLOAD_URL.tokenize("/")[-1])
+def out = new BufferedOutputStream(new FileOutputStream(downloadedFile))
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
@@ -20,7 +20,7 @@ File outputFile = new File(WORKING_DIR, "gafeco.txt")
 
 mappingCount = 0
 outputFile.withWriter { outFile ->
-    inputFile.withReader {
+    downloadedFile.withReader {
         reader ->
             while ((line = reader.readLine()) != null) {
                     if (!line.startsWith("#")) {
@@ -37,7 +37,7 @@ outputFile.withWriter { outFile ->
 // bail out rather than \copy an empty file into a load that would then report success:
 // a truncated or error-page download has to be a failure, not a no-op
 if (mappingCount == 0) {
-    System.err.println("No mappings parsed out of ${inputFile.absolutePath} -- refusing to run the load")
+    System.err.println("No mappings parsed out of ${downloadedFile.absolutePath} -- refusing to run the load")
     System.exit(1)
 }
 
