@@ -78,7 +78,8 @@ services:
     # configuration that contributed to repeated container OOMs during heavy
     # DIH workloads on a 32g host. Dial back up if you have a clearly RAM-rich
     # host and a workload that benefits.
-    command: -c 'max_connections=7500' -c 'shared_buffers=4GB' -c 'huge_pages=try' -c 'temp_buffers=256MB' -c 'work_mem=256MB' -c 'maintenance_work_mem=1GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
+    # work_mem is 128MB, paired with the 2g shm_size below -- the two have to be chosen together.
+    command: -c 'max_connections=7500' -c 'shared_buffers=4GB' -c 'huge_pages=try' -c 'temp_buffers=256MB' -c 'work_mem=128MB' -c 'maintenance_work_mem=1GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
@@ -86,7 +87,7 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
       TZ: ${TZ}
-    shm_size: 1g
+    shm_size: 2g
     ports:
       - "${DOCKER_DB_PORT:-127.0.0.1:5432}:5432"
     volumes:
