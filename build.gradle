@@ -42,10 +42,13 @@ def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 def zfinrelease = env['ZFIN_RELEASE']
 String targetroot = env['TARGETROOT']
 
-// Standalone zfin-static repo (served static content: zf_info reference pages,
-// images, ZFIN, robots.txt, favicon.ico, analytics.js). `make` downloads a
-// pinned release tarball from this repo and extracts it into the Apache
-// DocumentRoot instead of copying a local static/ tree.
+// Standalone zfin-static repo (frozen archival content: zf_info reference pages,
+// images, ZFIN). `make` downloads a pinned release tarball from this repo and
+// extracts it into the Apache DocumentRoot instead of copying a local static/ tree.
+//
+// App-owned root files (robots.txt, favicon.ico, analytics.js) are NOT in that
+// release -- they live in this repo under docroot/ and deploy via the
+// `docroot;deployFiles` task below. See docroot/README.md for the split.
 //
 // zfinStaticRepo is the "owner/name" GitHub slug. The default is the repo's
 // eventual home under the ZFIN org; while the content still lives on the
@@ -56,7 +59,7 @@ String targetroot = env['TARGETROOT']
 // / ZFIN_STATIC_VERSION env vars. Bump the version to deploy a new snapshot.
 // Releases: https://github.com/<zfinStaticRepo>/releases
 def zfinStaticRepo = env['ZFIN_STATIC_REPO'] ?: 'zfin/zfin-static'
-def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.3.1'
+def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.4.0'
 // Dedicated volume the release is extracted into. The static content lives here
 // (exclusively static-repo-owned) and is symlinked into the Apache DocumentRoot,
 // so the app's docroot and the static content stay on separate volumes with no
@@ -423,12 +426,15 @@ public enum ZfinPropertiesEnum {
 // `make` downloads the pinned zfinStaticVersion tarball from
 //   https://github.com/<zfinStaticRepo>/releases
 // and extracts it into a DEDICATED volume (zfinStaticDir, default /opt/zfin/static),
-// then symlinks each top-level entry (zf_info/, images/, ZFIN/, robots.txt,
-// favicon.ico, analytics.js) into the Apache DocumentRoot ($TARGETROOT/home). The
-// static content and the app's docroot thus live on separate volumes with NO
-// shared directory; Apache serves the symlinked paths as normal static files
-// (FollowSymLinks + a <Directory /opt/zfin/static> grant in conf-local). Deployed
-// URLs are unchanged.
+// then symlinks each top-level entry (zf_info/, images/, ZFIN/) into the Apache
+// DocumentRoot ($TARGETROOT/home). The static content and the app's docroot thus
+// live on separate volumes with NO shared directory; Apache serves the symlinked
+// paths as normal static files (FollowSymLinks + a <Directory /opt/zfin/static>
+// grant in conf-local). Deployed URLs are unchanged.
+//
+// The release deliberately does NOT contain the app-owned root files
+// (robots.txt, favicon.ico, analytics.js) -- those are copied out of this repo's
+// docroot/ by `docroot;deployFiles`, so no docroot name is owned by both tasks.
 //
 // Because the static volume is exclusively static-repo-owned, the extract is
 // WIPE-FIRST: the release-owned entries in zfinStaticDir are cleared before
@@ -514,6 +520,21 @@ task "home;static;deployFromRelease" {
 // content now lives in the standalone zfin-static repo and is deployed by
 // home;static;deployFromRelease above.)
 
+// ----------------------------------------------------------------------------
+// App-owned root files served verbatim by Apache: docroot/ -> $TARGETROOT/home,
+// i.e. path on disk = path in the URL (docroot/robots.txt -> /robots.txt).
+//
+// These are the site's own root files (robots.txt, favicon.ico, analytics.js),
+// not archival content, so they live in this repo and ship on the app's deploy
+// cadence rather than requiring a tagged zfin-static release. Nothing here is
+// compiled or templated -- see docroot/README.md for what belongs where.
+// ----------------------------------------------------------------------------
+task "docroot;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'docroot'
+    targetPath = 'home'                     // $TARGETROOT/home == Apache DocumentRoot
+    excludes = ['README.md']                // developer doc; not web-served
+}
+
 task "server_apps;apache;deployFiles" (type: SimpleDirectoryCopyTask) {
     sourcePath = 'server_apps/apache'
     excludes = ['Makefile', 'build.gradle']
@@ -596,6 +617,7 @@ task make(type: GradleBuild) {
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
              'home;static;deployFromRelease',
+             'docroot;deployFiles',
              'server_apps;apache;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
@@ -1782,9 +1804,10 @@ task npmInstall(type: Exec) {
     outputs.dir 'node_modules'
 }
 
-// analytics.js is a static file (in the zfin-static release, alongside robots.txt
-// and favicon.ico) that selects the GA4 id by hostname at runtime; it deploys into
-// $TARGETROOT/home via the `home;static;deployFromRelease` task. No per-instance
+// analytics.js is a static file (docroot/analytics.js, alongside robots.txt and
+// favicon.ico) that selects the GA4 id by hostname at runtime; it deploys into
+// $TARGETROOT/home via the `docroot;deployFiles` task. Not a webpack entry and
+// not bundled -- it is served as-is at /analytics.js, with no per-instance
 // generation step.
 
 task npmBuild(type: Exec) {
