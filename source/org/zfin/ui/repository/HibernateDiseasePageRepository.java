@@ -168,7 +168,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                   "where chebiDisplay.id in :ids ";
         }
         hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName), " +
-               "chebiDisplay.fishModelDisplay.fish.zdbID, chebiDisplay.fishModelDisplay.experiment.zdbID, chebiDisplay.fishModelDisplay.singlePublication.zdbID, chebiDisplay.term.zdbID ";
+               "chebiDisplay.fishModelDisplay.fish.zdbID, chebiDisplay.fishModelDisplay.experiment.zdbID, chebiDisplay.fishModelDisplay.singlePublication.zdbID, chebiDisplay.chebi.zdbID ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         if (includeChildren) {
             query.setParameterList("ids", matchingIds);
