@@ -38,6 +38,12 @@ ${PGBINDIR}/psql -v ON_ERROR_STOP=1 -d $DBNAME -f load_knockdown_reagents.sql
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update sequence_feature_chromosome_location_generated table
-psql -v ON_ERROR_STOP=1 -d $DB_NAME -a -f ../../../Ensembl/updateSequenceFeatureChromosomeLocation.sql
+# updateSequenceFeatureChromosomeLocation.sql opens 'begin work;' and contains no
+# COMMIT -- the caller decides, which is why fetch_ensdarg.sh appends commit.sql.
+# Running it with -f alone left the transaction open, so psql's disconnect rolled
+# the whole refresh back: the job exited 0 while sfclg kept its previous contents.
+cat ../../../Ensembl/updateSequenceFeatureChromosomeLocation.sql \
+    ../../../Ensembl/commit.sql \
+  | psql -v ON_ERROR_STOP=1 -d $DB_NAME -a
 
 

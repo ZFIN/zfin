@@ -197,11 +197,20 @@ INSERT INTO sequence_feature_chromosome_location_generated
          AND endval IS NOT NULL;
 
 -- §G. DirectSubmission re-import from sequence_feature_chromosome_location. -
+-- One location can carry more than one attribution (record_attribution), so the
+-- left join fans a single location into one row per pub. The generated table's
+-- uk_sfclg_unique_location key excludes the pub id, so those fan-out rows collide.
+-- (Harmless while sfclg_acc_num was null -- NULLs are distinct in the unique key --
+-- but a hard duplicate-key error once the accession is carried through.) DISTINCT ON
+-- the unique-key columns keeps one row per location, picking the lowest pub id
+-- deterministically; the authoritative attributions still live in record_attribution.
 insert into sequence_feature_chromosome_location_generated (
   sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_acc_num, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)
-select sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, sfcl_chromosome_reference_accession_number, 'DirectSubmission', '', sfcl_assembly, recattrib_source_zdb_id
+select distinct on (sfcl_feature_zdb_id, sfcl_assembly, sfcl_chromosome_reference_accession_number, sfcl_start_position, sfcl_end_position)
+       sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, sfcl_chromosome_reference_accession_number, 'DirectSubmission', '', sfcl_assembly, recattrib_source_zdb_id
   from sequence_feature_chromosome_location
-  left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id;
+  left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id
+ order by sfcl_feature_zdb_id, sfcl_assembly, sfcl_chromosome_reference_accession_number, sfcl_start_position, sfcl_end_position, recattrib_source_zdb_id;
 
 -- §H. zmp gbrowse-track tag for ZDB-PUB-130425-4. The warehouse script's §H
 -- re-tags both ZMP pubs (belt-and-suspenders); the additional pub
