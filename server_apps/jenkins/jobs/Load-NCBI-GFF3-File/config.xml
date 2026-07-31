@@ -34,7 +34,7 @@
         <hudson.tasks.ArtifactArchiver>
             <artifacts>gff3_ncbi_report.*</artifacts>
             <latestOnly>false</latestOnly>
-            <allowEmptyArchive>true</allowEmptyArchive>
+            <allowEmptyArchive>false</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
@@ -48,7 +48,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern>gff3_ncbi_report.*</attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo></replyTo>

@@ -254,16 +254,31 @@ task createGff3Files(type: JavaExec) {
     main = 'org.zfin.sequence.gff.Gff3Writer'
 }
 
+// Both NCBI GFF3 classes resolve every file against the working directory -- the
+// downloaded GCF_*.gff.gz, the gunzipped GFF3, the .test override and
+// gff3_ncbi_report.html. JavaExec defaults that to the project directory, so the
+// Load-NCBI-GFF3-File job (cd $SOURCEROOT && gradle loadGff3NcbiFile) dropped all of
+// it into the checkout, while Jenkins archives and mails gff3_ncbi_report.* from the
+// $TARGETROOT workspace. Run both from TARGETROOT: they share the download and the
+// report name, so they have to agree on one directory. -Djob.output.basedir overrides
+// it the way the ontology loads do.
+def ncbiGff3WorkingDir = file(System.getProperty('job.output.basedir')
+        ?: System.getenv('TARGETROOT') ?: projectDir)
+
 task loadGff3NcbiFile(type: JavaExec) {
     jvmArgs = ['-Xmx16g', '-Xms1g']
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3Processor'
+    workingDir = ncbiGff3WorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task postLoadGff3NcbiFile(type: JavaExec) {
     jvmArgs = ['-Xmx16g', '-Xms1g']
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3PostProcessor'
+    workingDir = ncbiGff3WorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 //example usage:
