@@ -59,7 +59,7 @@ String targetroot = env['TARGETROOT']
 // / ZFIN_STATIC_VERSION env vars. Bump the version to deploy a new snapshot.
 // Releases: https://github.com/<zfinStaticRepo>/releases
 def zfinStaticRepo = env['ZFIN_STATIC_REPO'] ?: 'zfin/zfin-static'
-def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.4.0'
+def zfinStaticVersion = env['ZFIN_STATIC_VERSION'] ?: 'v1.4.1'
 // Dedicated volume the release is extracted into. The static content lives here
 // (exclusively static-repo-owned) and is symlinked into the Apache DocumentRoot,
 // so the app's docroot and the static content stay on separate volumes with no
