@@ -11,11 +11,11 @@ no legacy context API.
 React 18 replaces the old `ReactDOM.render()` entry point with `createRoot()`.
 Only 2 call sites needed updating:
 
-- **`home/javascript/react/index.js`** — The main entry point that mounts all React
+- **`frontend/javascript/react/index.js`** — The main entry point that mounts all React
   components on the page. Scans for `.__react-root` divs and dynamically imports
   the matching container component.
 
-- **`home/javascript/react/containers/QuickFigure.js`** — Renders a dialog into
+- **`frontend/javascript/react/containers/QuickFigure.js`** — Renders a dialog into
   a jQuery popover. Stores the root ref so it can be reused without calling
   `createRoot()` twice on the same element.
 
@@ -30,7 +30,7 @@ elements into a blocker overlay appended to `<body>`. Once moved, click/submit e
 on buttons inside the modal no longer bubble through the React root, so React `onClick`
 and `onSubmit` handlers silently stop firing.
 
-**Fix:** The `Modal` component (`home/javascript/react/components/Modal.js`) was
+**Fix:** The `Modal` component (`frontend/javascript/react/components/Modal.js`) was
 rewritten to use `ReactDOM.createPortal()`. The portal container element is what jQuery
 Modal operates on. React attaches event listeners directly to portal containers, so
 when jQuery moves the container into its blocker overlay, the listeners travel with it
@@ -47,7 +47,7 @@ intact.
 `@tanstack/react-form` (completely different API requiring a rewrite of all 12 consumer
 files), we created a lightweight drop-in replacement:
 
-**`home/javascript/react/hooks/useFormLite.js`** (~170 lines)
+**`frontend/javascript/react/hooks/useFormLite.js`** (~170 lines)
 
 Provides the exact same API surface used by this codebase:
 - `useForm({ defaultValues, onSubmit })` → `{ Form, values, meta, setMeta, reset, ... }`
