@@ -87,7 +87,7 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
       TZ: ${TZ}
-    shm_size: 1g
+    shm_size: 2g
     ports:
       - "${DOCKER_DB_PORT:-127.0.0.1:5432}:5432"
     volumes:
