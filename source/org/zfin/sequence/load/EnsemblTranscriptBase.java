@@ -92,6 +92,10 @@ abstract public class EnsemblTranscriptBase {
         // equal timestamps mean the two are in sync. Comparing "older than" instead would break:
         // a refreshed archive is back-dated to the server's timestamp and can easily be older
         // than a fasta left over from the previous release.
+        //
+        // TODO: this whole block goes away once getFastaIterator reads the .gz directly -- the
+        // decompressed file is what has to be kept in sync, so not creating it removes the need.
+        // See workbench/stream-compressed-downloads-ticket.md
         File decompressedFile = new File(fileName);
         if (!decompressedFile.exists() || decompressedFile.lastModified() != zippedFile.lastModified()) {
             FileUtil.gunzipFile(zippedFileName);
@@ -140,6 +144,9 @@ abstract public class EnsemblTranscriptBase {
 
     private static List<RichSequence> getFastaIterator(String fileName) throws FileNotFoundException {
         System.out.println(fileName);
+        // TODO: read the .gz directly -- new InputStreamReader(new GZIPInputStream(...)) in place of
+        // the FileReader -- so the decompressed fasta never has to exist on disk. Everything below
+        // only needs a BufferedReader. See workbench/stream-compressed-downloads-ticket.md
         FileReader fileReader = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fileReader);
         RichSequenceIterator iterator;
@@ -198,6 +205,11 @@ abstract public class EnsemblTranscriptBase {
         }
     }
 
+    // TODO: .all.fa is ~150 MB of pure duplication -- it concatenates the two fasta downloads that
+    // are already on disk as archives. Only EnsemblTranscriptFastaReader
+    // (gradle createEnsemblTranscriptFastaFile) calls this, and no Jenkins job runs that task, so
+    // this may be droppable outright rather than ported to streaming.
+    // See workbench/stream-compressed-downloads-ticket.md
     protected static File getCombinedFastaFile() {
         // validate the two inputs before deciding whether the combined file is still good: it is
         // derived from them, so "it exists" said nothing about whether it was built from the

@@ -278,6 +278,11 @@ public class NCBIGff3Processor {
 
         // the archive carries the server's Last-Modified and we copy it onto the decompressed
         // file, so equal timestamps mean the gff3 on disk came out of this archive
+        //
+        // TODO: htsjdk reads a gzipped gff3 through the same
+        // AbstractFeatureReader.getFeatureReader call Gff3Reader already makes (verified against
+        // htsjdk 4.3.0), so this block can go away entirely -- hand Gff3Reader the .gz path and
+        // skip decompressing ~170 MB. See workbench/stream-compressed-downloads-ticket.md
         File decompressedFile = new File(zippedFileName.substring(0, zippedFileName.indexOf(".gz")));
         if (!decompressedFile.exists() || decompressedFile.lastModified() != zippedFile.lastModified()) {
             FileUtil.gunzipFile(zippedFileName);
