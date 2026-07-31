@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
  *
  * <p>Runs {@link GenerateTypeScript#render()} in-process and asserts the
  * output is byte-equal to the committed
- * {@code home/javascript/react/zirc/api/types.ts}. Forgetting to rerun
+ * {@code frontend/javascript/react/zirc/api/types.ts}. Forgetting to rerun
  * {@code gradle generateZircTypes} after changing a DTO would otherwise
  * silently de-sync the React client from the wire shape; this test
  * fails the build at that point with a single, obvious next step.
@@ -33,7 +33,7 @@ public class GenerateTypeScriptDriftTest {
         String generated = GenerateTypeScript.render();
 
         assertEquals(
-                "home/javascript/react/zirc/api/types.ts is out of sync with the Java DTOs. "
+                "frontend/javascript/react/zirc/api/types.ts is out of sync with the Java DTOs. "
                         + "Rerun `gradle generateZircTypes` and commit the result. "
                         + "See reference/zirc-architecture.md §3.",
                 generated,
@@ -46,7 +46,7 @@ public class GenerateTypeScriptDriftTest {
      * invoked. Probe both common roots.
      */
     private static Path locateTypesFile() {
-        String rel = "home/javascript/react/zirc/api/types.ts";
+        String rel = "frontend/javascript/react/zirc/api/types.ts";
         File here = new File(rel);
         File parent = new File("../" + rel);
         return (here.exists() || here.getParentFile().exists())

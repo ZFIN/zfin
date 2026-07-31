@@ -11,7 +11,7 @@ SOURCEROOT
 │   ├── WEB-INF/classes/      ← compileJava output goes here
 │   └── WEB-INF/lib/*.jar     (legacy jars)
 ├── conf/                     (hibernate.cfg.xml, log4j2.xml)
-├── home/javascript/react/    (React/webpack source)
+├── frontend/javascript/react/    (React/webpack source)
 ├── server_apps/              (Perl, SQL, shell scripts, etc.)
 └── cgi-bin/
 
@@ -47,7 +47,7 @@ WEB-INF/lib/*.jar                   ← from SOURCEROOT + Gradle
 ```
 SOURCEROOT/server_apps/  ──→ TARGETROOT/server_apps/
 SOURCEROOT/cgi-bin/      ──→ TARGETROOT/cgi-bin/
-SOURCEROOT/home/images/  ──→ TARGETROOT/home/images/
+SOURCEROOT/frontend/images/  ──→ TARGETROOT/frontend/images/
 SOURCEROOT/home/zf_info/ ──→ TARGETROOT/home/zf_info/
 SOURCEROOT/home/ZFIN/    ──→ TARGETROOT/home/ZFIN/
 + deploys Postgres functions/triggers
@@ -76,7 +76,7 @@ Same as `watch`, single execution.
 ### `gradle dirtydeploy` (+ frontend assets)
 
 ```
-npmBuild:  home/javascript/react/ ──→ TARGETROOT/home/dist/
+npmBuild:  frontend/javascript/react/ ──→ TARGETROOT/home/dist/
 + dirtycopy (everything above)
 ```
 
@@ -86,7 +86,7 @@ npmBuild:  home/javascript/react/ ──→ TARGETROOT/home/dist/
 compileJava:       source/*.java ──→ SOURCEROOT/home/WEB-INF/classes/
 gwtCompile:        source/org/zfin/gwt/ ──→ TARGETROOT/home/gwt/
 npmInstall:        package.json ──→ node_modules/
-npmBuild:          home/javascript/react/ ──→ TARGETROOT/home/dist/
+npmBuild:          frontend/javascript/react/ ──→ TARGETROOT/home/dist/
 deployGitInfoFile: git rev-parse ──→ zdb_property table (DB)
 tomcatDeploy:      (clean — deletes + recreates webapps/ROOT/)
     copyWebAppFiles (same as dirtycopy)

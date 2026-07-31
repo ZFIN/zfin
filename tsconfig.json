@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "home/javascript/**/*"
+    "frontend/javascript/**/*"
   ],
   "exclude": [
     "node_modules"

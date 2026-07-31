@@ -52,7 +52,7 @@ per page receives `{path, value}` and dispatches into a small set of
 ## File layout
 
 ```
-home/javascript/react/
+frontend/javascript/react/
   components/form-renderer/
     types.ts              # FormNode union: Section / Array / Field / Custom
     builders.ts           # tiny ergonomic factories (section/array/field/custom)
@@ -142,7 +142,7 @@ section('lesions', 'Lesions', [
 
 ## Type matrices
 
-`home/javascript/react/components/zirc/typeMatrices.ts` is the single
+`frontend/javascript/react/components/zirc/typeMatrices.ts` is the single
 source of truth for "which fields does this type show?". Each lesion
 type and each assay type names its field set:
 

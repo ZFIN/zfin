@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Generates {@code home/javascript/react/zirc/api/types.ts} from the
+ * Generates {@code frontend/javascript/react/zirc/api/types.ts} from the
  * Java DTO records in {@code org.zfin.zirc.dto}. Removes the per-field
  * Java↔TS mirror that was the largest pure-redundancy in the form
  * pipeline (see {@code reference/zirc-architecture.md} §3).
@@ -80,7 +80,7 @@ public final class GenerateTypeScript {
     public static void main(String[] args) throws IOException {
         Path out = args.length > 0
                 ? Path.of(args[0])
-                : Path.of("home/javascript/react/zirc/api/types.ts");
+                : Path.of("frontend/javascript/react/zirc/api/types.ts");
 
         String generated = render();
         Files.writeString(out, generated, StandardCharsets.UTF_8);
