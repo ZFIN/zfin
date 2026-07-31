@@ -53,6 +53,13 @@
     <hudson.tasks.Shell>
       <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current
 
+# createZfinExpressionInfoFile is part of createAllianceFiles, but its output is named in
+# lower case and so never matched the ZFIN*.json glob above -- it was neither published
+# nor removed, and accumulated in the checkout. Move it along with its siblings. Left as a
+# plain mv rather than rm -f: the file is written unconditionally by a task in the
+# createAllianceFiles graph, so a missing one means generation broke and should fail here.
+mv $SOURCEROOT/zfin_wt_expression.json $DOWNLOAD_DIRECTORY/current
+
 # validateAllianceFiles.sh reads authorization.txt and every filename relative to its own
 # directory, so the submission set has to be staged inside the checkout. Clear it out once
 # the submission has gone through -- the only tracked file in that directory is the script
