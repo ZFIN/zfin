@@ -45,13 +45,22 @@
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>
-        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json*   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
+        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json* zfin_genes.gff3   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
         cp $TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3 .
         cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit $ALLIANCE_RELEASE_VERSION
       </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current</command>
+      <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current
+
+# validateAllianceFiles.sh reads authorization.txt and every filename relative to its own
+# directory, so the submission set has to be staged inside the checkout. Clear it out once
+# the submission has gone through -- the only tracked file in that directory is the script
+# itself, so everything staged there was left behind after every run. A failed validation
+# skips this builder and keeps the artifacts for debugging; the rm at the top of the
+# previous builder clears them on the next run.
+rm -f $SOURCEROOT/server_apps/DB_maintenance/Alliance/ZFIN*.json.gz
+rm -f $SOURCEROOT/server_apps/DB_maintenance/Alliance/zfin_genes.gff3</command>
     </hudson.tasks.Shell>
   </builders>
   <buildWrappers>
