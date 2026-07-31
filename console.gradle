@@ -133,19 +133,35 @@ task expressionExperimentAnalysisTask(type: JavaExec) {
     main = 'org.zfin.expression.task.ExpressionExperimentAnalysisTask'
 }
 
+// Everything the Ensembl transcript classes touch is resolved against the working
+// directory: the Danio_rerio.GRCz11.* fasta downloads and the combined .all.fa in
+// EnsemblTranscriptBase, ensembl-transcript-load-report.html, and the five report
+// files in EnsemblTranscriptFastaReadProcess. Update-Length-For-Ensembl-Transcript
+// runs "cd $SOURCEROOT && gradle runEnsemblTranscriptLengthUpdater", so all of it
+// landed in the checkout while the job's workspace is $TARGETROOT. All four tasks
+// share the downloads and the report name, so they have to agree on one directory.
+def ensemblWorkingDir = file(System.getProperty('job.output.basedir')
+        ?: System.getenv('TARGETROOT') ?: projectDir)
+
 task runEnsemblTranscriptLoader(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReadProcess'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task runEnsemblTranscriptChecker(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptTester'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task runEnsemblTranscriptLengthUpdater(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptUpdateLengthTask'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task createMeshChebiMappingFile(type: JavaExec) {
@@ -161,6 +177,8 @@ task importMissingFPBaseProteinsTask(type: JavaExec) {
 task createEnsemblTranscriptFastaFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReader'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task findEmptyPublicationFilesTask(type: JavaExec) {
