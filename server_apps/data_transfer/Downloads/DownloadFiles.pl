@@ -506,7 +506,11 @@ if (!(-z $emptyFilesList)) {
     die "there are files with 0 data!";
 }
 
-system("cd $sourceRoot/ && gradle createMeshChebiMappingFile && cp mesh-chebi-mapping.tsv $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/.");
+# mv the result and drop the intermediate: createMeshChebiMappingFile reads
+# conf/mesh-chebi-header.txt relative to the working directory, so this task has to run
+# from $sourceRoot, but copying left both mesh-chebi-mapping.tsv and its
+# -preprocess.tsv intermediate behind as untracked files in the git checkout.
+system("cd $sourceRoot/ && gradle createMeshChebiMappingFile && mv mesh-chebi-mapping.tsv $rootPath/server_apps/data_transfer/Downloads/downloadsStaging/. && rm -f mesh-chebi-mapping-preprocess.tsv");
 
 
 # move files to production location -- assume all are good, as the file check above did not end the script
