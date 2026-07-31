@@ -45,6 +45,13 @@ task BatchNCBIFastaFetchTask(type: JavaExec) {
 task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.mutant.MarkerGoTermEvidenceCleanupTask'
+    // clean_marker_go_term_evidence.sql \copy's four debug csvs relative to psql's working
+    // directory, which is this task's; the .sql path itself is absolute (built from the
+    // SOURCEROOT property) so it keeps resolving. Nothing reads the csvs, but they are not
+    // gitignored, so writing them into the checkout left it dirty after every run.
+    workingDir = file(System.getProperty('job.output.basedir')
+            ?: System.getenv('TARGETROOT') ?: projectDir)
+    doFirst { workingDir.mkdirs() }
 }
 
 task thisseLegacyImportAnalysisTask(type: JavaExec) {
