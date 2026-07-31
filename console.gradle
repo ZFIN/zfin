@@ -129,7 +129,14 @@ task imageThumbnailFixTask(type: JavaExec) {
 task runMeshChebiGenerator(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.ctd.LoadCtdData'
+    // LoadCtdData writes its downloads and its <JobName> report directory relative to the working
+    // directory, which is the git checkout because Jenkins runs "cd $SOURCEROOT && gradle
+    // runMeshChebiGenerator". The artifact archiver, the html publisher and the email's
+    // ${FILE,path=...} all read workspace-relative paths, and the workspace is $TARGETROOT, so run
+    // from there instead. -Djob.output.basedir overrides it the way the ontology loads do.
+    workingDir = file(System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT') ?: projectDir)
     doFirst {
+        workingDir.mkdirs()
         args JobName
     }
 }
