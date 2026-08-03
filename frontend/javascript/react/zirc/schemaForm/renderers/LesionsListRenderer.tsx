@@ -19,10 +19,11 @@ import { aggregateRenderers } from '../aggregateRenderers';
 
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
-/** "point_mutation" -> "Point mutation"; for collapsed-card summaries. */
+/** "point_mutation" -> "Point Mutation"; for collapsed-card summaries. */
 function humanize(snake: string): string {
-    const spaced = snake.replace(/_/g, ' ');
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+    return snake
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /**
@@ -45,7 +46,7 @@ function LesionDetailCard({
     return (
         <div className='card mb-2'>
             <div className='card-header py-1'>
-                <strong>{summary.lesionType || `Lesion ${n}`}</strong>
+                <strong>{summary.lesionType ? humanize(summary.lesionType) : `Lesion ${n}`}</strong>
             </div>
             <div className='card-body py-2'>
                 {q.isLoading && <p className='text-muted small mb-0'>Loading…</p>}
