@@ -77,11 +77,11 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                 if (StringUtils.isEmpty(variant.getFgmdSeqRef())
-                                        || variant.getFgmdSeqVar().length() > 1
                                         || variant.getFgmdSeqRef().length() > 1) {
                                     System.out.println(feature.getZdbID());
                                 }
-                                if (StringUtils.isEmpty(variant.getFgmdSeqVar())) {
+                                if (StringUtils.isEmpty(variant.getFgmdSeqVar())
+                                        || variant.getFgmdSeqVar().length() > 1) {
                                     System.out.println(feature.getZdbID());
                                 }
                                 break;
