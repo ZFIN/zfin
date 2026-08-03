@@ -7,6 +7,7 @@ import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
+import { autoSizeRendererEntry } from './renderers/AutoSizeRenderer';
 import { assaysListRendererEntry } from './renderers/AssaysListRenderer';
 import { genesListRendererEntry } from './renderers/GenesListRenderer';
 import { lesionsListRendererEntry } from './renderers/LesionsListRenderer';
@@ -33,6 +34,7 @@ export const aggregateRenderers = [
     selectWithOtherRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,
+    autoSizeRendererEntry,
     assaysListRendererEntry,
     genesListRendererEntry,
     lesionsListRendererEntry,

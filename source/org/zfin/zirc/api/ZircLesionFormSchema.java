@@ -55,18 +55,21 @@ public final class ZircLesionFormSchema {
             BiConsumer<Lesion, JsonNode> write) {
     }
 
+    // Stable enum tokens stored on the wire (and in the lesion row). Display
+    // labels for the dropdown live in LESION_TYPE_LABELS, parallel by index.
+    // "other" is intentionally absent: the lesionType select widget already
+    // offers a free-text "Other" option, so an explicit token would double it.
     private static final List<String> LESION_TYPES = List.of(
             "point_mutation", "deletion", "insertion", "indel",
-            "transgene", "other", "unknown");
+            "transgene", "unknown");
+    private static final List<String> LESION_TYPE_LABELS = List.of(
+            "Point Mutation", "Deletion", "Insertion", "Indel",
+            "Transgene", "Unknown");
 
     // Per-cluster visibility lists. Adding a new type or moving a field
     // between types is a single-line edit here, no JSX changes — same
     // win the alt branch's typeMatrices.ts captured, but here it's just
     // data on the server.
-    private static final List<String> LESION_SIZE_TYPES =
-            List.of("point_mutation", "deletion", "indel");
-    private static final List<String> INSERTION_SIZE_TYPES =
-            List.of("insertion", "indel");
     private static final List<String> NUCLEOTIDE_CHANGE_TYPES =
             List.of("point_mutation");
     private static final List<String> DELETED_SEQ_TYPES =
@@ -79,6 +82,14 @@ public final class ZircLesionFormSchema {
             List.of("point_mutation", "deletion", "insertion", "indel", "transgene");
     private static final List<String> PROTEIN_TYPES =
             List.of("point_mutation");
+
+    // The twelve possible single-nucleotide substitutions, offered as a
+    // closed dropdown for point mutations (was free text). Token == label.
+    private static final List<String> NUCLEOTIDE_CHANGES = List.of(
+            "A>T", "A>C", "A>G",
+            "T>A", "T>C", "T>G",
+            "C>A", "C>T", "C>G",
+            "G>A", "G>T", "G>C");
 
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
@@ -94,9 +105,8 @@ public final class ZircLesionFormSchema {
         properties.put("insertedSequence",      StringSchema.of("Inserted sequence", 5000));
         properties.put("transgeneSequence",     StringSchema.of("Transgene sequence", 5000));
         // Location
-        properties.put("locationInline",        StringSchema.of("Location (inline)", 5000));
-        properties.put("fivePrimeFlank",        StringSchema.of("5′ flank", 5000));
-        properties.put("threePrimeFlank",       StringSchema.of("3′ flank", 5000));
+        properties.put("fivePrimeFlank",        StringSchema.of("5′ flanking sequence", 5000));
+        properties.put("threePrimeFlank",       StringSchema.of("3′ flanking sequence", 5000));
         properties.put("hasLargeVariant",       BooleanSchema.nullable("Has large variant"));
         // Protein-level
         properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
@@ -113,34 +123,52 @@ public final class ZircLesionFormSchema {
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/lesionType",
-                                Options.of().widget("selectWithOther").standardValues(LESION_TYPES)
+                                Options.of().widget("selectWithOther")
+                                        .standardValues(LESION_TYPES)
+                                        .standardLabels(LESION_TYPE_LABELS)
                                         .refreshesParent(true),
-                                null),
-                        new Control("#/properties/additionalInfo",
-                                Options.of().multi(true), null)
+                                null)
                 )),
-                groupRevealedFor(LESION_SIZE_TYPES, List.of(
-                        new Control("#/properties/lesionSizeBp",
-                                Options.of().suffix("bp"), null)
-                )),
-                groupRevealedFor(INSERTION_SIZE_TYPES, List.of(
-                        new Control("#/properties/insertionSizeBp",
-                                Options.of().suffix("bp"), null)
-                )),
+                // Sizes are always derived (never user-entered) and rendered
+                // read-only via the autoSize widget, placed directly under the
+                // sequence they measure. Point mutation: nucleotide change,
+                // then the fixed 1 bp size.
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/nucleotideChange",
                                 Options.of()
-                                        .placeholder("WT → mutant, e.g. A → T")
-                                        .multi(true),
+                                        .widget("selectWithOther")
+                                        .standardValues(NUCLEOTIDE_CHANGES)
+                                        .noOther(true),
                                 null)
                 )),
+                groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
+                        new Control("#/properties/lesionSizeBp",
+                                Options.of().widget("autoSize").constantValue(1).suffix("bp"),
+                                null)
+                )),
+                // Deletion / indel: deleted sequence, then its length as the
+                // (auto, read-only) lesion size.
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/deletedSequence",
                                 Options.of().multi(true), null)
                 )),
+                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
+                        new Control("#/properties/lesionSizeBp",
+                                Options.of().widget("autoSize")
+                                        .sourceField("deletedSequence").suffix("bp"),
+                                null)
+                )),
+                // Insertion / indel: inserted sequence, then its length as the
+                // (auto, read-only) insertion size.
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
                                 Options.of().multi(true), null)
+                )),
+                groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
+                        new Control("#/properties/insertionSizeBp",
+                                Options.of().widget("autoSize")
+                                        .sourceField("insertedSequence").suffix("bp"),
+                                null)
                 )),
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
@@ -149,11 +177,6 @@ public final class ZircLesionFormSchema {
                                 Options.of().widget("yesNoRadio"), null)
                 )),
                 groupRevealedFor(LOCATION_TYPES, List.of(
-                        new Control("#/properties/locationInline",
-                                Options.of()
-                                        .helpText("Annotated inline; list at least 5 nt before and after.")
-                                        .multi(true),
-                                null),
                         new Control("#/properties/fivePrimeFlank",
                                 Options.of()
                                         .helpText("At least 20 nt directly preceding the lesion / transgene.")
@@ -172,6 +195,12 @@ public final class ZircLesionFormSchema {
                                 Options.of().placeholder("e.g. p.Gly12Val"), null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
                                 Options.of().placeholder("HGVS protein notation"), null)
+                )),
+                // Always-visible, and kept last so it sits below every
+                // per-type field cluster regardless of the lesion type.
+                Group.of(null, List.of(
+                        new Control("#/properties/additionalInfo",
+                                Options.of().multi(true), null)
                 ))
         ));
     }
@@ -188,15 +217,15 @@ public final class ZircLesionFormSchema {
     }
 
     public static final Map<String, FieldDescriptor> FIELDS = Map.ofEntries(
+            // lesionSizeBp / insertionSizeBp are intentionally NOT here: they
+            // are server-computed (see ZircSubmissionService#recalcLesionSizes)
+            // and rendered read-only, never patched by the client.
             field("/lesionType",            Lesion::getLesionType,             (l, v) -> l.setLesionType(text(v))),
             field("/additionalInfo",        Lesion::getAdditionalInfo,         (l, v) -> l.setAdditionalInfo(text(v))),
-            field("/lesionSizeBp",          Lesion::getLesionSizeBp,           (l, v) -> l.setLesionSizeBp(intNullable(v))),
-            field("/insertionSizeBp",       Lesion::getInsertionSizeBp,        (l, v) -> l.setInsertionSizeBp(intNullable(v))),
             field("/nucleotideChange",      Lesion::getNucleotideChange,       (l, v) -> l.setNucleotideChange(text(v))),
             field("/deletedSequence",       Lesion::getDeletedSequence,        (l, v) -> l.setDeletedSequence(text(v))),
             field("/insertedSequence",      Lesion::getInsertedSequence,       (l, v) -> l.setInsertedSequence(text(v))),
             field("/transgeneSequence",     Lesion::getTransgeneSequence,      (l, v) -> l.setTransgeneSequence(text(v))),
-            field("/locationInline",        Lesion::getLocationInline,         (l, v) -> l.setLocationInline(text(v))),
             field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(text(v))),
             field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(text(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
@@ -222,10 +251,5 @@ public final class ZircLesionFormSchema {
     private static Boolean boolNullable(JsonNode v) {
         if (v == null || v.isNull()) {return null;}
         return v.asBoolean();
-    }
-
-    private static Integer intNullable(JsonNode v) {
-        if (v == null || v.isNull()) {return null;}
-        return v.isNumber() ? v.asInt() : null;
     }
 }

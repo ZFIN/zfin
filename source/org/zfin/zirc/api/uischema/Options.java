@@ -73,28 +73,38 @@ public record Options(
         List<String> standardLabels,
         // For selectWithOther — when true, suppress the "Other" option (and
         // its free-text input). Use for closed enums like assayType.
-        Boolean noOther
+        Boolean noOther,
+        // For the autoSize widget — the sibling field whose sequence length
+        // this read-only control displays (e.g. lesionSizeBp derives from
+        // deletedSequence). Mutually exclusive with constantValue.
+        String sourceField,
+        // For the autoSize widget — a fixed displayed value where the size is
+        // definitional rather than measured (a point mutation is always 1 bp).
+        // Mutually exclusive with sourceField.
+        Integer constantValue
 ) {
 
     public static Options of() {
-        return new Options(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        return new Options(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
-    public Options layout(String v)         { return new Options(v, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options widget(String v)         { return new Options(layout, v, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options multi(boolean v)         { return new Options(layout, widget, v, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options standardValues(List<String> v) { return new Options(layout, widget, multi, v, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options placeholder(String v)    { return new Options(layout, widget, multi, standardValues, v, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options helpText(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, v, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options infoHref(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, v, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options suffix(String v)         { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, v, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options label(String v)          { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, v, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options searchEndpoint(String v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, v, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options typeGroup(String v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, v, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options comments(boolean v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, v, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options managesOwnPersistence(boolean v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, v, refreshesParent, addLabel, standardLabels, noOther); }
-    public Options refreshesParent(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, v, addLabel, standardLabels, noOther); }
-    public Options addLabel(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, v, standardLabels, noOther); }
-    public Options standardLabels(List<String> v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, v, noOther); }
-    public Options noOther(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, v); }
+    public Options layout(String v)         { return new Options(v, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options widget(String v)         { return new Options(layout, v, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options multi(boolean v)         { return new Options(layout, widget, v, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options standardValues(List<String> v) { return new Options(layout, widget, multi, v, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options placeholder(String v)    { return new Options(layout, widget, multi, standardValues, v, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options helpText(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, v, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options infoHref(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, v, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options suffix(String v)         { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, v, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options label(String v)          { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, v, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options searchEndpoint(String v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, v, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options typeGroup(String v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, v, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options comments(boolean v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, v, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options managesOwnPersistence(boolean v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, v, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options refreshesParent(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, v, addLabel, standardLabels, noOther, sourceField, constantValue); }
+    public Options addLabel(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, v, standardLabels, noOther, sourceField, constantValue); }
+    public Options standardLabels(List<String> v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, v, noOther, sourceField, constantValue); }
+    public Options noOther(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, v, sourceField, constantValue); }
+    public Options sourceField(String v)    { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, v, constantValue); }
+    public Options constantValue(int v)     { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, v); }
 }

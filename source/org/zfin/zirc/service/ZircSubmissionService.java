@@ -718,10 +718,48 @@ public class ZircSubmissionService {
         JsonNode oldValue = descriptor.read().apply(lesion);
         HibernateUtil.createTransaction();
         descriptor.write().accept(lesion, update.value());
+        recalcLesionSizes(lesion);
         writeAudit("lesion", String.valueOf(lesionId), "update",
                 update.path(), oldValue, update.value());
         HibernateUtil.flushAndCommitCurrentSession();
         return lesion;
+    }
+
+    /**
+     * Lesion sizes are always derived, never curator-entered: a point mutation
+     * is 1 bp, a deletion/indel's lesion size is its deleted-sequence length,
+     * and an insertion/indel's insertion size is its inserted-sequence length.
+     * Recomputed on every save so the stored value can't drift from the
+     * (read-only) sequence fields. Types that don't use a given size get null.
+     */
+    private static void recalcLesionSizes(Lesion lesion) {
+        String type = lesion.getLesionType();
+        if ("point_mutation".equals(type)) {
+            lesion.setLesionSizeBp(1);
+        } else if ("deletion".equals(type) || "indel".equals(type)) {
+            lesion.setLesionSizeBp(sequenceLength(lesion.getDeletedSequence()));
+        } else {
+            lesion.setLesionSizeBp(null);
+        }
+        if ("insertion".equals(type) || "indel".equals(type)) {
+            lesion.setInsertionSizeBp(sequenceLength(lesion.getInsertedSequence()));
+        } else {
+            lesion.setInsertionSizeBp(null);
+        }
+    }
+
+    /** Count of nucleotide letters in a sequence; null when empty/blank. */
+    private static Integer sequenceLength(String sequence) {
+        if (sequence == null) {
+            return null;
+        }
+        int count = 0;
+        for (int i = 0; i < sequence.length(); i++) {
+            if (Character.isLetter(sequence.charAt(i))) {
+                count++;
+            }
+        }
+        return count == 0 ? null : count;
     }
 
     private static int nextLesionSortOrder(Mutation mutation) {
