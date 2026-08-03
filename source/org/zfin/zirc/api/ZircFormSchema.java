@@ -115,20 +115,20 @@ public final class ZircFormSchema {
                 Group.of("Overview", List.of(
                         new Control("#/properties/name",
                                 Options.of()
-                                        .placeholder("e.g. nasl1zf123")
-                                        .helpText("Line name as it should appear in publications."),
+                                        .withPlaceholder("e.g. nasl1zf123")
+                                        .withHelpText("Line name as it should appear in publications."),
                                 null),
                         new Control("#/properties/previousNames",
                                 Options.of()
-                                        .widget("stringList")
-                                        .placeholder("Previous name")
-                                        .addLabel("+ Add previous name")
-                                        .helpText("Useful when this line was previously known by a different designation."),
+                                        .withWidget("stringList")
+                                        .withPlaceholder("Previous name")
+                                        .withAddLabel("+ Add previous name")
+                                        .withHelpText("Useful when this line was previously known by a different designation."),
                                 null),
                         new Control("#/properties/acceptance",
                                 Options.of()
-                                        .widget("multipleChoiceWithOther")
-                                        .label("Acceptance Reasons"),
+                                        .withWidget("multipleChoiceWithOther")
+                                        .withLabel("Acceptance Reasons"),
                                 null)
                 )),
                 // Mutations is structurally different from the field sections —
@@ -136,39 +136,39 @@ public final class ZircFormSchema {
                 // layout option tells SectionRenderer to drop the table wrapper.
                 new Group("Mutations",
                         List.of(new Control("#/properties/mutations",
-                                Options.of().widget("mutationsList").managesOwnPersistence(true),
+                                Options.of().withWidget("mutationsList").withManagesOwnPersistence(true),
                                 null)),
-                        Options.of().layout("plain"),
+                        Options.of().withLayout("plain"),
                         null),
                 // Linked features: pairwise links between mutations on the
                 // same submission. List-of-cards layout like Mutations.
                 new Group("Linked Features",
                         List.of(new Control("#/properties/linkedFeatures",
-                                Options.of().widget("linkedFeaturesList").managesOwnPersistence(true),
+                                Options.of().withWidget("linkedFeaturesList").withManagesOwnPersistence(true),
                                 null)),
-                        Options.of().layout("plain"),
+                        Options.of().withLayout("plain"),
                         null),
                 Group.of("Background", List.of(
                         new Control("#/properties/background/properties/singleAllelic",
-                                Options.of().widget("yesNoRadio"), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/background/properties/maternalBackground",
-                                Options.of().widget("selectWithOther").standardValues(backgroundValues),
+                                Options.of().withWidget("selectWithOther").withStandardValues(backgroundValues),
                                 null),
                         new Control("#/properties/background/properties/paternalBackground",
-                                Options.of().widget("selectWithOther").standardValues(backgroundValues),
+                                Options.of().withWidget("selectWithOther").withStandardValues(backgroundValues),
                                 null),
                         new Control("#/properties/background/properties/backgroundChangeable",
-                                Options.of().widget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null)
                 )),
                 Group.of("Additional Info", List.of(
                         new Control("#/properties/additionalInfo/properties/unreportedFeaturesDetails",
-                                Options.of().multi(true), null),
+                                Options.of().withMulti(true), null),
                         new Control("#/properties/additionalInfo/properties/husbandryInfo",
-                                Options.of().multi(true)
-                                        .placeholder("Husbandry-specific information, e.g. special feeding regime"),
+                                Options.of().withMulti(true)
+                                        .withPlaceholder("Husbandry-specific information, e.g. special feeding regime"),
                                 null),
                         new Control("#/properties/additionalInfo/properties/additionalInfo",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 ))
         ));
     }

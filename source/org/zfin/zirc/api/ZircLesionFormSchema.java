@@ -123,10 +123,10 @@ public final class ZircLesionFormSchema {
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/lesionType",
-                                Options.of().widget("selectWithOther")
-                                        .standardValues(LESION_TYPES)
-                                        .standardLabels(LESION_TYPE_LABELS)
-                                        .refreshesParent(true),
+                                Options.of().withWidget("selectWithOther")
+                                        .withStandardValues(LESION_TYPES)
+                                        .withStandardLabels(LESION_TYPE_LABELS)
+                                        .withRefreshesParent(true),
                                 null)
                 )),
                 // Sizes are always derived (never user-entered) and rendered
@@ -136,71 +136,71 @@ public final class ZircLesionFormSchema {
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/nucleotideChange",
                                 Options.of()
-                                        .widget("selectWithOther")
-                                        .standardValues(NUCLEOTIDE_CHANGES)
-                                        .noOther(true),
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(NUCLEOTIDE_CHANGES)
+                                        .withNoOther(true),
                                 null)
                 )),
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/lesionSizeBp",
-                                Options.of().widget("autoSize").constantValue(1).suffix("bp"),
+                                Options.of().withWidget("autoSize").withConstantValue(1).withSuffix("bp"),
                                 null)
                 )),
                 // Deletion / indel: deleted sequence, then its length as the
                 // (auto, read-only) lesion size.
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/deletedSequence",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 )),
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/lesionSizeBp",
-                                Options.of().widget("autoSize")
-                                        .sourceField("deletedSequence").suffix("bp"),
+                                Options.of().withWidget("autoSize")
+                                        .withSourceField("deletedSequence").withSuffix("bp"),
                                 null)
                 )),
                 // Insertion / indel: inserted sequence, then its length as the
                 // (auto, read-only) insertion size.
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 )),
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertionSizeBp",
-                                Options.of().widget("autoSize")
-                                        .sourceField("insertedSequence").suffix("bp"),
+                                Options.of().withWidget("autoSize")
+                                        .withSourceField("insertedSequence").withSuffix("bp"),
                                 null)
                 )),
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
-                                Options.of().multi(true), null),
+                                Options.of().withMulti(true), null),
                         new Control("#/properties/hasLargeVariant",
-                                Options.of().widget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null)
                 )),
                 groupRevealedFor(LOCATION_TYPES, List.of(
                         new Control("#/properties/fivePrimeFlank",
                                 Options.of()
-                                        .helpText("At least 20 nt directly preceding the lesion / transgene.")
-                                        .multi(true)
-                                        .infoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
+                                        .withHelpText("At least 20 nt directly preceding the lesion / transgene.")
+                                        .withMulti(true)
+                                        .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null),
                         new Control("#/properties/threePrimeFlank",
                                 Options.of()
-                                        .helpText("At least 20 nt directly following the lesion / transgene.")
-                                        .multi(true)
-                                        .infoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
+                                        .withHelpText("At least 20 nt directly following the lesion / transgene.")
+                                        .withMulti(true)
+                                        .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)
                 )),
                 groupRevealedFor(PROTEIN_TYPES, List.of(
                         new Control("#/properties/mutatedAminoAcids",
-                                Options.of().placeholder("e.g. p.Gly12Val"), null),
+                                Options.of().withPlaceholder("e.g. p.Gly12Val"), null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
-                                Options.of().placeholder("HGVS protein notation"), null)
+                                Options.of().withPlaceholder("HGVS protein notation"), null)
                 )),
                 // Always-visible, and kept last so it sits below every
                 // per-type field cluster regardless of the lesion type.
                 Group.of(null, List.of(
                         new Control("#/properties/additionalInfo",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 ))
         ));
     }
