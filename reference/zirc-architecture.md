@@ -109,9 +109,9 @@ This one map gives us four things at once:
 1. **Authorization gate** — unknown paths are rejected at the controller. Clients can't write columns the form doesn't expose.
 2. **Audit log capture** — the same descriptor's `read()` produces the pre-update value, so `old`/`new` round-trip through Jackson consistently.
 3. **Persistence** — `write()` applies typed coercion (trim, null-on-blank, etc.) before Hibernate sees the entity.
-4. **Schema generation reference** — the `FIELDS` keys are the legal paths; if a uiSchema Control references a scope that isn't in `FIELDS`, the client's PATCH will 400 at runtime. Three tests guard against drift before it reaches the client: `FormSchemaSnapshotTest` locks down the serialized wire shape per form; `FormSchemaInvariantsTest` asserts the three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the corresponding DTO record components (with per-form whitelists for intentional divergence like server-managed child lists and read-only denormalized columns); and `GenerateTypeScriptDriftTest` asserts the committed `home/javascript/react/zirc/api/types.ts` matches the output of `GenerateTypeScript.render()` from the Java DTOs.
+4. **Schema generation reference** — the `FIELDS` keys are the legal paths; if a uiSchema Control references a scope that isn't in `FIELDS`, the client's PATCH will 400 at runtime. Three tests guard against drift before it reaches the client: `FormSchemaSnapshotTest` locks down the serialized wire shape per form; `FormSchemaInvariantsTest` asserts the three-way alignment between `schema().properties`, `FIELDS.keySet()`, and the corresponding DTO record components (with per-form whitelists for intentional divergence like server-managed child lists and read-only denormalized columns); and `GenerateTypeScriptDriftTest` asserts the committed `frontend/javascript/react/zirc/api/types.ts` matches the output of `GenerateTypeScript.render()` from the Java DTOs.
 
-   The TypeScript mirror is generated from the Java DTOs via `gradle generateZircTypes`. Jakarta `@NotNull` on a DTO record component is the signal that the field is server-set and always populated on the wire — the generator emits it as a non-nullable TS field. Per-page `FormDataShape` types derive from the generated DTO type via `FormFor<T>` (see `home/javascript/react/zirc/api/formHelpers.ts`), so an added field shows up in the React form without a per-page edit.
+   The TypeScript mirror is generated from the Java DTOs via `gradle generateZircTypes`. Jakarta `@NotNull` on a DTO record component is the signal that the field is server-set and always populated on the wire — the generator emits it as a non-nullable TS field. Per-page `FormDataShape` types derive from the generated DTO type via `FormFor<T>` (see `frontend/javascript/react/zirc/api/formHelpers.ts`), so an added field shows up in the React form without a per-page edit.
 
 **Rule**: if you add a column to an entity that should be editable, you add a `FIELDS` entry, a `schema()` property, and a uiSchema Control. Forgetting any one is the most common bug pattern.
 
@@ -454,7 +454,7 @@ source/org/zfin/zirc/
     ├── Zirc*ApiController.java       — Spring MVC controllers
     └── ZircApiExceptionHandler.java  — RFC 7807 advice
 
-home/javascript/react/zirc/
+frontend/javascript/react/zirc/
 ├── api/                              client + (generated) types + React Query hooks + formHelpers (FormFor, seedFromDto, diffLeaves)
 ├── pages/                            top-level page components
 │   ├── LineSubmissionEdit.tsx        — submission page (mounts SchemaForm)
@@ -576,7 +576,7 @@ You almost always touch six places. In this order:
 4. **FIELDS map**: an entry in the relevant `Zirc*FormSchema.FIELDS` with `(getter, setter)`.
 5. **JSON Schema**: a property in `Zirc*FormSchema.schema()` (typed record under `org.zfin.zirc.api.jsonschema`).
 6. **uiSchema**: a Control (with options) in the appropriate Group in `Zirc*FormSchema.uiSchema()`.
-7. **TS type**: regenerate `home/javascript/react/zirc/api/types.ts` via `gradle generateZircTypes`. The file is auto-generated from the DTO records; never hand-edit. `GenerateTypeScriptDriftTest` fails CI if you forget. Per-page `FormDataShape` derives from the generated DTO type via `FormFor<T>` (see `home/javascript/react/zirc/api/formHelpers.ts`), so no per-page edit is needed unless you add a new page.
+7. **TS type**: regenerate `frontend/javascript/react/zirc/api/types.ts` via `gradle generateZircTypes`. The file is auto-generated from the DTO records; never hand-edit. `GenerateTypeScriptDriftTest` fails CI if you forget. Per-page `FormDataShape` derives from the generated DTO type via `FormFor<T>` (see `frontend/javascript/react/zirc/api/formHelpers.ts`), so no per-page edit is needed unless you add a new page.
 8. **Snapshot**: rerun `gradle test --tests org.zfin.zirc.api.FormSchemaSnapshotTest -Pzirc.snapshot.update=true`, then review the diff under `test/resources/zirc/snapshot/` before committing.
 
 That's it. If the field is editable, no React change is needed — JSON

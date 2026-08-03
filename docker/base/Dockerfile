@@ -64,6 +64,7 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
              /opt/zfin/tls/certs /opt/zfin/tls/private \
              /opt/zfin/catalina_bases/zfin.org \
              /opt/zfin/download-files /opt/zfin/bin \
+             /opt/zfin/static \
              /usr/local/tomcat/lib /local/bin \
              /research /mnt/research \
     && ln -s /usr/bin/perl /opt/zfin/bin/perl \

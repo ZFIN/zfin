@@ -40,7 +40,7 @@
         </div>
         <h1>${alleleLabel}</h1>
 
-        <%-- React mount: container at home/javascript/react/containers/MutationEdit.tsx. --%>
+        <%-- React mount: container at frontend/javascript/react/containers/MutationEdit.tsx. --%>
         <div class="__react-root" id="MutationEdit"
              data-mutation-id="${mutation.id}"
              data-submission-id="${submission.zdbID}"></div>

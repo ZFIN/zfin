@@ -3,11 +3,12 @@ package org.zfin.uniprot.task;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.report.Report;
+import org.zfin.report.ReportWriter;
+import org.zfin.uniprot.UniProtDiffReportBuilder;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.diff.RichSequenceDiff;
 import org.zfin.uniprot.diff.UniProtDiffSet;
@@ -195,13 +196,13 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         String reportfile = outputFilenameWithoutExtension + ".report.html";
         log.info("Creating report file: " + reportfile);
         try {
-            String outfileContents = FileUtils.readFileToString(new File(outputFilename));
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/uniprot-diff-report.html";
-            String templateContents = FileUtils.readFileToString(new File(template));
-            String filledTemplate = templateContents.replace("JSON_GOES_HERE", outfileContents);
-            FileUtils.writeStringToFile(new File(reportfile), filledTemplate);
+            String title = "UniProt Diff: " + new File(inputFilename1).getName()
+                    + " vs " + new File(inputFilename2).getName();
+            Report report = new UniProtDiffReportBuilder().build(title, UniProtDiffSetDTO.from(diffSet));
+            new ReportWriter().write(report, new File(reportfile));
+            log.info("Finished creating report file: " + reportfile);
         } catch (IOException e) {
-            System.err.println("Error creating report (" + reportfile + ") from template (" + outputFilename + ")\n" + e.getMessage());
+            log.error("Error creating report (" + reportfile + ")\n" + e.getMessage(), e);
         }
     }
 

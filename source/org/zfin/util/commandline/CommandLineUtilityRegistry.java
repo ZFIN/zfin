@@ -42,6 +42,18 @@ public class CommandLineUtilityRegistry {
                 "merge-markers <zdbIdToDelete> <zdbIdToMergeInto> [--dry-run] [--skip-regen]",
                 true);
 
+        // Administer user accounts (set password / role, inspect). Database-backed, so it runs inside
+        // ToolBootstrap.run's managed transaction.
+        register("user-tool",
+                "org.zfin.profile.UserToolCommandLine",
+                "Administer user accounts: set-password, set-role, show",
+                """
+                user-tool set-password -u <user> <newPassword>   Set the user's password (BCrypt-hashed)
+                       user-tool set-role     -u <user> <role>          Set the access role (root | submit)
+                       user-tool show         -u <user>                 Print account info (no secrets)
+                       <user> may be a login name, e-mail, or ZDB person ID""",
+                true);
+
         // Add more utilities as they are discovered/created.
     }
 

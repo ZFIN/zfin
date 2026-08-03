@@ -129,8 +129,6 @@ common_properties:
   DOWNLOAD_DIRECTORY: "${base_path}/download-files"
   EMAIL_SENDER_CLASS: "org.zfin.framework.mail.IntegratedJavaMailSender"
   ENVIRONMENT: "development"  # Default; overridden by instance_environment lookup
-  GA4_ANALYTICS_ID_PRODUCTION: "G-R5XJW0QW0Y"
-  GA4_ANALYTICS_ID_ZFINLABS: "G-5J7RMKMBWC"
   GBROWSE_DB: "ensembl_current"
   GBROWSE_DB_HOST: "gbrowse1.zfin.org"
   GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT: "gb2/gbrowse_img/zfin_ensembl/"
@@ -343,7 +341,6 @@ emails:
 dev_defaults:
   ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
   BLAST_CACHE_AT_STARTUP: "false"
-  GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
   NCBI_LINKOUT_UPLOAD: "false"
   NODE_ENV: "development"
   SCHEDULE_TRIGGER_FILES: ""
@@ -379,7 +376,6 @@ staging_defaults:
 prod_defaults:
   ALLIANCE_CURATION_URL: "https://beta-curation.alliancegenome.org"
   BLAST_CACHE_AT_STARTUP: "true"
-  GA4_ANALYTICS_ID: "G-R5XJW0QW0Y"
   LOG4J_FILE: "production-site.log4j.xml"
   NCBI_LINKOUT_UPLOAD: "true"
   NODE_ENV: "production"
@@ -479,7 +475,6 @@ instance_overrides:
     SWISSPROT_EMAIL_REPORT: "informix@zfin.org rtaylor@zfin.org"
     BLAST_CACHE_AT_STARTUP: "false"
     ENVIRONMENT: "development"
-    GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
     GO_EMAIL_CURATOR: "dhowe@zfin.org rtaylor@zfin.org"
     GOOGLE_ANALYTICS_ID: "UA-2417927-5"
     NCBI_LINKOUT_UPLOAD: "false"
@@ -537,7 +532,6 @@ instance_overrides:
     WIKI_PUSH_TO_WIKI: "true"
     ALLIANCE_CURATION_URL: "https://alpha-curation.alliancegenome.org"
     BLAST_CACHE_AT_STARTUP: "false"
-    GA4_ANALYTICS_ID: "G-5J7RMKMBWC"
     GOOGLE_ANALYTICS_ID: "UA-2417927-5"
     NCBI_LINKOUT_UPLOAD: "false"
     SEND_AUTHOR_NOTIF_EMAIL: "false"
