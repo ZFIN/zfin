@@ -113,7 +113,6 @@ BEGIN
                  ('external_reference', 'exref_data_zdb_id'),
                  ('feature_marker_relationship', 'fmrel_mrkr_zdb_id'),
                  ('fish_str', 'fishstr_str_zdb_id'),
-                 ('fluorescent_marker', 'fm_mrkr_zdb_id'),
                  ('fpprotein_construct', 'fc_mrkr_zdb_id'),
                  ('fpprotein_efg', 'fe_mrkr_zdb_id'),
                  ('gene_description', 'gd_gene_zdb_id'),
