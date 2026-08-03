@@ -128,14 +128,14 @@ public final class ZircMutationFormSchema {
                         // renders, so it comes first in the group.
                         new Control("#/properties/alleleInZfin",
                                 Options.of()
-                                        .widget("yesNoRadio")
-                                        .helpText("When \"Yes\", the field below searches existing ZFIN markers."),
+                                        .withWidget("yesNoRadio")
+                                        .withHelpText("When \"Yes\", the field below searches existing ZFIN markers."),
                                 null),
                         // Plain text input for new alleles.
                         new Control("#/properties/alleleDesignation",
                                 Options.of()
-                                        .placeholder("e.g. zf123")
-                                        .helpText("ZFIN allele designation; leave blank if not yet assigned."),
+                                        .withPlaceholder("e.g. zf123")
+                                        .withHelpText("ZFIN allele designation; leave blank if not yet assigned."),
                                 hideIfInZfin),
                         // Feature autocomplete when the allele is already in
                         // ZFIN — alleles live in the Feature table, not
@@ -143,80 +143,80 @@ public final class ZircMutationFormSchema {
                         // The selected ZDB-ID is what we PATCH back.
                         new Control("#/properties/alleleDesignation",
                                 Options.of()
-                                        .widget("autocomplete")
-                                        .searchEndpoint("features")
-                                        .placeholder("Start typing an allele or ZDB-ID…")
-                                        .helpText("Resolves to the ZFIN feature ZDB-ID."),
+                                        .withWidget("autocomplete")
+                                        .withSearchEndpoint("features")
+                                        .withPlaceholder("Start typing an allele or ZDB-ID…")
+                                        .withHelpText("Resolves to the ZFIN feature ZDB-ID."),
                                 showIfInZfin),
                         new Control("#/properties/mutationType",
-                                Options.of().widget("selectWithOther").standardValues(MUTATION_TYPES),
+                                Options.of().withWidget("selectWithOther").withStandardValues(MUTATION_TYPES),
                                 null),
                         new Control("#/properties/mutationDiscoverer",
-                                Options.of().placeholder("Person who first identified the mutation"),
+                                Options.of().withPlaceholder("Person who first identified the mutation"),
                                 null),
                         new Control("#/properties/mutationInstitution",
-                                Options.of().placeholder("Lab / institution"), null)
+                                Options.of().withPlaceholder("Lab / institution"), null)
                 )),
                 Group.of("Mutagenesis", List.of(
                         new Control("#/properties/mutagenesisStage",
-                                Options.of().widget("selectWithOther").standardValues(MUTAGENESIS_STAGES),
+                                Options.of().withWidget("selectWithOther").withStandardValues(MUTAGENESIS_STAGES),
                                 null),
                         new Control("#/properties/mutagenesisProtocol",
-                                Options.of().widget("selectWithOther").standardValues(MUTAGENESIS_PROTOCOLS),
+                                Options.of().withWidget("selectWithOther").withStandardValues(MUTAGENESIS_PROTOCOLS),
                                 null),
                         new Control("#/properties/molecularlyCharacterized",
-                                Options.of().widget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null)
                 )),
                 // Genes: same inline-expand pattern as assays.
                 new Group("Genes",
                         List.of(new Control("#/properties/genes",
-                                Options.of().widget("genesList").managesOwnPersistence(true), null)),
-                        Options.of().layout("plain"),
+                                Options.of().withWidget("genesList").withManagesOwnPersistence(true), null)),
+                        Options.of().withLayout("plain"),
                         null),
                 // Lesions: same inline-expand pattern; the per-lesion
                 // form has the lesion-type matrix.
                 new Group("Lesions",
                         List.of(new Control("#/properties/lesions",
-                                Options.of().widget("lesionsList").managesOwnPersistence(true), null)),
-                        Options.of().layout("plain"),
+                                Options.of().withWidget("lesionsList").withManagesOwnPersistence(true), null)),
+                        Options.of().withLayout("plain"),
                         null),
                 // Genotyping Assays is a list of child rows like the
                 // submission's Mutations section — drop the table wrapper.
                 new Group("Genotyping Assays",
                         List.of(new Control("#/properties/assays",
-                                Options.of().widget("assaysList").managesOwnPersistence(true), null)),
-                        Options.of().layout("plain"),
+                                Options.of().withWidget("assaysList").withManagesOwnPersistence(true), null)),
+                        Options.of().withLayout("plain"),
                         null),
                 // Phenotypes: same inline-expand pattern; no type matrix.
                 new Group("Phenotypes",
                         List.of(new Control("#/properties/phenotypes",
-                                Options.of().widget("phenotypesList").managesOwnPersistence(true), null)),
-                        Options.of().layout("plain"),
+                                Options.of().withWidget("phenotypesList").withManagesOwnPersistence(true), null)),
+                        Options.of().withLayout("plain"),
                         null),
                 Group.of("Lethality", List.of(
                         new Control("#/properties/homozygousLethal",
-                                Options.of().widget("yesNoRadio"), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/lethalityStageTypical",
-                                Options.of().widget("selectWithOther").standardValues(LETHALITY_STAGES),
+                                Options.of().withWidget("selectWithOther").withStandardValues(LETHALITY_STAGES),
                                 showWhenLethal),
                         new Control("#/properties/lethalitySpecificTimepoint",
                                 Options.of()
-                                        .placeholder("e.g. 48 hpf")
-                                        .helpText("Single timepoint when most homozygotes die. Use the window fields below for a range."),
+                                        .withPlaceholder("e.g. 48 hpf")
+                                        .withHelpText("Single timepoint when most homozygotes die. Use the window fields below for a range."),
                                 showWhenLethal),
                         new Control("#/properties/lethalityWindowStart",
-                                Options.of().placeholder("e.g. 24 hpf"), showWhenLethal),
+                                Options.of().withPlaceholder("e.g. 24 hpf"), showWhenLethal),
                         new Control("#/properties/lethalityWindowEnd",
-                                Options.of().placeholder("e.g. 72 hpf"), showWhenLethal),
+                                Options.of().withPlaceholder("e.g. 72 hpf"), showWhenLethal),
                         new Control("#/properties/lethalityAdditionalInfo",
-                                Options.of().multi(true), showWhenLethal)
+                                Options.of().withMulti(true), showWhenLethal)
                 )),
                 Group.of("Publications", List.of(
                         new Control("#/properties/publications",
                                 Options.of()
-                                        .widget("stringList")
-                                        .placeholder("Citation, PMID, DOI, or ZDB Pub ID")
-                                        .addLabel("+ Add publication"),
+                                        .withWidget("stringList")
+                                        .withPlaceholder("Citation, PMID, DOI, or ZDB Pub ID")
+                                        .withAddLabel("+ Add publication"),
                                 null)
                 ))
         ));

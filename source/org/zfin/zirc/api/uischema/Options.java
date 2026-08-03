@@ -1,6 +1,9 @@
 package org.zfin.zirc.api.uischema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.With;
 
 import java.util.List;
 
@@ -9,19 +12,21 @@ import java.util.List;
  * captured in one place. See {@code reference/zirc-architecture.md} §5
  * for what each one means and which renderers honor it.
  *
- * <p>Mutate via the fluent withers — each one returns a new instance.
- * {@code Options.of()} produces an empty instance to start from.
+ * <p>Mutate via the Lombok-generated {@code withX} withers — each one returns a
+ * new instance. {@code Options.of()} produces an empty instance to start from.
  *
  * <pre>{@code
  * Options.of()
- *     .placeholder("e.g. zf123")
- *     .helpText("ZFIN allele designation; leave blank if not yet assigned.")
+ *     .withPlaceholder("e.g. zf123")
+ *     .withHelpText("ZFIN allele designation; leave blank if not yet assigned.")
  * }</pre>
  *
  * <p>The fields are explicit (not a generic Map) so a typo on a key name
  * fails at compile time instead of silently being ignored at runtime.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@With
+@Builder(access = AccessLevel.PRIVATE)
 public record Options(
         // Layout-on-Group hint: "plain" drops the table wrapper.
         String layout,
@@ -84,27 +89,13 @@ public record Options(
         Integer constantValue
 ) {
 
+    /**
+     * An empty instance to start a wither chain from. Built via the private
+     * Lombok builder so adding a component here costs nothing — the
+     * alternative is a positional list of nulls that has to grow in lockstep
+     * with the record header.
+     */
     public static Options of() {
-        return new Options(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        return builder().build();
     }
-
-    public Options layout(String v)         { return new Options(v, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options widget(String v)         { return new Options(layout, v, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options multi(boolean v)         { return new Options(layout, widget, v, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options standardValues(List<String> v) { return new Options(layout, widget, multi, v, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options placeholder(String v)    { return new Options(layout, widget, multi, standardValues, v, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options helpText(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, v, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options infoHref(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, v, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options suffix(String v)         { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, v, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options label(String v)          { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, v, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options searchEndpoint(String v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, v, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options typeGroup(String v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, v, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options comments(boolean v)      { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, v, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options managesOwnPersistence(boolean v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, v, refreshesParent, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options refreshesParent(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, v, addLabel, standardLabels, noOther, sourceField, constantValue); }
-    public Options addLabel(String v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, v, standardLabels, noOther, sourceField, constantValue); }
-    public Options standardLabels(List<String> v) { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, v, noOther, sourceField, constantValue); }
-    public Options noOther(boolean v)       { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, v, sourceField, constantValue); }
-    public Options sourceField(String v)    { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, v, constantValue); }
-    public Options constantValue(int v)     { return new Options(layout, widget, multi, standardValues, placeholder, helpText, infoHref, suffix, label, searchEndpoint, typeGroup, comments, managesOwnPersistence, refreshesParent, addLabel, standardLabels, noOther, sourceField, v); }
 }
