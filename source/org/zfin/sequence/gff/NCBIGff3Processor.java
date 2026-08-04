@@ -50,6 +50,7 @@ public class NCBIGff3Processor {
     private ReportBuilder.SummaryTable summaryTableLoad;
     private ReportBuilder.SummaryTable summaryTableFeatureHisto;
     private ReportBuilder.SummaryTable summaryTableGeneLocation;
+    private ReportBuilder.SummaryTable summaryTableRemovedLocations;
     private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
     private final AssemblyDAO assemblyDAO = new AssemblyDAO();
 
@@ -74,6 +75,7 @@ public class NCBIGff3Processor {
         addGeneIDToAttributes();
         createFeatureTypeHistogram();
         int failedBatches = upsertSequenceFeatureChromosomeRecords();
+        reconcileOrphanedGenomeLocations();
         createReport(builder);
         // Write the report first so the failure is diagnosable, then fail: a batch that could not
         // commit means genome locations are missing, and swallowing that let the job report
@@ -193,6 +195,74 @@ public class NCBIGff3Processor {
             String.valueOf(failedBatches.get())
         ));
         return failedBatches.get();
+    }
+
+    /**
+     * Delete the NCBI_LOADER locations for this assembly whose (gene, NCBI GeneID) pair is no longer
+     * a current NCBI Gene link, and list what was removed in the report.
+     * <p/>
+     * The load owns the NCBI_LOADER slice of GRCz12tu outright, but only ever inserted and updated
+     * it, so a location outlived the link that produced it: when NCBI withdraws or re-assigns a
+     * GeneID the db_link moves and the location row stays behind on the old gene. 57 such rows had
+     * accumulated, 14 of them for accessions that now belong to a *different* ZFIN gene (a gene
+     * split -- qdprb.2/qdprb.3, pimr93/pimr94, marchf4b/marchf4bl), so the old gene was showing the
+     * new gene's coordinates as a second GRCz12tu location.
+     * <p/>
+     * Membership is decided against the same getAllGenbankGenes() links the insert path maps
+     * through, so the two halves cannot disagree and a row deleted by one run is not re-created by
+     * the next. Exact (gene, accession) pairs rather than an accession -> gene map: an accession
+     * ZFIN links to two genes must not make either gene's location look orphaned.
+     */
+    private void reconcileOrphanedGenomeLocations() {
+        HibernateUtil.createTransaction();
+        try {
+            List<MarkerDBLink> currentLinks = getSequenceRepository().getAllGenbankGenes();
+            Set<String> currentPairs = currentLinks.stream()
+                .map(link -> genePair(link.getMarker().getZdbID(), link.getAccessionNumber()))
+                .collect(Collectors.toSet());
+            // Where a retired accession ended up. These are curation events worth a curator's
+            // attention, so the report names the new owner rather than dropping the row silently.
+            Map<String, String> accessionOwner = currentLinks.stream()
+                .collect(Collectors.toMap(DBLink::getAccessionNumber,
+                    link -> link.getMarker().getAbbreviation(),
+                    (a, b) -> a + ", " + b));
+
+            String assemblyName = assemblyDAO.find(GRCZ12TU_ASSEMBLY_ID).getName();
+            List<MarkerGenomeLocation> orphans = getSequenceRepository()
+                .getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER).stream()
+                .filter(location -> assemblyName.equals(location.getAssembly()))
+                // sfclg_data_zdb_id is nullable; a location with no gene is not ours to match on
+                .filter(location -> location.getMarker() != null)
+                .filter(location -> !currentPairs.contains(
+                    genePair(location.getMarker().getZdbID(), location.getAccessionNumber())))
+                .toList();
+
+            orphans.forEach(location -> {
+                summaryTableRemovedLocations.addSummaryRow(List.of(
+                    location.getMarker().getZdbID(),
+                    Objects.toString(location.getMarker().getAbbreviation(), ""),
+                    Objects.toString(location.getAccessionNumber(), ""),
+                    Objects.toString(location.getChromosome(), ""),
+                    Objects.toString(location.getStart(), ""),
+                    Objects.toString(location.getEnd(), ""),
+                    accessionOwner.getOrDefault(location.getAccessionNumber(), "(none)")
+                ));
+                getSequenceRepository().deleteGenomeLocation(location);
+            });
+
+            HibernateUtil.flushAndCommitCurrentSession();
+            log.info("Removed " + orphans.size() + " orphaned NCBI genome location(s)");
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            HibernateUtil.currentSession().clear();
+            throw new IllegalStateException(
+                "Could not reconcile orphaned NCBI genome locations; the loaded records are "
+                + "committed but stale locations remain.", e);
+        }
+    }
+
+    private static String genePair(String geneZdbID, String accessionNumber) {
+        return geneZdbID + "|" + accessionNumber;
     }
 
     private void createFeatureTypeHistogram() {
@@ -404,6 +474,11 @@ public class NCBIGff3Processor {
         summaryTableFeatureHisto.setHeaders(List.of("Feature Type", "Count"));
         summaryTableGeneLocation = builder.addSummaryTable("Genome Location Load (sequence_feature_chromosome_location_generated table)");
         summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records", "Failed Batches"));
+        summaryTableRemovedLocations = builder.addSummaryTable(
+            "Removed Genome Locations (no current NCBI Gene link). Accession Now On names the gene "
+            + "the retired accession moved to, which is usually a gene split worth reviewing.");
+        summaryTableRemovedLocations.setHeaders(List.of(
+            "Gene ID", "Gene", "NCBI Gene ID", "Chromosome", "Start", "End", "Accession Now On"));
         return builder;
     }
 
