@@ -53,9 +53,6 @@ OUT=$TARGETROOT/server_apps/DB_maintenance/gff3Load/Load-NCBI-GFF3-File
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gff3Load
 PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
 cd $SOURCEROOT
-# CSVDIFF_XLSX_ONLY -> a single gff3_locations_dbdiff.xlsx workbook
-# (deletes/adds/updated_1/updated_2 sheets); intermediate CSVs removed.
-export CSVDIFF_XLSX_ONLY=true
 $PSQL -v stage=tmp_gff3_loc_after -f $SQL/snapshot_gff3_ncbi_locations.sql
 $PSQL -c "\copy (SELECT * FROM tmp_gff3_loc_after ORDER BY gene_zdb_id, accession) TO STDOUT CSV HEADER" > "$OUT/gff3_locations_after.csv"
 echo "AFTER rows: $(( $(wc -l < "$OUT/gff3_locations_after.csv") - 1 ))"
@@ -63,6 +60,9 @@ $PSQL -c "DROP TABLE IF EXISTS tmp_gff3_loc_before, tmp_gff3_loc_after"
 # key = the gene and its NCBI GeneID, so a gene whose coordinates moved lands in
 # updated_1/_2 rather than as a delete plus an add; gene_abbrev is readable-only.
 gradle csvDiff --args="$OUT/gff3_locations_dbdiff $OUT/gff3_locations_before.csv $OUT/gff3_locations_after.csv gene_zdb_id,accession gene_abbrev"
+# Roll the four diff CSVs into one workbook so the run's delta is a single attachment. csvDiff
+# writes the CSVs and nothing else on this branch, so the conversion is a separate explicit step.
+gradle csv2xlsx --args="$OUT/gff3_locations_dbdiff.xlsx $OUT/gff3_locations_dbdiff_deletes.csv $OUT/gff3_locations_dbdiff_adds.csv $OUT/gff3_locations_dbdiff_updated_1.csv $OUT/gff3_locations_dbdiff_updated_2.csv"
 ]]></command>
         </hudson.tasks.Shell>
     </builders>
