@@ -37,6 +37,12 @@ public class NCBIGff3Processor {
 
     public static final String GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF = "GCF_049306965.1_GRCz12tu_genomic.gff";
 
+    // assembly.a_pk_id of GRCz12tu. Typed Long so it binds through BaseSQLDAO.find(Long): the
+    // find(String) overload handed Hibernate a String for this entity's long @Id, which keyed the
+    // loaded Assembly differently from the Long-keyed instances Hibernate materializes when it
+    // initializes Marker.assemblies -- so an assembly the gene already had went unrecognized.
+    private static final Long GRCZ12TU_ASSEMBLY_ID = 1L;
+
     static {
         Configurator.setLevel("htsjdk.tribble.gff.Gff3Codec", org.apache.logging.log4j.Level.ERROR);
     }
@@ -62,17 +68,45 @@ public class NCBIGff3Processor {
         } else {
             downloadNcbiGff3File();
         }
+        // after the download, so a failed fetch leaves the previous load's records in place
+        clearStagingTables();
         processNcbiGff3(fileName);
         addGeneIDToAttributes();
         createFeatureTypeHistogram();
-        upsertSequenceFeatureChromosomeRecords();
+        int failedBatches = upsertSequenceFeatureChromosomeRecords();
         createReport(builder);
+        // Write the report first so the failure is diagnosable, then fail: a batch that could not
+        // commit means genome locations are missing, and swallowing that let the job report
+        // success over a partial load.
+        if (failedBatches > 0) {
+            throw new IllegalStateException("Genome location load failed for " + failedBatches
+                + " batch(es); see the errors above and gff3_ncbi_report.html.");
+        }
+    }
+
+    // The load is insert-only, so it has to replace the previous run's records rather than add to
+    // them. Failing hard here is deliberate: carrying on would load this release's records on top
+    // of the last one, which is the state this is meant to prevent.
+    private void clearStagingTables() {
+        HibernateUtil.createTransaction();
+        try {
+            dao.truncateStagingTables();
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            HibernateUtil.currentSession().clear();
+            throw new IllegalStateException("Could not clear the GFF3 staging tables; "
+                + "aborting rather than appending to the previous load.", e);
+        }
     }
 
     private final VocabularyService vocabularyService = new VocabularyService();
 
-    private void upsertSequenceFeatureChromosomeRecords() {
-        Assembly grcz12tu = assemblyDAO.find("1");
+    /**
+     * @return the number of batches that failed to commit
+     */
+    private int upsertSequenceFeatureChromosomeRecords() {
+        Assembly grcz12tu = assemblyDAO.find(GRCZ12TU_ASSEMBLY_ID);
         List<Gff3Ncbi> filteredResultSet = getZfinGeneRecords();
         System.out.println("1-1 ZFIN-NCBI-Gene Records in ZFIN found: " + filteredResultSet.size());
 
@@ -85,6 +119,7 @@ public class NCBIGff3Processor {
 
         AtomicInteger newRecords = new AtomicInteger();
         AtomicInteger updatedRecords = new AtomicInteger();
+        AtomicInteger failedBatches = new AtomicInteger();
         batchedFilteredResults.forEach(filteredResults -> {
             HibernateUtil.createTransaction();
             try {
@@ -100,7 +135,7 @@ public class NCBIGff3Processor {
                             changesIncurred = true;
                         }
                         if (!genomeLocation.getEnd().equals(gff3Ncbi.getEnd())) {
-                            genomeLocation.setEnd(gff3Ncbi.getStart());
+                            genomeLocation.setEnd(gff3Ncbi.getEnd());
                             changesIncurred = true;
                         }
                         if (!genomeLocation.getChromosome().equals(gff3Ncbi.getChromosome())) {
@@ -116,7 +151,13 @@ public class NCBIGff3Processor {
                         genomeLocation = new MarkerGenomeLocation();
                         genomeLocation.setAccessionNumber(geneID);
                         Marker gene = getMarkerRepository().getMarker(gff3Ncbi.getGeneZdbID());
-                        gene.getAssemblies().add(grcz12tu);
+                        // a gene can already be associated with GRCz12tu while having no
+                        // NCBI_LOADER genome location (the association also comes from other
+                        // loaders), so "not in geneIDMap" does not imply "not in marker_assembly".
+                        // Adding unconditionally duplicated the join row for those genes.
+                        if (gene.getAssemblies() != null && !gene.getAssemblies().contains(grcz12tu)) {
+                            gene.getAssemblies().add(grcz12tu);
+                        }
                         gene.setAnnotationStatusTerms(Set.of(annotationStatusTerm));
                         genomeLocation.setMarker(gene);
                         genomeLocation.setAssembly(grcz12tu.getName());
@@ -132,14 +173,26 @@ public class NCBIGff3Processor {
                 });
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
+                failedBatches.incrementAndGet();
                 log.log(Level.ERROR, "Error saving genome location: ", e);
+                // Roll back before the next batch. Leaving the failed transaction open made the
+                // next createTransaction() throw "Transaction already active", which escaped this
+                // forEach and aborted the load with 22 of 23 batches unprocessed and no report
+                // written at all.
+                HibernateUtil.rollbackTransaction();
+                // A failed flush leaves the queued changes in the session, so without clearing it
+                // the next commit re-flushes the same offending insert and every remaining batch
+                // fails for a reason that has nothing to do with its own records.
+                HibernateUtil.currentSession().clear();
             }
         });
 
         summaryTableGeneLocation.addSummaryRow(List.of(
             String.valueOf(newRecords.get()),
-            String.valueOf(updatedRecords.get())
+            String.valueOf(updatedRecords.get()),
+            String.valueOf(failedBatches.get())
         ));
+        return failedBatches.get();
     }
 
     private void createFeatureTypeHistogram() {
@@ -350,7 +403,7 @@ public class NCBIGff3Processor {
         summaryTableFeatureHisto = builder.addSummaryTable("Feature Histogram");
         summaryTableFeatureHisto.setHeaders(List.of("Feature Type", "Count"));
         summaryTableGeneLocation = builder.addSummaryTable("Genome Location Load (sequence_feature_chromosome_location_generated table)");
-        summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records"));
+        summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records", "Failed Batches"));
         return builder;
     }
 
