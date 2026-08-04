@@ -27,12 +27,48 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# BEFORE snapshot of everything this load writes (GRCz12tu genome locations, the
+# gene -> assembly links and the NCBI annotation statuses, flattened one row per gene).
+# This load is run by hand and rarely -- a year between the last two runs -- so the
+# before/after diff is the only practical record of what a given run actually changed.
+OUT=$TARGETROOT/server_apps/DB_maintenance/gff3Load/Load-NCBI-GFF3-File
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gff3Load
+mkdir -p "$OUT"
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+$PSQL -v stage=tmp_gff3_loc_before -f $SQL/snapshot_gff3_ncbi_locations.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gff3_loc_before ORDER BY gene_zdb_id, accession) TO STDOUT CSV HEADER" > "$OUT/gff3_locations_before.csv"
+echo "BEFORE rows: $(( $(wc -l < "$OUT/gff3_locations_before.csv") - 1 ))"
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
             <command>cd $SOURCEROOT &amp;&amp; gradle loadGff3NcbiFile</command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# AFTER snapshot (post-load) + database-level diff.
+OUT=$TARGETROOT/server_apps/DB_maintenance/gff3Load/Load-NCBI-GFF3-File
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gff3Load
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+cd $SOURCEROOT
+# CSVDIFF_XLSX_ONLY -> a single gff3_locations_dbdiff.xlsx workbook
+# (deletes/adds/updated_1/updated_2 sheets); intermediate CSVs removed.
+export CSVDIFF_XLSX_ONLY=true
+$PSQL -v stage=tmp_gff3_loc_after -f $SQL/snapshot_gff3_ncbi_locations.sql
+$PSQL -c "\copy (SELECT * FROM tmp_gff3_loc_after ORDER BY gene_zdb_id, accession) TO STDOUT CSV HEADER" > "$OUT/gff3_locations_after.csv"
+echo "AFTER rows: $(( $(wc -l < "$OUT/gff3_locations_after.csv") - 1 ))"
+$PSQL -c "DROP TABLE IF EXISTS tmp_gff3_loc_before, tmp_gff3_loc_after"
+# key = the gene and its NCBI GeneID, so a gene whose coordinates moved lands in
+# updated_1/_2 rather than as a delete plus an add; gene_abbrev is readable-only.
+gradle csvDiff --args="$OUT/gff3_locations_dbdiff $OUT/gff3_locations_before.csv $OUT/gff3_locations_after.csv gene_zdb_id,accession gene_abbrev"
+]]></command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>gff3_ncbi_report.*</artifacts>
+            <artifacts>gff3_ncbi_report.*,server_apps/DB_maintenance/gff3Load/Load-NCBI-GFF3-File/gff3_locations_*.xlsx,server_apps/DB_maintenance/gff3Load/Load-NCBI-GFF3-File/gff3_locations_*.csv</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>false</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
