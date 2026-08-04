@@ -41,14 +41,56 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# Prerequisite check, before the 30+ minutes of file generation below. zfin_genes.gff3 is not
+# produced by this job -- Download-Files_d runs generateGff3.sh, which writes it into
+# $TARGETROOT/home/data_transfer/Downloads -- and nothing expresses that dependency, so a stale or
+# never-populated Downloads directory used to surface as a bare "cp: cannot stat" after the whole
+# generation had already run and left its artifacts in the checkout.
+GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3
+if [ -f "$GFF3_SOURCE" ]; then
+    echo "Found $GFF3_SOURCE"
+elif [ -n "$ALLIANCE_RELEASE_VERSION" ]; then
+    # Required: validateAllianceFiles.sh submits/validates it as the GFF file of the release.
+    echo "ERROR: $GFF3_SOURCE is missing, and ALLIANCE_RELEASE_VERSION is set" >&2
+    echo "       ('$ALLIANCE_RELEASE_VERSION'), so this run has to submit a GFF file." >&2
+    echo "       Run Download-Files_d to regenerate it, then re-run this job." >&2
+    exit 1
+else
+    # Not required: with no release version validateAllianceFiles.sh skips the validate/submit
+    # routine entirely, so the file is never read and generation can go ahead without it.
+    echo "NOTE: $GFF3_SOURCE is missing. ALLIANCE_RELEASE_VERSION is empty, so no files are"
+    echo "      submitted or validated and the GFF is not needed; continuing without it."
+    echo "      Run Download-Files_d first if you intended a real submission."
+fi
+]]></command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
       <command>cd $SOURCEROOT  &amp;&amp; gradle createAllianceFiles</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>
-        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json* zfin_genes.gff3   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
-        cp $TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3 .
-        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit $ALLIANCE_RELEASE_VERSION
-      </command>
+      <command><![CDATA[
+set -e
+cd $SOURCEROOT/server_apps/DB_maintenance/Alliance && rm -f ZFIN*.json* zfin_genes.gff3 && cp $SOURCEROOT/ZFIN*.json . && gzip ZFIN*.json
+
+# zfin_genes.gff3 comes from Download-Files_d, not from this job (see the prerequisite check in the
+# first build step). Copy it when it is there; only insist on it when a release version means
+# validateAllianceFiles.sh is actually going to submit or validate a GFF file. Copying it
+# unconditionally failed generation-only runs on a file they were never going to read.
+GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3
+if [ -f "$GFF3_SOURCE" ]; then
+    cp "$GFF3_SOURCE" .
+elif [ -n "$ALLIANCE_RELEASE_VERSION" ]; then
+    echo "ERROR: $GFF3_SOURCE went missing since the prerequisite check; cannot submit a GFF" >&2
+    echo "       file for release '$ALLIANCE_RELEASE_VERSION'. Run Download-Files_d." >&2
+    exit 1
+else
+    echo "NOTE: $GFF3_SOURCE not present; skipping it (no release version, so it is unused)."
+fi
+
+cd $SOURCEROOT/server_apps/DB_maintenance/Alliance && ./validateAllianceFiles.sh $submit $ALLIANCE_RELEASE_VERSION
+]]></command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current
