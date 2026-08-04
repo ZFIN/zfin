@@ -200,16 +200,25 @@ task reload(type: GradleBuild) {
 String preChangeLog = "source/org/zfin/db/load/db.changelog.master.xml"
 String postChangeLog = "source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
 
+// Liquibase logs 'Reading resource: ...' at INFO for every changelog file it parses, including
+// the hundreds of migrations that already ran, which buries the changesets that actually apply.
+// WARNING silences the parse chatter; the changesets that run are still reported ('Running
+// Changeset: ...' and the update summary go to the console, not the log).
+// Use -PliquibaseLogLevel=INFO to get the verbose output back when debugging a changelog.
+String liquibaseLogLevel = project.findProperty('liquibaseLogLevel') ?: 'WARNING'
+
 // Configure liquibase activities at configuration time (required for Gradle 8+)
 liquibase {
     activities {
         preBuild {
             changelogFile preChangeLog
             url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
+            logLevel liquibaseLogLevel
         }
         postBuild {
             changelogFile postChangeLog
             url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
+            logLevel liquibaseLogLevel
         }
     }
 }
