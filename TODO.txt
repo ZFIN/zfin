@@ -1,0 +1,79 @@
+TODO
+====
+
+OPEN QUESTION -- 3742 'la' insertion locations will display without a citation
+-----------------------------------------------------------------------------
+Needs a curator decision before release. Blocks nothing mechanically; the rows
+load fine. The question is what pub, if any, they should cite.
+
+What happens:
+  source/org/zfin/db/postGmakePostloaddb/1184/migrations/
+    0030-la-insertion-grcz12tu-liftover.sql
+mints GRCz12tu sequence_feature_chromosome_location rows for 3742 'la'
+transgenic-insertion features (UCSC liftOver of their Zv9 coordinates). It
+writes no record_attribution.
+
+Refresh-GBrowse-Tracks_d §G
+(server_apps/data_transfer/Ensembl/updateSequenceFeatureChromosomeLocation.sql)
+re-imports sfcl into sequence_feature_chromosome_location_generated with
+
+    left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id
+
+so an unattributed sfcl row lands with sfclg_pub_zdb_id NULL and the location
+renders on the feature page with no citation.
+
+Why the sibling changeset does not cover them:
+  0030-grcz12tu-liftover-record-attribution.sql
+inherits each lifted row's pub(s) from the feature's GRCz11 sfcl row. Measured
+against the 2026-07-31 production snapshot, all 3742 'la' features have NO sfcl
+row on ANY assembly -- not GRCz11, not Zv9. So that join matches nothing for
+them, at any changeset ordering. (Do not renumber it hoping to fix this; that
+was tried and it does not help.)
+
+Not a regression, which is why this is a question and not a bug: these features
+already display uncited locations today. Their existing generated rows carry
+zero pubs --
+    ZfinGbrowseZv9StartEndLoader / Zv9      3742 rows, 3742 features, 0 with pub
+    'other map location'        / GRCz11    5850 rows, 3625 features, 0 with pub
+The new GRCz12tu rows join an already-uncited set rather than creating a new
+class of defect.
+
+An attribution source does exist: all 3742 features have feature-level
+record_attribution (the pub that described the allele). Whether to reuse it is
+the decision. Reusing it asserts that pub made a GRCz12tu placement claim, which
+it did not -- the coordinates are computationally lifted. Options:
+  a) leave uncited (status quo for this feature set)
+  b) inherit the feature-level pub, accepting the overclaim
+  c) attribute to a ZFIN-internal / computational-analysis pub, if one is
+     appropriate for liftOver-derived placements
+  d) surface the placement as computational in the UI instead of via a pub
+     (sfcl_evidence_code is already ZDB-TERM-170419-312, 'evidence used in
+     automatic assertion')
+
+To re-measure after 0030-la-insertion has run:
+  select count(*) from sequence_feature_chromosome_location z12
+   where z12.sfcl_assembly = 'GRCz12tu'
+     and not exists (select 1 from record_attribution
+                      where recattrib_data_zdb_id = z12.sfcl_zdb_id);
+
+
+CONTEXT -- why the GBrowse refresh fixes in this branch matter
+-------------------------------------------------------------
+Back-ported from release-1183 (0aa07919ee), which fixed a Refresh-GBrowse-
+Tracks_d production outage: nightly failures from 2026-07-07 01:00 through
+2026-07-31 00:50.
+
+  - Root cause: §G's left join fans one location into a row per pub, and
+    uk_sfclg_unique_location excludes the pub id, so the fan-out rows collide
+    once sfclg_acc_num is non-null. Harmless while it was NULL (NULLs are
+    distinct in a unique key); e040299b16 started carrying the accession through
+    and armed it. Fixed by §G's DISTINCT ON, which reached main in ac1f157271
+    but was not cherry-picked to release-1183 for 23 days -- hence the long
+    failure run.
+  - Still load-bearing: 269 colliding fan-out groups (273 surplus rows) exist in
+    the 2026-07-31 snapshot. Removing the DISTINCT ON re-breaks the job today.
+  - Second fix: both knockdown-reagent callers now append commit.sql. The SQL
+    opens 'begin work;' with no COMMIT by design (the caller decides), so
+    running it with -f alone left the transaction open and psql's disconnect
+    rolled the whole refresh back -- the job exited 0 while the table never
+    moved.

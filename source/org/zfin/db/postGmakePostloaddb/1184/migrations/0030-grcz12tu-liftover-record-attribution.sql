@@ -1,25 +1,18 @@
 --liquibase formatted sql
---changeset cmpich:0040-grcz12tu-liftover-record-attribution.sql splitStatements:false
+--changeset cmpich:0030-grcz12tu-liftover-record-attribution.sql splitStatements:false
 
--- Attribute the GRCz12tu sequence_feature_chromosome_location rows inserted by the
--- liftover changesets in this directory:
---   0020-grcz11-to-grcz12tu-liftover-welltested.sql
---   0030-la-insertion-grcz12tu-liftover.sql
+-- Attribute the GRCz12tu sequence_feature_chromosome_location rows inserted by
+-- 0020-grcz11-to-grcz12tu-liftover-welltested.sql.
 --
--- Both mint sfcl rows and register them in zdb_active_data, but neither writes
--- record_attribution. That matters for display: Refresh-GBrowse-Tracks_d §G
--- (server_apps/data_transfer/Ensembl/updateSequenceFeatureChromosomeLocation.sql)
+-- 0020 minted the sfcl rows and registered them in zdb_active_data, but did not
+-- write record_attribution. That matters for display: Refresh-GBrowse-Tracks_d
+-- §G (server_apps/data_transfer/Ensembl/updateSequenceFeatureChromosomeLocation.sql)
 -- re-imports sfcl into sequence_feature_chromosome_location_generated with
 --     left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id
 -- so an unattributed sfcl row propagates with sfclg_pub_zdb_id NULL and the
 -- location renders on the feature page without a citation. Every other sfcl row
 -- in the table is attributed (GRCz11 42464/42464, GRCz12tu 36811/36811 before
 -- 0020), so the unattributed lifted rows are the anomaly.
---
--- Numbered 0040 rather than 0030 deliberately. The 1184 changelog uses
--- <includeAll>, which orders by filename, so a 0030-grcz12tu-* name would sort
--- ahead of 0030-la-insertion-* and run before the rows it needs to attribute
--- exist. 0040 runs after every liftover changeset here.
 --
 -- A lifted GRCz12tu placement is the same assertion as its GRCz11 source
 -- placement expressed in new coordinates, so it inherits that row's pub(s).
@@ -28,16 +21,9 @@
 -- (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
 -- collapses duplicates.
 --
--- Scope limit: attribution is inherited from the feature's GRCz11 sfcl row, so a
--- lifted row whose feature has no attributed GRCz11 sfcl row is left alone and
--- still propagates a NULL pub through §G. That is expected to be the case for
--- 0030's 'la' insertions, which 0030's own header describes as having had a
--- genomic position only on Zv9. Verify the remaining unattributed GRCz12tu count
--- after this runs; sourcing a pub for the Zv9-only set is separate work.
---
--- Targeting: GRCz12tu rows with NO attribution at all. That is exactly the
--- 0020 + 0030 set; pre-existing GRCz12tu rows are already attributed and are
--- left alone. recattrib_pk_id comes from record_attribution_recattrib_pk_id_seq.
+-- Targeting: GRCz12tu rows with NO attribution at all. That is exactly the 0020
+-- set; pre-existing GRCz12tu rows are already attributed and are left alone.
+-- recattrib_pk_id comes from record_attribution_recattrib_pk_id_seq.
 -- ON CONFLICT DO NOTHING + the NOT EXISTS guard make this safe to re-run.
 
 insert into record_attribution
