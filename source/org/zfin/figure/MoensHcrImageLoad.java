@@ -35,14 +35,22 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
  * <p>
  * Manifest columns (tab-separated, one header line):
  * include, disk_filename, view, direction, form, preparation, fig_label, caption, note
- * Only rows with include == "Y" are loaded.
+ * Only rows with include == "Y" are loaded. The manifest's own fig_label column is the
+ * source filename stem and is used only as the load-map key, not as the figure label.
+ * <p>
+ * Figures are labelled "Fig. N" by position among the included manifest rows, matching
+ * the convention every other publication in the database uses. The source filename is
+ * recorded in moens_hcr_image_load_map (created by migration 0040) rather than in
+ * fig_label or img_label, so the follow-up expression changeset can still join a
+ * staging row to the figure it belongs to.
  * <p>
  * Args:
  * [0] manifest TSV path
  * [1] directory containing the image files named in disk_filename
  * <p>
- * Re-runnable: a row is skipped if a figure with the same label already exists
- * under the publication.
+ * Re-runnable: a row is skipped if its filename stem is already in the load map.
+ * Labels are derived from manifest position, not from a running counter, so a re-run
+ * after a partial failure keeps the numbering it assigned the first time.
  */
 @Log4j2
 public class MoensHcrImageLoad extends AbstractScriptWrapper {
@@ -123,20 +131,23 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
         SecurityContextHolder.setContext(securityContext);
 
         log.info("Loading {} manifest rows for {}", rows.size(), PUBLICATION_ZDB_ID);
-        for (String[] row : rows) {
-            loadRow(row, publication);
+        for (int i = 0; i < rows.size(); i++) {
+            // Figure number is the row's position in the manifest, so it is stable
+            // across re-runs even when earlier rows are skipped as already loaded.
+            loadRow(rows.get(i), i + 1, publication);
         }
         log.info("Done. loaded={} skippedExisting={} errors={}", loaded, skippedExisting, errors);
     }
 
-    private void loadRow(String[] row, Publication publication) {
+    private void loadRow(String[] row, int figureNumber, Publication publication) {
         String diskFilename = col(row, 1);
         String view = vocab(VIEW_MAP, col(row, 2), "view");
         String direction = vocab(DIRECTION_MAP, col(row, 3), "direction");
         String form = vocab(FORM_MAP, col(row, 4), "form");
         String preparation = vocab(PREP_MAP, col(row, 5), "preparation");
-        String figLabel = col(row, 6);
+        String imageStem = col(row, 6);
         String caption = col(row, 7);
+        String figLabel = "Fig. " + figureNumber;
 
         File imageFile = new File(imageDirectory, diskFilename);
         if (!imageFile.isFile()) {
@@ -144,8 +155,8 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
             errors++;
             return;
         }
-        if (figureLabelExists(publication.getZdbID(), figLabel)) {
-            log.info("SKIP (figure label already loaded): {}", figLabel);
+        if (alreadyLoaded(imageStem)) {
+            log.info("SKIP (already loaded): {}", imageStem);
             skippedExisting++;
             return;
         }
@@ -161,6 +172,7 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
             // Copies the file into the loadup area and builds thumbnail + medium.
             Image image = ImageService.processImage(figure, imageFile.getAbsolutePath(), false, direction, publication.getZdbID());
             image.setOwner(owner);   // override ImageService's hardcoded ZDB-PERS-030520-2
+            image.setLabel(figLabel);
             image.setView(view);
             image.setDirection(direction);
             image.setForm(form);
@@ -168,10 +180,11 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
             HibernateUtil.currentSession().save(image);
 
             getInfrastructureRepository().insertUpdatesTable(publication, "fig_zdb_id", "create new record", figure.getZdbID(), null);
+            recordInLoadMap(imageStem, figure.getZdbID(), image.getZdbID(), figLabel);
 
             tx.commit();
             loaded++;
-            log.info("Loaded figure {} / image {} from {}", figure.getZdbID(), image.getZdbID(), diskFilename);
+            log.info("Loaded {} as figure {} / image {} from {}", figLabel, figure.getZdbID(), image.getZdbID(), diskFilename);
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             errors++;
@@ -179,13 +192,28 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
         }
     }
 
-    private boolean figureLabelExists(String pubZdbId, String label) {
-        Long count = (Long) HibernateUtil.currentSession()
-            .createQuery("select count(*) from Figure f where f.publication.zdbID = :pub and f.label = :label")
-            .setParameter("pub", pubZdbId)
-            .setParameter("label", label)
+    /**
+     * moens_hcr_image_load_map is disposable staging created by migration 0040 and has no
+     * Hibernate mapping, so both it and {@link #recordInLoadMap} go through native SQL.
+     */
+    private boolean alreadyLoaded(String imageStem) {
+        Number count = (Number) HibernateUtil.currentSession()
+            .createNativeQuery("select count(*) from moens_hcr_image_load_map where mhilm_image_stem = :stem")
+            .setParameter("stem", imageStem)
             .uniqueResult();
-        return count != null && count > 0;
+        return count != null && count.intValue() > 0;
+    }
+
+    private void recordInLoadMap(String imageStem, String figureZdbId, String imageZdbId, String figLabel) {
+        HibernateUtil.currentSession()
+            .createNativeQuery("insert into moens_hcr_image_load_map"
+                + " (mhilm_image_stem, mhilm_fig_zdb_id, mhilm_img_zdb_id, mhilm_fig_label)"
+                + " values (:stem, :fig, :img, :label)")
+            .setParameter("stem", imageStem)
+            .setParameter("fig", figureZdbId)
+            .setParameter("img", imageZdbId)
+            .setParameter("label", figLabel)
+            .executeUpdate();
     }
 
     private List<String[]> readManifest() {

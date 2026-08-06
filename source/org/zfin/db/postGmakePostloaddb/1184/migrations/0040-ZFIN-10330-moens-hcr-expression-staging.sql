@@ -1,5 +1,9 @@
 --liquibase formatted sql
---changeset cmpich:0040-ZFIN-10330-moens-hcr-expression-staging
+
+-- runOnChange:true because both tables below are disposable staging scratch that
+-- this changeset drops and rebuilds from scratch; environments that applied an
+-- earlier variant should pick up edits rather than fail on a checksum mismatch.
+--changeset cmpich:0040-ZFIN-10330-moens-hcr-expression-staging runOnChange:true
 
 -- ZFIN-10330 / ZFINHELP-5462 : Moens lab HCR in situ expression data (staging).
 --
@@ -16,10 +20,17 @@
 --       (efna2b 6 dpf -> ZFS:0000038 ; slc10a4/vwc2l 26 hpf -> ZFS:0000029)
 --   * multi-structure rows split to ONE superterm + ONE subterm per row
 --     (super/sub pipe-delimited values expanded; single-super*single-sub kept)
---   * mhel_fig_label = the loaded figure's label (image filename stem) created by
---     org.zfin.figure.MoensHcrImageLoad; every row maps to one of the 99 loaded figures
---   * 6 rows whose image filename could not be reconciled to a loaded figure
---     (spreadsheet rows 17,19,21,29,57,92) are EXCLUDED pending curator confirmation
+--   * multi-GENE rows split to ONE gene per row: a cell holding two gene ids is one
+--     expression annotation per gene. Affects sheet row 88 (vipb + isl1a) only; the other
+--     multi-gene row, sheet row 19 (mnx2b + cntn2), is excluded here as an unreconciled
+--     image and additionally needs per-gene structures (see MULTI_GENE_ROWS.txt).
+--   * mhel_image_stem = source image filename without the .tif extension; joins to
+--     moens_hcr_image_load_map (written by org.zfin.figure.MoensHcrImageLoad) to reach
+--     the loaded figure. Every row maps to one of the 99 loaded figures.
+--   * of the 6 rows whose image filename could not be reconciled to a file on disk
+--     (spreadsheet rows 17,19,21,29,57,92), the curator confirmed on 2026-08-04 that
+--     17, 57 and 92 should use the disk image as found -- those are now included.
+--     Rows 19, 21 and 29 remain EXCLUDED; they are to be assigned a different image.
 --   * uniform columns: fish = ZDB-FISH-260717-2, assay = MMO_0000643 (HCR in situ),
 --     publication = ZDB-PUB-260717-17, expression_found = true
 --
@@ -28,9 +39,27 @@
 
 drop table if exists moens_hcr_expression_load;
 
+-- Written one row at a time by org.zfin.figure.MoensHcrImageLoad as each image is
+-- loaded. Keeps the source filename -> loaded figure/image mapping outside of
+-- fig_label / img_label, which stay on the site-wide "Fig. N" convention. Doubles as
+-- the loader's re-run guard (a stem present here is skipped) and as the join the
+-- follow-up expression changeset uses to reach fig_zdb_id.
+--
+-- NOT dropped here, unlike the staging data table above. This changeset is
+-- runOnChange:true, and its contents are written by a separate load step, not by this
+-- file -- dropping it on every re-run would discard the record of what was already
+-- loaded and the loader would then create a second set of 99 figures on its next run.
+-- It is dropped by the follow-up expression changeset, once it has served its purpose.
+create table if not exists moens_hcr_image_load_map (
+  mhilm_image_stem      text    primary key,  -- source filename without .tif
+  mhilm_fig_zdb_id      text    not null,     -- ZDB-FIG-... created by the loader
+  mhilm_img_zdb_id      text    not null,     -- ZDB-IMAGE-... created by the loader
+  mhilm_fig_label       text    not null      -- 'Fig. N' assigned by manifest order
+);
+
 create table moens_hcr_expression_load (
   mhel_pk_id            serial primary key,
-  mhel_fig_label        text    not null,   -- figure label = loaded image filename stem
+  mhel_image_stem       text    not null,   -- -> moens_hcr_image_load_map.mhilm_image_stem
   mhel_gene_zdb_id      text    not null,   -- ZDB-GENE-...
   mhel_gene_symbol      text    not null,   -- for QC / readability
   mhel_zfs_id           text    not null,   -- ZFS:....  (start = end = this stage)
@@ -43,7 +72,7 @@ create table moens_hcr_expression_load (
 );
 
 insert into moens_hcr_expression_load
-  (mhel_fig_label, mhel_gene_zdb_id, mhel_gene_symbol, mhel_zfs_id, mhel_superterm_zfa, mhel_subterm_zfa)
+  (mhel_image_stem, mhel_gene_zdb_id, mhel_gene_symbol, mhel_zfs_id, mhel_superterm_zfa, mhel_subterm_zfa)
 values
   ('btbd11b_magenta_2d_emb2_260130_mIX_ventral_(RGB)_with lines', 'ZDB-GENE-050419-99', 'btbd11b', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007127'),
   ('calca_magenta_48h_20250917_emb4_mX_ventral_(RGB)', 'ZDB-GENE-040718-173', 'calca', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126'),
@@ -131,8 +160,14 @@ values
   ('tmeff2b_magenta_6dpf_20250929_emb4_mX_ventral_(RGB)', 'ZDB-GENE-101001-4', 'tmeff2b', 'ZFS:0000038', 'ZFA:0000029', 'ZFA:0007126'),
   ('tmeff2b_magenta_6dpf_20250929_emb1_mX_lateral_(RGB)', 'ZDB-GENE-101001-4', 'tmeff2b', 'ZFS:0000038', 'ZFA:0000029', 'ZFA:0007126'),
   ('trh_magenta_28hpf_20251024_emb3_mV r2_ventral_(RGB)', 'ZDB-GENE-020930-1', 'trh', 'ZFS:0000029', 'ZFA:0000822', 'ZFA:0007130'),
-  ('vipb_magenta_3d_20240924_emb4_dorsal_mX_2_(RGB)', 'ZDB-GENE-080225-22', 'done - vipb', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
-  ('vipb_magenta_isl1a_cyan_3dpf_emb5_20260113_mX_ventral_(RGB)', 'ZDB-GENE-080225-22, ZDB-GENE-980526-112', 'vipb and isl1a', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
+  -- Sheet row 87's symbol cell reads "done - vipb"; the "done - " is a curator working note
+  -- left in the sheet, not a second gene. Single gene id, recorded here under its symbol.
+  ('vipb_magenta_3d_20240924_emb4_dorsal_mX_2_(RGB)', 'ZDB-GENE-080225-22', 'vipb', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
+  -- Sheet row 88 carried two gene ids in one cell ('vipb and isl1a', a dual-channel HCR
+  -- image). Per curator decision, a multi-gene cell becomes one expression annotation per
+  -- gene, so this is split into the two rows below sharing the row's stage and structure.
+  ('vipb_magenta_isl1a_cyan_3dpf_emb5_20260113_mX_ventral_(RGB)', 'ZDB-GENE-080225-22', 'vipb', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
+  ('vipb_magenta_isl1a_cyan_3dpf_emb5_20260113_mX_ventral_(RGB)', 'ZDB-GENE-980526-112', 'isl1a', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
   ('vipb_magenta_6dpf_20241206_emb3_dorsal_mX_(RGB)', 'ZDB-GENE-080225-22', 'vipb', 'ZFS:0000038', 'ZFA:0000029', 'ZFA:0007126'),
   ('vwc2l_magenta_26hpf_20241018_emb4_ventral_mVII_(RGB)', 'ZDB-GENE-081104-169', 'vwc2l', 'ZFS:0000029', 'ZFA:0000069', 'ZFA:0007133'),
   ('vwc2l_magenta_26hpf_20241018_emb4_ventral_mVII_(RGB)', 'ZDB-GENE-081104-169', 'vwc2l', 'ZFS:0000029', 'ZFA:0000949', 'ZFA:0007133'),
@@ -152,4 +187,17 @@ values
   ('MAX_znf385d_magenta_28h_emb4_251209_mVII_best(RGB)', 'ZDB-GENE-130201-2', 'znf385d', 'ZFS:0000029', 'ZFA:0000949', 'ZFA:0007133'),
   ('znf385d_magenta_48h_emb1_251209_mVII r6_ventral_(RGB)', 'ZDB-GENE-130201-2', 'znf385d', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007129'),
   ('znf385d_magenta_3dpf_emb3_251209_mVII r7_ventral_(RGB)', 'ZDB-GENE-130201-2', 'znf385d', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007129'),
-  ('znf385d_magenta_6dpf_20250204_emb4_ventral_mVII r7_(RGB)', 'ZDB-GENE-130201-2', 'znf385d', 'ZFS:0000038', 'ZFA:0000029', 'ZFA:0007129');
+  ('znf385d_magenta_6dpf_20250204_emb4_ventral_mVII r7_(RGB)', 'ZDB-GENE-130201-2', 'znf385d', 'ZFS:0000038', 'ZFA:0000029', 'ZFA:0007129'),
+
+  -- Sheet rows 17, 57 and 92: originally held back because the image filename in the
+  -- spreadsheet did not match any file on disk. Curator confirmed 2026-08-04 to use the
+  -- disk image as found, so these are now loaded (Fig. 100-102) and annotated here from
+  -- their spreadsheet rows unchanged. Sheet rows 19, 21 and 29 remain excluded -- they are
+  -- to be assigned a different image when one is available.
+  -- sheet row 17 -- cntn2, 48 hpf, r6 + r7 / facial motor neuron (2 superterms -> 2 rows)
+  ('cntn2_magenta_48h_20250815_emb4_mVII r7_ventral_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000033', 'ZFA:0000069', 'ZFA:0007129'),
+  ('cntn2_magenta_48h_20250815_emb4_mVII r7_ventral_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000033', 'ZFA:0000949', 'ZFA:0007129'),
+  -- sheet row 57 -- ptgir, 48 hpf, rhombomere 2 / trigeminal motor neuron
+  ('ptgir_magenta_48hpf_20250930_emb2_mV r2_ventral_PMT Light_(RGB)', 'ZDB-GENE-120511-1', 'ptgir', 'ZFS:0000033', 'ZFA:0000822', 'ZFA:0007130'),
+  -- sheet row 92 -- vwc2l, 48 hpf (2 dpf), hindbrain / vagus motor neuron
+  ('vwc2l_magenta_2dpf_20260529_emb1_lateral_mX_(RGB)', 'ZDB-GENE-081104-169', 'vwc2l', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126');
