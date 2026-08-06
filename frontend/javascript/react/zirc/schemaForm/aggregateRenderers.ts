@@ -8,6 +8,10 @@ import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRendere
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
 import { autoSizeRendererEntry } from './renderers/AutoSizeRenderer';
+import { nucleotideSequenceRendererEntry } from './renderers/NucleotideSequenceRenderer';
+import { vocabularySelectRendererEntry } from './renderers/VocabularySelectRenderer';
+import { vocabularyMultiSelectRendererEntry } from './renderers/VocabularyMultiSelectRenderer';
+import { aminoAcidChangeRendererEntry } from './renderers/AminoAcidChangeRenderer';
 import { assaysListRendererEntry } from './renderers/AssaysListRenderer';
 import { genesListRendererEntry } from './renderers/GenesListRenderer';
 import { lesionsListRendererEntry } from './renderers/LesionsListRenderer';
@@ -35,6 +39,10 @@ export const aggregateRenderers = [
     publicationsListRendererEntry,
     autocompleteRendererEntry,
     autoSizeRendererEntry,
+    nucleotideSequenceRendererEntry,
+    vocabularySelectRendererEntry,
+    vocabularyMultiSelectRendererEntry,
+    aminoAcidChangeRendererEntry,
     assaysListRendererEntry,
     genesListRendererEntry,
     lesionsListRendererEntry,

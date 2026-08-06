@@ -86,7 +86,24 @@ public record Options(
         // For the autoSize widget — a fixed displayed value where the size is
         // definitional rather than measured (a point mutation is always 1 bp).
         // Mutually exclusive with sourceField.
-        Integer constantValue
+        Integer constantValue,
+        // For the vocabularySelect / vocabularyMultiSelect / aminoAcidChange
+        // widgets — which controlled vocabulary to populate the dropdown
+        // from. An mdcv_used_in value served by /api/zirc/vocabulary/{name};
+        // see ZircVocabularyService for the served set. The stored value is
+        // the term's ZDB ID, not its display name.
+        String vocabulary,
+        // For the nucleotideSequence widget — the accepted character set.
+        // Input is uppercased and anything outside this set is dropped, so
+        // a pasted FASTA record or numbered sequence normalizes to bases.
+        // Defaults client-side to "ACGTN".
+        String alphabet,
+        // For the aminoAcidChange widget — the sibling fields it writes
+        // alongside the one it is bound to (which holds the "from" residue).
+        // Named rather than derived so the schema stays the single place
+        // field names are declared.
+        String toField,
+        String positionField
 ) {
 
     /**
