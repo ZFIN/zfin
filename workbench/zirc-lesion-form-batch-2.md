@@ -211,18 +211,47 @@ abbreviation when a term has one. Yields `Ala [A]` for amino acids,
 matching the curation interface, and plain labels for the consequence
 vocabularies, which have no abbreviations.
 
-### What Phase 0 is and isn't verified against
+### Phase 0 verification
 
-Verified: the `options` reach the wire (checked against a live
-`/lesions/form-schema` payload with temporary Control wiring, since
-reverted); the endpoint returns the right terms in the right order for
-all three vocabularies, and 404s on an unknown name; 30 unit tests on the
-normalization and caret helpers; typecheck; lint; 43 zirc Java tests with
-the schema snapshot unchanged.
+Verified in the running app, with all four widgets temporarily wired into
+the lesion schema (since reverted):
 
-Not verified: React rendering of the four widgets, which needs a
-logged-in session on the dev stack. The first Phase 1 ticket to wire a
-widget into the schema will exercise it.
+- `vocabularySelect` and both amino-acid selects populate from
+  `/api/zirc/vocabulary`, with `Ala [A]` formatting.
+- `vocabularyMultiSelect` adds a chip, resets its picker, and offers a
+  remove link.
+- `nucleotideSequence` normalizes `acgt 123 nnxx acgt` to `ACGTNNACGT`
+  and reads `10 bp`, with the server's recomputed **Lesion size (bp)**
+  agreeing at 10.
+- Typing `gg` mid-sequence yields `ACGTGG|NNACGT` with the caret after
+  the insertion — unpatched, the second `g` would be stranded at the end.
+
+Plus: 30 unit tests on the normalization and caret helpers, typecheck,
+lint, and 43 zirc Java tests with the schema snapshot unchanged.
+
+**The screenshot check earned its keep.** All four widgets were initially
+dead. They had been registered only in `aggregateRenderers.ts` — the
+*view-mode* registry — while `ZircEntityEditor` kept its own
+near-identical list for edit mode. A Control declaring
+`widget: "vocabularySelect"` therefore fell back to `RowControlRenderer`
+and rendered as a plain text input.
+
+That failure mode is silent by construction: nothing logged, correct
+payload on the wire, and a field that looks ordinary rather than broken.
+Typecheck, lint and the whole Java suite passed with every widget
+unreachable. Fixed in `867c9cb454` by extracting a shared `fieldRenderers`
+list, so the duplication that caused it is gone rather than patched.
+
+Note `SchemaForm.tsx` keeps a *third* renderer list for the
+submission-level form. It has a genuinely different field set, so it was
+left alone — but it is the same trap if a submission-level widget is ever
+added.
+
+Minor, not fixed: `options.label` is ignored by the new renderers (they
+use the JSON Forms `label` prop, which comes from the schema title). The
+codebase is already inconsistent here — `MultipleChoiceWithOtherRenderer`
+honours it, `SelectWithOtherRenderer` doesn't. Phase 1 fields carry
+proper schema titles, so it doesn't bite.
 
 ### Storage convention for multi-valued fields
 
