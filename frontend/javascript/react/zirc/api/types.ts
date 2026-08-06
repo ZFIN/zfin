@@ -175,6 +175,12 @@ export interface AutocompleteItemDTO {
     value: string;
 }
 
+export interface VocabularyTermDTO {
+    id: string;
+    label: string;
+    abbreviation: string | null;
+}
+
 // RFC 7807 problem detail returned by ZircApiExceptionHandler.
 export interface ProblemDetail {
     type?: string;
